@@ -1,0 +1,11 @@
+name: SkinsRestorer
+main: skinsrestorer.bukkit.SkinsRestorer
+version: 10.4.3
+author: Th3Tr0LLeR
+load: startup
+commands:
+  skinsrestorer:
+    aliases: [sr]
+    description: SkinsRestorer's main command.
+  skin:
+    description: Use this command to change your skin.
