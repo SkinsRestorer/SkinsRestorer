@@ -51,7 +51,7 @@ public class LoginListener1_8 implements Listener {
 					Method getprofile = clazz.getMethod("getProfile");
 						GameProfile eplayer = (GameProfile) getprofile.invoke(player);
 						Property prop = new Property(property.getName(), property.getValue(), property.getSignature());
-				        eplayer.getProperties().remove(prop.getName(), prop);
+				        eplayer.getProperties().put(prop.getName(), prop);
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 				}
