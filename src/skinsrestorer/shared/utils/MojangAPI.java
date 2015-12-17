@@ -20,7 +20,7 @@ package skinsrestorer.shared.utils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -42,24 +42,26 @@ public class MojangAPI {
 		private static final String profileurl = "https://api.mojang.com/profiles/minecraft";
 		private static final String mcapipurl = ConfigStorage.getInstance().GET_PROFILE_URL;
 		public static Profile getProfile(String nick) throws SkinFetchFailedException, IOException, ParseException {
+			
 			//open connection
-			HttpURLConnection connection = (HttpURLConnection) setupConnection(new URL(profileurl));
+			HttpsURLConnection connection = (HttpsURLConnection) setupConnection(new URL(profileurl));
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
+			
 			//write body
 			DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
 			writer.write(JSONArray.toJSONString(Arrays.asList(nick)).getBytes(StandardCharsets.UTF_8));
 			writer.flush();
 			writer.close();
+			
 			//check response code
 			if (connection.getResponseCode() == 429) {
-				connection = (HttpURLConnection) setupConnection(new URL(mcapipurl.replace("{username}", nick).replace("'", String.valueOf('"'))));
+				connection = (HttpsURLConnection) setupConnection(new URL(mcapipurl.replace("{username}", nick).replace("'", String.valueOf('"'))));
 				connection.setRequestMethod("GET");
 				connection.setRequestProperty("Content-Type", "application/json");
+				
 				//write body
 			    writer = new DataOutputStream(connection.getOutputStream());
-				//List<List<String>> nicka = Arrays.asList(Arrays.asList("*".replace('*', '"')+nick+"*".replace('*', '"')+","+"*".replace('*', '"')+nick+"*".replace('*', '"')));
-				//writer.write(JSONArray.toJSONString(nicka).getBytes(StandardCharsets.UTF_8));
 				writer.flush();
 				writer.close();
 				
@@ -74,6 +76,7 @@ public class MojangAPI {
 				}
 				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 			}
+			
 			//read response
 			InputStream is = connection.getInputStream();
 			String result = IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -89,13 +92,16 @@ public class MojangAPI {
 		private static final String skullbloburl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 		private static final String mcapiurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
 		public static SkinProfile getSkinProfile(String id) throws IOException, ParseException, SkinFetchFailedException {
+			
 			//open connection
-			HttpURLConnection connection =  (HttpURLConnection) setupConnection(new URL(skullbloburl+id.replace("-", "")+"?unsigned=false"));
+			HttpsURLConnection connection =  (HttpsURLConnection) setupConnection(new URL(skullbloburl+id.replace("-", "")+"?unsigned=false"));
+			
 			//check response code
 			if (connection.getResponseCode() == 429) {
-				connection = (HttpURLConnection) setupConnection(new URL(mcapiurl.replace("{uuid}", id.replace("-", ""))));
+				connection = (HttpsURLConnection) setupConnection(new URL(mcapiurl.replace("{uuid}", id.replace("-", ""))));
 				System.out.println(LocaleStorage.getInstance().TRYING_TO_USE_NCAPI);
 			}
+			
 			//read response
 			InputStream is = connection.getInputStream();
 			String result = IOUtils.toString(is, StandardCharsets.UTF_8);
