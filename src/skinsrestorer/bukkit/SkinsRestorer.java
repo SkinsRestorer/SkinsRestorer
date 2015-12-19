@@ -30,8 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import skinsrestorer.bukkit.commands.AdminCommands;
 import skinsrestorer.bukkit.commands.PlayerCommands;
-import skinsrestorer.bukkit.listeners.LoginListener1_8;
-import skinsrestorer.bukkit.listeners.LoginListener1_7;
+import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.Updater;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -52,6 +51,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	static Logger log;
     public ConsoleCommandSender log1 = null;
 	private skinsrestorer.bukkit.listeners.Updater updater;
+
+	private String version;
 	public void logInfo(String message) {
 		log.info(message);
 	}
@@ -61,12 +62,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = this;
 		log = getLogger();
 		log1 = Bukkit.getConsoleSender();
-		/*if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-			log1.sendMessage(ChatColor.RED+"You need to install ProtocolLib for the plugin to work.");
-			log1.sendMessage(ChatColor.RED+"Download it from http://ci.shadowvolt.com/job/ProtocolLib/");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		}*/
+		
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		SkinStorage.init(getDataFolder());
@@ -100,15 +96,11 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
         }
 		getCommand("skinsrestorer").setExecutor(new AdminCommands());
 		getCommand("skin").setExecutor(new PlayerCommands());
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-		if (version.contains("1_7")){
-		getServer().getPluginManager().registerEvents(new LoginListener1_7(), this);
-		}else if (version.contains("1_8")){
-			getServer().getPluginManager().registerEvents(new LoginListener1_8(), this);	
-		}
+		this.version = version;
 		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
-
 	@Override
 	public void onDisable() {
 		SkinStorage.getInstance().saveData();
@@ -122,5 +114,19 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
    @Deprecated
    public boolean hasSkin(String playerName){
 	   return SkinsRestorerAPI.hasSkin(playerName);
+   }
+   
+   
+   public boolean is1_7(){
+	   if (version.contains("1_7")){
+		   return true;
+	   }
+	   return false;
+   }
+   public boolean is1_8(){
+	   if (version.contains("1_8")){
+		   return true;
+	   }
+	   return false;
    }
 }
