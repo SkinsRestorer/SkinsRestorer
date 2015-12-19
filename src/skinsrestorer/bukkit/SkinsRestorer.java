@@ -67,6 +67,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		LocaleStorage.init(getDataFolder());
 		SkinStorage.init(getDataFolder());
 		System.currentTimeMillis();
+		getCommand("skinsrestorer").setExecutor(new AdminCommands());
+		getCommand("skin").setExecutor(new PlayerCommands());
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
+		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
+		this.version = version;
+		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
         updater = new Updater(this);
         
         updater.checkUpdates();
@@ -82,10 +88,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
           log1.sendMessage(ChatColor.YELLOW+" ");
           log1.sendMessage(ChatColor.YELLOW+"    Download at"+ChatColor.GREEN+" https://www.spigotmc.org/resources/skinsrestorer.2124/");
           log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-          
+          return;
         }
-        else
-        {
         	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
         	log1.sendMessage(ChatColor.YELLOW+"  SkinsRestorer Updater");
         	log1.sendMessage(ChatColor.YELLOW+" ");
@@ -93,14 +97,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
         	log1.sendMessage(ChatColor.GREEN+"    The latest version of SkinsRestorer!");
         	log1.sendMessage(ChatColor.YELLOW+" ");
         	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-        }
-		getCommand("skinsrestorer").setExecutor(new AdminCommands());
-		getCommand("skin").setExecutor(new PlayerCommands());
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-		this.version = version;
-		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-		}
+	}
 	@Override
 	public void onDisable() {
 		SkinStorage.getInstance().saveData();
