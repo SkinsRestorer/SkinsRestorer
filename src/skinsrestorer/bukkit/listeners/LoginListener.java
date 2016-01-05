@@ -6,7 +6,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import skinsrestorer.bukkit.SkinFactory;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -20,21 +19,23 @@ public class LoginListener implements Listener {
 		if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
 			return;
 		}
-		final Player player = event.getPlayer();
-		String name = player.getName();
-		addemptUpdate(name);
+		//Updating and applying skin.
+		updateAndApply(event.getPlayer());
+	}
+	
+	//Here's it :D
+	public void updateAndApply(final Player player){
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
 		new Thread(new Runnable() {
 		    public void run() {
-		    	SkinFactory.applySkin(player);
-		    }
-		}).start();
+		   	try {
+					skinprofile.attemptUpdate();
+				} catch (SkinFetchFailedException e) {
+					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
+					e.printStackTrace();
+				}
+		    	SkinsRestorer.getInstance().applySkin(player);
 	}
-	public void addemptUpdate(String name){
-		SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(name.toLowerCase());
-		try {
-			skinprofile.attemptUpdate();
-		} catch (SkinFetchFailedException e) {
-			SkinsRestorer.getInstance().logInfo("Skin fetch failed for player "+name+": "+e.getMessage());
-		}
-	}
+	}).start();
+}
 }

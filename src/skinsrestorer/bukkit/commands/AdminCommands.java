@@ -17,6 +17,7 @@
 
 package skinsrestorer.bukkit.commands;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -50,6 +51,9 @@ public class AdminCommands implements CommandExecutor {
 		}else
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
+			if (Bukkit.getPlayer(args[1]) != null){
+	    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+			}
 			sender.sendMessage(ChatColor.BLUE+"Skin data for player "+args[1]+" dropped");
 			return true;
 		} else
@@ -66,6 +70,9 @@ public class AdminCommands implements CommandExecutor {
 						String name = args[1];
 						try {
 							SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
+							if (Bukkit.getPlayer(args[1]) != null){
+						    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+								}
 							sender.sendMessage(ChatColor.BLUE+"Skin data updated");
 						} catch (SkinFetchFailedException e) {
 							sender.sendMessage(ChatColor.RED+"Skin fetch failed: "+e.getMessage());
@@ -84,6 +91,9 @@ public class AdminCommands implements CommandExecutor {
 						try {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 							SkinStorage.getInstance().setSkinData(args[1], skinprofile);
+							if (Bukkit.getPlayer(args[1]) != null){
+						    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+								}
 							sender.sendMessage(ChatColor.BLUE+"You set "+args[1]+"'s skin.");
 						} catch (SkinFetchFailedException e) {
 							sender.sendMessage(ChatColor.RED+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED+e.getMessage());

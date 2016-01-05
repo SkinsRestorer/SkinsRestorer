@@ -53,6 +53,7 @@ public class SkinsRestorer extends Plugin {
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		SkinStorage.init(getDataFolder());
+		new SkinFactoryBungee();
 		
         updater = new Updater(this);
         

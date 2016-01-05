@@ -61,8 +61,6 @@ public class SkinProfile implements Cloneable {
 		if (isForced || (System.currentTimeMillis() - timestamp) <= (2 * 60 * 60 * 1000)) {
 			return;
 		}
-		new Thread(new Runnable() {
-		    public void run() {
 				try {
 					SkinProfile newskinprofile = SkinFetchUtils.fetchSkinProfile(profile.getName(), UUIDUtil.fromDashlessString(profile.getId()));
 					timestamp = System.currentTimeMillis();
@@ -74,8 +72,6 @@ public class SkinProfile implements Cloneable {
 						return;
 					}
 				}
-		    }
-		}).start();
 	}
 	
 	public void attemptUpdateBungee() throws SkinFetchFailedException {
@@ -85,17 +81,17 @@ public class SkinProfile implements Cloneable {
 		if (isForced || (System.currentTimeMillis() - timestamp) <= (2 * 60 * 60 * 1000)) {
 			return;
 		}
-	try {
-		SkinProfile newskinprofile = SkinFetchUtils.fetchSkinProfile(profile.getName(), UUIDUtil.fromDashlessString(profile.getId()));
-		timestamp = System.currentTimeMillis();
-		profile = newskinprofile.profile;
-		skin = newskinprofile.skin;
-		} catch (SkinFetchFailedException e) {
-			if (e.getReason() == Reason.NO_PREMIUM_PLAYER || e.getReason() == Reason.NO_SKIN_DATA) {
-				timestamp = System.currentTimeMillis();
-				return;
-			}
-		}
+				try {
+					SkinProfile newskinprofile = SkinFetchUtils.fetchSkinProfile(profile.getName(), UUIDUtil.fromDashlessString(profile.getId()));
+					timestamp = System.currentTimeMillis();
+					profile = newskinprofile.profile;
+					skin = newskinprofile.skin;
+				} catch (SkinFetchFailedException e) {
+					if (e.getReason() == Reason.NO_PREMIUM_PLAYER || e.getReason() == Reason.NO_SKIN_DATA) {
+						timestamp = System.currentTimeMillis();
+						return;
+					}
+				}
 	}
 
 	public void applySkin(ApplyFunction applyfunction) {

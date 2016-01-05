@@ -24,6 +24,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -83,6 +84,7 @@ public class PlayerCommands extends Command {
 						try {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinFactoryBungee.getFactory().applySkin(player);
 							TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS);
 							component.setColor(ChatColor.BLUE);
 							player.sendMessage(component);

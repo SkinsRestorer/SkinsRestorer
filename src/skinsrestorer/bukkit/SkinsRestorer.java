@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -53,6 +54,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	private skinsrestorer.bukkit.listeners.Updater updater;
 
 	private String version;
+
 	public void logInfo(String message) {
 		log.info(message);
 	}
@@ -69,12 +71,27 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		System.currentTimeMillis();
 		getCommand("skinsrestorer").setExecutor(new AdminCommands());
 		getCommand("skin").setExecutor(new PlayerCommands());
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
+		
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);	
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-		this.version = version;
+		this.version = version.replace(".", "");
 		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-        updater = new Updater(this);
-        
+        System.out.println(getVersion());
+		if (getVersion().equalsIgnoreCase("v1_7_R4")){
+		    new SkinFactory1_7_R4();
+		}else if (getVersion().equalsIgnoreCase("v1_8_R1")){
+			new SkinFactory1_8_R1();
+		}else if (getVersion().equalsIgnoreCase("v1_8_R2")){
+			new SkinFactory1_8_R2();
+		}else if (getVersion().equalsIgnoreCase("v1_8_R3")){
+			new SkinFactory1_8_R3();
+		}else{
+			log1.sendMessage(ChatColor.RED+"This version is not supported by SkinsRestorer");
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+		
+		updater = new Updater(this);
         updater.checkUpdates();
 
         if (Updater.updateAvailable())
@@ -112,18 +129,21 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
    public boolean hasSkin(String playerName){
 	   return SkinsRestorerAPI.hasSkin(playerName);
    }
-   
-   
-   public boolean is1_7(){
-	   if (version.contains("1_7")){
-		   return true;
-	   }
-	   return false;
+   public void applySkin(Player player){
+   	if (version.equalsIgnoreCase("v1_7_R4")){
+   	SkinFactory1_7_R4.getFactory().applySkin(player);
+   	}else if (version.equalsIgnoreCase("v1_8_R1")){
+	    SkinFactory1_8_R1.getFactory().applySkin(player);	
+   	}else if (version.equalsIgnoreCase("v1_8_R2")){
+		SkinFactory1_8_R2.getFactory().applySkin(player);	
+	   	}else if (version.equalsIgnoreCase("v1_8_R3")){
+		SkinFactory1_8_R3.getFactory().applySkin(player);	
+	   	}else{
+   	player.sendMessage(version);
+	   	}
    }
-   public boolean is1_8(){
-	   if (version.contains("1_8")){
-		   return true;
-	   }
-	   return false;
+   
+   public String getVersion(){
+	   return version;
    }
 }

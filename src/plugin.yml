@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 10.4.4
+version: 10.5
 author: Th3Tr0LLeR
 load: startup
 commands:

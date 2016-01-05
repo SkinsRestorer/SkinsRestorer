@@ -57,6 +57,7 @@ public class PlayerCommands implements CommandExecutor {
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
+		    	SkinsRestorer.getInstance().applySkin(player);
 				player.sendMessage(ChatColor.BLUE+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 			}
 			return true;
@@ -74,6 +75,8 @@ public class PlayerCommands implements CommandExecutor {
 						try {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							skinprofile.attemptUpdate();
+					    	SkinsRestorer.getInstance().applySkin(player);
 							player.sendMessage(ChatColor.BLUE+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS);
 						} catch (SkinFetchFailedException e) {
 							player.sendMessage(ChatColor.RED+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED+e.getMessage());
