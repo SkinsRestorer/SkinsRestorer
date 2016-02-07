@@ -51,12 +51,18 @@ public class LocaleStorage {
 	public String SKIN_FETCH_FAILED_PARSE_FAILED = "Can't decode skin data";
 	public String SKIN_FETCH_FAILED_RATE_LIMITED = "Rate limited";
 	public String SKIN_FETCH_FAILED_ERROR = "An error has occured";
+	public String SKIN_DATA_DROPPED = "Skin data for player %player dropped";
+	public String SKIN_DATA_SAVED = "Skin data saved successfully.";
+	public String SKIN_DATA_UPDATED = "Skin data updated";
+	public String SKIN_FETCH_FAILED = "Skin fetch failed: ";
 	public String MCAPI_FAILED_ERROR = "Tried to use mcapi.ca, but it failed.";
 	public String TRYING_TO_USE_NCAPI = "[SkinsRestorer] Getting skin from Mojang failed. Using mcapi.ca!";
 	
 	public String USE_SKIN_HELP = "Use '/skin help' for help.";
+	public String PLAYER_HELP = "&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8[\n&9/skin set <skinname> &9-&a Sets your skin.\n&9/skin clear &9-&a Clears your skin.";
 	
 	public String ADMIN_USE_SKIN_HELP = "&9Use '/skinsrestorer help' for help.";
+	public String ADMIN_SET_SKIN = "You set %player''s skin.";
 	public String ADMIN_HELP = "&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8[\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n&9/skinsrestorer update <player> &9-&a Updates player skin data.\n&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.";
 
 }

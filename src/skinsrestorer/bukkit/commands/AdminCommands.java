@@ -52,12 +52,12 @@ public class AdminCommands implements CommandExecutor {
 			if (Bukkit.getPlayer(args[1]) != null){
 	    	SkinsRestorerAPI.removeSkinBukkit(Bukkit.getPlayer(args[1]));
 			}
-			sender.sendMessage(ChatColor.BLUE+"Skin data for player "+args[1]+" dropped");
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			return true;
 		} else
 		if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
 			SkinStorage.getInstance().saveData();
-				sender.sendMessage(ChatColor.BLUE+"Skin data saved successfully.");
+				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_SAVED));
 				return true;
 	    } else
 		if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
@@ -71,9 +71,9 @@ public class AdminCommands implements CommandExecutor {
 							if (Bukkit.getPlayer(args[1]) != null){
 						    	SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 								}
-							sender.sendMessage(ChatColor.BLUE+"Skin data updated");
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 						} catch (SkinFetchFailedException e) {
-							sender.sendMessage(ChatColor.RED+"Skin fetch failed: "+e.getMessage());
+							sender.sendMessage(ChatColor.translateAlternateColorCodes(LocaleStorage.getInstance().SKIN_FETCH_FAILED)+e.getMessage());
 						}
 					}
 				}
@@ -92,9 +92,9 @@ public class AdminCommands implements CommandExecutor {
 							if (Bukkit.getPlayer(args[1]) != null){
 						    	SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 								}
-							sender.sendMessage(ChatColor.BLUE+"You set "+args[1]+"'s skin.");
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
 						} catch (SkinFetchFailedException e) {
-							sender.sendMessage(ChatColor.RED+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED+e.getMessage());
+							sender.sendMessage(ChatColor.translateAlternateColorCodes(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED)+e.getMessage());
 						}
 					}
 				}
@@ -106,3 +106,4 @@ public class AdminCommands implements CommandExecutor {
 	}
 
 }
+
