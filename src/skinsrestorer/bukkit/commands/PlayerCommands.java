@@ -37,7 +37,7 @@ public class PlayerCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.playercmds")) {
-			sender.sendMessage("You don't have permission to do this");
+			sender.sendMessage(ChatColor.RED+LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 		if (!(sender instanceof Player)) {
