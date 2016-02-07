@@ -38,7 +38,8 @@ public class ConfigStorage {
 		} catch (IOException e) {
 		}
 	}
-
+    public boolean UPDATE_CHECK = true;
+    public boolean USE_AUTOIN_SKINS = false;
 	public String GET_PROFILE_URL = "https://mcapi.ca/uuid/players/['{username}']";
 	public String GET_SKIN_PROFILE_URL = "https://mcapi.ca/name/uuid/{uuid}";
 

@@ -1,8 +1,9 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 10.5
+version: 10.5.5
 author: Th3Tr0LLeR
 load: startup
+softdepend: [AutoIn]
 commands:
   skinsrestorer:
     aliases: [sr]

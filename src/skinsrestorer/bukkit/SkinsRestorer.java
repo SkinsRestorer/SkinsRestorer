@@ -1,20 +1,3 @@
-/**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
 package skinsrestorer.bukkit;
 
 import java.util.concurrent.Executors;
@@ -43,17 +26,18 @@ import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
+    private boolean autoIn = false;
 	static SkinsRestorer instance;
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
-
+    
 	static Logger log;
     public ConsoleCommandSender log1 = null;
 	private skinsrestorer.bukkit.listeners.Updater updater;
 
 	private String version;
+	private Factory factory;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -64,36 +48,42 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = this;
 		log = getLogger();
 		log1 = Bukkit.getConsoleSender();
-		
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		SkinStorage.init(getDataFolder());
-		System.currentTimeMillis();
 		getCommand("skinsrestorer").setExecutor(new AdminCommands());
 		getCommand("skin").setExecutor(new PlayerCommands());
+
+		factory = new Factory();
+		if (getServer().getPluginManager().isPluginEnabled("AutoIn")){
+			log1.sendMessage(ChatColor.GREEN+"SkinsRestorer has detected that you are using AutoIn.");
+			log1.sendMessage(ChatColor.GREEN+"Check the USE_AUTOIN_SKINS option in your config!");
+			autoIn = true;
+		}
 		
+		if (ConfigStorage.getInstance().UPDATE_CHECK == true){
+			updater = new Updater(this);
+	        updater.checkUpdates();
+		}else{
+			log1.sendMessage(ChatColor.RED+"SkinsRestorer Updater is Disabled!");
+			updater = null;
+		}
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);	
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
 		this.version = version.replace(".", "");
 		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-        System.out.println(getVersion());
-		if (getVersion().equalsIgnoreCase("v1_7_R4")){
-		    new SkinFactory1_7_R4();
-		}else if (getVersion().equalsIgnoreCase("v1_8_R1")){
-			new SkinFactory1_8_R1();
-		}else if (getVersion().equalsIgnoreCase("v1_8_R2")){
-			new SkinFactory1_8_R2();
-		}else if (getVersion().equalsIgnoreCase("v1_8_R3")){
-			new SkinFactory1_8_R3();
-		}else{
-			log1.sendMessage(ChatColor.RED+"This version is not supported by SkinsRestorer");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
+		//Registering the factory using reflection now. I'm tired of version checks xD
+		try {
+			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory"+getVersion());
+			this.factory = (Factory) factory.newInstance();
+			log1.sendMessage("[SkinsModule] Loaded Skin Factory for "+getVersion());
+		} catch (ClassNotFoundException e) {
+			log1.sendMessage(ChatColor.RED+"[SkinsRestorer] The version "+getVersion()+" is not supported by SkinsModule.");
+		    Bukkit.getPluginManager().disablePlugin(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
-		
-		updater = new Updater(this);
-        updater.checkUpdates();
-
+        if (updater!=null){
         if (Updater.updateAvailable())
         {
           log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
@@ -105,8 +95,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
           log1.sendMessage(ChatColor.YELLOW+" ");
           log1.sendMessage(ChatColor.YELLOW+"    Download at"+ChatColor.GREEN+" https://www.spigotmc.org/resources/skinsrestorer.2124/");
           log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-          return;
-        }
+        } else {
         	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
         	log1.sendMessage(ChatColor.YELLOW+"  SkinsRestorer Updater");
         	log1.sendMessage(ChatColor.YELLOW+" ");
@@ -114,6 +103,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
         	log1.sendMessage(ChatColor.GREEN+"    The latest version of SkinsRestorer!");
         	log1.sendMessage(ChatColor.YELLOW+" ");
         	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
+        }
+        }
 	}
 	@Override
 	public void onDisable() {
@@ -129,20 +120,47 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
    public boolean hasSkin(String playerName){
 	   return SkinsRestorerAPI.hasSkin(playerName);
    }
+   
+   @Deprecated
    public void applySkin(Player player){
    	if (version.equalsIgnoreCase("v1_7_R4")){
-   	SkinFactory1_7_R4.getFactory().applySkin(player);
+   	SkinFactoryv1_7_R4.getFactory().applySkin(player);
    	}else if (version.equalsIgnoreCase("v1_8_R1")){
-	    SkinFactory1_8_R1.getFactory().applySkin(player);	
+	    SkinFactoryv1_8_R1.getFactory().applySkin(player);	
    	}else if (version.equalsIgnoreCase("v1_8_R2")){
-		SkinFactory1_8_R2.getFactory().applySkin(player);	
+		SkinFactoryv1_8_R2.getFactory().applySkin(player);	
 	   	}else if (version.equalsIgnoreCase("v1_8_R3")){
-		SkinFactory1_8_R3.getFactory().applySkin(player);	
+		SkinFactoryv1_8_R3.getFactory().applySkin(player);	
 	   	}else{
-   	player.sendMessage(version);
+   	    player.sendMessage(version);
 	   	}
    }
    
+   @Deprecated
+   public void removeSkin(Player player){
+	   	if (version.equalsIgnoreCase("v1_7_R4")){
+	   	SkinFactoryv1_7_R4.getFactory().removeSkin(player);	
+	   	}else if (version.equalsIgnoreCase("v1_8_R1")){
+		    SkinFactoryv1_8_R1.getFactory().removeSkin(player);		
+	   	}else if (version.equalsIgnoreCase("v1_8_R2")){
+			SkinFactoryv1_8_R2.getFactory().removeSkin(player);		
+		   	}else if (version.equalsIgnoreCase("v1_8_R3")){
+			SkinFactoryv1_8_R3.getFactory().removeSkin(player);	
+		   	}else{
+	   	    player.sendMessage(version);
+		   	}
+	   }
+   
+   public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI(){
+	   return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
+   }
+   
+   public boolean isAutoInEnabled(){
+	   return autoIn;
+   }
+   public Factory getFactory(){
+	   return factory;
+   }
    public String getVersion(){
 	   return version;
    }

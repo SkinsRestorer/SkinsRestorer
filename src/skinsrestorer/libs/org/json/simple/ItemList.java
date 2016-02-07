@@ -100,7 +100,7 @@ public class ItemList {
 	}
 
 	public String get(int i) {
-		return (String) items.get(i);
+		return items.get(i);
 	}
 
 	public int size() {

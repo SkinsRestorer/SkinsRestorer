@@ -1,12 +1,16 @@
 package skinsrestorer.shared.api;
 
+import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class SkinsRestorerAPI {
-	   
 	/**
 	 * This method is used to set player's skin.
 	 * <p>
@@ -39,5 +43,43 @@ public class SkinsRestorerAPI {
     		   return null;
     	   }
     	   return data.getName();
+       }
+       
+       /**
+        * Used for instant skin applying.
+        * Since i'm using NMS and OBC this
+        * method can be used only in bukkit/spigot
+        * but not on bungeecord.
+        */
+       public static void applySkinBukkit(Player player){
+    	   	SkinsRestorer.getInstance().getFactory().applySkin(player);
+       }
+       
+       /**
+        * Used for instant skin applying.
+        * This method can be used on
+        * Bungeecord side only!
+        */
+       public static void applySkinBungee(ProxiedPlayer player){
+    	   	SkinFactoryBungee.getFactory().applySkin(player);
+    	    }
+    	   
+       /**
+        * Used for instant skin removing.
+        * This method can be used on
+        * Bungeecord side only!
+        */
+       public static void removeSkinBungee(ProxiedPlayer player){
+    	   	SkinFactoryBungee.getFactory().removeSkin(player);
+    	    }
+       
+       /**
+        * Used for instant skin removing.
+        * Since i'm using NMS and OBC this
+        * method can be used only in bukkit/spigot
+        * but not on bungeecord.
+        */
+       public static void removeSkinBukkit(Player player){
+    	   	SkinsRestorer.getInstance().getFactory().removeSkin(player);
        }
 }

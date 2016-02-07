@@ -1,10 +1,13 @@
 package skinsrestorer.bungee;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.UserConnection;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
@@ -37,48 +40,91 @@ public class SkinFactoryBungee {
 	}
 	//Apply the skin to the player.
 	public void applySkin(final ProxiedPlayer player){
-		 SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
+		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+		    @Override
+		    public void run() {
+
+
+		SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
 			skinprofile.applySkin(new SkinProfile.ApplyFunction() {
 				@Override
 				public void applySkin(SkinProperty property) {
 					try {
 						Property textures = new Property(property.getName(), property.getValue(), property.getSignature());
 						InitialHandler handler = (InitialHandler) player.getPendingConnection();
-						LoginResult profile = (LoginResult) profileField.get(handler);
-						if (profile == null) {
-							profile = new LoginResult(player.getUniqueId().toString(), new Property[] { textures });
-						} else {
+						
+						LoginResult profile = new LoginResult(player.getUniqueId().toString(), new Property[] { textures });
 							Property[] present = profile.getProperties();
-							boolean alreadyHasSkin = false;
-							for (Property prop : present) {
-								if (prop.getName().equals(textures.getName())) {
-									alreadyHasSkin = true;
-								}
-							}
-							if (!alreadyHasSkin) {
 								Property[] newprops = new Property[present.length + 1];
 								System.arraycopy(present, 0, newprops, 0, present.length);
 								newprops[present.length] = textures;
-								profile.setProperties(newprops);
-								updatePlayer(player, newprops);
-							}
-						}
-						profileField.set(handler, profile);
-						updatePlayer(player, profile.getProperties());
+								profile.getProperties()[0].setName(newprops[0].getName());
+								profile.getProperties()[0].setValue(newprops[0].getValue());
+								profile.getProperties()[0].setSignature(newprops[0].getSignature());
+								profileField.set(handler, profile);
+								updateSkin(player, profile, false);
+							
 					} catch (Throwable t) {
 						t.printStackTrace();
 					}
 				}
 			});
+			}
+}
+);
 		}
 	
-	//TODO Instant skin update
-	public void updatePlayer(ProxiedPlayer player, Property[] property){
-		UserConnection user = BungeeCord.getInstance().getPlayerByOfflineUUID(player.getUniqueId());
-		LoginResult profile = user.getPendingConnection().getLoginProfile();
-		profile.setProperties(property);
-		user.setPing(player.getPing());
+	//Remove skin from player
+	public void removeSkin(ProxiedPlayer player){
+	//	if (SkinsRestorer.getInstance().isAutoInEnabled()){
+		//	if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(player.getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+	//			return;
+	//		}
+	//	}
+				LoginResult profile = ((UserConnection) player).getPendingConnection().getLoginProfile();
+				updateSkin(player, profile, true); //Removing the skin.
 	}
+	
+	public void updateSkin(final ProxiedPlayer player, final LoginResult profile, final boolean removeSkin){
+		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+		    @Override
+		    public void run() {
+
+		final UserConnection user = (UserConnection) player;
+        String[][] props = new String[ profile.getProperties().length ][];
+        for ( int i = 0; i < props.length; i++ )
+        {
+            props[ i ] = new String[]
+            {
+            	profile.getProperties()[ i ].getName(),
+            	profile.getProperties()[ i ].getValue(),
+            	profile.getProperties()[ i ].getSignature()
+            };
+        }
+		if (player.getServer()==null){
+			return;
+		}
+			    sendUpdateRequest(user, removeSkin);
+			}});
+	}
+    public void sendUpdateRequest( UserConnection p, boolean removeSkin ) {
+    	final ByteArrayOutputStream b = new ByteArrayOutputStream();
+    	DataOutputStream out = new DataOutputStream(b);
+		try {
+			out.writeUTF("ForwardToPlayer");
+			out.writeUTF(p.getName());
+            if (removeSkin==true){
+            out.writeBoolean(true);
+            }else{
+            out.writeBoolean(false);
+            }
+         
+         p.getServer().sendData("SkinUpdate", b.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			}
+    
     
     // Refletion stuff down there. 
 	  protected static void setValue(Object owner, Field field, Object value) throws Exception { 

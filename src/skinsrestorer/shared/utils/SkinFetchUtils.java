@@ -27,6 +27,7 @@ import skinsrestorer.shared.storage.LocaleStorage;
 public class SkinFetchUtils {
 
 	public static SkinProfile fetchSkinProfile(String name, UUID uuid) throws SkinFetchFailedException {
+		
 		try {
 			if (uuid != null) {
 				try {

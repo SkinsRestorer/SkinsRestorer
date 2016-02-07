@@ -18,6 +18,10 @@
 package skinsrestorer.bungee.commands;
 
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -55,13 +59,14 @@ public class PlayerCommands extends Command {
 		}else
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help")){
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8["));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin. &7&o//requires relog"));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin clear &9-&a Clears your skin &7&o//requires relog"));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin."));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin clear &9-&a Clears your skin."));
 			return;
 		}else
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
+				SkinFactoryBungee.getFactory().removeSkin(player);
 				TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 				component.setColor(ChatColor.BLUE);
 				player.sendMessage(component);
@@ -75,11 +80,10 @@ public class PlayerCommands extends Command {
 				return;
 			}
 			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), 10, TimeUnit.MINUTES);*/
-			ProxyServer.getInstance().getScheduler().runAsync(
-				SkinsRestorer.getInstance(),
-				new Runnable() {
-					@Override
-					public void run() {
+				ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+				    @Override
+				    public void run() {
+
 						String from = args[1];
 						try {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
@@ -95,12 +99,31 @@ public class PlayerCommands extends Command {
 							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
 						}
 					}
-				}
-			);
+				});
 		}else{
 			TextComponent component = new TextComponent(LocaleStorage.getInstance().USE_SKIN_HELP);
 			component.setColor(ChatColor.BLUE);
 		    sender.sendMessage(component);
 		}
 	}
+    public void sendUpdateRequest(UserConnection p){
+    	ByteArrayOutputStream b = new ByteArrayOutputStream();
+    	DataOutputStream out = new DataOutputStream(b);
+    	try {
+		out.writeUTF("Forward");
+    	out.writeUTF("ALL");
+    	//out.writeUTF("SkinUpdate");
+
+    	ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+    	DataOutputStream msgout = new DataOutputStream(msgbytes);
+    	msgout.writeUTF("Some kind of data here"); // You can do anything you want with msgout
+    	msgout.writeShort(123);
+
+    	out.writeShort(msgbytes.toByteArray().length);
+    	out.write(msgbytes.toByteArray()); 
+    	p.sendData("BungeeCord", b.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 	}

@@ -30,6 +30,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy {
 	 * Using this naming policy with Gson will ensure that the field name is unchanged.
 	 */
 	IDENTITY() {
+		@Override
 		public String translateName(Field f) {
 			return f.getName();
 		}
@@ -47,6 +48,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy {
 	 * </ul>
 	 */
 	UPPER_CAMEL_CASE() {
+		@Override
 		public String translateName(Field f) {
 			return upperCaseFirstLetter(f.getName());
 		}
@@ -66,6 +68,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy {
 	 * @since 1.4
 	 */
 	UPPER_CAMEL_CASE_WITH_SPACES() {
+		@Override
 		public String translateName(Field f) {
 			return upperCaseFirstLetter(separateCamelCase(f.getName(), " "));
 		}
@@ -85,6 +88,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy {
 	 * </ul>
 	 */
 	LOWER_CASE_WITH_UNDERSCORES() {
+		@Override
 		public String translateName(Field f) {
 			return separateCamelCase(f.getName(), "_").toLowerCase();
 		}
@@ -107,6 +111,7 @@ public enum FieldNamingPolicy implements FieldNamingStrategy {
 	 * @since 1.4
 	 */
 	LOWER_CASE_WITH_DASHES() {
+		@Override
 		public String translateName(Field f) {
 			return separateCamelCase(f.getName(), "-").toLowerCase();
 		}

@@ -41,7 +41,7 @@ public class LocaleStorage {
 
 	public String PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED = "Your skin data has been removed";
 	public String PLAYER_SKIN_CHANGE_COOLDOWN = "You can change your skin only once per 10 minutes";
-	public String PLAYER_SKIN_CHANGE_SUCCESS = "Your skin has been updated, relog to see changes";
+	public String PLAYER_SKIN_CHANGE_SUCCESS = "Your skin has been updated.";
 	public String PLAYER_SKIN_CHANGE_FAILED = "Skin fetch failed: ";
 
 	public String SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER = "Can't find a valid premium player with that name";

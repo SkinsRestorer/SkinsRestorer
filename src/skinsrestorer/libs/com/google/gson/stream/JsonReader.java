@@ -843,7 +843,7 @@ public class JsonReader implements Closeable {
 		if (p == PEEKED_LONG) {
 			peeked = PEEKED_NONE;
 			pathIndices[stackSize - 1]++;
-			return (double) peekedLong;
+			return peekedLong;
 		}
 
 		if (p == PEEKED_NUMBER) {
@@ -1140,6 +1140,7 @@ public class JsonReader implements Closeable {
 	/**
 	 * Closes this JSON reader and the underlying {@link java.io.Reader}.
 	 */
+	@Override
 	public void close() throws IOException {
 		peeked = PEEKED_NONE;
 		stack[0] = JsonScope.CLOSED;

@@ -115,6 +115,7 @@ final class TreeTypeAdapter<T> extends TypeAdapter<T> {
 			this.hierarchyType = hierarchyType;
 		}
 
+		@Override
 		@SuppressWarnings("unchecked")
 		// guarded by typeToken.equals() call
 		public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {

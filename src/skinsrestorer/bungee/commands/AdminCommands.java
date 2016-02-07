@@ -17,6 +17,7 @@
 
 package skinsrestorer.bungee.commands;
 
+import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
@@ -53,6 +54,7 @@ public class AdminCommands extends Command {
 		}else
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
+			SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 			TextComponent component = new TextComponent("Skin data for player "+args[1]+" dropped");
 			component.setColor(ChatColor.BLUE);
 			sender.sendMessage(component);
@@ -71,6 +73,7 @@ public class AdminCommands extends Command {
 					public void run() {
 						try {
 							SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
+							SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 							TextComponent component = new TextComponent("Skin data updated");
 							component.setColor(ChatColor.BLUE);
 							sender.sendMessage(component);
@@ -82,7 +85,7 @@ public class AdminCommands extends Command {
 					}
 				}
 			);
-		}
+		}else
 		if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			ProxyServer.getInstance().getScheduler().runAsync(
 				SkinsRestorer.getInstance(),
@@ -93,6 +96,7 @@ public class AdminCommands extends Command {
 						try {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 							SkinStorage.getInstance().setSkinData(args[1], skinprofile);
+							SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 							TextComponent component = new TextComponent(ChatColor.BLUE+"You set "+args[1]+"'s skin.");
 							component.setColor(ChatColor.BLUE);
 							sender.sendMessage(component);

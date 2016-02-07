@@ -24,6 +24,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -52,7 +53,7 @@ public class AdminCommands implements CommandExecutor {
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			if (Bukkit.getPlayer(args[1]) != null){
-	    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+	    	SkinsRestorerAPI.removeSkinBukkit(Bukkit.getPlayer(args[1]));
 			}
 			sender.sendMessage(ChatColor.BLUE+"Skin data for player "+args[1]+" dropped");
 			return true;
@@ -71,7 +72,7 @@ public class AdminCommands implements CommandExecutor {
 						try {
 							SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
 							if (Bukkit.getPlayer(args[1]) != null){
-						    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+						    	SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 								}
 							sender.sendMessage(ChatColor.BLUE+"Skin data updated");
 						} catch (SkinFetchFailedException e) {
@@ -92,7 +93,7 @@ public class AdminCommands implements CommandExecutor {
 							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 							SkinStorage.getInstance().setSkinData(args[1], skinprofile);
 							if (Bukkit.getPlayer(args[1]) != null){
-						    	SkinsRestorer.getInstance().applySkin(Bukkit.getPlayer(args[1]));
+						    	SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 								}
 							sender.sendMessage(ChatColor.BLUE+"You set "+args[1]+"'s skin.");
 						} catch (SkinFetchFailedException e) {

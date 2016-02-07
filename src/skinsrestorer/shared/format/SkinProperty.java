@@ -44,6 +44,9 @@ public class SkinProperty implements Cloneable {
 	public String getSignature() {
 		return signature;
 	}
+	public String getUUID() {
+		return signature;
+	}
 
 	@Override
 	public SkinProperty clone() {

@@ -36,7 +36,8 @@ import skinsrestorer.libs.com.google.gson.stream.JsonWriter;
  */
 public final class ObjectTypeAdapter extends TypeAdapter<Object> {
   public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-    @SuppressWarnings("unchecked")
+    @Override
+	@SuppressWarnings("unchecked")
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
       if (type.getRawType() == Object.class) {
         return (TypeAdapter<T>) new ObjectTypeAdapter(gson);

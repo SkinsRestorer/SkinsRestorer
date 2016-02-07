@@ -42,6 +42,7 @@ public class SkinsRestorer extends Plugin {
 
 	private Logger log;
 	private Updater updater;
+	private boolean autoIn = false;
 	public void logInfo(String message) {
 		log.info(message);
 	}
@@ -50,43 +51,49 @@ public class SkinsRestorer extends Plugin {
 	public void onEnable() {
 		instance = this;
 		log = getLogger();
+		if (ConfigStorage.getInstance().UPDATE_CHECK == true){
+			updater = new Updater(this);
+	        updater.checkUpdates();
+		}else{
+			log.info(ChatColor.RED+"SkinsRestorer Updater is Disabled!");
+			updater = null;
+		}
+		if (getProxy().getPluginManager().getPlugin("AutoIn")!=null){
+			log.info(ChatColor.GREEN+"SkinsRestorer has detected that you are using AutoIn.");
+			log.info(ChatColor.GREEN+"Check the USE_AUTOIN_SKINS option in your config!");
+			autoIn = true;
+		}
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		SkinStorage.init(getDataFolder());
 		new SkinFactoryBungee();
-		
-        updater = new Updater(this);
-        
-        updater.checkUpdates();
-
-        if (Updater.updateAvailable())
-        {
-          log.info(ChatColor.DARK_GREEN+"==============================================");
-          log.info(ChatColor.YELLOW+"  SkinsRestorer Updater  ");
-          log.info(ChatColor.YELLOW+" ");
-          log.info(ChatColor.GREEN+"    An update for SkinsRestorer has been found!");
-          log.info(ChatColor.AQUA+"    SkinsRestorer " +ChatColor.GREEN+"v"+ Updater.getHighest());
-          log.info(ChatColor.AQUA+"    You are running " +ChatColor.RED+"v"+  getDescription().getVersion());
-          log.info(ChatColor.YELLOW+" ");
-          log.info(ChatColor.YELLOW+"    Download at"+ChatColor.GREEN+" https://www.spigotmc.org/resources/skinsrestorer.2124/");
-          log.info(ChatColor.DARK_GREEN+"==============================================");
-          
-        }
-        else
-        {
-        	log.info(ChatColor.DARK_GREEN+"==============================================");
-        	log.info(ChatColor.YELLOW+"  SkinsRestorer Updater");
-        	log.info(ChatColor.YELLOW+" ");
-        	log.info(ChatColor.AQUA+"    You are running " +"v"+ ChatColor.GREEN+ getDescription().getVersion());
-        	log.info(ChatColor.GREEN+"    The latest version of SkinsRestorer!");
-        	log.info(ChatColor.YELLOW+" ");
-        	log.info(ChatColor.DARK_GREEN+"==============================================");
-        }
-		
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
+		this.getProxy().registerChannel("SkinUpdate");
 		this.getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
+		if (updater!=null){
+	        if (Updater.updateAvailable())
+	        {
+	          log.info(ChatColor.DARK_GREEN+"==============================================");
+	          log.info(ChatColor.YELLOW+"  SkinsRestorer Updater  ");
+	          log.info(ChatColor.YELLOW+" ");
+	          log.info(ChatColor.GREEN+"    An update for SkinsRestorer has been found!");
+	          log.info(ChatColor.AQUA+"    SkinsRestorer " +ChatColor.GREEN+"v"+ Updater.getHighest());
+	          log.info(ChatColor.AQUA+"    You are running " +ChatColor.RED+"v"+  getDescription().getVersion());
+	          log.info(ChatColor.YELLOW+" ");
+	          log.info(ChatColor.YELLOW+"    Download at"+ChatColor.GREEN+" https://www.spigotmc.org/resources/skinsrestorer.2124/");
+	          log.info(ChatColor.DARK_GREEN+"==============================================");
+	        }else{
+	        	log.info(ChatColor.DARK_GREEN+"==============================================");
+	        	log.info(ChatColor.YELLOW+"  SkinsRestorer Updater");
+	        	log.info(ChatColor.YELLOW+" ");
+	        	log.info(ChatColor.AQUA+"    You are running " +"v"+ ChatColor.GREEN+ getDescription().getVersion());
+	        	log.info(ChatColor.GREEN+"    The latest version of SkinsRestorer!");
+	        	log.info(ChatColor.YELLOW+" ");
+	        	log.info(ChatColor.DARK_GREEN+"==============================================");
+	        }
+			}
 	}
 
 	@Override
@@ -101,5 +108,13 @@ public class SkinsRestorer extends Plugin {
 	   @Deprecated
 	   public boolean hasSkin(String playerName){
 		   return SkinsRestorerAPI.hasSkin(playerName);
+	   }
+	   
+	   public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI(){
+		   return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
+	   }
+	   
+	   public boolean isAutoInEnabled(){
+		   return autoIn;
 	   }
 }
