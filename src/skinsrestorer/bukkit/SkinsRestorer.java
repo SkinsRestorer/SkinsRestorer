@@ -76,7 +76,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		try {
 			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory"+getVersion());
 			this.factory = (Factory) factory.newInstance();
-			log1.sendMessage("[SkinsModule] Loaded Skin Factory for "+getVersion());
+			log1.sendMessage("[SkinsRestorer] Loaded Skin Factory for "+getVersion());
 		} catch (ClassNotFoundException e) {
 			log1.sendMessage(ChatColor.RED+"[SkinsRestorer] The version "+getVersion()+" is not supported by SkinsModule.");
 		    Bukkit.getPluginManager().disablePlugin(this);
