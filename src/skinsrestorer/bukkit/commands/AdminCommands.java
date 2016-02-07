@@ -36,18 +36,15 @@ public class AdminCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(final CommandSender sender, Command cmd, String label, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.cmds")) {
-			sender.sendMessage("You don't have permission to do this");
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 			return true;
 		}
 		if (args.length == 0){
-		    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9Use '/skinsrestorer help' for help."));
+		    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return true;
 		}else
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help")){
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8["));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skinsrestorer drop <player> &9-&a Drops player skin data."));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skinsrestorer update <player> &9-&a Updates player skin data."));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin."));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_HELP));
 			return true;
 		}else
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
@@ -104,7 +101,7 @@ public class AdminCommands implements CommandExecutor {
 			);
 			return true;
 		}else
-		  sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9Use '/skinsrestorer help' for help."));
+		  sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 		return false;
 	}
 
