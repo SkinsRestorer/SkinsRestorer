@@ -106,24 +106,4 @@ public class PlayerCommands extends Command {
 		    sender.sendMessage(component);
 		}
 	}
-    public void sendUpdateRequest(UserConnection p){
-    	ByteArrayOutputStream b = new ByteArrayOutputStream();
-    	DataOutputStream out = new DataOutputStream(b);
-    	try {
-		out.writeUTF("Forward");
-    	out.writeUTF("ALL");
-    	//out.writeUTF("SkinUpdate");
-
-    	ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-    	DataOutputStream msgout = new DataOutputStream(msgbytes);
-    	msgout.writeUTF("Some kind of data here"); // You can do anything you want with msgout
-    	msgout.writeShort(123);
-
-    	out.writeShort(msgbytes.toByteArray().length);
-    	out.write(msgbytes.toByteArray()); 
-    	p.sendData("BungeeCord", b.toByteArray());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
 	}

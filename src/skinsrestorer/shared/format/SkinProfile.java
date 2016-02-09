@@ -143,7 +143,7 @@ public class SkinProfile implements Cloneable {
 			object.add("profile", profile);
 			JsonObject skin = new JsonObject();
 			skin.add("name", new JsonPrimitive(src.skin.getName()));
-			//skin.add("value", new JsonPrimitive(src.skin.getValue()));
+			skin.add("value", new JsonPrimitive(src.skin.getValue()));
 			skin.add("signature", new JsonPrimitive(src.skin.getSignature()));
 			object.add("skin", skin);
 			return object;

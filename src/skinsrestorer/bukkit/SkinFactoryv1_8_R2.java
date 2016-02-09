@@ -86,11 +86,10 @@ public class SkinFactoryv1_8_R2 extends Factory {
     	        craftOnline.getHandle().playerConnection.sendPacket(pos);
     	        craftOnline.getHandle().playerConnection.sendPacket(slot);
     	        craftOnline.updateInventory();
-            Chunk chunk = player.getWorld().getChunkAt(player.getLocation());
-            for(int x=-10; x<10; x++) for(int z=-10; z<10; z++)
-                player.getWorld().refreshChunk(chunk.getX()+x, chunk.getZ()+z);
-            	continue;
-            }
+    	           Chunk chunk = l.getChunk();
+                   player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
+               	continue;
+               }
             craftOnline.getHandle().playerConnection.sendPacket(removeEntity);
             craftOnline.getHandle().playerConnection.sendPacket(removeInfo);
             if (removeSkin==false){
