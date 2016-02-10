@@ -1,5 +1,6 @@
 package skinsrestorer.bungee.listeners;
 
+import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -30,6 +31,7 @@ public class LoginListener implements Listener {
 			public void run() {
 				try {
 					skinprofile.attemptUpdateBungee();
+					SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
 				} catch (SkinFetchFailedException e) {
 					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
 			}
