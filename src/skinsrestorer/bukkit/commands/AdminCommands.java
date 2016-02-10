@@ -73,7 +73,7 @@ public class AdminCommands implements CommandExecutor {
 								}
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 						} catch (SkinFetchFailedException e) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes(LocaleStorage.getInstance().SKIN_FETCH_FAILED)+e.getMessage());
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_FETCH_FAILED)+e.getMessage());
 						}
 					}
 				}
@@ -94,7 +94,7 @@ public class AdminCommands implements CommandExecutor {
 								}
 							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
 						} catch (SkinFetchFailedException e) {
-							sender.sendMessage(ChatColor.translateAlternateColorCodes(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED)+e.getMessage());
+							sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED)+e.getMessage());
 						}
 					}
 				}
