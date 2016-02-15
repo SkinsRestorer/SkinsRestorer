@@ -58,8 +58,6 @@ public class MojangAPI {
 				connection.setRequestProperty("Content-Type", "application/json");
 				//write body
 			    writer = new DataOutputStream(connection.getOutputStream());
-				//List<List<String>> nicka = Arrays.asList(Arrays.asList("*".replace('*', '"')+nick+"*".replace('*', '"')+","+"*".replace('*', '"')+nick+"*".replace('*', '"')));
-				//writer.write(JSONArray.toJSONString(nicka).getBytes(StandardCharsets.UTF_8));
 				writer.flush();
 				writer.close();
 				
@@ -69,8 +67,10 @@ public class MojangAPI {
 				JSONArray jsonProfiles = (JSONArray) new JSONParser().parse(result);
 				if (jsonProfiles.size() > 0) {
 					JSONObject jsonProfile = (JSONObject) jsonProfiles.get(0);
-					System.out.println("[MCAPI] Got skin profile for "+nick);
-					return new Profile((String) jsonProfile.get("uuid"), (String) jsonProfile.get("name"));
+					if (jsonProfile.get("id")==null || jsonProfile.get("name")==null){
+						throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
+					}
+					return new Profile((String) jsonProfile.get("id"), (String) jsonProfile.get("name"));
 				}
 				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 			}
@@ -81,6 +81,9 @@ public class MojangAPI {
 			JSONArray jsonProfiles = (JSONArray) new JSONParser().parse(result);
 			if (jsonProfiles.size() > 0) {
 				JSONObject jsonProfile = (JSONObject) jsonProfiles.get(0);
+				if (jsonProfile.get("id")==null || jsonProfile.get("name")==null){
+					throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
+				}
 				return new Profile((String) jsonProfile.get("id"), (String) jsonProfile.get("name"));
 			}
 			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
@@ -89,6 +92,9 @@ public class MojangAPI {
 		private static final String skullbloburl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 		private static final String mcapiurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
 		public static SkinProfile getSkinProfile(String id) throws IOException, ParseException, SkinFetchFailedException {
+			if (id.equals("")){
+				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
+			}
 			//open connection
 			HttpURLConnection connection =  (HttpURLConnection) setupConnection(new URL(skullbloburl+id.replace("-", "")+"?unsigned=false"));
 			//check response code
