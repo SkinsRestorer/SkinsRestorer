@@ -19,6 +19,7 @@ package skinsrestorer.shared.utils;
 
 import java.util.UUID;
 
+import net.md_5.bungee.api.ChatColor;
 import skinsrestorer.libs.org.json.simple.parser.ParseException;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
@@ -70,12 +71,13 @@ public class SkinFetchUtils {
 		}
 
 		public static enum Reason {
-			NO_PREMIUM_PLAYER(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER),
-			NO_SKIN_DATA(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA),
-			SKIN_RECODE_FAILED(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED),
-			RATE_LIMITED(LocaleStorage.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED),
-			GENERIC_ERROR(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR),
-			MCAPI_FAILED(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR);
+			NO_PREMIUM_PLAYER(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)),
+			NO_SKIN_DATA(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)),
+			SKIN_RECODE_FAILED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)),
+			RATE_LIMITED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)),
+			GENERIC_ERROR(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR)),
+			MCAPI_FAILED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR)),
+			MCAPI_OVERLOAD(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_MCAPI_OVERLOAD));
 
 			private String exceptionCause;
 
@@ -90,4 +92,7 @@ public class SkinFetchUtils {
 		
 	}
 
+	   public static String c(String msg){
+		   return ChatColor.translateAlternateColorCodes('&', msg);
+	   }
 }
