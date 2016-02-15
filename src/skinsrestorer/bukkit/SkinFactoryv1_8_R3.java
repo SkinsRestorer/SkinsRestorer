@@ -1,7 +1,6 @@
 package skinsrestorer.bukkit;
 
 import java.util.HashSet;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -9,6 +8,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPosition.EnumPlayerTeleportFlags;
@@ -42,8 +42,9 @@ public class SkinFactoryv1_8_R3 extends Factory {
 			@Override
 			public void applySkin(SkinProperty property) {
 				EntityPlayer ep = ((CraftPlayer) player).getHandle();
-					com.mojang.authlib.GameProfile eplayer = ep.getProfile();
-					com.mojang.authlib.properties.Property prop = new com.mojang.authlib.properties.Property(property.getName(), property.getValue(), property.getSignature());
+					GameProfile eplayer = ep.getProfile();
+					
+					Property prop =new Property(property.getName(), property.getValue(), property.getSignature());
 					 
 					//Clear the current textures (skin & cape).
 					eplayer.getProperties().get("textures").clear();
@@ -58,7 +59,7 @@ public class SkinFactoryv1_8_R3 extends Factory {
 	//Remove skin from player
 	@Override
 	public void removeSkin(final Player player){
-				GameProfile profile = ((CraftPlayer) player).getProfile();
+				GameProfile profile =  ((CraftPlayer) player).getProfile();
 				updateSkin(player, profile, true); //Removing the skin.
 	}
 		  
@@ -104,7 +105,7 @@ public class SkinFactoryv1_8_R3 extends Factory {
         	//Player skin is already applied.
         }
     	}
-	
+	 
 	//Just adding that, so the class will not be abstract. It will never be used.
 	@Override
 	public void updateSkin(Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile, boolean removeSkin) {
