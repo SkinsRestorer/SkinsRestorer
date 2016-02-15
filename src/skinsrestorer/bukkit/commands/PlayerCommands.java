@@ -18,6 +18,8 @@
 package skinsrestorer.bukkit.commands;
 
 
+import java.util.concurrent.TimeUnit;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,6 +29,8 @@ import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
+import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
@@ -65,10 +69,11 @@ public class PlayerCommands implements CommandExecutor {
 			return true;
 		} else
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-			/*if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				player.sendMessage(ChatColor.RED+LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_COOLDOWN);
+			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s", ""+ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				return true;
-			}*/
+			}
+			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 			SkinsRestorer.executor.execute(
 				new Runnable() {
 					@Override

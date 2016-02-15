@@ -17,6 +17,8 @@
 
 package skinsrestorer.bungee.commands;
 
+import java.util.concurrent.TimeUnit;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -26,6 +28,7 @@ import net.md_5.bungee.api.plugin.Command;
 import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
+import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -68,13 +71,12 @@ public class PlayerCommands extends Command {
 			}
 		} else
 			if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-			/*if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_COOLDOWN);
-				component.setColor(ChatColor.RED);
+			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
+				TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s", ""+ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				player.sendMessage(component);
 				return;
 			}
-			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), 10, TimeUnit.MINUTES);*/
+			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 				ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 				    @Override
 				    public void run() {
