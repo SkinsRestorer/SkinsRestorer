@@ -1,11 +1,16 @@
 package skinsrestorer.bukkit.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
@@ -21,6 +26,9 @@ public class LoginListener implements Listener {
 		if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
 			return;
 		}
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE==true){
+			return;
+		}
 		if (SkinsRestorer.getInstance().isAutoInEnabled()){
 			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
 				return;
@@ -28,6 +36,33 @@ public class LoginListener implements Listener {
 		}
 		//Updating and applying skin.
 		updateAndApply(event.getPlayer());
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onLoginEvent(final PlayerJoinEvent event) {
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE==false){
+			return;
+		}
+		if (SkinsRestorer.getInstance().isAutoInEnabled()){
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+				return;
+			}
+		}
+		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName())!=null){
+			updateAndApply(event.getPlayer());
+			return;
+		}
+		final TextComponent message = new TextComponent( "Click me if you want to receive skin!" );
+		message.setColor(ChatColor.BLUE);
+		message.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/skin set "+event.getPlayer().getName() ) );
+		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable(){
+
+			@Override
+			public void run() {
+				event.getPlayer().spigot().sendMessage( message );
+			}
+			
+		}, 5L);
 	}
 	
 	//Here's it :D

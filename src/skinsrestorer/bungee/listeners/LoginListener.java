@@ -7,8 +7,14 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
+import java.util.concurrent.TimeUnit;
+
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
@@ -18,7 +24,9 @@ public class LoginListener implements Listener {
 	//load skin data on login
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(final PostLoginEvent event) {
-		
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE==true){
+			return;
+		}
 		if (SkinsRestorer.getInstance().isAutoInEnabled()){
 			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
 				return;
@@ -37,5 +45,27 @@ public class LoginListener implements Listener {
 			}
 			}
 		});
+	}
+
+	//load skin data on login
+	@EventHandler(priority = EventPriority.LOW)
+	public void onPreLogin(final ServerConnectedEvent event) {
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE==false){
+			return;
+		}
+		if (SkinsRestorer.getInstance().isAutoInEnabled()){
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+				return;
+			}
+		}
+		final TextComponent message = new TextComponent( "Click me if you want to receive skin!" );
+		message.setColor(ChatColor.BLUE);
+		message.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/skin set "+event.getPlayer().getName() ) );
+		ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				event.getPlayer().sendMessage(message);
+			}
+		}, 5L, TimeUnit.MILLISECONDS);
 	}
 }
