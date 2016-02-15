@@ -40,6 +40,8 @@ public class ConfigStorage {
 	}
     public boolean UPDATE_CHECK = true;
     public boolean USE_AUTOIN_SKINS = false;
+    public boolean USE_BOT_FEATURE = true;
+    public int SKIN_CHANGE_COOLDOWN = 30;
 	public String GET_PROFILE_URL = "https://mcapi.ca/uuid/players/['{username}']";
 	public String GET_SKIN_PROFILE_URL = "https://mcapi.ca/name/uuid/{uuid}";
 
