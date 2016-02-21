@@ -1,12 +1,5 @@
 package skinsrestorer.bungee.listeners;
 
-import skinsrestorer.bungee.SkinFactoryBungee;
-import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-
 import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
@@ -18,49 +11,59 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import skinsrestorer.bungee.SkinFactoryBungee;
+import skinsrestorer.bungee.SkinStorage;
+import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.format.SkinProfile;
+import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class LoginListener implements Listener {
 
-	//load skin data on login
+	// load skin data on login
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(final PostLoginEvent event) {
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE==true){
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE == true) {
 			return;
 		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()){
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
+					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
+							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
 				return;
 			}
 		}
 		final String name = event.getPlayer().getName();
 		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(name.toLowerCase());
-		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				try {
-					skinprofile.attemptUpdateBungee();
-					SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
-				} catch (SkinFetchFailedException e) {
-					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
+		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+
+			try {
+				skinprofile.attemptUpdateBungee();
+				SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
+			} catch (SkinFetchFailedException e) {
+				SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
 			}
-			}
+
 		});
 	}
 
-	//load skin data on login
+	// load skin data on login
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(final ServerConnectedEvent event) {
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE==false){
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE == false) {
 			return;
 		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()){
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
+					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
+							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
 				return;
 			}
 		}
-		final TextComponent message = new TextComponent( "Click me if you want to receive skin!" );
+		final TextComponent message = new TextComponent("Click me if you want to receive skin!");
 		message.setColor(ChatColor.BLUE);
-		message.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/skin set "+event.getPlayer().getName() ) );
+		message.setClickEvent(
+				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
 		ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
 			@Override
 			public void run() {

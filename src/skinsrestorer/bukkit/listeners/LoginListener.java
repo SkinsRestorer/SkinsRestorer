@@ -11,74 +11,80 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import skinsrestorer.bukkit.SkinStorage;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class LoginListener implements Listener {
 
-	//fix skin on player login
+	// fix skin on player login
 	@EventHandler(priority = EventPriority.LOW)
 	public void onLoginEvent(final PlayerLoginEvent event) {
 		if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
 			return;
 		}
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE==true){
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE == true) {
 			return;
 		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()){
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
+					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
+							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
 				return;
 			}
 		}
-		//Updating and applying skin.
+		// Updating and applying skin.
 		updateAndApply(event.getPlayer());
 	}
-	
+
 	@EventHandler(priority = EventPriority.LOW)
 	public void onLoginEvent(final PlayerJoinEvent event) {
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE==false){
+		if (ConfigStorage.getInstance().USE_BOT_FEATURE == false) {
 			return;
 		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()){
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer().getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
+		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
+			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
+					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
+							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
 				return;
 			}
 		}
-		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName())!=null){
+		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName()) != null) {
 			updateAndApply(event.getPlayer());
 			return;
 		}
-		final TextComponent message = new TextComponent( "Click me if you want to receive skin!" );
+		final TextComponent message = new TextComponent("Click me if you want to receive skin!");
 		message.setColor(ChatColor.BLUE);
-		message.setClickEvent( new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/skin set "+event.getPlayer().getName() ) );
-		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable(){
+		message.setClickEvent(
+				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
+		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override
 			public void run() {
-				event.getPlayer().spigot().sendMessage( message );
+				event.getPlayer().spigot().sendMessage(message);
 			}
-			
+
 		}, 5L);
 	}
-	
-	//Here's it :D
-	public void updateAndApply(final Player player){
+
+	// Here's it :D
+	public void updateAndApply(final Player player) {
 		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
 		new Thread(new Runnable() {
-		    @Override
+			@Override
 			public void run() {
-		   	try {
+				try {
 					skinprofile.attemptUpdate();
 				} catch (SkinFetchFailedException e) {
-					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
+					SkinsRestorer.getInstance()
+							.logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
 					e.printStackTrace();
 				}
-		    	SkinsRestorerAPI.applySkinBukkit(player);
+				SkinsRestorerAPI.applySkinBukkit(player);
+			}
+		}).start();
 	}
-	}).start();
-}
 }

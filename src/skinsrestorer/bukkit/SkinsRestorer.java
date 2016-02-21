@@ -20,20 +20,20 @@ import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private boolean autoIn = false;
+	private boolean autoIn = false;
 	static SkinsRestorer instance;
+
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
-    
+
 	static Logger log;
-    public ConsoleCommandSender log1 = null;
+	public ConsoleCommandSender log1 = null;
 	private skinsrestorer.bukkit.listeners.Updater updater;
 
 	private String version;
@@ -50,118 +50,135 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		log1 = Bukkit.getConsoleSender();
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
-		SkinStorage.init(getDataFolder());
+		if (ConfigStorage.getInstance().USE_MYSQL)
+			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
+					ConfigStorage.getInstance().MYSQL_DATABASE, ConfigStorage.getInstance().MYSQL_USERNAME,
+					ConfigStorage.getInstance().MYSQL_PASSWORD));
+		else {
+			SkinStorage.init(getDataFolder());
+			executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
+		}
+
 		getCommand("skinsrestorer").setExecutor(new AdminCommands());
 		getCommand("skin").setExecutor(new PlayerCommands());
 
 		factory = new Factory();
-		if (getServer().getPluginManager().isPluginEnabled("AutoIn")){
-			log1.sendMessage(ChatColor.GREEN+"SkinsRestorer has detected that you are using AutoIn.");
-			log1.sendMessage(ChatColor.GREEN+"Check the USE_AUTOIN_SKINS option in your config!");
+		if (getServer().getPluginManager().isPluginEnabled("AutoIn")) {
+			log1.sendMessage(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
+			log1.sendMessage(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
 			autoIn = true;
 		}
-		
-		if (ConfigStorage.getInstance().UPDATE_CHECK == true){
+
+		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(this);
-	        updater.checkUpdates();
-		}else{
-			log1.sendMessage(ChatColor.RED+"SkinsRestorer Updater is Disabled!");
+			updater.checkUpdates();
+		} else {
+			log1.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
 			updater = null;
 		}
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);	
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
 		this.version = version.replace(".", "");
-		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-		//Registering the factory using reflection now. I'm tired of version checks xD
+
+		// Registering the factory using reflection now. I'm tired of version
+		// checks xD
 		try {
-			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory"+getVersion());
+			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory" + getVersion());
 			this.factory = (Factory) factory.newInstance();
-			log1.sendMessage("[SkinsRestorer] Loaded Skin Factory for "+getVersion());
+			log1.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getVersion());
 		} catch (ClassNotFoundException e) {
-			log1.sendMessage(ChatColor.RED+"[SkinsRestorer] The version "+getVersion()+" is not supported by SkinsModule.");
-		    Bukkit.getPluginManager().disablePlugin(this);
+			log1.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getVersion()
+					+ " is not supported by SkinsModule.");
+			Bukkit.getPluginManager().disablePlugin(this);
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-        if (updater!=null){
-        if (Updater.updateAvailable())
-        {
-          log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-          log1.sendMessage(ChatColor.YELLOW+"  SkinsRestorer Updater  ");
-          log1.sendMessage(ChatColor.YELLOW+" ");
-          log1.sendMessage(ChatColor.GREEN+"    An update for SkinsRestorer has been found!");
-          log1.sendMessage(ChatColor.AQUA+"    SkinsRestorer " +ChatColor.GREEN+"v"+ Updater.getHighest());
-          log1.sendMessage(ChatColor.AQUA+"    You are running " +ChatColor.RED+"v"+  getDescription().getVersion());
-          log1.sendMessage(ChatColor.YELLOW+" ");
-          log1.sendMessage(ChatColor.YELLOW+"    Download at"+ChatColor.GREEN+" https://www.spigotmc.org/resources/skinsrestorer.2124/");
-          log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-        } else {
-        	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-        	log1.sendMessage(ChatColor.YELLOW+"  SkinsRestorer Updater");
-        	log1.sendMessage(ChatColor.YELLOW+" ");
-        	log1.sendMessage(ChatColor.AQUA+"    You are running " +"v"+ ChatColor.GREEN+ getDescription().getVersion());
-        	log1.sendMessage(ChatColor.GREEN+"    The latest version of SkinsRestorer!");
-        	log1.sendMessage(ChatColor.YELLOW+" ");
-        	log1.sendMessage(ChatColor.DARK_GREEN+"==============================================");
-        }
-        }
+		if (updater != null) {
+			if (Updater.updateAvailable()) {
+				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				log1.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
+				log1.sendMessage(ChatColor.YELLOW + " ");
+				log1.sendMessage(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
+				log1.sendMessage(ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
+				log1.sendMessage(
+						ChatColor.AQUA + "    You are running " + ChatColor.RED + "v" + getDescription().getVersion());
+				log1.sendMessage(ChatColor.YELLOW + " ");
+				log1.sendMessage(ChatColor.YELLOW + "    Download at" + ChatColor.GREEN
+						+ " https://www.spigotmc.org/resources/skinsrestorer.2124/");
+				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+			} else {
+				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				log1.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater");
+				log1.sendMessage(ChatColor.YELLOW + " ");
+				log1.sendMessage(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
+						+ getDescription().getVersion());
+				log1.sendMessage(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
+				log1.sendMessage(ChatColor.YELLOW + " ");
+				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+			}
+		}
 	}
+
 	@Override
 	public void onDisable() {
 		SkinStorage.getInstance().saveData();
 		executor.shutdown();
 		instance = null;
 	}
-   @Deprecated
-   public void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException{
-					SkinsRestorerAPI.setSkin(playerName, skinName);
-					}
-   @Deprecated
-   public boolean hasSkin(String playerName){
-	   return SkinsRestorerAPI.hasSkin(playerName);
-   }
-   
-   @Deprecated
-   public void applySkin(Player player){
-   	if (version.equalsIgnoreCase("v1_7_R4")){
-   	SkinFactoryv1_7_R4.getFactory().applySkin(player);
-   	}else if (version.equalsIgnoreCase("v1_8_R1")){
-	    SkinFactoryv1_8_R1.getFactory().applySkin(player);	
-   	}else if (version.equalsIgnoreCase("v1_8_R2")){
-		SkinFactoryv1_8_R2.getFactory().applySkin(player);	
-	   	}else if (version.equalsIgnoreCase("v1_8_R3")){
-		SkinFactoryv1_8_R3.getFactory().applySkin(player);	
-	   	}else{
-   	    player.sendMessage(version);
-	   	}
-   }
-   
-   @Deprecated
-   public void removeSkin(Player player){
-	   	if (version.equalsIgnoreCase("v1_7_R4")){
-	   	SkinFactoryv1_7_R4.getFactory().removeSkin(player);	
-	   	}else if (version.equalsIgnoreCase("v1_8_R1")){
-		    SkinFactoryv1_8_R1.getFactory().removeSkin(player);		
-	   	}else if (version.equalsIgnoreCase("v1_8_R2")){
-			SkinFactoryv1_8_R2.getFactory().removeSkin(player);		
-		   	}else if (version.equalsIgnoreCase("v1_8_R3")){
-			SkinFactoryv1_8_R3.getFactory().removeSkin(player);	
-		   	}else{
-	   	    player.sendMessage(version);
-		   	}
-	   }
-   
-   public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI(){
-	   return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
-   }
-   
-   public boolean isAutoInEnabled(){
-	   return autoIn;
-   }
-   public Factory getFactory(){
-	   return factory;
-   }
-   public String getVersion(){
-	   return version;
-   }
+
+	@Deprecated
+	public void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException {
+		SkinsRestorerAPI.setSkin(playerName, skinName);
+	}
+
+	@Deprecated
+	public boolean hasSkin(String playerName) {
+		return SkinsRestorerAPI.hasSkin(playerName);
+	}
+
+	@Deprecated
+	public void applySkin(Player player) {
+		if (version.equalsIgnoreCase("v1_7_R4")) {
+			SkinFactoryv1_7_R4.getFactory().applySkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R1")) {
+			SkinFactoryv1_8_R1.getFactory().applySkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R2")) {
+			SkinFactoryv1_8_R2.getFactory().applySkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R3")) {
+			SkinFactoryv1_8_R3.getFactory().applySkin(player);
+		} else {
+			player.sendMessage(version);
+		}
+	}
+
+	@Deprecated
+	public void removeSkin(Player player) {
+		if (version.equalsIgnoreCase("v1_7_R4")) {
+			SkinFactoryv1_7_R4.getFactory().removeSkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R1")) {
+			SkinFactoryv1_8_R1.getFactory().removeSkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R2")) {
+			SkinFactoryv1_8_R2.getFactory().removeSkin(player);
+		} else if (version.equalsIgnoreCase("v1_8_R3")) {
+			SkinFactoryv1_8_R3.getFactory().removeSkin(player);
+		} else {
+			player.sendMessage(version);
+		}
+	}
+
+	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
+		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
+	}
+
+	public boolean isAutoInEnabled() {
+		return autoIn;
+	}
+
+	public Factory getFactory() {
+		return factory;
+	}
+
+	public String getVersion() {
+		return version;
+	}
 }

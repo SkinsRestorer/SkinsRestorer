@@ -17,7 +17,6 @@
 
 package skinsrestorer.bukkit.commands;
 
-
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.ChatColor;
@@ -26,13 +25,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import skinsrestorer.bukkit.SkinStorage;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -41,7 +40,8 @@ public class PlayerCommands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.playercmds")) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+			sender.sendMessage(
+					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 			return true;
 		}
 		if (!(sender instanceof Player)) {
@@ -49,52 +49,53 @@ public class PlayerCommands implements CommandExecutor {
 			return true;
 		}
 		final Player player = (Player) sender;
-		if (args.length == 0){
+		if (args.length == 0) {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().USE_SKIN_HELP));
 			return true;
-		}else
-		if ((args.length == 1) && args[0].equalsIgnoreCase("help")){
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HELP));
 			return true;
-		}else
-		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
-		    	SkinsRestorerAPI.removeSkinBukkit(player);
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			}else{
-		    	SkinsRestorerAPI.removeSkinBukkit(player);
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));	
+				SkinsRestorerAPI.removeSkinBukkit(player);
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+			} else {
+				SkinsRestorerAPI.removeSkinBukkit(player);
+				player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			}
 			return true;
-		} else
-		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+		} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s", ""+ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
+				player.sendMessage(
+						ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
+								.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				return true;
 			}
-			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-			SkinsRestorer.executor.execute(
-				new Runnable() {
-					@Override
-					public void run() {
-						String from = args[1];
-						try {
-							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
-							skinprofile.attemptUpdate();
-					    	SkinsRestorerAPI.applySkinBukkit(player);
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
-						} catch (SkinFetchFailedException e) {
-							player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED)+e.getMessage());
-						}
+			CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
+					ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+			SkinsRestorer.executor.execute(new Runnable() {
+				@Override
+				public void run() {
+					String from = args[1];
+					try {
+						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
+						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						skinprofile.attemptUpdate();
+						SkinsRestorerAPI.applySkinBukkit(player);
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
+					} catch (SkinFetchFailedException e) {
+						player.sendMessage(ChatColor.translateAlternateColorCodes('&',
+								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED) + e.getMessage());
 					}
 				}
-			);
+			});
 			return true;
-		}else
+		} else
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().USE_SKIN_HELP));
 		return false;
 	}
 }
-
