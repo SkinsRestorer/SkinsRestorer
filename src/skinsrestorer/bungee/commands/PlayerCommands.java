@@ -26,12 +26,12 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import skinsrestorer.bungee.SkinFactoryBungee;
+import skinsrestorer.bungee.SkinStorage;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -40,6 +40,7 @@ public class PlayerCommands extends Command {
 	public PlayerCommands() {
 		super("skin", "skinsrestorer.playercmds");
 	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
@@ -49,58 +50,63 @@ public class PlayerCommands extends Command {
 			return;
 		}
 		final ProxiedPlayer player = (ProxiedPlayer) sender;
-		if (args.length == 0){
+		if (args.length == 0) {
 			TextComponent component = new TextComponent(LocaleStorage.getInstance().USE_SKIN_HELP);
 			component.setColor(ChatColor.BLUE);
-		    sender.sendMessage(component);
+			sender.sendMessage(component);
 			return;
-		}else
-		if ((args.length == 1) && args[0].equalsIgnoreCase("help")){
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8["));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin."));
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+					"&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8["));
+			sender.sendMessage(
+					ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin."));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin clear &9-&a Clears your skin."));
 			return;
-		}else
-		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinFactoryBungee.getFactory().removeSkin(player);
-				TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
+				TextComponent component = new TextComponent(
+						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 				component.setColor(ChatColor.BLUE);
 				player.sendMessage(component);
 			}
-		} else
-			if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+		} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s", ""+ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
+				TextComponent component = new TextComponent(
+						ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
+								.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				player.sendMessage(component);
 				return;
 			}
-			CooldownStorage.getInstance().setCooldown(player.getUniqueId(), ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-				ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-				    @Override
-				    public void run() {
+			CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
+					ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
 
-						String from = args[1];
-						try {
-							SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
-							SkinFactoryBungee.getFactory().applySkin(player);
-							TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS);
-							component.setColor(ChatColor.BLUE);
-							player.sendMessage(component);
-						} catch (SkinFetchFailedException e) {
-							TextComponent component = new TextComponent(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED+e.getMessage());
-							component.setColor(ChatColor.RED);
-							player.sendMessage(component);
-							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
-						}
+					String from = args[1];
+					try {
+						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
+						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						SkinFactoryBungee.getFactory().applySkin(player);
+						TextComponent component = new TextComponent(
+								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS);
+						component.setColor(ChatColor.BLUE);
+						player.sendMessage(component);
+					} catch (SkinFetchFailedException e) {
+						TextComponent component = new TextComponent(
+								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED + e.getMessage());
+						component.setColor(ChatColor.RED);
+						player.sendMessage(component);
+						CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
 					}
-				});
-		}else{
+				}
+			});
+		} else {
 			TextComponent component = new TextComponent(LocaleStorage.getInstance().USE_SKIN_HELP);
 			component.setColor(ChatColor.BLUE);
-		    sender.sendMessage(component);
+			sender.sendMessage(component);
 		}
 	}
-	}
+}
