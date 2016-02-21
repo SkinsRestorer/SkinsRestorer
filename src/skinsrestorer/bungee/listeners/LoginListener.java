@@ -35,13 +35,16 @@ public class LoginListener implements Listener {
 		}
 		final String name = event.getPlayer().getName();
 		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(name.toLowerCase());
-		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
-			try {
-				skinprofile.attemptUpdateBungee();
-				SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
-			} catch (SkinFetchFailedException e) {
-				SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
+			@Override
+			public void run() {
+				try {
+					skinprofile.attemptUpdateBungee();
+					SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
+				} catch (SkinFetchFailedException e) {
+					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
+				}
 			}
 
 		});

@@ -65,12 +65,16 @@ public class MySQL {
 
 	public void execute(final PreparedStatement ps) {
 		if (isConnected()) {
-			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-				try {
-					ps.execute();
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
+			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						ps.execute();
+						ps.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 
 			});
