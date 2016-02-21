@@ -31,13 +31,16 @@ public class MySQL {
 
 	public void openConnection() {
 		if (!isConnected()) {
-			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-				try {
-					con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username,
-							password);
-					Bukkit.getLogger().info("Connected to MySQL!");
-				} catch (SQLException e) {
-					Bukkit.getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					try {
+						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username,
+								password);
+						Bukkit.getLogger().info("Connected to MySQL!");
+					} catch (SQLException e) {
+						Bukkit.getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+					}
 				}
 
 			});
