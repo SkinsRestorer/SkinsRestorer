@@ -86,7 +86,7 @@ public class SkinStorage {
 	public void removeSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 			table();
-			mysql.execute(mysql.prepareStatement("delete from Skins where Nick=?", name));
+			mysql.execute(mysql.prepareStatement("delete from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
 		} else
 			skins.remove(name.toLowerCase());
 	}
@@ -94,13 +94,13 @@ public class SkinStorage {
 	public void setSkinData(String name, SkinProfile profile) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 			table();
-			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from Skins where Nick=?", name));
+			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement("insert into Skins (Nick, Value, Signature) values (?,?,?)", name,
+				mysql.execute(mysql.prepareStatement("insert into "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick, Value, Signature) values (?,?,?)", name,
 						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature()));
 			else
-				mysql.execute(mysql.prepareStatement("update Skins set Value=?, Signature=? where Nick=?",
+				mysql.execute(mysql.prepareStatement("update "+ConfigStorage.getInstance().MYSQL_TABLE+" set Value=?, Signature=? where Nick=?",
 						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(), name));
 		} else
 			skins.put(name.toLowerCase(), profile.cloneAsForced());
@@ -130,7 +130,7 @@ public class SkinStorage {
 			table();
 
 			CachedRowSet crs = mysql
-					.query(mysql.prepareStatement("select * from Skins where Nick=?", name.toLowerCase()));
+					.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name.toLowerCase()));
 
 			if (crs == null) {
 				return null;
@@ -187,7 +187,7 @@ public class SkinStorage {
 
 	public void table() {
 		mysql.execute(mysql.prepareStatement(
-				"create table if not exists Skins (Nick varchar(255), Value text, Signature text)", ""));
+				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text)", ""));
 
 	}
 }

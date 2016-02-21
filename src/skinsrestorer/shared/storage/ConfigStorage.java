@@ -49,6 +49,7 @@ public class ConfigStorage {
 	public String MYSQL_HOST = "localhost";
 	public String MYSQL_PORT = "3306";
 	public String MYSQL_DATABASE = "db";
+	public String MYSQL_TABLE = "Skins";
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
 
