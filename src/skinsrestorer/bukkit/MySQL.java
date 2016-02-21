@@ -37,9 +37,9 @@ public class MySQL {
 					try {
 						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username,
 								password);
-						Bukkit.getLogger().info("Connected to MySQL!");
+						Bukkit.getLogger().info("[SkinsRestorer] Connected to MySQL!");
 					} catch (SQLException e) {
-						Bukkit.getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+						Bukkit.getLogger().severe("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}
 				}
 

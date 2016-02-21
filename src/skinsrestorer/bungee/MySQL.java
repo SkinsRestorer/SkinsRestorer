@@ -36,9 +36,9 @@ public class MySQL {
 					try {
 						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
 								username, password);
-						ProxyServer.getInstance().getLogger().info("Connected to MySQL!");
+						ProxyServer.getInstance().getLogger().info("[SkinsRestorer] Connected to MySQL!");
 					} catch (SQLException e) {
-						ProxyServer.getInstance().getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+						ProxyServer.getInstance().getLogger().severe("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}
 				}
 
