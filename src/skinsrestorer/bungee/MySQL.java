@@ -30,13 +30,16 @@ public class MySQL {
 
 	public void openConnection() {
 		if (!isConnected()) {
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-				try {
-					con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username,
-							password);
-					ProxyServer.getInstance().getLogger().info("Connected to MySQL!");
-				} catch (SQLException e) {
-					ProxyServer.getInstance().getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					try {
+						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
+								username, password);
+						ProxyServer.getInstance().getLogger().info("Connected to MySQL!");
+					} catch (SQLException e) {
+						ProxyServer.getInstance().getLogger().severe("Could NOT connect to MySQL: " + e.getMessage());
+					}
 				}
 
 			});
@@ -64,12 +67,15 @@ public class MySQL {
 
 	public void execute(final PreparedStatement ps) {
 		if (isConnected()) {
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-				try {
-					ps.execute();
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
+			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					try {
+						ps.execute();
+						ps.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 
 			});
