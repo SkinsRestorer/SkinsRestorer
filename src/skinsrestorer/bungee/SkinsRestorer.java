@@ -52,6 +52,9 @@ public class SkinsRestorer extends Plugin {
 	public void onEnable() {
 		instance = this;
 		log = getLogger();
+		getDataFolder().mkdirs();
+		ConfigStorage.init(getDataFolder());
+		LocaleStorage.init(getDataFolder());
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(this);
 			updater.checkUpdates();
@@ -64,8 +67,6 @@ public class SkinsRestorer extends Plugin {
 			log.info(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
 			autoIn = true;
 		}
-		ConfigStorage.init(getDataFolder());
-		LocaleStorage.init(getDataFolder());
 
 		if (ConfigStorage.getInstance().USE_MYSQL)
 			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
@@ -105,6 +106,7 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
+		SkinStorage.getInstance().saveData();
 	}
 
 	@Override

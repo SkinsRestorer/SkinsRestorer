@@ -48,6 +48,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = this;
 		log = getLogger();
 		log1 = Bukkit.getConsoleSender();
+		getDataFolder().mkdirs();
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		if (ConfigStorage.getInstance().USE_MYSQL)
@@ -117,6 +118,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
+		SkinStorage.getInstance().saveData();
 	}
 
 	@Override
