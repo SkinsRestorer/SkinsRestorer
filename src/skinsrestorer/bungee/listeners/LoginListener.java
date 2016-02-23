@@ -64,8 +64,8 @@ public class LoginListener implements Listener {
 				return;
 			}
 		}
-		final TextComponent message = new TextComponent(LocaleStorage.getInstance().DO_YOU_WANT_SKIN);
-		message.setColor(ChatColor.BLUE);
+		final TextComponent message = new TextComponent("");
+		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
 		message.setClickEvent(
 				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
 		ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {

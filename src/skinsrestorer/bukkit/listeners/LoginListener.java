@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import skinsrestorer.bukkit.SkinStorage;
@@ -57,10 +56,10 @@ public class LoginListener implements Listener {
 			updateAndApply(event.getPlayer());
 			return;
 		}
-		final TextComponent message = new TextComponent(LocaleStorage.getInstance().DO_YOU_WANT_SKIN);
-		message.setColor(ChatColor.BLUE);
+		final TextComponent message = new TextComponent("");
 		message.setClickEvent(
 				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
+		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
 		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override
