@@ -42,7 +42,7 @@ public class AdminCommands extends Command {
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9Use '/skinsrestorer help' for help."));
 			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					"&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8["));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
@@ -52,17 +52,18 @@ public class AdminCommands extends Command {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					"&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin."));
 			return;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 			TextComponent component = new TextComponent("Skin data for player " + args[1] + " dropped");
 			component.setColor(ChatColor.BLUE);
 			sender.sendMessage(component);
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
+			return;
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
 			SkinStorage.getInstance().saveData();
 			sender.sendMessage(ChatColor.BLUE + "Skin data saved successfully.");
 			return;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 			final String name = args[1];
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 				@Override
@@ -81,7 +82,8 @@ public class AdminCommands extends Command {
 					}
 				}
 			});
-		} else if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+			return;
+		} if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 				@Override
 				public void run() {

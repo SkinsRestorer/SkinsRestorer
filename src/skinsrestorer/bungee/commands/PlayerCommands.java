@@ -55,14 +55,14 @@ public class PlayerCommands extends Command {
 			component.setColor(ChatColor.BLUE);
 			sender.sendMessage(component);
 			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					"&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8["));
 			sender.sendMessage(
 					ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin."));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin clear &9-&a Clears your skin."));
 			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinFactoryBungee.getFactory().removeSkin(player);
@@ -76,7 +76,8 @@ public class PlayerCommands extends Command {
 			component.setColor(ChatColor.BLUE);
 			player.sendMessage(component);
 			SkinFactoryBungee.getFactory().removeSkin(player);
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+			return;
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
 				TextComponent component = new TextComponent(
 						ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
