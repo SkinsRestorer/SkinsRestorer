@@ -67,10 +67,15 @@ public class PlayerCommands extends Command {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinFactoryBungee.getFactory().removeSkin(player);
 				TextComponent component = new TextComponent(
-						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
+				LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 				component.setColor(ChatColor.BLUE);
 				player.sendMessage(component);
 			}
+			TextComponent component = new TextComponent(
+			LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
+			component.setColor(ChatColor.BLUE);
+			player.sendMessage(component);
+			SkinFactoryBungee.getFactory().removeSkin(player);
 		} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
 				TextComponent component = new TextComponent(
