@@ -2,7 +2,6 @@ package skinsrestorer.bungee.listeners;
 
 import java.util.concurrent.TimeUnit;
 
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -64,6 +63,7 @@ public class LoginListener implements Listener {
 				return;
 			}
 		}
+		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")){
 		final TextComponent message = new TextComponent("");
 		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
 		message.setClickEvent(
@@ -74,5 +74,6 @@ public class LoginListener implements Listener {
 				event.getPlayer().sendMessage(message);
 			}
 		}, 5L, TimeUnit.MILLISECONDS);
+	}
 	}
 }

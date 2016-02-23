@@ -56,6 +56,7 @@ public class LoginListener implements Listener {
 			updateAndApply(event.getPlayer());
 			return;
 		}
+		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")){
 		final TextComponent message = new TextComponent("");
 		message.setClickEvent(
 				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
@@ -68,6 +69,7 @@ public class LoginListener implements Listener {
 			}
 
 		}, 5L);
+		}
 	}
 
 	// Here's it :D
