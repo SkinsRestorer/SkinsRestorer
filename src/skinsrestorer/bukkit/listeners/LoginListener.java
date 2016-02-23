@@ -16,6 +16,7 @@ import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class LoginListener implements Listener {
@@ -56,7 +57,7 @@ public class LoginListener implements Listener {
 			updateAndApply(event.getPlayer());
 			return;
 		}
-		final TextComponent message = new TextComponent("Click me if you want to receive skin!");
+		final TextComponent message = new TextComponent(LocaleStorage.getInstance().DO_YOU_WANT_SKIN);
 		message.setColor(ChatColor.BLUE);
 		message.setClickEvent(
 				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
