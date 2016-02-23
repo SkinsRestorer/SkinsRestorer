@@ -52,10 +52,10 @@ public class PlayerCommands implements CommandExecutor {
 		if (args.length == 0) {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().USE_SKIN_HELP));
 			return true;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HELP));
 			return true;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinsRestorerAPI.removeSkinBukkit(player);
@@ -67,7 +67,7 @@ public class PlayerCommands implements CommandExecutor {
 						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			}
 			return true;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
 				player.sendMessage(
 						ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN

@@ -44,10 +44,10 @@ public class AdminCommands implements CommandExecutor {
 			sender.sendMessage(
 					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return true;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_HELP));
 			return true;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			if (Bukkit.getPlayer(args[1]) != null) {
 				SkinsRestorerAPI.removeSkinBukkit(Bukkit.getPlayer(args[1]));
@@ -55,12 +55,12 @@ public class AdminCommands implements CommandExecutor {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			return true;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
+		} if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
 			SkinStorage.getInstance().saveData();
 			sender.sendMessage(
 					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_SAVED));
 			return true;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
+		} if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 			SkinsRestorer.executor.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -100,7 +100,8 @@ public class AdminCommands implements CommandExecutor {
 				}
 			});
 			return true;
-		} else
+		}
+		else
 			sender.sendMessage(
 					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 		return false;
