@@ -106,7 +106,6 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
-		SkinStorage.getInstance().saveData();
 	}
 
 	@Override

@@ -118,7 +118,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
-		SkinStorage.getInstance().saveData();
 	}
 
 	@Override
