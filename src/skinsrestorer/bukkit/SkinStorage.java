@@ -94,11 +94,11 @@ public class SkinStorage {
 			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement("insert into "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick, Value, Signature) values (?,?,?)", name,
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature()));
+				mysql.execute(mysql.prepareStatement("insert into "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick, Value, Signature, Timestamp) values (?,?,?,?)", name,
+						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),String.valueOf(System.currentTimeMillis())));
 			else
-				mysql.execute(mysql.prepareStatement("update "+ConfigStorage.getInstance().MYSQL_TABLE+" set Value=?, Signature=? where Nick=?",
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(), name));
+				mysql.execute(mysql.prepareStatement("update "+ConfigStorage.getInstance().MYSQL_TABLE+" set Value=?, Signature=?, Timestamp=? where Nick=?",
+						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(), String.valueOf(System.currentTimeMillis()), name));
 		} else
 			skins.put(name.toLowerCase(), profile.cloneAsForced());
 	}
@@ -135,8 +135,9 @@ public class SkinStorage {
 				try {
 					String value = crs.getString("Value");
 					String signature = crs.getString("Signature");
+					String timestamp = crs.getString("Timestamp");
 
-					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature), 0,
+					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature), Long.valueOf(timestamp),
 							false);
 
 				} catch (Exception e) {

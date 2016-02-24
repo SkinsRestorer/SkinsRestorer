@@ -147,7 +147,7 @@ public class MySQL {
 	
 	public void createTable() {
 		execute(prepareStatement(
-				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text)", ""));
+				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text, Timestamp text)", ""));
 
 	}
 }
