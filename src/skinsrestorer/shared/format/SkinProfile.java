@@ -19,7 +19,6 @@ package skinsrestorer.shared.format;
 
 import java.lang.reflect.Type;
 
-import skinsrestorer.bukkit.SkinStorage;
 import skinsrestorer.libs.com.google.gson.JsonDeserializationContext;
 import skinsrestorer.libs.com.google.gson.JsonDeserializer;
 import skinsrestorer.libs.com.google.gson.JsonElement;
@@ -68,6 +67,8 @@ public class SkinProfile implements Cloneable {
 			timestamp = System.currentTimeMillis();
 			profile = newskinprofile.profile;
 			skin = newskinprofile.skin;
+			
+			skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(profile.getName(), newskinprofile);
 		} catch (SkinFetchFailedException e) {
 			if (e.getReason() == Reason.NO_PREMIUM_PLAYER || e.getReason() == Reason.NO_SKIN_DATA) {
 				timestamp = System.currentTimeMillis();
@@ -90,7 +91,7 @@ public class SkinProfile implements Cloneable {
 			profile = newskinprofile.profile;
 			skin = newskinprofile.skin;
 
-			SkinStorage.getInstance().setSkinData(profile.getName(), newskinprofile);
+			skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(profile.getName(), newskinprofile);
 		} catch (SkinFetchFailedException e) {
 			if (e.getReason() == Reason.NO_PREMIUM_PLAYER || e.getReason() == Reason.NO_SKIN_DATA) {
 				timestamp = System.currentTimeMillis();
