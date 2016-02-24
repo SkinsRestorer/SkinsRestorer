@@ -119,8 +119,6 @@ public class SkinFactoryv1_7_R4 extends Factory {
 				craftOnline.getHandle().playerConnection.sendPacket(chestplate);
 				craftOnline.getHandle().playerConnection.sendPacket(leggings);
 				craftOnline.getHandle().playerConnection.sendPacket(boots);
-				craftOnline.hidePlayer(player);
-				craftOnline.showPlayer(player);
 			}
 		} catch (Exception e) {
 			// Player logging in isnt finished and the method will not be used.
