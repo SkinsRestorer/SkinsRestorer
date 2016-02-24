@@ -8,12 +8,16 @@ import org.bukkit.entity.Player;
 
 import net.minecraft.server.v1_7_R4.EntityPlayer;
 import net.minecraft.server.v1_7_R4.EnumGamemode;
+import net.minecraft.server.v1_7_R4.PacketPlayOutAbilities;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_7_R4.PacketPlayOutExperience;
 import net.minecraft.server.v1_7_R4.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_7_R4.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PacketPlayOutRespawn;
+import net.minecraft.server.v1_7_R4.PacketPlayOutUpdateHealth;
+import net.minecraft.server.v1_7_R4.PlayerAbilities;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import skinsrestorer.shared.format.SkinProfile;
@@ -83,6 +87,10 @@ public class SkinFactoryv1_7_R4 extends Factory {
 			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
 			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
+			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
+			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
+			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
+			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
 				if (online.equals(player)) {
@@ -91,7 +99,10 @@ public class SkinFactoryv1_7_R4 extends Factory {
 						craftOnline.getHandle().playerConnection.sendPacket(addInfo);
 					}
 					craftOnline.getHandle().playerConnection.sendPacket(respawn);
+					craftOnline.getHandle().playerConnection.sendPacket(packetAbilities);
 					craftOnline.getHandle().playerConnection.sendPacket(slot);
+					craftOnline.getHandle().playerConnection.sendPacket(exp);
+					craftOnline.getHandle().playerConnection.sendPacket(health);
 					craftOnline.updateInventory();
 					Chunk chunk = player.getLocation().getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());

@@ -2,6 +2,7 @@ package skinsrestorer.bukkit;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
@@ -20,6 +21,10 @@ import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R1.PacketPlayOutRespawn;
+import net.minecraft.server.v1_8_R1.PacketPlayOutAbilities;
+import net.minecraft.server.v1_8_R1.PacketPlayOutExperience;
+import net.minecraft.server.v1_8_R1.PacketPlayOutUpdateHealth;
+import net.minecraft.server.v1_8_R1.PlayerAbilities;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
@@ -69,7 +74,7 @@ public class SkinFactoryv1_8_R1 extends Factory {
 	// Update the skin without relog. (Using NMS and OBC)
 	@Override
 	@SuppressWarnings("deprecation")
-	public void updateSkin(Player player, final GameProfile profile, boolean removeSkin) {
+	public void updateSkin(Player player, GameProfile profile, boolean removeSkin) {
 		try {
 			Location l = player.getLocation();
 			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER,
@@ -93,16 +98,25 @@ public class SkinFactoryv1_8_R1 extends Factory {
 			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
 			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
-			for (Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
+			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
+			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
+			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
+			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
+			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
 				if (online.equals(player)) {
+
 					craftOnline.getHandle().playerConnection.sendPacket(removeInfo);
 					if (removeSkin == false) {
 						craftOnline.getHandle().playerConnection.sendPacket(addInfo);
 					}
+
 					craftOnline.getHandle().playerConnection.sendPacket(respawn);
+					craftOnline.getHandle().playerConnection.sendPacket(packetAbilities);
 					craftOnline.getHandle().playerConnection.sendPacket(pos);
 					craftOnline.getHandle().playerConnection.sendPacket(slot);
+					craftOnline.getHandle().playerConnection.sendPacket(exp);
+					craftOnline.getHandle().playerConnection.sendPacket(health);
 					craftOnline.updateInventory();
 					Chunk chunk = l.getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());

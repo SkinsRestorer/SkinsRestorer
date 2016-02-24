@@ -13,8 +13,10 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
 import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAbilities;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_8_R3.PacketPlayOutExperience;
 import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -22,6 +24,8 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo.EnumPlayerInfoAction
 import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPosition.EnumPlayerTeleportFlags;
 import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn;
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateHealth;
+import net.minecraft.server.v1_8_R3.PlayerAbilities;
 import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
@@ -95,6 +99,10 @@ public class SkinFactoryv1_8_R3 extends Factory {
 			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
 			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
+			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
+			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
+			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
+			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
 				if (online.equals(player)) {
@@ -105,8 +113,11 @@ public class SkinFactoryv1_8_R3 extends Factory {
 					}
 
 					craftOnline.getHandle().playerConnection.sendPacket(respawn);
+					craftOnline.getHandle().playerConnection.sendPacket(packetAbilities);
 					craftOnline.getHandle().playerConnection.sendPacket(pos);
 					craftOnline.getHandle().playerConnection.sendPacket(slot);
+					craftOnline.getHandle().playerConnection.sendPacket(exp);
+					craftOnline.getHandle().playerConnection.sendPacket(health);
 					craftOnline.updateInventory();
 					Chunk chunk = l.getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
