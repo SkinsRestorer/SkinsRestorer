@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 
 import com.mojang.authlib.GameProfile;
@@ -20,6 +21,7 @@ import net.minecraft.server.v1_8_R2.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R2.PacketPlayOutPosition.EnumPlayerTeleportFlags;
 import net.minecraft.server.v1_8_R2.PacketPlayOutRespawn;
 import net.minecraft.server.v1_8_R2.WorldSettings.EnumGamemode;
+import net.minecraft.server.v1_8_R2.PacketPlayOutEntityEquipment;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 
@@ -86,6 +88,11 @@ public class SkinFactoryv1_8_R2 extends Factory {
 					EnumGamemode.getById(player.getGameMode().getValue()));
 			PacketPlayOutPosition pos = new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(),
 					l.getPitch(), new HashSet<EnumPlayerTeleportFlags>());
+			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(player.getEntityId(), 0, CraftItemStack.asNMSCopy(player.getItemInHand()));
+			PacketPlayOutEntityEquipment helmet = new PacketPlayOutEntityEquipment(player.getEntityId(), 4, CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
+			PacketPlayOutEntityEquipment chestplate = new PacketPlayOutEntityEquipment(player.getEntityId(), 3, CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
+			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
+			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
@@ -108,6 +115,11 @@ public class SkinFactoryv1_8_R2 extends Factory {
 					craftOnline.getHandle().playerConnection.sendPacket(addInfo);
 				}
 				craftOnline.getHandle().playerConnection.sendPacket(addNamed);
+				craftOnline.getHandle().playerConnection.sendPacket(itemhand);
+				craftOnline.getHandle().playerConnection.sendPacket(helmet);
+				craftOnline.getHandle().playerConnection.sendPacket(chestplate);
+				craftOnline.getHandle().playerConnection.sendPacket(leggings);
+				craftOnline.getHandle().playerConnection.sendPacket(boots);
 			}
 		} catch (Exception e) {
 			// Player logging in isnt finished and the method will not be used.
