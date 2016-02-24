@@ -71,7 +71,6 @@ public class SkinStorage {
 
 	public boolean isSkinDataForced(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			table();
 			// w/e
 			return false;
 		} else {
@@ -85,7 +84,6 @@ public class SkinStorage {
 
 	public void removeSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			table();
 			mysql.execute(mysql.prepareStatement("delete from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
 		} else
 			skins.remove(name.toLowerCase());
@@ -93,7 +91,6 @@ public class SkinStorage {
 
 	public void setSkinData(String name, SkinProfile profile) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			table();
 			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
 
 			if (crs == null)
@@ -109,7 +106,6 @@ public class SkinStorage {
 	// Justin case
 	public SkinProfile getOrCreateSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			table();
 
 			SkinProfile sp;
 			if ((sp = getSkinData(name)) == null)
@@ -127,7 +123,6 @@ public class SkinStorage {
 
 	public SkinProfile getSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			table();
 
 			CachedRowSet crs = mysql
 					.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name.toLowerCase()));
@@ -183,11 +178,5 @@ public class SkinStorage {
 			gson.toJson(toSerialize, type, writer);
 		} catch (JsonIOException | IOException e) {
 		}
-	}
-
-	public void table() {
-		mysql.execute(mysql.prepareStatement(
-				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text)", ""));
-
 	}
 }

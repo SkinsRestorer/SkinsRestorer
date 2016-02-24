@@ -15,6 +15,8 @@ import javax.sql.rowset.RowSetProvider;
 
 import org.bukkit.Bukkit;
 
+import skinsrestorer.shared.storage.ConfigStorage;
+
 public class MySQL {
 
 	private Connection con;
@@ -38,6 +40,7 @@ public class MySQL {
 						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username,
 								password);
 						Bukkit.getLogger().info("[SkinsRestorer] Connected to MySQL!");
+						createTable();
 					} catch (SQLException e) {
 						Bukkit.getLogger().severe("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}
@@ -140,5 +143,11 @@ public class MySQL {
 			}
 		}
 		return rowSet;
+	}
+	
+	public void createTable() {
+		execute(prepareStatement(
+				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text)", ""));
+
 	}
 }

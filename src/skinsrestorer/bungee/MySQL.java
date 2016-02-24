@@ -13,6 +13,7 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
 import net.md_5.bungee.api.ProxyServer;
+import skinsrestorer.shared.storage.ConfigStorage;
 
 public class MySQL {
 
@@ -37,6 +38,7 @@ public class MySQL {
 						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
 								username, password);
 						ProxyServer.getInstance().getLogger().info("[SkinsRestorer] Connected to MySQL!");
+					createTable();
 					} catch (SQLException e) {
 						ProxyServer.getInstance().getLogger().severe("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}
@@ -139,5 +141,10 @@ public class MySQL {
 			}
 		}
 		return rowSet;
+	}
+	public void createTable() {
+		execute(prepareStatement(
+				"create table if not exists "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick varchar(255), Value text, Signature text)", ""));
+
 	}
 }
