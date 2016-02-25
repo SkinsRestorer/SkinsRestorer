@@ -25,6 +25,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
+import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.bungee.listeners.Updater;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -79,6 +80,7 @@ public class SkinsRestorer extends Plugin {
 
 		new SkinFactoryBungee();
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
+		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
 		this.getProxy().registerChannel("SkinUpdate");

@@ -15,11 +15,35 @@ public class SkinsRestorerAPI {
 	 * <p>
 	 */
 	public static void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException {
-		SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
-		if (skinsrestorer.bungee.SkinStorage.getInstance() != null)
-			skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-		else
-			skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+		SkinProfile skinprofile = null;
+		try {
+			// TODO: This needs to be done async! Leaving it be for now
+			skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
+			if (skinsrestorer.bungee.SkinStorage.getInstance() != null)
+				skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+			else
+				skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+		} catch (SkinFetchFailedException e) {
+
+			if (skinsrestorer.bungee.SkinStorage.getInstance() != null) {
+				skinprofile = skinsrestorer.bungee.SkinStorage.getInstance().getSkinData(skinName);
+
+				if (skinprofile == null)
+					throw e;
+
+				skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+
+			} else {
+
+				skinprofile = skinsrestorer.bukkit.SkinStorage.getInstance().getSkinData(skinName);
+
+				if (skinprofile == null)
+					throw e;
+
+				skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+			}
+		}
+
 	}
 
 	/**
