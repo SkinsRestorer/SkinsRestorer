@@ -84,21 +84,29 @@ public class SkinStorage {
 
 	public void removeSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			mysql.execute(mysql.prepareStatement("delete from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
+			mysql.execute(mysql.prepareStatement(
+					"delete from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
 		} else
 			skins.remove(name.toLowerCase());
 	}
 
 	public void setSkinData(String name, SkinProfile profile) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement("insert into "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick, Value, Signature, Timestamp) values (?,?,?,?)", name,
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(), String.valueOf(System.currentTimeMillis())));
+				mysql.execute(mysql.prepareStatement(
+						"insert into " + ConfigStorage.getInstance().MYSQL_TABLE
+								+ " (Nick, Value, Signature, Timestamp) values (?,?,?,?)",
+						name, profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
+						String.valueOf(System.currentTimeMillis())));
 			else
-				mysql.execute(mysql.prepareStatement("update "+ConfigStorage.getInstance().MYSQL_TABLE+" set Value=?, Signature=?, Timestamp=? where Nick=?",
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),String.valueOf(System.currentTimeMillis()), name));
+				mysql.execute(mysql.prepareStatement(
+						"update " + ConfigStorage.getInstance().MYSQL_TABLE
+								+ " set Value=?, Signature=?, Timestamp=? where Nick=?",
+						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
+						String.valueOf(System.currentTimeMillis()), name));
 		} else
 			skins.put(name.toLowerCase(), profile.cloneAsForced());
 	}
@@ -124,8 +132,8 @@ public class SkinStorage {
 	public SkinProfile getSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 
-			CachedRowSet crs = mysql
-					.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name.toLowerCase()));
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name.toLowerCase()));
 
 			if (crs == null) {
 				return null;
@@ -135,8 +143,8 @@ public class SkinStorage {
 					String signature = crs.getString("Signature");
 					String timestamp = crs.getString("Timestamp");
 
-					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature), Long.valueOf(timestamp),
-							false);
+					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature),
+							Long.valueOf(timestamp), false);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -162,7 +170,7 @@ public class SkinStorage {
 			if (gsondata != null) {
 				skins.putAll(gsondata);
 			}
-		} catch (JsonIOException | IOException e) {
+		} catch (JsonIOException | IOException | NullPointerException e) {
 		}
 	}
 
@@ -177,7 +185,7 @@ public class SkinStorage {
 				}
 			}
 			gson.toJson(toSerialize, type, writer);
-		} catch (JsonIOException | IOException e) {
+		} catch (JsonIOException | IOException | NullPointerException e) {
 		}
 	}
 }

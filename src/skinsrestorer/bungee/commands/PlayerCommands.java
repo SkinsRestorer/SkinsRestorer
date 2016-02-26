@@ -55,29 +55,32 @@ public class PlayerCommands extends Command {
 			component.setColor(ChatColor.BLUE);
 			sender.sendMessage(component);
 			return;
-		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		}
+		if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
 					"&8]&7&m-------------&r&8[ &9SkinsRestorer Help &8]&7&m-------------*r&8["));
 			sender.sendMessage(
 					ChatColor.translateAlternateColorCodes('&', "&9/skin set <skinname> &9-&a Sets your skin."));
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9/skin clear &9-&a Clears your skin."));
 			return;
-		} if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
+		}
+		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinFactoryBungee.getFactory().removeSkin(player);
 				TextComponent component = new TextComponent(
-				LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
+						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 				component.setColor(ChatColor.BLUE);
 				player.sendMessage(component);
 			}
 			TextComponent component = new TextComponent(
-			LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
+					LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED);
 			component.setColor(ChatColor.BLUE);
 			player.sendMessage(component);
 			SkinFactoryBungee.getFactory().removeSkin(player);
 			return;
-		} if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+		}
+		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
 				TextComponent component = new TextComponent(
 						ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
@@ -101,11 +104,21 @@ public class PlayerCommands extends Command {
 						component.setColor(ChatColor.BLUE);
 						player.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
-						TextComponent component = new TextComponent(
-								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED + e.getMessage());
-						component.setColor(ChatColor.RED);
-						player.sendMessage(component);
-						CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
+						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
+						if (skinprofile != null) {
+							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinFactoryBungee.getFactory().applySkin(player);
+							TextComponent component = new TextComponent(
+									LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE);
+							component.setColor(ChatColor.BLUE);
+							player.sendMessage(component);
+						} else {
+							TextComponent component = new TextComponent(
+									LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED + e.getMessage());
+							component.setColor(ChatColor.RED);
+							player.sendMessage(component);
+							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
+						}
 					}
 				}
 			});
