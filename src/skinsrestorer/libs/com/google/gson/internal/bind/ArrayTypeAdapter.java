@@ -37,8 +37,7 @@ import skinsrestorer.libs.com.google.gson.stream.JsonWriter;
  */
 public final class ArrayTypeAdapter<E> extends TypeAdapter<Object> {
   public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-    @Override
-	@SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
       Type type = typeToken.getType();
       if (!(type instanceof GenericArrayType || type instanceof Class && ((Class<?>) type).isArray())) {
@@ -61,8 +60,7 @@ public final class ArrayTypeAdapter<E> extends TypeAdapter<Object> {
     this.componentType = componentType;
   }
 
-  @Override
-public Object read(JsonReader in) throws IOException {
+  public Object read(JsonReader in) throws IOException {
     if (in.peek() == JsonToken.NULL) {
       in.nextNull();
       return null;

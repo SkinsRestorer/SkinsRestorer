@@ -119,7 +119,6 @@ public final class Gson {
 	private final boolean prettyPrinting;
 
 	final JsonDeserializationContext deserializationContext = new JsonDeserializationContext() {
-		@Override
 		@SuppressWarnings("unchecked")
 		public <T> T deserialize(JsonElement json, Type typeOfT) throws JsonParseException {
 			return (T) fromJson(json, typeOfT);
@@ -127,12 +126,10 @@ public final class Gson {
 	};
 
 	final JsonSerializationContext serializationContext = new JsonSerializationContext() {
-		@Override
 		public JsonElement serialize(Object src) {
 			return toJsonTree(src);
 		}
 
-		@Override
 		public JsonElement serialize(Object src, Type typeOfSrc) {
 			return toJsonTree(src, typeOfSrc);
 		}

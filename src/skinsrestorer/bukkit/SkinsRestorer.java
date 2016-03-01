@@ -147,6 +147,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			SkinFactoryv1_8_R2.getFactory().applySkin(player);
 		} else if (version.equalsIgnoreCase("v1_8_R3")) {
 			SkinFactoryv1_8_R3.getFactory().applySkin(player);
+		} else if (version.equalsIgnoreCase("v1_9_R1")) {
+			SkinFactoryv1_9_R1.getFactory().applySkin(player);
 		} else {
 			player.sendMessage(version);
 		}
@@ -162,6 +164,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			SkinFactoryv1_8_R2.getFactory().removeSkin(player);
 		} else if (version.equalsIgnoreCase("v1_8_R3")) {
 			SkinFactoryv1_8_R3.getFactory().removeSkin(player);
+		} else if (version.equalsIgnoreCase("v1_9_R1")) {
+			SkinFactoryv1_9_R1.getFactory().removeSkin(player);
 		} else {
 			player.sendMessage(version);
 		}
