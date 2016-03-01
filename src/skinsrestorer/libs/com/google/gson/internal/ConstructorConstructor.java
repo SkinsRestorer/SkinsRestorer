@@ -59,7 +59,6 @@ public final class ConstructorConstructor {
 		final InstanceCreator<T> typeCreator = (InstanceCreator<T>) instanceCreators.get(type);
 		if (typeCreator != null) {
 			return new ObjectConstructor<T>() {
-				@Override
 				public T construct() {
 					return typeCreator.createInstance(type);
 				}
@@ -72,7 +71,6 @@ public final class ConstructorConstructor {
 		final InstanceCreator<T> rawTypeCreator = (InstanceCreator<T>) instanceCreators.get(rawType);
 		if (rawTypeCreator != null) {
 			return new ObjectConstructor<T>() {
-				@Override
 				public T construct() {
 					return rawTypeCreator.createInstance(type);
 				}
@@ -100,7 +98,6 @@ public final class ConstructorConstructor {
 				constructor.setAccessible(true);
 			}
 			return new ObjectConstructor<T>() {
-				@Override
 				@SuppressWarnings("unchecked")
 				// T is the same raw type as is requested
 				public T construct() {
@@ -133,14 +130,12 @@ public final class ConstructorConstructor {
 		if (Collection.class.isAssignableFrom(rawType)) {
 			if (SortedSet.class.isAssignableFrom(rawType)) {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new TreeSet<Object>();
 					}
 				};
 			} else if (EnumSet.class.isAssignableFrom(rawType)) {
 				return new ObjectConstructor<T>() {
-					@Override
 					@SuppressWarnings("rawtypes")
 					public T construct() {
 						if (type instanceof ParameterizedType) {
@@ -157,21 +152,18 @@ public final class ConstructorConstructor {
 				};
 			} else if (Set.class.isAssignableFrom(rawType)) {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new LinkedHashSet<Object>();
 					}
 				};
 			} else if (Queue.class.isAssignableFrom(rawType)) {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new LinkedList<Object>();
 					}
 				};
 			} else {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new ArrayList<Object>();
 					}
@@ -182,21 +174,18 @@ public final class ConstructorConstructor {
 		if (Map.class.isAssignableFrom(rawType)) {
 			if (SortedMap.class.isAssignableFrom(rawType)) {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new TreeMap<Object, Object>();
 					}
 				};
 			} else if (type instanceof ParameterizedType && !(String.class.isAssignableFrom(TypeToken.get(((ParameterizedType) type).getActualTypeArguments()[0]).getRawType()))) {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new LinkedHashMap<Object, Object>();
 					}
 				};
 			} else {
 				return new ObjectConstructor<T>() {
-					@Override
 					public T construct() {
 						return (T) new LinkedTreeMap<String, Object>();
 					}
@@ -211,7 +200,6 @@ public final class ConstructorConstructor {
 		return new ObjectConstructor<T>() {
 			private final UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();
 
-			@Override
 			@SuppressWarnings("unchecked")
 			public T construct() {
 				try {

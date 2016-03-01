@@ -113,8 +113,7 @@ public final class MapTypeAdapterFactory implements TypeAdapterFactory {
     this.complexMapKeySerialization = complexMapKeySerialization;
   }
 
-  @Override
-public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+  public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
     Type type = typeToken.getType();
 
     Class<? super T> rawType = typeToken.getRawType();
@@ -159,8 +158,7 @@ public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
       this.constructor = constructor;
     }
 
-    @Override
-	public Map<K, V> read(JsonReader in) throws IOException {
+    public Map<K, V> read(JsonReader in) throws IOException {
       JsonToken peek = in.peek();
       if (peek == JsonToken.NULL) {
         in.nextNull();
@@ -198,8 +196,7 @@ public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
       return map;
     }
 
-    @Override
-	public void write(JsonWriter out, Map<K, V> map) throws IOException {
+    public void write(JsonWriter out, Map<K, V> map) throws IOException {
       if (map == null) {
         out.nullValue();
         return;

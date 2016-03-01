@@ -64,7 +64,6 @@ final class DefaultDateTypeAdapter implements JsonSerializer<Date>, JsonDeserial
 
 	// These methods need to be synchronized since JDK DateFormat classes are not thread-safe
 	// See issue 162
-	@Override
 	public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
 		synchronized (localFormat) {
 			String dateFormatAsString = enUsFormat.format(src);
@@ -72,7 +71,6 @@ final class DefaultDateTypeAdapter implements JsonSerializer<Date>, JsonDeserial
 		}
 	}
 
-	@Override
 	public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		if (!(json instanceof JsonPrimitive)) {
 			throw new JsonParseException("The date should be a string value");
