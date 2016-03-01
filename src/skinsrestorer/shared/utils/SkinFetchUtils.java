@@ -31,7 +31,7 @@ import skinsrestorer.shared.storage.LocaleStorage;
 
 public class SkinFetchUtils {
 
-	public static SkinProfile fetchSkinProfile(String name, UUID uuid) throws SkinFetchFailedException {
+	public static SkinProfile fetchSkinProfile(final String name, final UUID uuid) throws SkinFetchFailedException {
 
 		// Trying to avoid using runAsync all the time with this method
 		// Using Future

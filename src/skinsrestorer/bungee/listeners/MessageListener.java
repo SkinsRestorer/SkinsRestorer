@@ -38,7 +38,7 @@ public class MessageListener implements Listener {
 
 			final String player = dis.readUTF();
 
-			ProxiedPlayer p = ProxyServer.getInstance().getPlayer(player);
+			final ProxiedPlayer p = ProxyServer.getInstance().getPlayer(player);
 
 			if (p == null || p.getServer() == null)
 				return;
