@@ -49,7 +49,7 @@ public class MojangAPI {
 	private static final String skullbloburl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 	private static final String mcapiurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
 
-	public static Profile getProfile(String nick) throws SkinFetchFailedException, IOException, ParseException {
+	public static Profile getProfile(final String nick) throws SkinFetchFailedException, IOException, ParseException {
 
 		Profile profile = null;
 
@@ -112,14 +112,14 @@ public class MojangAPI {
 			if (future.get() != null)
 				profile = future.get();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 		}
 
 		return profile;
 
 	}
 
-	public static SkinProfile getSkinProfile(String id) throws IOException, ParseException, SkinFetchFailedException {
+	public static SkinProfile getSkinProfile(final String id) throws IOException, ParseException, SkinFetchFailedException {
 		if (id.equals("")) {
 			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
 		}
