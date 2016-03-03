@@ -17,7 +17,6 @@
 
 package skinsrestorer.bungee.commands;
 
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -27,6 +26,7 @@ import skinsrestorer.bungee.SkinStorage;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -40,28 +40,20 @@ public class AdminCommands extends Command {
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
 		if (args.length == 0) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9Use '/skinsrestorer help' for help."));
+			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return;
 		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8["));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&9/skinsrestorer drop <player> &9-&a Drops player skin data."));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&9/skinsrestorer update <player> &9-&a Updates player skin data."));
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-					"&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin."));
+			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_HELP));
 			return;
 		} if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-			TextComponent component = new TextComponent("Skin data for player " + args[1] + " dropped");
-			component.setColor(ChatColor.BLUE);
+			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			sender.sendMessage(component);
 			return;
 		} if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
 			SkinStorage.getInstance().saveData();
-			sender.sendMessage(ChatColor.BLUE + "Skin data saved successfully.");
+			sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_DATA_SAVED));
 			return;
 		} if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 			final String name = args[1];
@@ -72,12 +64,10 @@ public class AdminCommands extends Command {
 						SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
 						SkinFactoryBungee.getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-						TextComponent component = new TextComponent("Skin data updated");
-						component.setColor(ChatColor.BLUE);
+						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 						sender.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
-						TextComponent component = new TextComponent("Skin fetch failed: " + e.getMessage());
-						component.setColor(ChatColor.RED);
+						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
 						sender.sendMessage(component);
 					}
 				}
@@ -93,19 +83,16 @@ public class AdminCommands extends Command {
 						SkinStorage.getInstance().setSkinData(args[1], skinprofile);
 						SkinFactoryBungee.getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-						TextComponent component = new TextComponent(ChatColor.BLUE + "You set " + args[1] + "'s skin.");
-						component.setColor(ChatColor.BLUE);
+						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
 						sender.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
-						TextComponent component = new TextComponent(
-								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED + e.getMessage());
-						component.setColor(ChatColor.RED);
+						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
 						sender.sendMessage(component);
 					}
 				}
 			});
 		} else
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&9Use '/skinsrestorer help' for help."));
+			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 	}
 
 }

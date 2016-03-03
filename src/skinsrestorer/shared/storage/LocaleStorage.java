@@ -43,7 +43,6 @@ public class LocaleStorage {
 	public String PLAYER_SKIN_COOLDOWN = "&cYou can change your skin only once per %s seconds";
 	public String PLAYER_SKIN_CHANGE_SUCCESS = "&9Your skin has been updated.";
 	public String PLAYER_SKIN_CHANGE_SUCCESS_DATABASE = "&9Your skin has been updated from database.";
-	public String PLAYER_SKIN_CHANGE_FAILED = "&4Skin fetch failed: ";
 	public String DO_YOU_WANT_SKIN = "&9Click me if you want your skin.";
 
 	public String PLAYER_HAS_NO_PERMISSION = "&cYou don't have permission to do this!";
