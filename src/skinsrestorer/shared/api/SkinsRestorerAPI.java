@@ -6,6 +6,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.shared.format.SkinProfile;
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -19,31 +20,17 @@ public class SkinsRestorerAPI {
 		try {
 			// TODO: This needs to be done async! Leaving it be for now
 			skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
-			if (skinsrestorer.bungee.SkinStorage.getInstance() != null)
-				skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-			else
-				skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+
+			SkinStorage.getInstance().setSkinData(playerName, skinprofile);
 		} catch (SkinFetchFailedException e) {
 
-			if (skinsrestorer.bungee.SkinStorage.getInstance() != null) {
-				skinprofile = skinsrestorer.bungee.SkinStorage.getInstance().getSkinData(skinName);
+			skinprofile = SkinStorage.getInstance().getSkinData(skinName);
 
-				if (skinprofile == null)
-					throw e;
+			if (skinprofile == null)
+				throw e;
 
-				skinsrestorer.bungee.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-
-			} else {
-
-				skinprofile = skinsrestorer.bukkit.SkinStorage.getInstance().getSkinData(skinName);
-
-				if (skinprofile == null)
-					throw e;
-
-				skinsrestorer.bukkit.SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-			}
+			SkinStorage.getInstance().setSkinData(playerName, skinprofile);
 		}
-
 	}
 
 	/**
@@ -52,17 +39,10 @@ public class SkinsRestorerAPI {
 	 * saved data, it will return true.
 	 */
 	public static boolean hasSkin(String playerName) {
-		if (skinsrestorer.bungee.SkinStorage.getInstance() != null) {
-			if (skinsrestorer.bungee.SkinStorage.getInstance().getSkinData(playerName) == null) {
-				return false;
-			}
-			return true;
-		} else {
-			if (skinsrestorer.bungee.SkinStorage.getInstance().getSkinData(playerName) == null) {
-				return false;
-			}
-			return true;
+		if (SkinStorage.getInstance().getSkinData(playerName) == null) {
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -71,21 +51,13 @@ public class SkinsRestorerAPI {
 	 * name.
 	 */
 	public static String getSkinName(String playerName) {
-		if (skinsrestorer.bungee.SkinStorage.getInstance() != null) {
 
-			SkinProfile data = skinsrestorer.bungee.SkinStorage.getInstance().getSkinData(playerName);
-			if (data == null) {
-				return null;
-			}
-			return data.getName();
-
-		} else {
-			SkinProfile data = skinsrestorer.bukkit.SkinStorage.getInstance().getSkinData(playerName);
-			if (data == null) {
-				return null;
-			}
-			return data.getName();
+		SkinProfile data = SkinStorage.getInstance().getSkinData(playerName);
+		if (data == null) {
+			return null;
 		}
+		return data.getName();
+
 	}
 
 	/**

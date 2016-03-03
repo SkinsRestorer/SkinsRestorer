@@ -31,6 +31,8 @@ import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class SkinsRestorer extends Plugin {
@@ -70,9 +72,12 @@ public class SkinsRestorer extends Plugin {
 		}
 
 		if (ConfigStorage.getInstance().USE_MYSQL)
-			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
-					ConfigStorage.getInstance().MYSQL_DATABASE, ConfigStorage.getInstance().MYSQL_USERNAME,
-					ConfigStorage.getInstance().MYSQL_PASSWORD));
+			SkinStorage./*
+						*/init(/* 
+								**/new MySQL(ConfigStorage./*
+															* */getInstance().MYSQL_HOST,
+					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
+					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
 		else {
 			SkinStorage.init(getDataFolder());
 			this.getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);

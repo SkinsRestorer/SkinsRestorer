@@ -14,6 +14,7 @@ import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
+import skinsrestorer.shared.storage.SkinStorage;
 
 public class SkinFactoryBungee {
 
