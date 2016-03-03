@@ -28,6 +28,7 @@ import net.minecraft.server.v1_8_R1.PlayerAbilities;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
+import skinsrestorer.shared.storage.SkinStorage;
 
 public class SkinFactoryv1_8_R1 extends Factory {
 

@@ -29,6 +29,7 @@ import net.minecraft.server.v1_9_R1.PlayerAbilities;
 import net.minecraft.server.v1_9_R1.WorldSettings.EnumGamemode;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
+import skinsrestorer.shared.storage.SkinStorage;
 
 public class SkinFactoryv1_9_R1 extends Factory {
 

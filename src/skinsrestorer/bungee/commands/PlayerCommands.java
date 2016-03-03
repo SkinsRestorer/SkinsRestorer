@@ -25,12 +25,12 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import skinsrestorer.bungee.SkinFactoryBungee;
-import skinsrestorer.bungee.SkinStorage;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
@@ -63,17 +63,20 @@ public class PlayerCommands extends Command {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinFactoryBungee.getFactory().removeSkin(player);
-				TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+				TextComponent component = new TextComponent(
+						C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 				player.sendMessage(component);
 			}
-			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+			TextComponent component = new TextComponent(
+					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
 			SkinFactoryBungee.getFactory().removeSkin(player);
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
+				TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
+						.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				player.sendMessage(component);
 				return;
 			}
@@ -88,17 +91,20 @@ public class PlayerCommands extends Command {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
 						SkinFactoryBungee.getFactory().applySkin(player);
-						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
+						TextComponent component = new TextComponent(
+								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
 						player.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
 						if (skinprofile != null) {
 							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
 							SkinFactoryBungee.getFactory().applySkin(player);
-							TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
+							TextComponent component = new TextComponent(
+									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
 							player.sendMessage(component);
 						} else {
-							TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
+							TextComponent component = new TextComponent(
+									C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
 							player.sendMessage(component);
 							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
 						}

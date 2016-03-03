@@ -1,4 +1,4 @@
-package skinsrestorer.bungee;
+package skinsrestorer.shared.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -7,15 +7,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
-import net.md_5.bungee.api.ProxyServer;
 import skinsrestorer.shared.storage.ConfigStorage;
 
 public class MySQL {
+
+	/** Class by Blackfire62 **/
 
 	private Connection con;
 	private String host, port, database, username, password;
@@ -31,20 +33,20 @@ public class MySQL {
 
 	public void openConnection() {
 		if (!isConnected()) {
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+			new Thread(new Runnable() {
 				@Override
 				public void run() {
 					try {
 						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
 								username, password);
-						ProxyServer.getInstance().getLogger().info("[SkinsRestorer] Connected to MySQL!");
-					createTable();
+						System.out.println("[SkinsRestorer] Connected to MySQL!");
+						createTable();
 					} catch (SQLException e) {
-						ProxyServer.getInstance().getLogger().severe("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
+						System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}
 				}
 
-			});
+			}).run();
 		}
 	}
 
@@ -69,18 +71,18 @@ public class MySQL {
 
 	public void execute(final PreparedStatement ps) {
 		if (isConnected()) {
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+			new Thread(new Runnable() {
+
 				@Override
 				public void run() {
 					try {
 						ps.execute();
 						ps.close();
 					} catch (SQLException e) {
-						e.printStackTrace();
 					}
 				}
 
-			});
+			}).run();
 		}
 	}
 
@@ -104,12 +106,11 @@ public class MySQL {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	public CachedRowSet query(final PreparedStatement preparedStatement) {
 		CachedRowSet rowSet = null;
 		if (isConnected()) {
 			try {
-				ExecutorService exe = SkinsRestorer.getInstance().getExecutorService();
+				ExecutorService exe = Executors.newCachedThreadPool();
 
 				Future<CachedRowSet> future = exe.submit(new Callable<CachedRowSet>() {
 					@Override
@@ -142,16 +143,15 @@ public class MySQL {
 		}
 		return rowSet;
 	}
+
 	public void createTable() {
-		execute(prepareStatement("CREATE TABLE IF NOT EXISTS `"+ConfigStorage.getInstance().MYSQL_TABLE+"` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-				+ "`Value` text COLLATE utf8_unicode_ci,"
-				+ "`Signature` text COLLATE utf8_unicode_ci,"
-				+ "`Timestamp` bigint(20) unsigned DEFAULT NULL,"
+		execute(prepareStatement("CREATE TABLE IF NOT EXISTS `" + ConfigStorage.getInstance().MYSQL_TABLE + "` ("
+				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
+				+ "`Signature` text COLLATE utf8_unicode_ci," + "`Timestamp` bigint(20) unsigned DEFAULT NULL,"
 				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"));
-		execute(prepareStatement("ALTER TABLE `"+ConfigStorage.getInstance().MYSQL_DATABASE+"`."
-				+ "`"+ConfigStorage.getInstance().MYSQL_TABLE+"` CHANGE "
+		execute(prepareStatement("ALTER TABLE `" + ConfigStorage.getInstance().MYSQL_DATABASE + "`." + "`"
+				+ ConfigStorage.getInstance().MYSQL_TABLE + "` CHANGE "
 				+ "`Nick` `Nick` VARCHAR(16) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL, CHANGE "
 				+ "`Timestamp` `Timestamp` BIGINT UNSIGNED NULL, ADD PRIMARY KEY (`Nick`);"));
-		   }
 	}
+}

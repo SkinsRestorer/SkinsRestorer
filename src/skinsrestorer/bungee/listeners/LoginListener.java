@@ -11,11 +11,11 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import skinsrestorer.bungee.SkinFactoryBungee;
-import skinsrestorer.bungee.SkinStorage;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class LoginListener implements Listener {
@@ -63,17 +63,17 @@ public class LoginListener implements Listener {
 				return;
 			}
 		}
-		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")){
-		final TextComponent message = new TextComponent("");
-		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
-		message.setClickEvent(
-				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
-		ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				event.getPlayer().sendMessage(message);
-			}
-		}, 5L, TimeUnit.MILLISECONDS);
-	}
+		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
+			final TextComponent message = new TextComponent("");
+			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
+			message.setClickEvent(
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
+			ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					event.getPlayer().sendMessage(message);
+				}
+			}, 5L, TimeUnit.MILLISECONDS);
+		}
 	}
 }
