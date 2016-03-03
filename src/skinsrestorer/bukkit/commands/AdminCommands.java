@@ -18,7 +18,6 @@
 package skinsrestorer.bukkit.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,6 +27,7 @@ import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -37,28 +37,28 @@ public class AdminCommands implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, Command cmd, String label, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.cmds")) {
 			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+					C.c( LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 			return true;
 		}
 		if (args.length == 0) {
 			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+					C.c( LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return true;
 		} if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_HELP));
+			sender.sendMessage(C.c( LocaleStorage.getInstance().ADMIN_HELP));
 			return true;
 		} if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			if (Bukkit.getPlayer(args[1]) != null) {
 				SkinsRestorerAPI.removeSkinBukkit(Bukkit.getPlayer(args[1]));
 			}
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+			sender.sendMessage(C.c(
 					LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			return true;
 		} if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
 			SkinStorage.getInstance().saveData();
 			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().SKIN_DATA_SAVED));
+					C.c( LocaleStorage.getInstance().SKIN_DATA_SAVED));
 			return true;
 		} if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 			SkinsRestorer.executor.execute(new Runnable() {
@@ -70,10 +70,10 @@ public class AdminCommands implements CommandExecutor {
 						if (Bukkit.getPlayer(args[1]) != null) {
 							SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 						}
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						sender.sendMessage(C.c(
 								LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 					} catch (SkinFetchFailedException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						sender.sendMessage(C.c(
 								LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
 					}
 				}
@@ -91,11 +91,11 @@ public class AdminCommands implements CommandExecutor {
 						if (Bukkit.getPlayer(args[1]) != null) {
 							SkinsRestorerAPI.applySkinBukkit(Bukkit.getPlayer(args[1]));
 						}
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
+						sender.sendMessage(C.c(
 								LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
 					} catch (SkinFetchFailedException e) {
-						sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-								LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_FAILED) + e.getMessage());
+						sender.sendMessage(C.c(
+								LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
 					}
 				}
 			});
@@ -103,7 +103,7 @@ public class AdminCommands implements CommandExecutor {
 		}
 		else
 			sender.sendMessage(
-					ChatColor.translateAlternateColorCodes('&', LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+					C.c( LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 		return false;
 	}
 

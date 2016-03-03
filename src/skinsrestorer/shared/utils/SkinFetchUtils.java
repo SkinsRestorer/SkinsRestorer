@@ -73,8 +73,8 @@ public class SkinFetchUtils {
 			if (future.get() != null)
 				skinprofile = future.get();
 
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 		}
 
 		return skinprofile;
@@ -102,14 +102,13 @@ public class SkinFetchUtils {
 		}
 
 		public static enum Reason {
-			NO_PREMIUM_PLAYER(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), NO_SKIN_DATA(
-					c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)), SKIN_RECODE_FAILED(
-							c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), RATE_LIMITED(c(LocaleStorage
-									.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(c(LocaleStorage
-											.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(c(LocaleStorage
-													.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_OVERLOAD(
-															c(LocaleStorage
-																	.getInstance().SKIN_FETCH_FAILED_MCAPI_OVERLOAD));
+			NO_PREMIUM_PLAYER(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), 
+			NO_SKIN_DATA(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)), 
+			SKIN_RECODE_FAILED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), 
+			RATE_LIMITED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), 
+			GENERIC_ERROR(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR)), 
+			MCAPI_FAILED(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_ERROR)), 
+			MCAPI_OVERLOAD(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_MCAPI_OVERLOAD));
 
 			private String exceptionCause;
 
