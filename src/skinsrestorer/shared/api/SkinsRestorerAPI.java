@@ -14,23 +14,38 @@ public class SkinsRestorerAPI {
 	/**
 	 * This method is used to set player's skin.
 	 * <p>
+	 * Keep in mind it just sets the skin, you have to apply it using another
+	 * method!
+	 * <p>
+	 * Method will not do anything if it fails to get the skin from MojangAPI or
+	 * database!
 	 */
-	public static void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException {
-		SkinProfile skinprofile = null;
-		try {
-			// TODO: This needs to be done async! Leaving it be for now
-			skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
+	public static void setSkin(final String playerName, final String skinName) {
+		new Thread(new Runnable() {
 
-			SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-		} catch (SkinFetchFailedException e) {
+			@Override
+			public void run() {
 
-			skinprofile = SkinStorage.getInstance().getSkinData(skinName);
+				SkinProfile skinprofile = null;
 
-			if (skinprofile == null)
-				throw e;
+				try {
+					// TODO: This needs to be done async! Leaving it be for now
+					skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
 
-			SkinStorage.getInstance().setSkinData(playerName, skinprofile);
-		}
+					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+				} catch (SkinFetchFailedException e) {
+
+					skinprofile = SkinStorage.getInstance().getSkinData(skinName);
+
+					if (skinprofile == null)
+						return;
+
+					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+				}
+
+			}
+
+		}).run();
 	}
 
 	/**

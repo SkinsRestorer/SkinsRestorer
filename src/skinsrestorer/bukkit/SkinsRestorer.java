@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import skinsrestorer.bukkit.commands.AdminCommands;
 import skinsrestorer.bukkit.commands.PlayerCommands;
 import skinsrestorer.bukkit.listeners.LoginListener;
-import skinsrestorer.bukkit.listeners.Updater;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -23,6 +22,7 @@ import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
@@ -36,7 +36,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	static Logger log;
 	public ConsoleCommandSender log1 = null;
-	private skinsrestorer.bukkit.listeners.Updater updater;
+	private skinsrestorer.shared.utils.Updater updater;
 
 	private String version;
 	private Factory factory;
@@ -73,7 +73,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		}
 
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
-			updater = new Updater(this);
+			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
 		} else {
 			log1.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
