@@ -26,7 +26,6 @@ import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
-import skinsrestorer.bungee.listeners.Updater;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -34,6 +33,7 @@ import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends Plugin {
 
@@ -59,7 +59,7 @@ public class SkinsRestorer extends Plugin {
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
-			updater = new Updater(this);
+			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
 		} else {
 			log.info(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
