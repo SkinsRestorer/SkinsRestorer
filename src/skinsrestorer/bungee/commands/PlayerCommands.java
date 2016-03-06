@@ -66,6 +66,7 @@ public class PlayerCommands extends Command {
 				TextComponent component = new TextComponent(
 						C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 				player.sendMessage(component);
+				return;
 			}
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));

@@ -60,11 +60,11 @@ public class PlayerCommands implements CommandExecutor {
 				SkinStorage.getInstance().removeSkinData(player.getName());
 				SkinsRestorerAPI.removeSkinBukkit(player);
 				player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			} else {
+			return true;
+			}
 				SkinsRestorerAPI.removeSkinBukkit(player);
 				player.sendMessage(C.c(
 						LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			}
 			return true;
 		} if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
