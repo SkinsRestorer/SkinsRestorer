@@ -14,12 +14,11 @@ public class Factory {
 	}
 
 	// For 1.8+ servers.
-	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile, boolean removeSkin) {
+	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile) {
 	}
 
 	// For 1.7 servers.
-	public void updateSkin(Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile,
-			boolean removeSkin) {
+	public void updateSkin(Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile) {
 	}
 
 	public void removeSkin(Player player) {

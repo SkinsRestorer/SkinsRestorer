@@ -141,36 +141,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	@Deprecated
 	public void applySkin(Player player) {
-		if (version.equalsIgnoreCase("v1_7_R4")) {
-			SkinFactoryv1_7_R4.getFactory().applySkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R1")) {
-			SkinFactoryv1_8_R1.getFactory().applySkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R2")) {
-			SkinFactoryv1_8_R2.getFactory().applySkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R3")) {
-			SkinFactoryv1_8_R3.getFactory().applySkin(player);
-		} else if (version.equalsIgnoreCase("v1_9_R1")) {
-			SkinFactoryv1_9_R1.getFactory().applySkin(player);
-		} else {
-			player.sendMessage(version);
-		}
+		factory.applySkin(player);
 	}
 
 	@Deprecated
 	public void removeSkin(Player player) {
-		if (version.equalsIgnoreCase("v1_7_R4")) {
-			SkinFactoryv1_7_R4.getFactory().removeSkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R1")) {
-			SkinFactoryv1_8_R1.getFactory().removeSkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R2")) {
-			SkinFactoryv1_8_R2.getFactory().removeSkin(player);
-		} else if (version.equalsIgnoreCase("v1_8_R3")) {
-			SkinFactoryv1_8_R3.getFactory().removeSkin(player);
-		} else if (version.equalsIgnoreCase("v1_9_R1")) {
-			SkinFactoryv1_9_R1.getFactory().removeSkin(player);
-		} else {
-			player.sendMessage(version);
-		}
+		factory.removeSkin(player);
 	}
 
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {

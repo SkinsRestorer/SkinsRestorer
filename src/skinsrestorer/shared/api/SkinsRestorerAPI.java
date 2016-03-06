@@ -29,7 +29,6 @@ public class SkinsRestorerAPI {
 				SkinProfile skinprofile = null;
 
 				try {
-					// TODO: This needs to be done async! Leaving it be for now
 					skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
 
 					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
