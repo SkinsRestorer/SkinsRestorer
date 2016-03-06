@@ -69,7 +69,7 @@ public class SkinFactoryBungee {
 							profile.getProperties()[0].setValue(newprops[0].getValue());
 							profile.getProperties()[0].setSignature(newprops[0].getSignature());
 							profileField.set(handler, profile);
-							updateSkin(player, profile, false);
+							updateSkin(player, profile);
 
 						} catch (Throwable t) {
 							t.printStackTrace();
@@ -82,17 +82,18 @@ public class SkinFactoryBungee {
 
 	// Remove skin from player
 	public void removeSkin(ProxiedPlayer player) {
-		// if (SkinsRestorer.getInstance().isAutoInEnabled()){
-		// if
-		// (ConfigStorage.getInstance().USE_AUTOIN_SKINS==true&&SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(player.getName())==com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM){
-		// return;
-		// }
-		// }
 		LoginResult profile = ((UserConnection) player).getPendingConnection().getLoginProfile();
-		updateSkin(player, profile, true); // Removing the skin.
+		InitialHandler handler = (InitialHandler) player.getPendingConnection();
+		profile.getProperties()[0].setSignature(""); //This should do the trick.
+		try {
+			profileField.set(handler, profile);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			// Skin removing failed !?
+		}
+		updateSkin(player, profile); // Removing the skin.
 	}
 
-	public void updateSkin(final ProxiedPlayer player, final LoginResult profile, final boolean removeSkin) {
+	public void updateSkin(final ProxiedPlayer player, final LoginResult profile) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 			@Override
 			public void run() {
@@ -106,22 +107,17 @@ public class SkinFactoryBungee {
 				if (player.getServer() == null) {
 					return;
 				}
-				sendUpdateRequest(user, removeSkin);
+				sendUpdateRequest(user);
 			}
 		});
 	}
 
-	public void sendUpdateRequest(UserConnection p, boolean removeSkin) {
+	public void sendUpdateRequest(UserConnection p) {
 		final ByteArrayOutputStream b = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(b);
 		try {
 			out.writeUTF("ForwardToPlayer");
 			out.writeUTF(p.getName());
-			if (removeSkin == true) {
-				out.writeBoolean(true);
-			} else {
-				out.writeBoolean(false);
-			}
 
 			p.getServer().sendData("SkinUpdate", b.toByteArray());
 		} catch (IOException e) {

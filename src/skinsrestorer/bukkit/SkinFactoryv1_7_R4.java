@@ -18,6 +18,7 @@ import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PacketPlayOutRespawn;
 import net.minecraft.server.v1_7_R4.PacketPlayOutUpdateHealth;
 import net.minecraft.server.v1_7_R4.PlayerAbilities;
+import net.minecraft.server.v1_7_R4.PlayerConnection;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import skinsrestorer.shared.format.SkinProfile;
@@ -52,7 +53,7 @@ public class SkinFactoryv1_7_R4 extends Factory {
 				// Putting the new one.
 				eplayer.getProperties().put(prop.getName(), prop);
 				// Updating skin.
-				updateSkin(player, eplayer, false);
+				updateSkin(player, eplayer);
 
 			}
 		});
@@ -62,13 +63,14 @@ public class SkinFactoryv1_7_R4 extends Factory {
 	@Override
 	public void removeSkin(final Player player) {
 		GameProfile profile = ((CraftPlayer) player).getProfile();
-		updateSkin(player, profile, true); // Removing the skin.
+		profile.getProperties().clear();
+		updateSkin(player, profile); // Removing the skin.
 	}
 
 	// Update the skin without relog. (Using NMS and OBC)
 	@Override
 	@SuppressWarnings("deprecation")
-	public void updateSkin(Player player, final GameProfile profile, boolean removeSkin) {
+	public void updateSkin(Player player, final GameProfile profile) {
 		try {
 			PacketPlayOutPlayerInfo removeInfo = PacketPlayOutPlayerInfo
 					.removePlayer(((CraftPlayer) player).getHandle());
@@ -94,32 +96,29 @@ public class SkinFactoryv1_7_R4 extends Factory {
 			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
+                PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
 				if (online.equals(player)) {
-					craftOnline.getHandle().playerConnection.sendPacket(removeInfo);
-					if (removeSkin == false) {
-						craftOnline.getHandle().playerConnection.sendPacket(addInfo);
-					}
-					craftOnline.getHandle().playerConnection.sendPacket(respawn);
-					craftOnline.getHandle().playerConnection.sendPacket(packetAbilities);
-					craftOnline.getHandle().playerConnection.sendPacket(slot);
-					craftOnline.getHandle().playerConnection.sendPacket(exp);
-					craftOnline.getHandle().playerConnection.sendPacket(health);
+					playerCon.sendPacket(removeInfo);
+					playerCon.sendPacket(addInfo);
+					playerCon.sendPacket(respawn);
+					playerCon.sendPacket(packetAbilities);
+					playerCon.sendPacket(slot);
+					playerCon.sendPacket(exp);
+					playerCon.sendPacket(health);
 					craftOnline.updateInventory();
 					Chunk chunk = player.getLocation().getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
 					continue;
 				}
-				craftOnline.getHandle().playerConnection.sendPacket(removeEntity);
-				craftOnline.getHandle().playerConnection.sendPacket(removeInfo);
-				if (removeSkin == false) {
-					craftOnline.getHandle().playerConnection.sendPacket(addInfo);
-				}
-				craftOnline.getHandle().playerConnection.sendPacket(addNamed);
-				craftOnline.getHandle().playerConnection.sendPacket(itemhand);
-				craftOnline.getHandle().playerConnection.sendPacket(helmet);
-				craftOnline.getHandle().playerConnection.sendPacket(chestplate);
-				craftOnline.getHandle().playerConnection.sendPacket(leggings);
-				craftOnline.getHandle().playerConnection.sendPacket(boots);
+				playerCon.sendPacket(removeEntity);
+				playerCon.sendPacket(removeInfo);
+				playerCon.sendPacket(addInfo);
+				playerCon.sendPacket(addNamed);
+				playerCon.sendPacket(itemhand);
+				playerCon.sendPacket(helmet);
+				playerCon.sendPacket(chestplate);
+				playerCon.sendPacket(leggings);
+				playerCon.sendPacket(boots);
 			}
 		} catch (Exception e) {
 			// Player logging in isnt finished and the method will not be used.
@@ -130,7 +129,7 @@ public class SkinFactoryv1_7_R4 extends Factory {
 	// Just adding that, so the class will not be abstract. It will never be
 	// used.
 	@Override
-	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile, boolean removeSkin) {
+	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile) {
 	}
 
 	/*

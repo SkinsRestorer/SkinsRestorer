@@ -3,7 +3,6 @@ package skinsrestorer.bungee.listeners;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -40,11 +39,6 @@ public class MessageListener implements Listener {
 
 			if (p == null || p.getServer() == null)
 				return;
-
-			final boolean removeskin = dis.readBoolean();
-
-			if (removeskin)
-				SkinFactoryBungee.getFactory().sendUpdateRequest((UserConnection) p, removeskin);
 
 			final String skin = dis.readUTF();
 
