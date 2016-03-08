@@ -79,18 +79,6 @@ public class MojangAPI {
 					writer.flush();
 					writer.close();
 
-					InputStream is = connection.getInputStream();
-					String result = IOUtils.toString(is, StandardCharsets.UTF_8);
-					IOUtils.closeQuietly(is);
-					JSONArray jsonProfiles = (JSONArray) new JSONParser().parse(result);
-					if (jsonProfiles.size() > 0) {
-						JSONObject jsonProfile = (JSONObject) jsonProfiles.get(0);
-						if (jsonProfile.get("id") == null || jsonProfile.get("name") == null) {
-							throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
-						}
-						return new Profile((String) jsonProfile.get("id"), (String) jsonProfile.get("name"));
-					}
-					throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 				}
 				// read response
 				InputStream is = connection.getInputStream();

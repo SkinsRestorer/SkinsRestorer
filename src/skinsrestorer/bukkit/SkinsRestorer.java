@@ -29,6 +29,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private boolean autoIn = false;
 	static SkinsRestorer instance;
+	boolean isServerPremium = Bukkit.getOnlineMode();
 
 	public static SkinsRestorer getInstance() {
 		return instance;
@@ -75,6 +76,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
+		
 		} else {
 			log1.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
 			updater = null;
@@ -152,7 +154,11 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
-
+    
+	public boolean isServerPremium(){
+		return isServerPremium;
+	}
+	
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}
