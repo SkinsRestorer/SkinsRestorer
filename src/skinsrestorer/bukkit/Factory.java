@@ -21,6 +21,7 @@ public class Factory {
 	public void updateSkin(Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile) {
 	}
 
+	//For both.
 	public void removeSkin(Player player) {
 	}
 

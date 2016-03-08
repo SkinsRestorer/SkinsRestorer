@@ -1,7 +1,6 @@
 package skinsrestorer.bukkit;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -11,12 +10,10 @@ import net.minecraft.server.v1_7_R4.EnumGamemode;
 import net.minecraft.server.v1_7_R4.PacketPlayOutAbilities;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_7_R4.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_7_R4.PacketPlayOutExperience;
 import net.minecraft.server.v1_7_R4.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_7_R4.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_7_R4.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_7_R4.PacketPlayOutRespawn;
-import net.minecraft.server.v1_7_R4.PacketPlayOutUpdateHealth;
 import net.minecraft.server.v1_7_R4.PlayerAbilities;
 import net.minecraft.server.v1_7_R4.PlayerConnection;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
@@ -92,8 +89,6 @@ public class SkinFactoryv1_7_R4 extends Factory {
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
 			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
-			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
-			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
                 PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
@@ -103,11 +98,8 @@ public class SkinFactoryv1_7_R4 extends Factory {
 					playerCon.sendPacket(respawn);
 					playerCon.sendPacket(packetAbilities);
 					playerCon.sendPacket(slot);
-					playerCon.sendPacket(exp);
-					playerCon.sendPacket(health);
+					craftOnline.updateScaledHealth();
 					craftOnline.updateInventory();
-					Chunk chunk = player.getLocation().getChunk();
-					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
 					continue;
 				}
 				playerCon.sendPacket(removeEntity);
@@ -131,37 +123,4 @@ public class SkinFactoryv1_7_R4 extends Factory {
 	@Override
 	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile) {
 	}
-
-	/*
-	 * I will keep these methods there, because i will probably use them again.
-	 * private static Class<?> getCraftClass(String name) { String version =
-	 * Bukkit.getServer().getClass().getPackage().getName().replace(".",
-	 * ",").split(",")[3] + "."; String className = "org.bukkit.craftbukkit." +
-	 * version + name; Class<?> clazz = null; try { clazz =
-	 * Class.forName(className); } catch (ClassNotFoundException e) {
-	 * e.printStackTrace(); } return clazz; }
-	 * 
-	 * @SuppressWarnings("unused") private static Class<?> getNMSClass(String
-	 * name) { String version =
-	 * Bukkit.getServer().getClass().getPackage().getName().replace(".",
-	 * ",").split(",")[3] + "."; String className = "net.minecraft.server." +
-	 * version + name; Class<?> clazz = null; try { clazz =
-	 * Class.forName(className); } catch (ClassNotFoundException e) {
-	 * e.printStackTrace(); } return clazz; }
-	 * 
-	 * protected static void setValue(Object owner, Field field, Object value)
-	 * throws Exception { makeModifiable(field); field.set(owner, value); }
-	 * 
-	 * protected static void makeModifiable(Field nameField) throws Exception {
-	 * nameField.setAccessible(true); int modifiers = nameField.getModifiers();
-	 * Field modifierField = nameField.getClass().getDeclaredField("modifiers");
-	 * modifiers = modifiers & ~Modifier.FINAL;
-	 * modifierField.setAccessible(true); modifierField.setInt(nameField,
-	 * modifiers); }
-	 * 
-	 * @SuppressWarnings("unused") private Object getValue(Object instance,
-	 * String field) throws Exception { Field f =
-	 * instance.getClass().getDeclaredField(field); f.setAccessible(true);
-	 * return f.get(instance); }
-	 */
 }

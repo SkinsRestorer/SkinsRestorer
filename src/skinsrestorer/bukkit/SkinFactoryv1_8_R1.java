@@ -22,8 +22,6 @@ import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R1.PacketPlayOutPosition;
 import net.minecraft.server.v1_8_R1.PacketPlayOutRespawn;
 import net.minecraft.server.v1_8_R1.PacketPlayOutAbilities;
-import net.minecraft.server.v1_8_R1.PacketPlayOutExperience;
-import net.minecraft.server.v1_8_R1.PacketPlayOutUpdateHealth;
 import net.minecraft.server.v1_8_R1.PlayerAbilities;
 import net.minecraft.server.v1_8_R1.PlayerConnection;
 import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
@@ -103,8 +101,6 @@ public class SkinFactoryv1_8_R1 extends Factory {
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
 			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
-			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
-			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
 				PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
@@ -116,8 +112,7 @@ public class SkinFactoryv1_8_R1 extends Factory {
 					playerCon.sendPacket(packetAbilities);
 					playerCon.sendPacket(pos);
 					playerCon.sendPacket(slot);
-					playerCon.sendPacket(exp);
-					playerCon.sendPacket(health);
+					craftOnline.updateScaledHealth();
 					craftOnline.updateInventory();
 					Chunk chunk = l.getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());

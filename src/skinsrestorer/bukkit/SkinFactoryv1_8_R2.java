@@ -3,7 +3,6 @@ package skinsrestorer.bukkit;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R2.inventory.CraftItemStack;
@@ -22,8 +21,6 @@ import net.minecraft.server.v1_8_R2.PacketPlayOutPosition.EnumPlayerTeleportFlag
 import net.minecraft.server.v1_8_R2.PacketPlayOutRespawn;
 import net.minecraft.server.v1_8_R2.WorldSettings.EnumGamemode;
 import net.minecraft.server.v1_8_R2.PacketPlayOutAbilities;
-import net.minecraft.server.v1_8_R2.PacketPlayOutExperience;
-import net.minecraft.server.v1_8_R2.PacketPlayOutUpdateHealth;
 import net.minecraft.server.v1_8_R2.PlayerAbilities;
 import net.minecraft.server.v1_8_R2.PlayerConnection;
 import net.minecraft.server.v1_8_R2.PacketPlayOutEntityEquipment;
@@ -103,8 +100,6 @@ public class SkinFactoryv1_8_R2 extends Factory {
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
 			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
-			PacketPlayOutExperience exp = new PacketPlayOutExperience(player.getExp(),0,player.getLevel());
-			PacketPlayOutUpdateHealth health = new PacketPlayOutUpdateHealth((float) player.getHealth(), player.getFoodLevel(), player.getSaturation());
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
 				PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
@@ -116,11 +111,8 @@ public class SkinFactoryv1_8_R2 extends Factory {
 					playerCon.sendPacket(packetAbilities);
 					playerCon.sendPacket(pos);
 					playerCon.sendPacket(slot);
-					playerCon.sendPacket(exp);
-					playerCon.sendPacket(health);
+					craftOnline.updateScaledHealth();
 					craftOnline.updateInventory();
-					Chunk chunk = l.getChunk();
-					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
 					continue;
 				}
 				playerCon.sendPacket(removeEntity);
