@@ -75,14 +75,16 @@ public class PlayerCommands extends Command {
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
-						.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
-				player.sendMessage(component);
-				return;
+			if (!player.hasPermission("skinsrestorer.bypasscooldown")) {
+				if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
+					TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
+							.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
+					player.sendMessage(component);
+					return;
+				}
+				CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
+						ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 			}
-			CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
-					ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 				@Override
 				public void run() {
