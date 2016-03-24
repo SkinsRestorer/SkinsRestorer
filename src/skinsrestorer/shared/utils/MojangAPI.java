@@ -100,7 +100,7 @@ public class MojangAPI {
 			if (future.get() != null)
 				profile = future.get();
 		} catch (Exception e) {
-			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
+			throw new SkinFetchFailedException(e);
 		}
 
 		return profile;
