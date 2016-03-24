@@ -95,18 +95,24 @@ public class SkinFactoryv1_9_R1 extends Factory {
 					EnumGamemode.getById(player.getGameMode().getValue()));
 			PacketPlayOutPosition pos = new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(),
 					l.getPitch(), new HashSet<EnumPlayerTeleportFlags>(), 0);
-			PacketPlayOutEntityEquipment mainhand = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.MAINHAND, entityPlayer.getItemInMainHand());
-			PacketPlayOutEntityEquipment offhand = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.MAINHAND, entityPlayer.getItemInOffHand());
-			PacketPlayOutEntityEquipment helmet = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
-			PacketPlayOutEntityEquipment chestplate = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
-			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
-			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), EnumItemSlot.FEET, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
+			PacketPlayOutEntityEquipment mainhand = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.MAINHAND, entityPlayer.getItemInMainHand());
+			PacketPlayOutEntityEquipment offhand = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.OFFHAND, entityPlayer.getItemInOffHand());
+			PacketPlayOutEntityEquipment helmet = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
+			PacketPlayOutEntityEquipment chestplate = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.CHEST, CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
+			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.LEGS, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
+			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(),
+					EnumItemSlot.FEET, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
 			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
-			    PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
+				PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
 				if (online.equals(player)) {
 
 					playerCon.sendPacket(removeInfo);
