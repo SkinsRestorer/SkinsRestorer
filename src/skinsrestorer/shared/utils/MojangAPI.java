@@ -25,10 +25,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import skinsrestorer.libs.org.json.simple.JSONArray;
 import skinsrestorer.libs.org.json.simple.JSONObject;
@@ -51,14 +47,6 @@ public class MojangAPI {
 
 	public static Profile getProfile(final String nick) throws SkinFetchFailedException, IOException, ParseException {
 
-		Profile profile = null;
-
-		ExecutorService exe = Executors.newCachedThreadPool();
-
-		Future<Profile> future = exe.submit(new Callable<Profile>() {
-
-			@Override
-			public Profile call() throws Exception {
 				// open connection
 				HttpURLConnection connection = (HttpURLConnection) setupConnection(new URL(profileurl));
 				connection.setRequestMethod("POST");
@@ -95,31 +83,11 @@ public class MojangAPI {
 				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
 			}
 
-		});
-		try {
-			if (future.get() != null)
-				profile = future.get();
-		} catch (Exception e) {
-			throw new SkinFetchFailedException(e);
-		}
-
-		return profile;
-
-	}
-
 	public static SkinProfile getSkinProfile(final String id) throws IOException, ParseException, SkinFetchFailedException {
 		if (id.equals("")) {
 			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
 		}
 
-		SkinProfile sp = null;
-
-		ExecutorService exe = Executors.newCachedThreadPool();
-
-		Future<SkinProfile> future = exe.submit(new Callable<SkinProfile>() {
-
-			@Override
-			public SkinProfile call() throws Exception {
 				// open connection
 				HttpURLConnection connection = (HttpURLConnection) setupConnection(
 						new URL(skullbloburl + id.replace("-", "") + "?unsigned=false"));
@@ -148,19 +116,7 @@ public class MojangAPI {
 				}
 				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_SKIN_DATA);
 			}
-
-		});
-
-		try {
-			if (future.get() != null)
-				sp = future.get();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return sp;
-	}
-
+	
 	private static URLConnection setupConnection(URL url) throws IOException {
 		URLConnection connection = url.openConnection();
 		connection.setConnectTimeout(5000);
