@@ -99,6 +99,7 @@ public class SkinFactoryv1_7_R4 extends Factory {
 					playerCon.sendPacket(packetAbilities);
 					playerCon.sendPacket(slot);
 					craftOnline.updateScaledHealth();
+					craftOnline.getHandle().triggerHealthUpdate();
 					craftOnline.updateInventory();
 					continue;
 				}

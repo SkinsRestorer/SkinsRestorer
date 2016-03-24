@@ -113,6 +113,7 @@ public class SkinFactoryv1_8_R1 extends Factory {
 					playerCon.sendPacket(pos);
 					playerCon.sendPacket(slot);
 					craftOnline.updateScaledHealth();
+					craftOnline.getHandle().triggerHealthUpdate();
 					craftOnline.updateInventory();
 					Chunk chunk = l.getChunk();
 					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
