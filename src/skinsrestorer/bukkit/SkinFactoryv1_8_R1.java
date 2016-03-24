@@ -3,7 +3,6 @@ package skinsrestorer.bukkit;
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
@@ -115,8 +114,6 @@ public class SkinFactoryv1_8_R1 extends Factory {
 					craftOnline.updateScaledHealth();
 					craftOnline.getHandle().triggerHealthUpdate();
 					craftOnline.updateInventory();
-					Chunk chunk = l.getChunk();
-					player.getWorld().refreshChunk(chunk.getX(), chunk.getZ());
 					continue;
 				}
 				playerCon.sendPacket(removeEntity);
