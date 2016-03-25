@@ -76,7 +76,7 @@ public class MojangAPI {
 				if (jsonProfiles.size() > 0) {
 					JSONObject jsonProfile = (JSONObject) jsonProfiles.get(0);
 					if (jsonProfile.get("id") == null || jsonProfile.get("name") == null) {
-						throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
+						throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_PROBLEM);
 					}
 					return new Profile((String) jsonProfile.get("id"), (String) jsonProfile.get("name"));
 				}
@@ -84,9 +84,6 @@ public class MojangAPI {
 			}
 
 	public static SkinProfile getSkinProfile(final String id) throws IOException, ParseException, SkinFetchFailedException {
-		if (id.equals("")) {
-			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_OVERLOAD);
-		}
 
 				// open connection
 				HttpURLConnection connection = (HttpURLConnection) setupConnection(
@@ -104,6 +101,9 @@ public class MojangAPI {
 				JSONObject obj = (JSONObject) new JSONParser().parse(result);
 				String username = (String) obj.get("name");
 				JSONArray properties = (JSONArray) (obj).get("properties");
+				if (username==null){
+					throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_PROBLEM);
+				}
 				for (int i = 0; i < properties.size(); i++) {
 					JSONObject property = (JSONObject) properties.get(i);
 					String name = (String) property.get("name");

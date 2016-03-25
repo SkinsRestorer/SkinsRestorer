@@ -76,9 +76,9 @@ public class SkinFetchUtils {
 							c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), RATE_LIMITED(c(LocaleStorage
 									.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(c(LocaleStorage
 											.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(c(LocaleStorage
-													.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_OVERLOAD(
+													.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_PROBLEM(
 															c(LocaleStorage
-																	.getInstance().SKIN_FETCH_FAILED_MCAPI_OVERLOAD));
+																	.getInstance().SKIN_FETCH_FAILED_MCAPI_PROBLEM));
 
 			private String exceptionCause;
 

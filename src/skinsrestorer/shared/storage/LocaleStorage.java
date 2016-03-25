@@ -51,7 +51,7 @@ public class LocaleStorage {
 	public String SKIN_FETCH_FAILED_NO_SKIN_DATA = "&cNo skin data found for player with that name";
 	public String SKIN_FETCH_FAILED_PARSE_FAILED = "&cCan't decode skin data";
 	public String SKIN_FETCH_FAILED_RATE_LIMITED = "&cRate limited";
-	public String SKIN_FETCH_FAILED_MCAPI_OVERLOAD = "&cMcapi is overloaded.";
+	public String SKIN_FETCH_FAILED_MCAPI_PROBLEM = "&cAn error occured while trying to connect to mcapi.ca for skin.";
 	public String SKIN_FETCH_FAILED_ERROR = "&cAn error has occured";
 	public String SKIN_DATA_DROPPED = "&9Skin data for player %player dropped";
 	public String SKIN_DATA_SAVED = "&9Skin data saved successfully.";
