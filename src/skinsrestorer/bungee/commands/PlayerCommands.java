@@ -89,6 +89,14 @@ public class PlayerCommands extends Command {
 				public void run() {
 
 					String from = args[1];
+					if (!player.hasPermission("skinsrestorer.disabledskins")){
+						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS){
+							if (args[1].equalsIgnoreCase(disabledSkin)){
+								player.sendMessage(LocaleStorage.getInstance().DISABLED_SKIN);
+								return;
+							}
+						}
+					}
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
