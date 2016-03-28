@@ -12,8 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import skinsrestorer.bukkit.commands.AdminCommands;
-import skinsrestorer.bukkit.commands.PlayerCommands;
+import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -36,7 +35,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	}
 
 	static Logger log;
-	public ConsoleCommandSender log1 = null;
+	public ConsoleCommandSender coloredLog = null;
 	private skinsrestorer.shared.utils.Updater updater;
 
 	private String version;
@@ -50,7 +49,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	public void onEnable() {
 		instance = this;
 		log = getLogger();
-		log1 = Bukkit.getConsoleSender();
+		coloredLog = Bukkit.getConsoleSender();
 		getDataFolder().mkdirs();
 		ConfigStorage.init(getDataFolder());
 		LocaleStorage.init(getDataFolder());
@@ -63,13 +62,13 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
 
-		getCommand("skinsrestorer").setExecutor(new AdminCommands());
-		getCommand("skin").setExecutor(new PlayerCommands());
+		getCommand("skinsrestorer").setExecutor(new Commands());
+		getCommand("skin").setExecutor(new Commands());
 
 		factory = new Factory();
 		if (getServer().getPluginManager().isPluginEnabled("AutoIn")) {
-			log1.sendMessage(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
-			log1.sendMessage(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
+			coloredLog.sendMessage(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
+			coloredLog.sendMessage(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
 			autoIn = true;
 		}
 
@@ -78,7 +77,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			updater.checkUpdates();
 		
 		} else {
-			log1.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
+			coloredLog.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
 			updater = null;
 		}
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
@@ -90,9 +89,9 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		try {
 			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory" + getVersion());
 			this.factory = (Factory) factory.newInstance();
-			log1.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getVersion());
+			coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getVersion());
 		} catch (ClassNotFoundException e) {
-			log1.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getVersion()
+			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getVersion()
 					+ " is not supported by SkinsModule.");
 			Bukkit.getPluginManager().disablePlugin(this);
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -100,26 +99,26 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		}
 		if (updater != null) {
 			if (Updater.updateAvailable()) {
-				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-				log1.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
-				log1.sendMessage(ChatColor.YELLOW + " ");
-				log1.sendMessage(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
-				log1.sendMessage(ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
-				log1.sendMessage(
+				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				coloredLog.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
+				coloredLog.sendMessage(ChatColor.YELLOW + " ");
+				coloredLog.sendMessage(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
+				coloredLog.sendMessage(ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
+				coloredLog.sendMessage(
 						ChatColor.AQUA + "    You are running " + ChatColor.RED + "v" + getDescription().getVersion());
-				log1.sendMessage(ChatColor.YELLOW + " ");
-				log1.sendMessage(ChatColor.YELLOW + "    Download at" + ChatColor.GREEN
+				coloredLog.sendMessage(ChatColor.YELLOW + " ");
+				coloredLog.sendMessage(ChatColor.YELLOW + "    Download at" + ChatColor.GREEN
 						+ " https://www.spigotmc.org/resources/skinsrestorer.2124/");
-				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			} else {
-				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-				log1.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater");
-				log1.sendMessage(ChatColor.YELLOW + " ");
-				log1.sendMessage(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
+				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				coloredLog.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater");
+				coloredLog.sendMessage(ChatColor.YELLOW + " ");
+				coloredLog.sendMessage(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
 						+ getDescription().getVersion());
-				log1.sendMessage(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
-				log1.sendMessage(ChatColor.YELLOW + " ");
-				log1.sendMessage(ChatColor.DARK_GREEN + "==============================================");
+				coloredLog.sendMessage(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
+				coloredLog.sendMessage(ChatColor.YELLOW + " ");
+				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
 	}
