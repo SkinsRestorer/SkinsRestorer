@@ -36,6 +36,7 @@ import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 import skinsrestorer.shared.utils.apacheutils.IOUtils;
 
 public class MojangAPI {
@@ -58,6 +59,9 @@ public class MojangAPI {
 				writer.close();
 				// check response code
 				if (connection.getResponseCode() == 429) {
+					if (!ConfigStorage.getInstance().MCAPI_ENABLED){
+						throw new SkinFetchFailedException(Reason.RATE_LIMITED);
+					}
 					connection = (HttpURLConnection) setupConnection(
 							new URL(mcapipurl.replace("{username}", nick).replace("'", String.valueOf('"'))));
 					connection.setRequestMethod("GET");
@@ -90,6 +94,9 @@ public class MojangAPI {
 						new URL(skullbloburl + id.replace("-", "") + "?unsigned=false"));
 				// check response code
 				if (connection.getResponseCode() == 429) {
+					if (!ConfigStorage.getInstance().MCAPI_ENABLED){
+						throw new SkinFetchFailedException(Reason.RATE_LIMITED);
+					}
 					connection = (HttpURLConnection) setupConnection(
 							new URL(mcapiurl.replace("{uuid}", id.replace("-", ""))));
 					System.out.println(LocaleStorage.getInstance().TRYING_TO_USE_NCAPI);
