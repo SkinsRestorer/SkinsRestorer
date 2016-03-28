@@ -1,0 +1,43 @@
+##############################################
+#           SkinsRestorer Config             #
+#            Made By Th3Tr0LLeR              #
+##############################################
+
+
+
+#Should SkinsRestorer check for updates ?
+Update Check: true
+
+#You can enable that if you're using AutoIn.
+Use AutoIn Skins: false
+
+#This can be enabled if you are experiencing bot attacks.
+Use Bot Feature: false
+
+#This is for preventing skin change spam.
+Skin Change Cooldown: 30
+
+#Mojang has a limit for getting skins.
+#This website uses proxies to get the skin data
+#From mojang, so you will not be limited.
+#However. If you do not trust mcapi.ca, you can disable that option.
+MCAPI:
+  Enabled: true
+  Get Profile URL: https://mcapi.ca/SR/?player\u003d{username}
+  Get SkinProfile URL: https://mcapi.ca/name/uuid/{uuid}
+
+#A list of disabled skins. A permision will be needed for them.
+Disabled Skins:
+- SomeSkin
+- AnotherSkin
+
+#If this is enabled and configured SkinsRestorer will keep the skins
+#in a MySQL database. This is using less performance.
+MySQL:
+  Enabled: false
+  Host: localhost
+  Port: 3306
+  Database: db
+  Table: Skins
+  Username: root
+  Password: pass

@@ -1,48 +1,19 @@
 package skinsrestorer.shared.storage;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
-import skinsrestorer.libs.com.google.gson.Gson;
-import skinsrestorer.libs.com.google.gson.GsonBuilder;
+import skinsrestorer.shared.utils.DataFiles;
 
 public class ConfigStorage {
-
-	private static final String localefile = "config.json";
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-	private static final ConfigStorage instance = new ConfigStorage();
-
-	public static final ConfigStorage getInstance() {
-		return instance;
-	}
-
-	public static void init(File datafolder) {
-		File fullpath = new File(datafolder, localefile);
-		try (FileReader reader = new FileReader(fullpath)) {
-			ConfigStorage other = gson.fromJson(reader, ConfigStorage.class);
-			for (Field field : ConfigStorage.class.getFields()) {
-				Object value = field.get(other);
-				if (value != null) {
-					field.set(instance, value);
-				}
-			}
-		} catch (IOException | IllegalArgumentException | IllegalAccessException e) {
-		}
-		try (FileWriter writer = new FileWriter(fullpath)) {
-			datafolder.mkdirs();
-			writer.write(gson.toJson(instance));
-		} catch (IOException e) {
-		}
-	}
-
+	public DataFiles config = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config");	
 	public boolean UPDATE_CHECK = true;
 	public boolean USE_AUTOIN_SKINS = false;
 	public boolean USE_BOT_FEATURE = false;
 	public int SKIN_CHANGE_COOLDOWN = 30;
+	public boolean MCAPI_ENABLED = true;
 	public String GET_PROFILE_URL = "https://mcapi.ca/SR/?player={username}";
 	public String GET_SKIN_PROFILE_URL = "https://mcapi.ca/name/uuid/{uuid}";
 	public boolean USE_MYSQL = false;
@@ -52,5 +23,30 @@ public class ConfigStorage {
 	public String MYSQL_TABLE = "Skins";
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
-
+	public List<String> DISABLED_SKINS = new ArrayList<String>();
+	
+	private static final ConfigStorage instance = new ConfigStorage();
+	public static final ConfigStorage getInstance() {
+		return instance;
+	}
+    
+	public void init(InputStream stream, boolean overWrite) {
+		config.copyDefaults(stream, overWrite);
+		config.reload();
+		UPDATE_CHECK = config.getBoolean("Update Check");
+		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
+		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
+		SKIN_CHANGE_COOLDOWN = config.getInt("Skin Change Cooldown");
+		MCAPI_ENABLED = config.getBoolean("MCAPI.Enabled");
+		GET_PROFILE_URL = config.getString("MCAPI.Get Profile URL");
+		GET_SKIN_PROFILE_URL = config.getString("MCAPI.Get SkinProfile URL");
+		DISABLED_SKINS = config.getStringList("Disabled Skins");
+		USE_MYSQL = config.getBoolean("MySQL.Enabled");
+		MYSQL_HOST = config.getString("MySQL.Host");
+		MYSQL_PORT = config.getString("MySQL.Port");
+		MYSQL_DATABASE = config.getString("MySQL.Database");
+		MYSQL_TABLE = config.getString("MySQL.Table");
+		MYSQL_USERNAME = config.getString("MySQL.Username");
+		MYSQL_PASSWORD = config.getString("MySQL.Password");
+	}
 }

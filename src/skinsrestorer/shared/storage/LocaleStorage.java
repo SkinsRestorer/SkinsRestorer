@@ -46,6 +46,7 @@ public class LocaleStorage {
 	public String DO_YOU_WANT_SKIN = "&9Click me if you want your skin.";
 
 	public String PLAYER_HAS_NO_PERMISSION = "&cYou don't have permission to do this!";
+	public String DISABLED_SKIN = "&cThis skin is disabled by an Administrator";
 
 	public String SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER = "&cCan't find a valid premium player with that name";
 	public String SKIN_FETCH_FAILED_NO_SKIN_DATA = "&cNo skin data found for player with that name";

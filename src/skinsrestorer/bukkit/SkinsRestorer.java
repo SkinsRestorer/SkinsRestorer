@@ -26,6 +26,7 @@ import skinsrestorer.shared.utils.Updater;
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
 	private boolean autoIn = false;
 	static SkinsRestorer instance;
 	boolean isServerPremium = Bukkit.getOnlineMode();
@@ -51,7 +52,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		log = getLogger();
 		coloredLog = Bukkit.getConsoleSender();
 		getDataFolder().mkdirs();
-		ConfigStorage.init(getDataFolder());
+		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
 		LocaleStorage.init(getDataFolder());
 		if (ConfigStorage.getInstance().USE_MYSQL)
 			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
@@ -122,7 +123,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			}
 		}
 	}
-
+	
 	@Override
 	public void onDisable() {
 		SkinStorage.getInstance().saveData();

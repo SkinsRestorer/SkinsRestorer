@@ -121,6 +121,12 @@ public class Commands implements CommandExecutor {
 			@Override
 			public void run() {
 				String from = args[1];
+				for (String disabledSkins : ConfigStorage.getInstance().DISABLED_SKINS){
+					if (disabledSkins.equals(from)){
+					player.sendMessage(C.c(LocaleStorage.getInstance().DISABLED_SKIN));
+					return;
+					}
+				}
 				try {
 					SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 					SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);

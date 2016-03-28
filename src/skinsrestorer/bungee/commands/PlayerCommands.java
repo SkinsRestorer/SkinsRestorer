@@ -54,8 +54,7 @@ public class PlayerCommands extends Command {
 			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
 			sender.sendMessage(component);
 			return;
-		}
-		if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+		}else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_HELP));
 			return;
 		}
