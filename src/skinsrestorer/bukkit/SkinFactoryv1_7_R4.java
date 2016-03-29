@@ -21,6 +21,7 @@ import net.minecraft.util.com.mojang.authlib.properties.Property;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 
 public class SkinFactoryv1_7_R4 extends Factory {
 
@@ -117,11 +118,5 @@ public class SkinFactoryv1_7_R4 extends Factory {
 			// Player logging in isnt finished and the method will not be used.
 			// Player skin is already applied.
 		}
-	}
-
-	// Just adding that, so the class will not be abstract. It will never be
-	// used.
-	@Override
-	public void updateSkin(Player player, com.mojang.authlib.GameProfile profile) {
 	}
 }

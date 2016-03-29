@@ -19,6 +19,7 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;

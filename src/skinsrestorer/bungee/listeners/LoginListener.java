@@ -10,7 +10,6 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -41,7 +40,7 @@ public class LoginListener implements Listener {
 			public void run() {
 				try {
 					skinprofile.attemptUpdateBungee();
-					SkinFactoryBungee.getFactory().applySkin(event.getPlayer());
+					SkinsRestorer.getInstance().getFactory().applySkin(event.getPlayer());
 				} catch (SkinFetchFailedException e) {
 					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
 				}

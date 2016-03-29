@@ -31,6 +31,7 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
@@ -45,6 +46,7 @@ public class SkinsRestorer extends Plugin {
 
 	private Logger log;
 	private Updater updater;
+	public Factory factory;
 	private boolean autoIn = false;
 
 	public void logInfo(String message) {
@@ -83,7 +85,17 @@ public class SkinsRestorer extends Plugin {
 			this.getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
 
-		new SkinFactoryBungee();
+		try {
+			Class<?> factory = Class.forName("skinsrestorer.bungee.SkinFactoryBungee");
+			this.factory = (Factory) factory.newInstance();
+			log.info("[SkinsRestorer] Loaded Skin Factory for Bungeecord");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			getProxy().getPluginManager().unregisterListeners(this);
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
@@ -135,6 +147,10 @@ public class SkinsRestorer extends Plugin {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
 
+	public Factory getFactory(){
+		return factory;
+	}
+	
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}
