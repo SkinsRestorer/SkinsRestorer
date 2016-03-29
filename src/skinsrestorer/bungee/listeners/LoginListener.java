@@ -50,7 +50,7 @@ public class LoginListener implements Listener {
 		});
 	}
 
-	// load skin data on login
+	// Apply skin on join.
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPreLogin(final ServerConnectedEvent event) {
 		if (ConfigStorage.getInstance().USE_BOT_FEATURE == false) {
