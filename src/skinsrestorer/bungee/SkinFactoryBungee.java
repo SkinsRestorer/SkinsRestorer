@@ -20,10 +20,9 @@ import skinsrestorer.shared.utils.Factory;
 public class SkinFactoryBungee extends Factory {
 
 	private static Field profileField = null;
-	public static SkinFactoryBungee skinfactory;
+	private static SkinFactoryBungee skinfactory;
 
 	public SkinFactoryBungee() {
-		skinfactory = this;
 		profileField = getProfileField();
 	}
     @Deprecated

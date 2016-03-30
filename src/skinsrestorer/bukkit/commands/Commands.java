@@ -121,7 +121,7 @@ public class Commands implements CommandExecutor {
 			CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
 					ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 		}
-		SkinsRestorer.executor.execute(new Runnable() {
+		SkinsRestorer.getExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
 				String from = args[1];
@@ -173,7 +173,7 @@ public class Commands implements CommandExecutor {
 	
 	//Skin update command
 	public void updateCommand(final CommandSender sender, final String[] args){
-		SkinsRestorer.executor.execute(new Runnable() {
+		SkinsRestorer.getExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
 				String name = args[1];
@@ -194,7 +194,7 @@ public class Commands implements CommandExecutor {
 	
 	//Admin skin change command.
 	public void changeCommand(final CommandSender sender, final String[] args){
-		SkinsRestorer.executor.execute(new Runnable() {
+		SkinsRestorer.getExecutor().execute(new Runnable() {
 			@Override
 			public void run() {
 				String from = args[2];

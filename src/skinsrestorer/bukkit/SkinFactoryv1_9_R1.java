@@ -33,15 +33,7 @@ import skinsrestorer.shared.utils.Factory;
 
 public class SkinFactoryv1_9_R1 extends Factory {
 
-	public static SkinFactoryv1_9_R1 skinfactory;
-
-	public SkinFactoryv1_9_R1() {
-		skinfactory = this;
-	}
-
-	public static SkinFactoryv1_9_R1 getFactory() {
-		return skinfactory;
-	}
+	public SkinFactoryv1_9_R1() {}
 
 	// Apply the skin to the player.
 	@Override

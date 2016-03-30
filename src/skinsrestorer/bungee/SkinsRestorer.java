@@ -46,7 +46,7 @@ public class SkinsRestorer extends Plugin {
 
 	private Logger log;
 	private Updater updater;
-	public Factory factory;
+	private Factory factory;
 	private boolean autoIn = false;
 
 	public void logInfo(String message) {
