@@ -28,9 +28,10 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-	public static ScheduledExecutorService getExecutor(){
+	public static ScheduledExecutorService getExecutor() {
 		return executor;
 	}
+
 	private boolean autoIn = false;
 	private static SkinsRestorer instance;
 
@@ -56,7 +57,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		coloredLog = Bukkit.getConsoleSender();
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
-		LocaleStorage.init(getDataFolder());
+		LocaleStorage.init();
 		if (ConfigStorage.getInstance().USE_MYSQL)
 			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
 					ConfigStorage.getInstance().MYSQL_DATABASE, ConfigStorage.getInstance().MYSQL_USERNAME,
@@ -79,7 +80,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
-		
+
 		} else {
 			coloredLog.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
 			updater = null;
@@ -107,7 +108,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				coloredLog.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
 				coloredLog.sendMessage(ChatColor.YELLOW + " ");
 				coloredLog.sendMessage(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
-				coloredLog.sendMessage(ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
+				coloredLog.sendMessage(
+						ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
 				coloredLog.sendMessage(
 						ChatColor.AQUA + "    You are running " + ChatColor.RED + "v" + getDescription().getVersion());
 				coloredLog.sendMessage(ChatColor.YELLOW + " ");
@@ -126,7 +128,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onDisable() {
 		SkinStorage.getInstance().saveData();
@@ -157,7 +159,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
-	
+
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}

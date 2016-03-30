@@ -59,7 +59,7 @@ public class SkinsRestorer extends Plugin {
 		log = getLogger();
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResourceAsStream("config.yml"), false);
-		LocaleStorage.init(getDataFolder());
+		LocaleStorage.init();
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
@@ -95,7 +95,7 @@ public class SkinsRestorer extends Plugin {
 		} catch (InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
@@ -147,10 +147,10 @@ public class SkinsRestorer extends Plugin {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
 
-	public Factory getFactory(){
+	public Factory getFactory() {
 		return factory;
 	}
-	
+
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}
