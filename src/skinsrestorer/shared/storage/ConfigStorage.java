@@ -24,6 +24,7 @@ public class ConfigStorage {
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
 	public List<String> DISABLED_SKINS = new ArrayList<String>();
+	public boolean DISABLE_SKIN_COMMAND = false;
 	
 	private static final ConfigStorage instance = new ConfigStorage();
 	public static final ConfigStorage getInstance() {
@@ -32,7 +33,14 @@ public class ConfigStorage {
     
 	public void init(InputStream stream, boolean overWrite) {
 		config.copyDefaults(stream, overWrite);
+		//It should add the new option :)
+		if (config.getString("Disable Skin Command")==null){
+			config.set("Disable Skin Command", false);
+			config.comment("Disable Skin Command", new String[]{"Turn this to true if you want to disable","The /skin command."});
+		    config.save();
+		}
 		config.reload();
+		
 		UPDATE_CHECK = config.getBoolean("Update Check");
 		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
 		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
@@ -48,5 +56,6 @@ public class ConfigStorage {
 		MYSQL_TABLE = config.getString("MySQL.Table");
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
+		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");
 	}
 }

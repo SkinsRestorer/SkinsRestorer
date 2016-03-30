@@ -41,6 +41,10 @@ public class Commands implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
 		if (command.getName().equalsIgnoreCase("skin")){
+		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND){
+			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
+			return true;
+		}
 		if (!sender.hasPermission("skinsrestorer.playercmds")) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 			return true;

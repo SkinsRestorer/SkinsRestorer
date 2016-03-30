@@ -340,6 +340,38 @@ public class DataFiles {
 	public File getFile() {
 		return file;
 	}
+	
+	public void comment(String path, String comment) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						for (int x = content.size(); x >= lineNumber; x--) {
+							content.put(x + 1, content.get(x));
+							content.remove(content.get(x));
+						}
+						content.put(lineNumber, tab(counter) + "# " + comment);
+						break;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+	}
+	
+	public void comment(String path, String[] comment) {
+		if (pathExists(path))
+		for (String c : comment) comment(path, c);
+		else throw new NullPointerException();
+	}
+	
     ///////////////////////////////// Unused Methods //////////////////////////////////
     /* 
 	public static Set<DataFiles> getFolderContents(String folderLoc) {
@@ -438,37 +470,6 @@ public class DataFiles {
 			lineNumber++;
 		}
 		throw new NullPointerException();
-	}
-	
-	public void comment(String path, String comment) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						for (int x = content.size(); x >= lineNumber; x--) {
-							content.put(x + 1, content.get(x));
-							content.remove(content.get(x));
-						}
-						content.put(lineNumber, tab(counter) + "# " + comment);
-						break;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-	}
-
-	public void comment(String path, String[] comment) {
-		if (pathExists(path))
-		for (String c : comment) comment(path, c);
-		else throw new NullPointerException();
 	}
 
 	public void removePath(String path) {

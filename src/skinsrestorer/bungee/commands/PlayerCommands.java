@@ -43,6 +43,10 @@ public class PlayerCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
+		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND){
+			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
+			return;
+		}
 		if (!(sender instanceof ProxiedPlayer)) {
 			TextComponent component = new TextComponent("This commands are only for players");
 			sender.sendMessage(component);

@@ -41,3 +41,7 @@ MySQL:
   Table: Skins
   Username: root
   Password: pass
+
+#Turn this to true if you want to disable
+#The /skin command.
+Disable Skin Command: false
