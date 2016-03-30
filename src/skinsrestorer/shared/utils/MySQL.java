@@ -21,6 +21,7 @@ public class MySQL {
 
 	private Connection con;
 	private String host, port, database, username, password;
+	private ExecutorService exe;
 
 	public MySQL(String host, String port, String database, String username, String password) {
 		this.host = host;
@@ -28,12 +29,13 @@ public class MySQL {
 		this.database = database;
 		this.username = username;
 		this.password = password;
+		this.exe = Executors.newCachedThreadPool();
 		openConnection();
 	}
 
 	public void openConnection() {
 		if (!isConnected()) {
-			new Thread(new Runnable() {
+			exe.execute(new Runnable() {
 				@Override
 				public void run() {
 					try {
@@ -46,7 +48,7 @@ public class MySQL {
 					}
 				}
 
-			}).run();
+			});
 		}
 	}
 
@@ -55,7 +57,7 @@ public class MySQL {
 			try {
 				con.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
 		}
 	}
@@ -64,14 +66,14 @@ public class MySQL {
 		try {
 			return con != null && !con.isClosed();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 		}
 		return false;
 	}
 
 	public void execute(final PreparedStatement ps) {
 		if (isConnected()) {
-			new Thread(new Runnable() {
+			exe.execute(new Runnable() {
 
 				@Override
 				public void run() {
@@ -79,10 +81,11 @@ public class MySQL {
 						ps.execute();
 						ps.close();
 					} catch (SQLException e) {
+						System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 					}
 				}
 
-			}).run();
+			});
 		}
 	}
 
@@ -100,7 +103,7 @@ public class MySQL {
 				return ps;
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 		}
 
 		return null;
@@ -110,7 +113,6 @@ public class MySQL {
 		CachedRowSet rowSet = null;
 		if (isConnected()) {
 			try {
-				ExecutorService exe = Executors.newCachedThreadPool();
 
 				Future<CachedRowSet> future = exe.submit(new Callable<CachedRowSet>() {
 					@Override
@@ -127,7 +129,7 @@ public class MySQL {
 								return crs;
 							}
 						} catch (SQLException e) {
-							e.printStackTrace();
+							System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 						}
 
 						return null;
@@ -138,7 +140,7 @@ public class MySQL {
 					rowSet = future.get();
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
 		}
 		return rowSet;
