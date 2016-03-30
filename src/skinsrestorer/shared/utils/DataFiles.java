@@ -10,11 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 public class DataFiles {
 	private File file;
@@ -128,152 +126,6 @@ public class DataFiles {
 		}
 		
 	}
- 
-	public void rename(String path, String pathName) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						content.put(lineNumber, tab(counter) + pathName);
-						break;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-	}
-	
-	public int lineNumber(String path) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						return lineNumber;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-		throw new NullPointerException();
-	}
-	
-	public void comment(String path, String comment) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						for (int x = content.size(); x >= lineNumber; x--) {
-							content.put(x + 1, content.get(x));
-							content.remove(content.get(x));
-						}
-						content.put(lineNumber, tab(counter) + "# " + comment);
-						break;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-	}
-
-	public void comment(String path, String[] comment) {
-		if (pathExists(path))
-		for (String c : comment) comment(path, c);
-		else throw new NullPointerException();
-	}
-
-	public void removePath(String path) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						int last = lineNumber;
-						int diff = lineNumber;
-						lineNumber++;
-						while (content.get(lineNumber) != null && (isListing(content.get(lineNumber)) || content.get(lineNumber).startsWith(tab(counter + 1)) || isCommented(content.get(lineNumber)))) {
-							if (!isCommented(content.get(lineNumber))) {
-								diff = lineNumber;
-							}
-							lineNumber++;
-						}
-						lineNumber = diff + 1;
-						for (int i = last; i < lineNumber; i++) {
-							content.remove(i);
-						}
-						for (int i = last; content.get(lineNumber) != null; i++){
-							content.put(i, content.get(lineNumber));
-							content.remove(lineNumber);
-							lineNumber++;
-						}
-						return;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-		throw new NullPointerException();
-	}
-
-	public boolean removeComments(String path) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						int last = lineNumber - 1;
-						while (isCommented(content.get(last))) {
-							last--;
-						}
-						int diff = last - lineNumber + 1;
-						if (diff > 0) {
-							while (content.get(lineNumber) != null) {
-								content.put(lineNumber + (diff), content.get(lineNumber));
-								content.remove(lineNumber);
-								lineNumber++;
-							}
-							return true;
-						}
-						return false;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-		throw new NullPointerException();
-	}
 
 	public Object get(String path) {
 		String value = null;
@@ -296,36 +148,6 @@ public class DataFiles {
 			lineNumber++;
 		}
 		return value;
-	}
-
-	public Set<String> getPaths(String path) {
-		Set<String> paths = new HashSet<>();
-		int lineNumber = 1;
-		int counter = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						counter++;
-						lineNumber++;
-						break;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-		while (content.get(lineNumber) != null && (content.get(lineNumber).startsWith(tab(counter)) || isCommented(content.get(lineNumber)))) {
-			if (!isCommented(content.get(lineNumber)) && !content.get(lineNumber).startsWith(tab(counter + 1)) && !isListing(content.get(lineNumber))) {
-				paths.add(content.get(lineNumber).trim().substring(0, content.get(lineNumber).trim().indexOf(":")));
-			}
-			lineNumber++;
-		}
-		return paths;
 	}
 
 	public String getContents() {
@@ -396,50 +218,6 @@ public class DataFiles {
 		return list;
 	}
 
-	public List<Integer> getIntList(String path) {
-		List<Integer> list = new ArrayList<Integer>();
-		getList(path);
-		int counter = 0;
-		while (counter < listings.size()) {
-			list.add(Integer.parseInt(listings.get(counter).toString().trim()));
-			counter++;
-		}
-		return list;
-	}
-
-	public List<Long> getLongList(String path) {
-		List<Long> list = new ArrayList<Long>();
-		getList(path);
-		int counter = 0;
-		while (counter < listings.size()) {
-			list.add(Long.parseLong(listings.get(counter).toString().trim()));
-			counter++;
-		}
-		return list;
-	}
-
-	public List<Double> getDoubleList(String path) {
-		List<Double> list = new ArrayList<Double>();
-		getList(path);
-		int counter = 0;
-		while (counter < listings.size()) {
-			list.add(Double.parseDouble(listings.get(counter).toString().trim()));
-			counter++;
-		}
-		return list;
-	}
- 
-	public List<Boolean> getBooleanList(String path) {
-		List<Boolean> list = new ArrayList<Boolean>();
-		getList(path);
-		int counter = 0;
-		while (counter < listings.size()) {
-			list.add(Boolean.parseBoolean(listings.get(counter).toString().trim()));
-			counter++;
-		}
-		return list;
-	}
-
 	public String getString(String path) {
 		if (get(path) != null) {
 			return get(path).toString();
@@ -457,24 +235,6 @@ public class DataFiles {
 
 	public int getInt(String path) {
 		return Integer.parseInt(get(path).toString().trim());
-	}
-
-	public long getLong(String path) {
-		return Long.parseLong(get(path).toString().trim());
-	}
- 
-	public double getDouble(String path) {
-		return Double.parseDouble(get(path).toString().trim());
-	}
- 
-	public float getFloat(String path) {
-		return Float.parseFloat(get(path).toString().trim());
-	}
-
-    @Deprecated
-	public DataFiles copyDefaults(String pathToResource, boolean overWrite) {
-		InputStream is = (DataFiles.class.getClassLoader().getResourceAsStream(pathToResource));
-		return copyDefaults(is, overWrite);
 	}
  
 	public DataFiles copyDefaults(InputStream is, boolean overWrite) {
@@ -580,7 +340,40 @@ public class DataFiles {
 	public File getFile() {
 		return file;
 	}
-
+	
+	public void comment(String path, String comment) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						for (int x = content.size(); x >= lineNumber; x--) {
+							content.put(x + 1, content.get(x));
+							content.remove(content.get(x));
+						}
+						content.put(lineNumber, tab(counter) + "# " + comment);
+						break;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+	}
+	
+	public void comment(String path, String[] comment) {
+		if (pathExists(path))
+		for (String c : comment) comment(path, c);
+		else throw new NullPointerException();
+	}
+	
+    ///////////////////////////////// Unused Methods //////////////////////////////////
+    /* 
 	public static Set<DataFiles> getFolderContents(String folderLoc) {
 		Set<DataFiles> files = new HashSet<>();
 		File file = new File(folderLoc);
@@ -594,4 +387,213 @@ public class DataFiles {
 		}
 		return null;
 	}
+	
+	public float getFloat(String path) {
+		return Float.parseFloat(get(path).toString().trim());
+	}
+	
+	public long getLong(String path) {
+		return Long.parseLong(get(path).toString().trim());
+	}
+	
+	public List<Double> getDoubleList(String path) {
+		List<Double> list = new ArrayList<Double>();
+		getList(path);
+		int counter = 0;
+		while (counter < listings.size()) {
+			list.add(Double.parseDouble(listings.get(counter).toString().trim()));
+			counter++;
+		}
+		return list;
+	}
+ 
+	public List<Boolean> getBooleanList(String path) {
+		List<Boolean> list = new ArrayList<Boolean>();
+		getList(path);
+		int counter = 0;
+		while (counter < listings.size()) {
+			list.add(Boolean.parseBoolean(listings.get(counter).toString().trim()));
+			counter++;
+		}
+		return list;
+	}
+	
+	public double getDouble(String path) {
+		return Double.parseDouble(get(path).toString().trim());
+	}
+
+    @Deprecated
+	public DataFiles copyDefaults(String pathToResource, boolean overWrite) {
+		InputStream is = (DataFiles.class.getClassLoader().getResourceAsStream(pathToResource));
+		return copyDefaults(is, overWrite);
+	}
+	
+	public List<Integer> getIntList(String path) {
+		List<Integer> list = new ArrayList<Integer>();
+		getList(path);
+		int counter = 0;
+		while (counter < listings.size()) {
+			list.add(Integer.parseInt(listings.get(counter).toString().trim()));
+			counter++;
+		}
+		return list;
+	}
+
+	public List<Long> getLongList(String path) {
+		List<Long> list = new ArrayList<Long>();
+		getList(path);
+		int counter = 0;
+		while (counter < listings.size()) {
+			list.add(Long.parseLong(listings.get(counter).toString().trim()));
+			counter++;
+		}
+		return list;
+	}
+	
+	
+	public int lineNumber(String path) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						return lineNumber;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+		throw new NullPointerException();
+	}
+
+	public void removePath(String path) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						int last = lineNumber;
+						int diff = lineNumber;
+						lineNumber++;
+						while (content.get(lineNumber) != null && (isListing(content.get(lineNumber)) || content.get(lineNumber).startsWith(tab(counter + 1)) || isCommented(content.get(lineNumber)))) {
+							if (!isCommented(content.get(lineNumber))) {
+								diff = lineNumber;
+							}
+							lineNumber++;
+						}
+						lineNumber = diff + 1;
+						for (int i = last; i < lineNumber; i++) {
+							content.remove(i);
+						}
+						for (int i = last; content.get(lineNumber) != null; i++){
+							content.put(i, content.get(lineNumber));
+							content.remove(lineNumber);
+							lineNumber++;
+						}
+						return;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+		throw new NullPointerException();
+	}
+
+	public boolean removeComments(String path) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						int last = lineNumber - 1;
+						while (isCommented(content.get(last))) {
+							last--;
+						}
+						int diff = last - lineNumber + 1;
+						if (diff > 0) {
+							while (content.get(lineNumber) != null) {
+								content.put(lineNumber + (diff), content.get(lineNumber));
+								content.remove(lineNumber);
+								lineNumber++;
+							}
+							return true;
+						}
+						return false;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+		throw new NullPointerException();
+	}
+	
+	public Set<String> getPaths(String path) {
+		Set<String> paths = new HashSet<>();
+		int lineNumber = 1;
+		int counter = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						counter++;
+						lineNumber++;
+						break;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+		while (content.get(lineNumber) != null && (content.get(lineNumber).startsWith(tab(counter)) || isCommented(content.get(lineNumber)))) {
+			if (!isCommented(content.get(lineNumber)) && !content.get(lineNumber).startsWith(tab(counter + 1)) && !isListing(content.get(lineNumber))) {
+				paths.add(content.get(lineNumber).trim().substring(0, content.get(lineNumber).trim().indexOf(":")));
+			}
+			lineNumber++;
+		}
+		return paths;
+	}
+	
+	public void rename(String path, String pathName) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						content.put(lineNumber, tab(counter) + pathName);
+						break;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+	}
+	*/
 }

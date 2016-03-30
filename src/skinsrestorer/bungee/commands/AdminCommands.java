@@ -21,7 +21,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Command;
-import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
@@ -49,7 +48,7 @@ public class AdminCommands extends Command {
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
-			SkinFactoryBungee.getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
+			SkinsRestorer.getInstance().getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			sender.sendMessage(component);
@@ -67,7 +66,7 @@ public class AdminCommands extends Command {
 				public void run() {
 					try {
 						SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
-						SkinFactoryBungee.getFactory()
+						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 						sender.sendMessage(component);
@@ -88,7 +87,7 @@ public class AdminCommands extends Command {
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 						SkinStorage.getInstance().setSkinData(args[1], skinprofile);
-						SkinFactoryBungee.getFactory()
+						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 						TextComponent component = new TextComponent(
 								C.c(LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));

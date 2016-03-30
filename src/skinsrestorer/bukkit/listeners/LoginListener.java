@@ -85,7 +85,7 @@ public class LoginListener implements Listener {
 							.logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
 					e.printStackTrace();
 				}
-				SkinsRestorerAPI.applySkinBukkit(player);
+				SkinsRestorerAPI.applySkin(player);
 			}
 		}).start();
 	}

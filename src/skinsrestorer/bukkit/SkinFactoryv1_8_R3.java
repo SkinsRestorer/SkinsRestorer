@@ -28,18 +28,11 @@ import net.minecraft.server.v1_8_R3.WorldSettings.EnumGamemode;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 
 public class SkinFactoryv1_8_R3 extends Factory {
 
-	public static SkinFactoryv1_8_R3 skinfactory;
-
-	public SkinFactoryv1_8_R3() {
-		skinfactory = this;
-	}
-
-	public static SkinFactoryv1_8_R3 getFactory() {
-		return skinfactory;
-	}
+	public SkinFactoryv1_8_R3() {}
 
 	// Apply the skin to the player.
 	@Override
@@ -131,11 +124,5 @@ public class SkinFactoryv1_8_R3 extends Factory {
 			// Player logging in isnt finished and the method will not be used.
 			// Player skin is already applied.
 		}
-	}
-
-	// Just adding that, so the class will not be abstract. It will never be
-	// used.
-	@Override
-	public void updateSkin(Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile) {
 	}
 }

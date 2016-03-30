@@ -24,7 +24,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
@@ -44,6 +43,10 @@ public class PlayerCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
+		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND){
+			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
+			return;
+		}
 		if (!(sender instanceof ProxiedPlayer)) {
 			TextComponent component = new TextComponent("This commands are only for players");
 			sender.sendMessage(component);
@@ -61,7 +64,7 @@ public class PlayerCommands extends Command {
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
 				SkinStorage.getInstance().removeSkinData(player.getName());
-				SkinFactoryBungee.getFactory().removeSkin(player);
+				SkinsRestorer.getInstance().getFactory().removeSkin(player);
 				TextComponent component = new TextComponent(
 						C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 				player.sendMessage(component);
@@ -70,7 +73,7 @@ public class PlayerCommands extends Command {
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
-			SkinFactoryBungee.getFactory().removeSkin(player);
+			SkinsRestorer.getInstance().getFactory().removeSkin(player);
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
@@ -100,7 +103,7 @@ public class PlayerCommands extends Command {
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
-						SkinFactoryBungee.getFactory().applySkin(player);
+						SkinsRestorer.getInstance().getFactory().applySkin(player);
 						TextComponent component = new TextComponent(
 								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
 						player.sendMessage(component);
@@ -108,7 +111,7 @@ public class PlayerCommands extends Command {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
 						if (skinprofile != null) {
 							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
-							SkinFactoryBungee.getFactory().applySkin(player);
+							SkinsRestorer.getInstance().getFactory().applySkin(player);
 							TextComponent component = new TextComponent(
 									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
 							player.sendMessage(component);

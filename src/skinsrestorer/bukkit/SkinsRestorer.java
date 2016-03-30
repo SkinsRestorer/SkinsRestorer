@@ -19,24 +19,27 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
-	public static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
+	public static ScheduledExecutorService getExecutor(){
+		return executor;
+	}
 	private boolean autoIn = false;
-	static SkinsRestorer instance;
-	boolean isServerPremium = Bukkit.getOnlineMode();
+	private static SkinsRestorer instance;
 
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
 
-	static Logger log;
-	public ConsoleCommandSender coloredLog = null;
+	private Logger log;
+	private ConsoleCommandSender coloredLog = null;
 	private skinsrestorer.shared.utils.Updater updater;
 
 	private String version;
@@ -153,10 +156,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
-	}
-    
-	public boolean isServerPremium(){
-		return isServerPremium;
 	}
 	
 	public boolean isAutoInEnabled() {

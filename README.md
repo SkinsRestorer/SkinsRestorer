@@ -1,7 +1,10 @@
-SkinsRestorer
-=============
+ SkinsRestorer
+---------------------	 
 
-Skins for 1.7.9/1.7.10/1.8.0/1.9 offline mode
-
-
-License - GPLv3
+ Offline mode skins for Spigot/Bukkit/BungeeCord servers
+  		  
+ Supported versions: 1.7.10 | 1.8.x | 1.9
+ 
+ Download Jar | https://www.spigotmc.org/resources/skinsrestorer.2124/
+  		  
+ License - GPLv3

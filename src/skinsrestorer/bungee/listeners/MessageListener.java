@@ -8,7 +8,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import skinsrestorer.bungee.SkinFactoryBungee;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -33,11 +32,11 @@ public class MessageListener implements Listener {
 			if (!channel.equalsIgnoreCase("SkinsRestorer"))
 				return;
 
-			final String player = dis.readUTF();
+			final String pl = dis.readUTF();
 
-			final ProxiedPlayer p = ProxyServer.getInstance().getPlayer(player);
+			final ProxiedPlayer player = ProxyServer.getInstance().getPlayer(pl);
 
-			if (p == null || p.getServer() == null)
+			if (player == null || player.getServer() == null)
 				return;
 
 			final String skin = dis.readUTF();
@@ -49,13 +48,13 @@ public class MessageListener implements Listener {
 					try {
 
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(skin, null);
-						SkinStorage.getInstance().setSkinData(p.getName(), skinprofile);
-						SkinFactoryBungee.getFactory().applySkin(p);
+						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						SkinsRestorer.getInstance().getFactory().applySkin(player);
 					} catch (SkinFetchFailedException ex) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(skin);
 						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(p.getName(), skinprofile);
-							SkinFactoryBungee.getFactory().applySkin(p);
+							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinsRestorer.getInstance().getFactory().applySkin(player);
 						}
 
 					}

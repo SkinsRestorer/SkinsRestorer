@@ -15,17 +15,17 @@ import net.md_5.bungee.connection.LoginResult.Property;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.Factory;
 
-public class SkinFactoryBungee {
+public class SkinFactoryBungee extends Factory {
 
 	private static Field profileField = null;
-	public static SkinFactoryBungee skinfactory;
+	private static SkinFactoryBungee skinfactory;
 
 	public SkinFactoryBungee() {
-		skinfactory = this;
 		profileField = getProfileField();
 	}
-
+    @Deprecated
 	public static SkinFactoryBungee getFactory() {
 		return skinfactory;
 	}
