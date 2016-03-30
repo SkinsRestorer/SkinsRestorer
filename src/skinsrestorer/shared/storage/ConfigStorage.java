@@ -33,13 +33,14 @@ public class ConfigStorage {
     
 	public void init(InputStream stream, boolean overWrite) {
 		config.copyDefaults(stream, overWrite);
+		config.reload();
+		
 		//It should add the new option :)
 		if (config.getString("Disable Skin Command")==null){
 			config.set("Disable Skin Command", false);
 			config.comment("Disable Skin Command", new String[]{"Turn this to true if you want to disable","The /skin command."});
 		    config.save();
 		}
-		config.reload();
 		
 		UPDATE_CHECK = config.getBoolean("Update Check");
 		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
