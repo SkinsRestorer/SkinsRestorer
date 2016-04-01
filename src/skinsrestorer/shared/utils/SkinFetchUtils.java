@@ -20,30 +20,33 @@ package skinsrestorer.shared.utils;
 import java.util.UUID;
 
 import net.md_5.bungee.api.ChatColor;
-import skinsrestorer.libs.org.json.simple.parser.ParseException;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 
 public class SkinFetchUtils {
 
 	public static SkinProfile fetchSkinProfile(final String name, final UUID uuid) throws SkinFetchFailedException {
 		try {
 			if (uuid != null) {
-				try {
-					SkinProfile skinprofile = MojangAPI.getSkinProfile(uuid.toString());
-					if (skinprofile.getName().equalsIgnoreCase(name)) {
-						return skinprofile;
-					}
-				} catch (SkinFetchFailedException ex) {
+				SkinProfile skinprofile = MojangAPI.getSkinProfile(uuid.toString(), name);
+				if (skinprofile.getName().equalsIgnoreCase(name)) {
+					return skinprofile;
 				}
 			}
 			Profile profile = MojangAPI.getProfile(name);
-			return MojangAPI.getSkinProfile(profile.getId());
-		} catch (ParseException e) {
-			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.SKIN_RECODE_FAILED);
-		} catch (SkinFetchFailedException sffe) {
-			throw sffe;
+
+			if (profile == null)
+				throw new SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
+
+			SkinProfile sp = MojangAPI.getSkinProfile(profile.getId(), name);
+
+			if (sp == null)
+				throw new SkinFetchFailedException(Reason.MCAPI_PROBLEM);
+
+			return sp;
+
 		} catch (Exception e) {
 			throw new SkinFetchFailedException(e);
 		}

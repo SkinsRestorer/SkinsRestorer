@@ -24,7 +24,7 @@ public class Profile implements Cloneable {
 
 	public Profile(String id, String name) {
 		this.id = id != null ? id.replace("-", "") : null;
-		this.name = name.toLowerCase();
+		this.name = name != null ? name.toLowerCase() : null;
 	}
 
 	public String getId() {

@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 11.3
+version: 11.4
 author: Th3Tr0LLeR
 load: startup
 softdepend: [AutoIn]

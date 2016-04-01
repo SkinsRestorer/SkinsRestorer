@@ -18,51 +18,28 @@
 package skinsrestorer.shared.storage;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.rowset.CachedRowSet;
 
-import skinsrestorer.libs.com.google.gson.Gson;
-import skinsrestorer.libs.com.google.gson.GsonBuilder;
-import skinsrestorer.libs.com.google.gson.JsonIOException;
-import skinsrestorer.libs.com.google.gson.reflect.TypeToken;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
-import skinsrestorer.shared.utils.IOUils;
+import skinsrestorer.shared.utils.DataFiles;
 import skinsrestorer.shared.utils.MySQL;
 
 public class SkinStorage {
 
-	private static SkinStorage instance = new SkinStorage();;
+	private static SkinStorage instance = new SkinStorage();
+	private static DataFiles cache;
 	private static MySQL mysql;
 
 	public static SkinStorage getInstance() {
 		return instance;
 	}
 
-	private static String cachefile;
-	private static Gson gson;
-	private static Type type;
-	private static ConcurrentHashMap<String, SkinProfile> skins;
-	protected static File pluginfolder;
+	public static void init() {
+		cache = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "cache");
 
-	public static void init(File pluginfolder) {
-		cachefile = "cache.json";
-		gson = new GsonBuilder().registerTypeHierarchyAdapter(SkinProfile.class, new SkinProfile.GsonTypeAdapter())
-				.setPrettyPrinting().create();
-		type = new TypeToken<ConcurrentHashMap<String, SkinProfile>>() {
-		}.getType();
-		skins = new ConcurrentHashMap<String, SkinProfile>();
-
-		SkinStorage.pluginfolder = pluginfolder;
-		instance.loadData();
 	}
 
 	public static void init(MySQL mysql) {
@@ -70,37 +47,53 @@ public class SkinStorage {
 	}
 
 	public boolean isSkinDataForced(String name) {
+		// Ummmmmmmmmm
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 			// w/e
 			return false;
 		} else {
-			SkinProfile profile = skins.get(name.toLowerCase());
-			if (profile != null && profile.isForced()) {
-				return true;
-			}
-			return false;
+			return true;
 		}
 	}
 
 	public void removeSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			mysql.execute(mysql.prepareStatement("delete from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
-		} else
-			skins.remove(name.toLowerCase());
+			mysql.execute(mysql.prepareStatement(
+					"delete from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
+		} else {
+			name = name.toLowerCase();
+
+			cache.set(name, null);
+			cache.save();
+		}
+
 	}
 
 	public void setSkinData(String name, SkinProfile profile) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
-			CachedRowSet crs = mysql.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name));
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement("insert into "+ConfigStorage.getInstance().MYSQL_TABLE+" (Nick, Value, Signature, Timestamp) values (?,?,?,?)", name,
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),String.valueOf(System.currentTimeMillis())));
+				mysql.execute(mysql.prepareStatement(
+						"insert into " + ConfigStorage.getInstance().MYSQL_TABLE
+								+ " (Nick, Value, Signature, Timestamp) values (?,?,?,?)",
+						name, profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
+						String.valueOf(System.currentTimeMillis())));
 			else
-				mysql.execute(mysql.prepareStatement("update "+ConfigStorage.getInstance().MYSQL_TABLE+" set Value=?, Signature=?, Timestamp=? where Nick=?",
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(), String.valueOf(System.currentTimeMillis()), name));
-		} else
-			skins.put(name.toLowerCase(), profile.cloneAsForced());
+				mysql.execute(mysql.prepareStatement(
+						"update " + ConfigStorage.getInstance().MYSQL_TABLE
+								+ " set Value=?, Signature=?, Timestamp=? where Nick=?",
+						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
+						String.valueOf(System.currentTimeMillis()), name));
+		} else {
+			name = name.toLowerCase();
+
+			cache.set(name + ".value", profile.getSkinProperty().getValue());
+			cache.set(name + ".signature", profile.getSkinProperty().getSignature());
+			cache.set(name + ".timestamp", System.currentTimeMillis());
+			cache.save();
+		}
 	}
 
 	// Justin case
@@ -113,11 +106,24 @@ public class SkinStorage {
 			else
 				return sp;
 		} else {
+			name = name.toLowerCase();
 
 			SkinProfile emptyprofile = new SkinProfile(new Profile(null, name), null, 0, false);
-			SkinProfile profile = skins.putIfAbsent(name, emptyprofile);
 
-			return profile != null ? profile : emptyprofile;
+			Long timestamp = System.currentTimeMillis();
+
+			try {
+				timestamp = Long.parseLong(cache.getString(name + ".timestamp"));
+			} catch (Throwable e) {
+			}
+
+			SkinProfile profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
+					cache.getString(name + ".value"), cache.getString(name + ".signature")), timestamp, false);
+
+			if (profile.getSkinProperty().getSignature() != null)
+				return profile;
+			else
+				return emptyprofile;
 
 		}
 
@@ -126,8 +132,8 @@ public class SkinStorage {
 	public SkinProfile getSkinData(String name) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 
-			CachedRowSet crs = mysql
-					.query(mysql.prepareStatement("select * from "+ConfigStorage.getInstance().MYSQL_TABLE+" where Nick=?", name.toLowerCase()));
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name.toLowerCase()));
 
 			if (crs == null) {
 				return null;
@@ -137,8 +143,8 @@ public class SkinStorage {
 					String signature = crs.getString("Signature");
 					String timestamp = crs.getString("Timestamp");
 
-					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature), Long.valueOf(timestamp),
-							false);
+					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature),
+							Long.valueOf(timestamp), false);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -148,39 +154,18 @@ public class SkinStorage {
 			return null;
 
 		} else {
+			name = name.toLowerCase();
 
-			SkinProfile profile = skins.get(name.toLowerCase());
-			if (profile == null) {
+			SkinProfile profile = new SkinProfile(new Profile(null, name),
+					new SkinProperty("textures", cache.getString(name + ".value"),
+							cache.getString(name + ".signature")),
+					Long.valueOf(cache.getString(name + ".timestamp")), true);
+
+			if (profile.getSkinProperty().getSignature() == null)
 				return null;
-			}
+
 			return profile;
 
-		}
-	}
-
-	public void loadData() {
-		try (InputStreamReader reader = IOUils.createReader(new File(pluginfolder, cachefile))) {
-			Map<String, SkinProfile> gsondata = gson.fromJson(reader, type);
-			if (gsondata != null) {
-				skins.putAll(gsondata);
-			}
-		} catch (JsonIOException | IOException e) {
-		}
-	}
-
-	public void saveData() {
-		pluginfolder.mkdirs();
-		
-		try (OutputStreamWriter writer = IOUils.createWriter(new File(pluginfolder, cachefile))) {
-			ConcurrentHashMap<String, SkinProfile> toSerialize = new ConcurrentHashMap<String, SkinProfile>();
-			for (Entry<String, SkinProfile> entry : skins.entrySet()) {
-
-				if (entry.getValue().shouldSerialize()) {
-					toSerialize.put(entry.getKey(), entry.getValue());
-				}
-			}
-			gson.toJson(toSerialize, type, writer);
-		} catch (JsonIOException | IOException e) {
 		}
 	}
 }

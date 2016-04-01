@@ -48,15 +48,11 @@ public class AdminCommands extends Command {
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			SkinStorage.getInstance().removeSkinData(args[1]);
-			SkinsRestorer.getInstance().getFactory().applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
+			SkinsRestorer.getInstance().getFactory()
+					.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
 			sender.sendMessage(component);
-			return;
-		}
-		if ((args.length == 1) && args[0].equalsIgnoreCase("savedata")) {
-			SkinStorage.getInstance().saveData();
-			sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_DATA_SAVED));
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {

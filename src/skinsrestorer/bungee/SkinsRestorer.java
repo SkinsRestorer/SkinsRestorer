@@ -81,7 +81,7 @@ public class SkinsRestorer extends Plugin {
 					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
 					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
 		else {
-			SkinStorage.init(getDataFolder());
+			SkinStorage.init();
 			this.getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
 
@@ -129,7 +129,6 @@ public class SkinsRestorer extends Plugin {
 
 	@Override
 	public void onDisable() {
-		SkinStorage.getInstance().saveData();
 		instance = null;
 	}
 
