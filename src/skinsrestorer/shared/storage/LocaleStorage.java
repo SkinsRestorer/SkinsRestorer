@@ -35,7 +35,7 @@ public class LocaleStorage {
 
 	public String ADMIN_USE_SKIN_HELP = "&9Use '/skinsrestorer help' for help.";
 	public String ADMIN_SET_SKIN = "You set %player''s skin.";
-	public String ADMIN_HELP = "&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8[\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n&9/skinsrestorer update <player> &9-&a Updates player skin data.\n&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.";
+	public String ADMIN_HELP = "&8]&7&m-------------&r&8[ &9SkinsRestorer Admin Help &8]&7&m-------------*r&8[\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n&9/skinsrestorer update <player> &9-&a Updates player skin data.\n&9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.\n&9/skinsrestorer info &9- &aShows some info.";
 
 	private static final LocaleStorage instance = new LocaleStorage();
 	private static DataFiles locale = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "",
@@ -47,7 +47,6 @@ public class LocaleStorage {
 
 	public static void init() {
 		locale.reload();
-
 		for (Field f : LocaleStorage.class.getFields()) {
 			try {
 				if (f.getType() != String.class)
@@ -66,6 +65,6 @@ public class LocaleStorage {
 			} catch (Exception e) {
 			}
 		}
+		locale.save();
 	}
-
 }
