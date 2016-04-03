@@ -150,6 +150,9 @@ public class SkinsRestorer extends Plugin {
 		return factory;
 	}
 
+	public String getVersion(){
+		return getDescription().getVersion();
+	}
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}

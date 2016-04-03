@@ -33,8 +33,10 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.Updater;
 
 public class Commands implements CommandExecutor {
 
@@ -73,6 +75,8 @@ public class Commands implements CommandExecutor {
 				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 				helpCommandAdmin(sender);
+			} else if ((args.length == 1) && args[0].equalsIgnoreCase("info")){
+				infoCommand(sender, args);
 			} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 				dropData(sender, args);
 			} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
@@ -178,6 +182,30 @@ public class Commands implements CommandExecutor {
 		});
 	}
 
+	public void infoCommand(CommandSender sender, String[] args){
+		sender.sendMessage(C.c("&7=========== &9SkinsRestorer Info &7============"));
+		String version = SkinsRestorer.getInstance().getVersion();
+		sender.sendMessage(C.c("  \n&2&lVersion Info"));
+		sender.sendMessage(C.c("   &fYour SkinsRestorer version is &9"+version));
+		if (ConfigStorage.getInstance().UPDATE_CHECK&&Updater.updateAvailable()){
+			sender.sendMessage(C.c("  \n&2&lUpdates Info"));
+		sender.sendMessage(C.c("   &fThe latest version is &9"+Updater.getHighest()));
+		}
+		if (ConfigStorage.getInstance().USE_MYSQL){
+		   sender.sendMessage(C.c("  \n&2&lMySQL Info"));
+		   if (MySQL.isConnected()){
+			   sender.sendMessage(C.c("    &aMySQL connection is OK."));
+		   }else{
+			   sender.sendMessage(C.c("    &cMySQL is enabled, but not connected!\n    In order to use MySQL please fill the \n    config with the required info!"));
+		   }
+		}
+		sender.sendMessage(C.c("  \n&2&lOther Info"));
+		sender.sendMessage(C.c("    &fMCAPI &7| &9"+ConfigStorage.getInstance().MCAPI_ENABLED));
+		sender.sendMessage(C.c("    &fBot feature &7| &9"+ConfigStorage.getInstance().USE_BOT_FEATURE));
+		sender.sendMessage(C.c("    &fAutoIn Skins &7| &9"+ConfigStorage.getInstance().USE_AUTOIN_SKINS));
+		sender.sendMessage(C.c("    &fDisable /Skin Command &7| &9"+ConfigStorage.getInstance().DISABLE_SKIN_COMMAND));
+		sender.sendMessage(C.c("    &fSkin Change Cooldown | &9"+ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN+" Seconds"));
+	}
 	// Admin skin change command.
 	public void changeCommand(final CommandSender sender, final String[] args) {
 		SkinsRestorer.getExecutor().execute(new Runnable() {
