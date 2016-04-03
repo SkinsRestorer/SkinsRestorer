@@ -63,7 +63,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 					ConfigStorage.getInstance().MYSQL_DATABASE, ConfigStorage.getInstance().MYSQL_USERNAME,
 					ConfigStorage.getInstance().MYSQL_PASSWORD));
 		else {
-			SkinStorage.init(getDataFolder());
+			SkinStorage.init();
 			executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
 
@@ -131,7 +131,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	@Override
 	public void onDisable() {
-		SkinStorage.getInstance().saveData();
 		executor.shutdown();
 		instance = null;
 	}

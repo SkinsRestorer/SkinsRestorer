@@ -17,120 +17,116 @@
 
 package skinsrestorer.shared.utils;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import skinsrestorer.libs.org.json.simple.JSONArray;
-import skinsrestorer.libs.org.json.simple.JSONObject;
-import skinsrestorer.libs.org.json.simple.parser.JSONParser;
-import skinsrestorer.libs.org.json.simple.parser.ParseException;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
-import skinsrestorer.shared.utils.apacheutils.IOUtils;
 
 public class MojangAPI {
 
-	private static final String profileurl = "https://api.mojang.com/profiles/minecraft";
-	private static final String mcapipurl = ConfigStorage.getInstance().GET_PROFILE_URL;
-	private static final String skullbloburl = "https://sessionserver.mojang.com/session/minecraft/profile/";
-	private static final String mcapiurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
+	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
+	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
-	public static Profile getProfile(final String nick) throws SkinFetchFailedException, IOException, ParseException {
+	private static final String altskinurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
 
-				// open connection
-				HttpURLConnection connection = (HttpURLConnection) setupConnection(new URL(profileurl));
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Content-Type", "application/json");
-				// write body
-				DataOutputStream writer = new DataOutputStream(connection.getOutputStream());
-				writer.write(JSONArray.toJSONString(Arrays.asList(nick)).getBytes(StandardCharsets.UTF_8));
-				writer.flush();
-				writer.close();
-				// check response code
-				if (connection.getResponseCode() == 429) {
-					if (!ConfigStorage.getInstance().MCAPI_ENABLED){
-						throw new SkinFetchFailedException(Reason.RATE_LIMITED);
-					}
-					connection = (HttpURLConnection) setupConnection(
-							new URL(mcapipurl.replace("{username}", nick).replace("'", String.valueOf('"'))));
-					connection.setRequestMethod("GET");
-					connection.setRequestProperty("Content-Type", "application/json");
-					// write body
-					writer = new DataOutputStream(connection.getOutputStream());
-					writer.flush();
-					writer.close();
+	private static final String haspaidurl = "https://minecraft.net/haspaid.jsp?user=";
 
-				}
-				// read response
-				InputStream is = connection.getInputStream();
-				String result = IOUtils.toString(is, StandardCharsets.UTF_8);
-				IOUtils.closeQuietly(is);
-				JSONArray jsonProfiles = (JSONArray) new JSONParser().parse(result);
-				if (jsonProfiles.size() > 0) {
-					JSONObject jsonProfile = (JSONObject) jsonProfiles.get(0);
-					if (jsonProfile.get("id") == null || jsonProfile.get("name") == null) {
-						throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_PROBLEM);
-					}
-					return new Profile((String) jsonProfile.get("id"), (String) jsonProfile.get("name"));
-				}
-				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_PREMIUM_PLAYER);
-			}
-
-	public static SkinProfile getSkinProfile(final String id) throws IOException, ParseException, SkinFetchFailedException {
-
-				// open connection
-				HttpURLConnection connection = (HttpURLConnection) setupConnection(
-						new URL(skullbloburl + id.replace("-", "") + "?unsigned=false"));
-				// check response code
-				if (connection.getResponseCode() == 429) {
-					if (!ConfigStorage.getInstance().MCAPI_ENABLED){
-						throw new SkinFetchFailedException(Reason.RATE_LIMITED);
-					}
-					connection = (HttpURLConnection) setupConnection(
-							new URL(mcapiurl.replace("{uuid}", id.replace("-", ""))));
-					System.out.println(LocaleStorage.getInstance().TRYING_TO_USE_NCAPI);
-				}
-				// read response
-				InputStream is = connection.getInputStream();
-				String result = IOUtils.toString(is, StandardCharsets.UTF_8);
-				IOUtils.closeQuietly(is);
-				JSONObject obj = (JSONObject) new JSONParser().parse(result);
-				String username = (String) obj.get("name");
-				JSONArray properties = (JSONArray) (obj).get("properties");
-				if (username==null){
-					throw new SkinFetchFailedException(SkinFetchFailedException.Reason.MCAPI_PROBLEM);
-				}
-				for (int i = 0; i < properties.size(); i++) {
-					JSONObject property = (JSONObject) properties.get(i);
-					String name = (String) property.get("name");
-					String value = (String) property.get("value");
-					String signature = (String) property.get("signature");
-					if (name.equals("textures")) {
-						return new SkinProfile(new Profile(id, username), new SkinProperty(name, value, signature),
-								System.currentTimeMillis(), false);
-					}
-				}
-				throw new SkinFetchFailedException(SkinFetchFailedException.Reason.NO_SKIN_DATA);
-			}
-	
-	private static URLConnection setupConnection(URL url) throws IOException {
-		URLConnection connection = url.openConnection();
-		connection.setConnectTimeout(5000);
-		connection.setReadTimeout(5000);
-		connection.setUseCaches(false);
-		connection.setDoInput(true);
-		connection.setDoOutput(true);
-		return connection;
+	public static boolean hasPaid(String name) throws MalformedURLException {
+		return Boolean.parseBoolean(readURL(new URL(haspaidurl + name)));
 	}
+
+	public static Profile getProfile(String name) throws MalformedURLException {
+
+		if (hasPaid(name))
+			return new Profile(readURL(new URL(uuidurl + name)).substring(7, 39), name);
+		else
+			return null;
+	}
+
+	public static SkinProfile getSkinProfile(String uuid, String name) throws MalformedURLException {
+		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
+
+		String valuebeg = "value\":\"";
+		String mid = "\",\"signature\":\"";
+		String signatureend = "\"}]}";
+
+		if (output == null || output.contains("TooManyRequestsException")) {
+
+			if (!ConfigStorage.getInstance().MCAPI_ENABLED)
+				return null;
+
+			output = readURL(new URL(altskinurl.replace("{uuid}", uuid))).replace(" ", "");
+			System.out.println("[SkinsRestorer] Using McAPI for this skin..");
+
+			String uid = getStringBetween(output, "\"properties\": ", "\"properties_decoded\":");
+
+			if (uid.toLowerCase().contains("null"))
+				return null;
+
+			valuebeg = ",\"value\": \"";
+			mid = "\",\"signature\": \"";
+			signatureend = "\"},\"properties";
+		}
+
+		String value = getStringBetween(output, valuebeg, mid);
+		String signature = getStringBetween(output, mid, signatureend);
+
+		return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
+				System.currentTimeMillis(), true);
+	}
+
+	private static String readURL(URL url) {
+		try {
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+			con.setRequestMethod("GET");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0");
+			con.setConnectTimeout(5000);
+			con.setReadTimeout(5000);
+			con.setUseCaches(false);
+
+			String line;
+			StringBuilder output = new StringBuilder();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+			while ((line = in.readLine()) != null)
+				output.append(line);
+
+			in.close();
+
+			return output.toString();
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+	private static String getStringBetween(final String base, final String begin, final String end) {
+
+		Pattern patbeg = Pattern.compile(begin);
+		Pattern patend = Pattern.compile(end);
+
+		int resbeg = 0;
+		int resend = base.length() - 1;
+
+		Matcher matbeg = patbeg.matcher(base);
+
+		while (matbeg.find())
+			resbeg = matbeg.end();
+
+		Matcher matend = patend.matcher(base);
+
+		while (matend.find())
+			resend = matend.start();
+
+		return base.substring(resbeg, resend);
+	}
+
 }
