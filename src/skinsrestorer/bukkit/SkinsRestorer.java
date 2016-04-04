@@ -92,11 +92,11 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		// Registering the factory using reflection now. I'm tired of version
 		// checks xD
 		try {
-			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory" + getVersion());
+			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory" + getBukkitVersion());
 			this.factory = (Factory) factory.newInstance();
-			coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getVersion());
+			coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getBukkitVersion());
 		} catch (ClassNotFoundException e) {
-			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getVersion()
+			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getBukkitVersion()
 					+ " is not supported by SkinsModule.");
 			Bukkit.getPluginManager().disablePlugin(this);
 		} catch (InstantiationException | IllegalAccessException e) {
@@ -168,6 +168,10 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	}
 
 	public String getVersion() {
+		return this.getDescription().getVersion();
+	}
+	
+	public String getBukkitVersion() {
 		return version;
 	}
 }
