@@ -82,7 +82,7 @@ public class Commands implements CommandExecutor {
 			} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 				updateCommand(sender, args);
 			} else if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-
+                changeCommand(sender, args);
 			} else
 				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return false;
