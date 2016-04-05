@@ -1,5 +1,6 @@
 package skinsrestorer.bukkit;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
+import skinsrestorer.bukkit.metrics.Metrics;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -127,6 +129,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
+		  try {
+		        Metrics metrics = new Metrics(this);
+		        metrics.start();
+		    } catch (IOException e) {
+		        coloredLog.sendMessage(ChatColor.RED+"Failed to start Metrics.");
+		    }
 	}
 
 	@Override
