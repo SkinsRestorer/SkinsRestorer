@@ -17,11 +17,13 @@
 
 package skinsrestorer.bungee;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
+import skinsrestorer.bungee.metrics.Metrics;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
@@ -125,6 +127,12 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
+		  try {
+		        Metrics metrics = new Metrics(this);
+		        metrics.start();
+		    } catch (IOException e) {
+		        log.info(ChatColor.RED+"Failed to start Metrics.");
+		    }
 	}
 
 	@Override
