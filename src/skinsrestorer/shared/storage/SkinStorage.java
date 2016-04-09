@@ -156,10 +156,16 @@ public class SkinStorage {
 		} else {
 			name = name.toLowerCase();
 
-			SkinProfile profile = new SkinProfile(new Profile(null, name),
-					new SkinProperty("textures", cache.getString(name + ".value"),
-							cache.getString(name + ".signature")),
-					Long.valueOf(cache.getString(name + ".timestamp")), true);
+			Long timestamp = System.currentTimeMillis();
+
+			try {
+				timestamp = Long.parseLong(cache.getString(name + ".timestamp"));
+			} catch (Throwable e) {
+			}
+
+			SkinProfile profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
+					cache.getString(name + ".value"), cache.getString(name + ".signature")), Long.valueOf(timestamp),
+					true);
 
 			if (profile.getSkinProperty().getSignature() == null)
 				return null;
