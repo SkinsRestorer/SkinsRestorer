@@ -48,8 +48,8 @@ public class DataFiles {
 		reload();
 	}
  
-	private Map<Integer, String> sec = new HashMap<>();
-	private Map<Integer, String> content = new HashMap<>();
+	private Map<Integer, String> sec = new HashMap<Integer, String>();
+	private Map<Integer, String> content = new HashMap<Integer, String>();
 	private List<Object> listings = new ArrayList<Object>();
  
 	public void set(String path, Object value) {

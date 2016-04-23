@@ -87,7 +87,9 @@ public class SkinFactoryBungee extends Factory {
 		profile.getProperties()[0].setSignature(""); //This should do the trick.
 		try {
 			profileField.set(handler, profile);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
+			// Skin removing failed !?
+		} catch (IllegalAccessException e) {
 			// Skin removing failed !?
 		}
 		updateSkin(player, profile); // Removing the skin.

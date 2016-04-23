@@ -62,7 +62,7 @@ public class SkinsRestorer extends Plugin {
 		log = getLogger();
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResourceAsStream("config.yml"), false);
-		LocaleStorage.init();
+		LocaleStorage.getInstance().init(this.getResourceAsStream("messages.yml"), false);
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(getDescription().getVersion());
 			updater.checkUpdates();
@@ -92,7 +92,9 @@ public class SkinsRestorer extends Plugin {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			getProxy().getPluginManager().unregisterListeners(this);
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 

@@ -58,7 +58,9 @@ public class PlayerCommands extends Command {
 			sender.sendMessage(component);
 			return;
 		}else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_HELP));
+			for (String s : LocaleStorage.getInstance().PLAYER_HELP){
+			sender.sendMessage(C.c(s));
+			}
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
