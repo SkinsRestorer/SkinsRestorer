@@ -46,9 +46,9 @@ public class SkinFactoryv1_8_R1 extends Factory {
 						property.getName(), property.getValue(), property.getSignature());
 
 				// Clear the current textures (skin & cape).
-				eplayer.getProperties().get("textures").clear();
+				eplayer.getProperties().get(prop.getName()).clear();
 				// Putting the new one.
-				eplayer.getProperties().put(prop.getName(), prop);
+				eplayer.getProperties().get(prop.getName()).add(prop);
 				// Updating skin.
 				updateSkin(player, eplayer);
 
@@ -60,7 +60,7 @@ public class SkinFactoryv1_8_R1 extends Factory {
 	@Override
 	public void removeSkin(final Player player) {
 		GameProfile profile = ((CraftPlayer) player).getProfile();
-		profile.getProperties().clear();
+		profile.getProperties().get("textures").clear();
 		updateSkin(player, profile); // Removing the skin.
 	}
 

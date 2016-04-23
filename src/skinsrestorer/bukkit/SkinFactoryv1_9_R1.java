@@ -38,7 +38,7 @@ public class SkinFactoryv1_9_R1 extends Factory {
 	// Apply the skin to the player.
 	@Override
 	public void applySkin(final Player player) {
-		SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
 		skinprofile.applySkin(new SkinProfile.ApplyFunction() {
 			@Override
 			public void applySkin(SkinProperty property) {
@@ -48,9 +48,9 @@ public class SkinFactoryv1_9_R1 extends Factory {
 				Property prop = new Property(property.getName(), property.getValue(), property.getSignature());
 
 				// Clear the current textures (skin & cape).
-				eplayer.getProperties().get("textures").clear();
+				eplayer.getProperties().get(prop.getName()).clear();
 				// Putting the new one.
-				eplayer.getProperties().put(prop.getName(), prop);
+				eplayer.getProperties().get(prop.getName()).add(prop);
 				// Updating skin.
 				updateSkin(player, eplayer);
 
@@ -62,7 +62,7 @@ public class SkinFactoryv1_9_R1 extends Factory {
 	@Override
 	public void removeSkin(final Player player) {
 		GameProfile profile = ((CraftPlayer) player).getProfile();
-		profile.getProperties().clear();
+		profile.getProperties().get("textures").clear();
 		updateSkin(player, profile); // Removing the skin.
 	}
 
