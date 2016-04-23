@@ -45,15 +45,13 @@ public class SkinStorage {
 	public static void init(MySQL mysql) {
 		SkinStorage.mysql = mysql;
 	}
-
+	
 	public boolean isSkinDataForced(String name) {
-		// Ummmmmmmmmm
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			// w/e
-			return false;
-		} else {
+		SkinProfile profile = getSkinData(name);
+		if (profile != null && profile.isForced()) {
 			return true;
 		}
+		return false;
 	}
 
 	public void removeSkinData(String name) {
@@ -63,7 +61,7 @@ public class SkinStorage {
 		} else {
 			name = name.toLowerCase();
 
-			cache.set(name, null);
+			cache.removePath(name);
 			cache.save();
 		}
 
@@ -159,7 +157,7 @@ public class SkinStorage {
 			SkinProfile profile = new SkinProfile(new Profile(null, name),
 					new SkinProperty("textures", cache.getString(name + ".value"),
 							cache.getString(name + ".signature")),
-					Long.valueOf(cache.getString(name + ".timestamp")), true);
+					cache.getLong(name + ".timestamp"), true);
 
 			if (profile.getSkinProperty().getSignature() == null)
 				return null;

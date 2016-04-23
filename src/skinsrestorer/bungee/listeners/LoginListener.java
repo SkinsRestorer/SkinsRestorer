@@ -39,7 +39,7 @@ public class LoginListener implements Listener {
 			@Override
 			public void run() {
 				try {
-					skinprofile.attemptUpdateBungee();
+					skinprofile.attemptUpdate();
 					SkinsRestorer.getInstance().getFactory().applySkin(event.getPlayer());
 				} catch (SkinFetchFailedException e) {
 					SkinsRestorer.getInstance().logInfo("Skin fetch failed for player " + name + ": " + e.getMessage());
