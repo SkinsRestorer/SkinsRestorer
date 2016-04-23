@@ -23,11 +23,11 @@ import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.plugin.Plugin;
-import skinsrestorer.bungee.metrics.Metrics;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
+import skinsrestorer.bungee.metrics.Metrics;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -50,6 +50,7 @@ public class SkinsRestorer extends Plugin {
 	private Updater updater;
 	private Factory factory;
 	private boolean autoIn = false;
+	private MySQL mysql;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -76,10 +77,7 @@ public class SkinsRestorer extends Plugin {
 		}
 
 		if (ConfigStorage.getInstance().USE_MYSQL)
-			SkinStorage./*
-						*/init(/* 
-								**/new MySQL(ConfigStorage./*
-															* */getInstance().MYSQL_HOST,
+			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
 					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
 					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
 		else {
@@ -127,12 +125,12 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
-		  try {
-		        Metrics metrics = new Metrics(this);
-		        metrics.start();
-		    } catch (IOException e) {
-		        log.info(ChatColor.RED+"Failed to start Metrics.");
-		    }
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			log.info(ChatColor.RED + "Failed to start Metrics.");
+		}
 	}
 
 	@Override
@@ -158,10 +156,15 @@ public class SkinsRestorer extends Plugin {
 		return factory;
 	}
 
-	public String getVersion(){
+	public String getVersion() {
 		return getDescription().getVersion();
 	}
+
 	public boolean isAutoInEnabled() {
 		return autoIn;
+	}
+
+	public MySQL getMySQL() {
+		return mysql;
 	}
 }

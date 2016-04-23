@@ -47,6 +47,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	private String version;
 	private Factory factory;
+	private MySQL mysql;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -61,9 +62,9 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
 		LocaleStorage.init();
 		if (ConfigStorage.getInstance().USE_MYSQL)
-			SkinStorage.init(new MySQL(ConfigStorage.getInstance().MYSQL_HOST, ConfigStorage.getInstance().MYSQL_PORT,
-					ConfigStorage.getInstance().MYSQL_DATABASE, ConfigStorage.getInstance().MYSQL_USERNAME,
-					ConfigStorage.getInstance().MYSQL_PASSWORD));
+			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
+					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
+					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
 		else {
 			SkinStorage.init();
 			executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
@@ -129,12 +130,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
-		  try {
-		        Metrics metrics = new Metrics(this);
-		        metrics.start();
-		    } catch (IOException e) {
-		        coloredLog.sendMessage(ChatColor.RED+"Failed to start Metrics.");
-		    }
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch (IOException e) {
+			coloredLog.sendMessage(ChatColor.RED + "Failed to start Metrics.");
+		}
 	}
 
 	@Override
@@ -178,8 +179,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	public String getVersion() {
 		return this.getDescription().getVersion();
 	}
-	
+
 	public String getBukkitVersion() {
 		return version;
+	}
+
+	public MySQL getMySQL() {
+		return mysql;
 	}
 }

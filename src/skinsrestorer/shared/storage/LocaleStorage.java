@@ -58,7 +58,7 @@ public class LocaleStorage {
 				if (s != null)
 					f.set(instance, s);
 				else
-					locale.set("Messages."+f.getName(), f.get(instance));
+					locale.set(f.getName(), f.get(instance));
 
 				f.setAccessible(false);
 

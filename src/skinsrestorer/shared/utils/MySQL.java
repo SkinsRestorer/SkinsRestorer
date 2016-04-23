@@ -19,7 +19,7 @@ public class MySQL {
 
 	/** Class by Blackfire62 **/
 
-	private static Connection con;
+	private Connection con;
 	private String host, port, database, username, password;
 	private ExecutorService exe;
 
@@ -62,7 +62,7 @@ public class MySQL {
 		}
 	}
 
-	public static boolean isConnected() {
+	public boolean isConnected() {
 		try {
 			return con != null && !con.isClosed();
 		} catch (SQLException e) {

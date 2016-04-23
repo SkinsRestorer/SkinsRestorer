@@ -42,7 +42,6 @@ public class ConfigStorage {
 		    config.save();
 		}
 		
-		
 		UPDATE_CHECK = config.getBoolean("Update Check");
 		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
 		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
