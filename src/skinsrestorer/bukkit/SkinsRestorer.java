@@ -60,7 +60,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		coloredLog = Bukkit.getConsoleSender();
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
-		LocaleStorage.init();
+		LocaleStorage.getInstance().init(this.getResource("messages.yml"), false);
 		if (ConfigStorage.getInstance().USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
 					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
@@ -102,7 +102,9 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getBukkitVersion()
 					+ " is not supported by SkinsModule.");
 			Bukkit.getPluginManager().disablePlugin(this);
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e){
 			e.printStackTrace();
 		}
 		if (updater != null) {

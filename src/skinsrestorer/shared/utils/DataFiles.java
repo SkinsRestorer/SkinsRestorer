@@ -48,8 +48,8 @@ public class DataFiles {
 		reload();
 	}
  
-	private Map<Integer, String> sec = new HashMap<>();
-	private Map<Integer, String> content = new HashMap<>();
+	private Map<Integer, String> sec = new HashMap<Integer, String>();
+	private Map<Integer, String> content = new HashMap<Integer, String>();
 	private List<Object> listings = new ArrayList<Object>();
  
 	public void set(String path, Object value) {
@@ -158,6 +158,10 @@ public class DataFiles {
 		return value;
 	}
 
+	public long getLong(String path) {
+		return Long.parseLong(get(path).toString().trim());
+	}
+	
 	public boolean pathExists(String path) {
 		int counter = 1;
 		int lineNumber = 1;
@@ -372,6 +376,44 @@ public class DataFiles {
 		else throw new NullPointerException();
 	}
 	
+	public void removePath(String path) {
+		int counter = 1;
+		int lineNumber = 1;
+		section(counter, path);
+		while (content.get(lineNumber) != null && counter <= sec.size()) {
+			String line = content.get(lineNumber);
+			if (line.startsWith(tab(counter)) || isCommented(line)) {
+				if (line.startsWith(sec.get(counter))) {
+					if (counter == sec.size()) {
+						int last = lineNumber;
+						int diff = lineNumber;
+						lineNumber++;
+						while (content.get(lineNumber) != null && (isListing(content.get(lineNumber)) || content.get(lineNumber).startsWith(tab(counter + 1)) || isCommented(content.get(lineNumber)))) {
+							if (!isCommented(content.get(lineNumber))) {
+								diff = lineNumber;
+							}
+							lineNumber++;
+						}
+						lineNumber = diff + 1;
+						for (int i = last; i < lineNumber; i++) {
+							content.remove(i);
+						}
+						for (int i = last; content.get(lineNumber) != null; i++){
+							content.put(i, content.get(lineNumber));
+							content.remove(lineNumber);
+							lineNumber++;
+						}
+						return;
+					}
+					counter++;
+				}
+			} else {
+				throw new NullPointerException();
+			}
+			lineNumber++;
+		}
+		throw new NullPointerException();
+	}
     ///////////////////////////////// Unused Methods //////////////////////////////////
     /* 
 	public static Set<DataFiles> getFolderContents(String folderLoc) {
@@ -390,10 +432,6 @@ public class DataFiles {
 	
 	public float getFloat(String path) {
 		return Float.parseFloat(get(path).toString().trim());
-	}
-	
-	public long getLong(String path) {
-		return Long.parseLong(get(path).toString().trim());
 	}
 	
 	public List<Double> getDoubleList(String path) {
@@ -461,45 +499,6 @@ public class DataFiles {
 				if (line.startsWith(sec.get(counter))) {
 					if (counter == sec.size()) {
 						return lineNumber;
-					}
-					counter++;
-				}
-			} else {
-				throw new NullPointerException();
-			}
-			lineNumber++;
-		}
-		throw new NullPointerException();
-	}
-
-	public void removePath(String path) {
-		int counter = 1;
-		int lineNumber = 1;
-		section(counter, path);
-		while (content.get(lineNumber) != null && counter <= sec.size()) {
-			String line = content.get(lineNumber);
-			if (line.startsWith(tab(counter)) || isCommented(line)) {
-				if (line.startsWith(sec.get(counter))) {
-					if (counter == sec.size()) {
-						int last = lineNumber;
-						int diff = lineNumber;
-						lineNumber++;
-						while (content.get(lineNumber) != null && (isListing(content.get(lineNumber)) || content.get(lineNumber).startsWith(tab(counter + 1)) || isCommented(content.get(lineNumber)))) {
-							if (!isCommented(content.get(lineNumber))) {
-								diff = lineNumber;
-							}
-							lineNumber++;
-						}
-						lineNumber = diff + 1;
-						for (int i = last; i < lineNumber; i++) {
-							content.remove(i);
-						}
-						for (int i = last; content.get(lineNumber) != null; i++){
-							content.put(i, content.get(lineNumber));
-							content.remove(lineNumber);
-							lineNumber++;
-						}
-						return;
 					}
 					counter++;
 				}

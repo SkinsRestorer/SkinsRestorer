@@ -45,7 +45,9 @@ public class AdminCommands extends Command {
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_HELP));
+			for (String s : LocaleStorage.getInstance().ADMIN_HELP){
+				sender.sendMessage(C.c(s));
+			}
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
