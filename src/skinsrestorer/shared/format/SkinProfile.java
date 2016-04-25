@@ -17,7 +17,6 @@
 
 package skinsrestorer.shared.format;
 
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
