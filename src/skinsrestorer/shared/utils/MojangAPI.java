@@ -54,9 +54,9 @@ public class MojangAPI {
 	public static SkinProfile getSkinProfile(String uuid, String name) throws MalformedURLException {
 		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
 
-		String valuebeg = "value\":\"";
-		String mid = "\",\"signature\":\"";
-		String signatureend = "\"}]}";
+		String sigbeg = "[{\"signature\":\"";
+		String mid = "\",\"name\":\"textures\",\"value\":\"";
+		String valend = "\"}]}";
 
 		if (output == null || output.contains("TooManyRequestsException")) {
 
@@ -71,13 +71,19 @@ public class MojangAPI {
 			if (uid.toLowerCase().contains("null"))
 				return null;
 
-			valuebeg = ",\"value\": \"";
-			mid = "\",\"signature\": \"";
-			signatureend = "\"},\"properties";
+			String alt_valuebeg = ",\"value\": \"";
+			String alt_mid = "\",\"signature\": \"";
+			String alt_signatureend = "\"},\"properties";
+
+			String value = getStringBetween(output, alt_valuebeg, alt_mid);
+			String signature = getStringBetween(output, alt_mid, alt_signatureend);
+
+			return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
+					System.currentTimeMillis(), true);
 		}
 
-		String value = getStringBetween(output, valuebeg, mid);
-		String signature = getStringBetween(output, mid, signatureend);
+		String value = getStringBetween(output, mid, valend);
+		String signature = getStringBetween(output, sigbeg, mid);
 
 		return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
 				System.currentTimeMillis(), true);
@@ -110,8 +116,8 @@ public class MojangAPI {
 
 	private static String getStringBetween(final String base, final String begin, final String end) {
 
-		Pattern patbeg = Pattern.compile(begin);
-		Pattern patend = Pattern.compile(end);
+		Pattern patbeg = Pattern.compile(Pattern.quote(begin));
+		Pattern patend = Pattern.compile(Pattern.quote(end));
 
 		int resbeg = 0;
 		int resend = base.length() - 1;
