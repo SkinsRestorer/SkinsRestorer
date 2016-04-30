@@ -1,6 +1,11 @@
 package skinsrestorer.bukkit;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -11,17 +16,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.metrics.Metrics;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
+import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.Factory;
+import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
@@ -48,6 +56,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	private String version;
 	private Factory factory;
 	private MySQL mysql;
+	private File debug;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -104,7 +113,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			Bukkit.getPluginManager().disablePlugin(this);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
-		} catch (IllegalAccessException e){
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		if (updater != null) {
@@ -132,6 +141,72 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
 			}
 		}
+
+		if (ConfigStorage.getInstance().DEBUG_ENABLED) {
+
+			debug = new File(getDataFolder(), "debug.txt");
+
+			PrintWriter out = null;
+
+			try {
+				if (!debug.exists())
+					debug.createNewFile();
+				out = new PrintWriter(new FileOutputStream(debug), true);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+
+				out.println("Java version: " + System.getProperty("java.version"));
+				out.println("Bukkit version: " + Bukkit.getBukkitVersion());
+				out.println("SkinsRestoerer version: " + getDescription().getVersion());
+				out.println();
+
+				String plugins = "";
+				for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
+					plugins += plugin.getName() + " (" + plugin.getDescription().getVersion() + "), ";
+
+				out.println("Plugin list: " + plugins);
+				out.println();
+				out.println("Property output from MojangAPI (Notch) : ");
+
+				SkinProfile sp = MojangAPI.getSkinProfile(MojangAPI.getProfile("Notch").getId(), "Notch");
+
+				out.println("Name: " + sp.getSkinProperty().getName());
+				out.println("Value: " + sp.getSkinProperty().getValue());
+				out.println("Signature: " + sp.getSkinProperty().getSignature());
+				out.println();
+
+				out.println("Raw data from MojangAPI (Blackfire62): ");
+				Method m = MojangAPI.class.getDeclaredMethod("readURL", URL.class);
+
+				m.setAccessible(true);
+				String output = (String) m.invoke(null,
+						new URL("https://sessionserver.mojang.com/session/minecraft/profile/"
+								+ MojangAPI.getProfile("Blackfire62").getId() + "?unsigned=false"));
+
+				out.println(output);
+
+				out.println("\n\n\n\n\n\n\n\n\n\n");
+
+			} catch (Exception e) {
+				out.println("=========================================");
+				e.printStackTrace(out);
+				out.println("=========================================");
+			}
+
+			coloredLog.sendMessage(
+					ChatColor.RED + "[SkinsRestorer] Debug file crated! Automatically setting debug mode to false... ");
+			ConfigStorage.getInstance().config.set("Debug Enabled", false);
+			ConfigStorage.getInstance().config.save();
+			coloredLog.sendMessage(ChatColor.RED
+					+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
+			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] URL for error reporting: " + ChatColor.YELLOW
+					+ "https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/issues");
+
+		}
+
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();

@@ -8,7 +8,8 @@ import java.util.List;
 import skinsrestorer.shared.utils.DataFiles;
 
 public class ConfigStorage {
-	public DataFiles config = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config");	
+	public DataFiles config = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "",
+			"config");
 	public boolean UPDATE_CHECK = true;
 	public boolean USE_AUTOIN_SKINS = false;
 	public boolean USE_BOT_FEATURE = false;
@@ -23,25 +24,38 @@ public class ConfigStorage {
 	public String MYSQL_TABLE = "Skins";
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
+	public Boolean DEBUG_ENABLED = false;
 	public List<String> DISABLED_SKINS = new ArrayList<String>();
 	public boolean DISABLE_SKIN_COMMAND = false;
-	
+
 	private static final ConfigStorage instance = new ConfigStorage();
+
 	public static final ConfigStorage getInstance() {
 		return instance;
 	}
-    
+
 	public void init(InputStream stream, boolean overWrite) {
 		config.copyDefaults(stream, overWrite);
 		config.reload();
-		
-		//It should add the new option :)
-		if (config.getString("Disable Skin Command")==null){
+
+		// It should add the new option :)
+		if (config.getString("Disable Skin Command") == null) {
 			config.set("Disable Skin Command", false);
-			config.comment("Disable Skin Command", new String[]{"Turn this to true if you want to disable","The /skin command."});
-		    config.save();
+			config.comment("Disable Skin Command",
+					new String[] { "Turn this to true if you want to disable", "The /skin command." });
+			config.save();
 		}
-		
+
+		if (config.getString("Debug Enabled") == null) {
+			config.set("Debug Enabled", false);
+			config.comment("Debug Enabled",
+					new String[] { "Debug Mode", "", "You should only set this option to true, if you have problems",
+							"with SkinsRestorer and you would like to report them", "",
+							"It will create a file debug.txt which should contain enough",
+							"information for developers to understand the problem" });
+			config.save();
+		}
+
 		UPDATE_CHECK = config.getBoolean("Update Check");
 		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
 		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
@@ -58,5 +72,6 @@ public class ConfigStorage {
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
 		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");
+		DEBUG_ENABLED = config.getBoolean("Debug Enabled");
 	}
 }
