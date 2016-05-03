@@ -29,6 +29,8 @@ import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 
 public class MojangAPI {
 
@@ -36,22 +38,17 @@ public class MojangAPI {
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	private static final String altskinurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
+	
+	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
+		String output = readURL(new URL(uuidurl + name));
 
-	private static final String haspaidurl = "https://minecraft.net/haspaid.jsp?user=";
-
-	public static boolean hasPaid(String name) throws MalformedURLException {
-		return Boolean.parseBoolean(readURL(new URL(haspaidurl + name)));
+		if (output.isEmpty()) 
+			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
+		
+		return new Profile(output.substring(7, 39), name);
 	}
 
-	public static Profile getProfile(String name) throws MalformedURLException {
-
-		if (hasPaid(name))
-			return new Profile(readURL(new URL(uuidurl + name)).substring(7, 39), name);
-		else
-			return null;
-	}
-
-	public static SkinProfile getSkinProfile(String uuid, String name) throws MalformedURLException {
+	public static SkinProfile getSkinProfile(String uuid, String name) throws MalformedURLException, SkinFetchFailedException {
 		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
 
 		String sigbeg = "[{\"signature\":\"";
@@ -60,8 +57,10 @@ public class MojangAPI {
 
 		if (output == null || output.contains("TooManyRequestsException")) {
 
-			if (!ConfigStorage.getInstance().MCAPI_ENABLED)
-				return null;
+			if (!ConfigStorage.getInstance().MCAPI_ENABLED){
+				//Please BlackFire throw errors instead of returning null...
+				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
+			}
 
 			output = readURL(new URL(altskinurl.replace("{uuid}", uuid))).replace(" ", "");
 			System.out.println("[SkinsRestorer] Using McAPI for this skin..");
@@ -69,7 +68,8 @@ public class MojangAPI {
 			String uid = getStringBetween(output, "\"properties\": ", "\"properties_decoded\":");
 
 			if (uid.toLowerCase().contains("null"))
-				return null;
+				//Should also throw error here.
+				throw new SkinFetchUtils.SkinFetchFailedException(Reason.MCAPI_FAILED);
 
 			String alt_valuebeg = ",\"value\": \"";
 			String alt_mid = "\",\"signature\": \"";
