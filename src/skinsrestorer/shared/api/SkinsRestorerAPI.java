@@ -76,7 +76,7 @@ public class SkinsRestorerAPI {
 	 * Used for instant skin applying. Since i'm using NMS and OBC this method
 	 * can be used only in bukkit/spigot but not on bungeecord.
 	 */
-	public static void applySkin(org.bukkit.entity.Player player) {
+	public static void applySkinBukkit(org.bukkit.entity.Player player) {
 		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin(player);
 	}
 	
@@ -84,7 +84,7 @@ public class SkinsRestorerAPI {
 	 * Used for instant skin applying. This method can be used on Bungeecord
 	 * side only!
 	 */
-	public static void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
+	public static void applySkinBungee(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 		skinsrestorer.bungee.SkinsRestorer.getInstance().getFactory().applySkin(player);
 	}
 	
@@ -114,12 +114,12 @@ public class SkinsRestorerAPI {
 	
 	//////////////////// Deprecated Methods ////////////////////////
 	@Deprecated
-	public static void applySkinBukkit(org.bukkit.entity.Player player) {
+	public static void applySkin(org.bukkit.entity.Player player) {
 		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin(player);
 	}
 
 	@Deprecated
-	public static void applySkinBungee(net.md_5.bungee.api.connection.ProxiedPlayer player) {
+	public static void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 		skinsrestorer.bungee.SkinFactoryBungee.getFactory().applySkin(player);
 	}
 
