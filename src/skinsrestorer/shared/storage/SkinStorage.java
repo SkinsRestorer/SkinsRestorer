@@ -60,9 +60,10 @@ public class SkinStorage {
 					"delete from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
 		} else {
 			name = name.toLowerCase();
-
+            if (cache.getString(name)!=null){
 			cache.removePath(name);
 			cache.save();
+            }
 		}
 
 	}
