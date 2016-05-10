@@ -25,7 +25,8 @@ import skinsrestorer.shared.utils.Factory;
 
 public class SkinFactoryv1_7_R4 extends Factory {
 
-	public SkinFactoryv1_7_R4() {}
+	public SkinFactoryv1_7_R4() {
+	}
 
 	// Apply the skin to the player.
 	@Override
@@ -74,17 +75,22 @@ public class SkinFactoryv1_7_R4 extends Factory {
 					((CraftPlayer) player).getHandle().getWorld().difficulty,
 					((CraftPlayer) player).getHandle().getWorld().worldData.getType(),
 					EnumGamemode.getById(player.getGameMode().getValue()));
-			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(player.getEntityId(), 0, CraftItemStack.asNMSCopy(player.getItemInHand()));
-			PacketPlayOutEntityEquipment helmet = new PacketPlayOutEntityEquipment(player.getEntityId(), 4, CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
-			PacketPlayOutEntityEquipment chestplate = new PacketPlayOutEntityEquipment(player.getEntityId(), 3, CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
-			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
-			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
+			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(player.getEntityId(), 0,
+					CraftItemStack.asNMSCopy(player.getItemInHand()));
+			PacketPlayOutEntityEquipment helmet = new PacketPlayOutEntityEquipment(player.getEntityId(), 4,
+					CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
+			PacketPlayOutEntityEquipment chestplate = new PacketPlayOutEntityEquipment(player.getEntityId(), 3,
+					CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
+			PacketPlayOutEntityEquipment leggings = new PacketPlayOutEntityEquipment(player.getEntityId(), 2,
+					CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
+			PacketPlayOutEntityEquipment boots = new PacketPlayOutEntityEquipment(player.getEntityId(), 1,
+					CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
 			PlayerAbilities abilities = ((CraftPlayer) player).getHandle().abilities;
 			PacketPlayOutAbilities packetAbilities = new PacketPlayOutAbilities(abilities);
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				CraftPlayer craftOnline = (CraftPlayer) online;
-                PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
+				PlayerConnection playerCon = craftOnline.getHandle().playerConnection;
 				if (online.equals(player)) {
 					playerCon.sendPacket(removeInfo);
 					playerCon.sendPacket(addInfo);

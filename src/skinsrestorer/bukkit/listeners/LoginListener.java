@@ -56,19 +56,19 @@ public class LoginListener implements Listener {
 			updateAndApply(event.getPlayer());
 			return;
 		}
-		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")){
-		final TextComponent message = new TextComponent("");
-		message.setClickEvent(
-				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
-		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
-		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
+		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
+			final TextComponent message = new TextComponent("");
+			message.setClickEvent(
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
+			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
 
-			@Override
-			public void run() {
-				event.getPlayer().spigot().sendMessage(message);
-			}
+				@Override
+				public void run() {
+					event.getPlayer().spigot().sendMessage(message);
+				}
 
-		}, 5L);
+			}, 5L);
 		}
 	}
 

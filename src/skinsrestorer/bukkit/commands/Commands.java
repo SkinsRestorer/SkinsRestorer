@@ -93,8 +93,8 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Skin help command.
 	public void helpCommand(Player p) {
-		for (String s : LocaleStorage.getInstance().PLAYER_HELP){
-		p.sendMessage(C.c(s));
+		for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
+			p.sendMessage(C.c(s));
 		}
 	}
 
@@ -152,8 +152,8 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Admin Help Command
 	public void helpCommandAdmin(CommandSender sender) {
-		for (String s : LocaleStorage.getInstance().ADMIN_HELP){
-		sender.sendMessage(C.c(s));
+		for (String s : LocaleStorage.getInstance().ADMIN_HELP) {
+			sender.sendMessage(C.c(s));
 		}
 	}
 

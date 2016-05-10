@@ -25,7 +25,8 @@ public class SkinFactoryBungee extends Factory {
 	public SkinFactoryBungee() {
 		profileField = getProfileField();
 	}
-    @Deprecated
+
+	@Deprecated
 	public static SkinFactoryBungee getFactory() {
 		return skinfactory;
 	}
@@ -43,6 +44,7 @@ public class SkinFactoryBungee extends Factory {
 	}
 
 	// Apply the skin to the player.
+	@Override
 	public void applySkin(final ProxiedPlayer player) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 			@Override
@@ -81,10 +83,12 @@ public class SkinFactoryBungee extends Factory {
 	}
 
 	// Remove skin from player
+	@Override
 	public void removeSkin(ProxiedPlayer player) {
 		LoginResult profile = ((UserConnection) player).getPendingConnection().getLoginProfile();
 		InitialHandler handler = (InitialHandler) player.getPendingConnection();
-		profile.getProperties()[0].setSignature(""); //This should do the trick.
+		profile.getProperties()[0].setSignature(""); // This should do the
+														// trick.
 		try {
 			profileField.set(handler, profile);
 		} catch (IllegalArgumentException e) {
@@ -95,6 +99,7 @@ public class SkinFactoryBungee extends Factory {
 		updateSkin(player, profile); // Removing the skin.
 	}
 
+	@Override
 	public void updateSkin(final ProxiedPlayer player, final LoginResult profile) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 			@Override

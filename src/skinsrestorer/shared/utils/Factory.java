@@ -10,7 +10,7 @@ public class Factory {
 	// it.
 	public void applySkin(org.bukkit.entity.Player player) {
 	}
-	
+
 	public void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 	}
 
@@ -21,17 +21,18 @@ public class Factory {
 	// For 1.7 servers.
 	public void updateSkin(org.bukkit.entity.Player player, net.minecraft.util.com.mojang.authlib.GameProfile profile) {
 	}
-	
+
 	// For Bungeecord
-	public void updateSkin(net.md_5.bungee.api.connection.ProxiedPlayer player, net.md_5.bungee.connection.LoginResult result){
-		
+	public void updateSkin(net.md_5.bungee.api.connection.ProxiedPlayer player,
+			net.md_5.bungee.connection.LoginResult result) {
+
 	}
 
-	//For CraftBukkit/spigot
+	// For CraftBukkit/spigot
 	public void removeSkin(org.bukkit.entity.Player player) {
 	}
-	
-	//For Bungeecord
+
+	// For Bungeecord
 	public void removeSkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 	}
 

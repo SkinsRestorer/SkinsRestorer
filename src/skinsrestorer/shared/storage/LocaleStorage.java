@@ -37,7 +37,7 @@ public class LocaleStorage {
 	public String ADMIN_USE_SKIN_HELP = null;
 	public String ADMIN_SET_SKIN = null;
 	public List<String> ADMIN_HELP = new ArrayList<String>();
-	
+
 	private static final LocaleStorage instance = new LocaleStorage();
 	private static DataFiles locale = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "",
 			"messages");

@@ -43,7 +43,7 @@ public class PlayerCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
-		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND){
+		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
 			return;
 		}
@@ -57,9 +57,9 @@ public class PlayerCommands extends Command {
 			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
 			sender.sendMessage(component);
 			return;
-		}else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			for (String s : LocaleStorage.getInstance().PLAYER_HELP){
-			sender.sendMessage(C.c(s));
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+			for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
+				sender.sendMessage(C.c(s));
 			}
 			return;
 		}
@@ -94,9 +94,9 @@ public class PlayerCommands extends Command {
 				public void run() {
 
 					String from = args[1];
-					if (!player.hasPermission("skinsrestorer.disabledskins")){
-						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS){
-							if (args[1].equalsIgnoreCase(disabledSkin)){
+					if (!player.hasPermission("skinsrestorer.disabledskins")) {
+						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS) {
+							if (args[1].equalsIgnoreCase(disabledSkin)) {
 								player.sendMessage(LocaleStorage.getInstance().DISABLED_SKIN);
 								return;
 							}
