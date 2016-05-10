@@ -41,8 +41,8 @@ public class MojangAPI {
 
 	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
 		String output = readURL(new URL(uuidurl + name));
-
-		if (output.isEmpty())
+			
+		if (output == null || output.isEmpty()) 
 			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
 
 		return new Profile(output.substring(7, 39), name);
