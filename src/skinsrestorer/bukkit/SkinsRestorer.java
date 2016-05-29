@@ -104,7 +104,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		// Registering the factory using reflection now. I'm tired of version
 		// checks xD
 		try {
-			Class<?> factory = Class.forName("skinsrestorer.bukkit.SkinFactory" + getBukkitVersion());
+			Class<?> factory = Class.forName("skinsrestorer.bukkit.UniversalSkinFactory");
 			this.factory = (Factory) factory.newInstance();
 			coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getBukkitVersion());
 		} catch (ClassNotFoundException e) {
@@ -263,5 +263,9 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public MySQL getMySQL() {
 		return mysql;
+	}
+
+	public ConsoleCommandSender getColoredLog() {
+		return coloredLog;
 	}
 }
