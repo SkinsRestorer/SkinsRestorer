@@ -14,9 +14,6 @@ public class ReflectionUtil {
 			f.setAccessible(true);
 			return f;
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName() + fname);
-
 			return null;
 		}
 	}
@@ -27,9 +24,6 @@ public class ReflectionUtil {
 			f.setAccessible(true);
 			return f;
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName() + fname);
-
 			return null;
 		}
 	}
@@ -53,9 +47,6 @@ public class ReflectionUtil {
 			m.setAccessible(true);
 			return m;
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName() + args);
-
 			return null;
 		}
 	}
@@ -66,9 +57,6 @@ public class ReflectionUtil {
 			c.setAccessible(true);
 			return c;
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName() + args);
-
 			return null;
 		}
 	}
@@ -83,9 +71,6 @@ public class ReflectionUtil {
 			}
 			throw new Exception("Enum constant not found " + constant);
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName() + "$" + enumname);
-
 			return null;
 		}
 	}
@@ -100,9 +85,6 @@ public class ReflectionUtil {
 			}
 			throw new Exception("Enum constant not found " + constant);
 		} catch (Exception e) {
-
-			System.out.println(clazz.getName());
-
 			return null;
 		}
 	}
@@ -111,9 +93,6 @@ public class ReflectionUtil {
 		try {
 			return Class.forName("net.minecraft.server." + getServerVersion() + "." + clazz);
 		} catch (ClassNotFoundException e) {
-
-			System.out.println("net.minecraft.server." + getServerVersion() + "." + clazz);
-
 			return null;
 		}
 	}

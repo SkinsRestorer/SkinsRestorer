@@ -43,7 +43,7 @@ public class PlayerCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
-		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND){
+		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
 			return;
 		}
@@ -57,21 +57,14 @@ public class PlayerCommands extends Command {
 			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
 			sender.sendMessage(component);
 			return;
-		}else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			for (String s : LocaleStorage.getInstance().PLAYER_HELP){
-			sender.sendMessage(C.c(s));
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+			for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
+				sender.sendMessage(C.c(s));
 			}
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
-			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
-				SkinStorage.getInstance().removeSkinData(player.getName());
-				SkinsRestorer.getInstance().getFactory().removeSkin(player);
-				TextComponent component = new TextComponent(
-						C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-				player.sendMessage(component);
-				return;
-			}
+			SkinStorage.getInstance().removePlayerSkin(player.getName());
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
@@ -94,9 +87,9 @@ public class PlayerCommands extends Command {
 				public void run() {
 
 					String from = args[1];
-					if (!player.hasPermission("skinsrestorer.disabledskins")){
-						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS){
-							if (args[1].equalsIgnoreCase(disabledSkin)){
+					if (!player.hasPermission("skinsrestorer.disabledskins")) {
+						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS) {
+							if (args[1].equalsIgnoreCase(disabledSkin)) {
 								player.sendMessage(LocaleStorage.getInstance().DISABLED_SKIN);
 								return;
 							}
@@ -104,7 +97,8 @@ public class PlayerCommands extends Command {
 					}
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						SkinStorage.getInstance().setSkinData(skinprofile);
+						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 						SkinsRestorer.getInstance().getFactory().applySkin(player);
 						TextComponent component = new TextComponent(
 								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
@@ -112,7 +106,8 @@ public class PlayerCommands extends Command {
 					} catch (SkinFetchFailedException e) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
 						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinStorage.getInstance().setSkinData(skinprofile);
+							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 							SkinsRestorer.getInstance().getFactory().applySkin(player);
 							TextComponent component = new TextComponent(
 									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));

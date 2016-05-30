@@ -45,7 +45,7 @@ public class AdminCommands extends Command {
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			for (String s : LocaleStorage.getInstance().ADMIN_HELP){
+			for (String s : LocaleStorage.getInstance().ADMIN_HELP) {
 				sender.sendMessage(C.c(s));
 			}
 			return;
@@ -65,7 +65,7 @@ public class AdminCommands extends Command {
 				@Override
 				public void run() {
 					try {
-						SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
+						SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
 						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
@@ -86,7 +86,8 @@ public class AdminCommands extends Command {
 					String from = args[2];
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(args[1], skinprofile);
+						SkinStorage.getInstance().setSkinData(skinprofile);
+						SkinStorage.getInstance().setPlayerSkin(args[1], skinprofile.getName());
 						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 						TextComponent component = new TextComponent(

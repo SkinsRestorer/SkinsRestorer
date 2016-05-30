@@ -21,7 +21,8 @@ public class ConfigStorage {
 	public String MYSQL_HOST = "localhost";
 	public String MYSQL_PORT = "3306";
 	public String MYSQL_DATABASE = "db";
-	public String MYSQL_TABLE = "Skins";
+	public String MYSQL_SKINTABLE = "Skins";
+	public String MYSQL_PLAYERTABLE = "Skins";
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
 	public Boolean DEBUG_ENABLED = false;
@@ -43,6 +44,19 @@ public class ConfigStorage {
 			config.set("Disable Skin Command", false);
 			config.comment("Disable Skin Command",
 					new String[] { "Turn this to true if you want to disable", "The /skin command." });
+			config.save();
+		}
+
+		if (config.getString("MySQL.SkinTable") == null) {
+			config.set("MySQL.SkinTable", "Skins");
+			config.comment("MySQL.SkinTable", new String[] { "Skin data will be saved in this table." });
+			config.save();
+		}
+
+		if (config.getString("MySQL.PlayerTable") == null) {
+			config.set("MySQL.PlayerTable", "Players");
+			config.comment("MySQL.PlayerTable",
+					new String[] { "Player data about skins will be saved in this table." });
 			config.save();
 		}
 
@@ -68,7 +82,8 @@ public class ConfigStorage {
 		MYSQL_HOST = config.getString("MySQL.Host");
 		MYSQL_PORT = config.getString("MySQL.Port");
 		MYSQL_DATABASE = config.getString("MySQL.Database");
-		MYSQL_TABLE = config.getString("MySQL.Table");
+		MYSQL_SKINTABLE = config.getString("MySQL.SkinTable");
+		MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable");
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
 		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");

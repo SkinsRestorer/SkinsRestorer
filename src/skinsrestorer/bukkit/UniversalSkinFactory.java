@@ -22,42 +22,45 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 public class UniversalSkinFactory extends Factory {
 
+	/** Class by Blackfire62 **/
+
 	public UniversalSkinFactory() {
 
 	}
 
 	@Override
 	public void applySkin(final Player player) {
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 		skinprofile.applySkin(new SkinProfile.ApplyFunction() {
 			@Override
 			public void applySkin(SkinProperty property) {
-				Property prop = null;
 				try {
+					Property prop = null;
+
 					prop = new Property(property.getName(), property.getValue(), property.getSignature());
 
-				} catch (Throwable t) {
+					Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+
+					Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+
+					GameProfile profile = (GameProfile) ReflectionUtil
+							.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
+
+					// Clear the current textures (skin & cape).
+					profile.getProperties().get(prop.getName()).clear();
+
+					// Putting the new one.
+					profile.getProperties().get(prop.getName()).add(prop);
+
+					// Updating skin.
+					updateSkin(player, profile);
+
+				} catch (NoClassDefFoundError e) {
 					SkinsRestorer.getInstance().getColoredLog()
 							.sendMessage(ChatColor.RED + "[SkinsRestorer] The version "
 									+ ReflectionUtil.getServerVersion() + " is not supported.");
 					Bukkit.getPluginManager().disablePlugin(SkinsRestorer.getInstance());
 				}
-				Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
-
-				Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
-
-				GameProfile profile = (GameProfile) ReflectionUtil
-						.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
-
-				// Clear the current textures (skin & cape).
-				profile.getProperties().get(prop.getName()).clear();
-
-				// Putting the new one.
-				profile.getProperties().get(prop.getName()).add(prop);
-
-				// Updating skin.
-				updateSkin(player, profile);
-
 			}
 		});
 	}
@@ -80,7 +83,6 @@ public class UniversalSkinFactory extends Factory {
 	@SuppressWarnings("deprecation")
 	public void updateSkin(Player player, GameProfile profile) {
 		try {
-			System.out.println("Trying to update skin");
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 			Location l = player.getLocation();
@@ -213,9 +215,7 @@ public class UniversalSkinFactory extends Factory {
 						player.getEntityId(),
 						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND"),
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class }, // ReflectionUtil.invokeMethod(ep.getClass(),
-																					// ep,
-																					// "getItemInOffHand").getClass()
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
 								ReflectionUtil.invokeMethod(ep.getClass(), ep, "getItemInOffHand")));
 
 				helmet = ReflectionUtil
@@ -270,8 +270,6 @@ public class UniversalSkinFactory extends Factory {
 			Object slot = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot"),
 					new Class<?>[] { int.class }, player.getInventory().getHeldItemSlot());
 
-			System.out.println("Finished definitions! ");
-
 			Object playerCons = ReflectionUtil.getField(ep.getClass(), "playerConnection").get(ep);
 
 			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
@@ -286,11 +284,10 @@ public class UniversalSkinFactory extends Factory {
 					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, slot);
 			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateScaledHealth");
 			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateInventory");
-			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateAbilities");
+			ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
 			ReflectionUtil.invokeMethod(ep.getClass(), ep, "triggerHealthUpdate");
 
 			for (Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
-				System.out.println("Sending packet for player " + online.getName());
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(ep);
@@ -328,11 +325,7 @@ public class UniversalSkinFactory extends Factory {
 				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
 						boots);
 			}
-			System.out.println("All packets sent!");
 		} catch (Exception e) {
-			System.out.println("----------------------------------");
-			e.printStackTrace();
-			System.out.println("----------------------------------");
 			// Player logging in isnt finished and the method will not be used.
 			// Player skin is already applied.
 		}

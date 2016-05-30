@@ -93,20 +93,14 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Skin help command.
 	public void helpCommand(Player p) {
-		for (String s : LocaleStorage.getInstance().PLAYER_HELP){
-		p.sendMessage(C.c(s));
+		for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
+			p.sendMessage(C.c(s));
 		}
 	}
 
 	// Skin clear command.
 	public void clearCommand(Player player) {
-		if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
-			SkinStorage.getInstance().removeSkinData(player.getName());
-			SkinsRestorerAPI.removeSkin(player);
-			player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			return;
-		}
-		SkinsRestorerAPI.removeSkin(player);
+		SkinStorage.getInstance().removePlayerSkin(player.getName());
 		player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 	}
 
@@ -136,8 +130,9 @@ public class Commands implements CommandExecutor {
 				}
 				try {
 					SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-					SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+					SkinStorage.getInstance().setSkinData(skinprofile);
 					skinprofile.attemptUpdate();
+					SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 					SkinsRestorerAPI.applySkin(player);
 					player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
 				} catch (SkinFetchFailedException e) {
@@ -152,8 +147,8 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Admin Help Command
 	public void helpCommandAdmin(CommandSender sender) {
-		for (String s : LocaleStorage.getInstance().ADMIN_HELP){
-		sender.sendMessage(C.c(s));
+		for (String s : LocaleStorage.getInstance().ADMIN_HELP) {
+			sender.sendMessage(C.c(s));
 		}
 	}
 
@@ -173,7 +168,7 @@ public class Commands implements CommandExecutor {
 			public void run() {
 				String name = args[1];
 				try {
-					SkinStorage.getInstance().getOrCreateSkinData(name).attemptUpdate();
+					SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
 					if (Bukkit.getPlayer(args[1]) != null) {
 						SkinsRestorerAPI.applySkin(Bukkit.getPlayer(args[1]));
 					}
@@ -221,7 +216,8 @@ public class Commands implements CommandExecutor {
 				String from = args[2];
 				try {
 					SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-					SkinStorage.getInstance().setSkinData(args[1], skinprofile);
+					SkinStorage.getInstance().setSkinData(skinprofile);
+					SkinStorage.getInstance().setPlayerSkin(args[1], from);
 					if (Bukkit.getPlayer(args[1]) != null) {
 						SkinsRestorerAPI.applySkin(Bukkit.getPlayer(args[1]));
 					}

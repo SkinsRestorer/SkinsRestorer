@@ -8,7 +8,7 @@ import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class SkinsRestorerAPI {
-	
+
 	/**
 	 * This method is used to set player's skin.
 	 * <p>
@@ -29,7 +29,8 @@ public class SkinsRestorerAPI {
 				try {
 					skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
 
-					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+					SkinStorage.getInstance().setSkinData(skinprofile);
+					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
 				} catch (SkinFetchFailedException e) {
 
 					skinprofile = SkinStorage.getInstance().getSkinData(skinName);
@@ -37,7 +38,7 @@ public class SkinsRestorerAPI {
 					if (skinprofile == null)
 						return;
 
-					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
 				}
 
 			}
@@ -79,7 +80,7 @@ public class SkinsRestorerAPI {
 	public static void applySkin(org.bukkit.entity.Player player) {
 		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin(player);
 	}
-	
+
 	/**
 	 * Used for instant skin applying. This method can be used on Bungeecord
 	 * side only!
@@ -87,7 +88,7 @@ public class SkinsRestorerAPI {
 	public static void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 		skinsrestorer.bungee.SkinsRestorer.getInstance().getFactory().applySkin(player);
 	}
-	
+
 	/**
 	 * Used for instant skin removing. This method can be used on Bungeecord
 	 * side only!
@@ -103,15 +104,15 @@ public class SkinsRestorerAPI {
 	public static void removeSkin(org.bukkit.entity.Player player) {
 		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().removeSkin(player);
 	}
-	
+
 	/**
-	 * Used to get the SkinsRestorer config if needed for
-	 * external plugins which are depending on SkinsRestorer
+	 * Used to get the SkinsRestorer config if needed for external plugins which
+	 * are depending on SkinsRestorer
 	 */
-	public static DataFiles getConfig(){
+	public static DataFiles getConfig() {
 		return ConfigStorage.getInstance().config;
 	}
-	
+
 	//////////////////// Deprecated Methods ////////////////////////
 	@Deprecated
 	public static void applySkinBukkit(org.bukkit.entity.Player player) {
@@ -127,7 +128,7 @@ public class SkinsRestorerAPI {
 	public static void removeSkinBungee(net.md_5.bungee.api.connection.ProxiedPlayer player) {
 		skinsrestorer.bungee.SkinFactoryBungee.getFactory().removeSkin(player);
 	}
-	
+
 	@Deprecated
 	public static void removeSkinBukkit(org.bukkit.entity.Player player) {
 		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().removeSkin(player);

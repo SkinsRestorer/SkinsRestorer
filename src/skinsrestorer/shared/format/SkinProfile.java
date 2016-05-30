@@ -17,6 +17,7 @@
 
 package skinsrestorer.shared.format;
 
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
@@ -25,30 +26,21 @@ import skinsrestorer.shared.utils.UUIDUtil;
 public class SkinProfile implements Cloneable {
 
 	protected long timestamp;
-	protected boolean isForced;
 	protected Profile profile;
 	protected SkinProperty skin;
 
-	public SkinProfile(Profile profile, SkinProperty skinData, long creationTime, boolean isForced) {
+	public SkinProfile(Profile profile, SkinProperty skinData, long creationTime) {
 		this.profile = profile;
 		this.skin = skinData;
 		this.timestamp = creationTime;
-		this.isForced = isForced;
 	}
 
 	public String getName() {
 		return profile.getName();
 	}
 
-	public boolean isForced() {
-		return isForced;
-	}
-
 	public void attemptUpdate() throws SkinFetchFailedException {
-		if (isForced) {
-			timestamp = System.currentTimeMillis();
-		}
-		if (isForced || (System.currentTimeMillis() - timestamp) <= (2 * 60 * 60 * 1000)) {
+		if ((System.currentTimeMillis() - timestamp) <= (2 * 60 * 60 * 1000)) {
 			return;
 		}
 		try {
@@ -58,7 +50,7 @@ public class SkinProfile implements Cloneable {
 			profile = newskinprofile.profile;
 			skin = newskinprofile.skin;
 
-			skinsrestorer.shared.storage.SkinStorage.getInstance().setSkinData(profile.getName(), newskinprofile);
+			SkinStorage.getInstance().setSkinData(newskinprofile);
 		} catch (SkinFetchFailedException e) {
 			if (e.getReason() == Reason.NO_PREMIUM_PLAYER || e.getReason() == Reason.NO_SKIN_DATA) {
 				timestamp = System.currentTimeMillis();
@@ -75,13 +67,12 @@ public class SkinProfile implements Cloneable {
 
 	public SkinProfile cloneAsForced() {
 		SkinProfile cloned = this.clone();
-		cloned.isForced = true;
 		return cloned;
 	}
 
 	@Override
 	public SkinProfile clone() {
-		return new SkinProfile(profile.clone(), skin, timestamp, isForced);
+		return new SkinProfile(profile.clone(), skin, timestamp);
 	}
 
 	private static final long MONTH = 30L * 24L * 60L * 60L * 1000L;

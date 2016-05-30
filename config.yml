@@ -38,7 +38,8 @@ MySQL:
   Host: localhost
   Port: 3306
   Database: db
-  Table: Skins
+  SkinTable: Skins
+  PlayerTable: Players
   Username: root
   Password: pass
 

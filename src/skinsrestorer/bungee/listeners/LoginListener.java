@@ -33,7 +33,7 @@ public class LoginListener implements Listener {
 			}
 		}
 		final String name = event.getPlayer().getName();
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(name.toLowerCase());
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(name.toLowerCase());
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override

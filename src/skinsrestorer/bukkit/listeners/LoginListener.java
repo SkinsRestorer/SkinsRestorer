@@ -56,25 +56,25 @@ public class LoginListener implements Listener {
 			updateAndApply(event.getPlayer());
 			return;
 		}
-		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")){
-		final TextComponent message = new TextComponent("");
-		message.setClickEvent(
-				new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
-		message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
-		Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
+		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
+			final TextComponent message = new TextComponent("");
+			message.setClickEvent(
+					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
+			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
+			Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
 
-			@Override
-			public void run() {
-				event.getPlayer().spigot().sendMessage(message);
-			}
+				@Override
+				public void run() {
+					event.getPlayer().sendRawMessage(message.toPlainText());
+				}
 
-		}, 5L);
+			}, 5L);
 		}
 	}
 
 	// Here's it :D
 	public void updateAndApply(final Player player) {
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
