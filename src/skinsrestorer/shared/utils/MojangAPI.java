@@ -40,9 +40,15 @@ public class MojangAPI {
 	private static final String altskinurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
 
 	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
+		name = name.toLowerCase();
 		String output = readURL(new URL(uuidurl + name));
+<<<<<<< HEAD
+
+		if (output == null || output.isEmpty())
+=======
 			
 		if (output == null || output.isEmpty()) 
+>>>>>>> origin/master
 			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
 
 		return new Profile(output.substring(7, 39), name);
@@ -50,6 +56,10 @@ public class MojangAPI {
 
 	public static SkinProfile getSkinProfile(String uuid, String name)
 			throws MalformedURLException, SkinFetchFailedException {
+<<<<<<< HEAD
+		name = name.toLowerCase();
+=======
+>>>>>>> origin/master
 		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
 
 		String sigbeg = "[{\"signature\":\"";
@@ -60,6 +70,10 @@ public class MojangAPI {
 
 			if (!ConfigStorage.getInstance().MCAPI_ENABLED) {
 				// Please BlackFire throw errors instead of returning null...
+<<<<<<< HEAD
+				// Im returning null so i can just catch the error later
+=======
+>>>>>>> origin/master
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
 			}
 
@@ -80,14 +94,14 @@ public class MojangAPI {
 			String signature = getStringBetween(output, alt_mid, alt_signatureend);
 
 			return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
-					System.currentTimeMillis(), true);
+					System.currentTimeMillis());
 		}
 
 		String value = getStringBetween(output, mid, valend);
 		String signature = getStringBetween(output, sigbeg, mid);
 
 		return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
-				System.currentTimeMillis(), true);
+				System.currentTimeMillis());
 	}
 
 	private static String readURL(URL url) {

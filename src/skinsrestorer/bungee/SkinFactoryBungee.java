@@ -12,6 +12,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -50,8 +51,11 @@ public class SkinFactoryBungee extends Factory {
 			@Override
 			public void run() {
 
-				final SkinProfile skinprofile = SkinStorage.getInstance()
-						.getOrCreateSkinData(player.getName().toLowerCase());
+				final String skin = SkinStorage.getInstance().getPlayerSkin(player.getName());
+				SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(skin);
+				if (skinprofile == null)
+					skinprofile = new SkinProfile(new Profile(null, player.getName()),
+							new SkinProperty("textures", null, null), 0);
 				skinprofile.applySkin(new SkinProfile.ApplyFunction() {
 					@Override
 					public void applySkin(SkinProperty property) {

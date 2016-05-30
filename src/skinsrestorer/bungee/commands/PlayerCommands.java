@@ -64,14 +64,7 @@ public class PlayerCommands extends Command {
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
-			if (SkinStorage.getInstance().isSkinDataForced(player.getName())) {
-				SkinStorage.getInstance().removeSkinData(player.getName());
-				SkinsRestorer.getInstance().getFactory().removeSkin(player);
-				TextComponent component = new TextComponent(
-						C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-				player.sendMessage(component);
-				return;
-			}
+			SkinStorage.getInstance().removePlayerSkin(player.getName());
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
@@ -104,7 +97,8 @@ public class PlayerCommands extends Command {
 					}
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						SkinStorage.getInstance().setSkinData(skinprofile);
+						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 						SkinsRestorer.getInstance().getFactory().applySkin(player);
 						TextComponent component = new TextComponent(
 								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
@@ -112,7 +106,8 @@ public class PlayerCommands extends Command {
 					} catch (SkinFetchFailedException e) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
 						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinStorage.getInstance().setSkinData(skinprofile);
+							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 							SkinsRestorer.getInstance().getFactory().applySkin(player);
 							TextComponent component = new TextComponent(
 									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));

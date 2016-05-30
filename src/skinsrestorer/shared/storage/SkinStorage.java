@@ -46,93 +46,94 @@ public class SkinStorage {
 		SkinStorage.mysql = mysql;
 	}
 
-	public boolean isSkinDataForced(String name) {
-		SkinProfile profile = getSkinData(name);
-		if (profile != null && profile.isForced()) {
-			return true;
-		}
-		return false;
-	}
-
-	public void removeSkinData(String name) {
+	public void removePlayerSkin(String name) {
+		name = name.toLowerCase();
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 			mysql.execute(mysql.prepareStatement(
-					"delete from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
+					"delete from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?", name));
 		} else {
 			name = name.toLowerCase();
-			if (cache.getString(name) != null) {
-				cache.removePath(name);
+			if (cache.getString("Players." + name) != null) {
+				cache.removePath("Players." + name);
 				cache.save();
 			}
 		}
 
 	}
 
-	public void setSkinData(String name, SkinProfile profile) {
+	public void removeSkinData(String name) {
+		name = name.toLowerCase();
+		if (ConfigStorage.getInstance().USE_MYSQL) {
+			mysql.execute(mysql.prepareStatement(
+					"delete from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?", name));
+		} else {
+			name = name.toLowerCase();
+			if (cache.getString(name) != null) {
+<<<<<<< HEAD
+				cache.removePath("Skins." + name);
+=======
+				cache.removePath(name);
+>>>>>>> origin/master
+				cache.save();
+			}
+		}
+
+	}
+
+	public void setPlayerSkin(String name, String skin) {
+		name = name.toLowerCase();
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name));
+					"select * from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?", name));
 
 			if (crs == null)
 				mysql.execute(mysql.prepareStatement(
-						"insert into " + ConfigStorage.getInstance().MYSQL_TABLE
-								+ " (Nick, Value, Signature, Timestamp) values (?,?,?,?)",
-						name, profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
-						String.valueOf(System.currentTimeMillis())));
+						"insert into " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)",
+						name, skin));
 			else
 				mysql.execute(mysql.prepareStatement(
-						"update " + ConfigStorage.getInstance().MYSQL_TABLE
-								+ " set Value=?, Signature=?, Timestamp=? where Nick=?",
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
-						String.valueOf(System.currentTimeMillis()), name));
+						"update " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin,
+						name));
 		} else {
-			name = name.toLowerCase();
-
-			cache.set(name + ".value", profile.getSkinProperty().getValue());
-			cache.set(name + ".signature", profile.getSkinProperty().getSignature());
-			cache.set(name + ".timestamp", System.currentTimeMillis());
+			cache.set("Players." + name + ".Skin", skin);
 			cache.save();
 		}
 	}
 
-	// Justin case
-	public SkinProfile getOrCreateSkinData(String name) {
+	public void setSkinData(SkinProfile profile) {
 		if (ConfigStorage.getInstance().USE_MYSQL) {
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?",
+					profile.getName().toLowerCase()));
 
-			SkinProfile sp;
-			if ((sp = getSkinData(name)) == null)
-				return new SkinProfile(new Profile(null, name), null, 0, false);
+			if (crs == null)
+				mysql.execute(mysql.prepareStatement(
+						"insert into " + ConfigStorage.getInstance().MYSQL_SKINTABLE
+								+ " (Nick, Value, Signature, Timestamp) values (?,?,?,?)",
+						profile.getName().toLowerCase(), profile.getSkinProperty().getValue(),
+						profile.getSkinProperty().getSignature(), String.valueOf(System.currentTimeMillis())));
 			else
-				return sp;
+				mysql.execute(mysql.prepareStatement(
+						"update " + ConfigStorage.getInstance().MYSQL_SKINTABLE
+								+ " set Value=?, Signature=?, Timestamp=? where Nick=?",
+						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
+						String.valueOf(System.currentTimeMillis()), profile.getName().toLowerCase()));
 		} else {
-			name = name.toLowerCase();
 
-			SkinProfile emptyprofile = new SkinProfile(new Profile(null, name), null, 0, false);
-
-			Long timestamp = System.currentTimeMillis();
-
-			try {
-				timestamp = Long.parseLong(cache.getString(name + ".timestamp"));
-			} catch (Throwable e) {
-			}
-
-			SkinProfile profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
-					cache.getString(name + ".value"), cache.getString(name + ".signature")), timestamp, false);
-
-			if (profile.getSkinProperty().getSignature() != null)
-				return profile;
-			else
-				return emptyprofile;
-
+			cache.set("Skins." + profile.getName() + ".Value", profile.getSkinProperty().getValue());
+			cache.set("Skins." + profile.getName() + ".Signature", profile.getSkinProperty().getSignature());
+			cache.set("Skins." + profile.getName() + ".Timestamp", System.currentTimeMillis());
+			cache.save();
 		}
-
 	}
 
 	public SkinProfile getSkinData(String name) {
+		name = name.toLowerCase();
 		if (ConfigStorage.getInstance().USE_MYSQL) {
 
 			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_TABLE + " where Nick=?", name.toLowerCase()));
+					"select * from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?",
+					name.toLowerCase()));
 
 			if (crs == null) {
 				return null;
@@ -143,7 +144,7 @@ public class SkinStorage {
 					String timestamp = crs.getString("Timestamp");
 
 					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature),
-							Long.valueOf(timestamp), false);
+							Long.valueOf(timestamp));
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -153,17 +154,16 @@ public class SkinStorage {
 			return null;
 
 		} else {
-			name = name.toLowerCase();
-
 			Long timestamp = System.currentTimeMillis();
 
 			try {
-				timestamp = Long.parseLong(cache.getString(name + ".timestamp"));
+				timestamp = Long.parseLong(cache.getString("Skins." + name + ".Timestamp"));
 			} catch (Throwable e) {
 			}
 
 			SkinProfile profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
-					cache.getString(name + ".value"), cache.getString(name + ".signature")), timestamp, true);
+					cache.getString("Skins." + name + ".Value"), cache.getString("Skins." + name + ".Signature")),
+					timestamp);
 
 			if (profile.getSkinProperty().getSignature() == null)
 				return null;
@@ -171,5 +171,55 @@ public class SkinStorage {
 			return profile;
 
 		}
+	}
+
+	public String getPlayerSkin(String name) {
+		name = name.toLowerCase();
+		if (ConfigStorage.getInstance().USE_MYSQL) {
+
+			CachedRowSet crs = mysql.query(mysql.prepareStatement(
+					"select * from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?",
+					name.toLowerCase()));
+
+			if (crs == null) {
+				return null;
+			} else {
+				try {
+					String skin = crs.getString("Skin");
+
+					if (skin.equalsIgnoreCase(name))
+						removePlayerSkin(name);
+
+					return skin;
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			return null;
+
+		} else {
+			String skin = cache.getString("Players." + name + ".Skin");
+
+			if (skin.equalsIgnoreCase(name))
+				removePlayerSkin(name);
+
+			return skin;
+		}
+	}
+
+	public SkinProfile getOrCreateSkinForPlayer(String name) {
+		name = name.toLowerCase();
+		String skin = getPlayerSkin(name);
+
+		if (skin == null)
+			skin = name;
+
+		SkinProfile skinprofile = getSkinData(skin);
+		if (skinprofile == null)
+			skinprofile = new SkinProfile(new Profile(null, name), new SkinProperty("textures", null, null), 0);
+
+		return skinprofile;
 	}
 }

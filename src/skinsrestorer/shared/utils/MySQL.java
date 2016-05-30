@@ -147,12 +147,16 @@ public class MySQL {
 	}
 
 	public void createTable() {
-		execute(prepareStatement("CREATE TABLE IF NOT EXISTS `" + ConfigStorage.getInstance().MYSQL_TABLE + "` ("
+		execute(prepareStatement("CREATE TABLE IF NOT EXISTS `" + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + "` ("
+				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+				+ "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"));
+		execute(prepareStatement("CREATE TABLE IF NOT EXISTS `" + ConfigStorage.getInstance().MYSQL_SKINTABLE + "` ("
 				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
 				+ "`Signature` text COLLATE utf8_unicode_ci," + "`Timestamp` bigint(20) unsigned DEFAULT NULL,"
 				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci"));
 		execute(prepareStatement("ALTER TABLE `" + ConfigStorage.getInstance().MYSQL_DATABASE + "`." + "`"
-				+ ConfigStorage.getInstance().MYSQL_TABLE + "` CHANGE "
+				+ ConfigStorage.getInstance().MYSQL_SKINTABLE + "` CHANGE "
 				+ "`Nick` `Nick` VARCHAR(16) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL, CHANGE "
 				+ "`Timestamp` `Timestamp` BIGINT UNSIGNED NULL, ADD PRIMARY KEY (`Nick`);"));
 	}

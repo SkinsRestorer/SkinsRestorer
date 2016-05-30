@@ -65,7 +65,11 @@ public class LoginListener implements Listener {
 
 				@Override
 				public void run() {
+<<<<<<< HEAD
+					event.getPlayer().sendRawMessage(message.toPlainText());
+=======
 					event.getPlayer().spigot().sendMessage(message);
+>>>>>>> origin/master
 				}
 
 			}, 5L);
@@ -74,7 +78,7 @@ public class LoginListener implements Listener {
 
 	// Here's it :D
 	public void updateAndApply(final Player player) {
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinData(player.getName().toLowerCase());
+		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 		new Thread(new Runnable() {
 			@Override
 			public void run() {

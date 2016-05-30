@@ -29,7 +29,8 @@ public class SkinsRestorerAPI {
 				try {
 					skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
 
-					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+					SkinStorage.getInstance().setSkinData(skinprofile);
+					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
 				} catch (SkinFetchFailedException e) {
 
 					skinprofile = SkinStorage.getInstance().getSkinData(skinName);
@@ -37,7 +38,7 @@ public class SkinsRestorerAPI {
 					if (skinprofile == null)
 						return;
 
-					SkinStorage.getInstance().setSkinData(playerName, skinprofile);
+					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
 				}
 
 			}

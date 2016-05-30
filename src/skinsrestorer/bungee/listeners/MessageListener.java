@@ -48,12 +48,14 @@ public class MessageListener implements Listener {
 					try {
 
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(skin, null);
-						SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+						SkinStorage.getInstance().setSkinData(skinprofile);
+						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 						SkinsRestorer.getInstance().getFactory().applySkin(player);
 					} catch (SkinFetchFailedException ex) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(skin);
 						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(player.getName(), skinprofile);
+							SkinStorage.getInstance().setSkinData(skinprofile);
+							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 							SkinsRestorer.getInstance().getFactory().applySkin(player);
 						}
 
