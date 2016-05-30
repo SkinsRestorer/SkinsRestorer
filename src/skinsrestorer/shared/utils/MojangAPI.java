@@ -42,8 +42,13 @@ public class MojangAPI {
 	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
 		name = name.toLowerCase();
 		String output = readURL(new URL(uuidurl + name));
+<<<<<<< HEAD
 
 		if (output == null || output.isEmpty())
+=======
+			
+		if (output == null || output.isEmpty()) 
+>>>>>>> origin/master
 			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
 
 		return new Profile(output.substring(7, 39), name);
@@ -51,7 +56,10 @@ public class MojangAPI {
 
 	public static SkinProfile getSkinProfile(String uuid, String name)
 			throws MalformedURLException, SkinFetchFailedException {
+<<<<<<< HEAD
 		name = name.toLowerCase();
+=======
+>>>>>>> origin/master
 		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
 
 		String sigbeg = "[{\"signature\":\"";
@@ -62,7 +70,10 @@ public class MojangAPI {
 
 			if (!ConfigStorage.getInstance().MCAPI_ENABLED) {
 				// Please BlackFire throw errors instead of returning null...
+<<<<<<< HEAD
 				// Im returning null so i can just catch the error later
+=======
+>>>>>>> origin/master
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
 			}
 

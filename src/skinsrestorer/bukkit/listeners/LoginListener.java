@@ -65,7 +65,11 @@ public class LoginListener implements Listener {
 
 				@Override
 				public void run() {
+<<<<<<< HEAD
 					event.getPlayer().sendRawMessage(message.toPlainText());
+=======
+					event.getPlayer().spigot().sendMessage(message);
+>>>>>>> origin/master
 				}
 
 			}, 5L);

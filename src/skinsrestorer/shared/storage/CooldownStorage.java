@@ -15,7 +15,6 @@
  *
  */
 
-
 package skinsrestorer.shared.storage;
 
 import java.util.Iterator;
