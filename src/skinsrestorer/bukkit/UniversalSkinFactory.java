@@ -60,6 +60,8 @@ public class UniversalSkinFactory extends Factory {
 							.sendMessage(ChatColor.RED + "[SkinsRestorer] The version "
 									+ ReflectionUtil.getServerVersion() + " is not supported.");
 					Bukkit.getPluginManager().disablePlugin(SkinsRestorer.getInstance());
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		});
@@ -68,14 +70,18 @@ public class UniversalSkinFactory extends Factory {
 	// Remove skin from player
 	@Override
 	public void removeSkin(final Player player) {
-		Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+		try {
+			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 
-		Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 
-		GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep,
-				"getProfile");
-		profile.getProperties().get("textures").clear();
-		updateSkin(player, profile); // Removing the skin.
+			GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"),
+					ep, "getProfile");
+			profile.getProperties().get("textures").clear();
+			updateSkin(player, profile); // Removing the skin.
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	// Update the skin without relog. (Using NMS and OBC)
@@ -158,9 +164,14 @@ public class UniversalSkinFactory extends Factory {
 			Object chestplate = null;
 			Object leggings = null;
 
-			Constructor<?> constr = ReflectionUtil.getConstructor(
-					ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-					new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") });
+			Constructor<?> constr = null;
+
+			try {
+				constr = ReflectionUtil.getConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
+						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") });
+
+			} catch (Throwable t) {
+			}
 
 			if (constr != null) {
 
@@ -284,10 +295,23 @@ public class UniversalSkinFactory extends Factory {
 					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, slot);
 			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateScaledHealth");
 			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateInventory");
-			ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
 			ReflectionUtil.invokeMethod(ep.getClass(), ep, "triggerHealthUpdate");
 
-			for (Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
+			Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
+
+				@Override
+				public void run() {
+					// This cant be async
+					try {
+						ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+
+			});
+
+			for (Player online : Bukkit.getOnlinePlayers()) {
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(ep);

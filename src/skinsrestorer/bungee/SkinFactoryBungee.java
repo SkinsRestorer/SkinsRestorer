@@ -12,11 +12,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.Factory;
+import skinsrestorer.shared.utils.ReflectionUtil;
 
 public class SkinFactoryBungee extends Factory {
 
@@ -24,24 +24,17 @@ public class SkinFactoryBungee extends Factory {
 	private static SkinFactoryBungee skinfactory;
 
 	public SkinFactoryBungee() {
-		profileField = getProfileField();
+		try {
+			profileField = ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile");
+		} catch (Exception e) {
+			System.err.println("Failed to get method handle for initial handel loginProfile field");
+			e.printStackTrace();
+		}
 	}
 
 	@Deprecated
 	public static SkinFactoryBungee getFactory() {
 		return skinfactory;
-	}
-
-	private static Field getProfileField() {
-		try {
-			Field profileField = InitialHandler.class.getDeclaredField("loginProfile");
-			profileField.setAccessible(true);
-			return profileField;
-		} catch (Throwable t) {
-			System.err.println("Failed to get method handle for initial handel loginProfile field");
-			t.printStackTrace();
-		}
-		return null;
 	}
 
 	// Apply the skin to the player.
@@ -51,11 +44,7 @@ public class SkinFactoryBungee extends Factory {
 			@Override
 			public void run() {
 
-				final String skin = SkinStorage.getInstance().getPlayerSkin(player.getName());
-				SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(skin);
-				if (skinprofile == null)
-					skinprofile = new SkinProfile(new Profile(null, player.getName()),
-							new SkinProperty("textures", null, null), 0);
+				final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 				skinprofile.applySkin(new SkinProfile.ApplyFunction() {
 					@Override
 					public void applySkin(SkinProperty property) {
@@ -95,9 +84,7 @@ public class SkinFactoryBungee extends Factory {
 														// trick.
 		try {
 			profileField.set(handler, profile);
-		} catch (IllegalArgumentException e) {
-			// Skin removing failed !?
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			// Skin removing failed !?
 		}
 		updateSkin(player, profile); // Removing the skin.

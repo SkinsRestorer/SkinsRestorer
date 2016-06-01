@@ -69,11 +69,8 @@ public class SkinStorage {
 		} else {
 			name = name.toLowerCase();
 			if (cache.getString(name) != null) {
-<<<<<<< HEAD
 				cache.removePath("Skins." + name);
-=======
 				cache.removePath(name);
->>>>>>> origin/master
 				cache.save();
 			}
 		}
@@ -202,7 +199,7 @@ public class SkinStorage {
 		} else {
 			String skin = cache.getString("Players." + name + ".Skin");
 
-			if (skin.equalsIgnoreCase(name))
+			if (skin != null && skin.equalsIgnoreCase(name))
 				removePlayerSkin(name);
 
 			return skin;

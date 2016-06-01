@@ -25,7 +25,6 @@ public class ConfigStorage {
 	public String MYSQL_PLAYERTABLE = "Skins";
 	public String MYSQL_USERNAME = "admin";
 	public String MYSQL_PASSWORD = "pass";
-	public Boolean DEBUG_ENABLED = false;
 	public List<String> DISABLED_SKINS = new ArrayList<String>();
 	public boolean DISABLE_SKIN_COMMAND = false;
 
@@ -60,16 +59,6 @@ public class ConfigStorage {
 			config.save();
 		}
 
-		if (config.getString("Debug Enabled") == null) {
-			config.set("Debug Enabled", false);
-			config.comment("Debug Enabled",
-					new String[] { "Debug Mode", "", "You should only set this option to true, if you have problems",
-							"with SkinsRestorer and you would like to report them", "",
-							"It will create a file debug.txt which should contain enough",
-							"information for developers to understand the problem" });
-			config.save();
-		}
-
 		UPDATE_CHECK = config.getBoolean("Update Check");
 		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
 		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
@@ -87,6 +76,5 @@ public class ConfigStorage {
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
 		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");
-		DEBUG_ENABLED = config.getBoolean("Debug Enabled");
 	}
 }

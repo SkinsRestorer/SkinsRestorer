@@ -17,17 +17,11 @@
 
 package skinsrestorer.bungee;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
@@ -35,13 +29,11 @@ import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.bungee.metrics.Metrics;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
-import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.Factory;
-import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
@@ -59,7 +51,6 @@ public class SkinsRestorer extends Plugin {
 	private Factory factory;
 	private boolean autoIn = false;
 	private MySQL mysql;
-	private File debug;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -135,70 +126,6 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.YELLOW + " ");
 				log.info(ChatColor.DARK_GREEN + "==============================================");
 			}
-		}
-
-		if (ConfigStorage.getInstance().DEBUG_ENABLED) {
-
-			debug = new File(getDataFolder(), "debug.txt");
-
-			PrintWriter out = null;
-
-			try {
-				debug.createNewFile();
-				out = new PrintWriter(new FileOutputStream(debug), true);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try {
-
-				out.println("Java version: " + System.getProperty("java.version"));
-				out.println("Bungee version: " + ProxyServer.getInstance().getVersion());
-				out.println("SkinsRestoerer version: " + getDescription().getVersion());
-				out.println();
-
-				String plugins = "";
-				for (Plugin plugin : ProxyServer.getInstance().getPluginManager().getPlugins())
-					plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion() + "), ";
-
-				out.println("Plugin list: " + plugins);
-				out.println();
-				out.println("Property output from MojangAPI (Notch) : ");
-
-				SkinProfile sp = MojangAPI.getSkinProfile(MojangAPI.getProfile("Notch").getId(), "Notch");
-
-				out.println("Name: " + sp.getSkinProperty().getName());
-				out.println("Value: " + sp.getSkinProperty().getValue());
-				out.println("Signature: " + sp.getSkinProperty().getSignature());
-				out.println();
-
-				out.println("Raw data from MojangAPI (Blackfire62): ");
-				Method m = MojangAPI.class.getDeclaredMethod("readURL", URL.class);
-
-				m.setAccessible(true);
-				String output = (String) m.invoke(null,
-						new URL("https://sessionserver.mojang.com/session/minecraft/profile/"
-								+ MojangAPI.getProfile("Blackfire62").getId() + "?unsigned=false"));
-
-				out.println(output);
-
-				out.println("\n\n\n\n\n\n\n\n\n\n");
-
-			} catch (Exception e) {
-				out.println("=========================================");
-				e.printStackTrace(out);
-				out.println("=========================================");
-			}
-
-			log.info(
-					ChatColor.RED + "[SkinsRestorer] Debug file crated! Automatically setting debug mode to false... ");
-			ConfigStorage.getInstance().config.set("Debug Enabled", false);
-			ConfigStorage.getInstance().config.save();
-			log.info(ChatColor.RED
-					+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
-			log.info(ChatColor.RED + "[SkinsRestorer] URL for error reporting: " + ChatColor.YELLOW
-					+ "https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/issues");
-
 		}
 
 		try {

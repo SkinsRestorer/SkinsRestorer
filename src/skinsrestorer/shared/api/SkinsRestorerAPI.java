@@ -47,12 +47,12 @@ public class SkinsRestorerAPI {
 	}
 
 	/**
-	 * This method is used to check if player has saved skin data. If player
-	 * skin data equals null, the method will return false. Else if player has
-	 * saved data, it will return true.
+	 * This method is used to check if player has set a skin. If player has no
+	 * skin assigned (so playerName = skinName), the method will return false.
+	 * Else if player has a skin assigned, returns true.
 	 */
 	public static boolean hasSkin(String playerName) {
-		if (SkinStorage.getInstance().getSkinData(playerName) == null) {
+		if (SkinStorage.getInstance().getPlayerSkin(playerName) == null) {
 			return false;
 		}
 		return true;
@@ -62,14 +62,16 @@ public class SkinsRestorerAPI {
 	 * This method is used to get player's skin name. If player doesn't have
 	 * skin, the method will return null. Else it will return player's skin
 	 * name.
+	 * 
+	 * When player has no skin (null) , his skin name equals his username
 	 */
 	public static String getSkinName(String playerName) {
 
-		SkinProfile data = SkinStorage.getInstance().getSkinData(playerName);
-		if (data == null) {
+		String skin = SkinStorage.getInstance().getPlayerSkin(playerName);
+		if (skin == null) {
 			return null;
 		}
-		return data.getName();
+		return skin;
 
 	}
 
@@ -111,26 +113,5 @@ public class SkinsRestorerAPI {
 	 */
 	public static DataFiles getConfig() {
 		return ConfigStorage.getInstance().config;
-	}
-
-	//////////////////// Deprecated Methods ////////////////////////
-	@Deprecated
-	public static void applySkinBukkit(org.bukkit.entity.Player player) {
-		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin(player);
-	}
-
-	@Deprecated
-	public static void applySkinBungee(net.md_5.bungee.api.connection.ProxiedPlayer player) {
-		skinsrestorer.bungee.SkinFactoryBungee.getFactory().applySkin(player);
-	}
-
-	@Deprecated
-	public static void removeSkinBungee(net.md_5.bungee.api.connection.ProxiedPlayer player) {
-		skinsrestorer.bungee.SkinFactoryBungee.getFactory().removeSkin(player);
-	}
-
-	@Deprecated
-	public static void removeSkinBukkit(org.bukkit.entity.Player player) {
-		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().removeSkin(player);
 	}
 }
