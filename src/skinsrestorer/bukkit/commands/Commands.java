@@ -17,6 +17,10 @@
 
 package skinsrestorer.bukkit.commands;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
@@ -25,6 +29,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
@@ -33,6 +40,8 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
@@ -72,6 +81,8 @@ public class Commands implements CommandExecutor {
 			}
 			if (args.length == 0) {
 				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+			} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
+				debugCommand(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 				helpCommandAdmin(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("info")) {
@@ -228,5 +239,78 @@ public class Commands implements CommandExecutor {
 			}
 		});
 		return;
+	}
+
+	public void debugCommand(final CommandSender sender) {
+
+		SkinsRestorer.getExecutor().execute(new Runnable() {
+			@Override
+			public void run() {
+				File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
+
+				PrintWriter out = null;
+
+				try {
+					if (!debug.exists())
+						debug.createNewFile();
+					out = new PrintWriter(new FileOutputStream(debug, true), true);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+
+				String player1 = "Notch";
+				String player2 = "Blackfire62";
+
+				if (sender instanceof Player)
+					player1 = sender.getName();
+
+				try {
+
+					out.println("Java version: " + System.getProperty("java.version"));
+					out.println("Bungee version: " + ProxyServer.getInstance().getVersion());
+					out.println("SkinsRestoerer version: " + SkinsRestorer.getInstance().getDescription().getVersion());
+					out.println();
+
+					String plugins = "";
+					for (Plugin plugin : ProxyServer.getInstance().getPluginManager().getPlugins())
+						plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion()
+								+ "), ";
+
+					out.println("Plugin list: " + plugins);
+					out.println();
+					out.println("Property output from MojangAPI (" + player1 + ") : ");
+
+					SkinProfile sp = MojangAPI.getSkinProfile(MojangAPI.getProfile(player1).getId(), player1);
+
+					out.println("Name: " + sp.getSkinProperty().getName());
+					out.println("Value: " + sp.getSkinProperty().getValue());
+					out.println("Signature: " + sp.getSkinProperty().getSignature());
+					out.println();
+
+					out.println("Raw data from MojangAPI (" + player2 + "): ");
+
+					String output = (String) ReflectionUtil.invokeMethod(MojangAPI.class, null, "readURL",
+							new Class<?>[] { URL.class },
+							new URL("https://sessionserver.mojang.com/session/minecraft/profile/"
+									+ MojangAPI.getProfile(player2).getId() + "?unsigned=false"));
+
+					out.println(output);
+
+					out.println("\n\n\n\n\n\n\n\n\n\n");
+
+				} catch (Exception e) {
+					out.println("=========================================");
+					e.printStackTrace(out);
+					out.println("=========================================");
+				}
+
+				sender.sendMessage(ChatColor.RED + "[SkinsRestorer] Debug file crated!");
+				sender.sendMessage(ChatColor.RED
+						+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
+				sender.sendMessage(ChatColor.RED + "[SkinsRestorer] URL for error reporting: " + ChatColor.YELLOW
+						+ "https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/issues");
+			}
+		});
+
 	}
 }

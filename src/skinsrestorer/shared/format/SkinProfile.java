@@ -17,11 +17,12 @@
 
 package skinsrestorer.shared.format;
 
+import java.util.UUID;
+
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
-import skinsrestorer.shared.utils.UUIDUtil;
 
 public class SkinProfile implements Cloneable {
 
@@ -45,7 +46,7 @@ public class SkinProfile implements Cloneable {
 		}
 		try {
 			SkinProfile newskinprofile = SkinFetchUtils.fetchSkinProfile(profile.getName(),
-					UUIDUtil.fromDashlessString(profile.getId()));
+					fromDashlessString(profile.getId()));
 			timestamp = System.currentTimeMillis();
 			profile = newskinprofile.profile;
 			skin = newskinprofile.skin;
@@ -65,20 +66,9 @@ public class SkinProfile implements Cloneable {
 		}
 	}
 
-	public SkinProfile cloneAsForced() {
-		SkinProfile cloned = this.clone();
-		return cloned;
-	}
-
 	@Override
 	public SkinProfile clone() {
 		return new SkinProfile(profile.clone(), skin, timestamp);
-	}
-
-	private static final long MONTH = 30L * 24L * 60L * 60L * 1000L;
-
-	public boolean shouldSerialize() {
-		return profile.getId() != null && skin != null && (System.currentTimeMillis() - timestamp < MONTH);
 	}
 
 	public static interface ApplyFunction {
@@ -89,6 +79,13 @@ public class SkinProfile implements Cloneable {
 
 	public SkinProperty getSkinProperty() {
 		return skin;
+	}
+
+	private UUID fromDashlessString(final String input) {
+		if (input == null) {
+			return null;
+		}
+		return UUID.fromString(input.replaceFirst("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})", "$1-$2-$3-$4-$5"));
 	}
 
 }
