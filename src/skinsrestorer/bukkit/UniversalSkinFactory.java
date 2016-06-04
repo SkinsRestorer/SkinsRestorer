@@ -2,6 +2,7 @@ package skinsrestorer.bukkit;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -166,6 +167,7 @@ public class UniversalSkinFactory extends Factory {
 
 			Constructor<?> constr = null;
 
+			// Check if we are using version 1.8 or below
 			try {
 				constr = ReflectionUtil.getConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") });
@@ -173,6 +175,7 @@ public class UniversalSkinFactory extends Factory {
 			} catch (Throwable t) {
 			}
 
+			// And use packet definitons respective for these versions
 			if (constr != null) {
 
 				hand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -311,7 +314,8 @@ public class UniversalSkinFactory extends Factory {
 
 			});
 
-			for (Player online : Bukkit.getOnlinePlayers()) {
+			for (Object onlinep : (Collection<?>) ReflectionUtil.invokeMethod(Bukkit.class, null, "getOnlinePlayers")) {
+				Player online = (Player) onlinep;
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(ep);
