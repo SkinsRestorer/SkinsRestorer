@@ -1,7 +1,6 @@
 package skinsrestorer.bukkit;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,9 +86,10 @@ public class UniversalSkinFactory {
 			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 			Location l = player.getLocation();
 
-			ArrayList<Object> list = new ArrayList<Object>();
-			list.add(ep);
-			Iterable<?> iterable = list;
+			HashSet<Object> set = new HashSet<Object>();
+			set.add(ep);
+			System.out.println(set.toArray());
+			Iterable<?> iterable = set;
 
 			Object removeInfo = ReflectionUtil
 					.invokeConstructor(
@@ -279,34 +279,6 @@ public class UniversalSkinFactory {
 
 			Object playerCons = ReflectionUtil.getField(ep.getClass(), "playerConnection").get(ep);
 
-			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, removeInfo);
-			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, addInfo);
-			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, respawn);
-			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, pos);
-			ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-					new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, slot);
-			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateScaledHealth");
-			ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateInventory");
-			ReflectionUtil.invokeMethod(ep.getClass(), ep, "triggerHealthUpdate");
-
-			Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
-
-				@Override
-				public void run() {
-					// This cant be async
-					try {
-						ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-
-			});
-
 			for (Object onlinep : (Collection<?>) ReflectionUtil.invokeMethod(Bukkit.class, null, "getOnlinePlayers")) {
 				Player online = (Player) onlinep;
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
@@ -316,6 +288,36 @@ public class UniversalSkinFactory {
 				Class<?> packet = ReflectionUtil.getNMSClass("Packet");
 
 				if (online.getName().equals(player.getName())) {
+					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
+							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, removeInfo);
+
+					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
+							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, addInfo);
+
+					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
+							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, respawn);
+					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
+							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, pos);
+
+					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
+							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, slot);
+					ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateScaledHealth");
+					ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateInventory");
+					ReflectionUtil.invokeMethod(ep.getClass(), ep, "triggerHealthUpdate");
+
+					Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
+
+						@Override
+						public void run() {
+							// This cant be async
+							try {
+								ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+					});
 					continue;
 				}
 
