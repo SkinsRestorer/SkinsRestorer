@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -62,6 +63,12 @@ public class LoginListener implements Listener {
 				return;
 			}
 		}
+
+		// Online mode fix
+		if (event.getPlayer().getPendingConnection().isOnlineMode())
+			for (ProxiedPlayer pl : event.getServer().getInfo().getPlayers())
+				SkinsRestorer.getInstance().getFactory().updateSkin(pl);
+
 		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
 			final TextComponent message = new TextComponent("");
 			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));

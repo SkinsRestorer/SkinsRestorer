@@ -28,14 +28,11 @@ import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.bungee.metrics.Metrics;
-import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends Plugin {
@@ -48,7 +45,7 @@ public class SkinsRestorer extends Plugin {
 
 	private Logger log;
 	private Updater updater;
-	private Factory factory;
+	private SkinFactoryBungee factory;
 	private boolean autoIn = false;
 	private MySQL mysql;
 
@@ -85,18 +82,7 @@ public class SkinsRestorer extends Plugin {
 			this.getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 		}
 
-		try {
-			Class<?> factory = Class.forName("skinsrestorer.bungee.SkinFactoryBungee");
-			this.factory = (Factory) factory.newInstance();
-			log.info("[SkinsRestorer] Loaded Skin Factory for Bungeecord");
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			getProxy().getPluginManager().unregisterListeners(this);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		factory = new SkinFactoryBungee();
 
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
@@ -141,21 +127,11 @@ public class SkinsRestorer extends Plugin {
 		instance = null;
 	}
 
-	@Deprecated
-	public void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException {
-		SkinsRestorerAPI.setSkin(playerName, skinName);
-	}
-
-	@Deprecated
-	public boolean hasSkin(String playerName) {
-		return SkinsRestorerAPI.hasSkin(playerName);
-	}
-
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
 
-	public Factory getFactory() {
+	public SkinFactoryBungee getFactory() {
 		return factory;
 	}
 

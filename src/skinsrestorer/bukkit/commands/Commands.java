@@ -24,14 +24,13 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
@@ -243,7 +242,7 @@ public class Commands implements CommandExecutor {
 
 	public void debugCommand(final CommandSender sender) {
 
-		SkinsRestorer.getExecutor().execute(new Runnable() {
+		Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
@@ -267,12 +266,12 @@ public class Commands implements CommandExecutor {
 				try {
 
 					out.println("Java version: " + System.getProperty("java.version"));
-					out.println("Bungee version: " + ProxyServer.getInstance().getVersion());
+					out.println("Bukkit version: " + Bukkit.getVersion());
 					out.println("SkinsRestoerer version: " + SkinsRestorer.getInstance().getDescription().getVersion());
 					out.println();
 
 					String plugins = "";
-					for (Plugin plugin : ProxyServer.getInstance().getPluginManager().getPlugins())
+					for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
 						plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion()
 								+ "), ";
 

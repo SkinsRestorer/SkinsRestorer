@@ -1,20 +1,3 @@
-/**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
 package skinsrestorer.shared.utils;
 
 import java.io.BufferedReader;
@@ -32,6 +15,8 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 
+/** Class by Blackfire62 **/
+
 public class MojangAPI {
 
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
@@ -42,13 +27,8 @@ public class MojangAPI {
 	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
 		name = name.toLowerCase();
 		String output = readURL(new URL(uuidurl + name));
-<<<<<<< HEAD
 
 		if (output == null || output.isEmpty())
-=======
-			
-		if (output == null || output.isEmpty()) 
->>>>>>> origin/master
 			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
 
 		return new Profile(output.substring(7, 39), name);
@@ -56,10 +36,7 @@ public class MojangAPI {
 
 	public static SkinProfile getSkinProfile(String uuid, String name)
 			throws MalformedURLException, SkinFetchFailedException {
-<<<<<<< HEAD
 		name = name.toLowerCase();
-=======
->>>>>>> origin/master
 		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
 
 		String sigbeg = "[{\"signature\":\"";
@@ -68,37 +45,25 @@ public class MojangAPI {
 
 		if (output == null || output.contains("TooManyRequestsException")) {
 
-			if (!ConfigStorage.getInstance().MCAPI_ENABLED) {
-				// Please BlackFire throw errors instead of returning null...
-<<<<<<< HEAD
-				// Im returning null so i can just catch the error later
-=======
->>>>>>> origin/master
+			if (!ConfigStorage.getInstance().MCAPI_ENABLED)
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
-			}
 
 			output = readURL(new URL(altskinurl.replace("{uuid}", uuid))).replace(" ", "");
-			System.out.println("[SkinsRestorer] Using McAPI for this skin..");
+			System.out.println("[SkinsRestorer] Using McAPI for skin " + name);
 
-			String uid = getStringBetween(output, "\"properties\": ", "\"properties_decoded\":");
+			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
 
 			if (uid.toLowerCase().contains("null"))
-				// Should also throw error here.
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.MCAPI_FAILED);
 
-			String alt_valuebeg = ",\"value\": \"";
-			String alt_mid = "\",\"signature\": \"";
-			String alt_signatureend = "\"},\"properties";
+			sigbeg = "\"signature\":\"";
+			mid = "\",\"name\":\"textures\",\"value\":\"";
+			valend = "\"}],\"properties_decoded";
 
-			String value = getStringBetween(output, alt_valuebeg, alt_mid);
-			String signature = getStringBetween(output, alt_mid, alt_signatureend);
-
-			return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
-					System.currentTimeMillis());
 		}
 
-		String value = getStringBetween(output, mid, valend);
-		String signature = getStringBetween(output, sigbeg, mid);
+		String value = getStringBetween(output, mid, valend).replace("\\/", "/");
+		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
 
 		return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
 				System.currentTimeMillis());
@@ -112,7 +77,6 @@ public class MojangAPI {
 			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
-			con.setUseCaches(false);
 
 			String line;
 			StringBuilder output = new StringBuilder();
@@ -125,8 +89,8 @@ public class MojangAPI {
 
 			return output.toString();
 		} catch (Exception e) {
+			return null;
 		}
-		return null;
 	}
 
 	private static String getStringBetween(final String base, final String begin, final String end) {

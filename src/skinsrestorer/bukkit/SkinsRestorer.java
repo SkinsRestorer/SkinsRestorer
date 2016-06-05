@@ -9,45 +9,39 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.metrics.Metrics;
-import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-	public static ScheduledExecutorService getExecutor() {
-		return executor;
-	}
-
 	private boolean autoIn = false;
 	private static SkinsRestorer instance;
+	private Logger log;
+	private ConsoleCommandSender coloredLog = null;
+	private Updater updater;
+	private UniversalSkinFactory factory;
+	private MySQL mysql;
 
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
 
-	private Logger log;
-	private ConsoleCommandSender coloredLog = null;
-	private skinsrestorer.shared.utils.Updater updater;
-
-	private String version;
-	private Factory factory;
-	private MySQL mysql;
+	public static ScheduledExecutorService getExecutor() {
+		return executor;
+	}
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -73,7 +67,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		getCommand("skinsrestorer").setExecutor(new Commands());
 		getCommand("skin").setExecutor(new Commands());
 
-		factory = new Factory();
 		if (getServer().getPluginManager().isPluginEnabled("AutoIn")) {
 			coloredLog.sendMessage(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
 			coloredLog.sendMessage(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
@@ -88,25 +81,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			coloredLog.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
 			updater = null;
 		}
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
-		String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3] + ".";
-		this.version = version.replace(".", "");
 
-		// Registering the factory using reflection now. I'm tired of version
-		// checks xD
-		try {
-			Class<?> factory = Class.forName("skinsrestorer.bukkit.UniversalSkinFactory");
-			this.factory = (Factory) factory.newInstance();
-			coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + getBukkitVersion());
-		} catch (ClassNotFoundException e) {
-			coloredLog.sendMessage(ChatColor.RED + "[SkinsRestorer] The version " + getBukkitVersion()
-					+ " is not supported by SkinsModule.");
-			Bukkit.getPluginManager().disablePlugin(this);
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
+
+		factory = new UniversalSkinFactory();
+		coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + ReflectionUtil.getServerVersion());
+
 		if (updater != null) {
 			if (Updater.updateAvailable()) {
 				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
@@ -147,26 +127,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = null;
 	}
 
-	@Deprecated
-	public void setSkin(final String playerName, final String skinName) throws SkinFetchFailedException {
-		SkinsRestorerAPI.setSkin(playerName, skinName);
-	}
-
-	@Deprecated
-	public boolean hasSkin(String playerName) {
-		return SkinsRestorerAPI.hasSkin(playerName);
-	}
-
-	@Deprecated
-	public void applySkin(Player player) {
-		factory.applySkin(player);
-	}
-
-	@Deprecated
-	public void removeSkin(Player player) {
-		factory.removeSkin(player);
-	}
-
 	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
 		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
 	}
@@ -175,16 +135,12 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		return autoIn;
 	}
 
-	public Factory getFactory() {
+	public UniversalSkinFactory getFactory() {
 		return factory;
 	}
 
 	public String getVersion() {
 		return this.getDescription().getVersion();
-	}
-
-	public String getBukkitVersion() {
-		return version;
 	}
 
 	public MySQL getMySQL() {
