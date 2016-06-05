@@ -18,18 +18,12 @@ import com.mojang.authlib.properties.Property;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.Factory;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-public class UniversalSkinFactory extends Factory {
+public class UniversalSkinFactory {
 
 	/** Class by Blackfire62 **/
 
-	public UniversalSkinFactory() {
-
-	}
-
-	@Override
 	public void applySkin(final Player player) {
 		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 		skinprofile.applySkin(new SkinProfile.ApplyFunction() {
@@ -54,7 +48,7 @@ public class UniversalSkinFactory extends Factory {
 					profile.getProperties().get(prop.getName()).add(prop);
 
 					// Updating skin.
-					updateSkin(player, profile);
+					updateSkin(player);
 
 				} catch (NoClassDefFoundError e) {
 					SkinsRestorer.getInstance().getColoredLog()
@@ -69,7 +63,6 @@ public class UniversalSkinFactory extends Factory {
 	}
 
 	// Remove skin from player
-	@Override
 	public void removeSkin(final Player player) {
 		try {
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
@@ -79,16 +72,16 @@ public class UniversalSkinFactory extends Factory {
 			GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"),
 					ep, "getProfile");
 			profile.getProperties().get("textures").clear();
-			updateSkin(player, profile); // Removing the skin.
+			updateSkin(player); // Removing the skin.
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Update the skin without relog. (Using NMS and OBC)
-	@Override
+	// Update the skin without reloging (Invoking player info packets with
+	// reflection)
 	@SuppressWarnings("deprecation")
-	public void updateSkin(Player player, GameProfile profile) {
+	public void updateSkin(Player player) {
 		try {
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");

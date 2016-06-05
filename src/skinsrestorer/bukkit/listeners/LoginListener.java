@@ -52,6 +52,13 @@ public class LoginListener implements Listener {
 				return;
 			}
 		}
+
+		// Fix for online mode
+		if (Bukkit.getOnlineMode()) {
+			for (Player p : Bukkit.getOnlinePlayers())
+				SkinsRestorer.getInstance().getFactory().updateSkin(p);
+		}
+
 		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName()) != null) {
 			updateAndApply(event.getPlayer());
 			return;

@@ -19,11 +19,9 @@ package skinsrestorer.shared.utils;
 
 import java.util.UUID;
 
-import net.md_5.bungee.api.ChatColor;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 
 public class SkinFetchUtils {
 
@@ -35,16 +33,9 @@ public class SkinFetchUtils {
 					return skinprofile;
 				}
 			}
+
 			Profile profile = MojangAPI.getProfile(name);
-
-			if (profile == null)
-				throw new SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
-
 			SkinProfile sp = MojangAPI.getSkinProfile(profile.getId(), name);
-
-			if (sp == null)
-				throw new SkinFetchFailedException(Reason.MCAPI_PROBLEM);
-
 			return sp;
 
 		} catch (Exception e) {
@@ -64,7 +55,7 @@ public class SkinFetchUtils {
 		}
 
 		public SkinFetchFailedException(Throwable exception) {
-			super(Reason.GENERIC_ERROR.getExceptionCause() + " : " + exception.getMessage(), exception);
+			super(Reason.GENERIC_ERROR.getExceptionCause(), exception);
 			this.reason = Reason.GENERIC_ERROR;
 		}
 
@@ -73,13 +64,13 @@ public class SkinFetchUtils {
 		}
 
 		public static enum Reason {
-			NO_PREMIUM_PLAYER(c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), NO_SKIN_DATA(
-					c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)), SKIN_RECODE_FAILED(
-							c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), RATE_LIMITED(c(LocaleStorage
-									.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(c(LocaleStorage
-											.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(c(LocaleStorage
+			NO_PREMIUM_PLAYER(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), NO_SKIN_DATA(
+					C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)), SKIN_RECODE_FAILED(C.c(
+							LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), RATE_LIMITED(C.c(LocaleStorage
+									.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(C.c(LocaleStorage
+											.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(C.c(LocaleStorage
 													.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_PROBLEM(
-															c(LocaleStorage
+															C.c(LocaleStorage
 																	.getInstance().SKIN_FETCH_FAILED_MCAPI_PROBLEM));
 
 			private String exceptionCause;
@@ -93,9 +84,5 @@ public class SkinFetchUtils {
 			}
 		}
 
-	}
-
-	public static String c(String msg) {
-		return ChatColor.translateAlternateColorCodes('&', msg);
 	}
 }

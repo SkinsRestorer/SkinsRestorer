@@ -89,15 +89,15 @@ public class MySQL {
 		}
 	}
 
-	public PreparedStatement prepareStatement(String query, String... vars) {
+	public PreparedStatement prepareStatement(String query, Object... vars) {
 		try {
 			if (isConnected()) {
 				PreparedStatement ps = con.prepareStatement(query);
-				int x = 0;
+				int i = 0;
 				if (query.contains("?") && vars.length != 0) {
-					for (String var : vars) {
-						x++;
-						ps.setString(x, var);
+					for (Object obj : vars) {
+						i++;
+						ps.setObject(i, obj);
 					}
 				}
 				return ps;
