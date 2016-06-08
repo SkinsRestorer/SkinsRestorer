@@ -215,7 +215,7 @@ public class SkinStorage {
 
 		SkinProfile skinprofile = getSkinData(skin);
 		if (skinprofile == null)
-			skinprofile = new SkinProfile(new Profile(null, name), new SkinProperty("textures", null, null), 0);
+			skinprofile = new SkinProfile(new Profile(null, name), new SkinProperty("textures", "", ""), 0);
 
 		return skinprofile;
 	}
