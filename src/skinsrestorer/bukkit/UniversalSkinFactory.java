@@ -1,8 +1,9 @@
 package skinsrestorer.bukkit;
 
 import java.lang.reflect.Constructor;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -29,9 +30,7 @@ public class UniversalSkinFactory {
 			@Override
 			public void applySkin(SkinProperty property) {
 				try {
-					Property prop = null;
-
-					prop = new Property(property.getName(), property.getValue(), property.getSignature());
+					Property prop = new Property(property.getName(), property.getValue(), property.getSignature());
 
 					Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 
@@ -50,6 +49,7 @@ public class UniversalSkinFactory {
 					updateSkin(player);
 
 				} catch (NoClassDefFoundError e) {
+					e.printStackTrace();
 					SkinsRestorer.getInstance().getColoredLog()
 							.sendMessage(ChatColor.RED + "[SkinsRestorer] The version "
 									+ ReflectionUtil.getServerVersion() + " is not supported.");
@@ -86,9 +86,8 @@ public class UniversalSkinFactory {
 			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 			Location l = player.getLocation();
 
-			HashSet<Object> set = new HashSet<Object>();
+			List<Object> set = new ArrayList<Object>();
 			set.add(ep);
-			System.out.println(set.toArray());
 			Iterable<?> iterable = set;
 
 			Object removeInfo = ReflectionUtil
@@ -121,6 +120,8 @@ public class UniversalSkinFactory {
 					ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
 							"EnumPlayerInfoAction", "ADD_PLAYER"), iterable);
 
+			// Slowly getting from object to object till i get what I need for
+			// the respawn packet
 			Object world = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getWorld");
 			Object difficulty = ReflectionUtil.invokeMethod(world.getClass(), world, "getDifficulty");
 			Object worlddata = ReflectionUtil.getField(world.getClass(), "worldData").get(world);
@@ -128,22 +129,27 @@ public class UniversalSkinFactory {
 			Object worldprovider = ReflectionUtil.getField(world.getClass(), "worldProvider").get(world);
 			Object dimensionmanager = ReflectionUtil.invokeMethod(worldprovider.getClass(), worldprovider,
 					"getDimensionManager");
+			Enum<?> enumGamemode = null;
+
+			try {
+				// 1.7 - 1.9
+				enumGamemode = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("WorldSettings"), "EnumGamemode",
+						"SURVIVAL");
+
+			} catch (Throwable t) {
+				// 1.10 +
+				enumGamemode = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumGamemode"), "SURVIVAL");
+			}
 
 			Object respawn = ReflectionUtil
 					.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutRespawn"),
 							new Class<?>[] { int.class,
 									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL")
 											.getClass(),
-									worldtype.getClass(),
-									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("WorldSettings"), "EnumGamemode",
-											"SURVIVAL").getClass() },
-							ReflectionUtil
-									.invokeMethod(dimensionmanager.getClass(), dimensionmanager, "getDimensionID"),
-							difficulty, worldtype,
-							ReflectionUtil.invokeMethod(
-									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("WorldSettings"), "EnumGamemode",
-											"SURVIVAL").getClass(),
-									null, "getById", new Class<?>[] { int.class }, player.getGameMode().getValue()));
+									worldtype.getClass(), enumGamemode.getClass() },
+					ReflectionUtil.invokeMethod(dimensionmanager.getClass(), dimensionmanager, "getDimensionID"),
+					difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById",
+							new Class<?>[] { int.class }, player.getGameMode().getValue()));
 
 			Object pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
 					new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
@@ -166,6 +172,7 @@ public class UniversalSkinFactory {
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") });
 
 			} catch (Throwable t) {
+				// If 1.9+, leave it at null
 			}
 
 			// And use packet definitons respective for these versions
@@ -212,7 +219,7 @@ public class UniversalSkinFactory {
 						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND"),
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
 								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								ReflectionUtil.invokeMethod(ep.getClass(), ep, "getItemInMainHand")));
+								player.getInventory().getItemInMainHand()));
 
 				offhand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class,
@@ -223,7 +230,7 @@ public class UniversalSkinFactory {
 						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND"),
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
 								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								ReflectionUtil.invokeMethod(ep.getClass(), ep, "getItemInOffHand")));
+								player.getInventory().getItemInOffHand()));
 
 				helmet = ReflectionUtil
 						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -277,81 +284,62 @@ public class UniversalSkinFactory {
 			Object slot = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot"),
 					new Class<?>[] { int.class }, player.getInventory().getHeldItemSlot());
 
-			Object playerCons = ReflectionUtil.getField(ep.getClass(), "playerConnection").get(ep);
+			// We finished defining packets, now lets send em
 
-			for (Object onlinep : (Collection<?>) ReflectionUtil.invokeMethod(Bukkit.class, null, "getOnlinePlayers")) {
-				Player online = (Player) onlinep;
-				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+			for (Player online : Bukkit.getOnlinePlayers()) {
+				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
 				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
-				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(ep);
-
-				Class<?> packet = ReflectionUtil.getNMSClass("Packet");
-
-				if (online.getName().equals(player.getName())) {
-					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, removeInfo);
-
-					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, addInfo);
-
-					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, respawn);
-					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, pos);
-
-					ReflectionUtil.invokeMethod(playerCons.getClass(), playerCons, "sendPacket",
-							new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, slot);
-					ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateScaledHealth");
-					ReflectionUtil.invokeMethod(cp.getClass(), cp, "updateInventory");
-					ReflectionUtil.invokeMethod(ep.getClass(), ep, "triggerHealthUpdate");
-
+				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
+				if (online.equals(player)) {
+					sendPacket(playerCon, removeInfo);
+					sendPacket(playerCon, addInfo);
+					sendPacket(playerCon, respawn);
 					Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
-
 						@Override
 						public void run() {
 							// This cant be async
+							// I may change this, it looks ugly
 							try {
-								ReflectionUtil.invokeMethod(ep.getClass(), ep, "updateAbilities");
+								ReflectionUtil.invokeMethod(craftHandle.getClass(), craftHandle, "updateAbilities");
 							} catch (Exception e) {
-								e.printStackTrace();
 							}
 						}
 
 					});
+					sendPacket(playerCon, pos);
+					sendPacket(playerCon, slot);
+					ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "updateScaledHealth");
+					ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "updateInventory");
+					ReflectionUtil.invokeMethod(craftHandle.getClass(), craftHandle, "triggerHealthUpdate");
 					continue;
 				}
 
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						removeEntity);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						removeInfo);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						addInfo);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						addNamed);
+				sendPacket(playerCon, removeEntity);
+				sendPacket(playerCon, removeInfo);
 
+				sendPacket(playerCon, addInfo);
+				sendPacket(playerCon, addNamed);
 				if (hand == null) {
-					ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket",
-							new Class<?>[] { packet }, mainhand);
-					ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket",
-							new Class<?>[] { packet }, offhand);
+					sendPacket(playerCon, mainhand);
+					sendPacket(playerCon, offhand);
 				} else {
-					ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket",
-							new Class<?>[] { packet }, hand);
+					sendPacket(playerCon, hand);
 				}
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						helmet);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						chestplate);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						leggings);
-				ReflectionUtil.invokeMethod(playerCon.getClass(), playerCon, "sendPacket", new Class<?>[] { packet },
-						boots);
+				sendPacket(playerCon, helmet);
+				sendPacket(playerCon, chestplate);
+				sendPacket(playerCon, leggings);
+				sendPacket(playerCon, boots);
 			}
 		} catch (Exception e) {
-			// Player logging in isnt finished and the method will not be used.
-			// Player skin is already applied.
+			e.printStackTrace();
+			// Ill just leave the printStackTrace here
+			// So people can actually report errors
 		}
 
+	}
+
+	private void sendPacket(Object playerConnection, Object packet) throws Exception {
+		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
+				new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, packet);
 	}
 }

@@ -20,7 +20,6 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
@@ -59,10 +58,10 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
 					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
 					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
-		else {
+		else
 			SkinStorage.init();
-			executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-		}
+
+		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 
 		getCommand("skinsrestorer").setExecutor(new Commands());
 		getCommand("skin").setExecutor(new Commands());
@@ -85,7 +84,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
 		factory = new UniversalSkinFactory();
-		coloredLog.sendMessage("[SkinsRestorer] Loaded Skin Factory for " + ReflectionUtil.getServerVersion());
 
 		if (updater != null) {
 			if (Updater.updateAvailable()) {
