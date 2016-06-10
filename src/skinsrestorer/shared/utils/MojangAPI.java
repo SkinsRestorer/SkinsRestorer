@@ -41,7 +41,7 @@ public class MojangAPI {
 
 		String sigbeg = "[{\"signature\":\"";
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
-		String valend = "\"}]}";
+		String valend = "\"}]";
 
 		if (output == null || output.contains("TooManyRequestsException")) {
 
