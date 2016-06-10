@@ -72,7 +72,7 @@ public class LoginListener implements Listener {
 
 				@Override
 				public void run() {
-					event.getPlayer().sendRawMessage(message.toPlainText());
+					event.getPlayer().sendMessage(message.toPlainText());
 				}
 
 			}, 5L);
