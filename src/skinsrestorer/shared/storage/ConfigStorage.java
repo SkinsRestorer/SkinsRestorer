@@ -27,6 +27,12 @@ public class ConfigStorage {
 	public String MYSQL_PASSWORD = "pass";
 	public List<String> DISABLED_SKINS = new ArrayList<String>();
 	public boolean DISABLE_SKIN_COMMAND = false;
+	public String CUSTOMSKINS_USERNAME = null;
+	public String CUSTOMSKINS_PASSWORD = null;
+	public String CUSTOMSKINS_NAME = null;
+	public String CUSTOMSKINS_ID = null;
+	public String CUSTOMSKINS_AUTHTOKEN = null;
+	public String CUSTOMSKINS_CLIENTTOKEN = null;
 
 	private static final ConfigStorage instance = new ConfigStorage();
 
@@ -76,5 +82,11 @@ public class ConfigStorage {
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
 		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");
+		CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
+		CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");
+		CUSTOMSKINS_NAME = config.getString("CustomSkins.Name");
+		CUSTOMSKINS_ID = config.getString("CustomSkins.ID");
+		CUSTOMSKINS_AUTHTOKEN = config.getString("CustomSkins.Authtoken");
+		CUSTOMSKINS_CLIENTTOKEN = config.getString("CustomSkins.Clienttoken");
 	}
 }

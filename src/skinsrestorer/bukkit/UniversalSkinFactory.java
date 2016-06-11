@@ -141,6 +141,17 @@ public class UniversalSkinFactory {
 				enumGamemode = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumGamemode"), "SURVIVAL");
 			}
 
+			int gmid = 0;
+
+			try {
+				gmid = /*
+						*/ player./* 
+										*/getGameMode()/*
+																	*/.getValue();
+			} catch (Exception e) {
+
+			}
+
 			Object respawn = ReflectionUtil
 					.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutRespawn"),
 							new Class<?>[] { int.class,
@@ -149,7 +160,7 @@ public class UniversalSkinFactory {
 									worldtype.getClass(), enumGamemode.getClass() },
 					ReflectionUtil.invokeMethod(dimensionmanager.getClass(), dimensionmanager, "getDimensionID"),
 					difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById",
-							new Class<?>[] { int.class }, player.getGameMode().getValue()));
+							new Class<?>[] { int.class }, gmid));
 
 			Object pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
 					new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
