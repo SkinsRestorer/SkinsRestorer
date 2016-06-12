@@ -38,11 +38,14 @@ import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.AuthSession;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAuthAPI;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.SkinsPacketHandler;
 import skinsrestorer.shared.utils.Updater;
 
 public class Commands implements CommandExecutor {
@@ -82,6 +85,8 @@ public class Commands implements CommandExecutor {
 				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
 				debugCommand(sender);
+			} else if ((args.length == 1) && args[0].equalsIgnoreCase("test")) {
+				test(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 				helpCommandAdmin(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("info")) {
@@ -143,7 +148,7 @@ public class Commands implements CommandExecutor {
 					SkinStorage.getInstance().setSkinData(skinprofile);
 					skinprofile.attemptUpdate();
 					SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
-					SkinsRestorerAPI.applySkin(player);
+					SkinsPacketHandler.updateSkin(player);
 					player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
 				} catch (SkinFetchFailedException e) {
 					player.sendMessage(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
@@ -180,7 +185,7 @@ public class Commands implements CommandExecutor {
 				try {
 					SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
 					if (Bukkit.getPlayer(args[1]) != null) {
-						SkinsRestorerAPI.applySkin(Bukkit.getPlayer(args[1]));
+						SkinsPacketHandler.updateSkin((Player) sender);
 					}
 					sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
 				} catch (SkinFetchFailedException e) {
@@ -229,7 +234,7 @@ public class Commands implements CommandExecutor {
 					SkinStorage.getInstance().setSkinData(skinprofile);
 					SkinStorage.getInstance().setPlayerSkin(args[1], from);
 					if (Bukkit.getPlayer(args[1]) != null) {
-						SkinsRestorerAPI.applySkin(Bukkit.getPlayer(args[1]));
+						SkinsPacketHandler.updateSkin((Player) sender);
 					}
 					sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
 				} catch (SkinFetchFailedException e) {
@@ -311,5 +316,56 @@ public class Commands implements CommandExecutor {
 			}
 		});
 
+	}
+
+	public void test(CommandSender sender) {
+		try {
+			AuthSession sess = MojangAuthAPI.authenticate(ConfigStorage.getInstance().CUSTOMSKINS_USERNAME,
+					ConfigStorage.getInstance().CUSTOMSKINS_PASSWORD);
+
+			ConfigStorage.getInstance().config.set("CustomSkins.Authtoken", sess.getAuthToken());
+			ConfigStorage.getInstance().config.set("CustomSkins.Clienttoken", sess.getClientToken());
+			ConfigStorage.getInstance().config.set("CustomSkins.ID", sess.getId());
+			ConfigStorage.getInstance().config.set("CustomSkins.Name", sess.getName());
+			ConfigStorage.getInstance().config.save();
+
+			/*
+			 * if (ConfigStorage.getInstance().CUSTOMSKINS_AUTHTOKEN == null ||
+			 * ConfigStorage.getInstance().CUSTOMSKINS_CLIENTTOKEN == null) {
+			 * sess = MojangAuthAPI.authenticate(ConfigStorage.getInstance().
+			 * CUSTOMSKINS_USERNAME,
+			 * ConfigStorage.getInstance().CUSTOMSKINS_PASSWORD);
+			 * 
+			 * ConfigStorage.getInstance().config.set("CustomSkins.Authtoken",
+			 * sess.getAuthToken());
+			 * ConfigStorage.getInstance().config.set("CustomSkins.Clienttoken",
+			 * sess.getClientToken());
+			 * ConfigStorage.getInstance().config.set("CustomSkins.ID",
+			 * sess.getId());
+			 * ConfigStorage.getInstance().config.set("CustomSkins.Name",
+			 * sess.getName()); ConfigStorage.getInstance().config.save(); }
+			 * else sess = new
+			 * AuthSession(ConfigStorage.getInstance().CUSTOMSKINS_NAME,
+			 * ConfigStorage.getInstance().CUSTOMSKINS_ID,
+			 * ConfigStorage.getInstance().CUSTOMSKINS_AUTHTOKEN,
+			 * ConfigStorage.getInstance().CUSTOMSKINS_CLIENTTOKEN);
+			 */
+
+			File f = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "skin.png");
+
+			if (!f.exists()) {
+				sender.sendMessage("Soubor skin.png neexistuje!");
+				return;
+			}
+
+			sess = MojangAuthAPI.authenticate(ConfigStorage.getInstance().CUSTOMSKINS_USERNAME,
+					ConfigStorage.getInstance().CUSTOMSKINS_PASSWORD);
+
+			String output = MojangAuthAPI.uploadSkin(sess.getId(), sess.getAuthToken(), f, true);
+			// String output = MojangAuthAPI.info(sess.getAuthToken());
+			sender.sendMessage(output);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,4 +1,4 @@
-package skinsrestorer.bukkit;
+package skinsrestorer.shared.utils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,72 +14,87 @@ import org.bukkit.inventory.ItemStack;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.ReflectionUtil;
 
-public class UniversalSkinFactory {
+/** Class by Blackfire62 **/
 
-	/** Class by Blackfire62 **/
+public class SkinsPacketHandler extends ChannelDuplexHandler {
 
-	public void applySkin(final Player player) {
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
-		skinprofile.applySkin(new SkinProfile.ApplyFunction() {
-			@Override
-			public void applySkin(SkinProperty property) {
-				try {
-					Property prop = new Property(property.getName(), property.getValue(), property.getSignature());
+	private Player p;
 
-					Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+	public SkinsPacketHandler(Player p) {
+		this.p = p;
+	}
 
+	@Override
+	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+
+		if (ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo").isInstance(msg)) {
+
+			try {
+				Enum<?> a = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
+
+				if (a.name().equalsIgnoreCase("ADD_PLAYER")) {
+					final SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
+
+					Property prop = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
+							sp.getSkinProperty().getSignature());
+					Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
 					Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 
 					GameProfile profile = (GameProfile) ReflectionUtil
 							.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
 
-					// Clear the current textures (skin & cape).
 					profile.getProperties().get(prop.getName()).clear();
-
-					// Putting the new one.
 					profile.getProperties().get(prop.getName()).add(prop);
-
-					// Updating skin.
-					updateSkin(player);
-
-				} catch (NoClassDefFoundError e) {
-					e.printStackTrace();
-					SkinsRestorer.getInstance().getColoredLog()
-							.sendMessage(ChatColor.RED + "[SkinsRestorer] The version "
-									+ ReflectionUtil.getServerVersion() + " is not supported.");
-					Bukkit.getPluginManager().disablePlugin(SkinsRestorer.getInstance());
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		});
+
+		}
+		super.write(ctx, msg, promise);
 	}
 
-	// Remove skin from player
-	public void removeSkin(final Player player) {
+	public static void inject(Player p) {
 		try {
-			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
+			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
+			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
+			Channel channel = (Channel) ReflectionUtil.getField(manager.getClass(), "channel").get(manager);
 
-			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
-
-			GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"),
-					ep, "getProfile");
-			profile.getProperties().get("textures").clear();
-			updateSkin(player); // Removing the skin.
+			if (channel.pipeline().context("skins_handler") == null)
+				channel.pipeline().addBefore("packet_handler", "skins_handler", new SkinsPacketHandler(p));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Update the skin without reloging (Invoking player info packets with
-	// reflection)
+	public static void uninject(Player p) {
+		try {
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
+			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
+			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
+			Channel channel = (Channel) ReflectionUtil.getField(manager.getClass(), "channel").get(manager);
+
+			if (channel.pipeline().context("skins_handler") != null)
+				channel.pipeline().remove("skins_handler");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Update the skin without reloging
 	@SuppressWarnings("deprecation")
-	public void updateSkin(Player player) {
+	public static void updateSkin(Player player) {
 		try {
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
@@ -144,12 +158,8 @@ public class UniversalSkinFactory {
 			int gmid = 0;
 
 			try {
-				gmid = /*
-						*/ player./* 
-										*/getGameMode()/*
-																	*/.getValue();
+				gmid = player.getGameMode().getValue();
 			} catch (Exception e) {
-
 			}
 
 			Object respawn = ReflectionUtil
@@ -349,8 +359,9 @@ public class UniversalSkinFactory {
 
 	}
 
-	private void sendPacket(Object playerConnection, Object packet) throws Exception {
+	private static void sendPacket(Object playerConnection, Object packet) throws Exception {
 		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
 				new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, packet);
 	}
+
 }

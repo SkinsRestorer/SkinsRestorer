@@ -60,21 +60,9 @@ public class SkinProfile implements Cloneable {
 		}
 	}
 
-	public void applySkin(ApplyFunction applyfunction) {
-		if (skin != null) {
-			applyfunction.applySkin(skin);
-		}
-	}
-
 	@Override
 	public SkinProfile clone() {
 		return new SkinProfile(profile.clone(), skin, timestamp);
-	}
-
-	public static interface ApplyFunction {
-
-		public void applySkin(SkinProperty property);
-
 	}
 
 	public SkinProperty getSkinProperty() {

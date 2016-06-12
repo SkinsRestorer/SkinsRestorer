@@ -67,7 +67,7 @@ public class LoginListener implements Listener {
 		// Online mode fix
 		if (event.getPlayer().getPendingConnection().isOnlineMode())
 			for (ProxiedPlayer pl : event.getServer().getInfo().getPlayers())
-				SkinsRestorer.getInstance().getFactory().updateSkin(pl);
+				SkinsRestorer.getInstance().getFactory().sendUpdateRequest(pl);
 
 		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
 			final TextComponent message = new TextComponent("");

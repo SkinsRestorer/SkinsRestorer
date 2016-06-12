@@ -11,14 +11,19 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.api.SkinsRestorerAPI;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.SkinsPacketHandler;
 
 public class LoginListener implements Listener {
+
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onJoin(PlayerJoinEvent e) {
+		SkinsPacketHandler.inject(e.getPlayer());
+	}
 
 	// fix skin on player login
 	@EventHandler(priority = EventPriority.LOW)
@@ -51,12 +56,6 @@ public class LoginListener implements Listener {
 							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
 				return;
 			}
-		}
-
-		// Fix for online mode
-		if (Bukkit.getOnlineMode()) {
-			for (Player p : Bukkit.getOnlinePlayers())
-				SkinsRestorer.getInstance().getFactory().updateSkin(p);
 		}
 
 		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName()) != null) {
@@ -92,8 +91,8 @@ public class LoginListener implements Listener {
 							.logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
 					e.printStackTrace();
 				}
-				SkinsRestorerAPI.applySkin(player);
 			}
 		}).start();
 	}
+
 }

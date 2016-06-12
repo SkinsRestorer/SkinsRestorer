@@ -80,7 +80,7 @@ public class SkinsRestorerAPI {
 	 * can be used only in bukkit/spigot but not on bungeecord.
 	 */
 	public static void applySkin(org.bukkit.entity.Player player) {
-		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin(player);
+		skinsrestorer.shared.utils.SkinsPacketHandler.updateSkin(player);
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class SkinsRestorerAPI {
 	 * can be used only in bukkit/spigot but not on bungeecord.
 	 */
 	public static void removeSkin(org.bukkit.entity.Player player) {
-		skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().removeSkin(player);
+		skinsrestorer.shared.storage.SkinStorage.getInstance().removePlayerSkin(player.getName());
 	}
 
 	/**

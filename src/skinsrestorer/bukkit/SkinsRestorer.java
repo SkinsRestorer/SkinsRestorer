@@ -1,5 +1,6 @@
 package skinsrestorer.bukkit;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -9,8 +10,11 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
@@ -20,6 +24,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.SkinsPacketHandler;
 import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends JavaPlugin implements Listener {
@@ -31,8 +36,8 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	private Logger log;
 	private ConsoleCommandSender coloredLog = null;
 	private Updater updater;
-	private UniversalSkinFactory factory;
 	private MySQL mysql;
+	private boolean bungeeEnabled;
 
 	public static SkinsRestorer getInstance() {
 		return instance;
@@ -51,6 +56,33 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = this;
 		log = getLogger();
 		coloredLog = Bukkit.getConsoleSender();
+		try {
+			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
+					.getBoolean("settings.bungeecord");
+		} catch (Exception e) {
+			bungeeEnabled = false;
+		}
+
+		if (bungeeEnabled) {
+
+			Bukkit.getMessenger().registerIncomingPluginChannel(this, "SkinUpdate", new PluginMessageListener() {
+				@Override
+				public void onPluginMessageReceived(String channel, final Player player, byte[] message) {
+					if (!channel.equals("SkinUpdate"))
+						return;
+
+					Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
+
+						@Override
+						public void run() {
+							SkinsPacketHandler.updateSkin(player);
+						}
+					});
+				}
+			});
+			return;
+		}
+
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
 		LocaleStorage.getInstance().init(this.getResource("messages.yml"), false);
@@ -81,9 +113,10 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			updater = null;
 		}
 
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
+		for (Player p : Bukkit.getOnlinePlayers())
+			SkinsPacketHandler.inject(p);
 
-		factory = new UniversalSkinFactory();
+		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
 		if (updater != null) {
 			if (Updater.updateAvailable()) {
@@ -122,6 +155,9 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		executor.shutdown();
+		if (!bungeeEnabled)
+			for (Player p : Bukkit.getOnlinePlayers())
+				SkinsPacketHandler.uninject(p);
 		instance = null;
 	}
 
@@ -131,10 +167,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 	public boolean isAutoInEnabled() {
 		return autoIn;
-	}
-
-	public UniversalSkinFactory getFactory() {
-		return factory;
 	}
 
 	public String getVersion() {
