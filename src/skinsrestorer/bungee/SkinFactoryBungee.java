@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.md_5.bungee.UserConnection;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
@@ -45,21 +44,6 @@ public class SkinFactoryBungee {
 			}
 		});
 
-	}
-
-	// Remove skin from player
-
-	public void removeSkin(ProxiedPlayer player) {
-		LoginResult profile = ((UserConnection) player).getPendingConnection().getLoginProfile();
-		InitialHandler handler = (InitialHandler) player.getPendingConnection();
-		profile.getProperties()[0].setSignature(""); // This should do the
-														// trick.
-		try {
-			ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile").set(handler, profile);
-		} catch (Exception e) {
-			// Skin removing failed !?
-		}
-		sendUpdateRequest(player); // Removing the skin.
 	}
 
 	public void sendUpdateRequest(ProxiedPlayer p) {

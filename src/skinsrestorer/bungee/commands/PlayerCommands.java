@@ -37,12 +37,16 @@ import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 public class PlayerCommands extends Command {
 
 	public PlayerCommands() {
-		super("skin", "skinsrestorer.playercmds");
+		super("skin", null);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
+		if (!sender.hasPermission("skinsrestorer.playercmds")) {
+			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
+					+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+		}
 		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
 			return;
@@ -58,6 +62,7 @@ public class PlayerCommands extends Command {
 			sender.sendMessage(component);
 			return;
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
+			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion()));
 			for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
 				sender.sendMessage(C.c(s));
 			}
@@ -68,7 +73,8 @@ public class PlayerCommands extends Command {
 			TextComponent component = new TextComponent(
 					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
-			SkinsRestorer.getInstance().getFactory().removeSkin(player);
+			SkinStorage.getInstance().removePlayerSkin(player.getName());
+			SkinsRestorer.getInstance().getFactory().applySkin(player);
 			return;
 		}
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {

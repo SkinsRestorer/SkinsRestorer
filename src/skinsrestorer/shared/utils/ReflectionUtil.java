@@ -3,6 +3,7 @@ package skinsrestorer.shared.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import org.bukkit.Bukkit;
 
@@ -19,6 +20,9 @@ public class ReflectionUtil {
 	public static Field getPrivateField(Class<?> clazz, String fname) throws Exception {
 		Field f = clazz.getDeclaredField(fname);
 		f.setAccessible(true);
+		Field modifiers = Field.class.getDeclaredField("modifiers");
+		modifiers.setAccessible(true);
+		modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
 		return f;
 	}
 
@@ -80,18 +84,15 @@ public class ReflectionUtil {
 
 	public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs)
 			throws Exception {
-		Object o = getMethod(clazz, method, args).invoke(obj, initargs);
-		return o;
+		return getMethod(clazz, method, args).invoke(obj, initargs);
 	}
 
 	public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws Exception {
-		Object o = getMethod(clazz, method).invoke(obj, new Object[] {});
-		return o;
+		return getMethod(clazz, method).invoke(obj, new Object[] {});
 	}
 
 	public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initargs) throws Exception {
-		Object o = getConstructor(clazz, args).newInstance(initargs);
-		return o;
+		return getConstructor(clazz, args).newInstance(initargs);
 	}
 
 	public static String getServerVersion() {

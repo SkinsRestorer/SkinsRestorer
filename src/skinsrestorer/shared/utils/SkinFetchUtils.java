@@ -55,7 +55,7 @@ public class SkinFetchUtils {
 		}
 
 		public SkinFetchFailedException(Throwable exception) {
-			super(Reason.GENERIC_ERROR.getExceptionCause(), exception);
+			super(exception.getMessage(), exception);
 			this.reason = Reason.GENERIC_ERROR;
 		}
 

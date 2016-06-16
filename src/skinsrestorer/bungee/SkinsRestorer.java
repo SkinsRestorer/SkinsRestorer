@@ -48,6 +48,7 @@ public class SkinsRestorer extends Plugin {
 	private SkinFactoryBungee factory;
 	private boolean autoIn = false;
 	private MySQL mysql;
+	private String version;
 
 	public void logInfo(String message) {
 		log.info(message);
@@ -60,8 +61,9 @@ public class SkinsRestorer extends Plugin {
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResourceAsStream("config.yml"), false);
 		LocaleStorage.getInstance().init(this.getResourceAsStream("messages.yml"), false);
+		version = getDescription().getVersion();
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
-			updater = new Updater(getDescription().getVersion());
+			updater = new Updater(version);
 			updater.checkUpdates();
 		} else {
 			log.info(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
@@ -127,16 +129,12 @@ public class SkinsRestorer extends Plugin {
 		instance = null;
 	}
 
-	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
-		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
-	}
-
 	public SkinFactoryBungee getFactory() {
 		return factory;
 	}
 
 	public String getVersion() {
-		return getDescription().getVersion();
+		return version;
 	}
 
 	public boolean isAutoInEnabled() {

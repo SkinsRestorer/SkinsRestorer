@@ -44,12 +44,16 @@ import skinsrestorer.shared.utils.Updater;
 public class AdminCommands extends Command {
 
 	public AdminCommands() {
-		super("skinsrestorer", "skinsrestorer.cmds", new String[] { "sr" });
+		super("skinsrestorer", null, new String[] { "sr" });
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
+		if (!sender.hasPermission("skinsrestorer.cmds")) {
+			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
+					+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+		}
 		if (args.length == 0) {
 			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
 			return;

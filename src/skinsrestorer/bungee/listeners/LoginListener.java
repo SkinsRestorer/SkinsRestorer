@@ -16,6 +16,7 @@ import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
 public class LoginListener implements Listener {
@@ -27,11 +28,24 @@ public class LoginListener implements Listener {
 			return;
 		}
 		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
-					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
-							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
-				return;
+
+			try {
+
+				Object api = ReflectionUtil.invokeMethod(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.APICore"),
+						null, "getAPI");
+				Enum<?> premiumStatus = (Enum<?>) ReflectionUtil.invokeMethod(api.getClass(), null, "getPremiumStatus",
+						new Class<?>[] { String.class }, event.getPlayer().getName());
+				Enum<?> premiumEnum = ReflectionUtil
+						.getEnum(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus"), "PREMIUM");
+
+				if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true && premiumStatus == premiumEnum) {
+					return;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 		}
 		final String name = event.getPlayer().getName();
 		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(name.toLowerCase());
@@ -57,11 +71,24 @@ public class LoginListener implements Listener {
 			return;
 		}
 		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
-			if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true
-					&& SkinsRestorer.getInstance().getAutoInAPI().getPremiumStatus(event.getPlayer()
-							.getName()) == com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus.PREMIUM) {
-				return;
+
+			try {
+
+				Object api = ReflectionUtil.invokeMethod(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.APICore"),
+						null, "getAPI");
+				Enum<?> premiumStatus = (Enum<?>) ReflectionUtil.invokeMethod(api.getClass(), null, "getPremiumStatus",
+						new Class<?>[] { String.class }, event.getPlayer().getName());
+				Enum<?> premiumEnum = ReflectionUtil
+						.getEnum(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus"), "PREMIUM");
+
+				if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true && premiumStatus == premiumEnum) {
+					return;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 		}
 
 		// Online mode fix

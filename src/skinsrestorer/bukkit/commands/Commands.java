@@ -58,7 +58,8 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 			if (!sender.hasPermission("skinsrestorer.playercmds")) {
-				sender.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+				sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
+						+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
 			if (!(sender instanceof Player)) {
@@ -78,7 +79,8 @@ public class Commands implements CommandExecutor {
 				player.sendMessage(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
 		} else if (command.getName().equalsIgnoreCase("skinsrestorer")) {
 			if (!sender.hasPermission("skinsrestorer.cmds")) {
-				sender.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+				sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
+						+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
 			if (args.length == 0) {

@@ -161,10 +161,6 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 		instance = null;
 	}
 
-	public com.gmail.bartlomiejkmazur.autoin.api.AutoInAPI getAutoInAPI() {
-		return com.gmail.bartlomiejkmazur.autoin.api.APICore.getAPI();
-	}
-
 	public boolean isAutoInEnabled() {
 		return autoIn;
 	}

@@ -6,6 +6,7 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.DataFiles;
 import skinsrestorer.shared.utils.SkinFetchUtils;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.SkinsPacketHandler;
 
 public class SkinsRestorerAPI {
 
@@ -52,10 +53,7 @@ public class SkinsRestorerAPI {
 	 * Else if player has a skin assigned, returns true.
 	 */
 	public static boolean hasSkin(String playerName) {
-		if (SkinStorage.getInstance().getPlayerSkin(playerName) == null) {
-			return false;
-		}
-		return true;
+		return SkinStorage.getInstance().getPlayerSkin(playerName) != null;
 	}
 
 	/**
@@ -66,11 +64,10 @@ public class SkinsRestorerAPI {
 	 * When player has no skin (null) , his skin name equals his username
 	 */
 	public static String getSkinName(String playerName) {
-
 		String skin = SkinStorage.getInstance().getPlayerSkin(playerName);
-		if (skin == null) {
+		if (skin == null)
 			return null;
-		}
+
 		return skin;
 
 	}
@@ -80,7 +77,7 @@ public class SkinsRestorerAPI {
 	 * can be used only in bukkit/spigot but not on bungeecord.
 	 */
 	public static void applySkin(org.bukkit.entity.Player player) {
-		skinsrestorer.shared.utils.SkinsPacketHandler.updateSkin(player);
+		SkinsPacketHandler.updateSkin(player);
 	}
 
 	/**
@@ -92,19 +89,18 @@ public class SkinsRestorerAPI {
 	}
 
 	/**
-	 * Used for instant skin removing. This method can be used on Bungeecord
-	 * side only!
+	 * Used for skin removing. This method can be used on Bungeecord side only!
 	 */
 	public static void removeSkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
-		skinsrestorer.bungee.SkinsRestorer.getInstance().getFactory().removeSkin(player);
+		SkinStorage.getInstance().removePlayerSkin(player.getName());
 	}
 
 	/**
-	 * Used for instant skin removing. Since i'm using NMS and OBC this method
-	 * can be used only in bukkit/spigot but not on bungeecord.
+	 * Used for skin removing. Since i'm using NMS and OBC this method can be
+	 * used only in bukkit/spigot but not on bungeecord.
 	 */
 	public static void removeSkin(org.bukkit.entity.Player player) {
-		skinsrestorer.shared.storage.SkinStorage.getInstance().removePlayerSkin(player.getName());
+		SkinStorage.getInstance().removePlayerSkin(player.getName());
 	}
 
 	/**
