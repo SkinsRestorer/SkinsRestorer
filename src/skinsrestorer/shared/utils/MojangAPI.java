@@ -74,7 +74,6 @@ public class MojangAPI {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
 			con.setRequestMethod("GET");
-			con.setRequestProperty("User-Agent", "Mozilla/5.0");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 

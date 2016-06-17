@@ -158,9 +158,15 @@ public class SkinStorage {
 			} catch (Throwable e) {
 			}
 
-			SkinProfile profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
-					cache.getString("Skins." + name + ".Value"), cache.getString("Skins." + name + ".Signature")),
-					timestamp);
+			SkinProfile profile = null;
+
+			try {
+				profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
+						cache.getString("Skins." + name + ".Value"), cache.getString("Skins." + name + ".Signature")),
+						timestamp);
+			} catch (Exception e) {
+				return null;
+			}
 
 			if (profile.getSkinProperty().getSignature() == null)
 				return null;

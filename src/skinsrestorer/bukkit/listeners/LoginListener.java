@@ -113,6 +113,7 @@ public class LoginListener implements Listener {
 			public void run() {
 				try {
 					skinprofile.attemptUpdate();
+					SkinsPacketHandler.updateSkin(player);
 				} catch (SkinFetchFailedException e) {
 					SkinsRestorer.getInstance()
 							.logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
