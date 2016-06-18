@@ -35,29 +35,35 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 
-		if (ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo").isInstance(msg)) {
+		try {
 
-			try {
-				Enum<?> a = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
+			if (ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo").isInstance(msg)) {
 
-				if (a.name().equalsIgnoreCase("ADD_PLAYER")) {
-					final SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
+				try {
+					Enum<?> a = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
 
-					Property prop = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
-							sp.getSkinProperty().getSignature());
-					Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-					Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+					if (a.name().equalsIgnoreCase("ADD_PLAYER")) {
+						final SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
 
-					GameProfile profile = (GameProfile) ReflectionUtil
-							.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
+						Property prop = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
+								sp.getSkinProperty().getSignature());
+						Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
+						Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
 
-					profile.getProperties().get(prop.getName()).clear();
-					profile.getProperties().get(prop.getName()).add(prop);
+						GameProfile profile = (GameProfile) ReflectionUtil
+								.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
+
+						profile.getProperties().get(prop.getName()).clear();
+						profile.getProperties().get(prop.getName()).add(prop);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+
 			}
 
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		super.write(ctx, msg, promise);
 	}
