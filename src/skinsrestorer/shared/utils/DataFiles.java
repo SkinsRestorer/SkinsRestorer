@@ -223,8 +223,15 @@ public class DataFiles {
 	}
 
 	public String getString(String path) {
-		if (get(path) != null) {
-			return get(path).toString();
+		try {
+			Object o = get(path);
+			if (o != null) {
+				System.out.println("Returning: " + o.toString());
+				return o.toString();
+			}
+		} catch (Exception e) {
+			System.out.println("Path: " + path);
+			e.printStackTrace();
 		}
 		return null;
 	}
