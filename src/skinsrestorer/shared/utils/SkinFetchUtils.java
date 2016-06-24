@@ -38,8 +38,11 @@ public class SkinFetchUtils {
 			SkinProfile sp = MojangAPI.getSkinProfile(profile.getId(), name);
 			return sp;
 
+		} catch (SkinFetchFailedException e) {
+			throw new SkinFetchFailedException(e.getReason());
 		} catch (Exception e) {
-			throw new SkinFetchFailedException(e);
+			// At this stage it can only be malformed url
+			throw new SkinFetchFailedException(SkinFetchFailedException.Reason.GENERIC_ERROR);
 		}
 	}
 
@@ -54,24 +57,17 @@ public class SkinFetchUtils {
 			this.reason = reason;
 		}
 
-		public SkinFetchFailedException(Throwable exception) {
-			super(exception.getMessage(), exception);
-			this.reason = Reason.GENERIC_ERROR;
-		}
-
 		public Reason getReason() {
 			return reason;
 		}
 
 		public static enum Reason {
-			NO_PREMIUM_PLAYER(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), NO_SKIN_DATA(
-					C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED_NO_SKIN_DATA)), SKIN_RECODE_FAILED(C.c(
-							LocaleStorage.getInstance().SKIN_FETCH_FAILED_PARSE_FAILED)), RATE_LIMITED(C.c(LocaleStorage
-									.getInstance().SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(C.c(LocaleStorage
-											.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(C.c(LocaleStorage
-													.getInstance().SKIN_FETCH_FAILED_ERROR)), MCAPI_PROBLEM(
-															C.c(LocaleStorage
-																	.getInstance().SKIN_FETCH_FAILED_MCAPI_PROBLEM));
+			NO_PREMIUM_PLAYER(C.c(LocaleStorage.SKIN_FETCH_FAILED_NO_PREMIUM_PLAYER)), NO_SKIN_DATA(
+					C.c(LocaleStorage.SKIN_FETCH_FAILED_NO_SKIN_DATA)), RATE_LIMITED(
+							C.c(LocaleStorage.SKIN_FETCH_FAILED_RATE_LIMITED)), GENERIC_ERROR(
+									C.c(LocaleStorage.SKIN_FETCH_FAILED_ERROR)), MCAPI_FAILED(
+											C.c(LocaleStorage.SKIN_FETCH_FAILED_ERROR)), MCAPI_PROBLEM(
+													C.c(LocaleStorage.SKIN_FETCH_FAILED_MCAPI_PROBLEM));
 
 			private String exceptionCause;
 

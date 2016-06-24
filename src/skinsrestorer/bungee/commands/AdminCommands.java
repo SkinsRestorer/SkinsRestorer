@@ -51,16 +51,18 @@ public class AdminCommands extends Command {
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.cmds")) {
-			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
-					+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+					+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
+			return;
 		}
 		if (args.length == 0) {
-			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+			sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
 			return;
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			for (String s : LocaleStorage.getInstance().ADMIN_HELP) {
-				sender.sendMessage(C.c(s));
-			}
+			sender.sendMessage(C.c(LocaleStorage.ADMIN_HELP));
+			return;
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("reload")) {
+			reloadCommand(sender);
 			return;
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
 			debugCommand(sender);
@@ -70,7 +72,7 @@ public class AdminCommands extends Command {
 			SkinsRestorer.getInstance().getFactory()
 					.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 			TextComponent component = new TextComponent(
-					C.c(LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
+					C.c(LocaleStorage.SKIN_DATA_DROPPED.replace("%player", args[1])));
 			sender.sendMessage(component);
 			return;
 		} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
@@ -82,11 +84,11 @@ public class AdminCommands extends Command {
 						SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
 						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-						TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
+						TextComponent component = new TextComponent(C.c(LocaleStorage.SKIN_DATA_UPDATED));
 						sender.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
 						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
+								C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
 						sender.sendMessage(component);
 					}
 				}
@@ -104,17 +106,17 @@ public class AdminCommands extends Command {
 						SkinsRestorer.getInstance().getFactory()
 								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
 						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
+								C.c(LocaleStorage.ADMIN_SET_SKIN.replace("%player", args[1])));
 						sender.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
 						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
+								C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
 						sender.sendMessage(component);
 					}
 				}
 			});
 		} else
-			sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+			sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -144,6 +146,13 @@ public class AdminCommands extends Command {
 				C.c("    &fDisable /Skin Command &7| &9" + ConfigStorage.getInstance().DISABLE_SKIN_COMMAND));
 		sender.sendMessage(
 				C.c("    &fSkin Change Cooldown | &9" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN + " Seconds"));
+	}
+
+	@SuppressWarnings("deprecation")
+	public void reloadCommand(CommandSender sender) {
+		LocaleStorage.init();
+		ConfigStorage.getInstance().init(SkinsRestorer.getInstance().getResourceAsStream("config.yml"), false);
+		sender.sendMessage(C.c(LocaleStorage.RELOAD));
 	}
 
 	@SuppressWarnings("deprecation")

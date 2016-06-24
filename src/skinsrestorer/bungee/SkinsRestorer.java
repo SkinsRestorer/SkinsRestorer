@@ -60,7 +60,7 @@ public class SkinsRestorer extends Plugin {
 		log = getLogger();
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResourceAsStream("config.yml"), false);
-		LocaleStorage.getInstance().init(this.getResourceAsStream("messages.yml"), false);
+		LocaleStorage.init();
 		version = getDescription().getVersion();
 		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
 			updater = new Updater(version);

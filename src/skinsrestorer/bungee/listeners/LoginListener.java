@@ -16,6 +16,7 @@ import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.ConfigStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 
@@ -98,7 +99,7 @@ public class LoginListener implements Listener {
 
 		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
 			final TextComponent message = new TextComponent("");
-			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
+			message.addExtra(C.c(LocaleStorage.DO_YOU_WANT_SKIN));
 			message.setClickEvent(
 					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
 			ProxyServer.getInstance().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {

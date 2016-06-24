@@ -3,6 +3,7 @@ package skinsrestorer.shared.utils;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,46 +23,74 @@ import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
 
-/** Class by Blackfire62 **/
+/**
+ * This class handler all the stuff about skin applying
+ * 
+ * <p>
+ * How it works:
+ * <p>
+ * 1. Server tries to send PacketPlayOutPlayerInfo packet to a player
+ * <p>
+ * 2. This handler catches it before default packet_handler
+ * <p>
+ * 3. Checks if its adding player (that when client takes skin properties in
+ * account)
+ * <p>
+ * 4. Checks if the included game profiles are profiles of online players (not
+ * NPCs)
+ * <p>
+ * 5. Changes the properties for that player
+ * <p>
+ * 6. Sends the packet to the next handler (packet_handler)
+ * <p>
+ * 7. But since we have edited the properties in the packet, client will
+ * instantly see skinned player (not steve, unless, there is no skin data)
+ * <p>
+ * 
+ * @author Blackfire62
+ **/
 
 public class SkinsPacketHandler extends ChannelDuplexHandler {
 
-	private Player p;
-
-	public SkinsPacketHandler(Player p) {
-		this.p = p;
-	}
-
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-
 		try {
 
 			if (ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo").isInstance(msg)) {
 
-				try {
-					Enum<?> a = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
+				Enum<?> action = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
 
-					if (a.name().equalsIgnoreCase("ADD_PLAYER")) {
-						final SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
+				if (action.name().equalsIgnoreCase("ADD_PLAYER")) {
 
-						Property prop = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
-								sp.getSkinProperty().getSignature());
-						Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-						Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+					List<?> dataList = (List<?>) ReflectionUtil.getPrivateField(msg.getClass(), "b").get(msg);
 
-						GameProfile profile = (GameProfile) ReflectionUtil
-								.invokeMethod(ReflectionUtil.getNMSClass("EntityPlayer"), ep, "getProfile");
+					// Making sure the skins are only applied
+					// To online players, not NPCs or whatever
+					for (Object plData : dataList) {
+						GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(plData.getClass(), plData, "a");
 
-						profile.getProperties().get(prop.getName()).clear();
-						profile.getProperties().get(prop.getName()).add(prop);
+						// Thread safe iterating
+						Iterator<? extends Player> it = Bukkit.getOnlinePlayers().iterator();
+
+						while (it.hasNext()) {
+							Player p = it.next();
+
+							if (p.getName().equals(profile.getName())) {
+								SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
+
+								Property prop = new Property(sp.getSkinProperty().getName(),
+										sp.getSkinProperty().getValue(), sp.getSkinProperty().getSignature());
+
+								profile.getProperties().get(prop.getName()).clear();
+								profile.getProperties().get(prop.getName()).add(prop);
+
+								super.write(ctx, msg, promise);
+								return;
+							}
+						}
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -76,8 +105,11 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
 			Channel channel = (Channel) ReflectionUtil.getField(manager.getClass(), "channel").get(manager);
 
+			if (channel.pipeline().context("skins_handler") != null)
+				channel.pipeline().remove("skins_handler");
+
 			if (channel.pipeline().context("skins_handler") == null)
-				channel.pipeline().addBefore("packet_handler", "skins_handler", new SkinsPacketHandler(p));
+				channel.pipeline().addBefore("packet_handler", "skins_handler", new SkinsPacketHandler());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -99,6 +131,8 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	}
 
 	// Update the skin without reloging
+	// Omg so much reflection
+	// Im lazy to make so much classes for just NMS
 	@SuppressWarnings("deprecation")
 	public static void updateSkin(Player player) {
 		try {

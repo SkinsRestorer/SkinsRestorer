@@ -54,12 +54,12 @@ public class Commands implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, final String[] args) {
 		if (command.getName().equalsIgnoreCase("skin")) {
 			if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
-				sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
+				sender.sendMessage(C.c(LocaleStorage.UNKNOWN_COMMAND));
 				return true;
 			}
 			if (!sender.hasPermission("skinsrestorer.playercmds")) {
-				sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
-						+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+						+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
 			if (!(sender instanceof Player)) {
@@ -68,7 +68,7 @@ public class Commands implements CommandExecutor {
 			}
 			final Player player = (Player) sender;
 			if (args.length == 0) {
-				player.sendMessage(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
+				player.sendMessage(C.c(LocaleStorage.USE_SKIN_HELP));
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
 				helpCommand(player);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
@@ -76,17 +76,20 @@ public class Commands implements CommandExecutor {
 			} else if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 				changeCommand(player, args);
 			} else
-				player.sendMessage(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
+				player.sendMessage(C.c(LocaleStorage.USE_SKIN_HELP));
 		} else if (command.getName().equalsIgnoreCase("skinsrestorer")) {
 			if (!sender.hasPermission("skinsrestorer.cmds")) {
-				sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
-						+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+						+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
 			if (args.length == 0) {
-				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+				sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
 				debugCommand(sender);
+
+			} else if ((args.length == 1) && args[0].equalsIgnoreCase("reload")) {
+				reloadCommand(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("test")) {
 				test(sender);
 			} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
@@ -100,7 +103,7 @@ public class Commands implements CommandExecutor {
 			} else if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 				changeCommand(sender, args);
 			} else
-				sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_USE_SKIN_HELP));
+				sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
 			return false;
 		}
 		return false;
@@ -110,22 +113,26 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Skin help command.
 	public void helpCommand(Player p) {
-		for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
-			p.sendMessage(C.c(s));
-		}
+		p.sendMessage(C.c(LocaleStorage.PLAYER_HELP));
 	}
 
 	// Skin clear command.
 	public void clearCommand(Player player) {
 		SkinStorage.getInstance().removePlayerSkin(player.getName());
-		player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+		player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+	}
+
+	public void reloadCommand(CommandSender sender) {
+		LocaleStorage.init();
+		ConfigStorage.getInstance().init(SkinsRestorer.getInstance().getResource("config.yml"), false);
+		sender.sendMessage(C.c(LocaleStorage.RELOAD));
 	}
 
 	// Skin change command.
 	public void changeCommand(final Player player, final String[] args) {
 		if (!player.hasPermission("skinsrestorer.bypasscooldown")) {
 			if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-				player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN.replace("%s",
+				player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_COOLDOWN.replace("%s",
 						"" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 				return;
 			}
@@ -140,7 +147,7 @@ public class Commands implements CommandExecutor {
 					for (String disabledSkins : ConfigStorage.getInstance().DISABLED_SKINS) {
 						if (disabledSkins.equalsIgnoreCase(from)) {
 
-							player.sendMessage(C.c(LocaleStorage.getInstance().DISABLED_SKIN));
+							player.sendMessage(C.c(LocaleStorage.DISABLED_SKIN));
 							return;
 						}
 					}
@@ -151,9 +158,9 @@ public class Commands implements CommandExecutor {
 					skinprofile.attemptUpdate();
 					SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 					SkinsPacketHandler.updateSkin(player);
-					player.sendMessage(C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
+					player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS));
 				} catch (SkinFetchFailedException e) {
-					player.sendMessage(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
+					player.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED) + e.getMessage());
 				}
 			}
 		});
@@ -164,18 +171,16 @@ public class Commands implements CommandExecutor {
 	//////////////////////////////////// //////////////////////////////////////
 	// Admin Help Command
 	public void helpCommandAdmin(CommandSender sender) {
-		for (String s : LocaleStorage.getInstance().ADMIN_HELP) {
-			sender.sendMessage(C.c(s));
-		}
+		sender.sendMessage(C.c(LocaleStorage.ADMIN_HELP));
 	}
 
 	// Drop data command
 	public void dropData(CommandSender sender, String[] args) {
 		SkinStorage.getInstance().removeSkinData(args[1]);
-		if (Bukkit.getPlayer(args[1]) != null) {
-			SkinsRestorerAPI.removeSkin(Bukkit.getPlayer(args[1]));
-		}
-		sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_DATA_DROPPED.replace("%player", args[1])));
+		if (Bukkit.getPlayer(args[1]) != null)
+			SkinsRestorerAPI.removeSkin(Bukkit.getPlayer(args[1]).getName());
+
+		sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_DROPPED.replace("%player", args[1])));
 	}
 
 	// Skin update command
@@ -189,9 +194,9 @@ public class Commands implements CommandExecutor {
 					if (Bukkit.getPlayer(args[1]) != null) {
 						SkinsPacketHandler.updateSkin((Player) sender);
 					}
-					sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_DATA_UPDATED));
+					sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_UPDATED));
 				} catch (SkinFetchFailedException e) {
-					sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
+					sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED) + e.getMessage());
 				}
 			}
 		});
@@ -238,9 +243,9 @@ public class Commands implements CommandExecutor {
 					if (Bukkit.getPlayer(args[1]) != null) {
 						SkinsPacketHandler.updateSkin((Player) sender);
 					}
-					sender.sendMessage(C.c(LocaleStorage.getInstance().ADMIN_SET_SKIN.replace("%player", args[1])));
+					sender.sendMessage(C.c(LocaleStorage.ADMIN_SET_SKIN.replace("%player", args[1])));
 				} catch (SkinFetchFailedException e) {
-					sender.sendMessage(C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED) + e.getMessage());
+					sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED) + e.getMessage());
 				}
 			}
 		});
@@ -319,6 +324,9 @@ public class Commands implements CommandExecutor {
 		});
 
 	}
+
+	// This exist just in case mojang decides to make their Skin API work for
+	// testing
 
 	public void test(CommandSender sender) {
 		try {

@@ -12,6 +12,7 @@ import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
 import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
 
@@ -49,7 +50,7 @@ public class MojangAPI {
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
 
 			output = readURL(new URL(altskinurl.replace("{uuid}", uuid))).replace(" ", "");
-			System.out.println("[SkinsRestorer] Using McAPI for skin " + name);
+			System.out.print("[SkinsRestorer] " + C.c(LocaleStorage.TRYING_TO_USE_MCAPI.replace("%skin", name)));
 
 			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
 

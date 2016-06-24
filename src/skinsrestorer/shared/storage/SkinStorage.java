@@ -24,13 +24,13 @@ import javax.sql.rowset.CachedRowSet;
 import skinsrestorer.shared.format.Profile;
 import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.format.SkinProperty;
-import skinsrestorer.shared.utils.DataFiles;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.YamlConfig;
 
 public class SkinStorage {
 
 	private static SkinStorage instance = new SkinStorage();
-	private static DataFiles cache;
+	private static YamlConfig cache;
 	private static MySQL mysql;
 
 	public static SkinStorage getInstance() {
@@ -38,7 +38,7 @@ public class SkinStorage {
 	}
 
 	public static void init() {
-		cache = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "cache");
+		cache = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "cache");
 
 	}
 
@@ -54,7 +54,7 @@ public class SkinStorage {
 		} else {
 			name = name.toLowerCase();
 			if (cache.getString("Players." + name) != null) {
-				cache.removePath("Players." + name);
+				cache.set("Players." + name, null);
 				cache.save();
 			}
 		}
@@ -69,8 +69,8 @@ public class SkinStorage {
 		} else {
 			name = name.toLowerCase();
 			if (cache.getString(name) != null) {
-				cache.removePath("Skins." + name);
-				cache.removePath(name);
+				cache.set("Skins." + name, null);
+				cache.set(name, null);
 				cache.save();
 			}
 		}

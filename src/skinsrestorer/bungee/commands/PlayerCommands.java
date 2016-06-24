@@ -44,11 +44,12 @@ public class PlayerCommands extends Command {
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.playercmds")) {
-			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion() + "/n"
-					+ LocaleStorage.getInstance().PLAYER_HAS_NO_PERMISSION));
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+					+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
+			return;
 		}
 		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
-			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
+			sender.sendMessage(C.c(LocaleStorage.UNKNOWN_COMMAND));
 			return;
 		}
 		if (!(sender instanceof ProxiedPlayer)) {
@@ -58,20 +59,17 @@ public class PlayerCommands extends Command {
 		}
 		final ProxiedPlayer player = (ProxiedPlayer) sender;
 		if (args.length == 0) {
-			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
+			TextComponent component = new TextComponent(C.c(LocaleStorage.USE_SKIN_HELP));
 			sender.sendMessage(component);
 			return;
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(C.c("&4[SkinsRestorer] &e" + SkinsRestorer.getInstance().getVersion()));
-			for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
-				sender.sendMessage(C.c(s));
-			}
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion()));
+			sender.sendMessage(C.c(LocaleStorage.PLAYER_HELP));
 			return;
 		}
 		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
 			SkinStorage.getInstance().removePlayerSkin(player.getName());
-			TextComponent component = new TextComponent(
-					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
+			TextComponent component = new TextComponent(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
 			player.sendMessage(component);
 			SkinStorage.getInstance().removePlayerSkin(player.getName());
 			SkinsRestorer.getInstance().getFactory().applySkin(player);
@@ -80,8 +78,8 @@ public class PlayerCommands extends Command {
 		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
 			if (!player.hasPermission("skinsrestorer.bypasscooldown")) {
 				if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-					TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
-							.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
+					TextComponent component = new TextComponent(C.c(LocaleStorage.PLAYER_SKIN_COOLDOWN.replace("%s",
+							"" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
 					player.sendMessage(component);
 					return;
 				}
@@ -96,7 +94,7 @@ public class PlayerCommands extends Command {
 					if (!player.hasPermission("skinsrestorer.disabledskins")) {
 						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS) {
 							if (args[1].equalsIgnoreCase(disabledSkin)) {
-								player.sendMessage(LocaleStorage.getInstance().DISABLED_SKIN);
+								player.sendMessage(LocaleStorage.DISABLED_SKIN);
 								return;
 							}
 						}
@@ -106,8 +104,7 @@ public class PlayerCommands extends Command {
 						SkinStorage.getInstance().setSkinData(skinprofile);
 						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 						SkinsRestorer.getInstance().getFactory().applySkin(player);
-						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
+						TextComponent component = new TextComponent(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS));
 						player.sendMessage(component);
 					} catch (SkinFetchFailedException e) {
 						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
@@ -116,11 +113,11 @@ public class PlayerCommands extends Command {
 							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
 							SkinsRestorer.getInstance().getFactory().applySkin(player);
 							TextComponent component = new TextComponent(
-									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
+									C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
 							player.sendMessage(component);
 						} else {
 							TextComponent component = new TextComponent(
-									C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
+									C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
 							player.sendMessage(component);
 							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
 						}
@@ -128,7 +125,7 @@ public class PlayerCommands extends Command {
 				}
 			});
 		} else {
-			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
+			TextComponent component = new TextComponent(C.c(LocaleStorage.USE_SKIN_HELP));
 			sender.sendMessage(component);
 		}
 	}

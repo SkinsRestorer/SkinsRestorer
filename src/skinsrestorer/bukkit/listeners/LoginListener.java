@@ -93,7 +93,7 @@ public class LoginListener implements Listener {
 			final TextComponent message = new TextComponent("");
 			message.setClickEvent(
 					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
-			message.addExtra(LocaleStorage.getInstance().DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
+			message.addExtra(LocaleStorage.DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
 
 				@Override

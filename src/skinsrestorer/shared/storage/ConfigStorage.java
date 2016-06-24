@@ -5,17 +5,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import skinsrestorer.shared.utils.DataFiles;
+import skinsrestorer.shared.utils.YamlConfig;
 
 public class ConfigStorage {
-	public DataFiles config = new DataFiles("plugins" + File.separator + "SkinsRestorer" + File.separator + "",
+	public YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "",
 			"config");
 	public boolean UPDATE_CHECK = true;
 	public boolean USE_AUTOIN_SKINS = false;
 	public boolean USE_BOT_FEATURE = false;
 	public int SKIN_CHANGE_COOLDOWN = 30;
 	public boolean MCAPI_ENABLED = true;
-	public String GET_PROFILE_URL = "https://mcapi.ca/SR/?player={username}";
 	public String GET_SKIN_PROFILE_URL = "https://mcapi.ca/name/uuid/{uuid}";
 	public boolean USE_MYSQL = false;
 	public String MYSQL_HOST = "localhost";
@@ -41,38 +40,16 @@ public class ConfigStorage {
 	}
 
 	public void init(InputStream stream, boolean overWrite) {
-		config.copyDefaults(stream, overWrite);
 		config.reload();
+		config.copyDefaults(stream, overWrite);
 
-		// It should add the new option :)
-		if (config.getString("Disable Skin Command") == null) {
-			config.set("Disable Skin Command", false);
-			config.comment("Disable Skin Command",
-					new String[] { "Turn this to true if you want to disable", "The /skin command." });
-			config.save();
-		}
-
-		if (config.getString("MySQL.SkinTable") == null) {
-			config.set("MySQL.SkinTable", "Skins");
-			config.comment("MySQL.SkinTable", new String[] { "Skin data will be saved in this table." });
-			config.save();
-		}
-
-		if (config.getString("MySQL.PlayerTable") == null) {
-			config.set("MySQL.PlayerTable", "Players");
-			config.comment("MySQL.PlayerTable",
-					new String[] { "Player data about skins will be saved in this table." });
-			config.save();
-		}
-
-		UPDATE_CHECK = config.getBoolean("Update Check");
-		USE_AUTOIN_SKINS = config.getBoolean("Use AutoIn Skins");
-		USE_BOT_FEATURE = config.getBoolean("Use Bot Feature");
-		SKIN_CHANGE_COOLDOWN = config.getInt("Skin Change Cooldown");
+		UPDATE_CHECK = config.getBoolean("UpdateCheck");
+		USE_AUTOIN_SKINS = config.getBoolean("UseAutoInSkins");
+		USE_BOT_FEATURE = config.getBoolean("UseBotFeature");
+		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown");
 		MCAPI_ENABLED = config.getBoolean("MCAPI.Enabled");
-		GET_PROFILE_URL = config.getString("MCAPI.Get Profile URL");
-		GET_SKIN_PROFILE_URL = config.getString("MCAPI.Get SkinProfile URL");
-		DISABLED_SKINS = config.getStringList("Disabled Skins");
+		GET_SKIN_PROFILE_URL = config.getString("MCAPI.GetSkinProfileURL");
+		DISABLED_SKINS = config.getStringList("DisabledSkins");
 		USE_MYSQL = config.getBoolean("MySQL.Enabled");
 		MYSQL_HOST = config.getString("MySQL.Host");
 		MYSQL_PORT = config.getString("MySQL.Port");
@@ -81,12 +58,15 @@ public class ConfigStorage {
 		MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable");
 		MYSQL_USERNAME = config.getString("MySQL.Username");
 		MYSQL_PASSWORD = config.getString("MySQL.Password");
-		DISABLE_SKIN_COMMAND = config.getBoolean("Disable Skin Command");
-		CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
-		CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");
-		CUSTOMSKINS_NAME = config.getString("CustomSkins.Name");
-		CUSTOMSKINS_ID = config.getString("CustomSkins.ID");
-		CUSTOMSKINS_AUTHTOKEN = config.getString("CustomSkins.Authtoken");
-		CUSTOMSKINS_CLIENTTOKEN = config.getString("CustomSkins.Clienttoken");
+		DISABLE_SKIN_COMMAND = config.getBoolean("DisableSkinCommand");
+		/*
+		 * CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
+		 * CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");
+		 * CUSTOMSKINS_NAME = config.getString("CustomSkins.Name");
+		 * CUSTOMSKINS_ID = config.getString("CustomSkins.ID");
+		 * CUSTOMSKINS_AUTHTOKEN = config.getString("CustomSkins.Authtoken");
+		 * CUSTOMSKINS_CLIENTTOKEN =
+		 * config.getString("CustomSkins.Clienttoken");
+		 */
 	}
 }

@@ -22,6 +22,7 @@ public class MojangAuthAPI {
 	private final static String api = "https://api.mojang.com";
 
 	// Werks
+	// All data stored fine
 	public static AuthSession authenticate(String username, String password) throws Exception {
 
 		String genClientToken = UUID.randomUUID().toString();
@@ -59,9 +60,7 @@ public class MojangAuthAPI {
 	}
 
 	// Still error 500, cmonBruh
-	// THERE IS STILL WORK TO BE DONE STAY TUNED
-	// Bc Mojang API for skins still does not accept the auth tokens
-	// pls
+	// De-Stroyed for debugging
 	public static String uploadSkin(String id, String authtoken, File image, boolean slim) throws Exception {
 
 		String boundary = "===" + System.currentTimeMillis() + "===";
@@ -80,6 +79,8 @@ public class MojangAuthAPI {
 		 * OutputStream outs = con.getOutputStream(); DataOutputStream out = new
 		 * DataOutputStream(con.getOutputStream());
 		 */
+
+		// Debugging stuff for this API, still doesnt work for me
 
 		StringBuilder builder = new StringBuilder();
 		builder.append(con.getResponseCode()).append(" ").append(con.getResponseMessage()).append("\n");
@@ -109,6 +110,7 @@ public class MojangAuthAPI {
 
 	}
 
+	// Error 402 or 500
 	public static String change(String id, String authtoken) throws Exception {
 
 		HttpURLConnection con = (HttpURLConnection) (new URL(api + "/user/profile/" + id + "/skin").openConnection());
@@ -140,6 +142,7 @@ public class MojangAuthAPI {
 		return output;
 	}
 
+	// Error 402 or 500
 	public static String reset(String id, String authtoken) throws Exception {
 
 		HttpsURLConnection con = (HttpsURLConnection) (new URL(api + "/user/profile/" + id + "/skin").openConnection());
@@ -164,6 +167,10 @@ public class MojangAuthAPI {
 	}
 
 	// Werks
+	// I wonder how
+	// I wonder why
+	// Because previous methods with the same setup just respond with 402
+	// Maybe mojang skin api is not ready yet?
 	public static String info(String authtoken) throws Exception {
 		HttpURLConnection con = (HttpURLConnection) (new URL(api + "/user").openConnection());
 
@@ -181,6 +188,8 @@ public class MojangAuthAPI {
 
 		return output;
 	}
+
+	// These 4 methods should werk fine
 
 	public static void invalidate(String authtoken, String clienttoken) throws Exception {
 		String payload = "{\"accessToken\": \"" + authtoken + "\",\"clientToken\": \"" + clienttoken + "\"}";
@@ -222,6 +231,7 @@ public class MojangAuthAPI {
 
 	}
 
+	// Simple payload posting and reading the outpust
 	private static String postReadURL(String payload, URL url) throws Exception {
 		HttpsURLConnection con = (HttpsURLConnection) (url.openConnection());
 
@@ -248,6 +258,7 @@ public class MojangAuthAPI {
 		return output;
 	}
 
+	// slightly edited method from MojangAPI.java
 	private static String getStringBetween(String base, String begin, String end) {
 
 		Pattern patbeg = Pattern.compile(Pattern.quote(begin));

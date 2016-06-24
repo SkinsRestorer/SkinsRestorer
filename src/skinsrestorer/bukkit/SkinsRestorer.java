@@ -85,7 +85,7 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 		getDataFolder().mkdirs();
 		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
-		LocaleStorage.getInstance().init(this.getResource("messages.yml"), false);
+		LocaleStorage.init();
 		if (ConfigStorage.getInstance().USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
 					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
