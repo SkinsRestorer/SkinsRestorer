@@ -1,5 +1,7 @@
 package skinsrestorer.bukkit;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -16,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
 import skinsrestorer.bukkit.commands.Commands;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.metrics.Metrics;
@@ -24,6 +29,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.LocaleStorage;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SkinsPacketHandler;
 import skinsrestorer.shared.utils.Updater;
 
@@ -75,6 +81,24 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 
 						@Override
 						public void run() {
+
+							DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+
+							try {
+								// Skipping the channel and playername
+								in.readUTF();
+								in.readUTF();
+								Property textures = new Property(in.readUTF(), in.readUTF(), in.readUTF());
+
+								Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+								Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+								GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep,
+										"getProfile");
+
+								profile.getProperties().get(textures.getName()).clear();
+								profile.getProperties().put(textures.getName(), textures);
+							} catch (Exception e) {
+							}
 							SkinsPacketHandler.updateSkin(player);
 						}
 					});

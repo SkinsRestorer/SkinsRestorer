@@ -81,9 +81,18 @@ public class YamlConfig {
 
 	public void save() {
 		try {
-			ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[] { File.class }, file);
+			Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
+					null, "getProvider", new Class<?>[] { Class.class },
+					Class.forName("net.md_5.bungee.config.YamlConfiguration"));
+
+			ReflectionUtil.invokeMethod(provider.getClass(), provider, "save",
+					new Class<?>[] { Class.forName("net.md_5.bungee.config.Configuration"), File.class }, config, file);
 		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[] { File.class }, file);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 

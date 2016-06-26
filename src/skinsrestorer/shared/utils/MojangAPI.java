@@ -24,13 +24,24 @@ public class MojangAPI {
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	private static final String altskinurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
+	private static final String altuuidurl = "https://us.mc-api.net/v3/uuid/";
 
 	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
 		name = name.toLowerCase();
 		String output = readURL(new URL(uuidurl + name));
 
-		if (output == null || output.isEmpty())
-			throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
+		if (output == null || output.isEmpty()) {
+
+			output = readURL(new URL(altuuidurl + name));
+
+			if (output == null || output.isEmpty() || output.contains("\"error\":\"Unknown Username\""))
+				throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
+
+			String idbeg = "\"uuid\":\"";
+			String idend = "\"}";
+
+			return new Profile(getStringBetween(output, idbeg, idend), name);
+		}
 
 		return new Profile(output.substring(7, 39), name);
 	}
@@ -44,7 +55,7 @@ public class MojangAPI {
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
 		String valend = "\"}]";
 
-		if (output == null || output.contains("TooManyRequestsException")) {
+		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
 			if (!ConfigStorage.getInstance().MCAPI_ENABLED)
 				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
@@ -75,8 +86,10 @@ public class MojangAPI {
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
 			con.setRequestMethod("GET");
+			con.setRequestProperty("User-Agent", "SkinsRestorer");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
+			con.setUseCaches(false);
 
 			String line;
 			StringBuilder output = new StringBuilder();

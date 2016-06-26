@@ -110,6 +110,7 @@ public class SkinsRestorer extends Plugin {
 				log.info(ChatColor.YELLOW + " ");
 				log.info(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
 						+ getDescription().getVersion());
+				log.info(" ");
 				log.info(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
 				log.info(ChatColor.YELLOW + " ");
 				log.info(ChatColor.DARK_GREEN + "==============================================");

@@ -25,7 +25,6 @@ import java.net.URL;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -51,7 +50,7 @@ public class AdminCommands extends Command {
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
 		if (!sender.hasPermission("skinsrestorer.cmds")) {
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
 			return;
 		}
@@ -71,25 +70,19 @@ public class AdminCommands extends Command {
 			SkinStorage.getInstance().removeSkinData(args[1]);
 			SkinsRestorer.getInstance().getFactory()
 					.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-			TextComponent component = new TextComponent(
-					C.c(LocaleStorage.SKIN_DATA_DROPPED.replace("%player", args[1])));
-			sender.sendMessage(component);
+			sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_DROPPED.replace("%player", args[1])));
 			return;
 		} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
 			final String name = args[1];
+
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 				@Override
 				public void run() {
 					try {
 						SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
-						SkinsRestorer.getInstance().getFactory()
-								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-						TextComponent component = new TextComponent(C.c(LocaleStorage.SKIN_DATA_UPDATED));
-						sender.sendMessage(component);
+						sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_UPDATED));
 					} catch (SkinFetchFailedException e) {
-						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
-						sender.sendMessage(component);
+						sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
 					}
 				}
 			});
@@ -99,19 +92,29 @@ public class AdminCommands extends Command {
 				@Override
 				public void run() {
 					String from = args[2];
+
+					ProxiedPlayer p = SkinsRestorer.getInstance().getProxy().getPlayer(args[1]);
+
+					if (p == null) {
+						sender.sendMessage(C.c(LocaleStorage.PLAYER_NOT_ONLINE));
+						return;
+					}
+
 					try {
 						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
 						SkinStorage.getInstance().setSkinData(skinprofile);
 						SkinStorage.getInstance().setPlayerSkin(args[1], skinprofile.getName());
-						SkinsRestorer.getInstance().getFactory()
-								.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.ADMIN_SET_SKIN.replace("%player", args[1])));
-						sender.sendMessage(component);
+						SkinsRestorer.getInstance().getFactory().applySkin(p);
+						sender.sendMessage(C.c(LocaleStorage.ADMIN_SET_SKIN.replace("%player", args[1])));
 					} catch (SkinFetchFailedException e) {
-						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
-						sender.sendMessage(component);
+						sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
+						SkinProfile sp = SkinStorage.getInstance().getSkinData(from);
+
+						if (sp != null) {
+							SkinStorage.getInstance().setPlayerSkin(args[1], sp.getName());
+							SkinsRestorer.getInstance().getFactory().applySkin(p);
+							sender.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
+						}
 					}
 				}
 			});

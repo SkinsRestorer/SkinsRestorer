@@ -7,6 +7,7 @@ import skinsrestorer.shared.utils.YamlConfig;
 
 public class LocaleStorage {
 
+	public static String PLAYER_NOT_ONLINE = "&cPlayer is not online!";
 	public static String PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED = "&9Your skin data has been removed.";
 	public static String PLAYER_SKIN_COOLDOWN = "&cYou can change your skin only once per %s seconds.";
 	public static String PLAYER_SKIN_CHANGE_SUCCESS = "&9Your skin has been updated.";

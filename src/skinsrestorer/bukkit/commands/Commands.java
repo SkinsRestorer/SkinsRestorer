@@ -58,7 +58,7 @@ public class Commands implements CommandExecutor {
 				return true;
 			}
 			if (!sender.hasPermission("skinsrestorer.playercmds")) {
-				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 						+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
@@ -79,7 +79,7 @@ public class Commands implements CommandExecutor {
 				player.sendMessage(C.c(LocaleStorage.USE_SKIN_HELP));
 		} else if (command.getName().equalsIgnoreCase("skinsrestorer")) {
 			if (!sender.hasPermission("skinsrestorer.cmds")) {
-				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "/n"
+				sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 						+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
 				return true;
 			}
@@ -161,6 +161,13 @@ public class Commands implements CommandExecutor {
 					player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS));
 				} catch (SkinFetchFailedException e) {
 					player.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED) + e.getMessage());
+					SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
+					if (skinprofile != null) {
+						SkinStorage.getInstance().setSkinData(skinprofile);
+						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
+						SkinsPacketHandler.updateSkin(player);
+						player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
+					}
 				}
 			}
 		});

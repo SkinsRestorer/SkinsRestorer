@@ -22,10 +22,15 @@ public class SkinFactoryBungee {
 			@Override
 			public void run() {
 				try {
-					final SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
-
+					SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
 					Property textures = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
 							sp.getSkinProperty().getSignature());
+
+					if (player.getPendingConnection().isOnlineMode()) {
+						sendUpdateRequest(player, textures);
+						return;
+					}
+
 					InitialHandler handler = (InitialHandler) player.getPendingConnection();
 
 					LoginResult profile = new LoginResult(player.getUniqueId().toString(), new Property[] { textures });
@@ -37,7 +42,7 @@ public class SkinFactoryBungee {
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
 					ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile").set(handler, profile);
-					sendUpdateRequest(player);
+					sendUpdateRequest(player, null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -46,15 +51,21 @@ public class SkinFactoryBungee {
 
 	}
 
-	public void sendUpdateRequest(ProxiedPlayer p) {
+	public void sendUpdateRequest(ProxiedPlayer p, Property textures) {
 		if (p.getServer() == null)
 			return;
 
-		final ByteArrayOutputStream b = new ByteArrayOutputStream();
+		ByteArrayOutputStream b = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(b);
 		try {
 			out.writeUTF("ForwardToPlayer");
 			out.writeUTF(p.getName());
+
+			if (textures != null) {
+				out.writeUTF(textures.getName());
+				out.writeUTF(textures.getValue());
+				out.writeUTF(textures.getSignature());
+			}
 
 			p.getServer().sendData("SkinUpdate", b.toByteArray());
 		} catch (IOException e) {

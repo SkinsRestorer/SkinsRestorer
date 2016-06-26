@@ -40,8 +40,8 @@ public class ConfigStorage {
 	}
 
 	public void init(InputStream stream, boolean overWrite) {
-		config.reload();
 		config.copyDefaults(stream, overWrite);
+		config.reload();
 
 		UPDATE_CHECK = config.getBoolean("UpdateCheck");
 		USE_AUTOIN_SKINS = config.getBoolean("UseAutoInSkins");
