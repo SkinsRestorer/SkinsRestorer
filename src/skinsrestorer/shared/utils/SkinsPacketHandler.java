@@ -181,8 +181,17 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 			Object worlddata = ReflectionUtil.getField(world.getClass(), "worldData").get(world);
 			Object worldtype = ReflectionUtil.invokeMethod(worlddata.getClass(), worlddata, "getType");
 			Object worldprovider = ReflectionUtil.getField(world.getClass(), "worldProvider").get(world);
-			Object dimensionmanager = ReflectionUtil.invokeMethod(worldprovider.getClass(), worldprovider,
-					"getDimensionManager");
+
+			Object dimensionmanager = null;
+			int dimension = -1;
+			try {
+				dimensionmanager = ReflectionUtil.invokeMethod(worldprovider.getClass(), worldprovider,
+						"getDimensionManager");
+				dimension = (int) ReflectionUtil.invokeMethod(dimensionmanager.getClass(), dimensionmanager,
+						"getDimensionID");
+			} catch (Exception e) {
+				dimension = ReflectionUtil.getField(worldprovider.getClass(), "dimension").getInt(worldprovider);
+			}
 			Enum<?> enumGamemode = null;
 
 			try {
@@ -208,9 +217,8 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL")
 											.getClass(),
 									worldtype.getClass(), enumGamemode.getClass() },
-					ReflectionUtil.invokeMethod(dimensionmanager.getClass(), dimensionmanager, "getDimensionID"),
-					difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById",
-							new Class<?>[] { int.class }, gmid));
+							dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null,
+									"getById", new Class<?>[] { int.class }, gmid));
 
 			Object pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
 					new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
