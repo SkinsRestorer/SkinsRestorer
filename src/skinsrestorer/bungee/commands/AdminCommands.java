@@ -20,7 +20,6 @@ package skinsrestorer.bungee.commands;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -28,17 +27,16 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.SkinFetchUtils;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-import skinsrestorer.shared.utils.Updater;
 
 public class AdminCommands extends Command {
 
@@ -49,186 +47,161 @@ public class AdminCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
+
 		if (!sender.hasPermission("skinsrestorer.cmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
+					+ Locale.PLAYER_HAS_NO_PERMISSION));
 			return;
 		}
-		if (args.length == 0) {
-			sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
-			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(C.c(LocaleStorage.ADMIN_HELP));
-			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("reload")) {
-			reloadCommand(sender);
-			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
-			debugCommand(sender);
-			return;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
-			SkinStorage.getInstance().removeSkinData(args[1]);
-			SkinsRestorer.getInstance().getFactory()
-					.applySkin(SkinsRestorer.getInstance().getProxy().getPlayer(args[1]));
-			sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_DROPPED.replace("%player", args[1])));
-			return;
-		} else if ((args.length == 2) && args[0].equalsIgnoreCase("update")) {
-			final String name = args[1];
 
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					try {
-						SkinStorage.getInstance().getOrCreateSkinForPlayer(name).attemptUpdate();
-						sender.sendMessage(C.c(LocaleStorage.SKIN_DATA_UPDATED));
-					} catch (SkinFetchFailedException e) {
-						sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
+		if (args.length == 0) {
+			sender.sendMessage(Locale.ADMIN_HELP);
+
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
+			sender.sendMessage(Locale.ADMIN_HELP);
+
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+			Locale.load();
+			Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+			sender.sendMessage(Locale.RELOAD);
+
+		} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 1; i < args.length; i++)
+				sb.append(args[i]);
+
+			SkinStorage.removeSkinData(sb.toString());
+			sender.sendMessage(Locale.SKIN_DATA_DROPPED);
+
+		} else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 2; i < args.length; i++)
+				sb.append(args[i]);
+
+			String skin = sb.toString();
+			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[1]);
+
+			if (player == null)
+				for (ProxiedPlayer pl : ProxyServer.getInstance().getPlayers()) {
+					if (pl.getName().startsWith(args[1])) {
+						player = pl;
+						break;
 					}
 				}
-			});
-			return;
-		} else if ((args.length == 3) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
+
+			if (player == null) {
+				sender.sendMessage(Locale.NOT_ONLINE);
+				return;
+			}
+
+			ProxiedPlayer p = player;
+
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
 				@Override
 				public void run() {
-					String from = args[2];
 
-					ProxiedPlayer p = SkinsRestorer.getInstance().getProxy().getPlayer(args[1]);
+					Property props = null;
 
-					if (p == null) {
-						sender.sendMessage(C.c(LocaleStorage.PLAYER_NOT_ONLINE));
+					try {
+						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					} catch (SkinRequestException e) {
+						p.sendMessage(e.getReason());
+						sender.sendMessage(e.getReason());
+						props = (Property) SkinStorage.getSkinData(skin);
+
+						if (props != null) {
+							SkinStorage.setPlayerSkin(p.getName(), skin);
+							SkinApplier.applySkin(p);
+							p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
+							sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
+							return;
+						}
 						return;
 					}
 
-					try {
-						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(skinprofile);
-						SkinStorage.getInstance().setPlayerSkin(args[1], skinprofile.getName());
-						SkinsRestorer.getInstance().getFactory().applySkin(p);
-						sender.sendMessage(C.c(LocaleStorage.ADMIN_SET_SKIN.replace("%player", args[1])));
-					} catch (SkinFetchFailedException e) {
-						sender.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
-						SkinProfile sp = SkinStorage.getInstance().getSkinData(from);
+					SkinStorage.setSkinData(skin, props);
+					SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinApplier.applySkin(p);
+					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					return;
+				}
 
-						if (sp != null) {
-							SkinStorage.getInstance().setPlayerSkin(args[1], sp.getName());
-							SkinsRestorer.getInstance().getFactory().applySkin(p);
-							sender.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
-						}
+			});
+		} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
+			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
+
+					PrintWriter out = null;
+
+					try {
+						if (!debug.exists())
+							debug.createNewFile();
+						out = new PrintWriter(new FileOutputStream(debug, true), true);
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
+
+					String player1 = "Notch";
+					String player2 = "Blackfire62";
+
+					if (sender instanceof ProxiedPlayer)
+						player1 = sender.getName();
+
+					try {
+
+						out.println("Java version: " + System.getProperty("java.version"));
+						out.println("Bungee version: " + ProxyServer.getInstance().getVersion());
+						out.println(
+								"SkinsRestoerer version: " + SkinsRestorer.getInstance().getDescription().getVersion());
+						out.println();
+
+						String plugins = "";
+						for (Plugin plugin : ProxyServer.getInstance().getPluginManager().getPlugins())
+							plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion()
+									+ "), ";
+
+						out.println("Plugin list: " + plugins);
+						out.println();
+						out.println("Property output from MojangAPI (" + player1 + ") : ");
+
+						Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(player1));
+
+						out.println("Name: " + props.getName());
+						out.println("Value: " + props.getValue());
+						out.println("Signature: " + props.getSignature());
+						out.println();
+
+						out.println("Raw data from MojangAPI (" + player2 + "): ");
+
+						String output = (String) ReflectionUtil.invokeMethod(MojangAPI.class, null, "readURL",
+								new Class<?>[] { String.class },
+								"https://sessionserver.mojang.com/session/minecraft/profile/"
+										+ MojangAPI.getUUID(player2) + "?unsigned=false");
+
+						out.println(output);
+
+						out.println("\n\n\n\n\n\n\n\n\n\n");
+
+					} catch (Exception e) {
+						out.println("=========================================");
+						e.printStackTrace(out);
+						out.println("=========================================");
+					}
+
+					sender.sendMessage(ChatColor.RED + "[SkinsRestorer] Debug file crated!");
+					sender.sendMessage(ChatColor.RED
+							+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
+					sender.sendMessage(ChatColor.RED + "[SkinsRestorer] URL for error reporting: " + ChatColor.YELLOW
+							+ "https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/issues");
 				}
 			});
+			return;
 		} else
-			sender.sendMessage(C.c(LocaleStorage.ADMIN_USE_SKIN_HELP));
+			sender.sendMessage(Locale.ADMIN_HELP);
 	}
 
-	@SuppressWarnings("deprecation")
-	public void infoCommand(CommandSender sender, String[] args) {
-		sender.sendMessage(C.c("&7=========== &9SkinsRestorer Info &7============"));
-		String version = SkinsRestorer.getInstance().getVersion();
-		sender.sendMessage(C.c("  \n&2&lVersion Info"));
-		sender.sendMessage(C.c("   &fYour SkinsRestorer version is &9" + version));
-		if (ConfigStorage.getInstance().UPDATE_CHECK && Updater.updateAvailable()) {
-			sender.sendMessage(C.c("  \n&2&lUpdates Info"));
-			sender.sendMessage(C.c("   &fThe latest version is &9" + Updater.getHighest()));
-		}
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			sender.sendMessage(C.c("  \n&2&lMySQL Info"));
-			if (SkinsRestorer.getInstance().getMySQL().isConnected()) {
-				sender.sendMessage(C.c("    &aMySQL connection is OK."));
-			} else {
-				sender.sendMessage(C.c(
-						"    &cMySQL is enabled, but not connected!\n    In order to use MySQL please fill the \n    config with the required info!"));
-			}
-		}
-		sender.sendMessage(C.c("  \n&2&lOther Info"));
-		sender.sendMessage(C.c("    &fMCAPI &7| &9" + ConfigStorage.getInstance().MCAPI_ENABLED));
-		sender.sendMessage(C.c("    &fBot feature &7| &9" + ConfigStorage.getInstance().USE_BOT_FEATURE));
-		sender.sendMessage(C.c("    &fAutoIn Skins &7| &9" + ConfigStorage.getInstance().USE_AUTOIN_SKINS));
-		sender.sendMessage(
-				C.c("    &fDisable /Skin Command &7| &9" + ConfigStorage.getInstance().DISABLE_SKIN_COMMAND));
-		sender.sendMessage(
-				C.c("    &fSkin Change Cooldown | &9" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN + " Seconds"));
-	}
-
-	@SuppressWarnings("deprecation")
-	public void reloadCommand(CommandSender sender) {
-		LocaleStorage.init();
-		ConfigStorage.getInstance().init(SkinsRestorer.getInstance().getResourceAsStream("config.yml"), false);
-		sender.sendMessage(C.c(LocaleStorage.RELOAD));
-	}
-
-	@SuppressWarnings("deprecation")
-	public void debugCommand(final CommandSender sender) {
-
-		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
-
-				PrintWriter out = null;
-
-				try {
-					if (!debug.exists())
-						debug.createNewFile();
-					out = new PrintWriter(new FileOutputStream(debug, true), true);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-
-				String player1 = "Notch";
-				String player2 = "Blackfire62";
-
-				if (sender instanceof ProxiedPlayer)
-					player1 = sender.getName();
-
-				try {
-
-					out.println("Java version: " + System.getProperty("java.version"));
-					out.println("Bungee version: " + ProxyServer.getInstance().getVersion());
-					out.println("SkinsRestoerer version: " + SkinsRestorer.getInstance().getDescription().getVersion());
-					out.println();
-
-					String plugins = "";
-					for (Plugin plugin : ProxyServer.getInstance().getPluginManager().getPlugins())
-						plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion()
-								+ "), ";
-
-					out.println("Plugin list: " + plugins);
-					out.println();
-					out.println("Property output from MojangAPI (" + player1 + ") : ");
-
-					SkinProfile sp = MojangAPI.getSkinProfile(MojangAPI.getProfile(player1).getId(), player1);
-
-					out.println("Name: " + sp.getSkinProperty().getName());
-					out.println("Value: " + sp.getSkinProperty().getValue());
-					out.println("Signature: " + sp.getSkinProperty().getSignature());
-					out.println();
-
-					out.println("Raw data from MojangAPI (" + player2 + "): ");
-
-					String output = (String) ReflectionUtil.invokeMethod(MojangAPI.class, null, "readURL",
-							new Class<?>[] { URL.class },
-							new URL("https://sessionserver.mojang.com/session/minecraft/profile/"
-									+ MojangAPI.getProfile(player2).getId() + "?unsigned=false"));
-
-					out.println(output);
-
-					out.println("\n\n\n\n\n\n\n\n\n\n");
-
-				} catch (Exception e) {
-					out.println("=========================================");
-					e.printStackTrace(out);
-					out.println("=========================================");
-				}
-
-				sender.sendMessage(ChatColor.RED + "[SkinsRestorer] Debug file crated!");
-				sender.sendMessage(ChatColor.RED
-						+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
-				sender.sendMessage(ChatColor.RED + "[SkinsRestorer] URL for error reporting: " + ChatColor.YELLOW
-						+ "https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/issues");
-			}
-		});
-
-	}
 }

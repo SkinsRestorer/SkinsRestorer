@@ -21,21 +21,14 @@ import java.io.File;
 
 import javax.sql.rowset.CachedRowSet;
 
-import skinsrestorer.shared.format.Profile;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.format.SkinProperty;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.YamlConfig;
 
 public class SkinStorage {
 
-	private static SkinStorage instance = new SkinStorage();
 	private static YamlConfig cache;
 	private static MySQL mysql;
-
-	public static SkinStorage getInstance() {
-		return instance;
-	}
 
 	public static void init() {
 		cache = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "cache");
@@ -46,102 +39,99 @@ public class SkinStorage {
 		SkinStorage.mysql = mysql;
 	}
 
-	public void removePlayerSkin(String name) {
+	public static void removePlayerSkin(String name) {
 		name = name.toLowerCase();
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			mysql.execute(mysql.prepareStatement(
-					"delete from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?", name));
+		if (Config.USE_MYSQL) {
+			mysql.execute("delete from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 		} else {
-			name = name.toLowerCase();
-			if (cache.getString("Players." + name) != null) {
-				cache.set("Players." + name, null);
-				cache.save();
-			}
+			cache.set("Players." + name + ".Skin", null);
+			cache.set("Players." + name, null);
+			cache.set(name, null);
 		}
 
 	}
 
-	public void removeSkinData(String name) {
+	public static void removeSkinData(String name) {
 		name = name.toLowerCase();
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			mysql.execute(mysql.prepareStatement(
-					"delete from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?", name));
+		if (Config.USE_MYSQL) {
+			mysql.execute("delete from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 		} else {
-			name = name.toLowerCase();
-			if (cache.getString(name) != null) {
-				cache.set("Skins." + name, null);
-				cache.set(name, null);
-				cache.save();
-			}
+			cache.set("Skins." + name + ".Value", null);
+			cache.set("Skins." + name + ".Signature", null);
+			cache.set("Skins." + name, null);
+			cache.set(name, null);
 		}
 
 	}
 
-	public void setPlayerSkin(String name, String skin) {
+	public static void setPlayerSkin(String name, String skin) {
 		name = name.toLowerCase();
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?", name));
+		if (Config.USE_MYSQL) {
+			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement(
-						"insert into " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)",
-						name, skin));
+				mysql.execute("insert into " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)", name, skin);
 			else
-				mysql.execute(mysql.prepareStatement(
-						"update " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin,
-						name));
-		} else {
+				mysql.execute("update " + Config.MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin, name);
+		} else
 			cache.set("Players." + name + ".Skin", skin);
-			cache.save();
-		}
+
 	}
 
-	public void setSkinData(SkinProfile profile) {
-		if (ConfigStorage.getInstance().USE_MYSQL) {
-			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?",
-					profile.getName().toLowerCase()));
+	/**
+	 * Param textures is either BungeeCord's property or Mojang's property
+	 * 
+	 **/
+	public static void setSkinData(String name, Object textures) {
+		name = name.toLowerCase();
+		String value = "";
+		String signature = "";
+		try {
+			value = (String) ReflectionUtil.invokeMethod(textures.getClass(), textures, "getValue");
+			signature = (String) ReflectionUtil.invokeMethod(textures.getClass(), textures, "getSignature");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (Config.USE_MYSQL) {
+			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 
 			if (crs == null)
-				mysql.execute(mysql.prepareStatement(
-						"insert into " + ConfigStorage.getInstance().MYSQL_SKINTABLE
-								+ " (Nick, Value, Signature, Timestamp) values (?,?,?,?)",
-						profile.getName().toLowerCase(), profile.getSkinProperty().getValue(),
-						profile.getSkinProperty().getSignature(), String.valueOf(System.currentTimeMillis())));
+				mysql.execute("insert into " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature) values (?,?,?)",
+						name, value, signature);
 			else
-				mysql.execute(mysql.prepareStatement(
-						"update " + ConfigStorage.getInstance().MYSQL_SKINTABLE
-								+ " set Value=?, Signature=?, Timestamp=? where Nick=?",
-						profile.getSkinProperty().getValue(), profile.getSkinProperty().getSignature(),
-						String.valueOf(System.currentTimeMillis()), profile.getName().toLowerCase()));
+				mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=? where Nick=?", value,
+						signature, name);
 		} else {
-
-			cache.set("Skins." + profile.getName() + ".Value", profile.getSkinProperty().getValue());
-			cache.set("Skins." + profile.getName() + ".Signature", profile.getSkinProperty().getSignature());
-			cache.set("Skins." + profile.getName() + ".Timestamp", System.currentTimeMillis());
-			cache.save();
+			cache.set("Skins." + name + ".Value", value);
+			cache.set("Skins." + name + ".Signature", signature);
 		}
 	}
 
-	public SkinProfile getSkinData(String name) {
+	/**
+	 * Returned object needs to be casted to either BungeeCord's property or
+	 * Mojang's property
+	 * 
+	 * @return com.mojang.authlib.properties.Property (1.8+)
+	 *         <p>
+	 *         net.md_5.bungee.connection.LoginResult.Property (BungeeCord)
+	 *         <p>
+	 *         net.minecraft.util.com.mojang.authlib.properties.Property
+	 *         (1.7.10)
+	 * 
+	 **/
+	public static Object getSkinData(String name) {
 		name = name.toLowerCase();
-		if (ConfigStorage.getInstance().USE_MYSQL) {
+		if (Config.USE_MYSQL) {
 
-			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_SKINTABLE + " where Nick=?",
-					name.toLowerCase()));
+			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 
-			if (crs == null) {
-				return null;
-			} else {
+			if (crs != null) {
 				try {
 					String value = crs.getString("Value");
 					String signature = crs.getString("Signature");
-					String timestamp = crs.getString("Timestamp");
 
-					return new SkinProfile(new Profile(null, name), new SkinProperty("textures", value, signature),
-							Long.valueOf(timestamp));
+					return createProperty("textures", value, signature);
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -151,47 +141,33 @@ public class SkinStorage {
 			return null;
 
 		} else {
-			Long timestamp = System.currentTimeMillis();
 
-			try {
-				timestamp = Long.parseLong(cache.getString("Skins." + name + ".Timestamp"));
-			} catch (Throwable e) {
-			}
+			String value = cache.getString("Skins." + name + ".Value");
+			String signature = cache.getString("Skins." + name + ".Signature");
 
-			SkinProfile profile = null;
-
-			try {
-				profile = new SkinProfile(new Profile(null, name), new SkinProperty("textures",
-						cache.getString("Skins." + name + ".Value"), cache.getString("Skins." + name + ".Signature")),
-						timestamp);
-			} catch (Exception e) {
-				return null;
-			}
-
-			if (profile.getSkinProperty().getSignature() == null)
+			if (value.isEmpty() || signature.isEmpty())
 				return null;
 
-			return profile;
+			Object textures = createProperty("textures", value, cache.getString("Skins." + name + ".Signature"));
 
+			return textures;
 		}
 	}
 
-	public String getPlayerSkin(String name) {
+	public static String getPlayerSkin(String name) {
 		name = name.toLowerCase();
-		if (ConfigStorage.getInstance().USE_MYSQL) {
+		if (Config.USE_MYSQL) {
 
-			CachedRowSet crs = mysql.query(mysql.prepareStatement(
-					"select * from " + ConfigStorage.getInstance().MYSQL_PLAYERTABLE + " where Nick=?",
-					name.toLowerCase()));
+			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 
-			if (crs == null) {
-				return null;
-			} else {
+			if (crs != null) {
 				try {
 					String skin = crs.getString("Skin");
 
-					if (skin.equalsIgnoreCase(name))
+					if (skin.isEmpty() || skin.equalsIgnoreCase(name)) {
 						removePlayerSkin(name);
+						skin = name;
+					}
 
 					return skin;
 
@@ -205,24 +181,57 @@ public class SkinStorage {
 		} else {
 			String skin = cache.getString("Players." + name + ".Skin");
 
-			if (skin != null && skin.equalsIgnoreCase(name))
+			if (skin.isEmpty() || skin.equalsIgnoreCase(name)) {
 				removePlayerSkin(name);
+				skin = name;
+			}
 
 			return skin;
 		}
 	}
 
-	public SkinProfile getOrCreateSkinForPlayer(String name) {
+	/**
+	 * Returned object needs to be casted to either BungeeCord's property or
+	 * Mojang's property
+	 * 
+	 * @return com.mojang.authlib.properties.Property (1.8+)
+	 *         <p>
+	 *         net.md_5.bungee.connection.LoginResult.Property (BungeeCord)
+	 *         <p>
+	 *         net.minecraft.util.com.mojang.authlib.properties.Property
+	 *         (1.7.10)
+	 * 
+	 **/
+	public static Object getOrCreateSkinForPlayer(String name) {
 		name = name.toLowerCase();
 		String skin = getPlayerSkin(name);
 
-		if (skin == null)
-			skin = name;
+		Object textures = getSkinData(skin);
+		if (textures == null)
+			textures = createProperty("textures", "", "");
 
-		SkinProfile skinprofile = getSkinData(skin);
-		if (skinprofile == null)
-			skinprofile = new SkinProfile(new Profile(null, name), new SkinProperty("textures", "", ""), 0);
+		return textures;
+	}
 
-		return skinprofile;
+	public static Object createProperty(String name, String value, String signature) {
+		try {
+			return ReflectionUtil.invokeConstructor(Class.forName("com.mojang.authlib.properties.Property"),
+					new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
+		} catch (Exception e) {
+			try {
+				return ReflectionUtil.invokeConstructor(
+						Class.forName("net.md_5.bungee.connection.LoginResult$Property"),
+						new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
+			} catch (Exception ex) {
+				try {
+					return ReflectionUtil.invokeConstructor(
+							Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property"),
+							new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
+			}
+		}
+		return null;
 	}
 }

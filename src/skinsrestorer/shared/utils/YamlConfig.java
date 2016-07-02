@@ -25,6 +25,21 @@ public class YamlConfig {
 		reload();
 	}
 
+	public YamlConfig(String path, String name, boolean wait) {
+		File direc = new File(path);
+		if (!direc.exists())
+			direc.mkdirs();
+		file = new File(path + name + ".yml");
+		if (!wait) {
+			try {
+				file.createNewFile();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			reload();
+		}
+	}
+
 	public void set(String path, Object value) {
 		try {
 			ReflectionUtil.invokeMethod(config.getClass(), config, "set", new Class<?>[] { String.class, Object.class },
@@ -52,7 +67,7 @@ public class YamlConfig {
 	}
 
 	public String getString(String path) {
-		String s = null;
+		String s = "";
 		try {
 			s = get(path).toString();
 		} catch (Exception e) {
@@ -60,12 +75,24 @@ public class YamlConfig {
 		return s;
 	}
 
+	public String getString(String path, Object defValue) {
+		return get(path, defValue).toString();
+	}
+
 	public boolean getBoolean(String path) {
 		return Boolean.parseBoolean(getString(path));
 	}
 
+	public boolean getBoolean(String path, Object defValue) {
+		return Boolean.parseBoolean(getString(path, defValue));
+	}
+
 	public int getInt(String path) {
 		return Integer.parseInt(getString(path));
+	}
+
+	public int getInt(String path, Object defValue) {
+		return Integer.parseInt(getString(path, defValue));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -114,14 +141,11 @@ public class YamlConfig {
 		}
 	}
 
-	public void copyDefaults(InputStream is, boolean overWrite) {
-		if (overWrite || !file.exists() || isEmpty()) {
-			if (is == null) {
-				System.out.println("[Warning] " + file.getName() + "'s .jar file have been modified!");
-				System.out.println("[Warning] Could not generate " + file.getName() + "!");
-				System.out.println("[Warning] Please stop and restart the server completely!");
+	public void copyDefaults(InputStream is) {
+		if (!file.exists() || isEmpty()) {
+			if (is == null)
 				return;
-			}
+
 			try {
 				Files.copy(is, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
 			} catch (Exception e) {

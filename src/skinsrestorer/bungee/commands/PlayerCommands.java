@@ -23,15 +23,16 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.SkinFetchUtils;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 public class PlayerCommands extends Command {
 
@@ -42,79 +43,76 @@ public class PlayerCommands extends Command {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
-		if (!sender.hasPermission("skinsrestorer.playercmds")) {
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ LocaleStorage.PLAYER_HAS_NO_PERMISSION));
-			return;
-		}
-		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
-			sender.sendMessage(C.c(LocaleStorage.UNKNOWN_COMMAND));
-			return;
-		}
+
 		if (!(sender instanceof ProxiedPlayer)) {
 			sender.sendMessage("This commands are only for players");
 			return;
 		}
-		final ProxiedPlayer player = (ProxiedPlayer) sender;
+
+		ProxiedPlayer p = (ProxiedPlayer) sender;
+
+		if (!sender.hasPermission("skinsrestorer.playercmds")) {
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+					+ Locale.PLAYER_HAS_NO_PERMISSION));
+			return;
+		}
+
+		if (!(sender instanceof ProxiedPlayer)) {
+			sender.sendMessage("This commands are only for players");
+			return;
+		}
+
 		if (args.length == 0) {
-			sender.sendMessage(C.c(LocaleStorage.USE_SKIN_HELP));
+			sender.sendMessage(Locale.PLAYER_HELP);
 			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion()));
-			sender.sendMessage(C.c(LocaleStorage.PLAYER_HELP));
-			return;
-		}
-		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
-			player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			SkinStorage.getInstance().removePlayerSkin(player.getName());
-			SkinsRestorer.getInstance().getFactory().applySkin(player);
-			return;
-		}
-		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-			if (!player.hasPermission("skinsrestorer.bypasscooldown")) {
-				if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-					player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_COOLDOWN.replace("%s",
-							"" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
-					return;
-				}
-				CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
-						ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+		} else if (args.length > 0) {
+
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < args.length; i++)
+				sb.append(args[i]);
+
+			String skin = sb.toString();
+
+			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
+				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
+				return;
 			}
+
+			CooldownStorage.setCooldown(p.getUniqueId(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
 				@Override
 				public void run() {
 
-					String from = args[1];
-					if (!player.hasPermission("skinsrestorer.disabledskins")) {
-						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS) {
-							if (args[1].equalsIgnoreCase(disabledSkin)) {
-								player.sendMessage(LocaleStorage.DISABLED_SKIN);
-								return;
-							}
-						}
-					}
+					Property props = null;
+
 					try {
-						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(skinprofile);
-						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
-						SkinsRestorer.getInstance().getFactory().applySkin(player);
-						player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS));
-					} catch (SkinFetchFailedException e) {
-						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
-						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(skinprofile);
-							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
-							SkinsRestorer.getInstance().getFactory().applySkin(player);
-							player.sendMessage(C.c(LocaleStorage.PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
-						} else {
-							player.sendMessage(C.c(LocaleStorage.SKIN_FETCH_FAILED + e.getMessage()));
-							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
+						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					} catch (SkinRequestException e) {
+						p.sendMessage(e.getReason());
+						props = (Property) SkinStorage.getSkinData(skin);
+
+						if (props != null) {
+							SkinStorage.setPlayerSkin(p.getName(), skin);
+							SkinApplier.applySkin(p);
+							p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
+							return;
 						}
+						return;
 					}
+
+					SkinStorage.setSkinData(skin, props);
+					SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinApplier.applySkin(p);
+					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					return;
 				}
+
 			});
+			return;
 		} else {
-			sender.sendMessage(C.c(LocaleStorage.USE_SKIN_HELP));
+			sender.sendMessage(Locale.PLAYER_HELP);
 		}
 	}
 }

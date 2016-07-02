@@ -23,23 +23,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CooldownStorage {
+	private static final ConcurrentHashMap<UUID, Long> cooldown = new ConcurrentHashMap<UUID, Long>();
 
-	private CooldownStorage() {
-	}
-
-	private static final CooldownStorage instance = new CooldownStorage();
-
-	public static CooldownStorage getInstance() {
-		return instance;
-	}
-
-	protected final ConcurrentHashMap<UUID, Long> cooldown = new ConcurrentHashMap<UUID, Long>();
-
-	public void setCooldown(UUID playeruuid, int cooldowntime, TimeUnit timeunit) {
+	public static void setCooldown(UUID playeruuid, int cooldowntime, TimeUnit timeunit) {
 		cooldown.put(playeruuid, timeunit.toMillis(cooldowntime) + System.currentTimeMillis());
 	}
 
-	public boolean isAtCooldown(UUID playeruuid) {
+	public static boolean isAtCooldown(UUID playeruuid) {
 		Long expire = cooldown.get(playeruuid);
 		if (expire != null) {
 			return expire > System.currentTimeMillis();
@@ -47,7 +37,7 @@ public class CooldownStorage {
 		return false;
 	}
 
-	public void resetCooldown(UUID playeruuid) {
+	public static void resetCooldown(UUID playeruuid) {
 		cooldown.remove(playeruuid);
 	}
 
@@ -55,7 +45,7 @@ public class CooldownStorage {
 		@Override
 		public void run() {
 			long current = System.currentTimeMillis();
-			Iterator<Long> iterator = CooldownStorage.getInstance().cooldown.values().iterator();
+			Iterator<Long> iterator = CooldownStorage.cooldown.values().iterator();
 			while (iterator.hasNext()) {
 				if (iterator.next() <= current) {
 					iterator.remove();

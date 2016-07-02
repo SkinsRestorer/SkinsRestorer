@@ -1,67 +1,45 @@
 package skinsrestorer.bukkit;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+import java.io.InputStreamReader;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
-import skinsrestorer.bukkit.commands.Commands;
+import skinsrestorer.bukkit.commands.SkinCommand;
+import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
-import skinsrestorer.bukkit.metrics.Metrics;
-import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.SkinsPacketHandler;
-import skinsrestorer.shared.utils.Updater;
 
-public class SkinsRestorer extends JavaPlugin implements Listener {
+public class SkinsRestorer extends JavaPlugin {
 
-	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-	private boolean autoIn = false;
 	private static SkinsRestorer instance;
-	private Logger log;
-	private ConsoleCommandSender coloredLog = null;
-	private Updater updater;
 	private MySQL mysql;
 	private boolean bungeeEnabled;
-
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
-
-	public static ScheduledExecutorService getExecutor() {
-		return executor;
-	}
-
-	public void logInfo(String message) {
-		log.info(message);
-	}
+	private boolean v18plus;
 
 	@Override
 	public void onEnable() {
 		instance = this;
-		log = getLogger();
-		coloredLog = Bukkit.getConsoleSender();
+		ConsoleCommandSender console = Bukkit.getConsoleSender();
+
 		try {
 			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
 					.getBoolean("settings.bungeecord");
@@ -88,15 +66,13 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 								// Skipping the channel and playername
 								in.readUTF();
 								in.readUTF();
-								Property textures = new Property(in.readUTF(), in.readUTF(), in.readUTF());
+
+								Object textures = SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF());
 
 								Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 								Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
-								GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep,
-										"getProfile");
-
-								profile.getProperties().get(textures.getName()).clear();
-								profile.getProperties().put(textures.getName(), textures);
+								Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+								applyToGameProfile(profile, textures);
 							} catch (Exception e) {
 							}
 							SkinsPacketHandler.updateSkin(player);
@@ -107,97 +83,129 @@ public class SkinsRestorer extends JavaPlugin implements Listener {
 			return;
 		}
 
-		getDataFolder().mkdirs();
-		ConfigStorage.getInstance().init(this.getResource("config.yml"), false);
-		LocaleStorage.init();
-		if (ConfigStorage.getInstance().USE_MYSQL)
-			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
-					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
-					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
+		try {
+			v18plus = Class.forName("io.netty.channel.Channel") != null;
+		} catch (ClassNotFoundException e) {
+			v18plus = false;
+		}
+
+		Config.load(getResource("config.yml"));
+		Locale.load();
+
+		if (Config.USE_MYSQL)
+			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
+					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
 		else
 			SkinStorage.init();
 
-		executor.scheduleWithFixedDelay(CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, CooldownStorage.cleanupCooldowns, 0, 60 * 20);
 
-		getCommand("skinsrestorer").setExecutor(new Commands());
-		getCommand("skin").setExecutor(new Commands());
-
-		if (getServer().getPluginManager().isPluginEnabled("AutoIn")) {
-			coloredLog.sendMessage(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
-			coloredLog.sendMessage(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
-			autoIn = true;
-		}
-
-		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
-			updater = new Updater(getDescription().getVersion());
-			updater.checkUpdates();
-
-		} else {
-			coloredLog.sendMessage(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
-			updater = null;
-		}
+		getCommand("skinsrestorer").setExecutor(new SrCommand());
+		getCommand("skin").setExecutor(new SkinCommand());
 
 		for (Player p : Bukkit.getOnlinePlayers())
 			SkinsPacketHandler.inject(p);
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
-		if (updater != null) {
-			if (Updater.updateAvailable()) {
-				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-				coloredLog.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
-				coloredLog.sendMessage(ChatColor.YELLOW + " ");
-				coloredLog.sendMessage(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
-				coloredLog.sendMessage(
-						ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
-				coloredLog.sendMessage(
-						ChatColor.AQUA + "    You are running " + ChatColor.RED + "v" + getDescription().getVersion());
-				coloredLog.sendMessage(ChatColor.YELLOW + " ");
-				coloredLog.sendMessage(ChatColor.YELLOW + "    Download at" + ChatColor.GREEN
-						+ " https://www.spigotmc.org/resources/skinsrestorer.2124/");
-				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-			} else {
-				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-				coloredLog.sendMessage(ChatColor.YELLOW + "  SkinsRestorer Updater");
-				coloredLog.sendMessage(ChatColor.YELLOW + " ");
-				coloredLog.sendMessage(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
-						+ getDescription().getVersion());
-				coloredLog.sendMessage(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
-				coloredLog.sendMessage(ChatColor.YELLOW + " ");
-				coloredLog.sendMessage(ChatColor.DARK_GREEN + "==============================================");
-			}
+		if (!checkVersion().equals(getVersion())) {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+			console.sendMessage(ChatColor.RED + "    A new version is available!");
+			console.sendMessage("");
+		} else {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage("");
 		}
 
-		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			coloredLog.sendMessage(ChatColor.RED + "Failed to start Metrics.");
-		}
+	}
+
+	public static SkinsRestorer getInstance() {
+		return instance;
 	}
 
 	@Override
 	public void onDisable() {
-		executor.shutdown();
 		if (!bungeeEnabled)
 			for (Player p : Bukkit.getOnlinePlayers())
 				SkinsPacketHandler.uninject(p);
-		instance = null;
 	}
 
-	public boolean isAutoInEnabled() {
-		return autoIn;
+	public String checkVersion() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 7) {
+				return version;
+			}
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
+		}
+		return getVersion();
 	}
 
 	public String getVersion() {
-		return this.getDescription().getVersion();
+		return getDescription().getVersion();
 	}
 
 	public MySQL getMySQL() {
 		return mysql;
 	}
 
-	public ConsoleCommandSender getColoredLog() {
-		return coloredLog;
+	public void applyToGameProfile(Object profile, Object textures) {
+		try {
+			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+			Object delegate = ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "delegate");
+			Object propcollection = null;
+
+			for (Method me : delegate.getClass().getMethods()) {
+				if (me.getName().equalsIgnoreCase("get")) {
+					me.setAccessible(true);
+					propcollection = me.invoke(delegate, "textures");
+					ReflectionUtil.invokeMethod(propcollection.getClass(), propcollection, "clear");
+				}
+			}
+
+			for (Method me : delegate.getClass().getMethods()) {
+				if (me.getName().equalsIgnoreCase("put")) {
+					me.setAccessible(true);
+					propcollection = me.invoke(delegate, "textures", textures);
+				}
+			}
+			/*
+			 * for (Method me : delegate.getClass().getMethods()) { if
+			 * (me.getName().equalsIgnoreCase("get")) { me.setAccessible(true);
+			 * propcollection = me.invoke(delegate, "textures"); for (Object o :
+			 * (Collection<?>) propcollection) { String value = (String)
+			 * ReflectionUtil.invokeMethod(o.getClass(), o, "getValue"); String
+			 * signature = (String) ReflectionUtil.invokeMethod(o.getClass(), o,
+			 * "getSignature");
+			 * 
+			 * System.out.println(value); System.out.println(signature); } } }
+			 */
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+
+	public boolean is18plus() {
+		return v18plus;
+	}
+
 }

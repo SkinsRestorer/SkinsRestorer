@@ -1,9 +1,8 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.bukkit.listeners;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,16 +11,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.ReflectionUtil;
 
 /**
  * This class handler all the stuff about skin applying
@@ -48,6 +44,7 @@ import skinsrestorer.shared.storage.SkinStorage;
  * <p>
  * 
  * @author Blackfire62
+ * 
  **/
 
 public class SkinsPacketHandler extends ChannelDuplexHandler {
@@ -67,22 +64,17 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 					// Making sure the skins are only applied
 					// To online players, not NPCs or whatever
 					for (Object plData : dataList) {
-						GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(plData.getClass(), plData, "a");
+						Object profile = ReflectionUtil.invokeMethod(plData.getClass(), plData, "a");
 
 						// Thread safe iterating
-						Iterator<? extends Player> it = Bukkit.getOnlinePlayers().iterator();
 
-						while (it.hasNext()) {
-							Player p = it.next();
+						for (Player p : Bukkit.getOnlinePlayers()) {
 
-							if (p.getName().equals(profile.getName())) {
-								SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(p.getName());
+							if (p.getName()
+									.equals(ReflectionUtil.invokeMethod(profile.getClass(), profile, "getName"))) {
+								Object prop = SkinStorage.getOrCreateSkinForPlayer(p.getName());
 
-								Property prop = new Property(sp.getSkinProperty().getName(),
-										sp.getSkinProperty().getValue(), sp.getSkinProperty().getSignature());
-
-								profile.getProperties().get(prop.getName()).clear();
-								profile.getProperties().get(prop.getName()).add(prop);
+								SkinsRestorer.getInstance().applyToGameProfile(profile, prop);
 
 								super.write(ctx, msg, promise);
 								return;

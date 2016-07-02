@@ -1,126 +1,52 @@
 package skinsrestorer.bukkit.listeners;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-import skinsrestorer.shared.utils.SkinsPacketHandler;
 
 public class LoginListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onJoin(PlayerJoinEvent e) {
-		SkinsPacketHandler.inject(e.getPlayer());
+		if (SkinsRestorer.getInstance().is18plus())
+			SkinsPacketHandler.inject(e.getPlayer());
 	}
 
-	// fix skin on player login
-	@EventHandler(priority = EventPriority.LOW)
-	public void onLoginEvent(final PlayerLoginEvent event) {
-		if (event.getResult() != PlayerLoginEvent.Result.ALLOWED) {
-			return;
-		}
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE == true) {
-			return;
-		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
-
+	@EventHandler
+	public void onLogin(PlayerLoginEvent e) {
+		if (!SkinsRestorer.getInstance().is18plus())
 			try {
+				Object textures = SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
 
-				Object api = ReflectionUtil.invokeMethod(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.APICore"),
-						null, "getAPI");
-				Enum<?> premiumStatus = (Enum<?>) ReflectionUtil.invokeMethod(api.getClass(), null, "getPremiumStatus",
-						new Class<?>[] { String.class }, event.getPlayer().getName());
-				Enum<?> premiumEnum = ReflectionUtil
-						.getEnum(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus"), "PREMIUM");
-
-				if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true && premiumStatus == premiumEnum) {
-					return;
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
+				Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(e.getPlayer());
+				Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+				SkinsRestorer.getInstance().applyToGameProfile(ep, textures);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-
-		}
-		// Updating and applying skin.
-		updateAndApply(event.getPlayer());
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
-	public void onLoginEvent(final PlayerJoinEvent event) {
-		if (ConfigStorage.getInstance().USE_BOT_FEATURE == false) {
+	@EventHandler
+	public void onLogin(AsyncPlayerPreLoginEvent e) {
+		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
-		}
-		if (SkinsRestorer.getInstance().isAutoInEnabled()) {
 
-			try {
+		String skin = SkinStorage.getPlayerSkin(e.getName());
 
-				Object api = ReflectionUtil.invokeMethod(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.APICore"),
-						null, "getAPI");
-				Enum<?> premiumStatus = (Enum<?>) ReflectionUtil.invokeMethod(api.getClass(), null, "getPremiumStatus",
-						new Class<?>[] { String.class }, event.getPlayer().getName());
-				Enum<?> premiumEnum = ReflectionUtil
-						.getEnum(Class.forName("com.gmail.bartlomiejkmazur.autoin.api.PremiumStatus"), "PREMIUM");
-
-				if (ConfigStorage.getInstance().USE_AUTOIN_SKINS == true && premiumStatus == premiumEnum) {
-					return;
-				}
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-
-		if (SkinStorage.getInstance().getSkinData(event.getPlayer().getName()) != null) {
-			updateAndApply(event.getPlayer());
-			return;
-		}
-		if (event.getPlayer().hasPermission("skinsrestorer.playercmds")) {
-			final TextComponent message = new TextComponent("");
-			message.setClickEvent(
-					new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/skin set " + event.getPlayer().getName()));
-			message.addExtra(LocaleStorage.DO_YOU_WANT_SKIN.replaceAll("&", "\u00a7"));
-			Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), new Runnable() {
-
-				@Override
-				public void run() {
-					event.getPlayer().sendMessage(message.toPlainText());
-				}
-
-			}, 5L);
+		try {
+			Object props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+			SkinStorage.setSkinData(skin, props);
+		} catch (SkinRequestException ex) {
 		}
 	}
-
-	// Here's it :D
-	public void updateAndApply(final Player player) {
-		final SkinProfile skinprofile = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					skinprofile.attemptUpdate();
-					SkinsPacketHandler.updateSkin(player);
-				} catch (SkinFetchFailedException e) {
-					SkinsRestorer.getInstance()
-							.logInfo("Skin fetch failed for player " + player.getName() + ": " + e.getMessage());
-					e.printStackTrace();
-				}
-			}
-		}).start();
-	}
-
 }

@@ -1,13 +1,11 @@
 package skinsrestorer.shared.api;
 
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.SkinFetchUtils;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-import skinsrestorer.shared.utils.SkinsPacketHandler;
-import skinsrestorer.shared.utils.YamlConfig;
 
 public class SkinsRestorerAPI {
 
@@ -32,21 +30,20 @@ public class SkinsRestorerAPI {
 			@Override
 			public void run() {
 
-				SkinProfile skinprofile = null;
+				Object textures = null;
 
 				try {
-					skinprofile = SkinFetchUtils.fetchSkinProfile(skinName, null);
+					textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skinName));
 
-					SkinStorage.getInstance().setSkinData(skinprofile);
-					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
-				} catch (SkinFetchFailedException e) {
+					SkinStorage.setSkinData(skinName, textures);
+					SkinStorage.setPlayerSkin(playerName, skinName);
+				} catch (SkinRequestException e) {
+					textures = SkinStorage.getSkinData(skinName);
 
-					skinprofile = SkinStorage.getInstance().getSkinData(skinName);
-
-					if (skinprofile == null)
+					if (textures == null)
 						return;
 
-					SkinStorage.getInstance().setPlayerSkin(playerName, skinprofile.getName());
+					SkinStorage.setPlayerSkin(playerName, skinName);
 				}
 
 			}
@@ -63,7 +60,7 @@ public class SkinsRestorerAPI {
 	 *            = Player's nick name
 	 */
 	public static boolean hasSkin(String playerName) {
-		return SkinStorage.getInstance().getPlayerSkin(playerName) != null;
+		return SkinStorage.getPlayerSkin(playerName) != null;
 	}
 
 	/**
@@ -76,7 +73,7 @@ public class SkinsRestorerAPI {
 	 *            = Player's nick name
 	 */
 	public static String getSkinName(String playerName) {
-		return SkinStorage.getInstance().getPlayerSkin(playerName);
+		return SkinStorage.getPlayerSkin(playerName);
 	}
 
 	/**
@@ -108,7 +105,7 @@ public class SkinsRestorerAPI {
 	 * side only!
 	 */
 	public static void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
-		skinsrestorer.bungee.SkinsRestorer.getInstance().getFactory().applySkin(player);
+		SkinApplier.applySkin(player);
 	}
 
 	/**
@@ -121,14 +118,6 @@ public class SkinsRestorerAPI {
 	 * 
 	 */
 	public static void removeSkin(String playername) {
-		SkinStorage.getInstance().removePlayerSkin(playername);
-	}
-
-	/**
-	 * Used to get the SkinsRestorer config if needed for external plugins which
-	 * are depending on SkinsRestorer
-	 */
-	public static YamlConfig getConfig() {
-		return ConfigStorage.getInstance().config;
+		SkinStorage.removePlayerSkin(playername);
 	}
 }

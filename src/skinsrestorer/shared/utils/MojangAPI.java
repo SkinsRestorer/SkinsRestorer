@@ -3,53 +3,54 @@ package skinsrestorer.shared.utils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import skinsrestorer.shared.format.Profile;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.format.SkinProperty;
-import skinsrestorer.shared.storage.ConfigStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException.Reason;
-
-/** Class by Blackfire62 **/
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
 
 public class MojangAPI {
 
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
-	private static final String altskinurl = ConfigStorage.getInstance().GET_SKIN_PROFILE_URL;
-	private static final String altuuidurl = "https://us.mc-api.net/v3/uuid/";
+	public static String getUUID(String name) throws SkinRequestException {
+		String output = readURL(uuidurl + name);
 
-	public static Profile getProfile(String name) throws MalformedURLException, SkinFetchFailedException {
-		name = name.toLowerCase();
-		String output = readURL(new URL(uuidurl + name));
+		if (output.isEmpty())
+			throw new SkinRequestException(Locale.NOT_PREMIUM);
 
-		if (output == null || output.isEmpty()) {
+		else if (output.contains("TooManyRequestsException")) {
+			output = readURL(Config.ALT_SKIN_PROPERTY_URL + name);
 
-			output = readURL(new URL(altuuidurl + name));
+			if (output.isEmpty())
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
 
-			if (output == null || output.isEmpty() || output.contains("\"error\":\"Unknown Username\""))
-				throw new SkinFetchUtils.SkinFetchFailedException(Reason.NO_PREMIUM_PLAYER);
+			else if (output.contains("\"error\":\"Unknown Username\""))
+				throw new SkinRequestException(Locale.NOT_PREMIUM);
 
 			String idbeg = "\"uuid\":\"";
 			String idend = "\"}";
 
-			return new Profile(getStringBetween(output, idbeg, idend), name);
+			return getStringBetween(output, idbeg, idend);
 		}
 
-		return new Profile(output.substring(7, 39), name);
+		return output.substring(7, 39);
 	}
 
-	public static SkinProfile getSkinProfile(String uuid, String name)
-			throws MalformedURLException, SkinFetchFailedException {
-		name = name.toLowerCase();
-		String output = readURL(new URL(skinurl + uuid + "?unsigned=false"));
+	/**
+	 * Returned object needs to be casted to either BungeeCord's property or
+	 * Mojang's property
+	 * 
+	 * @return com.mojang.authlib.properties.Property
+	 *         <p>
+	 *         net.md_5.bungee.connection.LoginResult.Property
+	 * 
+	 **/
+	public static Object getSkinProperty(String uuid) throws SkinRequestException {
+		String output = readURL(skinurl + uuid + "?unsigned=false");
 
 		String sigbeg = "[{\"signature\":\"";
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
@@ -57,16 +58,12 @@ public class MojangAPI {
 
 		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
-			if (!ConfigStorage.getInstance().MCAPI_ENABLED)
-				throw new SkinFetchUtils.SkinFetchFailedException(Reason.RATE_LIMITED);
-
-			output = readURL(new URL(altskinurl.replace("{uuid}", uuid))).replace(" ", "");
-			System.out.print("[SkinsRestorer] " + C.c(LocaleStorage.TRYING_TO_USE_MCAPI.replace("%skin", name)));
+			output = readURL(Config.ALT_SKIN_PROPERTY_URL + uuid).replace(" ", "");
 
 			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
 
 			if (uid.toLowerCase().contains("null"))
-				throw new SkinFetchUtils.SkinFetchFailedException(Reason.MCAPI_FAILED);
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
 
 			sigbeg = "\"signature\":\"";
 			mid = "\",\"name\":\"textures\",\"value\":\"";
@@ -77,19 +74,19 @@ public class MojangAPI {
 		String value = getStringBetween(output, mid, valend).replace("\\/", "/");
 		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
 
-		return new SkinProfile(new Profile(uuid, name), new SkinProperty("textures", value, signature),
-				System.currentTimeMillis());
+		return SkinStorage.createProperty("textures", value, signature);
 	}
 
-	private static String readURL(URL url) {
+	private static String readURL(String url) {
 		try {
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
 			con.setRequestMethod("GET");
 			con.setRequestProperty("User-Agent", "SkinsRestorer");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			con.setUseCaches(false);
+			con.setDefaultUseCaches(false);
 
 			String line;
 			StringBuilder output = new StringBuilder();
@@ -102,7 +99,7 @@ public class MojangAPI {
 
 			return output.toString();
 		} catch (Exception e) {
-			return null;
+			return "";
 		}
 	}
 
@@ -125,6 +122,21 @@ public class MojangAPI {
 			resend = matend.start();
 
 		return base.substring(resbeg, resend);
+	}
+
+	public static class SkinRequestException extends Exception {
+
+		private static final long serialVersionUID = 5969055162529998032L;
+		private String reason;
+
+		public SkinRequestException(String reason) {
+			this.reason = reason;
+		}
+
+		public String getReason() {
+			return reason;
+		}
+
 	}
 
 }

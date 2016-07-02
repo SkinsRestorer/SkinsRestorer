@@ -1,90 +1,44 @@
-/**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
 package skinsrestorer.bungee;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
-import skinsrestorer.bungee.metrics.Metrics;
-import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.Updater;
 
 public class SkinsRestorer extends Plugin {
 
 	private static SkinsRestorer instance;
-
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
-
-	private Logger log;
-	private Updater updater;
-	private SkinFactoryBungee factory;
-	private boolean autoIn = false;
 	private MySQL mysql;
-	private String version;
 
-	public void logInfo(String message) {
-		log.info(message);
-	}
-
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
+		CommandSender console = getProxy().getConsole();
 		instance = this;
-		log = getLogger();
-		getDataFolder().mkdirs();
-		ConfigStorage.getInstance().init(this.getResourceAsStream("config.yml"), false);
-		LocaleStorage.init();
-		version = getDescription().getVersion();
-		if (ConfigStorage.getInstance().UPDATE_CHECK == true) {
-			updater = new Updater(version);
-			updater.checkUpdates();
-		} else {
-			log.info(ChatColor.RED + "SkinsRestorer Updater is Disabled!");
-			updater = null;
-		}
-		if (getProxy().getPluginManager().getPlugin("AutoIn") != null) {
-			log.info(ChatColor.GREEN + "SkinsRestorer has detected that you are using AutoIn.");
-			log.info(ChatColor.GREEN + "Check the USE_AUTOIN_SKINS option in your config!");
-			autoIn = true;
-		}
+		Config.load(getResourceAsStream("config.yml"));
+		Locale.load();
 
-		if (ConfigStorage.getInstance().USE_MYSQL)
-			SkinStorage.init(mysql = new MySQL(ConfigStorage.getInstance().MYSQL_HOST,
-					ConfigStorage.getInstance().MYSQL_PORT, ConfigStorage.getInstance().MYSQL_DATABASE,
-					ConfigStorage.getInstance().MYSQL_USERNAME, ConfigStorage.getInstance().MYSQL_PASSWORD));
+		if (Config.USE_MYSQL)
+			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
+					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
 		else
 			SkinStorage.init();
 
 		getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-
-		factory = new SkinFactoryBungee();
 
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
@@ -92,54 +46,53 @@ public class SkinsRestorer extends Plugin {
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
 		this.getProxy().registerChannel("SkinUpdate");
 
-		if (updater != null) {
-			if (Updater.updateAvailable()) {
-				log.info(ChatColor.DARK_GREEN + "==============================================");
-				log.info(ChatColor.YELLOW + "  SkinsRestorer Updater  ");
-				log.info(ChatColor.YELLOW + " ");
-				log.info(ChatColor.GREEN + "    An update for SkinsRestorer has been found!");
-				log.info(ChatColor.AQUA + "    SkinsRestorer " + ChatColor.GREEN + "v" + Updater.getHighest());
-				log.info(ChatColor.AQUA + "    You are running " + ChatColor.RED + "v" + getDescription().getVersion());
-				log.info(ChatColor.YELLOW + " ");
-				log.info(ChatColor.YELLOW + "    Download at" + ChatColor.GREEN
-						+ " https://www.spigotmc.org/resources/skinsrestorer.2124/");
-				log.info(ChatColor.DARK_GREEN + "==============================================");
-			} else {
-				log.info(ChatColor.DARK_GREEN + "==============================================");
-				log.info(ChatColor.YELLOW + "  SkinsRestorer Updater");
-				log.info(ChatColor.YELLOW + " ");
-				log.info(ChatColor.AQUA + "    You are running " + "v" + ChatColor.GREEN
-						+ getDescription().getVersion());
-				log.info(" ");
-				log.info(ChatColor.GREEN + "    The latest version of SkinsRestorer!");
-				log.info(ChatColor.YELLOW + " ");
-				log.info(ChatColor.DARK_GREEN + "==============================================");
-			}
+		if (!checkVersion().equals(getVersion())) {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+			console.sendMessage(ChatColor.RED + "    A new version is available!");
+			console.sendMessage("");
+		} else {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage("");
 		}
 
+	}
+
+	public static SkinsRestorer getInstance() {
+		return instance;
+	}
+
+	public String checkVersion() {
 		try {
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			log.info(ChatColor.RED + "Failed to start Metrics.");
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 7) {
+				return version;
+			}
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
 		}
-	}
-
-	@Override
-	public void onDisable() {
-		instance = null;
-	}
-
-	public SkinFactoryBungee getFactory() {
-		return factory;
+		return getVersion();
 	}
 
 	public String getVersion() {
-		return version;
-	}
-
-	public boolean isAutoInEnabled() {
-		return autoIn;
+		return getDescription().getVersion();
 	}
 
 	public MySQL getMySQL() {

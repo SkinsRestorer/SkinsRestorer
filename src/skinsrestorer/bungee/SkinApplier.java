@@ -9,31 +9,27 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import skinsrestorer.shared.format.SkinProfile;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-public class SkinFactoryBungee {
+public class SkinApplier {
 
-	// Apply the skin to the player.
-	public void applySkin(final ProxiedPlayer player) {
+	public static void applySkin(ProxiedPlayer p) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					SkinProfile sp = SkinStorage.getInstance().getOrCreateSkinForPlayer(player.getName());
-					Property textures = new Property(sp.getSkinProperty().getName(), sp.getSkinProperty().getValue(),
-							sp.getSkinProperty().getSignature());
+					Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(p.getName());
 
-					if (player.getPendingConnection().isOnlineMode()) {
-						sendUpdateRequest(player, textures);
+					InitialHandler handler = (InitialHandler) p.getPendingConnection();
+
+					if (handler.isOnlineMode()) {
+						sendUpdateRequest(p, textures);
 						return;
 					}
 
-					InitialHandler handler = (InitialHandler) player.getPendingConnection();
-
-					LoginResult profile = new LoginResult(player.getUniqueId().toString(), new Property[] { textures });
+					LoginResult profile = new LoginResult(p.getUniqueId().toString(), new Property[] { textures });
 					Property[] present = profile.getProperties();
 					Property[] newprops = new Property[present.length + 1];
 					System.arraycopy(present, 0, newprops, 0, present.length);
@@ -42,7 +38,7 @@ public class SkinFactoryBungee {
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
 					ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile").set(handler, profile);
-					sendUpdateRequest(player, null);
+					sendUpdateRequest(p, null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,7 +47,7 @@ public class SkinFactoryBungee {
 
 	}
 
-	public void sendUpdateRequest(ProxiedPlayer p, Property textures) {
+	private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
 		if (p.getServer() == null)
 			return;
 

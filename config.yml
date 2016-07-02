@@ -1,37 +1,21 @@
-##############################################
-#           SkinsRestorer Config             #
-#            Made By Th3Tr0LLeR              #
-##############################################
+#This option disables automatic requesting & applying skins on join
+#Commands still work
+DisableOnJoinSkins: false
 
-
-
-#Should SkinsRestorer check for updates ?
-UpdateCheck: true
-
-#You can enable that if you're using AutoIn.
-UseAutoInSkins: false
-
-#This can be enabled if you are experiencing bot attacks.
-UseBotFeature: false
-
-#This is for preventing skin change spam.
+#This is for preventing skin change spam
 SkinChangeCooldown: 30
 
-#Mojang has a limit for getting skins.
-#This website uses proxies to get the skin data
-#From mojang, so you will not be limited.
-#However. If you do not trust mcapi.ca, you can disable that option.
-MCAPI:
-  Enabled: true
-  GetSkinProfileURL: https://mcapi.ca/name/uuid/{uuid}
+# Mojang API (Used to get our skin data) has request limit:
+# You can only request skin data of the same player only once in 10 minutes
+# 
+# To bypass this, here are some our default alternative APIs to get the skin data
+# Feel free to change them to your own
+Alternatives:
+  SkinPropertyURL: https://mcapi.ca/name/uuid/
+  UUIDURL: https://us.mc-api.net/v3/uuid/
 
-#A list of disabled skins. A permision will be needed for them.
-DisabledSkins:
-  - SomeSkin
-  - AnotherSkin
-
-#If this is enabled and configured SkinsRestorer will keep the skins
-#in a MySQL database. This is using less performance.
+# MySQL database for large servers
+# or just to boost the performance
 MySQL:
   Enabled: false
   Host: localhost
@@ -41,7 +25,3 @@ MySQL:
   PlayerTable: Players
   Username: root
   Password: pass
-
-#Turn this to true if you want to disable
-#The /skin command.
-DisableSkinCommand: false

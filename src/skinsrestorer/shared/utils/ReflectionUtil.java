@@ -40,9 +40,18 @@ public class ReflectionUtil {
 	public static Method getMethod(Class<?> clazz, String mname, Class<?>... args) throws Exception {
 		Method m = null;
 		try {
-			m = clazz.getMethod(mname, args);
-		} catch (Exception e) {
 			m = clazz.getDeclaredMethod(mname, args);
+		} catch (Exception e) {
+			try {
+				m = clazz.getMethod(mname, args);
+			} catch (Exception ex) {
+				for (Method me : clazz.getDeclaredMethods()) {
+					if (me.getName().equalsIgnoreCase(mname))
+						m = me;
+					System.out.println(m.getName());
+					break;
+				}
+			}
 		}
 		m.setAccessible(true);
 		return m;
