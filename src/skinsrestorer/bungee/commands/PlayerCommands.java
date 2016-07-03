@@ -45,13 +45,13 @@ public class PlayerCommands extends Command {
 	public void execute(CommandSender sender, final String[] args) {
 
 		if (!(sender instanceof ProxiedPlayer)) {
-			sender.sendMessage("This commands are only for players");
+			sender.sendMessage("These commands are only for players");
 			return;
 		}
 
 		ProxiedPlayer p = (ProxiedPlayer) sender;
 
-		if (!sender.hasPermission("skinsrestorer.playercmds")) {
+		if (!p.hasPermission("skinsrestorer.cmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION));
 			return;

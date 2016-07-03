@@ -71,7 +71,7 @@ public class AdminCommands extends Command {
 				sb.append(args[i]);
 
 			SkinStorage.removeSkinData(sb.toString());
-			sender.sendMessage(Locale.SKIN_DATA_DROPPED);
+			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
 
 		} else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
 			StringBuilder sb = new StringBuilder();
@@ -131,6 +131,7 @@ public class AdminCommands extends Command {
 			});
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
 				@Override
 				public void run() {
 					File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");

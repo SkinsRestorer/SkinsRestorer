@@ -54,8 +54,7 @@ public class SkinApplier {
 		ByteArrayOutputStream b = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(b);
 		try {
-			out.writeUTF("ForwardToPlayer");
-			out.writeUTF(p.getName());
+			out.writeUTF("SkinUpdate");
 
 			if (textures != null) {
 				out.writeUTF(textures.getName());
@@ -63,7 +62,7 @@ public class SkinApplier {
 				out.writeUTF(textures.getSignature());
 			}
 
-			p.getServer().sendData("SkinUpdate", b.toByteArray());
+			p.getServer().sendData("SkinsRestorer", b.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

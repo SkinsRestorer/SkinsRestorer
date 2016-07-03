@@ -18,6 +18,7 @@
 package skinsrestorer.shared.storage;
 
 import java.io.File;
+import java.util.Random;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -181,7 +182,7 @@ public class SkinStorage {
 		} else {
 			String skin = cache.getString("Players." + name + ".Skin");
 
-			if (skin.isEmpty() || skin.equalsIgnoreCase(name)) {
+			if (skin == null || skin.isEmpty() || skin.equalsIgnoreCase(name)) {
 				removePlayerSkin(name);
 				skin = name;
 			}
@@ -206,9 +207,18 @@ public class SkinStorage {
 		name = name.toLowerCase();
 		String skin = getPlayerSkin(name);
 
+		if (skin == null || skin.isEmpty())
+			skin = name;
+
 		Object textures = getSkinData(skin);
-		if (textures == null)
-			textures = createProperty("textures", "", "");
+		if (textures == null) {
+			if (Config.DEFAULT_SKINS_ENABLED) {
+				textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+				if (textures == null)
+					textures = createProperty("textures", "", "");
+			} else
+				textures = createProperty("textures", "", "");
+		}
 
 		return textures;
 	}

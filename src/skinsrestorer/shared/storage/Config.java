@@ -2,6 +2,8 @@ package skinsrestorer.shared.storage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import skinsrestorer.shared.utils.YamlConfig;
 
@@ -24,6 +26,8 @@ public class Config {
 	public static String MYSQL_USERNAME = "admin";
 	public static String MYSQL_PASSWORD = "pass";
 	public static boolean DISABLE_SKIN_COMMAND = false;
+	public static boolean DEFAULT_SKINS_ENABLED = false;
+	public static List<String> DEFAULT_SKINS = null;
 	public static String CUSTOMSKINS_USERNAME = null;
 	public static String CUSTOMSKINS_PASSWORD = null;
 	public static String CUSTOMSKINS_NAME = null;
@@ -40,6 +44,7 @@ public class Config {
 		ALT_SKIN_PROPERTY_URL = config.getString("Alternatives.SkinPropertyURL", ALT_SKIN_PROPERTY_URL);
 		ALT_UUID_URL = config.getString("Alternatives.UUIDURL", ALT_UUID_URL);
 		ALT_UUID_URL2 = config.getString("Alternatives.UUIDURL2", ALT_UUID_URL2);
+		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
 		USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
 		MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
 		MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
@@ -48,6 +53,14 @@ public class Config {
 		MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
 		MYSQL_USERNAME = config.getString("MySQL.Username", MYSQL_USERNAME);
 		MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
+
+		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
+		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
+			DEFAULT_SKINS = new ArrayList<String>();
+			DEFAULT_SKINS.add("Steve");
+			config.set("DefaultSkins.Name", DEFAULT_SKINS.toArray());
+		}
+
 		/*
 		 * CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
 		 * CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");

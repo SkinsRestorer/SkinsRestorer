@@ -102,7 +102,7 @@ public class SrCommand implements CommandExecutor {
 
 			SkinStorage.removeSkinData(sb.toString());
 
-			sender.sendMessage(Locale.SKIN_DATA_DROPPED);
+			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
 		} else if (args.length == 1 && args[0].equalsIgnoreCase("debug")) {
 			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
 				@Override

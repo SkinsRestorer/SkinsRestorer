@@ -13,6 +13,10 @@ SkinChangeCooldown: 30
 Alternatives:
   SkinPropertyURL: https://mcapi.ca/name/uuid/
   UUIDURL: https://us.mc-api.net/v3/uuid/
+  
+DefaultSkin:
+  Enabled:
+  Names:
 
 # MySQL database for large servers
 # or just to boost the performance

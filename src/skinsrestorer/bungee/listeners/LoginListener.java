@@ -18,11 +18,15 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onLogin(PreLoginEvent e) {
-		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled() || e.getConnection() == null
-				|| e.getConnection().getName() == null)
+		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled())
 			return;
 
-		String skin = SkinStorage.getPlayerSkin(e.getConnection().getName());
+		String skinname = SkinStorage.getPlayerSkin(e.getConnection().getName());
+
+		if (skinname == null || skinname.isEmpty())
+			skinname = e.getConnection().getName();
+
+		String skin = skinname;
 
 		e.registerIntent(SkinsRestorer.getInstance());
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
@@ -33,16 +37,10 @@ public class LoginListener implements Listener {
 					Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					SkinStorage.setSkinData(skin, props);
 				} catch (SkinRequestException ex) {
-				} catch (NullPointerException ex) {
-					ex.printStackTrace();
-					System.out.println("============================================");
-					System.out.println("ConnName : " + e.getConnection().getName());
-					System.out.println("SKIN : " + skin);
-					System.out.println("============================================");
 				}
 				e.completeIntent(SkinsRestorer.getInstance());
-			}
 
+			}
 		});
 	}
 

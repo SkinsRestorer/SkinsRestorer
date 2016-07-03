@@ -19,6 +19,8 @@ public class ReflectionUtil {
 
 	public static Field getPrivateField(Class<?> clazz, String fname) throws Exception {
 		Field f = clazz.getDeclaredField(fname);
+		if (f == null)
+			f = clazz.getField(fname);
 		f.setAccessible(true);
 		Field modifiers = Field.class.getDeclaredField("modifiers");
 		modifiers.setAccessible(true);
