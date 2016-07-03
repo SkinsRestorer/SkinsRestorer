@@ -199,7 +199,8 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 			int gmid = 0;
 
 			try {
-				gmid = player.getGameMode().getValue();
+				gmid = (int) ReflectionUtil.invokeMethod(player.getGameMode().getClass(), player.getGameMode(),
+						"getValue");
 			} catch (Exception e) {
 			}
 

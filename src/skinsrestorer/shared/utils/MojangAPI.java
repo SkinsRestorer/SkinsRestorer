@@ -17,36 +17,37 @@ public class MojangAPI {
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	public static String getUUID(String name) throws SkinRequestException {
-		String output = readURL(uuidurl + name);
+		String output = readURL(Config.ALT_UUID_URL + name);
 
-		if (output.isEmpty())
-			throw new SkinRequestException(Locale.NOT_PREMIUM);
+		String idbeg = "\"uuid\":\"";
+		String idend = "\"}";
 
-		else if (output.contains("TooManyRequestsException")) {
-			output = readURL(Config.ALT_SKIN_PROPERTY_URL + name);
+		if (output.isEmpty() || output.contains("\"error\":\"Unknown Username\"")) {
+			output = readURL(uuidurl + name);
 
-			if (output.isEmpty())
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
+			if (output.isEmpty() || output.contains("TooManyRequestsException")) {
+				output = readURL(Config.ALT_UUID_URL2 + name).replace(" ", "");
 
-			else if (output.contains("\"error\":\"Unknown Username\""))
-				throw new SkinRequestException(Locale.NOT_PREMIUM);
+				idbeg = "\"uuid\":\"";
+				idend = "\",\"id\":";
 
-			String idbeg = "\"uuid\":\"";
-			String idend = "\"}";
+				String response = getStringBetween(output, idbeg, idend);
 
-			return getStringBetween(output, idbeg, idend);
+				if (output.startsWith(response))
+					throw new SkinRequestException(Locale.NOT_PREMIUM);
+
+				return response;
+			}
+			return output.substring(7, 39);
 		}
-
-		return output.substring(7, 39);
+		return getStringBetween(output, idbeg, idend);
 	}
 
 	/**
 	 * Returned object needs to be casted to either BungeeCord's property or
 	 * Mojang's property
 	 * 
-	 * @return com.mojang.authlib.properties.Property
-	 *         <p>
-	 *         net.md_5.bungee.connection.LoginResult.Property
+	 * @return Property object (Mojang or Bungee)
 	 * 
 	 **/
 	public static Object getSkinProperty(String uuid) throws SkinRequestException {
@@ -55,6 +56,8 @@ public class MojangAPI {
 		String sigbeg = "[{\"signature\":\"";
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
 		String valend = "\"}]";
+
+		String value;
 
 		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
@@ -69,9 +72,13 @@ public class MojangAPI {
 			mid = "\",\"name\":\"textures\",\"value\":\"";
 			valend = "\"}],\"properties_decoded";
 
+			value = getStringBetween(output, mid, valend).replace("\\/", "/");
+
+			if (value.startsWith("{\"uuid\":\""))
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
 		}
 
-		String value = getStringBetween(output, mid, valend).replace("\\/", "/");
+		value = getStringBetween(output, mid, valend).replace("\\/", "/");
 		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
 
 		return SkinStorage.createProperty("textures", value, signature);
@@ -85,8 +92,6 @@ public class MojangAPI {
 			con.setRequestProperty("User-Agent", "SkinsRestorer");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
-			con.setUseCaches(false);
-			con.setDefaultUseCaches(false);
 
 			String line;
 			StringBuilder output = new StringBuilder();
@@ -109,7 +114,7 @@ public class MojangAPI {
 		Pattern patend = Pattern.compile(Pattern.quote(end));
 
 		int resbeg = 0;
-		int resend = base.length() - 1;
+		int resend = base.length();
 
 		Matcher matbeg = patbeg.matcher(base);
 

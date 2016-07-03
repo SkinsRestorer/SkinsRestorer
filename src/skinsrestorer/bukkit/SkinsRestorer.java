@@ -38,6 +38,7 @@ public class SkinsRestorer extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
+
 		ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 		try {
@@ -115,7 +116,8 @@ public class SkinsRestorer extends JavaPlugin {
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.RED + "    A new version is available!");
+			console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+			console.sendMessage(ChatColor.YELLOW + "    www.spigotmc.org/resources/skinsrestorer-1-7-1-10-x.25777/");
 			console.sendMessage("");
 		} else {
 			console.sendMessage("");
@@ -148,7 +150,7 @@ public class SkinsRestorer extends JavaPlugin {
 			con.setDoOutput(true);
 			con.setRequestMethod("POST");
 			con.getOutputStream()
-					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
+					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=25777")
 							.getBytes("UTF-8"));
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
 			if (version.length() <= 7) {
