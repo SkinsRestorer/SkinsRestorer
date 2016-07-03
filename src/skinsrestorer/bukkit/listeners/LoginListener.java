@@ -30,7 +30,8 @@ public class LoginListener implements Listener {
 
 				Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(e.getPlayer());
 				Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
-				SkinsRestorer.getInstance().applyToGameProfile(ep, textures);
+				Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+				SkinsRestorer.getInstance().applyToGameProfile(profile, textures);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

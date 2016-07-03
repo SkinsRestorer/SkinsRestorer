@@ -213,6 +213,13 @@ public class SkinStorage {
 		return textures;
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @param value
+	 * @param signature
+	 * @return Property object (either Mojang or Bungee)
+	 */
 	public static Object createProperty(String name, String value, String signature) {
 		try {
 			return ReflectionUtil.invokeConstructor(Class.forName("com.mojang.authlib.properties.Property"),

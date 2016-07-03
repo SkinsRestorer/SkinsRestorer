@@ -12,8 +12,9 @@ public class Config {
 
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
-	public static String ALT_SKIN_PROPERTY_URL = "https://mcapi.ca/name/uuid/";
-	public static String ALT_UUID_URL = "https://us.mc-api.net/v3/uuid/";
+	public static String ALT_SKIN_PROPERTY_URL = "http://mcapi.ca/name/uuid/";
+	public static String ALT_UUID_URL = "http://us.mc-api.net/v3/uuid/";
+	public static String ALT_UUID_URL2 = "http://mcapi.ca/uuid/player/";
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
 	public static String MYSQL_PORT = "3306";
@@ -38,6 +39,7 @@ public class Config {
 		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
 		ALT_SKIN_PROPERTY_URL = config.getString("Alternatives.SkinPropertyURL", ALT_SKIN_PROPERTY_URL);
 		ALT_UUID_URL = config.getString("Alternatives.UUIDURL", ALT_UUID_URL);
+		ALT_UUID_URL2 = config.getString("Alternatives.UUIDURL2", ALT_UUID_URL2);
 		USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
 		MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
 		MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
