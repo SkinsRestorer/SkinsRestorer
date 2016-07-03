@@ -21,109 +21,98 @@ import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.format.SkinProfile;
-import skinsrestorer.shared.storage.ConfigStorage;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.LocaleStorage;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.SkinFetchUtils;
-import skinsrestorer.shared.utils.SkinFetchUtils.SkinFetchFailedException;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 public class PlayerCommands extends Command {
 
 	public PlayerCommands() {
-		super("skin", "skinsrestorer.playercmds");
+		super("skin", null);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, final String[] args) {
-		if (ConfigStorage.getInstance().DISABLE_SKIN_COMMAND) {
-			sender.sendMessage(C.c(LocaleStorage.getInstance().UNKNOWN_COMMAND));
-			return;
-		}
+
 		if (!(sender instanceof ProxiedPlayer)) {
-			TextComponent component = new TextComponent("This commands are only for players");
-			sender.sendMessage(component);
+			sender.sendMessage("This commands are only for players");
 			return;
 		}
-		final ProxiedPlayer player = (ProxiedPlayer) sender;
+
+		ProxiedPlayer p = (ProxiedPlayer) sender;
+
+		if (!sender.hasPermission("skinsrestorer.playercmds")) {
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+					+ Locale.PLAYER_HAS_NO_PERMISSION));
+			return;
+		}
+
+		if (!(sender instanceof ProxiedPlayer)) {
+			sender.sendMessage("This commands are only for players");
+			return;
+		}
+
 		if (args.length == 0) {
-			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
-			sender.sendMessage(component);
+			sender.sendMessage(Locale.PLAYER_HELP);
 			return;
-		} else if ((args.length == 1) && args[0].equalsIgnoreCase("help")) {
-			for (String s : LocaleStorage.getInstance().PLAYER_HELP) {
-				sender.sendMessage(C.c(s));
+		} else if (args.length > 0) {
+
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < args.length; i++)
+				sb.append(args[i]);
+
+			String skin = sb.toString();
+
+			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
+				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
+				return;
 			}
-			return;
-		}
-		if ((args.length == 1) && args[0].equalsIgnoreCase("clear")) {
-			SkinStorage.getInstance().removePlayerSkin(player.getName());
-			TextComponent component = new TextComponent(
-					C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SKIN_DATA_CLEARED));
-			player.sendMessage(component);
-			SkinsRestorer.getInstance().getFactory().removeSkin(player);
-			return;
-		}
-		if ((args.length == 2) && args[0].equalsIgnoreCase("set") || args[0].equalsIgnoreCase("change")) {
-			if (!player.hasPermission("skinsrestorer.bypasscooldown")) {
-				if (CooldownStorage.getInstance().isAtCooldown(player.getUniqueId())) {
-					TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().PLAYER_SKIN_COOLDOWN
-							.replace("%s", "" + ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN)));
-					player.sendMessage(component);
-					return;
-				}
-				CooldownStorage.getInstance().setCooldown(player.getUniqueId(),
-						ConfigStorage.getInstance().SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-			}
+
+			CooldownStorage.setCooldown(p.getUniqueId(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
 				@Override
 				public void run() {
 
-					String from = args[1];
-					if (!player.hasPermission("skinsrestorer.disabledskins")) {
-						for (String disabledSkin : ConfigStorage.getInstance().DISABLED_SKINS) {
-							if (args[1].equalsIgnoreCase(disabledSkin)) {
-								player.sendMessage(LocaleStorage.getInstance().DISABLED_SKIN);
-								return;
-							}
-						}
-					}
+					Property props = null;
+
 					try {
-						SkinProfile skinprofile = SkinFetchUtils.fetchSkinProfile(from, null);
-						SkinStorage.getInstance().setSkinData(skinprofile);
-						SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
-						SkinsRestorer.getInstance().getFactory().applySkin(player);
-						TextComponent component = new TextComponent(
-								C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS));
-						player.sendMessage(component);
-					} catch (SkinFetchFailedException e) {
-						SkinProfile skinprofile = SkinStorage.getInstance().getSkinData(from);
-						if (skinprofile != null) {
-							SkinStorage.getInstance().setSkinData(skinprofile);
-							SkinStorage.getInstance().setPlayerSkin(player.getName(), skinprofile.getName());
-							SkinsRestorer.getInstance().getFactory().applySkin(player);
-							TextComponent component = new TextComponent(
-									C.c(LocaleStorage.getInstance().PLAYER_SKIN_CHANGE_SUCCESS_DATABASE));
-							player.sendMessage(component);
-						} else {
-							TextComponent component = new TextComponent(
-									C.c(LocaleStorage.getInstance().SKIN_FETCH_FAILED + e.getMessage()));
-							player.sendMessage(component);
-							CooldownStorage.getInstance().resetCooldown(player.getUniqueId());
+						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					} catch (SkinRequestException e) {
+						p.sendMessage(e.getReason());
+						props = (Property) SkinStorage.getSkinData(skin);
+
+						if (props != null) {
+							SkinStorage.setPlayerSkin(p.getName(), skin);
+							SkinApplier.applySkin(p);
+							p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
+							return;
 						}
+						return;
 					}
+
+					SkinStorage.setSkinData(skin, props);
+					SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinApplier.applySkin(p);
+					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					return;
 				}
+
 			});
+			return;
 		} else {
-			TextComponent component = new TextComponent(C.c(LocaleStorage.getInstance().USE_SKIN_HELP));
-			sender.sendMessage(component);
+			sender.sendMessage(Locale.PLAYER_HELP);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.sponge.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -12,8 +12,6 @@ import java.util.concurrent.Future;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-
-import skinsrestorer.shared.storage.Config;
 
 public class MySQL {
 
@@ -71,14 +69,13 @@ public class MySQL {
 		return false;
 	}
 
-	public void execute(String query, Object... vars) {
+	public void execute(final PreparedStatement ps) {
 		if (isConnected()) {
 			exe.execute(new Runnable() {
 
 				@Override
 				public void run() {
 					try {
-						PreparedStatement ps = prepareStatement(query, vars);
 						ps.execute();
 						ps.close();
 					} catch (SQLException e) {
@@ -90,7 +87,7 @@ public class MySQL {
 		}
 	}
 
-	private PreparedStatement prepareStatement(String query, Object... vars) {
+	public PreparedStatement prepareStatement(String query, Object... vars) {
 		try {
 			if (isConnected()) {
 				PreparedStatement ps = con.prepareStatement(query);
@@ -110,7 +107,7 @@ public class MySQL {
 		return null;
 	}
 
-	public CachedRowSet query(String query, Object... vars) {
+	public CachedRowSet query(final PreparedStatement preparedStatement) {
 		CachedRowSet rowSet = null;
 		if (isConnected()) {
 			try {
@@ -119,17 +116,16 @@ public class MySQL {
 					@Override
 					public CachedRowSet call() {
 						try {
-							PreparedStatement ps = prepareStatement(query, vars);
-
-							ResultSet rs = ps.executeQuery();
+							ResultSet rs = preparedStatement.executeQuery();
 							CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
 							crs.populate(rs);
 							rs.close();
-							ps.close();
 
-							if (crs.next())
+							preparedStatement.close();
+
+							if (crs.next()) {
 								return crs;
-
+							}
 						} catch (SQLException e) {
 							System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 						}
@@ -138,9 +134,9 @@ public class MySQL {
 					}
 				});
 
-				if (future.get() != null)
+				if (future.get() != null) {
 					rowSet = future.get();
-
+				}
 			} catch (Exception e) {
 				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
@@ -149,13 +145,5 @@ public class MySQL {
 	}
 
 	public void createTable() {
-		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-				+ "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
-				+ "`Signature` text COLLATE utf8_unicode_ci,"
-				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 	}
 }

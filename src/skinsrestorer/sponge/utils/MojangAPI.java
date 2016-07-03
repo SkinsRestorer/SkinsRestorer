@@ -1,55 +1,46 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.sponge.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.profile.property.ProfileProperty;
+
+/** Class by Blackfire62 **/
 
 public class MojangAPI {
 
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
-	public static String getUUID(String name) throws SkinRequestException {
+	private static final String altskinurl = "https://mcapi.ca/name/uuid/";
+	private static final String altuuidurl = "https://us.mc-api.net/v3/uuid/";
+
+	public static Optional<String> getUUID(String name) {
 		String output = readURL(uuidurl + name);
 
-		if (output.isEmpty())
-			throw new SkinRequestException(Locale.NOT_PREMIUM);
+		if (output == null || output.isEmpty() || output.contains("\"error\":\"TooManyRequestsException\"")) {
 
-		else if (output.contains("TooManyRequestsException")) {
-			output = readURL(Config.ALT_SKIN_PROPERTY_URL + name);
+			output = readURL(altuuidurl + name);
 
-			if (output.isEmpty())
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
-
-			else if (output.contains("\"error\":\"Unknown Username\""))
-				throw new SkinRequestException(Locale.NOT_PREMIUM);
+			if (output == null || output.isEmpty() || output.contains("\"error\":\"Unknown Username\""))
+				return Optional.empty();
 
 			String idbeg = "\"uuid\":\"";
 			String idend = "\"}";
 
-			return getStringBetween(output, idbeg, idend);
+			return Optional.<String> of(getStringBetween(output, idbeg, idend));
 		}
 
-		return output.substring(7, 39);
+		return Optional.<String> of(output.substring(7, 39));
 	}
 
-	/**
-	 * Returned object needs to be casted to either BungeeCord's property or
-	 * Mojang's property
-	 * 
-	 * @return com.mojang.authlib.properties.Property
-	 *         <p>
-	 *         net.md_5.bungee.connection.LoginResult.Property
-	 * 
-	 **/
-	public static Object getSkinProperty(String uuid) throws SkinRequestException {
+	public static Optional<ProfileProperty> getSkinProperty(String uuid) {
 		String output = readURL(skinurl + uuid + "?unsigned=false");
 
 		String sigbeg = "[{\"signature\":\"";
@@ -58,23 +49,23 @@ public class MojangAPI {
 
 		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
-			output = readURL(Config.ALT_SKIN_PROPERTY_URL + uuid).replace(" ", "");
+			output = readURL(altskinurl + uuid).replace(" ", "");
 
 			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
 
 			if (uid.toLowerCase().contains("null"))
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
+				return Optional.empty();
 
 			sigbeg = "\"signature\":\"";
 			mid = "\",\"name\":\"textures\",\"value\":\"";
 			valend = "\"}],\"properties_decoded";
-
 		}
 
 		String value = getStringBetween(output, mid, valend).replace("\\/", "/");
 		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
 
-		return SkinStorage.createProperty("textures", value, signature);
+		return Optional.<ProfileProperty> of(
+				Sponge.getServer().getGameProfileManager().createProfileProperty("textures", value, signature));
 	}
 
 	private static String readURL(String url) {
@@ -86,7 +77,6 @@ public class MojangAPI {
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
 			con.setUseCaches(false);
-			con.setDefaultUseCaches(false);
 
 			String line;
 			StringBuilder output = new StringBuilder();
@@ -99,7 +89,7 @@ public class MojangAPI {
 
 			return output.toString();
 		} catch (Exception e) {
-			return "";
+			return null;
 		}
 	}
 
@@ -122,21 +112,6 @@ public class MojangAPI {
 			resend = matend.start();
 
 		return base.substring(resbeg, resend);
-	}
-
-	public static class SkinRequestException extends Exception {
-
-		private static final long serialVersionUID = 5969055162529998032L;
-		private String reason;
-
-		public SkinRequestException(String reason) {
-			this.reason = reason;
-		}
-
-		public String getReason() {
-			return reason;
-		}
-
 	}
 
 }
