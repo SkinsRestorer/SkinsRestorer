@@ -66,6 +66,8 @@ public class SkinCommand implements CommandExecutor {
 					try {
 						props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
+						if (e.getReason().equals(Locale.NOT_PREMIUM))
+							CooldownStorage.resetCooldown(p.getUniqueId());
 						p.sendMessage(e.getReason());
 						props = SkinStorage.getSkinData(skin);
 

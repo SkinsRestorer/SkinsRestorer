@@ -90,6 +90,8 @@ public class PlayerCommands extends Command {
 					try {
 						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
+						if (e.getReason().equals(Locale.NOT_PREMIUM))
+							CooldownStorage.resetCooldown(p.getUniqueId());
 						p.sendMessage(e.getReason());
 						props = (Property) SkinStorage.getSkinData(skin);
 
