@@ -1,9 +1,9 @@
 package skinsrestorer.bukkit.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
@@ -24,6 +24,29 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent e) {
+		if (Config.DISABLE_ONJOIN_SKINS)
+			return;
+
+		String skinname = SkinStorage.getPlayerSkin(e.getPlayer().getName());
+
+		if (skinname == null || skinname.isEmpty())
+			skinname = e.getPlayer().getName();
+
+		String skin = skinname;
+
+		Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Object props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					SkinStorage.setSkinData(skin, props);
+				} catch (SkinRequestException ex) {
+				}
+			}
+
+		});
+
 		if (!SkinsRestorer.getInstance().is18plus())
 			try {
 				Object textures = SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
@@ -35,19 +58,5 @@ public class LoginListener implements Listener {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-	}
-
-	@EventHandler
-	public void onLogin(AsyncPlayerPreLoginEvent e) {
-		if (Config.DISABLE_ONJOIN_SKINS)
-			return;
-
-		String skin = SkinStorage.getPlayerSkin(e.getName());
-
-		try {
-			Object props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
-			SkinStorage.setSkinData(skin, props);
-		} catch (SkinRequestException ex) {
-		}
 	}
 }

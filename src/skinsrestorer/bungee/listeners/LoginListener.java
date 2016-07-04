@@ -1,8 +1,7 @@
 package skinsrestorer.bungee.listeners;
 
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.LoginResult.Property;
@@ -17,7 +16,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 public class LoginListener implements Listener {
 
 	@EventHandler
-	public void onLogin(PreLoginEvent e) {
+	public void onLogin(LoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled())
 			return;
 
@@ -37,6 +36,7 @@ public class LoginListener implements Listener {
 					Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					SkinStorage.setSkinData(skin, props);
 				} catch (SkinRequestException ex) {
+					ex.printStackTrace();
 				}
 				e.completeIntent(SkinsRestorer.getInstance());
 
@@ -46,14 +46,6 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onServerConnect(ServerConnectedEvent e) {
-		if (Config.DISABLE_ONJOIN_SKINS)
-			return;
-
-		SkinApplier.applySkin(e.getPlayer());
-	}
-
-	@EventHandler
-	public void onServerConnect(PostLoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 

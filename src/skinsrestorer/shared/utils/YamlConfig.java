@@ -110,15 +110,22 @@ public class YamlConfig {
 		try {
 			Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
 					null, "getProvider", new Class<?>[] { Class.class },
-					Class.forName("net.md_5.bungee.config.YamlConfiguration"));
+					new Object[] { Class.forName("net.md_5.bungee.config.YamlConfiguration") });
 
 			ReflectionUtil.invokeMethod(provider.getClass(), provider, "save",
 					new Class<?>[] { Class.forName("net.md_5.bungee.config.Configuration"), File.class }, config, file);
 		} catch (Exception e) {
 			try {
-				ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[] { File.class }, file);
+				ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[] { File.class },
+						new Object[] { file });
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				try {
+					ReflectionUtil.invokeMethod(config.getClass(), config, "save",
+							new Class<?>[] { Class.forName("org.bukkit.configuration.Configuration"), File.class },
+							config, file);
+				} catch (Exception exc) {
+					exc.printStackTrace();
+				}
 			}
 		}
 	}
@@ -127,14 +134,14 @@ public class YamlConfig {
 		try {
 			Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
 					null, "getProvider", new Class<?>[] { Class.class },
-					Class.forName("net.md_5.bungee.config.YamlConfiguration"));
+					new Object[] { Class.forName("net.md_5.bungee.config.YamlConfiguration") });
 
 			config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[] { File.class },
-					file);
+					new Object[] { file });
 		} catch (Exception e) {
 			try {
 				config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
-						null, "loadConfiguration", new Class<?>[] { File.class }, file);
+						null, "loadConfiguration", new Class<?>[] { File.class }, new Object[] { file });
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -143,13 +150,14 @@ public class YamlConfig {
 
 	public void copyDefaults(InputStream is) {
 		if (!file.exists() || isEmpty()) {
-			if (is == null)
-				return;
-
 			try {
-				Files.copy(is, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+				Files.copy(is, file.toPath());
 			} catch (Exception e) {
-				e.printStackTrace();
+				try {
+					Files.copy(is, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 	}

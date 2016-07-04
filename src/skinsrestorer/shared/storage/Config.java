@@ -25,7 +25,6 @@ public class Config {
 	public static String MYSQL_PLAYERTABLE = "Skins";
 	public static String MYSQL_USERNAME = "admin";
 	public static String MYSQL_PASSWORD = "pass";
-	public static boolean DISABLE_SKIN_COMMAND = false;
 	public static boolean DEFAULT_SKINS_ENABLED = false;
 	public static List<String> DEFAULT_SKINS = null;
 	public static String CUSTOMSKINS_USERNAME = null;

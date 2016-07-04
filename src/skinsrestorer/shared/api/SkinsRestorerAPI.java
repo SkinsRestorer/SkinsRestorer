@@ -85,7 +85,7 @@ public class SkinsRestorerAPI {
 	public static void applySkin(Object player) {
 		try {
 			ReflectionUtil.invokeMethod(SkinsPacketHandler.class, null, "updateSkin",
-					new Class<?>[] { Class.forName("org.bukkit.entity.Player") }, player);
+					new Class<?>[] { Class.forName("org.bukkit.entity.Player") }, new Object[] { player });
 		} catch (Throwable t) {
 			try {
 				Object sr = ReflectionUtil.invokeMethod(Class.forName("skinsrestorer.bungee.SkinsRestorer"), null,

@@ -11,16 +11,24 @@ import org.bukkit.Bukkit;
 
 public class ReflectionUtil {
 
-	public static Field getField(Class<?> clazz, String fname) throws Exception {
-		Field f = clazz.getField(fname);
-		f.setAccessible(true);
-		return f;
+	public static final String serverVersion = null;
+
+	static {
+		try {
+			Class.forName("org.bukkit.Bukkit");
+			setObject(ReflectionUtil.class, null, "serverVersion", Bukkit.getServer().getClass().getPackage().getName()
+					.substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1));
+		} catch (Exception e) {
+		}
 	}
 
-	public static Field getPrivateField(Class<?> clazz, String fname) throws Exception {
-		Field f = clazz.getDeclaredField(fname);
-		if (f == null)
+	public static Field getField(Class<?> clazz, String fname) throws Exception {
+		Field f = null;
+		try {
+			f = clazz.getDeclaredField(fname);
+		} catch (Exception e) {
 			f = clazz.getField(fname);
+		}
 		f.setAccessible(true);
 		Field modifiers = Field.class.getDeclaredField("modifiers");
 		modifiers.setAccessible(true);
@@ -28,12 +36,36 @@ public class ReflectionUtil {
 		return f;
 	}
 
+	public static Object getObject(Object obj, String fname) throws Exception {
+		return getField(obj.getClass(), fname).get(obj);
+	}
+
+	public static Object getObject(Class<?> clazz, Object obj, String fname) throws Exception {
+		return getField(clazz, fname).get(obj);
+	}
+
+	public static void setObject(Object obj, String fname, Object value) throws Exception {
+		getField(obj.getClass(), fname).set(obj, value);
+	}
+
+	public static void setObject(Class<?> clazz, Object obj, String fname, Object value) throws Exception {
+		getField(clazz, fname).set(obj, value);
+	}
+
 	public static Method getMethod(Class<?> clazz, String mname) throws Exception {
 		Method m = null;
 		try {
-			m = clazz.getMethod(mname);
-		} catch (Exception e) {
 			m = clazz.getDeclaredMethod(mname);
+		} catch (Exception e) {
+			try {
+				m = clazz.getMethod(mname);
+			} catch (Exception ex) {
+				for (Method me : clazz.getMethods()) {
+					if (me.getName().equalsIgnoreCase(mname))
+						m = me;
+					break;
+				}
+			}
 		}
 		m.setAccessible(true);
 		return m;
@@ -47,10 +79,9 @@ public class ReflectionUtil {
 			try {
 				m = clazz.getMethod(mname, args);
 			} catch (Exception ex) {
-				for (Method me : clazz.getDeclaredMethods()) {
+				for (Method me : clazz.getMethods()) {
 					if (me.getName().equalsIgnoreCase(mname))
 						m = me;
-					System.out.println(m.getName());
 					break;
 				}
 			}
@@ -86,11 +117,11 @@ public class ReflectionUtil {
 	}
 
 	public static Class<?> getNMSClass(String clazz) throws Exception {
-		return Class.forName("net.minecraft.server." + getServerVersion() + "." + clazz);
+		return Class.forName("net.minecraft.server." + serverVersion + "." + clazz);
 	}
 
 	public static Class<?> getBukkitClass(String clazz) throws Exception {
-		return Class.forName("org.bukkit.craftbukkit." + getServerVersion() + "." + clazz);
+		return Class.forName("org.bukkit.craftbukkit." + serverVersion + "." + clazz);
 	}
 
 	public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs)
@@ -102,13 +133,20 @@ public class ReflectionUtil {
 		return getMethod(clazz, method).invoke(obj, new Object[] {});
 	}
 
-	public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initargs) throws Exception {
-		return getConstructor(clazz, args).newInstance(initargs);
+	public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initargs) throws Exception {
+		return getMethod(clazz, method).invoke(obj, initargs);
 	}
 
-	public static String getServerVersion() {
-		return Bukkit.getServer().getClass().getPackage().getName()
-				.substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
+	public static Object invokeMethod(Object obj, String method) throws Exception {
+		return getMethod(obj.getClass(), method).invoke(obj, new Object[] {});
+	}
+
+	public static Object invokeMethod(Object obj, String method, Object[] initargs) throws Exception {
+		return getMethod(obj.getClass(), method).invoke(obj, initargs);
+	}
+
+	public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initargs) throws Exception {
+		return getConstructor(clazz, args).newInstance(initargs);
 	}
 
 }

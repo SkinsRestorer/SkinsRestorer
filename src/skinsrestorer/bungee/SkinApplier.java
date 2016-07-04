@@ -37,7 +37,7 @@ public class SkinApplier {
 					profile.getProperties()[0].setName(newprops[0].getName());
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
-					ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile").set(handler, profile);
+					ReflectionUtil.setObject(handler, "loginProfile", profile);
 					sendUpdateRequest(p, null);
 				} catch (Exception e) {
 					e.printStackTrace();
