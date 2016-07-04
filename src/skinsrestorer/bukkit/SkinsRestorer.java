@@ -52,7 +52,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 			Bukkit.getMessenger().registerIncomingPluginChannel(this, "SkinUpdate", new PluginMessageListener() {
 				@Override
-				public void onPluginMessageReceived(String channel, final Player player, byte[] message) {
+				public void onPluginMessageReceived(String channel, final Player player, final byte[] message) {
 					if (!channel.equals("SkinUpdate"))
 						return;
 

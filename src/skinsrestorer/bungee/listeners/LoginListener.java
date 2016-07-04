@@ -17,12 +17,12 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 public class LoginListener implements Listener {
 
 	@EventHandler
-	public void onLogin(PreLoginEvent e) {
+	public void onLogin(final PreLoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled() || e.getConnection() == null
 				|| e.getConnection().getName() == null)
 			return;
 
-		String skin = SkinStorage.getPlayerSkin(e.getConnection().getName());
+		final String skin = SkinStorage.getPlayerSkin(e.getConnection().getName());
 
 		e.registerIntent(SkinsRestorer.getInstance());
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {

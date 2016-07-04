@@ -49,7 +49,7 @@ public class PlayerCommands extends Command {
 			return;
 		}
 
-		ProxiedPlayer p = (ProxiedPlayer) sender;
+		final ProxiedPlayer p = (ProxiedPlayer) sender;
 
 		if (!sender.hasPermission("skinsrestorer.playercmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
@@ -71,7 +71,7 @@ public class PlayerCommands extends Command {
 			for (int i = 0; i < args.length; i++)
 				sb.append(args[i]);
 
-			String skin = sb.toString();
+			final String skin = sb.toString();
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));

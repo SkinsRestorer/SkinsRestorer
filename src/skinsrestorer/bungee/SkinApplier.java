@@ -14,7 +14,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 public class SkinApplier {
 
-	public static void applySkin(ProxiedPlayer p) {
+	public static void applySkin(final ProxiedPlayer p) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override

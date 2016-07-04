@@ -350,7 +350,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
-				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
+				final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
 				if (online.equals(player)) {
 					sendPacket(playerCon, removeInfo);
