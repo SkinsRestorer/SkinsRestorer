@@ -33,7 +33,7 @@ public class MojangAPI {
 
 				String response = getStringBetween(output, idbeg, idend);
 
-				if (output.startsWith(response))
+				if (response.startsWith("[{\"uuid\":null"))
 					throw new SkinRequestException(Locale.NOT_PREMIUM);
 
 				return response;
@@ -109,24 +109,27 @@ public class MojangAPI {
 	}
 
 	private static String getStringBetween(final String base, final String begin, final String end) {
+		try {
+			Pattern patbeg = Pattern.compile(Pattern.quote(begin));
+			Pattern patend = Pattern.compile(Pattern.quote(end));
 
-		Pattern patbeg = Pattern.compile(Pattern.quote(begin));
-		Pattern patend = Pattern.compile(Pattern.quote(end));
+			int resbeg = 0;
+			int resend = base.length() - 1;
 
-		int resbeg = 0;
-		int resend = base.length();
+			Matcher matbeg = patbeg.matcher(base);
 
-		Matcher matbeg = patbeg.matcher(base);
+			while (matbeg.find())
+				resbeg = matbeg.end();
 
-		while (matbeg.find())
-			resbeg = matbeg.end();
+			Matcher matend = patend.matcher(base);
 
-		Matcher matend = patend.matcher(base);
+			while (matend.find())
+				resend = matend.start();
 
-		while (matend.find())
-			resend = matend.start();
-
-		return base.substring(resbeg, resend);
+			return base.substring(resbeg, resend);
+		} catch (Exception e) {
+			return base;
+		}
 	}
 
 	public static class SkinRequestException extends Exception {

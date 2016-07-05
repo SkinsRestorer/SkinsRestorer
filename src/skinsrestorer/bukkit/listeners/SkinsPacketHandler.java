@@ -55,23 +55,22 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 
 			if (ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo").isInstance(msg)) {
 
-				Enum<?> action = (Enum<?>) ReflectionUtil.getPrivateField(msg.getClass(), "a").get(msg);
+				Enum<?> action = (Enum<?>) ReflectionUtil.getObject(msg, "a");
 
 				if (action.name().equalsIgnoreCase("ADD_PLAYER")) {
 
-					List<?> dataList = (List<?>) ReflectionUtil.getPrivateField(msg.getClass(), "b").get(msg);
+					List<?> dataList = (List<?>) ReflectionUtil.getObject(msg, "b");
 
 					// Making sure the skins are only applied
 					// To online players, not NPCs or whatever
 					for (Object plData : dataList) {
-						Object profile = ReflectionUtil.invokeMethod(plData.getClass(), plData, "a");
+						Object profile = ReflectionUtil.invokeMethod(plData, "a");
 
 						// Thread safe iterating
 
 						for (Player p : Bukkit.getOnlinePlayers()) {
 
-							if (p.getName()
-									.equals(ReflectionUtil.invokeMethod(profile.getClass(), profile, "getName"))) {
+							if (p.getName().equals(ReflectionUtil.invokeMethod(profile, "getName"))) {
 								Object prop = SkinStorage.getOrCreateSkinForPlayer(p.getName());
 
 								SkinsRestorer.getInstance().applyToGameProfile(profile, prop);
@@ -92,10 +91,15 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	public static void inject(Player p) {
 		try {
 			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
-			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
-			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
-			Channel channel = (Channel) ReflectionUtil.getField(manager.getClass(), "channel").get(manager);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+			Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+			Object manager = ReflectionUtil.getObject(playerCon, "networkManager");
+			Channel channel = null;
+			try {
+				channel = (Channel) ReflectionUtil.getObject(manager, "channel");
+			} catch (Exception e) {
+				channel = (Channel) ReflectionUtil.getObject(manager, "i");
+			}
 
 			if (channel.pipeline().context("skins_handler") != null)
 				channel.pipeline().remove("skins_handler");
@@ -110,10 +114,15 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	public static void uninject(Player p) {
 		try {
 			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
-			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
-			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
-			Channel channel = (Channel) ReflectionUtil.getField(manager.getClass(), "channel").get(manager);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+			Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+			Object manager = ReflectionUtil.getObject(playerCon, "networkManager");
+			Channel channel = null;
+			try {
+				channel = (Channel) ReflectionUtil.getObject(manager, "channel");
+			} catch (Exception e) {
+				channel = (Channel) ReflectionUtil.getObject(manager, "i");
+			}
 
 			if (channel.pipeline().context("skins_handler") != null)
 				channel.pipeline().remove("skins_handler");
@@ -129,12 +138,15 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	public static void updateSkin(Player player) {
 		try {
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
-			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+			Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
 			Location l = player.getLocation();
 
 			List<Object> set = new ArrayList<Object>();
 			set.add(ep);
 			Iterable<?> iterable = set;
+
+			Enum<?> enumPlayerInfoAction = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
+					"EnumPlayerInfoAction", "REMOVE_PLAYER");
 
 			Object removeInfo = ReflectionUtil
 					.invokeConstructor(
@@ -168,41 +180,18 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 
 			// Slowly getting from object to object till i get what I need for
 			// the respawn packet
-			Object world = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getWorld");
-			Object difficulty = ReflectionUtil.invokeMethod(world.getClass(), world, "getDifficulty");
-			Object worlddata = ReflectionUtil.getField(world.getClass(), "worldData").get(world);
-			Object worldtype = ReflectionUtil.invokeMethod(worlddata.getClass(), worlddata, "getType");
-			Object worldprovider = ReflectionUtil.getField(world.getClass(), "worldProvider").get(world);
+			Object world = ReflectionUtil.invokeMethod(ep, "getWorld");
+			Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
+			Object worlddata = ReflectionUtil.getObject(world, "worldData");
+			Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
 
-			Object dimensionmanager = null;
-			int dimension = -1;
-			try {
-				dimensionmanager = ReflectionUtil.invokeMethod(worldprovider.getClass(), worldprovider,
-						"getDimensionManager");
-				dimension = (int) ReflectionUtil.invokeMethod(dimensionmanager.getClass(), dimensionmanager,
-						"getDimensionID");
-			} catch (Exception e) {
-				dimension = ReflectionUtil.getField(worldprovider.getClass(), "dimension").getInt(worldprovider);
-			}
-			Enum<?> enumGamemode = null;
+			Object worldserver = ReflectionUtil.getNMSClass("WorldServer").cast(world);
+			int dimension = (int) ReflectionUtil.getObject(worldserver, "dimension");
 
-			try {
-				// 1.7 - 1.9
-				enumGamemode = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("WorldSettings"), "EnumGamemode",
-						"SURVIVAL");
+			Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
+			Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
-			} catch (Throwable t) {
-				// 1.10 +
-				enumGamemode = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumGamemode"), "SURVIVAL");
-			}
-
-			int gmid = 0;
-
-			try {
-				gmid = (int) ReflectionUtil.invokeMethod(player.getGameMode().getClass(), player.getGameMode(),
-						"getValue");
-			} catch (Exception e) {
-			}
+			int gmid = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
 			Object respawn = ReflectionUtil
 					.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutRespawn"),
@@ -211,12 +200,23 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 											.getClass(),
 									worldtype.getClass(), enumGamemode.getClass() },
 							dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null,
-									"getById", new Class<?>[] { int.class }, gmid));
+									"getById", new Class<?>[] { int.class }, new Object[] { gmid }));
 
-			Object pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
-					new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
-							int.class },
-					l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
+			Object pos = null;
+
+			try {
+				// 1.9+
+				pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
+						new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
+								int.class },
+						l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
+			} catch (Exception e) {
+				// 1.8 -
+				pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
+						new Class<?>[] { double.class, double.class, double.class, float.class, float.class,
+								Set.class },
+						l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+			}
 
 			Object hand = null;
 			Object mainhand = null;
@@ -244,33 +244,37 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
 						player.getEntityId(), 0,
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class }, player.getItemInHand()));
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
+								new Object[] { player.getItemInHand() }));
 
 				helmet = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
 						player.getEntityId(), 4,
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class }, player.getInventory().getHelmet()));
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getHelmet() }));
 
-				chestplate = ReflectionUtil
-						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-								new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-								player.getEntityId(), 3,
-								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
-										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										player.getInventory().getLeggings()));
+				chestplate = ReflectionUtil.invokeConstructor(
+						ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
+						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
+						player.getEntityId(), 3,
+						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getLeggings() }));
 
 				leggings = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
 						player.getEntityId(), 2,
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class }, player.getInventory().getLeggings()));
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getLeggings() }));
 
 				boots = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
 						player.getEntityId(), 1,
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class }, player.getInventory().getBoots()));
+								"asNMSCopy", new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getBoots() }));
 			} else {
 				mainhand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class,
@@ -281,7 +285,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND"),
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
 								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								player.getInventory().getItemInMainHand()));
+								new Object[] { player.getInventory().getItemInMainHand() }));
 
 				offhand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
 						new Class<?>[] { int.class,
@@ -292,7 +296,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND"),
 						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
 								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								player.getInventory().getItemInOffHand()));
+								new Object[] { player.getInventory().getItemInOffHand() }));
 
 				helmet = ReflectionUtil
 						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -304,7 +308,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "HEAD"),
 								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
 										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										player.getInventory().getHelmet()));
+										new Object[] { player.getInventory().getHelmet() }));
 
 				chestplate = ReflectionUtil
 						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -316,7 +320,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "CHEST"),
 								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
 										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										player.getInventory().getChestplate()));
+										new Object[] { player.getInventory().getChestplate() }));
 
 				leggings = ReflectionUtil
 						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -328,7 +332,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "LEGS"),
 								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
 										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										player.getInventory().getLeggings()));
+										new Object[] { player.getInventory().getLeggings() }));
 
 				boots = ReflectionUtil
 						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
@@ -340,7 +344,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "FEET"),
 								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
 										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										player.getInventory().getBoots()));
+										new Object[] { player.getInventory().getBoots() }));
 			}
 
 			Object slot = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot"),
@@ -350,8 +354,8 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
-				final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
-				Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
+				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 				if (online.equals(player)) {
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
@@ -362,7 +366,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 							// This cant be async
 							// I may change this, it looks ugly
 							try {
-								ReflectionUtil.invokeMethod(craftHandle.getClass(), craftHandle, "updateAbilities");
+								ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
 							} catch (Exception e) {
 							}
 						}
@@ -370,9 +374,9 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 					});
 					sendPacket(playerCon, pos);
 					sendPacket(playerCon, slot);
-					ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "updateScaledHealth");
-					ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "updateInventory");
-					ReflectionUtil.invokeMethod(craftHandle.getClass(), craftHandle, "triggerHealthUpdate");
+					ReflectionUtil.invokeMethod(craftOnline, "updateScaledHealth");
+					ReflectionUtil.invokeMethod(craftOnline, "updateInventory");
+					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 					continue;
 				}
 
@@ -402,7 +406,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 
 	private static void sendPacket(Object playerConnection, Object packet) throws Exception {
 		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
-				new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, packet);
+				new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, new Object[] { packet });
 	}
 
 }

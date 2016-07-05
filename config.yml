@@ -13,6 +13,14 @@ SkinChangeCooldown: 30
 Alternatives:
   SkinPropertyURL: https://mcapi.ca/name/uuid/
   UUIDURL: https://us.mc-api.net/v3/uuid/
+ 
+#Enable or disable default skins
+#If more nicknames will be in the list, server will
+#always choose a random one
+DefaultSkins:
+  Enabled: false
+  Names:
+    - Steve
 
 # MySQL database for large servers
 # or just to boost the performance

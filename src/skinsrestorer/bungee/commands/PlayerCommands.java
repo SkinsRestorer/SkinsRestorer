@@ -1,20 +1,3 @@
-/**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
 package skinsrestorer.bungee.commands;
 
 import java.util.concurrent.TimeUnit;
@@ -45,20 +28,15 @@ public class PlayerCommands extends Command {
 	public void execute(CommandSender sender, final String[] args) {
 
 		if (!(sender instanceof ProxiedPlayer)) {
-			sender.sendMessage("This commands are only for players");
+			sender.sendMessage(Locale.NOT_PLAYER);
 			return;
 		}
 
-		final ProxiedPlayer p = (ProxiedPlayer) sender;
+		ProxiedPlayer p = (ProxiedPlayer) sender;
 
-		if (!sender.hasPermission("skinsrestorer.playercmds")) {
+		if (!p.hasPermission("skinsrestorer.cmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION));
-			return;
-		}
-
-		if (!(sender instanceof ProxiedPlayer)) {
-			sender.sendMessage("This commands are only for players");
 			return;
 		}
 
@@ -69,9 +47,15 @@ public class PlayerCommands extends Command {
 
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < args.length; i++)
-				sb.append(args[i]);
+				if (args.length == 1)
+					sb.append(args[i]);
+				else if (args.length > 1)
+					if (i + 1 == args.length)
+						sb.append(args[i]);
+					else
+						sb.append(args[i] + " ");
 
-			final String skin = sb.toString();
+			String skin = sb.toString();
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
@@ -90,6 +74,8 @@ public class PlayerCommands extends Command {
 					try {
 						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
+						if (e.getReason().equals(Locale.NOT_PREMIUM))
+							CooldownStorage.resetCooldown(p.getUniqueId());
 						p.sendMessage(e.getReason());
 						props = (Property) SkinStorage.getSkinData(skin);
 

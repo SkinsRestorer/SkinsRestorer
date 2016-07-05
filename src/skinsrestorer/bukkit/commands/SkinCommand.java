@@ -3,12 +3,12 @@ package skinsrestorer.bukkit.commands;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.ChatColor;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
 import skinsrestorer.shared.storage.Config;
@@ -28,7 +28,7 @@ public class SkinCommand implements CommandExecutor {
 			return true;
 		}
 
-		final Player p = (Player) sender;
+		Player p = (Player) sender;
 
 		if (!p.hasPermission("skinsrestorer.playercmds")) {
 			p.sendMessage(ChatColor.RED + "&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
@@ -47,7 +47,7 @@ public class SkinCommand implements CommandExecutor {
 			for (int i = 0; i < args.length; i++)
 				sb.append(args[i]);
 
-			final String skin = sb.toString();
+			String skin = sb.toString();
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
@@ -66,6 +66,8 @@ public class SkinCommand implements CommandExecutor {
 					try {
 						props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
+						if (e.getReason().equals(Locale.NOT_PREMIUM))
+							CooldownStorage.resetCooldown(p.getUniqueId());
 						p.sendMessage(e.getReason());
 						props = SkinStorage.getSkinData(skin);
 

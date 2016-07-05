@@ -14,7 +14,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 public class SkinApplier {
 
-	public static void applySkin(final ProxiedPlayer p) {
+	public static void applySkin(ProxiedPlayer p) {
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
 			@Override
@@ -37,7 +37,7 @@ public class SkinApplier {
 					profile.getProperties()[0].setName(newprops[0].getName());
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
-					ReflectionUtil.getPrivateField(InitialHandler.class, "loginProfile").set(handler, profile);
+					ReflectionUtil.setObject(handler, "loginProfile", profile);
 					sendUpdateRequest(p, null);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,8 +54,7 @@ public class SkinApplier {
 		ByteArrayOutputStream b = new ByteArrayOutputStream();
 		DataOutputStream out = new DataOutputStream(b);
 		try {
-			out.writeUTF("ForwardToPlayer");
-			out.writeUTF(p.getName());
+			out.writeUTF("SkinUpdate");
 
 			if (textures != null) {
 				out.writeUTF(textures.getName());
@@ -63,7 +62,7 @@ public class SkinApplier {
 				out.writeUTF(textures.getSignature());
 			}
 
-			p.getServer().sendData("SkinUpdate", b.toByteArray());
+			p.getServer().sendData("SkinsRestorer", b.toByteArray());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

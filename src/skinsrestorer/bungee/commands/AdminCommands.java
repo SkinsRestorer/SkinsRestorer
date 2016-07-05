@@ -21,12 +21,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult.Property;
 import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
@@ -68,17 +71,23 @@ public class AdminCommands extends Command {
 		} else if ((args.length == 2) && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)
-				sb.append(args[i]);
+				sb.append(args[i] + " ");
 
 			SkinStorage.removeSkinData(sb.toString());
-			sender.sendMessage(Locale.SKIN_DATA_DROPPED);
+			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
 
 		} else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 2; i < args.length; i++)
-				sb.append(args[i]);
+				if (args.length == 3)
+					sb.append(args[i]);
+				else if (args.length > 3)
+					if (i + 1 == args.length)
+						sb.append(args[i]);
+					else
+						sb.append(args[i] + " ");
 
-			final String skin = sb.toString();
+			String skin = sb.toString();
 			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[1]);
 
 			if (player == null)
@@ -94,7 +103,7 @@ public class AdminCommands extends Command {
 				return;
 			}
 
-			final ProxiedPlayer p = player;
+			ProxiedPlayer p = player;
 
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
@@ -129,8 +138,57 @@ public class AdminCommands extends Command {
 				}
 
 			});
+		} else if ((args.length > 0) && args[0].equalsIgnoreCase("props")) {
+
+			ProxiedPlayer p = null;
+
+			if (args.length == 1) {
+				if (!(sender instanceof ProxiedPlayer)) {
+					sender.sendMessage(Locale.NOT_PLAYER);
+					return;
+				}
+				p = ((ProxiedPlayer) sender);
+			} else if (args.length > 1) {
+				String name = "";
+				for (int i = 1; i < args.length; i++)
+					if (args.length == 2)
+						name += args[i];
+					else if (args.length > 2)
+						if (i + 1 == args.length)
+							name += args[i];
+						else
+							name += args[i] + " ";
+
+				p = ProxyServer.getInstance().getPlayer(name);
+
+				if (p == null) {
+					sender.sendMessage(Locale.NOT_ONLINE);
+					return;
+				}
+			}
+
+			InitialHandler h = (InitialHandler) p.getPendingConnection();
+			Property prop = h.getLoginProfile().getProperties()[0];
+
+			if (prop == null) {
+				sender.sendMessage(Locale.NO_SKIN_DATA);
+				return;
+			}
+
+			String decoded = Base64Coder.decodeString(prop.getValue());
+
+			System.out.println("Name: " + prop.getName());
+			System.out.println("Value Decoded: " + decoded);
+			System.out.println("Value :" + prop.getValue());
+			System.out.println("Signature :" + prop.getSignature());
+
+			sender.sendMessage(decoded);
+			sender.sendMessage(C.c("&cMore info in console!"));
+
 		} else if ((args.length == 1) && args[0].equalsIgnoreCase("debug")) {
+
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
 				@Override
 				public void run() {
 					File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
@@ -179,8 +237,8 @@ public class AdminCommands extends Command {
 
 						String output = (String) ReflectionUtil.invokeMethod(MojangAPI.class, null, "readURL",
 								new Class<?>[] { String.class },
-								"https://sessionserver.mojang.com/session/minecraft/profile/"
-										+ MojangAPI.getUUID(player2) + "?unsigned=false");
+								new Object[] { "https://sessionserver.mojang.com/session/minecraft/profile/"
+										+ MojangAPI.getUUID(player2) + "?unsigned=false" });
 
 						out.println(output);
 
