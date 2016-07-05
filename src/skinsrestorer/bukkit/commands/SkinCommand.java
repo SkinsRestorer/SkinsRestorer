@@ -37,7 +37,7 @@ public class SkinCommand implements CommandExecutor {
 		}
 
 		// Skin Help
-		if (args.length == 0)
+		if (args.length == 0 || args.length > 1)
 			p.sendMessage(Locale.PLAYER_HELP);
 
 		// Set Skin
