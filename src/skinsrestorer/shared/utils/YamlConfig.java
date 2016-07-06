@@ -124,7 +124,6 @@ public class YamlConfig {
 							new Class<?>[] { Class.forName("org.bukkit.configuration.Configuration"), File.class },
 							config, file);
 				} catch (Exception exc) {
-					exc.printStackTrace();
 				}
 			}
 		}

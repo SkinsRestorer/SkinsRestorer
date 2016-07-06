@@ -15,7 +15,6 @@ import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -82,8 +81,8 @@ public class SrCommand implements CommandExecutor {
 
 						if (props != null) {
 							SkinStorage.setPlayerSkin(p.getName(), skin);
-							if (SkinsRestorer.getInstance().is18plus())
-								SkinsPacketHandler.updateSkin(p);
+							SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+							SkinsRestorer.getInstance().getFactory().updateSkin(p);
 							sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
 							return;
 						}
@@ -92,8 +91,8 @@ public class SrCommand implements CommandExecutor {
 
 					SkinStorage.setSkinData(skin, props);
 					SkinStorage.setPlayerSkin(p.getName(), skin);
-					if (SkinsRestorer.getInstance().is18plus())
-						SkinsPacketHandler.updateSkin(p);
+					SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
 				}

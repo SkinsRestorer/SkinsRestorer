@@ -36,7 +36,6 @@ public class LoginListener implements Listener {
 					Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
 					SkinStorage.setSkinData(skin, props);
 				} catch (SkinRequestException ex) {
-					ex.printStackTrace();
 				}
 				e.completeIntent(SkinsRestorer.getInstance());
 

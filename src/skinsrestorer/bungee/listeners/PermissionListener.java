@@ -20,14 +20,10 @@ public class PermissionListener implements Listener {
 		try {
 			String subchannel = in.readUTF();
 
-			System.out.println(subchannel);
+			if (subchannel.equalsIgnoreCase("SkinPermissions"))
+				((ProxiedPlayer) e.getReceiver()).setPermission(in.readUTF(), true);
 
-			if (subchannel.equalsIgnoreCase("SkinPermissions")) {
-				String perm = in.readUTF();
-				((ProxiedPlayer) e.getReceiver()).setPermission(perm, true);
-			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 }
