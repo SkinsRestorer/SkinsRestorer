@@ -35,7 +35,7 @@ public class SkinsRestorer extends Plugin {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
-		CommandSender console = getProxy().getConsole();
+		final CommandSender console = getProxy().getConsole();
 		instance = this;
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();

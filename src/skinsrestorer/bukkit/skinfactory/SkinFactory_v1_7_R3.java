@@ -72,7 +72,7 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(p.getInventory().getHeldItemSlot());
 
 			for (Player online : p.getWorld().getPlayers()) {
-				CraftPlayer craftOnline = (CraftPlayer) online;
+				final CraftPlayer craftOnline = (CraftPlayer) online;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
 				if (online.equals(p)) {
 					con.sendPacket(removeInfo);

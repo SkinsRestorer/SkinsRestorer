@@ -32,7 +32,7 @@ public class PlayerCommands extends Command {
 			return;
 		}
 
-		ProxiedPlayer p = (ProxiedPlayer) sender;
+		final ProxiedPlayer p = (ProxiedPlayer) sender;
 
 		if (!p.hasPermission("skinsrestorer.cmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
@@ -55,7 +55,7 @@ public class PlayerCommands extends Command {
 					else
 						sb.append(args[i] + " ");
 
-			String skin = sb.toString();
+			final String skin = sb.toString();
 
 			if (Config.DISABLED_SKINS_ENABLED) {
 				for (String dskin : Config.DISABLED_SKINS) {

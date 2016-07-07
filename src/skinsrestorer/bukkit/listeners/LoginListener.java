@@ -25,11 +25,11 @@ public class LoginListener implements Listener {
 	}
 
 	@EventHandler
-	public void onJoin(PlayerJoinEvent e) {
+	public void onJoin(final PlayerJoinEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 
-		Player p = e.getPlayer();
+		final Player p = e.getPlayer();
 
 		Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
 

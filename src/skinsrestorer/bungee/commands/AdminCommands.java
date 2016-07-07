@@ -70,7 +70,7 @@ public class AdminCommands extends Command {
 					else
 						sb.append(args[i] + " ");
 
-			String skin = sb.toString();
+			final String skin = sb.toString();
 			ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[1]);
 
 			if (player == null)
@@ -86,7 +86,7 @@ public class AdminCommands extends Command {
 				return;
 			}
 
-			ProxiedPlayer p = player;
+			final ProxiedPlayer p = player;
 
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 

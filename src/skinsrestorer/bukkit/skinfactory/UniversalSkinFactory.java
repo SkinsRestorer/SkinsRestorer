@@ -251,7 +251,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
-				Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+				final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 				if (online.equals(player)) {
 					sendPacket(playerCon, removeInfo);

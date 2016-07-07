@@ -16,7 +16,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 public class LoginListener implements Listener {
 
 	@EventHandler
-	public void onLogin(LoginEvent e) {
+	public void onLogin(final LoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled())
 			return;
 
@@ -25,7 +25,7 @@ public class LoginListener implements Listener {
 		if (skinname == null || skinname.isEmpty())
 			skinname = e.getConnection().getName();
 
-		String skin = skinname;
+		final String skin = skinname;
 
 		e.registerIntent(SkinsRestorer.getInstance());
 		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {

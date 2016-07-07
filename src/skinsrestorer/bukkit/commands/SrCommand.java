@@ -27,7 +27,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 public class SrCommand implements CommandExecutor {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
+	public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
 		if (!sender.hasPermission("skinsrestorer.cmds") && !sender.isOp()) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
@@ -49,7 +49,7 @@ public class SrCommand implements CommandExecutor {
 					else
 						sb.append(args[i] + " ");
 
-			String skin = sb.toString();
+			final String skin = sb.toString();
 			Player player = Bukkit.getPlayer(args[1]);
 
 			if (player == null)
@@ -65,7 +65,7 @@ public class SrCommand implements CommandExecutor {
 				return true;
 			}
 
-			Player p = player;
+			final Player p = player;
 
 			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
 

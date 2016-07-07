@@ -71,7 +71,7 @@ public class MySQL {
 		return false;
 	}
 
-	public void execute(String query, Object... vars) {
+	public void execute(final String query, final Object... vars) {
 		if (isConnected()) {
 			exe.execute(new Runnable() {
 
@@ -116,7 +116,7 @@ public class MySQL {
 		return null;
 	}
 
-	public CachedRowSet query(String query, Object... vars) {
+	public CachedRowSet query(final String query, final Object... vars) {
 		CachedRowSet rowSet = null;
 		if (isConnected()) {
 			try {
