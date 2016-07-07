@@ -1,26 +1,27 @@
 package skinsrestorer.bukkit.skinfactory;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R1.inventory.CraftItemStack;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_7_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
-
-import net.minecraft.server.v1_8_R1.EntityPlayer;
-import net.minecraft.server.v1_8_R1.EnumGamemode;
-import net.minecraft.server.v1_8_R1.EnumPlayerInfoAction;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityDestroy;
-import net.minecraft.server.v1_8_R1.PacketPlayOutEntityEquipment;
-import net.minecraft.server.v1_8_R1.PacketPlayOutHeldItemSlot;
-import net.minecraft.server.v1_8_R1.PacketPlayOutNamedEntitySpawn;
-import net.minecraft.server.v1_8_R1.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R1.PacketPlayOutRespawn;
-import net.minecraft.server.v1_8_R1.PlayerConnection;
+import net.minecraft.server.v1_7_R3.EntityPlayer;
+import net.minecraft.server.v1_7_R3.EnumGamemode;
+import net.minecraft.server.v1_7_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_7_R3.PacketPlayOutEntityEquipment;
+import net.minecraft.server.v1_7_R3.PacketPlayOutHeldItemSlot;
+import net.minecraft.server.v1_7_R3.PacketPlayOutNamedEntitySpawn;
+import net.minecraft.server.v1_7_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_7_R3.PacketPlayOutPosition;
+import net.minecraft.server.v1_7_R3.PacketPlayOutRespawn;
+import net.minecraft.server.v1_7_R3.PlayerConnection;
+import net.minecraft.server.v1_7_R3.WorldServer;
+import net.minecraft.util.com.mojang.authlib.properties.Property;
+import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 import skinsrestorer.bukkit.SkinsRestorer;
 
-public class SkinFactory_v1_8_R1 implements SkinFactory {
+public class SkinFactory_v1_7_R3 implements SkinFactory {
 
 	@Override
 	public void applySkin(Player p, Object props) {
@@ -36,18 +37,22 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 			CraftPlayer cp = (CraftPlayer) p;
 			EntityPlayer ep = cp.getHandle();
 			int entId = ep.getId();
+			Location l = p.getLocation();
 
-			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, ep);
+			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(ep.getProfile().getName(), false, entId);
 
 			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
 
 			PacketPlayOutNamedEntitySpawn addNamed = new PacketPlayOutNamedEntitySpawn(ep);
 
-			PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, ep);
+			PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(ep.getProfile().getName(), true, entId);
 
-			PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(ep.getWorld().worldProvider.getDimension(),
-					ep.getWorld().getDifficulty(), ep.getWorld().worldData.getType(),
-					EnumGamemode.getById(p.getGameMode().getValue()));
+			PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(((WorldServer) ep.getWorld()).dimension,
+					ep.getWorld().difficulty, ep.getWorld().worldData.getType(),
+					EnumGamemode.a(p.getGameMode().getValue()));
+
+			PacketPlayOutPosition pos = new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(),
+					l.getPitch(), false);
 
 			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(entId, 0,
 					CraftItemStack.asNMSCopy(p.getItemInHand()));
@@ -66,13 +71,14 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(p.getInventory().getHeldItemSlot());
 
-			for (Player online : Bukkit.getOnlinePlayers()) {
+			for (Player online : p.getWorld().getPlayers()) {
 				final CraftPlayer craftOnline = (CraftPlayer) online;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
 				if (online.equals(p)) {
 					con.sendPacket(removeInfo);
 					con.sendPacket(addInfo);
 					con.sendPacket(respawn);
+					con.sendPacket(pos);
 					con.sendPacket(slot);
 					craftOnline.updateScaledHealth();
 					craftOnline.getHandle().triggerHealthUpdate();

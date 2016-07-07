@@ -51,7 +51,7 @@ public class SkinsRestorer extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		ConsoleCommandSender console = Bukkit.getConsoleSender();
+		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 		try {
 			factory = (SkinFactory) Class
@@ -75,7 +75,7 @@ public class SkinsRestorer extends JavaPlugin {
 			Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 			Bukkit.getMessenger().registerIncomingPluginChannel(this, "SkinsRestorer", new PluginMessageListener() {
 				@Override
-				public void onPluginMessageReceived(String channel, final Player player, byte[] message) {
+				public void onPluginMessageReceived(String channel, final Player player, final byte[] message) {
 					if (!channel.equals("SkinsRestorer"))
 						return;
 

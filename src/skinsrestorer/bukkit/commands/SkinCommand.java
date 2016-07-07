@@ -27,7 +27,7 @@ public class SkinCommand implements CommandExecutor {
 			return true;
 		}
 
-		Player p = (Player) sender;
+		final Player p = (Player) sender;
 
 		if (!p.hasPermission("skinsrestorer.playercmds")) {
 			p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
@@ -46,7 +46,7 @@ public class SkinCommand implements CommandExecutor {
 			for (int i = 0; i < args.length; i++)
 				sb.append(args[i]);
 
-			String skin = sb.toString();
+			final String skin = sb.toString();
 
 			if (Config.DISABLED_SKINS_ENABLED) {
 				for (String dskin : Config.DISABLED_SKINS) {
