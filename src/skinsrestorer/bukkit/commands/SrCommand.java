@@ -189,7 +189,7 @@ public class SrCommand implements CommandExecutor {
 						ex.printStackTrace();
 					}
 
-					String player2 = "Blackfire62";
+					String player2 = "md_5";
 
 					try {
 

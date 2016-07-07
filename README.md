@@ -1,12 +1,13 @@
 --------------------
  SkinsRestorer
----------------------	 
+------------------
 
  Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/Sponge servers
   		  
- Supported versions: 1.8.x | 1.9.x | 1.10.x 
+ Supported versions: 1.7.10 | 1.8.x | 1.9.x | 1.10.x 
  
- Download Jar | https://github.com/Blackfire62/SkinsRestorer---Maro/blob/master/SkinsRestorer-11.9.1.jar
+ Download Jar | 
+ https://www.spigotmc.org/resources/skinsrestorer.2124/
  
  Install instructions:
  

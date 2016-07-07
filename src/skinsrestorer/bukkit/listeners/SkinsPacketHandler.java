@@ -134,6 +134,7 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 	// Update the skin without reloging
 	// Omg so much reflection
 	// Im lazy to make so much classes for just NMS
+
 	@SuppressWarnings("deprecation")
 	public static void updateSkin(Player player) {
 		try {
@@ -144,9 +145,6 @@ public class SkinsPacketHandler extends ChannelDuplexHandler {
 			List<Object> set = new ArrayList<Object>();
 			set.add(ep);
 			Iterable<?> iterable = set;
-
-			Enum<?> enumPlayerInfoAction = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-					"EnumPlayerInfoAction", "REMOVE_PLAYER");
 
 			Object removeInfo = ReflectionUtil
 					.invokeConstructor(

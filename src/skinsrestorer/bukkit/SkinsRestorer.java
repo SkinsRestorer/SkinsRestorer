@@ -262,22 +262,13 @@ public class SkinsRestorer extends JavaPlugin {
 	public void applyToGameProfile(Object profile, Object textures) {
 		try {
 			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-			Object delegate = ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "delegate");
-			Object propcollection = null;
-
-			for (Method me : delegate.getClass().getMethods()) {
-				if (me.getName().equalsIgnoreCase("get")) {
-					me.setAccessible(true);
-					propcollection = me.invoke(delegate, "textures");
-					ReflectionUtil.invokeMethod(propcollection.getClass(), propcollection, "clear");
-				}
-			}
 
 			if (textures != null)
-				for (Method me : delegate.getClass().getMethods()) {
+				ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "clear");
+				for (Method me : propmap.getClass().getMethods()) {
 					if (me.getName().equalsIgnoreCase("put")) {
 						me.setAccessible(true);
-						propcollection = me.invoke(delegate, "textures", textures);
+						me.invoke(propmap, "textures", textures);
 					}
 				}
 		} catch (Exception e) {
