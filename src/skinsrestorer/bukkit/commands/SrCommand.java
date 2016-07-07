@@ -10,12 +10,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -82,8 +82,8 @@ public class SrCommand implements CommandExecutor {
 
 						if (props != null) {
 							SkinStorage.setPlayerSkin(p.getName(), skin);
-							if (SkinsRestorer.getInstance().is18plus())
-								SkinsPacketHandler.updateSkin(p);
+							SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+							SkinsRestorer.getInstance().getFactory().updateSkin(p);
 							sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
 							return;
 						}
@@ -92,8 +92,8 @@ public class SrCommand implements CommandExecutor {
 
 					SkinStorage.setSkinData(skin, props);
 					SkinStorage.setPlayerSkin(p.getName(), skin);
-					if (SkinsRestorer.getInstance().is18plus())
-						SkinsPacketHandler.updateSkin(p);
+					SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
 				}
@@ -106,9 +106,17 @@ public class SrCommand implements CommandExecutor {
 		} else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)
-				sb.append(args[i] + " ");
+				sb.append(args[i]);
 
 			SkinStorage.removeSkinData(sb.toString());
+
+			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
+		} else if (args.length > 1 && args[0].equalsIgnoreCase("remove")) {
+			StringBuilder sb = new StringBuilder();
+			for (int i = 1; i < args.length; i++)
+				sb.append(args[i]);
+
+			SkinStorage.removePlayerSkin(sb.toString());
 
 			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
 		} else if ((args.length > 0) && args[0].equalsIgnoreCase("props")) {
@@ -144,9 +152,9 @@ public class SrCommand implements CommandExecutor {
 				Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
 				Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
 				Object propmap = ReflectionUtil.invokeMethod(profile, "getProperties");
-				Object delegate = ReflectionUtil.invokeMethod(propmap, "delegate");
-				Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(delegate.getClass(), delegate, "get",
-						"textures");
+
+				Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "get",
+						new Class[] { Object.class }, "textures");
 
 				if (props == null || props.isEmpty()) {
 					sender.sendMessage(Locale.NO_SKIN_DATA);
@@ -157,19 +165,23 @@ public class SrCommand implements CommandExecutor {
 
 					String name = (String) ReflectionUtil.invokeMethod(prop, "getName");
 					String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
-					String signature = (String) ReflectionUtil.getObject(prop, "getSignature");
+					String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
 
 					String decoded = Base64Coder.decodeString(value);
 
-					System.out.println("Name: " + name);
-					System.out.println("Value Decoded: " + decoded);
-					System.out.println("Value :" + value);
-					System.out.println("Signature :" + signature);
+					ConsoleCommandSender cons = Bukkit.getConsoleSender();
 
-					sender.sendMessage(decoded);
+					cons.sendMessage(C.c("\n&aName: &8" + name));
+					cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
+					cons.sendMessage(C.c("\n&aValue : &8" + value));
+					cons.sendMessage(C.c("\n&aSignature : &8" + signature));
+
+					sender.sendMessage(C.c("\n&e" + decoded));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+				sender.sendMessage(Locale.NO_SKIN_DATA);
+				return true;
 			}
 			sender.sendMessage(C.c("&cMore info in console!"));
 

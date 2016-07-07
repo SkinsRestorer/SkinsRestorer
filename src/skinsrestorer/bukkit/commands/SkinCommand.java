@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -31,7 +30,7 @@ public class SkinCommand implements CommandExecutor {
 		Player p = (Player) sender;
 
 		if (!p.hasPermission("skinsrestorer.playercmds")) {
-			p.sendMessage(ChatColor.RED + "&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+			p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
@@ -48,6 +47,15 @@ public class SkinCommand implements CommandExecutor {
 				sb.append(args[i]);
 
 			String skin = sb.toString();
+
+			if (Config.DISABLED_SKINS_ENABLED) {
+				for (String dskin : Config.DISABLED_SKINS) {
+					if (skin.equalsIgnoreCase(dskin)) {
+						p.sendMessage(Locale.SKIN_DISABLED);
+						return true;
+					}
+				}
+			}
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
@@ -73,8 +81,8 @@ public class SkinCommand implements CommandExecutor {
 
 						if (props != null) {
 							SkinStorage.setPlayerSkin(p.getName(), skin);
-							if (SkinsRestorer.getInstance().is18plus())
-								SkinsPacketHandler.updateSkin(p);
+							SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+							SkinsRestorer.getInstance().getFactory().updateSkin(p);
 							p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
 							return;
 						}
@@ -83,8 +91,8 @@ public class SkinCommand implements CommandExecutor {
 
 					SkinStorage.setSkinData(skin, props);
 					SkinStorage.setPlayerSkin(p.getName(), skin);
-					if (SkinsRestorer.getInstance().is18plus())
-						SkinsPacketHandler.updateSkin(p);
+					SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
 				}

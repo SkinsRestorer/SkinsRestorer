@@ -1,8 +1,7 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 12.3
+version: 12.4
 author: Blackfire62,Th3Tr0LLeR
-load: STARTUP
 commands:
   skinsrestorer:
     aliases: [sr]

@@ -138,7 +138,6 @@ public class MojangAPI {
 		private String reason;
 
 		public SkinRequestException(String reason) {
-			super(reason);
 			this.reason = reason;
 		}
 

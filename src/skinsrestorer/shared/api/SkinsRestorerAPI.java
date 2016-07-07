@@ -1,7 +1,8 @@
 package skinsrestorer.shared.api;
 
-import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
-import skinsrestorer.bungee.SkinApplier;
+import org.bukkit.entity.Player;
+
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -84,8 +85,7 @@ public class SkinsRestorerAPI {
 	 */
 	public static void applySkin(Object player) {
 		try {
-			ReflectionUtil.invokeMethod(SkinsPacketHandler.class, null, "updateSkin",
-					new Class<?>[] { Class.forName("org.bukkit.entity.Player") }, new Object[] { player });
+			SkinsRestorer.getInstance().getFactory().updateSkin((Player) player);
 		} catch (Throwable t) {
 			try {
 				Object sr = ReflectionUtil.invokeMethod(Class.forName("skinsrestorer.bungee.SkinsRestorer"), null,
@@ -98,14 +98,6 @@ public class SkinsRestorerAPI {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	/**
-	 * Used for instant skin applying. This method can be used on Bungeecord
-	 * side only!
-	 */
-	public static void applySkin(net.md_5.bungee.api.connection.ProxiedPlayer player) {
-		SkinApplier.applySkin(player);
 	}
 
 	/**

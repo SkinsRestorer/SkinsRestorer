@@ -8,7 +8,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -30,11 +29,13 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
-import skinsrestorer.bukkit.listeners.SkinsPacketHandler;
+import skinsrestorer.bukkit.skinfactory.SkinFactory;
+import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -43,15 +44,24 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 public class SkinsRestorer extends JavaPlugin {
 
 	private static SkinsRestorer instance;
+	private SkinFactory factory;
 	private MySQL mysql;
 	private boolean bungeeEnabled;
-	private boolean v18plus;
 
 	@Override
 	public void onEnable() {
 		instance = this;
-
 		ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+		try {
+			factory = (SkinFactory) Class
+					.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
+					.newInstance();
+		} catch (Exception ex) {
+			factory = new UniversalSkinFactory();
+		}
+		console.sendMessage(C.c("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
+				+ factory.getClass().getSimpleName()));
 
 		try {
 			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
@@ -84,13 +94,10 @@ public class SkinsRestorer extends JavaPlugin {
 										Object textures = SkinStorage.createProperty(in.readUTF(), in.readUTF(),
 												in.readUTF());
 
-										Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
-										Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
-										Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-										applyToGameProfile(profile, textures);
+										factory.applySkin(player, textures);
 									} catch (Exception e) {
 									}
-									SkinsPacketHandler.updateSkin(player);
+									factory.updateSkin(player);
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -141,12 +148,6 @@ public class SkinsRestorer extends JavaPlugin {
 			return;
 		}
 
-		try {
-			v18plus = Class.forName("io.netty.channel.Channel") != null;
-		} catch (ClassNotFoundException e) {
-			v18plus = false;
-		}
-
 		Config.load(getResource("config.yml"));
 		Locale.load();
 
@@ -160,9 +161,6 @@ public class SkinsRestorer extends JavaPlugin {
 
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
-
-		for (Player p : Bukkit.getOnlinePlayers())
-			SkinsPacketHandler.inject(p);
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
@@ -225,13 +223,6 @@ public class SkinsRestorer extends JavaPlugin {
 		}
 	}
 
-	@Override
-	public void onDisable() {
-		if (!bungeeEnabled)
-			for (Player p : Bukkit.getOnlinePlayers())
-				SkinsPacketHandler.uninject(p);
-	}
-
 	public String checkVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
@@ -251,33 +242,16 @@ public class SkinsRestorer extends JavaPlugin {
 		return getVersion();
 	}
 
+	public SkinFactory getFactory() {
+		return factory;
+	}
+
 	public String getVersion() {
 		return getDescription().getVersion();
 	}
 
 	public MySQL getMySQL() {
 		return mysql;
-	}
-
-	public void applyToGameProfile(Object profile, Object textures) {
-		try {
-			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-
-			if (textures != null)
-				ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "clear");
-				for (Method me : propmap.getClass().getMethods()) {
-					if (me.getName().equalsIgnoreCase("put")) {
-						me.setAccessible(true);
-						me.invoke(propmap, "textures", textures);
-					}
-				}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public boolean is18plus() {
-		return v18plus;
 	}
 
 	public boolean downloadUpdate() {

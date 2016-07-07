@@ -60,11 +60,17 @@ public class ReflectionUtil {
 			try {
 				m = clazz.getMethod(mname);
 			} catch (Exception ex) {
-				for (Method me : clazz.getMethods()) {
+				for (Method me : clazz.getDeclaredMethods()) {
 					if (me.getName().equalsIgnoreCase(mname))
 						m = me;
 					break;
 				}
+				if (m == null)
+					for (Method me : clazz.getMethods()) {
+						if (me.getName().equalsIgnoreCase(mname))
+							m = me;
+						break;
+					}
 			}
 		}
 		m.setAccessible(true);
@@ -79,11 +85,17 @@ public class ReflectionUtil {
 			try {
 				m = clazz.getMethod(mname, args);
 			} catch (Exception ex) {
-				for (Method me : clazz.getMethods()) {
+				for (Method me : clazz.getDeclaredMethods()) {
 					if (me.getName().equalsIgnoreCase(mname))
 						m = me;
 					break;
 				}
+				if (m == null)
+					for (Method me : clazz.getMethods()) {
+						if (me.getName().equalsIgnoreCase(mname))
+							m = me;
+						break;
+					}
 			}
 		}
 		m.setAccessible(true);
