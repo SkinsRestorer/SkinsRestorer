@@ -21,7 +21,7 @@ import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.minecraft.util.com.mojang.authlib.properties.PropertyMap;
 import skinsrestorer.bukkit.SkinsRestorer;
 
-public class SkinFactory_1_7_R4 implements SkinFactory {
+public class SkinFactory_v1_7_R4 implements SkinFactory {
 
 	@Override
 	public void applySkin(Player p, Object props) {

@@ -87,6 +87,9 @@ public class MySQL {
 				}
 
 			});
+		} else {
+			openConnection();
+			execute(query, vars);
 		}
 	}
 
@@ -102,6 +105,9 @@ public class MySQL {
 					}
 				}
 				return ps;
+			} else {
+				openConnection();
+				return prepareStatement(query, vars);
 			}
 		} catch (SQLException e) {
 			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
@@ -144,7 +150,11 @@ public class MySQL {
 			} catch (Exception e) {
 				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
+		} else {
+			openConnection();
+			query(query, vars);
 		}
+
 		return rowSet;
 	}
 

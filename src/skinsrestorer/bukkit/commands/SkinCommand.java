@@ -30,7 +30,7 @@ public class SkinCommand implements CommandExecutor {
 		Player p = (Player) sender;
 
 		if (!p.hasPermission("skinsrestorer.playercmds")) {
-			p.sendMessage(ChatColor.RED + "&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+			p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
@@ -47,6 +47,15 @@ public class SkinCommand implements CommandExecutor {
 				sb.append(args[i]);
 
 			String skin = sb.toString();
+
+			if (Config.DISABLED_SKINS_ENABLED) {
+				for (String dskin : Config.DISABLED_SKINS) {
+					if (skin.equalsIgnoreCase(dskin)) {
+						p.sendMessage(Locale.SKIN_DISABLED);
+						return true;
+					}
+				}
+			}
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));

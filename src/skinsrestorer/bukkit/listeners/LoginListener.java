@@ -49,7 +49,6 @@ public class LoginListener implements Listener {
 
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 				} catch (SkinRequestException ex) {
-					ex.printStackTrace();
 				}
 			}
 

@@ -21,6 +21,14 @@ DefaultSkins:
   Enabled: false
   Names:
     - Steve
+    
+#Disable skin names
+#Put skins you want to disable on the list
+#Player wont be able to set these skins
+DisabledSkins:
+  Enabled: false
+  Names:
+    - Steve
 
 # MySQL database for large servers
 # or just to boost the performance

@@ -26,10 +26,10 @@ public class UniversalSkinFactory implements SkinFactory {
 
 			if (props != null) {
 				ReflectionUtil.invokeMethod(propmap, "clear");
-				ReflectionUtil.invokeMethod(propmap, "put", new Object[] { "textures", props });
+				ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put",
+						new Class[] { Object.class, Object.class }, new Object[] { "textures", props });
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 

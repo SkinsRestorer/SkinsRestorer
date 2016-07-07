@@ -26,7 +26,9 @@ public class Config {
 	public static String MYSQL_USERNAME = "admin";
 	public static String MYSQL_PASSWORD = "pass";
 	public static boolean DEFAULT_SKINS_ENABLED = false;
+	public static boolean DISABLED_SKINS_ENABLED = false;
 	public static List<String> DEFAULT_SKINS = null;
+	public static List<String> DISABLED_SKINS = null;
 	public static String CUSTOMSKINS_USERNAME = null;
 	public static String CUSTOMSKINS_PASSWORD = null;
 	public static String CUSTOMSKINS_NAME = null;
@@ -44,6 +46,7 @@ public class Config {
 		ALT_UUID_URL = config.getString("Alternatives.UUIDURL", ALT_UUID_URL);
 		ALT_UUID_URL2 = config.getString("Alternatives.UUIDURL2", ALT_UUID_URL2);
 		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
+		DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
 		USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
 		MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
 		MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
@@ -57,7 +60,14 @@ public class Config {
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
 			DEFAULT_SKINS = new ArrayList<String>();
 			DEFAULT_SKINS.add("Steve");
-			config.set("DefaultSkins.Name", DEFAULT_SKINS.toArray());
+			config.set("DefaultSkins.Names", DEFAULT_SKINS.toArray());
+		}
+
+		DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
+		if (DISABLED_SKINS == null || DISABLED_SKINS.isEmpty()) {
+			DISABLED_SKINS = new ArrayList<String>();
+			DISABLED_SKINS.add("Steve");
+			config.set("DisabledSkins.Names", DISABLED_SKINS.toArray());
 		}
 
 		/*

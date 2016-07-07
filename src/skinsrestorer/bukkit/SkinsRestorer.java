@@ -35,6 +35,7 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -59,6 +60,8 @@ public class SkinsRestorer extends JavaPlugin {
 		} catch (Exception ex) {
 			factory = new UniversalSkinFactory();
 		}
+		console.sendMessage(C.c("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
+				+ factory.getClass().getSimpleName()));
 
 		try {
 			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))

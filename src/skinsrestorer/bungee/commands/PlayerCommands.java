@@ -57,6 +57,15 @@ public class PlayerCommands extends Command {
 
 			String skin = sb.toString();
 
+			if (Config.DISABLED_SKINS_ENABLED) {
+				for (String dskin : Config.DISABLED_SKINS) {
+					if (skin.equalsIgnoreCase(dskin)) {
+						p.sendMessage(Locale.SKIN_DISABLED);
+						return;
+					}
+				}
+			}
+
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
 				return;

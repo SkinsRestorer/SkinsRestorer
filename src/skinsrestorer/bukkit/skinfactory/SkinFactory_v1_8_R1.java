@@ -20,7 +20,7 @@ import net.minecraft.server.v1_8_R1.PacketPlayOutRespawn;
 import net.minecraft.server.v1_8_R1.PlayerConnection;
 import skinsrestorer.bukkit.SkinsRestorer;
 
-public class SkinFactory_1_8_R1 implements SkinFactory {
+public class SkinFactory_v1_8_R1 implements SkinFactory {
 
 	@Override
 	public void applySkin(Player p, Object props) {

@@ -19,6 +19,7 @@ public class Locale {
 	public static String SKIN_CHANGE_SUCCESS_DATABASE = "&9Your skin has been updated from database.";
 
 	public static String PLAYER_HAS_NO_PERMISSION = "&cYou don't have permission to do this.";
+	public static String SKIN_DISABLED = "&cThis skin is disabled by an Administrator.";
 	public static String UNKNOWN_COMMAND = "Unknown command. Type \"/help\" for help.";
 
 	public static String ALT_API_FAILED = "&cAPI is overloaded, please try again later!";
