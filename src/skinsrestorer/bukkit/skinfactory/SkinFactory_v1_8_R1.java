@@ -98,7 +98,6 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 				con.sendPacket(boots);
 			}
 		} catch (Exception e) {
-			e.printStackTrace(); // TODO: remove
 		}
 
 	}
