@@ -34,7 +34,7 @@ public class PlayerCommands extends Command {
 
 		final ProxiedPlayer p = (ProxiedPlayer) sender;
 
-		if (!p.hasPermission("skinsrestorer.cmds")) {
+		if (!p.hasPermission("skinsrestorer.playercmds")) {
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION));
 			return;
