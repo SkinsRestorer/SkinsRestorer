@@ -1,5 +1,9 @@
 name: SkinsRestorer
 main: skinsrestorer.bungee.SkinsRestorer
+<<<<<<< HEAD
 soft-depend: [RedisBungee]
 version: 12.5
+=======
+version: 12.4.2
+>>>>>>> origin/master
 author: Blackfire62,Th3Tr0LLeR
