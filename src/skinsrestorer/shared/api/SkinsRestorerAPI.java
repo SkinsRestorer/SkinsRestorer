@@ -3,6 +3,7 @@ package skinsrestorer.shared.api;
 import org.bukkit.entity.Player;
 
 import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -88,12 +89,7 @@ public class SkinsRestorerAPI {
 			SkinsRestorer.getInstance().getFactory().updateSkin((Player) player);
 		} catch (Throwable t) {
 			try {
-				Object sr = ReflectionUtil.invokeMethod(Class.forName("skinsrestorer.bungee.SkinsRestorer"), null,
-						"getInstance");
-				Object factory = ReflectionUtil.invokeMethod(sr.getClass(), sr, "getFactory");
-
-				ReflectionUtil.invokeMethod(factory.getClass(), factory, "applySkin",
-						new Class<?>[] { Class.forName("net.md_5.bungee.api.connection.ProxiedPlayer") }, player);
+				ReflectionUtil.invokeMethod(SkinApplier.class, null, "applySkin", player);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

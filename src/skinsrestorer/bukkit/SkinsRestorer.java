@@ -120,20 +120,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 			}, this);
 
-			if (!checkVersion().equals(getVersion())) {
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    |---------------|");
-				console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-				console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-				console.sendMessage(
-						ChatColor.YELLOW + "    www.spigotmc.org/resources/skinsrestorer-1-7-1-10-x.25777/");
-				console.sendMessage("");
-			} else {
+			if (checkStableVersion().equals(getVersion())) {
 				console.sendMessage("");
 				console.sendMessage(ChatColor.GREEN + "    +===============+");
 				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -143,6 +130,31 @@ public class SkinsRestorer extends JavaPlugin {
 				console.sendMessage("");
 				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
 				console.sendMessage(ChatColor.GREEN + "    The latest version!");
+				console.sendMessage("");
+			} else if (checkDevVersion().equals(getVersion())) {
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+				console.sendMessage(ChatColor.GREEN + "    |---------------|");
+				console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+				console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
+				console.sendMessage("");
+			} else {
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+				console.sendMessage(ChatColor.GREEN + "    |---------------|");
+				console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+				console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+				console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
 				console.sendMessage("");
 			}
 			return;
@@ -164,15 +176,27 @@ public class SkinsRestorer extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
-		if (!checkVersion().equals(getVersion())) {
+		if (checkStableVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
+			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-			console.sendMessage(ChatColor.YELLOW + "    www.spigotmc.org/resources/skinsrestorer-1-7-1-10-x.25777/");
+			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage("");
+		} else if (checkDevVersion().equals(getVersion())) {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+			console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
 			console.sendMessage("");
 		} else {
 			console.sendMessage("");
@@ -180,8 +204,8 @@ public class SkinsRestorer extends JavaPlugin {
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+			console.sendMessage(ChatColor.RED + "    A new version is available!");
 			console.sendMessage("");
 		}
 
@@ -223,7 +247,26 @@ public class SkinsRestorer extends JavaPlugin {
 		}
 	}
 
-	public String checkVersion() {
+	public String checkStableVersion() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 7) {
+				return version;
+			}
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
+		}
+		return getVersion();
+	}
+
+	public String checkDevVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
 					.openConnection();

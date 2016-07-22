@@ -38,7 +38,11 @@ public class SkinApplier {
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
 					ReflectionUtil.setObject(handler, "loginProfile", profile);
-					sendUpdateRequest(p, null);
+
+					if (SkinsRestorer.getInstance().isMultiBungee())
+						sendUpdateRequest(p, textures);
+					else
+						sendUpdateRequest(p, null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -29,6 +29,7 @@ public class Config {
 	public static boolean DISABLED_SKINS_ENABLED = false;
 	public static List<String> DEFAULT_SKINS = null;
 	public static List<String> DISABLED_SKINS = null;
+	public static boolean MULTIBUNGEE_ENABLED = false;
 	public static String CUSTOMSKINS_USERNAME = null;
 	public static String CUSTOMSKINS_PASSWORD = null;
 	public static String CUSTOMSKINS_NAME = null;
@@ -47,6 +48,7 @@ public class Config {
 		ALT_UUID_URL2 = config.getString("Alternatives.UUIDURL2", ALT_UUID_URL2);
 		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
 		DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
+		MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
 		USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
 		MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
 		MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);

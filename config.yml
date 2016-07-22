@@ -13,6 +13,7 @@ SkinChangeCooldown: 30
 Alternatives:
   SkinPropertyURL: https://mcapi.ca/name/uuid/
   UUIDURL: https://us.mc-api.net/v3/uuid/
+  UUIDURL2: http://mcapi.ca/uuid/player/
  
 #Enable or disable default skins
 #If more nicknames will be in the list, server will
@@ -29,6 +30,15 @@ DisabledSkins:
   Enabled: false
   Names:
     - Steve
+    
+#Multi-Bungee support
+#If you use more proxy servers and you
+#experience issues with skin visibility between proxies
+#enable this option
+#
+#RedisBungee enables this option automatically
+MultiBungee:
+  Enabled: false
 
 # MySQL database for large servers
 # or just to boost the performance

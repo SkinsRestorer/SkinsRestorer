@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
@@ -31,6 +32,7 @@ public class SkinsRestorer extends Plugin {
 
 	private static SkinsRestorer instance;
 	private MySQL mysql;
+	private boolean multibungee;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -55,14 +57,30 @@ public class SkinsRestorer extends Plugin {
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
 		this.getProxy().registerChannel("SkinsRestorer");
 
-		if (!checkVersion().equals(getVersion())) {
+		multibungee = Config.MULTIBUNGEE_ENABLED
+				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+
+		if (checkStableVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
+			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.RED + "    A new version is available!");
+			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage("");
+		} else if (checkDevVersion().equals(getVersion())) {
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+			console.sendMessage(ChatColor.GREEN + "    +===============+");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
+			console.sendMessage("");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+			console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
 			console.sendMessage("");
 		} else {
 			console.sendMessage("");
@@ -70,8 +88,9 @@ public class SkinsRestorer extends Plugin {
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-			console.sendMessage(ChatColor.GREEN + "    The latest version!");
+			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+			console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+			console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
 			console.sendMessage("");
 		}
 
@@ -99,7 +118,26 @@ public class SkinsRestorer extends Plugin {
 		return instance;
 	}
 
-	public String checkVersion() {
+	public String checkStableVersion() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 7) {
+				return version;
+			}
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
+		}
+		return getVersion();
+	}
+
+	public String checkDevVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
 					.openConnection();
@@ -120,6 +158,10 @@ public class SkinsRestorer extends Plugin {
 
 	public String getVersion() {
 		return getDescription().getVersion();
+	}
+
+	public boolean isMultiBungee() {
+		return multibungee;
 	}
 
 	public MySQL getMySQL() {
