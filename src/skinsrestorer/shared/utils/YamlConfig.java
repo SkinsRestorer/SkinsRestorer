@@ -39,6 +39,10 @@ public class YamlConfig {
 			reload();
 		}
 	}
+	
+    public File getFile(){
+    	return file;
+    }
 
 	public void set(String path, Object value) {
 		try {
