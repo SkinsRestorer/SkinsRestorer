@@ -1,10 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-<<<<<<< HEAD
-version: 12.5
-=======
-version: 12.4.2
->>>>>>> origin/master
+version: 12.5.1
 author: Blackfire62,Th3Tr0LLeR
 commands:
   skinsrestorer:

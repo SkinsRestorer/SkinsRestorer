@@ -1,9 +1,15 @@
 package skinsrestorer.shared.api;
 
+import java.io.DataOutputStream;
+
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.minecraft.util.com.google.common.collect.Iterables;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.bungee.SkinApplier;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -27,30 +33,49 @@ public class SkinsRestorerAPI {
 	 *            = Skin's name
 	 */
 	public static void setSkin(final String playerName, final String skinName) {
-		new Thread(new Runnable() {
+		try {
+			new Thread(new Runnable() {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				Object textures = null;
+					Object textures = null;
 
-				try {
-					textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skinName));
+					try {
+						textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skinName));
 
-					SkinStorage.setSkinData(skinName, textures);
-					SkinStorage.setPlayerSkin(playerName, skinName);
-				} catch (SkinRequestException e) {
-					textures = SkinStorage.getSkinData(skinName);
+						if (textures == null)
+							throw new SkinRequestException(Locale.NO_SKIN_DATA);
 
-					if (textures == null)
-						return;
+						SkinStorage.setSkinData(skinName, textures);
+						SkinStorage.setPlayerSkin(playerName, skinName);
+					} catch (SkinRequestException e) {
+						SkinStorage.setPlayerSkin(playerName, skinName);
+					}
 
-					SkinStorage.setPlayerSkin(playerName, skinName);
 				}
 
-			}
+			}).run();
+		} catch (Throwable t) {
+			Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 
-		}).run();
+			if (p != null) {
+				ByteArrayOutputStream b = new ByteArrayOutputStream();
+				DataOutputStream out = new DataOutputStream(b);
+
+				try {
+					out.writeUTF("SkinsRestorer");
+					out.writeUTF(playerName);
+					out.writeUTF(skinName);
+
+					p.sendPluginMessage(SkinsRestorer.getInstance(), "BungeeCord", b.toByteArray());
+
+					out.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	/**
