@@ -2,8 +2,7 @@ package skinsrestorer.bungee.listeners;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PreLoginEvent;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.md_5.bungee.event.EventHandler;
@@ -17,7 +16,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 public class LoginListener implements Listener {
 
 	@EventHandler
-	public void onLogin(final PreLoginEvent e) {
+	public void onLogin(final LoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled())
 			return;
 
@@ -45,7 +44,7 @@ public class LoginListener implements Listener {
 	}
 
 	@EventHandler
-	public void onServerConnect(ServerConnectedEvent e) {
+	public void onServerConnect(final PostLoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 

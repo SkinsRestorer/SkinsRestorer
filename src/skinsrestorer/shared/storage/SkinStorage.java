@@ -88,8 +88,8 @@ public class SkinStorage {
 		String value = "";
 		String signature = "";
 		try {
-			value = (String) ReflectionUtil.invokeMethod(textures.getClass(), textures, "getValue");
-			signature = (String) ReflectionUtil.invokeMethod(textures.getClass(), textures, "getSignature");
+			value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
+			signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

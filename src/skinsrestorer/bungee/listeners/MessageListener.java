@@ -41,41 +41,31 @@ public class MessageListener implements Listener {
 
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
-				@SuppressWarnings("deprecation")
 				@Override
 				public void run() {
 
-					Object props = null;
+					Object textures = null;
 
 					try {
-						props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+						textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+
+						if (textures == null)
+							throw new SkinRequestException(Locale.NO_SKIN_DATA);
+
+						SkinStorage.setSkinData(skin, textures);
+						SkinStorage.setPlayerSkin(pl, skin);
 					} catch (SkinRequestException e) {
-						props = SkinStorage.getSkinData(skin);
-
-						if (props != null) {
-							SkinStorage.setPlayerSkin(pl, skin);
-
-							if (p != null) {
-								p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
-								SkinApplier.applySkin(p);
-							}
-							return;
-						}
-						return;
+						SkinStorage.setPlayerSkin(pl, skin);
 					}
 
-					SkinStorage.setSkinData(skin, props);
-					SkinStorage.setPlayerSkin(p.getName(), skin);
-					if (p != null) {
-						p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					if (p != null)
 						SkinApplier.applySkin(p);
-					}
-					return;
 				}
 
 			});
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 
 	}
