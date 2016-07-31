@@ -28,12 +28,10 @@ import skinsrestorer.shared.utils.YamlConfig;
 
 public class SkinStorage {
 
-	private static YamlConfig cache;
 	private static MySQL mysql;
 
 	public static void init() {
-		cache = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "cache");
-
+		
 	}
 
 	public static void init(MySQL mysql) {
@@ -45,9 +43,9 @@ public class SkinStorage {
 		if (Config.USE_MYSQL) {
 			mysql.execute("delete from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 		} else {
-			cache.set("Players." + name + ".Skin", null);
-			cache.set("Players." + name, null);
-			cache.set(name, null);
+			YamlConfig playerFile = initPlayer(name);
+			playerFile.getFile().delete();
+			playerFile.reload();
 		}
 
 	}
@@ -57,10 +55,9 @@ public class SkinStorage {
 		if (Config.USE_MYSQL) {
 			mysql.execute("delete from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 		} else {
-			cache.set("Skins." + name + ".Value", null);
-			cache.set("Skins." + name + ".Signature", null);
-			cache.set("Skins." + name, null);
-			cache.set(name, null);
+			YamlConfig skinFile = initSkin(name);
+			skinFile.getFile().delete();
+			skinFile.reload();
 		}
 
 	}
@@ -74,9 +71,11 @@ public class SkinStorage {
 				mysql.execute("insert into " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)", name, skin);
 			else
 				mysql.execute("update " + Config.MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin, name);
-		} else
-			cache.set("Players." + name + ".Skin", skin);
-
+		} else {
+			YamlConfig playerFile = initPlayer(name);
+			playerFile.set("Skin", skin);
+		    playerFile.reload();
+		}
 	}
 
 	/**
@@ -104,8 +103,13 @@ public class SkinStorage {
 				mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=? where Nick=?", value,
 						signature, name);
 		} else {
-			cache.set("Skins." + name + ".Value", value);
-			cache.set("Skins." + name + ".Signature", signature);
+			if (value.isEmpty() || signature.isEmpty()){
+				return;
+			}
+			YamlConfig skinFile = initSkin(name);
+			skinFile.set("Value", value);
+			skinFile.set("Signature", signature);
+			skinFile.reload();
 		}
 	}
 
@@ -142,14 +146,14 @@ public class SkinStorage {
 			return null;
 
 		} else {
-
-			String value = cache.getString("Skins." + name + ".Value");
-			String signature = cache.getString("Skins." + name + ".Signature");
+			YamlConfig skinFile = initSkin(name);
+			String value = skinFile.getString("Value");
+			String signature = skinFile.getString("Signature");
 
 			if (value.isEmpty() || signature.isEmpty())
 				return null;
 
-			Object textures = createProperty("textures", value, cache.getString("Skins." + name + ".Signature"));
+			Object textures = createProperty("textures", value, skinFile.getString("Signature"));
 
 			return textures;
 		}
@@ -180,7 +184,8 @@ public class SkinStorage {
 			return null;
 
 		} else {
-			String skin = cache.getString("Players." + name + ".Skin");
+			YamlConfig playerFile = initPlayer(name);
+			String skin = playerFile.getString("Skin");
 
 			if (skin == null || skin.isEmpty() || skin.equalsIgnoreCase(name)) {
 				removePlayerSkin(name);
@@ -250,5 +255,15 @@ public class SkinStorage {
 			}
 		}
 		return null;
+	}
+	
+	public static YamlConfig initSkin(String name){
+		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "database" + File.separator + "", name);
+		return skinFile;
+	}
+	
+	public static YamlConfig initPlayer(String name){
+		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "players" + File.separator + "", name);
+		return skinFile;
 	}
 }
