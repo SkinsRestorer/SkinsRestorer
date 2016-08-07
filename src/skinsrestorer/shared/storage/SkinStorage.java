@@ -45,7 +45,6 @@ public class SkinStorage {
 		} else {
 			YamlConfig playerFile = initPlayer(name);
 			playerFile.getFile().delete();
-			playerFile.save();
 		}
 
 	}
@@ -57,7 +56,6 @@ public class SkinStorage {
 		} else {
 			YamlConfig skinFile = initSkin(name);
 			skinFile.getFile().delete();
-			skinFile.save();
 		}
 
 	}
@@ -74,7 +72,7 @@ public class SkinStorage {
 		} else {
 			YamlConfig playerFile = initPlayer(name);
 			playerFile.set("Skin", skin);
-		    playerFile.save();
+		    playerFile.reload();
 		}
 	}
 
@@ -109,7 +107,7 @@ public class SkinStorage {
 			YamlConfig skinFile = initSkin(name);
 			skinFile.set("Value", value);
 			skinFile.set("Signature", signature);
-			skinFile.save();
+			skinFile.reload();
 		}
 	}
 
@@ -259,11 +257,13 @@ public class SkinStorage {
 	
 	public static YamlConfig initSkin(String name){
 		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "database" + File.separator + "", name);
+		skinFile.save();
 		return skinFile;
 	}
 	
 	public static YamlConfig initPlayer(String name){
 		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "players" + File.separator + "", name);
+		skinFile.save();
 		return skinFile;
 	}
 }

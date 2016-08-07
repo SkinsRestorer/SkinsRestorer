@@ -146,7 +146,6 @@ public class YamlConfig {
 				config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
 						null, "loadConfiguration", new Class<?>[] { File.class }, new Object[] { file });
 			} catch (Exception ex) {
-				ex.printStackTrace();
 			}
 		}
 	}

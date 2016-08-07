@@ -49,7 +49,7 @@ public class Locale {
 				f.set(null, C.c(locale.getString(f.getName(), f.get(null))));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("[SkinsRestorer] Can't read messages.yml! Try removing it and restarting.");
 		}
 	}
 }
