@@ -45,7 +45,7 @@ public class SkinStorage {
 		} else {
 			YamlConfig playerFile = initPlayer(name);
 			playerFile.getFile().delete();
-			playerFile.reload();
+			playerFile.save();
 		}
 
 	}
@@ -57,7 +57,7 @@ public class SkinStorage {
 		} else {
 			YamlConfig skinFile = initSkin(name);
 			skinFile.getFile().delete();
-			skinFile.reload();
+			skinFile.save();
 		}
 
 	}
@@ -74,7 +74,7 @@ public class SkinStorage {
 		} else {
 			YamlConfig playerFile = initPlayer(name);
 			playerFile.set("Skin", skin);
-		    playerFile.reload();
+		    playerFile.save();
 		}
 	}
 
@@ -109,7 +109,7 @@ public class SkinStorage {
 			YamlConfig skinFile = initSkin(name);
 			skinFile.set("Value", value);
 			skinFile.set("Signature", signature);
-			skinFile.reload();
+			skinFile.save();
 		}
 	}
 

@@ -36,11 +36,11 @@ public class Config {
 	public static String CUSTOMSKINS_ID = null;
 	public static String CUSTOMSKINS_AUTHTOKEN = null;
 	public static String CUSTOMSKINS_CLIENTTOKEN = null;
+	public static boolean UPDATER_ENABLED = true;
 
 	public static void load(InputStream is) {
 		config.copyDefaults(is);
 		config.reload();
-
 		DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
 		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
 		ALT_SKIN_PROPERTY_URL = config.getString("Alternatives.SkinPropertyURL", ALT_SKIN_PROPERTY_URL);
@@ -57,6 +57,12 @@ public class Config {
 		MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
 		MYSQL_USERNAME = config.getString("MySQL.Username", MYSQL_USERNAME);
 		MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
+		
+		if (config.get("Updater.Enabled")==null){
+			config.set("Updater.Enabled", true);
+			config.save();
+		}
+		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
 
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {

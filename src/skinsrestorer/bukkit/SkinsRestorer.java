@@ -119,7 +119,7 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 
 			}, this);
-
+        if (Config.UPDATER_ENABLED){
 			if (checkStableVersion().equals(getVersion())) {
 				console.sendMessage("");
 				console.sendMessage(ChatColor.GREEN + "    +===============+");
@@ -157,6 +157,7 @@ public class SkinsRestorer extends JavaPlugin {
 				console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
 				console.sendMessage("");
 			}
+        }
 			return;
 		}
 
@@ -175,7 +176,7 @@ public class SkinsRestorer extends JavaPlugin {
 		getCommand("skin").setExecutor(new SkinCommand());
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
-
+     if (Config.UPDATER_ENABLED){
 		if (checkStableVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
@@ -208,6 +209,7 @@ public class SkinsRestorer extends JavaPlugin {
 			console.sendMessage(ChatColor.RED + "    A new version is available!");
 			console.sendMessage("");
 		}
+     }
 
 		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 

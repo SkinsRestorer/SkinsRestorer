@@ -51,3 +51,7 @@ MySQL:
   PlayerTable: Players
   Username: root
   Password: pass
+  
+Updater:
+  Enabled: true
+#Enable or disable the updater check on enable.

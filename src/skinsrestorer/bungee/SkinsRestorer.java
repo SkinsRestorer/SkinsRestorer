@@ -59,7 +59,7 @@ public class SkinsRestorer extends Plugin {
 
 		multibungee = Config.MULTIBUNGEE_ENABLED
 				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
-
+        if (Config.UPDATER_ENABLED){
 		if (checkStableVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
@@ -93,7 +93,7 @@ public class SkinsRestorer extends Plugin {
 			console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
 			console.sendMessage("");
 		}
-
+        }
 		getProxy().getScheduler().runAsync(this, new Runnable() {
 
 			@Override
