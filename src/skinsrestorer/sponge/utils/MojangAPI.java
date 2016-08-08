@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+
 /** Class by Blackfire62 **/
 
 public class MojangAPI {
@@ -19,22 +23,27 @@ public class MojangAPI {
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	private static final String altskinurl = "https://mcapi.ca/name/uuid/";
-	private static final String altuuidurl = "https://us.mc-api.net/v3/uuid/";
+	private static final String altuuidurl = "http://mcapi.ca/uuid/player/";
 
 	public static Optional<String> getUUID(String name) {
 		String output = readURL(uuidurl + name);
 
 		if (output == null || output.isEmpty() || output.contains("\"error\":\"TooManyRequestsException\"")) {
 
-			output = readURL(altuuidurl + name);
-
-			if (output == null || output.isEmpty() || output.contains("\"error\":\"Unknown Username\""))
-				return Optional.empty();
+			output = readURL(altuuidurl + name).replace(" ", "");
 
 			String idbeg = "\"uuid\":\"";
-			String idend = "\"}";
+			String idend = "\",\"id\":";
 
-			return Optional.<String> of(getStringBetween(output, idbeg, idend));
+			String response = getStringBetween(output, idbeg, idend);
+
+			if (response.startsWith("[{\"uuid\":null"))
+				try {
+					throw new SkinRequestException(Locale.NOT_PREMIUM);
+				} catch (SkinRequestException e) {
+				}
+
+			return Optional.<String> of(response);
 		}
 
 		return Optional.<String> of(output.substring(7, 39));

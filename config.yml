@@ -12,8 +12,7 @@ SkinChangeCooldown: 30
 # Feel free to change them to your own
 Alternatives:
   SkinPropertyURL: https://mcapi.ca/name/uuid/
-  UUIDURL: https://us.mc-api.net/v3/uuid/
-  UUIDURL2: http://mcapi.ca/uuid/player/
+  NEWUUID: http://mcapi.ca/uuid/player/
  
 #Enable or disable default skins
 #If more nicknames will be in the list, server will

@@ -17,16 +17,13 @@ public class MojangAPI {
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	public static String getUUID(String name) throws SkinRequestException {
-		String output = readURL(Config.ALT_UUID_URL + name);
+		String output = readURL(uuidurl + name);
 
 		String idbeg = "\"uuid\":\"";
 		String idend = "\"}";
 
-		if (output.isEmpty() || output.contains("\"error\":\"Unknown Username\"")) {
-			output = readURL(uuidurl + name);
-
 			if (output.isEmpty() || output.contains("TooManyRequestsException")) {
-				output = readURL(Config.ALT_UUID_URL2 + name).replace(" ", "");
+				output = readURL(Config.ALT_UUID_URL + name).replace(" ", "");
 
 				idbeg = "\"uuid\":\"";
 				idend = "\",\"id\":";
@@ -37,10 +34,8 @@ public class MojangAPI {
 					throw new SkinRequestException(Locale.NOT_PREMIUM);
 
 				return response;
-			}
-			return output.substring(7, 39);
 		}
-		return getStringBetween(output, idbeg, idend);
+		return output.substring(7, 39);
 	}
 
 	/**
