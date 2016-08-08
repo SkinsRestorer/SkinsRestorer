@@ -36,13 +36,12 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 			CraftPlayer cp = (CraftPlayer) p;
 			EntityPlayer ep = cp.getHandle();
 			int entId = ep.getId();
-			Location l = p.getLocation();
 
 			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(ep.getProfile().getName(), false, entId);
 			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
 
-			for (Player online : p.getWorld().getPlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) online;
+			for (Player inWorld : p.getWorld().getPlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
@@ -93,10 +92,10 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(p.getInventory().getHeldItemSlot());
 
-			for (Player online : p.getWorld().getPlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) online;
+			for (Player inWorld : p.getWorld().getPlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
-				if (online.equals(p)) {
+				if (inWorld.equals(p)) {
 					con.sendPacket(removeInfo);
 					con.sendPacket(addInfo);
 					con.sendPacket(respawn);

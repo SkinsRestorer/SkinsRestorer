@@ -38,7 +38,6 @@ public class UniversalSkinFactory implements SkinFactory {
 		try {
 			cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 		Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
-		Location l = player.getLocation();
 
 		List<Object> set = new ArrayList<Object>();
 		set.add(ep);
@@ -58,8 +57,8 @@ public class UniversalSkinFactory implements SkinFactory {
 		Object removeEntity = ReflectionUtil.invokeConstructor(
 				ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy"), new Class<?>[] { int[].class },
 				new int[] { player.getEntityId() });
-		for (Player online : Bukkit.getOnlinePlayers()) {
-			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
+		for (Player inWorld : player.getWorld().getPlayers()) {
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(inWorld);
 			final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
 			Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 			sendPacket(playerCon, removeEntity);
@@ -284,11 +283,11 @@ public class UniversalSkinFactory implements SkinFactory {
 
 			// We finished defining packets, now lets send em
 
-			for (Player online : Bukkit.getOnlinePlayers()) {
-				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
+			for (Player inWorld : player.getWorld().getPlayers()) {
+				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(inWorld);
 				final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
-				if (online.equals(player)) {
+				if (inWorld.equals(player)) {
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
 					sendPacket(playerCon, respawn);

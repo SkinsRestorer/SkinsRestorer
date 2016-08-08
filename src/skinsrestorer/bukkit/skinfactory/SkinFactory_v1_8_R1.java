@@ -40,8 +40,8 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 
 			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
 
-			for (Player online : Bukkit.getOnlinePlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) online;
+			for (Player inWorld : p.getWorld().getPlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
@@ -87,10 +87,10 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(p.getInventory().getHeldItemSlot());
 
-			for (Player online : Bukkit.getOnlinePlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) online;
+			for (Player inWorld : p.getWorld().getPlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
-				if (online.equals(p)) {
+				if (inWorld.equals(p)) {
 					con.sendPacket(removeInfo);
 					con.sendPacket(addInfo);
 					con.sendPacket(respawn);

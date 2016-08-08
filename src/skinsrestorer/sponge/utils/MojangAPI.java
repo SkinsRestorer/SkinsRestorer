@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
