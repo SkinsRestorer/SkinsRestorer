@@ -115,6 +115,7 @@ public class SkinFactory_v1_7_R4 implements SkinFactory {
 				}
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
+				if (inWorld.canSee(p)){
 				con.sendPacket(addInfo);
 				con.sendPacket(addNamed);
 				con.sendPacket(itemhand);
@@ -122,6 +123,7 @@ public class SkinFactory_v1_7_R4 implements SkinFactory {
 				con.sendPacket(chestplate);
 				con.sendPacket(leggings);
 				con.sendPacket(boots);
+				}
 			}
 		} catch (Exception e) {
 		}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -311,7 +312,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
 				sendPacket(playerCon, removeEntity);
 				sendPacket(playerCon, removeInfo);
-
+				if (inWorld.canSee(player)){
 				sendPacket(playerCon, addInfo);
 				sendPacket(playerCon, addNamed);
 				if (hand == null) {
@@ -324,6 +325,7 @@ public class UniversalSkinFactory implements SkinFactory {
 				sendPacket(playerCon, chestplate);
 				sendPacket(playerCon, leggings);
 				sendPacket(playerCon, boots);
+				}
 			}
 		} catch (Exception e) {
 		}
