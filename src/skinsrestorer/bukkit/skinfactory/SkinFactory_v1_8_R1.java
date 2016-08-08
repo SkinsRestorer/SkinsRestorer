@@ -28,6 +28,27 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 		propmap.get("textures").clear();
 		propmap.put("textures", (Property) props);
 	}
+	
+	@Override
+	public void removeOnQuit(Player p){
+		try {
+			CraftPlayer cp = (CraftPlayer) p;
+			EntityPlayer ep = cp.getHandle();
+			int entId = ep.getId();
+
+			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.REMOVE_PLAYER, ep);
+
+			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
+
+			for (Player online : Bukkit.getOnlinePlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) online;
+				PlayerConnection con = craftOnline.getHandle().playerConnection;
+				con.sendPacket(removeEntity);
+				con.sendPacket(removeInfo);
+			}
+		} catch (Exception e) {
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override

@@ -29,6 +29,28 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 		propmap.get("textures").clear();
 		propmap.put("textures", (Property) props);
 	}
+	
+	@Override
+	public void removeOnQuit(Player p) {
+		try {
+			CraftPlayer cp = (CraftPlayer) p;
+			EntityPlayer ep = cp.getHandle();
+			int entId = ep.getId();
+			Location l = p.getLocation();
+
+			PacketPlayOutPlayerInfo removeInfo = new PacketPlayOutPlayerInfo(ep.getProfile().getName(), false, entId);
+			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
+
+			for (Player online : p.getWorld().getPlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) online;
+				PlayerConnection con = craftOnline.getHandle().playerConnection;
+				con.sendPacket(removeEntity);
+				con.sendPacket(removeInfo);
+			}
+		} catch (Exception e) {
+		}
+	}
+
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -105,7 +127,5 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 			}
 		} catch (Exception e) {
 		}
-
 	}
-
 }

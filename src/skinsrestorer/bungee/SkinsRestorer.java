@@ -18,6 +18,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
+import skinsrestorer.bungee.listeners.LogoutListener;
 import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.bungee.listeners.PermissionListener;
 import skinsrestorer.shared.storage.Config;
@@ -51,6 +52,7 @@ public class SkinsRestorer extends Plugin {
 		getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
+		this.getProxy().getPluginManager().registerListener(this, new LogoutListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerListener(this, new PermissionListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());

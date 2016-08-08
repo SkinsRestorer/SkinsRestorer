@@ -32,7 +32,42 @@ public class UniversalSkinFactory implements SkinFactory {
 		} catch (Exception e) {
 		}
 	}
+	@Override
+	public void removeOnQuit(Player player){
+		Object cp;
+		try {
+			cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
+		Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
+		Location l = player.getLocation();
 
+		List<Object> set = new ArrayList<Object>();
+		set.add(ep);
+		Iterable<?> iterable = set;
+
+		Object removeInfo = ReflectionUtil
+				.invokeConstructor(
+						ReflectionUtil
+								.getNMSClass("PacketPlayOutPlayerInfo"),
+						new Class<?>[] {
+								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
+										"EnumPlayerInfoAction", "REMOVE_PLAYER").getClass(),
+								Iterable.class },
+				ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
+						"EnumPlayerInfoAction", "REMOVE_PLAYER"), iterable);
+
+		Object removeEntity = ReflectionUtil.invokeConstructor(
+				ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy"), new Class<?>[] { int[].class },
+				new int[] { player.getEntityId() });
+		for (Player online : Bukkit.getOnlinePlayers()) {
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(online);
+			final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+			Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+			sendPacket(playerCon, removeEntity);
+			sendPacket(playerCon, removeInfo);
+		}
+		} catch (Exception e) {
+		}
+	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {

@@ -50,6 +50,10 @@ public class SkinApplier {
 		});
 
 	}
+	
+	public static void removeOnQuit(final ProxiedPlayer p) {
+		sendRemoveRequest(p);
+	}
 
 	private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
 		if (p.getServer() == null)
@@ -65,6 +69,21 @@ public class SkinApplier {
 				out.writeUTF(textures.getValue());
 				out.writeUTF(textures.getSignature());
 			}
+
+			p.getServer().sendData("SkinsRestorer", b.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void sendRemoveRequest(ProxiedPlayer p) {
+		if (p.getServer() == null)
+			return;
+
+		ByteArrayOutputStream b = new ByteArrayOutputStream();
+		DataOutputStream out = new DataOutputStream(b);
+		try {
+			out.writeUTF("SkinRemove");
 
 			p.getServer().sendData("SkinsRestorer", b.toByteArray());
 		} catch (IOException e) {
