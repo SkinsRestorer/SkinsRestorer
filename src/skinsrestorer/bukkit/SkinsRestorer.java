@@ -53,7 +53,16 @@ public class SkinsRestorer extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
-
+		try {
+		    Class.forName("net.minecraftforge.cauldron.CauldronHooks");
+		    factory = (SkinFactory) Class
+					.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_Cauldron")
+					.newInstance();
+			console.sendMessage(C.c("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :("));
+		Bukkit.getPluginManager().disablePlugin(this);
+		return;
+		} catch(Exception e) {
+		}
 		try {
 			factory = (SkinFactory) Class
 					.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
