@@ -1,8 +1,8 @@
 package skinsrestorer.shared.api;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
