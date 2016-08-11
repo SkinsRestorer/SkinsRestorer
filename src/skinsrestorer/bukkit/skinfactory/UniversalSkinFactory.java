@@ -309,10 +309,9 @@ public class UniversalSkinFactory implements SkinFactory {
 					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 					continue;
 				}
-
 				sendPacket(playerCon, removeEntity);
 				sendPacket(playerCon, removeInfo);
-				if (inWorld.canSee(player)){
+				if (player.isOnline() || inWorld.canSee(player)){
 				sendPacket(playerCon, addInfo);
 				sendPacket(playerCon, addNamed);
 				if (hand == null) {

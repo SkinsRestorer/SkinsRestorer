@@ -110,7 +110,7 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 				}
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
-				if (inWorld.canSee(p)){
+				if (p.isOnline() || inWorld.canSee(p)){
 				con.sendPacket(addInfo);
 				con.sendPacket(addNamed);
 				con.sendPacket(itemhand);

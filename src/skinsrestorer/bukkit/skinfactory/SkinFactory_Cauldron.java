@@ -59,6 +59,7 @@ public class SkinFactory_Cauldron implements SkinFactory {
 
 			S38PacketPlayerListItem addInfo = new S38PacketPlayerListItem(Action.ADD_PLAYER, ep);
 
+			@SuppressWarnings("deprecation")
 			S07PacketRespawn respawn = new S07PacketRespawn(((WorldServer) ep.getEntityWorld()).provider.getDimensionId(),
 					ep.getEntityWorld().getDifficulty(), ep.getEntityWorld().getWorldType(),
 					WorldSettings.GameType.getByID(p.getGameMode().getValue()));
@@ -106,7 +107,7 @@ public class SkinFactory_Cauldron implements SkinFactory {
 				}
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
-				if (inWorld.canSee(p)){
+				if (p.isOnline() || inWorld.canSee(p)){
 				con.sendPacket(addInfo);
 				con.sendPacket(addNamed);
 				con.sendPacket(itemhand);
