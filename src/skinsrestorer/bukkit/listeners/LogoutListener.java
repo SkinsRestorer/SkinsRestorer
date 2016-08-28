@@ -15,7 +15,6 @@ public class LogoutListener implements Listener{
 		final Player p = e.getPlayer();
 
 		SkinsRestorer.getInstance().getFactory().removeOnQuit(p);
-		SkinsRestorer.getInstance().getFactory().updateSkin(p);
 	}
 	
 	@EventHandler
@@ -23,7 +22,6 @@ public class LogoutListener implements Listener{
 		final Player p = e.getPlayer();
 
 		SkinsRestorer.getInstance().getFactory().removeOnQuit(p);
-		SkinsRestorer.getInstance().getFactory().updateSkin(p);
 	}
 	
 }
