@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import skinsrestorer.bukkit.commands.ClearCommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
@@ -107,7 +108,7 @@ public class SkinsRestorer extends JavaPlugin {
 									}
 									factory.updateSkin(player);
 								}else if (subchannel.equalsIgnoreCase("SkinRemove")) {
-									factory.removeOnQuit(player);
+									factory.removeSkin(player);
 								}
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -184,6 +185,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
+		getCommand("clearskin").setExecutor(new ClearCommand());
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 		Bukkit.getPluginManager().registerEvents(new LogoutListener(), this);

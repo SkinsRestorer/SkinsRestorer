@@ -16,6 +16,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
+import skinsrestorer.bungee.commands.ClearCommand;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.LogoutListener;
@@ -57,6 +58,7 @@ public class SkinsRestorer extends Plugin {
 		this.getProxy().getPluginManager().registerListener(this, new PermissionListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
+		this.getProxy().getPluginManager().registerCommand(this, new ClearCommand());
 		this.getProxy().registerChannel("SkinsRestorer");
 
 		multibungee = Config.MULTIBUNGEE_ENABLED

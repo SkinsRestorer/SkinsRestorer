@@ -39,7 +39,7 @@ public class SkinFactory_Cauldron implements SkinFactory {
 	}
 
 	@Override
-	public void removeOnQuit(Player p) {
+	public void removeSkin(Player p) {
 		// TODO Create this.
 		
 	}

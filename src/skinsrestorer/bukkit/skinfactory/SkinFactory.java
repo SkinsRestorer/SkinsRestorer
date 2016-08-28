@@ -24,7 +24,7 @@ public interface SkinFactory {
 	 * @param p
 	 *            - Player
 	 */
-	public void removeOnQuit(Player p);
+	public void removeSkin(Player p);
 
 	/**
 	 * Instantly updates player's skin

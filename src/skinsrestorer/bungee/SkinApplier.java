@@ -51,6 +51,43 @@ public class SkinApplier {
 
 	}
 	
+	public static void removeSkin(final ProxiedPlayer p) {
+		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					Property textures = (Property) SkinStorage.createProperty("textures", "", "");
+
+					InitialHandler handler = (InitialHandler) p.getPendingConnection();
+
+					if (handler.isOnlineMode()) {
+						sendUpdateRequest(p, textures);
+						return;
+					}
+
+					LoginResult profile = new LoginResult(p.getUniqueId().toString(), new Property[] { textures });
+					Property[] present = profile.getProperties();
+					Property[] newprops = new Property[present.length + 1];
+					System.arraycopy(present, 0, newprops, 0, present.length);
+					newprops[present.length] = textures;
+					profile.getProperties()[0].setName(newprops[0].getName());
+					profile.getProperties()[0].setValue(newprops[0].getValue());
+					profile.getProperties()[0].setSignature(newprops[0].getSignature());
+					ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
+
+					if (SkinsRestorer.getInstance().isMultiBungee())
+						sendUpdateRequest(p, textures);
+					else
+						sendUpdateRequest(p, null);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
+	
 	public static void removeOnQuit(final ProxiedPlayer p) {
 		sendRemoveRequest(p);
 	}

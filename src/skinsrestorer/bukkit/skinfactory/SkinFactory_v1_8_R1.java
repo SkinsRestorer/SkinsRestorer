@@ -30,7 +30,7 @@ public class SkinFactory_v1_8_R1 implements SkinFactory {
 	}
 	
 	@Override
-	public void removeOnQuit(Player p){
+	public void removeSkin(Player p){
 		try {
 			CraftPlayer cp = (CraftPlayer) p;
 			EntityPlayer ep = cp.getHandle();

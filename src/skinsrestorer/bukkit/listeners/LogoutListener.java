@@ -14,14 +14,14 @@ public class LogoutListener implements Listener{
 	public void onQuit(final PlayerQuitEvent e) {
 		final Player p = e.getPlayer();
 
-		SkinsRestorer.getInstance().getFactory().removeOnQuit(p);
+		SkinsRestorer.getInstance().getFactory().removeSkin(p);
 	}
 	
 	@EventHandler
 	public void onKick(final PlayerKickEvent e) {
 		final Player p = e.getPlayer();
 
-		SkinsRestorer.getInstance().getFactory().removeOnQuit(p);
+		SkinsRestorer.getInstance().getFactory().removeSkin(p);
 	}
 	
 }

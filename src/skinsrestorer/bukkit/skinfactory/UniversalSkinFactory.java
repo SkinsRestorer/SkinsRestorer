@@ -34,7 +34,7 @@ public class UniversalSkinFactory implements SkinFactory {
 		}
 	}
 	@Override
-	public void removeOnQuit(Player player){
+	public void removeSkin(Player player){
 		Object cp;
 		try {
 			cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
