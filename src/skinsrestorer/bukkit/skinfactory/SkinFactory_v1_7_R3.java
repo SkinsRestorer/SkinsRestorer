@@ -55,6 +55,9 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 	@Override
 	public void updateSkin(Player p) {
 		try {
+			if (!p.isOnline()){
+				return;
+			}
 			CraftPlayer cp = (CraftPlayer) p;
 			EntityPlayer ep = cp.getHandle();
 			int entId = ep.getId();
@@ -116,7 +119,7 @@ public class SkinFactory_v1_7_R3 implements SkinFactory {
 				}
 				con.sendPacket(removeEntity);
 				con.sendPacket(removeInfo);
-				if (p.isOnline() || inWorld.canSee(p)){
+				if (inWorld.canSee(p)){
 				con.sendPacket(addInfo);
 				con.sendPacket(addNamed);
 				con.sendPacket(itemhand);

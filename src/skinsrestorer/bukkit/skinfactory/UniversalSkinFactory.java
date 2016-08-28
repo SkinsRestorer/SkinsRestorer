@@ -71,6 +71,9 @@ public class UniversalSkinFactory implements SkinFactory {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {
+		if (!player.isOnline()){
+			return;
+		}
 		try {
 			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
 			Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
@@ -311,7 +314,7 @@ public class UniversalSkinFactory implements SkinFactory {
 				}
 				sendPacket(playerCon, removeEntity);
 				sendPacket(playerCon, removeInfo);
-				if (player.isOnline() || inWorld.canSee(player)){
+				if (inWorld.canSee(player)){
 				sendPacket(playerCon, addInfo);
 				sendPacket(playerCon, addNamed);
 				if (hand == null) {

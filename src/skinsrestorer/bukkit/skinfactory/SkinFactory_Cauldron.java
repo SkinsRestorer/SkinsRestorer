@@ -47,6 +47,9 @@ public class SkinFactory_Cauldron implements SkinFactory {
 	@Override
 	public void updateSkin(Player p) {
 		try {
+			if (!p.isOnline()){
+				return;
+			}
 			EntityPlayerMP ep = (EntityPlayerMP) p; //TODO Fix that (But i can't)
 			int entId = ep.getEntityId();
 			Location l = p.getLocation();
