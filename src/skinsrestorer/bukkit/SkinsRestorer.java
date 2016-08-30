@@ -2,9 +2,7 @@ package skinsrestorer.bukkit;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,10 +17,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -31,6 +25,7 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.LogoutListener;
+import skinsrestorer.bukkit.listeners.PermissionListener;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -118,20 +113,10 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 			});
 
-			Bukkit.getPluginManager().registerEvents(new Listener() {
-
-				@EventHandler(priority = EventPriority.LOW)
-				public void onJoin(PlayerJoinEvent e) {
-					Player p = e.getPlayer();
-					if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
-						sendBungeePermission(p, "skinsrestorer.cmds");
-					if (p.hasPermission("skinsrestorer.playercmds") || p.isOp())
-						sendBungeePermission(p, "skinsrestorer.playercmds");
-				}
-
-			}, this);
-        if (Config.UPDATER_ENABLED){
-			if (checkStableVersion().equals(getVersion())) {
+			Bukkit.getPluginManager().registerEvents(new PermissionListener(), this);
+        
+		if (Config.UPDATER_ENABLED){
+			if (checkVersion().equals(getVersion())) {
 				console.sendMessage("");
 				console.sendMessage(ChatColor.GREEN + "    +===============+");
 				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -141,19 +126,6 @@ public class SkinsRestorer extends JavaPlugin {
 				console.sendMessage("");
 				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
 				console.sendMessage(ChatColor.GREEN + "    The latest version!");
-				console.sendMessage("");
-			} else if (checkDevVersion().equals(getVersion())) {
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    |---------------|");
-				console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-				console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
 				console.sendMessage("");
 			} else {
 				console.sendMessage("");
@@ -191,27 +163,14 @@ public class SkinsRestorer extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new LogoutListener(), this);
 		
      if (Config.UPDATER_ENABLED){
-		if (checkStableVersion().equals(getVersion())) {
+		if (checkVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
 			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
 			console.sendMessage(ChatColor.GREEN + "    The latest version!");
-			console.sendMessage("");
-		} else if (checkDevVersion().equals(getVersion())) {
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-			console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
 			console.sendMessage("");
 		} else {
 			console.sendMessage("");
@@ -220,7 +179,8 @@ public class SkinsRestorer extends JavaPlugin {
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.RED + "    A new version is available!");
+			console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+			console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
 			console.sendMessage("");
 		}
      }
@@ -249,21 +209,7 @@ public class SkinsRestorer extends JavaPlugin {
 		return instance;
 	}
 
-	public void sendBungeePermission(Player p, String perm) {
-		try {
-			ByteArrayOutputStream b = new ByteArrayOutputStream();
-			DataOutputStream out = new DataOutputStream(b);
-
-			out.writeUTF("SkinPermissions");
-			out.writeUTF(perm);
-
-			p.sendPluginMessage(getInstance(), "BungeeCord", b.toByteArray());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public String checkStableVersion() {
+	public String checkVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
 					.openConnection();
@@ -271,25 +217,6 @@ public class SkinsRestorer extends JavaPlugin {
 			con.setRequestMethod("POST");
 			con.getOutputStream()
 					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
-							.getBytes("UTF-8"));
-			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 7) {
-				return version;
-			}
-		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
-		}
-		return getVersion();
-	}
-
-	public String checkDevVersion() {
-		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
-					.openConnection();
-			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=25777")
 							.getBytes("UTF-8"));
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
 			if (version.length() <= 7) {
@@ -316,9 +243,8 @@ public class SkinsRestorer extends JavaPlugin {
 	public boolean downloadUpdate() {
 		try {
 			InputStream in = new URL("https://api.spiget.org/v1/resources/1884/download").openStream();
-
-			Path target = new File("plugins" + File.separator + "SkinsRestorer.jar").toPath();
-
+			
+			Path target = new File(Bukkit.getPluginManager().getPlugin("SkinsRestorer").getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).toPath();
 			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
 
 			return true;

@@ -64,7 +64,7 @@ public class SkinsRestorer extends Plugin {
 		multibungee = Config.MULTIBUNGEE_ENABLED
 				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
         if (Config.UPDATER_ENABLED){
-		if (checkStableVersion().equals(getVersion())) {
+		if (checkVersion().equals(getVersion())) {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    +===============+");
 			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -72,19 +72,8 @@ public class SkinsRestorer extends Plugin {
 			console.sendMessage("");
 			console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
 			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.GREEN + "    The latest version!");
-			console.sendMessage("");
-		} else if (checkDevVersion().equals(getVersion())) {
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GOLD + "    DEVELOPER BUILD");
-			console.sendMessage("");
 			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-			console.sendMessage(ChatColor.GOLD + "    The latest developer build!");
+			console.sendMessage(ChatColor.GREEN + "    The latest version!");
 			console.sendMessage("");
 		} else {
 			console.sendMessage("");
@@ -122,7 +111,7 @@ public class SkinsRestorer extends Plugin {
 		return instance;
 	}
 
-	public String checkStableVersion() {
+	public String checkVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
 					.openConnection();
@@ -130,25 +119,6 @@ public class SkinsRestorer extends Plugin {
 			con.setRequestMethod("POST");
 			con.getOutputStream()
 					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
-							.getBytes("UTF-8"));
-			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 7) {
-				return version;
-			}
-		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
-		}
-		return getVersion();
-	}
-
-	public String checkDevVersion() {
-		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
-					.openConnection();
-			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=25777")
 							.getBytes("UTF-8"));
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
 			if (version.length() <= 7) {

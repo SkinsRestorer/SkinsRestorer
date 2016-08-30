@@ -14,16 +14,16 @@ public class PermissionListener implements Listener {
 	public void onPluginMessage(PluginMessageEvent e) {
 		if (!e.getTag().equalsIgnoreCase("BungeeCord"))
 			return;
-
+		
 		DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
 
 		try {
 			String subchannel = in.readUTF();
-
-			if (subchannel.equalsIgnoreCase("SkinPermissions"))
+			if (subchannel.equalsIgnoreCase("SkinsPermission"))
 				((ProxiedPlayer) e.getReceiver()).setPermission(in.readUTF(), true);
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 }
