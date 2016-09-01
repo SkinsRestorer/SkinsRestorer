@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 12.6.1
+version: 12.7-SNAPSHOT
 author: Blackfire62,Th3Tr0LLeR
 commands:
   skinsrestorer:
@@ -10,3 +10,5 @@ commands:
     description: Sets your skin.
   clearskin:
     description: Removes your skin.
+  skins:
+    description: Opens the skins menu.

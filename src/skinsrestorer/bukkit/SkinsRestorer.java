@@ -21,11 +21,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import skinsrestorer.bukkit.commands.ClearCommand;
+import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.LogoutListener;
 import skinsrestorer.bukkit.listeners.PermissionListener;
+import skinsrestorer.bukkit.menu.SkinsGUI;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -154,13 +156,15 @@ public class SkinsRestorer extends JavaPlugin {
 			SkinStorage.init();
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, CooldownStorage.cleanupCooldowns, 0, 60 * 20);
-
+		
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
 		getCommand("clearskin").setExecutor(new ClearCommand());
+		getCommand("skins").setExecutor(new GUICommand());
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 		Bukkit.getPluginManager().registerEvents(new LogoutListener(), this);
+		Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
 		
      if (Config.UPDATER_ENABLED){
 		if (checkVersion().equals(getVersion())) {

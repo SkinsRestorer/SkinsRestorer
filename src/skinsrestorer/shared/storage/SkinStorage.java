@@ -18,10 +18,14 @@
 package skinsrestorer.shared.storage;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 import javax.sql.rowset.CachedRowSet;
 
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.YamlConfig;
@@ -265,5 +269,21 @@ public class SkinStorage {
 		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "players" + File.separator + "", name);
 		skinFile.save();
 		return skinFile;
+	}
+	
+	public static Map<String, Object> getSkins(int number){
+		HashMap<String, Object> thingy = new HashMap<String, Object>();
+		Map<String, Object> list = new TreeMap<String, Object>(thingy);
+		String path  = SkinsRestorer.getInstance().getDataFolder() + "/database/";
+        File folder = new File(path);
+        String[] fileNames = folder.list();
+        int i = 0;
+        for (String file : fileNames){
+        	if (i >= number){
+        	list.put(file.replace(".yml", ""), SkinStorage.getSkinData(file.replace(".yml", "")));
+        	}
+        	i++;
+        }
+		return list;
 	}
 }
