@@ -3,9 +3,6 @@ package skinsrestorer.shared.api;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import net.minecraft.util.com.google.common.collect.Iterables;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.bungee.SkinApplier;
@@ -57,7 +54,7 @@ public class SkinsRestorerAPI {
 
 			}).run();
 		} catch (Throwable t) {
-			Player p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+			org.bukkit.entity.Player p = Iterables.getFirst(org.bukkit.Bukkit.getOnlinePlayers(), null);
 
 			if (p != null) {
 				ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -111,7 +108,7 @@ public class SkinsRestorerAPI {
 	 */
 	public static void applySkin(Object player) {
 		try {
-			SkinsRestorer.getInstance().getFactory().updateSkin((Player) player);
+			SkinsRestorer.getInstance().getFactory().updateSkin((org.bukkit.entity.Player) player);
 		} catch (Throwable t) {
 			try {
 				ReflectionUtil.invokeMethod(SkinApplier.class, null, "applySkin", player);
