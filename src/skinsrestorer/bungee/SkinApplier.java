@@ -61,11 +61,8 @@ public class SkinApplier {
 
 					InitialHandler handler = (InitialHandler) p.getPendingConnection();
 
-					if (handler.isOnlineMode()) {
-						sendUpdateRequest(p, textures);
-						return;
-					}
-
+				    //Doesn't really care if you are premium now :D
+					//This means fuk your premium skin. I'm putting mine on xD
 					LoginResult profile = new LoginResult(p.getUniqueId().toString(), new Property[] { textures });
 					Property[] present = profile.getProperties();
 					Property[] newprops = new Property[present.length + 1];
