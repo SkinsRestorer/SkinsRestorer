@@ -36,7 +36,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 	public static Inventory getGUI(int page){
 		Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page "+page);
 		int skinNumber = 36*page; 
-		Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
+		Map<String, Object> skinsList = SkinStorage.getPage(skinNumber);
 		inventory.setItem(36, createGlass(0));
 		inventory.setItem(37, createGlass(0));
 		inventory.setItem(38, createGlass(0));

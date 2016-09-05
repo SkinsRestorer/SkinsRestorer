@@ -3,6 +3,7 @@ package skinsrestorer.bukkit.commands;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -103,6 +104,24 @@ public class SrCommand implements CommandExecutor {
 			Locale.load();
 			Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
 			sender.sendMessage(Locale.RELOAD);
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("reloadskins")) {
+			SkinStorage.getList().clear();
+			if (Config.USE_MYSQL){
+				try {
+					SkinStorage.loadSkinsFromSQL();
+					sender.sendMessage(Locale.RELOAD_SKINS);
+				} catch (SQLException e) {
+					sender.sendMessage(C.c("&cAn error occured. Check console for details."));
+				}
+			}else{
+				try {
+					SkinStorage.loadSkinsFromFile();
+					sender.sendMessage(Locale.RELOAD_SKINS);
+				} catch (Exception e) {
+					sender.sendMessage(C.c("&cAn error occured. Check console for details."));
+					System.out.println("[SkinsRestorer] Can't load skins. The folder /database/ doesn't exist.");
+				}
+			}
 		} else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)

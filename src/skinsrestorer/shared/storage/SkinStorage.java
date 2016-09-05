@@ -18,8 +18,8 @@
 package skinsrestorer.shared.storage;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -31,13 +31,23 @@ import skinsrestorer.shared.utils.YamlConfig;
 public class SkinStorage {
 
 	private static MySQL mysql;
+	private static TreeMap<String, Object> list = null;
 
 	public static void init() {
-		
+		//Finally i can use that init() xD
+		HashMap<String, Object> thingy = new HashMap<String, Object>();
+		setList(new TreeMap<String, Object>(thingy));
+		try {
+			loadSkinsFromFile();
+		} catch (Exception e) {
+			System.out.println("[SkinsRestorer] Can't load skins. The folder /database/ doesn't exist.");
+		}
 	}
 
 	public static void init(MySQL mysql) {
 		SkinStorage.mysql = mysql;
+		HashMap<String, Object> thingy = new HashMap<String, Object>();
+		setList(new TreeMap<String, Object>(thingy));
 	}
 
 	public static void removePlayerSkin(String name) {
@@ -268,20 +278,48 @@ public class SkinStorage {
 		skinFile.save();
 		return skinFile;
 	}
-	
-	public static Map<String, Object> getSkins(int number){
+	public static TreeMap<String, Object> getPage(int number){
 		HashMap<String, Object> thingy = new HashMap<String, Object>();
-		Map<String, Object> list = new TreeMap<String, Object>(thingy);
-		String path  = skinsrestorer.bukkit.SkinsRestorer.getInstance().getDataFolder() + "/database/";
-        File folder = new File(path);
-        String[] fileNames = folder.list();
+		TreeMap<String, Object> pageSkins = new TreeMap<String, Object>(thingy);
         int i = 0;
-        for (String file : fileNames){
+        for (String skin : getList().keySet()){
         	if (i >= number){
-        	list.put(file.replace(".yml", ""), SkinStorage.getSkinData(file.replace(".yml", "")));
+        	pageSkins.put(skin, getList().get(skin));
         	}
         	i++;
         }
+        return pageSkins;
+	}
+	
+	//Loading skins from SQL on init.
+	public static void loadSkinsFromSQL() throws SQLException{
+		CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE);
+
+		if (crs==null){
+			return;
+		}
+			while(crs.next()){
+					getList().put(crs.getString("Nick"), SkinStorage.getSkinData(crs.getString("Nick")));
+			}
+		System.out.println("[SkinsRestorer] Loaded "+getList().size()+" skins from the database.");
+	}
+	
+	//Loading skins from file on init.
+	public static void loadSkinsFromFile() throws Exception{
+		String path  = skinsrestorer.bukkit.SkinsRestorer.getInstance().getDataFolder() + "/database/";
+        File folder = new File(path);
+        String[] fileNames = folder.list();
+        for (String file : fileNames){
+        	getList().put(file.replace(".yml", ""), SkinStorage.getSkinData(file.replace(".yml", "")));
+        }
+        System.out.println("[SkinsRestorer] Loaded "+getList().size()+" skins from the database.");
+	}
+
+	public static TreeMap<String, Object> getList() {
 		return list;
+	}
+
+	public static void setList(TreeMap<String, Object> list) {
+		SkinStorage.list = list;
 	}
 }

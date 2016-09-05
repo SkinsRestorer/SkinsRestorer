@@ -160,8 +160,10 @@ public class SkinsRestorer extends JavaPlugin {
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
 		getCommand("clearskin").setExecutor(new ClearCommand());
+		
+		
 		getCommand("skins").setExecutor(new GUICommand());
-
+		
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 		Bukkit.getPluginManager().registerEvents(new LogoutListener(), this);
 		Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
