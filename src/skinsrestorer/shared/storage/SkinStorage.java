@@ -24,8 +24,6 @@ import java.util.Random;
 import java.util.TreeMap;
 
 import javax.sql.rowset.CachedRowSet;
-
-import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.YamlConfig;
@@ -274,7 +272,7 @@ public class SkinStorage {
 	public static Map<String, Object> getSkins(int number){
 		HashMap<String, Object> thingy = new HashMap<String, Object>();
 		Map<String, Object> list = new TreeMap<String, Object>(thingy);
-		String path  = SkinsRestorer.getInstance().getDataFolder() + "/database/";
+		String path  = skinsrestorer.bukkit.SkinsRestorer.getInstance().getDataFolder() + "/database/";
         File folder = new File(path);
         String[] fileNames = folder.list();
         int i = 0;
