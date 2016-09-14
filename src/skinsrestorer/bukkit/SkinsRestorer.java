@@ -153,7 +153,7 @@ public class SkinsRestorer extends JavaPlugin {
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
 					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
 		else
-			SkinStorage.init();
+			SkinStorage.init(getDataFolder());
 
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, CooldownStorage.cleanupCooldowns, 0, 60 * 20);
 		

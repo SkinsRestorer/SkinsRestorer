@@ -33,12 +33,12 @@ public class SkinStorage {
 	private static MySQL mysql;
 	private static TreeMap<String, Object> list = null;
 
-	public static void init() {
+	public static void init(File pluginFolder) {
 		//Finally i can use that init() xD
 		HashMap<String, Object> thingy = new HashMap<String, Object>();
 		setList(new TreeMap<String, Object>(thingy));
 		try {
-			loadSkinsFromFile();
+			loadSkinsFromFile(pluginFolder);
 		} catch (Exception e) {
 			System.out.println("[SkinsRestorer] Can't load skins. The folder /database/ doesn't exist.");
 		}
@@ -305,9 +305,8 @@ public class SkinStorage {
 	}
 	
 	//Loading skins from file on init.
-	public static void loadSkinsFromFile() throws Exception{
-		String path  = skinsrestorer.bukkit.SkinsRestorer.getInstance().getDataFolder() + "/database/";
-        File folder = new File(path);
+	public static void loadSkinsFromFile(File dataFolder) throws Exception {
+        File folder = new File(dataFolder, "database");
         String[] fileNames = folder.list();
         for (String file : fileNames){
         	getList().put(file.replace(".yml", ""), SkinStorage.getSkinData(file.replace(".yml", "")));

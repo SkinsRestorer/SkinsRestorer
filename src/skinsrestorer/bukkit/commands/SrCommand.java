@@ -115,7 +115,7 @@ public class SrCommand implements CommandExecutor {
 				}
 			}else{
 				try {
-					SkinStorage.loadSkinsFromFile();
+					SkinStorage.loadSkinsFromFile(SkinsRestorer.getInstance().getDataFolder());
 					sender.sendMessage(Locale.RELOAD_SKINS);
 				} catch (Exception e) {
 					sender.sendMessage(C.c("&cAn error occured. Check console for details."));
