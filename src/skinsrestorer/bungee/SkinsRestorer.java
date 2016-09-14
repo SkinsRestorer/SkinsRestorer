@@ -48,7 +48,7 @@ public class SkinsRestorer extends Plugin {
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
 					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
 		else
-			SkinStorage.init();
+			SkinStorage.init(getDataFolder());
 
 		getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 
