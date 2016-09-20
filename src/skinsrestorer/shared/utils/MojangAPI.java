@@ -22,7 +22,7 @@ public class MojangAPI {
 		String idbeg = "\"uuid\":\"";
 		String idend = "\"}";
 
-			if (output.isEmpty() || output.contains("TooManyRequestsException")) {
+			if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 				output = readURL(Config.ALT_UUID_URL + name).replace(" ", "");
 
 				idbeg = "\"uuid\":\"";
