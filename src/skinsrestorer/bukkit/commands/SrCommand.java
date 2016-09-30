@@ -1,19 +1,13 @@
 package skinsrestorer.bukkit.commands;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.sql.SQLException;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import skinsrestorer.bukkit.SkinsRestorer;
@@ -104,24 +98,6 @@ public class SrCommand implements CommandExecutor {
 			Locale.load();
 			Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
 			sender.sendMessage(Locale.RELOAD);
-		} else if (args.length == 1 && args[0].equalsIgnoreCase("reloadskins")) {
-			SkinStorage.getList().clear();
-			if (Config.USE_MYSQL){
-				try {
-					SkinStorage.loadSkinsFromSQL();
-					sender.sendMessage(Locale.RELOAD_SKINS);
-				} catch (SQLException e) {
-					sender.sendMessage(C.c("&cAn error occured. Check console for details."));
-				}
-			}else{
-				try {
-					SkinStorage.loadSkinsFromFile(SkinsRestorer.getInstance().getDataFolder());
-					sender.sendMessage(Locale.RELOAD_SKINS);
-				} catch (Exception e) {
-					sender.sendMessage(C.c("&cAn error occured. Check console for details."));
-					System.out.println("[SkinsRestorer] Can't load skins. The folder /database/ doesn't exist.");
-				}
-			}
 		} else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)
@@ -167,8 +143,7 @@ public class SrCommand implements CommandExecutor {
 				}
 			}
 			try {
-				Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-				Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
+				Object ep = ReflectionUtil.invokeMethod(p, "getHandle");
 				Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
 				Object propmap = ReflectionUtil.invokeMethod(profile, "getProperties");
 
@@ -204,61 +179,6 @@ public class SrCommand implements CommandExecutor {
 			}
 			sender.sendMessage(C.c("&cMore info in console!"));
 
-		} else if (args.length == 1 && args[0].equalsIgnoreCase("debug")) {
-			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
-				@Override
-				public void run() {
-					File debug = new File(SkinsRestorer.getInstance().getDataFolder(), "debug.txt");
-
-					PrintWriter out = null;
-
-					try {
-						if (!debug.exists())
-							debug.createNewFile();
-						out = new PrintWriter(new FileOutputStream(debug, true), true);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-
-					String player2 = "md_5";
-
-					try {
-
-						out.println("Java version: " + System.getProperty("java.version"));
-						out.println("Bukkit version: " + Bukkit.getVersion());
-						out.println("SkinsRestoerer version: " + SkinsRestorer.getInstance().getVersion());
-						out.println();
-
-						String plugins = "";
-						for (Plugin plugin : Bukkit.getPluginManager().getPlugins())
-							plugins += plugin.getDescription().getName() + " (" + plugin.getDescription().getVersion()
-									+ "), ";
-
-						out.println("Plugin list: " + plugins);
-						out.println();
-
-						out.println("Raw data from MojangAPI (" + player2 + "): ");
-
-						String output = (String) ReflectionUtil.invokeMethod(MojangAPI.class, null, "readURL",
-								new Class<?>[] { String.class },
-								new Object[] { "https://sessionserver.mojang.com/session/minecraft/profile/"
-										+ MojangAPI.getUUID(player2) + "?unsigned=false" });
-
-						out.println(output);
-
-						out.println("\n\n\n\n\n\n\n\n\n\n");
-
-					} catch (Exception e) {
-						out.println("=========================================");
-						e.printStackTrace(out);
-						out.println("=========================================");
-					}
-
-					sender.sendMessage(ChatColor.RED + "[SkinsRestorer] Debug file crated!");
-					sender.sendMessage(ChatColor.RED
-							+ "[SkinsRestorer] Please check the contents of the file and send the contents to developers, if you are experiencing problems!");
-				}
-			});
 		}
 
 		return true;

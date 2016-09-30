@@ -15,16 +15,6 @@ public interface SkinFactory {
 	 *            - Property object
 	 */
 	public void applySkin(Player p, Object props);
-	
-	/**
-	 * 
-	 * Removes skin data from player (sets it to null))
-	 * 
-	 * 
-	 * @param p
-	 *            - Player
-	 */
-	public void removeSkin(Player p);
 
 	/**
 	 * Instantly updates player's skin

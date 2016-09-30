@@ -35,7 +35,7 @@ public class Locale {
 
 	public static String PLAYER_HELP = "&e&m-------------&r&8[ &aSkinsRestorer &8]&e&m-------------&r\n &9/skin <skinname> &f-&a Sets your skin.\n &9/clearskin &f-&a Removes your skin.";
 	public static String ADMIN_SET_SKIN = "You set %player''s skin.";
-	public static String ADMIN_HELP = "&a&m-------------&r&8[ &9SkinsRestorer Admin &8]&a&m-------------&r\n &9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n &9/skinsrestorer debug &9- &aCreates a debug.txt file for reporting issues\n &9/skinsrestorer reload &9- &aReloads the config and locale\n &9/skinsrestorer reloadskins &9- &aReloads the skins menu\n &9/skinsrestorer props [player] &9- &aReloads the config and locale";;
+	public static String ADMIN_HELP = "&a&m-------------&r&8[ &9SkinsRestorer Admin &8]&a&m-------------&r\n &9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n &9/skinsrestorer reload &9- &aReloads the config and locale\n &9/skinsrestorer props [player] &9- &aDisplays the players actual skin as properties";;
 	public static String RELOAD = "&9Config and Locale has been reloaded!";
 	public static String RELOAD_SKINS = "&9The skins menu has been reloaded!";
 	public static String NO_SKIN_DATA = "&9No skin data!";

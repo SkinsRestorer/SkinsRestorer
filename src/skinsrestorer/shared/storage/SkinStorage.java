@@ -1,53 +1,49 @@
-/**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
-
 package skinsrestorer.shared.storage;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.sql.SQLException;
-import java.util.HashMap;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.Random;
-import java.util.TreeMap;
 
 import javax.sql.rowset.CachedRowSet;
+
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.YamlConfig;
 
 public class SkinStorage {
 
+	private static Class<?> property;
 	private static MySQL mysql;
-	private static TreeMap<String, Object> list = null;
+	private static File folder;
+
+	static {
+		try {
+			property = Class.forName("com.mojang.authlib.properties.Property");
+		} catch (Exception e) {
+			try {
+				property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+			} catch (Exception ex) {
+				try {
+					property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
+				} catch (Exception exc) {
+					System.out.println(
+							"[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+				}
+			}
+		}
+	}
 
 	public static void init(File pluginFolder) {
-		//Finally i can use that init() xD
-		HashMap<String, Object> thingy = new HashMap<String, Object>();
-		setList(new TreeMap<String, Object>(thingy));
-		try {
-			loadSkinsFromFile(pluginFolder);
-		} catch (Exception e) {
-			System.out.println("[SkinsRestorer] Can't load skins. The folder /database/ doesn't exist.");
-		}
+		folder = pluginFolder;
+		File tempFolder = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator);
+		tempFolder.mkdirs();
+		tempFolder = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator);
+		tempFolder.mkdirs();
 	}
 
 	public static void init(MySQL mysql) {
 		SkinStorage.mysql = mysql;
-		HashMap<String, Object> thingy = new HashMap<String, Object>();
-		setList(new TreeMap<String, Object>(thingy));
 	}
 
 	public static void removePlayerSkin(String name) {
@@ -55,8 +51,11 @@ public class SkinStorage {
 		if (Config.USE_MYSQL) {
 			mysql.execute("delete from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 		} else {
-			YamlConfig playerFile = initPlayer(name);
-			playerFile.getFile().delete();
+			File playerFile = new File(
+					folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+
+			if (playerFile.exists())
+				playerFile.delete();
 		}
 
 	}
@@ -66,8 +65,11 @@ public class SkinStorage {
 		if (Config.USE_MYSQL) {
 			mysql.execute("delete from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 		} else {
-			YamlConfig skinFile = initSkin(name);
-			skinFile.getFile().delete();
+			File skinFile = new File(
+					folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+
+			if (skinFile.exists())
+				skinFile.delete();
 		}
 
 	}
@@ -82,9 +84,25 @@ public class SkinStorage {
 			else
 				mysql.execute("update " + Config.MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin, name);
 		} else {
-			YamlConfig playerFile = initPlayer(name);
-			playerFile.set("Skin", skin);
-		    playerFile.reload();
+			File playerFile = new File(
+					folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+
+			try {
+				if (!playerFile.exists())
+					playerFile.createNewFile();
+
+				if (skin.equalsIgnoreCase(name)) {
+					playerFile.delete();
+					return;
+				}
+
+				FileWriter writer = new FileWriter(playerFile);
+
+				writer.write(skin);
+				writer.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -113,13 +131,23 @@ public class SkinStorage {
 				mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=? where Nick=?", value,
 						signature, name);
 		} else {
-			if (value.isEmpty() || signature.isEmpty()){
-				return;
+			File skinFile = new File(
+					folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+
+			try {
+				if (value.isEmpty() || signature.isEmpty())
+					return;
+
+				if (!skinFile.exists())
+					skinFile.createNewFile();
+
+				FileWriter writer = new FileWriter(skinFile);
+
+				writer.write(value + "\n" + signature);
+				writer.close();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			YamlConfig skinFile = initSkin(name);
-			skinFile.set("Value", value);
-			skinFile.set("Signature", signature);
-			skinFile.reload();
 		}
 	}
 
@@ -156,16 +184,37 @@ public class SkinStorage {
 			return null;
 
 		} else {
-			YamlConfig skinFile = initSkin(name);
-			String value = skinFile.getString("Value");
-			String signature = skinFile.getString("Signature");
+			File skinFile = new File(
+					folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
-			if (value.isEmpty() || signature.isEmpty())
-				return null;
+			try {
+				if (!skinFile.exists())
+					skinFile.createNewFile();
 
-			Object textures = createProperty("textures", value, skinFile.getString("Signature"));
+				BufferedReader buf = new BufferedReader(new FileReader(skinFile));
 
-			return textures;
+				String line, value = "", signature = "";
+				for (int i = 0; i < 2; i++) {
+					if ((line = buf.readLine()) != null) {
+						if (value == null)
+							value = line;
+						else
+							signature = line;
+					}
+				}
+
+				buf.close();
+
+				if (!value.isEmpty() && !signature.isEmpty())
+					return SkinStorage.createProperty("textures", value, signature);
+				else
+					skinFile.delete();
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return null;
 		}
 	}
 
@@ -194,15 +243,32 @@ public class SkinStorage {
 			return null;
 
 		} else {
-			YamlConfig playerFile = initPlayer(name);
-			String skin = playerFile.getString("Skin");
+			File playerFile = new File(
+					folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
-			if (skin == null || skin.isEmpty() || skin.equalsIgnoreCase(name)) {
-				removePlayerSkin(name);
-				skin = name;
+			try {
+				if (!playerFile.exists())
+					playerFile.createNewFile();
+
+				BufferedReader buf = new BufferedReader(new FileReader(playerFile));
+
+				String line, skin = null;
+				if ((line = buf.readLine()) != null)
+					skin = line;
+
+				buf.close();
+
+				if (skin.equalsIgnoreCase(name)) {
+					playerFile.delete();
+				}
+
+				return skin;
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-			return skin;
+			return null;
 		}
 	}
 
@@ -243,82 +309,16 @@ public class SkinStorage {
 	 * @param name
 	 * @param value
 	 * @param signature
-	 * @return Property object (either Mojang or Bungee)
+	 * @return Property object (either oldMojang, newMojang or Bungee one)
 	 */
 	public static Object createProperty(String name, String value, String signature) {
 		try {
-			return ReflectionUtil.invokeConstructor(Class.forName("com.mojang.authlib.properties.Property"),
+			return ReflectionUtil.invokeConstructor(property,
 					new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
 		} catch (Exception e) {
-			try {
-				return ReflectionUtil.invokeConstructor(
-						Class.forName("net.md_5.bungee.connection.LoginResult$Property"),
-						new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
-			} catch (Exception ex) {
-				try {
-					return ReflectionUtil.invokeConstructor(
-							Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property"),
-							new Class<?>[] { String.class, String.class, String.class }, name, value, signature);
-				} catch (Exception exc) {
-					exc.printStackTrace();
-				}
-			}
 		}
+
 		return null;
 	}
-	
-	public static YamlConfig initSkin(String name){
-		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "database" + File.separator + "", name);
-		skinFile.save();
-		return skinFile;
-	}
-	
-	public static YamlConfig initPlayer(String name){
-		YamlConfig skinFile = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "players" + File.separator + "", name);
-		skinFile.save();
-		return skinFile;
-	}
-	public static TreeMap<String, Object> getPage(int number){
-		HashMap<String, Object> thingy = new HashMap<String, Object>();
-		TreeMap<String, Object> pageSkins = new TreeMap<String, Object>(thingy);
-        int i = 0;
-        for (String skin : getList().keySet()){
-        	if (i >= number){
-        	pageSkins.put(skin, getList().get(skin));
-        	}
-        	i++;
-        }
-        return pageSkins;
-	}
-	
-	//Loading skins from SQL on init.
-	public static void loadSkinsFromSQL() throws SQLException{
-		CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE);
 
-		if (crs==null){
-			return;
-		}
-			while(crs.next()){
-					getList().put(crs.getString("Nick"), SkinStorage.getSkinData(crs.getString("Nick")));
-			}
-		System.out.println("[SkinsRestorer] Loaded "+getList().size()+" skins from the database.");
-	}
-	
-	//Loading skins from file on init.
-	public static void loadSkinsFromFile(File dataFolder) throws Exception {
-        File folder = new File(dataFolder, "database");
-        String[] fileNames = folder.list();
-        for (String file : fileNames){
-        	getList().put(file.replace(".yml", ""), SkinStorage.getSkinData(file.replace(".yml", "")));
-        }
-        System.out.println("[SkinsRestorer] Loaded "+getList().size()+" skins from the database.");
-	}
-
-	public static TreeMap<String, Object> getList() {
-		return list;
-	}
-
-	public static void setList(TreeMap<String, Object> list) {
-		SkinStorage.list = list;
-	}
 }
