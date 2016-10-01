@@ -1,6 +1,5 @@
 package skinsrestorer.bukkit.skinfactory;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,11 +15,60 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 public class UniversalSkinFactory implements SkinFactory {
 
+	private Class<?> PlayOutRespawn;
+	private Class<?> EntityHuman;
+	private Class<?> PlayOutNamedEntitySpawn;
+	private Class<?> PlayOutEntityDestroy;
+	private Class<?> PlayOutPlayerInfo;
+	private Class<?> PlayOutPosition;
+	private Class<?> PlayOutEntityEquipment;
+	private Class<?> ItemStack;
+	private Class<?> Packet;
+	private Class<?> CraftItemStack;
+	private Class<?> PlayOutHeldItemSlot;
+
+	private Enum<?> PEACEFUL;
+	private Enum<?> REMOVE_PLAYER;
+	private Enum<?> ADD_PLAYER;
+	private Enum<?> MAINHAND;
+	private Enum<?> OFFHAND;
+	private Enum<?> HEAD;
+	private Enum<?> FEET;
+	private Enum<?> LEGS;
+	private Enum<?> CHEST;
+
+	// Since literraly no one is able to optimize it, I will
+	public UniversalSkinFactory() {
+		try {
+			Packet = ReflectionUtil.getNMSClass("Packet");
+			PlayOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot");
+			CraftItemStack = ReflectionUtil.getBukkitClass("inventory.CraftItemStack");
+			ItemStack = ReflectionUtil.getNMSClass("ItemStack");
+			PlayOutEntityEquipment = ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment");
+			PlayOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition");
+			EntityHuman = ReflectionUtil.getNMSClass("EntityHuman");
+			PlayOutNamedEntitySpawn = ReflectionUtil.getNMSClass("PacketPlayOutNamedEntitySpawn");
+			PlayOutEntityDestroy = ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy");
+			PlayOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
+			PlayOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn");
+
+			PEACEFUL = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL");
+			REMOVE_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
+			ADD_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
+			MAINHAND = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND");
+			OFFHAND = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND");
+			HEAD = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "HEAD");
+			CHEST = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "CHEST");
+			FEET = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "FEET");
+			LEGS = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "LEGS");
+		} catch (Exception e) {
+		}
+	}
+
 	@Override
 	public void applySkin(Player p, Object props) {
 		try {
-			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
-			Object ep = ReflectionUtil.invokeMethod(cp.getClass(), cp, "getHandle");
+			Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
 			Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
 			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
 
@@ -32,85 +80,32 @@ public class UniversalSkinFactory implements SkinFactory {
 		} catch (Exception e) {
 		}
 	}
-	@Override
-	public void removeSkin(Player player){
-		Object cp;
-		try {
-			cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
-		Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
 
-		List<Object> set = new ArrayList<Object>();
-		set.add(ep);
-		Iterable<?> iterable = set;
-
-		Object removeInfo = ReflectionUtil
-				.invokeConstructor(
-						ReflectionUtil
-								.getNMSClass("PacketPlayOutPlayerInfo"),
-						new Class<?>[] {
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-										"EnumPlayerInfoAction", "REMOVE_PLAYER").getClass(),
-								Iterable.class },
-				ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-						"EnumPlayerInfoAction", "REMOVE_PLAYER"), iterable);
-
-		Object removeEntity = ReflectionUtil.invokeConstructor(
-				ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy"), new Class<?>[] { int[].class },
-				new int[] { player.getEntityId() });
-		for (Player inWorld : player.getWorld().getPlayers()) {
-			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(inWorld);
-			final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
-			Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
-			sendPacket(playerCon, removeEntity);
-			sendPacket(playerCon, removeInfo);
-		}
-		} catch (Exception e) {
-		}
-	}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {
-		if (!player.isOnline()){
+		if (!player.isOnline())
 			return;
-		}
+
 		try {
-			Object cp = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(player);
-			Object ep = ReflectionUtil.invokeMethod(cp, "getHandle");
+			Object ep = ReflectionUtil.invokeMethod(player, "getHandle");
 			Location l = player.getLocation();
 
-			List<Object> set = new ArrayList<Object>();
+			List<Object> set = new ArrayList<>();
 			set.add(ep);
 			Iterable<?> iterable = set;
 
-			Object removeInfo = ReflectionUtil
-					.invokeConstructor(
-							ReflectionUtil
-									.getNMSClass("PacketPlayOutPlayerInfo"),
-							new Class<?>[] {
-									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-											"EnumPlayerInfoAction", "REMOVE_PLAYER").getClass(),
-									Iterable.class },
-					ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-							"EnumPlayerInfoAction", "REMOVE_PLAYER"), iterable);
+			Object removeInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
+					new Class<?>[] { REMOVE_PLAYER.getClass(), Iterable.class }, REMOVE_PLAYER, iterable);
 
-			Object removeEntity = ReflectionUtil.invokeConstructor(
-					ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy"), new Class<?>[] { int[].class },
+			Object removeEntity = ReflectionUtil.invokeConstructor(PlayOutEntityDestroy, new Class<?>[] { int[].class },
 					new int[] { player.getEntityId() });
 
-			Object addNamed = ReflectionUtil.invokeConstructor(
-					ReflectionUtil.getNMSClass("PacketPlayOutNamedEntitySpawn"),
-					new Class<?>[] { ReflectionUtil.getNMSClass("EntityHuman") }, ep);
+			Object addNamed = ReflectionUtil.invokeConstructor(PlayOutNamedEntitySpawn, new Class<?>[] { EntityHuman },
+					ep);
 
-			Object addInfo = ReflectionUtil
-					.invokeConstructor(
-							ReflectionUtil
-									.getNMSClass("PacketPlayOutPlayerInfo"),
-							new Class<?>[] {
-									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-											"EnumPlayerInfoAction", "ADD_PLAYER").getClass(),
-									Iterable.class },
-					ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo"),
-							"EnumPlayerInfoAction", "ADD_PLAYER"), iterable);
+			Object addInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
+					new Class<?>[] { ADD_PLAYER.getClass(), Iterable.class }, ADD_PLAYER, iterable);
 
 			// Slowly getting from object to object till i get what I need for
 			// the respawn packet
@@ -119,34 +114,29 @@ public class UniversalSkinFactory implements SkinFactory {
 			Object worlddata = ReflectionUtil.getObject(world, "worldData");
 			Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
 
-			Object worldserver = ReflectionUtil.getNMSClass("WorldServer").cast(world);
-			int dimension = (int) ReflectionUtil.getObject(worldserver, "dimension");
+			int dimension = (int) ReflectionUtil.getObject(world, "dimension");
 
 			Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
 			Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
 			int gmid = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
-			Object respawn = ReflectionUtil
-					.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutRespawn"),
-							new Class<?>[] { int.class,
-									ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL")
-											.getClass(),
-									worldtype.getClass(), enumGamemode.getClass() },
-							dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null,
-									"getById", new Class<?>[] { int.class }, new Object[] { gmid }));
+			Object respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+					new Class<?>[] { int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass() },
+					dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null,
+							"getById", new Class<?>[] { int.class }, new Object[] { gmid }));
 
 			Object pos = null;
 
 			try {
 				// 1.9+
-				pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
+				pos = ReflectionUtil.invokeConstructor(PlayOutPosition,
 						new Class<?>[] { double.class, double.class, double.class, float.class, float.class, Set.class,
 								int.class },
 						l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
 			} catch (Exception e) {
 				// 1.8 -
-				pos = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutPosition"),
+				pos = ReflectionUtil.invokeConstructor(PlayOutPosition,
 						new Class<?>[] { double.class, double.class, double.class, float.class, float.class,
 								Set.class },
 						l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
@@ -160,137 +150,86 @@ public class UniversalSkinFactory implements SkinFactory {
 			Object chestplate = null;
 			Object leggings = null;
 
-			Constructor<?> constr = null;
+			// MAINHAND is only null if we are less than 1.9
+			if (MAINHAND == null) {
 
-			// Check if we are using version 1.8 or below
-			try {
-				constr = ReflectionUtil.getConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") });
+				hand = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 0,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class }, new Object[] { player.getItemInHand() }));
 
-			} catch (Throwable t) {
-				// If 1.9+, leave it at null
-			}
-
-			// And use packet definitons respective for these versions
-			if (constr != null) {
-
-				hand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(), 0,
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								new Object[] { player.getItemInHand() }));
-
-				helmet = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(), 4,
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
+				helmet = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 4,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
 								new Object[] { player.getInventory().getHelmet() }));
 
-				chestplate = ReflectionUtil.invokeConstructor(
-						ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(), 3,
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
+				chestplate = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 3,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
 								new Object[] { player.getInventory().getLeggings() }));
 
-				leggings = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(), 2,
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
+				leggings = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 2,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
 								new Object[] { player.getInventory().getLeggings() }));
 
-				boots = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class, int.class, ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(), 1,
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
-								new Object[] { player.getInventory().getBoots() }));
-			} else {
-				mainhand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class,
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND")
-										.getClass(),
-								ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(),
-						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND"),
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
+				boots = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 1,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class }, new Object[] { player.getInventory().getBoots() }));
+			}
+			// If 1.9+
+			else {
+				mainhand = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, MAINHAND.getClass(), ItemStack }, player.getEntityId(), MAINHAND,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
 								new Object[] { player.getInventory().getItemInMainHand() }));
 
-				offhand = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-						new Class<?>[] { int.class,
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND")
-										.getClass(),
-								ReflectionUtil.getNMSClass("ItemStack") },
-						player.getEntityId(),
-						ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND"),
-						ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"), null,
-								"asNMSCopy", new Class<?>[] { ItemStack.class },
+				offhand = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, OFFHAND.getClass(), ItemStack }, player.getEntityId(), OFFHAND,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
 								new Object[] { player.getInventory().getItemInOffHand() }));
 
-				helmet = ReflectionUtil
-						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-								new Class<?>[] { int.class,
-										ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "HEAD")
-												.getClass(),
-										ReflectionUtil.getNMSClass("ItemStack") },
-								player.getEntityId(),
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "HEAD"),
-								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
-										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										new Object[] { player.getInventory().getHelmet() }));
+				helmet = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, HEAD.getClass(), ItemStack }, player.getEntityId(), HEAD,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getHelmet() }));
 
-				chestplate = ReflectionUtil
-						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-								new Class<?>[] { int.class,
-										ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "CHEST")
-												.getClass(),
-										ReflectionUtil.getNMSClass("ItemStack") },
-								player.getEntityId(),
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "CHEST"),
-								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
-										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										new Object[] { player.getInventory().getChestplate() }));
+				chestplate = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, CHEST.getClass(), ItemStack }, player.getEntityId(), CHEST,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getChestplate() }));
 
-				leggings = ReflectionUtil
-						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-								new Class<?>[] { int.class,
-										ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "LEGS")
-												.getClass(),
-										ReflectionUtil.getNMSClass("ItemStack") },
-								player.getEntityId(),
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "LEGS"),
-								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
-										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										new Object[] { player.getInventory().getLeggings() }));
+				leggings = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, LEGS.getClass(), ItemStack }, player.getEntityId(), LEGS,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class },
+								new Object[] { player.getInventory().getLeggings() }));
 
-				boots = ReflectionUtil
-						.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutEntityEquipment"),
-								new Class<?>[] { int.class,
-										ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "FEET")
-												.getClass(),
-										ReflectionUtil.getNMSClass("ItemStack") },
-								player.getEntityId(),
-								ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "FEET"),
-								ReflectionUtil.invokeMethod(ReflectionUtil.getBukkitClass("inventory.CraftItemStack"),
-										null, "asNMSCopy", new Class<?>[] { ItemStack.class },
-										new Object[] { player.getInventory().getBoots() }));
+				boots = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
+						new Class<?>[] { int.class, FEET.getClass(), ItemStack }, player.getEntityId(), FEET,
+						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
+								new Class<?>[] { ItemStack.class }, new Object[] { player.getInventory().getBoots() }));
 			}
 
-			Object slot = ReflectionUtil.invokeConstructor(ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot"),
-					new Class<?>[] { int.class }, player.getInventory().getHeldItemSlot());
+			Object slot = ReflectionUtil.invokeConstructor(PlayOutHeldItemSlot, new Class<?>[] { int.class },
+					player.getInventory().getHeldItemSlot());
 
 			// We finished defining packets, now lets send em
 
-			for (Player inWorld : player.getWorld().getPlayers()) {
-				Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(inWorld);
-				final Object craftHandle = ReflectionUtil.invokeMethod(craftOnline, "getHandle");
+			for (Player pOnline : player.getWorld().getPlayers()) {
+				final Object craftHandle = ReflectionUtil.invokeMethod(pOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
-				if (inWorld.equals(player)) {
+
+				if (pOnline.equals(player)) {
+
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
 					sendPacket(playerCon, respawn);
@@ -306,26 +245,27 @@ public class UniversalSkinFactory implements SkinFactory {
 					});
 					sendPacket(playerCon, pos);
 					sendPacket(playerCon, slot);
-					ReflectionUtil.invokeMethod(craftOnline, "updateScaledHealth");
-					ReflectionUtil.invokeMethod(craftOnline, "updateInventory");
+					ReflectionUtil.invokeMethod(pOnline, "updateScaledHealth");
+					ReflectionUtil.invokeMethod(pOnline, "updateInventory");
 					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 					continue;
 				}
-				sendPacket(playerCon, removeEntity);
-				sendPacket(playerCon, removeInfo);
-				if (inWorld.canSee(player)){
-				sendPacket(playerCon, addInfo);
-				sendPacket(playerCon, addNamed);
-				if (hand == null) {
-					sendPacket(playerCon, mainhand);
-					sendPacket(playerCon, offhand);
-				} else {
-					sendPacket(playerCon, hand);
-				}
-				sendPacket(playerCon, helmet);
-				sendPacket(playerCon, chestplate);
-				sendPacket(playerCon, leggings);
-				sendPacket(playerCon, boots);
+				if (pOnline.canSee(player)) {
+					sendPacket(playerCon, removeEntity);
+					sendPacket(playerCon, removeInfo);
+					sendPacket(playerCon, addInfo);
+					sendPacket(playerCon, addNamed);
+
+					if (MAINHAND != null) {
+						sendPacket(playerCon, mainhand);
+						sendPacket(playerCon, offhand);
+					} else
+						sendPacket(playerCon, hand);
+
+					sendPacket(playerCon, helmet);
+					sendPacket(playerCon, chestplate);
+					sendPacket(playerCon, leggings);
+					sendPacket(playerCon, boots);
 				}
 			}
 		} catch (Exception e) {
@@ -333,8 +273,8 @@ public class UniversalSkinFactory implements SkinFactory {
 
 	}
 
-	private static void sendPacket(Object playerConnection, Object packet) throws Exception {
+	private void sendPacket(Object playerConnection, Object packet) throws Exception {
 		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
-				new Class<?>[] { ReflectionUtil.getNMSClass("Packet") }, new Object[] { packet });
+				new Class<?>[] { Packet }, new Object[] { packet });
 	}
 }

@@ -36,6 +36,7 @@ public class Config {
 	public static String CUSTOMSKINS_AUTHTOKEN = null;
 	public static String CUSTOMSKINS_CLIENTTOKEN = null;
 	public static boolean UPDATER_ENABLED = true;
+	public static boolean AUTOUPDATE = true;
 
 	public static void load(InputStream is) {
 		config.copyDefaults(is);
@@ -55,23 +56,31 @@ public class Config {
 		MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
 		MYSQL_USERNAME = config.getString("MySQL.Username", MYSQL_USERNAME);
 		MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
-		
-		if (config.get("Updater.Enabled")==null){
+
+		if (config.get("Updater.Enabled") == null) {
 			config.set("Updater.Enabled", true);
 			config.save();
 		}
+
 		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
+
+		if (config.get("Updater.AutoUpdate") == null) {
+			config.set("Updater.AutoUpdate", false);
+			config.save();
+		}
+
+		AUTOUPDATE = config.getBoolean("Updater.AutoUpdate");
 
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
-			DEFAULT_SKINS = new ArrayList<String>();
+			DEFAULT_SKINS = new ArrayList<>();
 			DEFAULT_SKINS.add("Steve");
 			config.set("DefaultSkins.Names", DEFAULT_SKINS.toArray());
 		}
 
 		DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
 		if (DISABLED_SKINS == null || DISABLED_SKINS.isEmpty()) {
-			DISABLED_SKINS = new ArrayList<String>();
+			DISABLED_SKINS = new ArrayList<>();
 			DISABLED_SKINS.add("Steve");
 			config.set("DisabledSkins.Names", DISABLED_SKINS.toArray());
 		}

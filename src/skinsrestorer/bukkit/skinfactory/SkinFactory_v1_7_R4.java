@@ -2,6 +2,7 @@ package skinsrestorer.bukkit.skinfactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
@@ -29,32 +30,12 @@ public class SkinFactory_v1_7_R4 implements SkinFactory {
 		propmap.get("textures").clear();
 		propmap.put("textures", (Property) props);
 	}
-	
-	@Override
-	public void removeSkin(Player p) {
-		try {
-			CraftPlayer cp = (CraftPlayer) p;
-			EntityPlayer ep = cp.getHandle();
-			int entId = ep.getId();
-
-			PacketPlayOutPlayerInfo removeInfo = PacketPlayOutPlayerInfo.removePlayer(ep);
-			PacketPlayOutEntityDestroy removeEntity = new PacketPlayOutEntityDestroy(entId);
-			
-			for (Player inWorld : p.getWorld().getPlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
-				PlayerConnection con = craftOnline.getHandle().playerConnection;
-				con.sendPacket(removeEntity);
-				con.sendPacket(removeInfo);
-			}
-		} catch (Exception e) {
-		}
-	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player p) {
 		try {
-			if (!p.isOnline()){
+			if (!p.isOnline()) {
 				return;
 			}
 			CraftPlayer cp = (CraftPlayer) p;
@@ -94,10 +75,10 @@ public class SkinFactory_v1_7_R4 implements SkinFactory {
 
 			PacketPlayOutHeldItemSlot slot = new PacketPlayOutHeldItemSlot(p.getInventory().getHeldItemSlot());
 
-			for (Player inWorld : p.getWorld().getPlayers()) {
-				final CraftPlayer craftOnline = (CraftPlayer) inWorld;
+			for (Player pOnline : ((CraftServer) Bukkit.getServer()).getOnlinePlayers()) {
+				final CraftPlayer craftOnline = (CraftPlayer) pOnline;
 				PlayerConnection con = craftOnline.getHandle().playerConnection;
-				if (inWorld.equals(p)) {
+				if (pOnline.equals(p)) {
 					con.sendPacket(removeInfo);
 					con.sendPacket(addInfo);
 					con.sendPacket(respawn);
@@ -116,16 +97,16 @@ public class SkinFactory_v1_7_R4 implements SkinFactory {
 					});
 					continue;
 				}
-				con.sendPacket(removeEntity);
-				con.sendPacket(removeInfo);
-				if (inWorld.canSee(p)){
-				con.sendPacket(addInfo);
-				con.sendPacket(addNamed);
-				con.sendPacket(itemhand);
-				con.sendPacket(helmet);
-				con.sendPacket(chestplate);
-				con.sendPacket(leggings);
-				con.sendPacket(boots);
+				if (pOnline.canSee(p)) {
+					con.sendPacket(removeEntity);
+					con.sendPacket(removeInfo);
+					con.sendPacket(addInfo);
+					con.sendPacket(addNamed);
+					con.sendPacket(itemhand);
+					con.sendPacket(helmet);
+					con.sendPacket(chestplate);
+					con.sendPacket(leggings);
+					con.sendPacket(boots);
 				}
 			}
 		} catch (Exception e) {

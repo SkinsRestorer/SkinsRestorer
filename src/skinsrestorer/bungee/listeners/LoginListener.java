@@ -44,7 +44,7 @@ public class LoginListener implements Listener {
 	}
 
 	@EventHandler
-	public void onServerConnect(final PostLoginEvent e) {
+	public void onPostLogin(final PostLoginEvent e) {
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 

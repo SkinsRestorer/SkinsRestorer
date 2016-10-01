@@ -3,6 +3,8 @@ package skinsrestorer.shared.api;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
+import org.bukkit.Bukkit;
+
 import net.minecraft.util.com.google.common.collect.Iterables;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -51,7 +53,13 @@ public class SkinsRestorerAPI {
 
 			}).run();
 		} catch (Throwable t) {
-			org.bukkit.entity.Player p = Iterables.getFirst(org.bukkit.Bukkit.getOnlinePlayers(), null);
+			org.bukkit.entity.Player p = null;
+
+			try {
+				p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+			} catch (Exception e) {
+				p = Bukkit.getOnlinePlayers().iterator().next();
+			}
 
 			if (p != null) {
 				ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -62,7 +70,8 @@ public class SkinsRestorerAPI {
 					out.writeUTF(playerName);
 					out.writeUTF(skinName);
 
-					p.sendPluginMessage(skinsrestorer.bukkit.SkinsRestorer.getInstance(), "BungeeCord", b.toByteArray());
+					p.sendPluginMessage(skinsrestorer.bukkit.SkinsRestorer.getInstance(), "BungeeCord",
+							b.toByteArray());
 
 					out.close();
 				} catch (Exception e) {
@@ -104,12 +113,12 @@ public class SkinsRestorerAPI {
 	 *            = Player's instance (either ProxiedPlayer or Player)
 	 */
 	public static void applySkin(Object player) {
-		//Trying to use Bukkit.
+		// Trying to use Bukkit.
 		try {
 			skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().updateSkin((org.bukkit.entity.Player) player);
 		} catch (Throwable t) {
-			//On fail trying to use Bungee.
-				skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
+			// On fail trying to use Bungee.
+			skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
 		}
 	}
 

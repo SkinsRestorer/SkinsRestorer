@@ -14,7 +14,6 @@ import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 
 import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.SkinStorage;
 
 public class MySQL {
 
@@ -44,7 +43,6 @@ public class MySQL {
 								username, password);
 						System.out.println("[SkinsRestorer] Connected to MySQL!");
 						createTable();
-						SkinStorage.loadSkinsFromSQL();
 					} catch (SQLException e) {
 						System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
 					}

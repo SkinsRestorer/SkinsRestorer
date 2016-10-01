@@ -36,19 +36,6 @@ public class ReflectionUtil {
 		return f;
 	}
 
-    public static <T> Field getField(Class<?> target, String name, Class<T> fieldType, int index) {
-        for (final Field field : target.getDeclaredFields()) {
-            if ((name == null || field.getName().equals(name)) && fieldType.isAssignableFrom(field.getType()) && index-- <= 0) {
-                field.setAccessible(true);
-                return field;
-            }
-        }
-
-        if (target.getSuperclass() != null)
-            return getField(target.getSuperclass(), name, fieldType, index);
-        throw new IllegalArgumentException("Cannot find field with type " + fieldType);
-    }
-    
 	public static Object getObject(Object obj, String fname) throws Exception {
 		return getField(obj.getClass(), fname).get(obj);
 	}

@@ -19,9 +19,7 @@ import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.ClearCommand;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
-import skinsrestorer.bungee.listeners.LogoutListener;
 import skinsrestorer.bungee.listeners.MessageListener;
-import skinsrestorer.bungee.listeners.PermissionListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -53,9 +51,7 @@ public class SkinsRestorer extends Plugin {
 		getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
 
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
-		this.getProxy().getPluginManager().registerListener(this, new LogoutListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
-		this.getProxy().getPluginManager().registerListener(this, new PermissionListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new ClearCommand());
@@ -63,30 +59,47 @@ public class SkinsRestorer extends Plugin {
 
 		multibungee = Config.MULTIBUNGEE_ENABLED
 				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
-        if (Config.UPDATER_ENABLED){
-		if (checkVersion().equals(getVersion())) {
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-			console.sendMessage(ChatColor.GREEN + "    The latest version!");
-			console.sendMessage("");
-		} else {
-			console.sendMessage("");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-			console.sendMessage(ChatColor.GREEN + "    +===============+");
-			console.sendMessage("");
-			console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-			console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-			console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
-			console.sendMessage("");
+		if (Config.UPDATER_ENABLED) {
+			if (checkVersion().equals(getVersion())) {
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+				console.sendMessage(ChatColor.GREEN + "    The latest version!");
+				console.sendMessage("");
+			} else {
+				/*
+				 * if (Config.AUTOUPDATE) { console.sendMessage("");
+				 * console.sendMessage(ChatColor.GREEN +
+				 * "    +===============+"); console.sendMessage(ChatColor.GREEN
+				 * + "    | SkinsRestorer |");
+				 * console.sendMessage(ChatColor.GREEN +
+				 * "    +===============+"); console.sendMessage("");
+				 * console.sendMessage(ChatColor.RED +
+				 * "    A new version is available!");
+				 * console.sendMessage(ChatColor.GREEN + "    Downloading...");
+				 * if (downloadUpdate()) { console.sendMessage(ChatColor.GREEN +
+				 * "    Done!"); console.sendMessage(ChatColor.RED +
+				 * "    Cant reload plugin on bungee!");
+				 * console.sendMessage(ChatColor.GREEN +
+				 * "    Update will be applied on restart..."); } } else {
+				 */
+				console.sendMessage("");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+				console.sendMessage(ChatColor.GREEN + "    +===============+");
+				console.sendMessage("");
+				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+				console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+				console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
+				console.sendMessage("");
+				// }
+			}
 		}
-        }
 		getProxy().getScheduler().runAsync(this, new Runnable() {
 
 			@Override
@@ -144,7 +157,7 @@ public class SkinsRestorer extends Plugin {
 
 	public boolean downloadUpdate() {
 		try {
-			InputStream in = new URL("https://api.spiget.org/v1/resources/1884/download").openStream();
+			InputStream in = new URL("http://api.spiget.org/v1/resources/2124/download").openStream();
 
 			System.out.println(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
 
