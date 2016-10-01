@@ -88,13 +88,13 @@ public class SkinStorage {
 					folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
 			try {
-				if (!playerFile.exists())
-					playerFile.createNewFile();
-
-				if (skin.equalsIgnoreCase(name)) {
+				if (skin.equalsIgnoreCase(name) && playerFile.exists()) {
 					playerFile.delete();
 					return;
 				}
+
+				if (!playerFile.exists())
+					playerFile.createNewFile();
 
 				FileWriter writer = new FileWriter(playerFile);
 
@@ -189,14 +189,14 @@ public class SkinStorage {
 
 			try {
 				if (!skinFile.exists())
-					skinFile.createNewFile();
+					return null;
 
 				BufferedReader buf = new BufferedReader(new FileReader(skinFile));
 
 				String line, value = "", signature = "";
 				for (int i = 0; i < 2; i++) {
 					if ((line = buf.readLine()) != null) {
-						if (value == null)
+						if (value.isEmpty())
 							value = line;
 						else
 							signature = line;
@@ -205,10 +205,7 @@ public class SkinStorage {
 
 				buf.close();
 
-				if (!value.isEmpty() && !signature.isEmpty())
-					return SkinStorage.createProperty("textures", value, signature);
-				else
-					skinFile.delete();
+				return SkinStorage.createProperty("textures", value, signature);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -248,7 +245,7 @@ public class SkinStorage {
 
 			try {
 				if (!playerFile.exists())
-					playerFile.createNewFile();
+					return null;
 
 				BufferedReader buf = new BufferedReader(new FileReader(playerFile));
 
@@ -258,9 +255,8 @@ public class SkinStorage {
 
 				buf.close();
 
-				if (skin.equalsIgnoreCase(name)) {
+				if (skin.equalsIgnoreCase(name))
 					playerFile.delete();
-				}
 
 				return skin;
 
