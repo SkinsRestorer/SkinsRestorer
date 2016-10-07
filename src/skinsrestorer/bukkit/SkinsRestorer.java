@@ -17,6 +17,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -24,6 +28,7 @@ import skinsrestorer.bukkit.commands.ClearCommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
+import skinsrestorer.bukkit.listeners.PacketListener;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -47,6 +52,8 @@ public class SkinsRestorer extends JavaPlugin {
 	public void onEnable() {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+		PacketListener.injectForAll();
 
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
@@ -109,6 +116,17 @@ public class SkinsRestorer extends JavaPlugin {
 					});
 				}
 			});
+
+			if (Config.CRASHSKULLFIX) {
+				Bukkit.getPluginManager().registerEvents(new Listener() {
+
+					@EventHandler(priority = EventPriority.LOWEST)
+					public void onJoin(PlayerJoinEvent e) {
+						PacketListener.inject(e.getPlayer());
+					}
+
+				}, this);
+			}
 
 			if (Config.UPDATER_ENABLED) {
 				if (checkVersion().equals(getVersion())) {
@@ -212,6 +230,11 @@ public class SkinsRestorer extends JavaPlugin {
 
 		});
 
+	}
+
+	@Override
+	public void onDisable() {
+		PacketListener.uninjectForAll();
 	}
 
 	public static SkinsRestorer getInstance() {

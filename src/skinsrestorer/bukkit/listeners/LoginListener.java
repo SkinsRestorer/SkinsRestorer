@@ -17,8 +17,10 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onLogin(PlayerLoginEvent e) {
+
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
+
 		Player p = e.getPlayer();
 
 		SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
@@ -26,6 +28,9 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent e) {
+		if (Config.CRASHSKULLFIX)
+			PacketListener.inject(e.getPlayer());
+
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 
