@@ -168,7 +168,7 @@ public class UniversalSkinFactory implements SkinFactory {
 						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 3,
 						ReflectionUtil.invokeMethod(CraftItemStack, null, "asNMSCopy",
 								new Class<?>[] { ItemStack.class },
-								new Object[] { player.getInventory().getLeggings() }));
+								new Object[] { player.getInventory().getChestplate() }));
 
 				leggings = ReflectionUtil.invokeConstructor(PlayOutEntityEquipment,
 						new Class<?>[] { int.class, int.class, ItemStack }, player.getEntityId(), 2,

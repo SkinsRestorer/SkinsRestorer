@@ -37,6 +37,7 @@ public class Config {
 	public static String CUSTOMSKINS_CLIENTTOKEN = null;
 	public static boolean UPDATER_ENABLED = true;
 	public static boolean AUTOUPDATE = true;
+	public static boolean CRASHSKULLFIX = false;
 
 	public static void load(InputStream is) {
 		config.copyDefaults(is);
@@ -64,12 +65,19 @@ public class Config {
 
 		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
 
-		if (config.get("Updater.AutoUpdate") == null) {
-			config.set("Updater.AutoUpdate", false);
+		/*
+		 * if (config.get("Updater.AutoUpdate") == null) {
+		 * config.set("Updater.AutoUpdate", false); config.save(); }
+		 * 
+		 * AUTOUPDATE = config.getBoolean("Updater.AutoUpdate");
+		 */
+
+		if (config.get("CrashSkullFix") == null) {
+			config.set("CrashSkullFix", false);
 			config.save();
 		}
 
-		AUTOUPDATE = config.getBoolean("Updater.AutoUpdate");
+		CRASHSKULLFIX = config.getBoolean("CrashSkullFix");
 
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
