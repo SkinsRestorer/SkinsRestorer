@@ -1,8 +1,5 @@
 package skinsrestorer.bukkit.listeners;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,47 +14,37 @@ public class PacketListener extends ChannelDuplexHandler {
 	@SuppressWarnings("unused")
 	private Player p;
 	private Class<?> PlayOutTileEntityData;
+	private Class<?> PlayOutPlayerInfo;
 
 	public PacketListener(Player p) {
 		this.p = p;
 		try {
 			PlayOutTileEntityData = ReflectionUtil.getNMSClass("PacketPlayOutTileEntityData");
+			PlayOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
 		} catch (Exception e) {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (PlayOutTileEntityData.isInstance(msg)) {
 
 			Object tag = ReflectionUtil.getObject(msg, "c");
-			Object owner = ReflectionUtil.invokeMethod(tag.getClass(), tag, "getCompound",
+			Object owtag = ReflectionUtil.invokeMethod(tag.getClass(), tag, "getCompound",
 					new Class<?>[] { String.class }, "Owner");
 
-			if (!owner.toString().isEmpty()) {
+			if (owtag != null) {
+				String owner = owtag.toString();
 
-				Object props = ReflectionUtil.invokeMethod(owner.getClass(), owner, "getCompound",
-						new Class<?>[] { String.class }, "Properties");
-
-				if (!props.toString().isEmpty()) {
-
-					Map<String, Object> map = (Map<String, Object>) ReflectionUtil.getObject(props, "map");
-
-					for (Entry<String, Object> entry : map.entrySet()) {
-
-						if (!entry.getKey().equals("textures"))
-							continue;
-
-						String value = entry.getValue().toString();
-						if (value.contains("\"\"") || !value.contains("Value:\"")) {
-							return;
-						}
-					}
-
-				}
+				if (owner.contains("\"\"") || (owner.contains("textures") && owner.contains("Signature:\"\"")))
+					return;
 			}
 
+		} else if (PlayOutPlayerInfo.isInstance(msg)) {
+			// Todo check for skin validity?
+			// Skins should never get sent with null property
+			// It never happens as I made it like that
+			// But you can never know amirite
 		}
 
 		super.write(ctx, msg, promise);
