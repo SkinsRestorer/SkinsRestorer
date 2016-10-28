@@ -36,7 +36,7 @@ public class MojangAPI {
 		String valend = "\"}]";
 
 		String value;
-
+		String signature;
 		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
 			output = readURL(Config.ALT_SKIN_PROPERTY_URL + skin).replace(" ", "");
@@ -47,19 +47,22 @@ public class MojangAPI {
 				throw new SkinRequestException(Locale.ALT_API_FAILED);
 
 			//TODO fix that shit (Dumb Th3Tr0LLeR can't fix it for the new URL..)
-			sigbeg = "\"signature\":\"";
-			mid = "\",\"name\":\"textures\",\"value\":\"";
-			valend = "\"}],\"properties_decoded";
+			sigbeg = "\",\"signature\":\"";
+			mid = "properties\":{\"name\":\"textures\",\"value\":\"";
+			valend = "\"},\"properties_decoded";
 
-			value = getStringBetween(output, mid, valend).replace("\\/", "/");
-
-			if (value.startsWith("{\"uuid\":\""))
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
+			value = getStringBetween(output, mid, sigbeg).replace("\\/", "/");
+            signature = getStringBetween(output, value+sigbeg, valend).replace("\\/", "/").replace(" ", "");
+            System.out.println(value);
+            System.out.println(signature);
+			
+			return SkinStorage.createProperty("textures", value, signature);
 		}
 
 		value = getStringBetween(output, mid, valend).replace("\\/", "/");
-		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
-
+		signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
+        System.out.println(value);
+        System.out.println(signature);
 		return SkinStorage.createProperty("textures", value, signature);
 	}
 
