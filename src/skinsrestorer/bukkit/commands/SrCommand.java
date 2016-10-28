@@ -70,7 +70,7 @@ public class SrCommand implements CommandExecutor {
 					Object props = null;
 
 					try {
-						props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+						props = MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
 						sender.sendMessage(e.getReason());
 						props = SkinStorage.getSkinData(skin);

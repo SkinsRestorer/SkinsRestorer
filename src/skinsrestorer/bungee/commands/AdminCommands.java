@@ -96,7 +96,7 @@ public class AdminCommands extends Command {
 					Property props = null;
 
 					try {
-						props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+						props = (Property) MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
 						p.sendMessage(e.getReason());
 						sender.sendMessage(e.getReason());
@@ -212,7 +212,7 @@ public class AdminCommands extends Command {
 						out.println();
 						out.println("Property output from MojangAPI (" + player1 + ") : ");
 
-						Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(player1));
+						Property props = (Property) MojangAPI.getSkinProperty(player1, MojangAPI.getUUID(player1));
 
 						out.println("Name: " + props.getName());
 						out.println("Value: " + props.getValue());

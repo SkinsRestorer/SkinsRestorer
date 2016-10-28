@@ -47,7 +47,7 @@ public class MessageListener implements Listener {
 					Object textures = null;
 
 					try {
-						textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+						textures = MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 
 						if (textures == null)
 							throw new SkinRequestException(Locale.NO_SKIN_DATA);

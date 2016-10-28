@@ -33,7 +33,7 @@ public class LoginListener implements Listener {
 			@Override
 			public void run() {
 				try {
-					Property props = (Property) MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					Property props = (Property) MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					SkinStorage.setSkinData(skin, props);
 				} catch (SkinRequestException ex) {
 				}
