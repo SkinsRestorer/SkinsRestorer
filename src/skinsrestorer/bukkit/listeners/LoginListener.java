@@ -20,7 +20,7 @@ public class LoginListener implements Listener {
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 
-		Player p = e.getPlayer();
+		final Player p = e.getPlayer();
 
 		SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
 
