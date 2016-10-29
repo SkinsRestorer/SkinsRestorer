@@ -14,8 +14,7 @@ public class Config {
 
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
-	public static String ALT_SKIN_PROPERTY_URL = "http://mcapi.ca/name/uuid/";
-	public static String ALT_UUID_URL = "http://mcapi.ca/uuid/player/";
+	public static String ALT_SKIN_PROPERTY_URL = "https://dev.mcapi.ca/profile/";
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
 	public static String MYSQL_PORT = "3306";
@@ -37,15 +36,12 @@ public class Config {
 	public static String CUSTOMSKINS_CLIENTTOKEN = null;
 	public static boolean UPDATER_ENABLED = true;
 	public static boolean AUTOUPDATE = true;
-	public static boolean CRASHSKULLFIX = false;
 
 	public static void load(InputStream is) {
 		config.copyDefaults(is);
 		config.reload();
 		DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
 		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
-		ALT_SKIN_PROPERTY_URL = config.getString("Alternatives.SkinPropertyURL", ALT_SKIN_PROPERTY_URL);
-		ALT_UUID_URL = config.getString("Alternatives.NEWUUID", ALT_UUID_URL);
 		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
 		DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
 		MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
@@ -77,7 +73,6 @@ public class Config {
 			config.save();
 		}
 
-		CRASHSKULLFIX = config.getBoolean("CrashSkullFix");
 
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {

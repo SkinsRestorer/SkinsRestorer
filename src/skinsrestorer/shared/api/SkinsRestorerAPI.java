@@ -38,7 +38,7 @@ public class SkinsRestorerAPI {
 					Object textures = null;
 
 					try {
-						textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(skinName));
+						textures = MojangAPI.getSkinProperty(skinName, MojangAPI.getUUID(skinName));
 
 						if (textures == null)
 							throw new SkinRequestException(Locale.NO_SKIN_DATA);

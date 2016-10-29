@@ -18,23 +18,6 @@ public class MojangAPI {
 
 	public static String getUUID(String name) throws SkinRequestException {
 		String output = readURL(uuidurl + name);
-
-		String idbeg = "\"uuid\":\"";
-		String idend = "\"}";
-
-			if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
-				output = readURL(Config.ALT_UUID_URL + name).replace(" ", "");
-
-				idbeg = "\"uuid\":\"";
-				idend = "\",\"id\":";
-
-				String response = getStringBetween(output, idbeg, idend);
-
-				if (response.startsWith("[{\"uuid\":null"))
-					throw new SkinRequestException(Locale.NOT_PREMIUM);
-
-				return response;
-		}
 		return output.substring(7, 39);
 	}
 
@@ -45,7 +28,7 @@ public class MojangAPI {
 	 * @return Property object (Mojang or Bungee)
 	 * 
 	 **/
-	public static Object getSkinProperty(String uuid) throws SkinRequestException {
+	public static Object getSkinProperty(String skin, String uuid) throws SkinRequestException {
 		String output = readURL(skinurl + uuid + "?unsigned=false");
 
 		String sigbeg = "[{\"signature\":\"";
@@ -53,29 +36,33 @@ public class MojangAPI {
 		String valend = "\"}]";
 
 		String value;
-
+		String signature;
 		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
 
-			output = readURL(Config.ALT_SKIN_PROPERTY_URL + uuid).replace(" ", "");
+			output = readURL(Config.ALT_SKIN_PROPERTY_URL + skin).replace(" ", "");
 
 			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
 
 			if (uid.toLowerCase().contains("null"))
 				throw new SkinRequestException(Locale.ALT_API_FAILED);
 
-			sigbeg = "\"signature\":\"";
-			mid = "\",\"name\":\"textures\",\"value\":\"";
-			valend = "\"}],\"properties_decoded";
+			//TODO fix that shit (Dumb Th3Tr0LLeR can't fix it for the new URL..)
+			sigbeg = "\",\"signature\":\"";
+			mid = "properties\":{\"name\":\"textures\",\"value\":\"";
+			valend = "\"},\"properties_decoded";
 
-			value = getStringBetween(output, mid, valend).replace("\\/", "/");
-
-			if (value.startsWith("{\"uuid\":\""))
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
+			value = getStringBetween(output, mid, sigbeg).replace("\\/", "/");
+            signature = getStringBetween(output, value+sigbeg, valend).replace("\\/", "/").replace(" ", "");
+            System.out.println(value);
+            System.out.println(signature);
+			
+			return SkinStorage.createProperty("textures", value, signature);
 		}
 
 		value = getStringBetween(output, mid, valend).replace("\\/", "/");
-		String signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
-
+		signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
+        System.out.println(value);
+        System.out.println(signature);
 		return SkinStorage.createProperty("textures", value, signature);
 	}
 

@@ -11,6 +11,7 @@ import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 public class LoginListener implements Listener {
@@ -28,9 +29,11 @@ public class LoginListener implements Listener {
 
 	@EventHandler
 	public void onJoin(final PlayerJoinEvent e) {
-		if (Config.CRASHSKULLFIX)
+			if (ReflectionUtil.serverVersion.contains("1_7")){
+				PacketListenerv1_7.inject(e.getPlayer());	
+			}else{
 			PacketListener.inject(e.getPlayer());
-
+			}
 		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 
@@ -46,7 +49,7 @@ public class LoginListener implements Listener {
 					if (skin == null || skin.isEmpty())
 						skin = e.getPlayer().getName();
 
-					Object props = MojangAPI.getSkinProperty(MojangAPI.getUUID(skin));
+					Object props = MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 
 					SkinStorage.setSkinData(skin, props);
 					SkinsRestorer.getInstance().getFactory().applySkin(p,

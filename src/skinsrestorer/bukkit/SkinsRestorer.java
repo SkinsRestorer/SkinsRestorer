@@ -29,6 +29,7 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.PacketListener;
+import skinsrestorer.bukkit.listeners.PacketListenerv1_7;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -53,8 +54,11 @@ public class SkinsRestorer extends JavaPlugin {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
+		if (ReflectionUtil.serverVersion.contains("1_7")){
+			PacketListenerv1_7.injectForAll();
+		}else{
 		PacketListener.injectForAll();
-
+		}
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
 			console.sendMessage(C.c("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :("));
@@ -117,16 +121,18 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 			});
 
-			if (Config.CRASHSKULLFIX) {
 				Bukkit.getPluginManager().registerEvents(new Listener() {
 
 					@EventHandler(priority = EventPriority.LOWEST)
 					public void onJoin(PlayerJoinEvent e) {
-						PacketListener.inject(e.getPlayer());
+						if (ReflectionUtil.serverVersion.contains("1_7")){
+						PacketListenerv1_7.inject(e.getPlayer());
+						}else{
+						PacketListener.inject(e.getPlayer());	
+						}
 					}
 
 				}, this);
-			}
 
 			if (Config.UPDATER_ENABLED) {
 				if (checkVersion().equals(getVersion())) {
@@ -219,7 +225,7 @@ public class SkinsRestorer extends JavaPlugin {
 				if (Config.DEFAULT_SKINS_ENABLED)
 					for (String skin : Config.DEFAULT_SKINS) {
 						try {
-							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
+							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
 							if (SkinStorage.getSkinData(skin) == null)
 								console.sendMessage(
@@ -234,7 +240,11 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
+		if (ReflectionUtil.serverVersion.contains("1_7")){
+			PacketListenerv1_7.uninjectForAll();
+		}else{
 		PacketListener.uninjectForAll();
+		}
 	}
 
 	public static SkinsRestorer getInstance() {
