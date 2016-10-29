@@ -11,6 +11,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,7 +26,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import skinsrestorer.bukkit.commands.ClearCommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
@@ -48,16 +49,17 @@ public class SkinsRestorer extends JavaPlugin {
 	private SkinFactory factory;
 	private MySQL mysql;
 	private boolean bungeeEnabled;
+	private ExecutorService exe;
 
 	@Override
 	public void onEnable() {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-		if (ReflectionUtil.serverVersion.contains("1_7")){
+		if (ReflectionUtil.serverVersion.contains("1_7")) {
 			PacketListenerv1_7.injectForAll();
-		}else{
-		PacketListener.injectForAll();
+		} else {
+			PacketListener.injectForAll();
 		}
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
@@ -121,18 +123,18 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 			});
 
-				Bukkit.getPluginManager().registerEvents(new Listener() {
+			Bukkit.getPluginManager().registerEvents(new Listener() {
 
-					@EventHandler(priority = EventPriority.LOWEST)
-					public void onJoin(PlayerJoinEvent e) {
-						if (ReflectionUtil.serverVersion.contains("1_7")){
+				@EventHandler(priority = EventPriority.LOWEST)
+				public void onJoin(PlayerJoinEvent e) {
+					if (ReflectionUtil.serverVersion.contains("1_7")) {
 						PacketListenerv1_7.inject(e.getPlayer());
-						}else{
-						PacketListener.inject(e.getPlayer());	
-						}
+					} else {
+						PacketListener.inject(e.getPlayer());
 					}
+				}
 
-				}, this);
+			}, this);
 
 			if (Config.UPDATER_ENABLED) {
 				if (checkVersion().equals(getVersion())) {
@@ -164,6 +166,8 @@ public class SkinsRestorer extends JavaPlugin {
 			return;
 		}
 
+		exe = Executors.newCachedThreadPool();
+
 		Config.load(getResource("config.yml"));
 		Locale.load();
 
@@ -173,55 +177,42 @@ public class SkinsRestorer extends JavaPlugin {
 		else
 			SkinStorage.init(getDataFolder());
 
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, CooldownStorage.cleanupCooldowns, 0, 60 * 20);
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 1 * 20);
 
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
-		getCommand("clearskin").setExecutor(new ClearCommand());
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
-		if (Config.UPDATER_ENABLED) {
-			if (checkVersion().equals(getVersion())) {
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-				console.sendMessage(ChatColor.GREEN + "    The latest version!");
-				console.sendMessage("");
-			} else {
-				/*
-				 * if (Config.AUTOUPDATE) { console.sendMessage("");
-				 * console.sendMessage(ChatColor.GREEN +
-				 * "    +===============+"); console.sendMessage(ChatColor.GREEN
-				 * + "    | SkinsRestorer |");
-				 * console.sendMessage(ChatColor.GREEN +
-				 * "    +===============+"); console.sendMessage("");
-				 * console.sendMessage(ChatColor.RED +
-				 * "    A new version is available!");
-				 * console.sendMessage(ChatColor.GREEN + "    Downloading...");
-				 * if (downloadUpdate()) { console.sendMessage(ChatColor.GREEN +
-				 * "    Done!"); console.sendMessage(ChatColor.GREEN +
-				 * "    Reloading plugin..."); Bukkit.reload(); return; } }
-				 */
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-				console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-				console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-				console.sendMessage("");
-			}
-		}
-
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+		exe.submit(new Runnable() {
 
 			@Override
 			public void run() {
+
+				if (Config.UPDATER_ENABLED) {
+					if (checkVersion().equals(getVersion())) {
+						console.sendMessage("");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage("");
+						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						console.sendMessage(ChatColor.GREEN + "    The latest version!");
+						console.sendMessage("");
+					} else {
+						console.sendMessage("");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage("");
+						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+						console.sendMessage(
+								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
+						console.sendMessage("");
+					}
+				}
+
 				if (Config.DEFAULT_SKINS_ENABLED)
 					for (String skin : Config.DEFAULT_SKINS) {
 						try {
@@ -240,15 +231,20 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (ReflectionUtil.serverVersion.contains("1_7")){
+		if (ReflectionUtil.serverVersion.contains("1_7")) {
 			PacketListenerv1_7.uninjectForAll();
-		}else{
-		PacketListener.uninjectForAll();
+		} else {
+			PacketListener.uninjectForAll();
 		}
+		exe.shutdown();
 	}
 
 	public static SkinsRestorer getInstance() {
 		return instance;
+	}
+
+	public ExecutorService getExecutor() {
+		return exe;
 	}
 
 	public String checkVersion() {

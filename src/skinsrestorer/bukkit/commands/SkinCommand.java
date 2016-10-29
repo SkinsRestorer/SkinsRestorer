@@ -41,10 +41,15 @@ public class SkinCommand implements CommandExecutor {
 
 		// Set Skin
 		else if (args.length > 0) {
-
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < args.length; i++)
-				sb.append(args[i]);
+				if (args.length == 1)
+					sb.append(args[i]);
+				else if (args.length > 1)
+					if (i + 1 == args.length)
+						sb.append(args[i]);
+					else
+						sb.append(args[i] + " ");
 
 			final String skin = sb.toString();
 
@@ -57,12 +62,12 @@ public class SkinCommand implements CommandExecutor {
 				}
 			}
 
-			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
+			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
 				return true;
 			}
 
-			CooldownStorage.setCooldown(p.getUniqueId(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
 			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
 
@@ -75,7 +80,7 @@ public class SkinCommand implements CommandExecutor {
 						props = MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
 						if (e.getReason().equals(Locale.NOT_PREMIUM))
-							CooldownStorage.resetCooldown(p.getUniqueId());
+							CooldownStorage.resetCooldown(p.getName());
 						p.sendMessage(e.getReason());
 						props = SkinStorage.getSkinData(skin);
 

@@ -66,12 +66,12 @@ public class PlayerCommands extends Command {
 				}
 			}
 
-			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.isAtCooldown(p.getUniqueId())) {
+			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
 				return;
 			}
 
-			CooldownStorage.setCooldown(p.getUniqueId(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
 			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
@@ -84,7 +84,7 @@ public class PlayerCommands extends Command {
 						props = (Property) MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					} catch (SkinRequestException e) {
 						if (e.getReason().equals(Locale.NOT_PREMIUM))
-							CooldownStorage.resetCooldown(p.getUniqueId());
+							CooldownStorage.resetCooldown(p.getName());
 						p.sendMessage(e.getReason());
 						props = (Property) SkinStorage.getSkinData(skin);
 

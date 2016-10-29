@@ -18,51 +18,52 @@ public class MojangAPI {
 
 	public static String getUUID(String name) throws SkinRequestException {
 		String output = readURL(uuidurl + name);
+
+		if (output.isEmpty())
+			throw new SkinRequestException(Locale.NOT_PREMIUM);
+		else if (output.contains("\"error\""))
+			throw new SkinRequestException(Locale.RATE_LIMITED);
+
 		return output.substring(7, 39);
 	}
 
 	/**
 	 * Returned object needs to be casted to either BungeeCord's property or
-	 * Mojang's property
+	 * Mojang's property (old or new)
 	 * 
-	 * @return Property object (Mojang or Bungee)
+	 * @return Property object (New Mojang, Old Mojang or Bungee)
 	 * 
 	 **/
 	public static Object getSkinProperty(String skin, String uuid) throws SkinRequestException {
 		String output = readURL(skinurl + uuid + "?unsigned=false");
 
-		String sigbeg = "[{\"signature\":\"";
+		String sigbeg = "\"signature\":\"";
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
 		String valend = "\"}]";
 
-		String value;
-		String signature;
-		if (output == null || output.isEmpty() || output.contains("TooManyRequestsException")) {
+		String signature = "", value = "";
+
+		// Remember kids, output will never, ever be null
+		if (output.isEmpty() || output.contains("\"error\"")) {
 
 			output = readURL(Config.ALT_SKIN_PROPERTY_URL + skin).replace(" ", "");
 
-			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"uuid_formatted");
+			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"id\":\"");
 
-			if (uid.toLowerCase().contains("null"))
+			if (output.isEmpty() || uid.toLowerCase().contains("null") || output.contains("\"error\""))
 				throw new SkinRequestException(Locale.ALT_API_FAILED);
 
-			//TODO fix that shit (Dumb Th3Tr0LLeR can't fix it for the new URL..)
 			sigbeg = "\",\"signature\":\"";
-			mid = "properties\":{\"name\":\"textures\",\"value\":\"";
-			valend = "\"},\"properties_decoded";
+			mid = "\"value\":\"";
+			valend = "\"},\"properties_";
 
-			value = getStringBetween(output, mid, sigbeg).replace("\\/", "/");
-            signature = getStringBetween(output, value+sigbeg, valend).replace("\\/", "/").replace(" ", "");
-            System.out.println(value);
-            System.out.println(signature);
-			
-			return SkinStorage.createProperty("textures", value, signature);
+			value = getStringBetween(output, mid, sigbeg);
+			signature = getStringBetween(output, sigbeg, valend);
+		} else {
+			value = getStringBetween(output, mid, valend);
+			signature = getStringBetween(output, sigbeg, mid);
 		}
 
-		value = getStringBetween(output, mid, valend).replace("\\/", "/");
-		signature = getStringBetween(output, sigbeg, mid).replace("\\/", "/");
-        System.out.println(value);
-        System.out.println(signature);
 		return SkinStorage.createProperty("textures", value, signature);
 	}
 
@@ -74,6 +75,7 @@ public class MojangAPI {
 			con.setRequestProperty("User-Agent", "SkinsRestorer");
 			con.setConnectTimeout(5000);
 			con.setReadTimeout(5000);
+			con.setDoOutput(true);
 
 			String line;
 			StringBuilder output = new StringBuilder();

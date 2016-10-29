@@ -1,8 +1,7 @@
 package skinsrestorer.bungee.listeners;
 
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.md_5.bungee.event.EventHandler;
@@ -16,29 +15,26 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 public class LoginListener implements Listener {
 
 	@EventHandler
-	public void onLogin(final LoginEvent e) {
-		if (Config.DISABLE_ONJOIN_SKINS || e.isCancelled())
+	public void onLogin(final PreLoginEvent e) {
+		if (Config.DISABLE_ONJOIN_SKINS)
 			return;
 
-		String skinname = SkinStorage.getPlayerSkin(e.getConnection().getName());
+		SkinApplier.applySkin(e.getConnection());
 
-		if (skinname == null || skinname.isEmpty())
-			skinname = e.getConnection().getName();
-
-		final String skin = skinname;
-
-		e.registerIntent(SkinsRestorer.getInstance());
-		ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+		SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
+					String skin = SkinStorage.getPlayerSkin(e.getConnection().getName());
+
+					if (skin == null)
+						skin = e.getConnection().getName();
+
 					Property props = (Property) MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
 					SkinStorage.setSkinData(skin, props);
 				} catch (SkinRequestException ex) {
 				}
-				e.completeIntent(SkinsRestorer.getInstance());
-
 			}
 		});
 	}
