@@ -9,19 +9,18 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
-import skinsrestorer.bungee.commands.ClearCommand;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
@@ -33,6 +32,7 @@ public class SkinsRestorer extends Plugin {
 	private static SkinsRestorer instance;
 	private MySQL mysql;
 	private boolean multibungee;
+	private ExecutorService exe;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -42,68 +42,53 @@ public class SkinsRestorer extends Plugin {
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();
 
+		exe = Executors.newCachedThreadPool();
+
 		if (Config.USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
 					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
 		else
 			SkinStorage.init(getDataFolder());
 
-		getProxy().getScheduler().schedule(this, CooldownStorage.cleanupCooldowns, 0, 1, TimeUnit.MINUTES);
-
 		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
-		this.getProxy().getPluginManager().registerCommand(this, new ClearCommand());
 		this.getProxy().registerChannel("SkinsRestorer");
 
 		multibungee = Config.MULTIBUNGEE_ENABLED
 				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
-		if (Config.UPDATER_ENABLED) {
-			if (checkVersion().equals(getVersion())) {
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-				console.sendMessage(ChatColor.GREEN + "    The latest version!");
-				console.sendMessage("");
-			} else {
-				/*
-				 * if (Config.AUTOUPDATE) { console.sendMessage("");
-				 * console.sendMessage(ChatColor.GREEN +
-				 * "    +===============+"); console.sendMessage(ChatColor.GREEN
-				 * + "    | SkinsRestorer |");
-				 * console.sendMessage(ChatColor.GREEN +
-				 * "    +===============+"); console.sendMessage("");
-				 * console.sendMessage(ChatColor.RED +
-				 * "    A new version is available!");
-				 * console.sendMessage(ChatColor.GREEN + "    Downloading...");
-				 * if (downloadUpdate()) { console.sendMessage(ChatColor.GREEN +
-				 * "    Done!"); console.sendMessage(ChatColor.RED +
-				 * "    Cant reload plugin on bungee!");
-				 * console.sendMessage(ChatColor.GREEN +
-				 * "    Update will be applied on restart..."); } } else {
-				 */
-				console.sendMessage("");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-				console.sendMessage(ChatColor.GREEN + "    +===============+");
-				console.sendMessage("");
-				console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-				console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-				console.sendMessage(ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
-				console.sendMessage("");
-				// }
-			}
-		}
-		getProxy().getScheduler().runAsync(this, new Runnable() {
+
+		exe.submit(new Runnable() {
 
 			@Override
 			public void run() {
+				if (Config.UPDATER_ENABLED) {
+					if (checkVersion().equals(getVersion())) {
+						console.sendMessage("");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage("");
+						console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
+						console.sendMessage("");
+						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+						console.sendMessage(ChatColor.GREEN + "    The latest version!");
+						console.sendMessage("");
+					} else {
+						console.sendMessage("");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
+						console.sendMessage(ChatColor.GREEN + "    +===============+");
+						console.sendMessage("");
+						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
+						console.sendMessage(
+								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
+						console.sendMessage("");
+					}
+				}
+
 				if (Config.DEFAULT_SKINS_ENABLED)
 					for (String skin : Config.DEFAULT_SKINS) {
 						try {
@@ -120,8 +105,17 @@ public class SkinsRestorer extends Plugin {
 
 	}
 
+	@Override
+	public void onDisable() {
+		exe.shutdown();
+	}
+
 	public static SkinsRestorer getInstance() {
 		return instance;
+	}
+
+	public ExecutorService getExecutor() {
+		return exe;
 	}
 
 	public String checkVersion() {
