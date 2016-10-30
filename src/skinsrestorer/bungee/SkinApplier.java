@@ -79,7 +79,7 @@ public class SkinApplier {
 	}
 
 	private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
-		if (p.isConnected() && p.getServer() != null && p.getServer().isConnected())
+		if (p == null || !p.isConnected() || p.getServer() == null || !p.getServer().isConnected())
 			return;
 
 		ByteArrayOutputStream b = new ByteArrayOutputStream();

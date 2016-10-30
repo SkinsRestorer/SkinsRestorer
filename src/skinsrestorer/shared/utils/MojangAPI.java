@@ -7,6 +7,8 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -59,6 +61,10 @@ public class MojangAPI {
 
 			value = getStringBetween(output, mid, sigbeg);
 			signature = getStringBetween(output, sigbeg, valend);
+
+			// Temporar fix for that mcapi BS
+			if (Base64Coder.decodeString(value).contains("\\/"))
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
 		} else {
 			value = getStringBetween(output, mid, valend);
 			signature = getStringBetween(output, sigbeg, mid);

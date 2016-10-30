@@ -50,6 +50,7 @@ public class SkinsRestorer extends JavaPlugin {
 	private MySQL mysql;
 	private boolean bungeeEnabled;
 	private ExecutorService exe;
+	private boolean outdated;
 
 	@Override
 	public void onEnable() {
@@ -138,6 +139,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 			if (Config.UPDATER_ENABLED) {
 				if (checkVersion().equals(getVersion())) {
+					outdated = false;
 					console.sendMessage("");
 					console.sendMessage(ChatColor.GREEN + "    +===============+");
 					console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -149,6 +151,7 @@ public class SkinsRestorer extends JavaPlugin {
 					console.sendMessage(ChatColor.GREEN + "    The latest version!");
 					console.sendMessage("");
 				} else {
+					outdated = true;
 					console.sendMessage("");
 					console.sendMessage(ChatColor.GREEN + "    +===============+");
 					console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -191,6 +194,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 				if (Config.UPDATER_ENABLED) {
 					if (checkVersion().equals(getVersion())) {
+						outdated = false;
 						console.sendMessage("");
 						console.sendMessage(ChatColor.GREEN + "    +===============+");
 						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -200,6 +204,7 @@ public class SkinsRestorer extends JavaPlugin {
 						console.sendMessage(ChatColor.GREEN + "    The latest version!");
 						console.sendMessage("");
 					} else {
+						outdated = true;
 						console.sendMessage("");
 						console.sendMessage(ChatColor.GREEN + "    +===============+");
 						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -231,11 +236,16 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (ReflectionUtil.serverVersion.contains("1_7")) {
-			PacketListenerv1_7.uninjectForAll();
-		} else {
-			PacketListener.uninjectForAll();
+		try {
+			if (ReflectionUtil.serverVersion.contains("1_7")) {
+				PacketListenerv1_7.uninjectForAll();
+			} else {
+				PacketListener.uninjectForAll();
+			}
+		} catch (Exception e) {
+
 		}
+
 		exe.shutdown();
 	}
 
@@ -245,6 +255,10 @@ public class SkinsRestorer extends JavaPlugin {
 
 	public ExecutorService getExecutor() {
 		return exe;
+	}
+
+	public boolean isOutdated() {
+		return outdated;
 	}
 
 	public String checkVersion() {

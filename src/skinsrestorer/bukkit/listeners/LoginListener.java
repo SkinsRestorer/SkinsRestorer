@@ -8,7 +8,9 @@ import org.bukkit.event.player.PlayerLoginEvent;
 
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
@@ -44,6 +46,10 @@ public class LoginListener implements Listener {
 			return;
 
 		final Player p = e.getPlayer();
+
+		if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
+				&& (p.isOp() || p.hasPermission("skinsrestorer.cmds")))
+			p.sendMessage(C.c(Locale.OUTDATED));
 
 		SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
 

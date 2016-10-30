@@ -2,11 +2,11 @@
  SkinsRestorer
 ------------------
 
- Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/Sponge servers
+ Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/Waterfall/Sponge servers
   		  
- Supported versions: 1.7.10 | 1.8.x | 1.9.x | 1.10.x 
+ Supported versions: 1.7.x | 1.8.x | 1.9.x | 1.10.x 
  
- Download Jar | 
+ Download Jar from Spigot| 
  https://www.spigotmc.org/resources/skinsrestorer.2124/
  
  Install instructions:
@@ -17,7 +17,7 @@
  2. Restart your server
  3. Edit config to your liking
  
-For BungeeCord:
+For BungeeCord/Waterfall:
 
  1. Place the plugin in plugins folder
  2. Restart your server
@@ -30,4 +30,3 @@ For BungeeCord:
  
  1. Place the plugin in your mods folder
  2. Restart your server
- 3. TODO: Config :c
