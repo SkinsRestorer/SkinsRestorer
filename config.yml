@@ -45,6 +45,3 @@ MySQL:
 Updater:
   Enabled: true
 #Enable or disable the updater check on enable.
-
-CrashSkullFix: false
-#Should SR attempt to prevent client crashes caused by broken skulls ?

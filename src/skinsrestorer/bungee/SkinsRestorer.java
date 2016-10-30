@@ -33,6 +33,7 @@ public class SkinsRestorer extends Plugin {
 	private MySQL mysql;
 	private boolean multibungee;
 	private ExecutorService exe;
+	private boolean outdated;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -65,6 +66,7 @@ public class SkinsRestorer extends Plugin {
 			public void run() {
 				if (Config.UPDATER_ENABLED) {
 					if (checkVersion().equals(getVersion())) {
+						outdated = false;
 						console.sendMessage("");
 						console.sendMessage(ChatColor.GREEN + "    +===============+");
 						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -76,6 +78,7 @@ public class SkinsRestorer extends Plugin {
 						console.sendMessage(ChatColor.GREEN + "    The latest version!");
 						console.sendMessage("");
 					} else {
+						outdated = true;
 						console.sendMessage("");
 						console.sendMessage(ChatColor.GREEN + "    +===============+");
 						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
@@ -112,6 +115,10 @@ public class SkinsRestorer extends Plugin {
 
 	public static SkinsRestorer getInstance() {
 		return instance;
+	}
+
+	public boolean isOutdated() {
+		return outdated;
 	}
 
 	public ExecutorService getExecutor() {

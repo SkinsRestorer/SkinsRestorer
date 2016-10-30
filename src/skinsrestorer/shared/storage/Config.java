@@ -68,12 +68,6 @@ public class Config {
 		 * AUTOUPDATE = config.getBoolean("Updater.AutoUpdate");
 		 */
 
-		if (config.get("CrashSkullFix") == null) {
-			config.set("CrashSkullFix", false);
-			config.save();
-		}
-
-
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
 			DEFAULT_SKINS = new ArrayList<>();
