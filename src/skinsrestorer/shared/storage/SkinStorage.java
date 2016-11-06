@@ -318,7 +318,7 @@ public class SkinStorage {
 	 * @return Property object
 	 * 
 	 **/
-	public static Object getOrCreateSkinForPlayer(String name) {
+	public static Object getOrCreateSkinForPlayer(final String name) {
 		String skin = getPlayerSkin(name);
 
 		if (skin == null)
@@ -331,8 +331,8 @@ public class SkinStorage {
 
 		}
 		// Schedule skin update for next login
-		String sname = skin;
-		Object oldprops = textures;
+		final String sname = skin;
+		final Object oldprops = textures;
 		exe.submit(new Runnable() {
 
 			@Override
