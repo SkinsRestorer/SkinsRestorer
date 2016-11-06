@@ -74,29 +74,15 @@ public class SkinCommand implements CommandExecutor {
 				@Override
 				public void run() {
 
-					Object props = null;
-
-					try {
-						props = MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin));
-					} catch (SkinRequestException e) {
-						if (e.getReason().equals(Locale.NOT_PREMIUM))
-							CooldownStorage.resetCooldown(p.getName());
-						p.sendMessage(e.getReason());
-						props = SkinStorage.getSkinData(skin);
-
-						if (props != null) {
-							SkinStorage.setPlayerSkin(p.getName(), skin);
-							SkinsRestorer.getInstance().getFactory().applySkin(p, props);
-							SkinsRestorer.getInstance().getFactory().updateSkin(p);
-							p.sendMessage(Locale.SKIN_CHANGE_SUCCESS_DATABASE);
+					if (SkinStorage.getSkinData(skin) == null)
+						try {
+							MojangAPI.getUUID(skin);
+						} catch (SkinRequestException e) {
+							p.sendMessage(e.getReason());
 							return;
 						}
-						return;
-					}
 
-					SkinStorage.setSkinData(skin, props);
 					SkinStorage.setPlayerSkin(p.getName(), skin);
-					SkinsRestorer.getInstance().getFactory().applySkin(p, props);
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;

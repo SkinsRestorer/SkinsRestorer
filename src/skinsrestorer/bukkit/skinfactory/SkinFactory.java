@@ -13,8 +13,12 @@ public interface SkinFactory {
 	 *            - Player
 	 * @param props
 	 *            - Property object
+	 * @param propertymap
+	 *            - Additional property map where props should be applied. Set
+	 *            to null if none. We use this for the propertymap inside
+	 *            PlayerInfo packet.
 	 */
-	public void applySkin(Player p, Object props);
+	public void applySkin(Player p, Object props, Object propertymap);
 
 	/**
 	 * Instantly updates player's skin

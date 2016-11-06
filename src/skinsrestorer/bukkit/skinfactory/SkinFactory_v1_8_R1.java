@@ -24,10 +24,12 @@ import skinsrestorer.bukkit.SkinsRestorer;
 public class SkinFactory_v1_8_R1 implements SkinFactory {
 
 	@Override
-	public void applySkin(Player p, Object props) {
-		PropertyMap propmap = ((CraftPlayer) p).getHandle().getProfile().getProperties();
-		propmap.get("textures").clear();
-		propmap.put("textures", (Property) props);
+	public void applySkin(Player p, Object props, Object propertymap) {
+		if (propertymap != null) {
+			PropertyMap propmap = (PropertyMap) propertymap;
+			propmap.get("textures").clear();
+			propmap.put("textures", (Property) props);
+		}
 	}
 
 	@SuppressWarnings("deprecation")

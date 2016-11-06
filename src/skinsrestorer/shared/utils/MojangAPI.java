@@ -63,7 +63,7 @@ public class MojangAPI {
 			signature = getStringBetween(output, sigbeg, valend);
 
 			// Temporar fix for that mcapi BS
-			if (Base64Coder.decodeString(value).contains("\\/"))
+			if (Base64Coder.decodeString(value).contains("}"))
 				throw new SkinRequestException(Locale.ALT_API_FAILED);
 		} else {
 			value = getStringBetween(output, mid, valend);
@@ -98,7 +98,7 @@ public class MojangAPI {
 		}
 	}
 
-	private static String getStringBetween(final String base, final String begin, final String end) {
+	public static String getStringBetween(final String base, final String begin, final String end) {
 		try {
 			Pattern patbeg = Pattern.compile(Pattern.quote(begin));
 			Pattern patend = Pattern.compile(Pattern.quote(end));

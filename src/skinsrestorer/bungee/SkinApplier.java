@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
@@ -44,38 +44,16 @@ public class SkinApplier {
 					else
 						sendUpdateRequest(p, null);
 				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		});
 
 	}
 
-	public static void applySkin(final PendingConnection p) {
-		SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(p.getName());
-
-					InitialHandler handler = (InitialHandler) p;
-
-					LoginResult profile = new LoginResult(p.getUniqueId().toString(), new Property[] { textures });
-					Property[] present = profile.getProperties();
-					Property[] newprops = new Property[present.length + 1];
-					System.arraycopy(present, 0, newprops, 0, present.length);
-					newprops[present.length] = textures;
-					profile.getProperties()[0].setName(newprops[0].getName());
-					profile.getProperties()[0].setValue(newprops[0].getValue());
-					profile.getProperties()[0].setSignature(newprops[0].getSignature());
-					ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
+	public static void applySkin(final String pname) {
+		ProxiedPlayer p = ProxyServer.getInstance().getPlayer(pname);
+		if (p != null)
+			applySkin(p);
 	}
 
 	private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
