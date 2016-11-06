@@ -66,17 +66,14 @@ public class UniversalSkinFactory implements SkinFactory {
 	}
 
 	@Override
-	public void applySkin(Player p, Object props) {
+	public void applySkin(Player p, Object props, Object propertymap) {
 		try {
-			Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
-			Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-
-			if (props != null) {
-				ReflectionUtil.invokeMethod(propmap, "clear");
-				ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put",
+			if (props != null && propertymap != null) {
+				ReflectionUtil.invokeMethod(propertymap, "clear");
+				ReflectionUtil.invokeMethod(propertymap.getClass(), propertymap, "put",
 						new Class[] { Object.class, Object.class }, new Object[] { "textures", props });
 			}
+
 		} catch (Exception e) {
 		}
 	}

@@ -5,9 +5,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.sql.rowset.CachedRowSet;
 
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
@@ -16,16 +23,22 @@ public class SkinStorage {
 	private static Class<?> property;
 	private static MySQL mysql;
 	private static File folder;
+	private static ExecutorService exe;
+	private static boolean isBungee;
 
 	static {
 		try {
+			exe = Executors.newCachedThreadPool();
 			property = Class.forName("com.mojang.authlib.properties.Property");
+			isBungee = false;
 		} catch (Exception e) {
 			try {
 				property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+				isBungee = true;
 			} catch (Exception ex) {
 				try {
 					property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
+					isBungee = false;
 				} catch (Exception exc) {
 					System.out.println(
 							"[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
@@ -46,6 +59,13 @@ public class SkinStorage {
 		SkinStorage.mysql = mysql;
 	}
 
+	/**
+	 * Removes custom players skin name from database
+	 * 
+	 * @param name
+	 *            - Players name
+	 * 
+	 **/
 	public static void removePlayerSkin(String name) {
 		name = name.toLowerCase();
 		if (Config.USE_MYSQL) {
@@ -60,6 +80,13 @@ public class SkinStorage {
 
 	}
 
+	/**
+	 * Removes skin data from database
+	 * 
+	 * @param name
+	 *            - Skin name
+	 * 
+	 **/
 	public static void removeSkinData(String name) {
 		name = name.toLowerCase();
 		if (Config.USE_MYSQL) {
@@ -74,6 +101,16 @@ public class SkinStorage {
 
 	}
 
+	/**
+	 * Saves custom player's skin name to dabase
+	 * 
+	 * @param name
+	 *            - Players name
+	 * 
+	 * @param skin
+	 *            - Skin name
+	 * 
+	 **/
 	public static void setPlayerSkin(String name, String skin) {
 		name = name.toLowerCase();
 		if (Config.USE_MYSQL) {
@@ -107,7 +144,12 @@ public class SkinStorage {
 	}
 
 	/**
-	 * Param textures is either BungeeCord's property or Mojang's property
+	 * Saves skin data to database
+	 * 
+	 * @param name
+	 *            - Skin name
+	 * @param textures
+	 *            - Property object
 	 * 
 	 **/
 	public static void setSkinData(String name, Object textures) {
@@ -152,15 +194,7 @@ public class SkinStorage {
 	}
 
 	/**
-	 * Returned object needs to be casted to either BungeeCord's property or
-	 * Mojang's property
-	 * 
-	 * @return com.mojang.authlib.properties.Property (1.8+)
-	 *         <p>
-	 *         net.md_5.bungee.connection.LoginResult.Property (BungeeCord)
-	 *         <p>
-	 *         net.minecraft.util.com.mojang.authlib.properties.Property
-	 *         (1.7.10)
+	 * Returns property object containing skin data of the wanted skin
 	 * 
 	 **/
 	public static Object getSkinData(String name) {
@@ -215,6 +249,11 @@ public class SkinStorage {
 		}
 	}
 
+	/*
+	 * Returns the custom skin name that player has set.
+	 * 
+	 * Returns null if player has no custom skin set. (even if its his own name)
+	 */
 	public static String getPlayerSkin(String name) {
 		name = name.toLowerCase();
 		if (Config.USE_MYSQL) {
@@ -269,38 +308,94 @@ public class SkinStorage {
 	}
 
 	/**
-	 * Returned object needs to be casted to either BungeeCord's property or
-	 * Mojang's property
+	 * This methods seeks out players actual skin (chosen or not) and returns
+	 * either null (if no skin data found) or the property object conatining all
+	 * the skin data.
 	 * 
-	 * @return com.mojang.authlib.properties.Property (1.8+)
-	 *         <p>
-	 *         net.md_5.bungee.connection.LoginResult.Property (BungeeCord)
-	 *         <p>
-	 *         net.minecraft.util.com.mojang.authlib.properties.Property
-	 *         (1.7.10)
+	 * Also, it schedules a skin update to stay up to date with skin changes.
+	 * 
+	 * 
+	 * @return Property object
 	 * 
 	 **/
 	public static Object getOrCreateSkinForPlayer(String name) {
-		name = name.toLowerCase();
 		String skin = getPlayerSkin(name);
 
-		if (skin == null || skin.isEmpty())
-			skin = name;
+		if (skin == null)
+			skin = name.toLowerCase();
 
 		Object textures = getSkinData(skin);
 		if (textures == null) {
-			if (Config.DEFAULT_SKINS_ENABLED) {
+			if (Config.DEFAULT_SKINS_ENABLED)
 				textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
-				if (textures == null)
-					textures = createProperty("textures", "", "");
-			} else
-				textures = createProperty("textures", "", "");
+
 		}
+		// Schedule skin update for next login
+		String sname = skin;
+		Object oldprops = textures;
+		exe.submit(new Runnable() {
+
+			@Override
+			public void run() {
+
+				try {
+					Object props = null;
+					try {
+						props = MojangAPI.getSkinProperty(sname, MojangAPI.getUUID(sname));
+					} catch (SkinRequestException e) {
+						return;
+					}
+
+					if (props == null)
+						return;
+
+					boolean shouldUpdate = false;
+
+					String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
+
+					String urlbeg = "url\":\"";
+					String urlend = "\"}}";
+
+					String newurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
+
+					try {
+						value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(oldprops, "getValue"));
+
+						String oldurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
+
+						shouldUpdate = !oldurl.equals(newurl);
+					} catch (Exception e) {
+						shouldUpdate = true;
+					}
+
+					setSkinData(sname, props);
+
+					if (shouldUpdate) {
+						if (isBungee)
+							skinsrestorer.bungee.SkinApplier.applySkin(name);
+						else
+							SkinsRestorer.getInstance().getFactory().updateSkin(org.bukkit.Bukkit.getPlayer(name));
+					}
+				} catch (Exception e) {
+				}
+			}
+
+		});
 
 		return textures;
 	}
 
+	/*
+	 * Return the executor service which hosts all the skin updates
+	 */
+	public static ExecutorService getExecutor() {
+		return exe;
+	}
+
 	/**
+	 * Returns property object with filled data depending on the server version
+	 * and type
+	 * 
 	 * 
 	 * @param name
 	 * @param value

@@ -15,7 +15,6 @@ public class Locale {
 	public static String NOT_ONLINE = "&cPlayer is not online!";
 	public static String SKIN_COOLDOWN = "&cYou can change your skin only once per %s seconds.";
 	public static String SKIN_CHANGE_SUCCESS = "&aYour skin has been updated.";
-	public static String SKIN_CHANGE_SUCCESS_DATABASE = "&aYour skin has been updated from database.";
 
 	public static String PLAYER_HAS_NO_PERMISSION = "&cYou don't have permission to do this.";
 	public static String SKIN_DISABLED = "&cThis skin is disabled by an Administrator.";
@@ -34,7 +33,6 @@ public class Locale {
 	public static String ADMIN_SET_SKIN = "&aYou set %player's skin.";
 	public static String ADMIN_HELP = "&a&m-------------&r&8[ &9SkinsRestorer Admin &8]&a&m-------------&r\n &9/skinsrestorer set <player> <skin name> &9-&a Sets Player's skin.\n&9/skinsrestorer drop <player> &9-&a Drops player skin data.\n &9/skinsrestorer reload &9- &aReloads the config and locale\n &9/skinsrestorer props [player] &9- &aDisplays the players actual skin as properties";;
 	public static String RELOAD = "&aConfig and Locale has been reloaded!";
-	public static String RELOAD_SKINS = "&aThe skins menu has been reloaded!";
 	public static String NO_SKIN_DATA = "&cNo skin data acquired! Does this player have a skin?";
 
 	public static String OUTDATED = "&4You are running an outdated version of SKINSRESTORER!\n&cPlease update to latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";

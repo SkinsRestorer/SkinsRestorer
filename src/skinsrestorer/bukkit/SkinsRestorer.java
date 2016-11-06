@@ -11,8 +11,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,7 +28,6 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.PacketListener;
-import skinsrestorer.bukkit.listeners.PacketListenerv1_7;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -49,7 +46,6 @@ public class SkinsRestorer extends JavaPlugin {
 	private SkinFactory factory;
 	private MySQL mysql;
 	private boolean bungeeEnabled;
-	private ExecutorService exe;
 	private boolean outdated;
 
 	@Override
@@ -57,11 +53,9 @@ public class SkinsRestorer extends JavaPlugin {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-		if (ReflectionUtil.serverVersion.contains("1_7")) {
-			PacketListenerv1_7.injectForAll();
-		} else {
-			PacketListener.injectForAll();
-		}
+		for (Player p : Bukkit.getOnlinePlayers())
+			PacketListener.inject(p);
+
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
 			console.sendMessage(C.c("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :("));
@@ -111,7 +105,12 @@ public class SkinsRestorer extends JavaPlugin {
 										Object textures = SkinStorage.createProperty(in.readUTF(), in.readUTF(),
 												in.readUTF());
 
-										factory.applySkin(player, textures);
+										Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+										Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+										Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile,
+												"getProperties");
+
+										factory.applySkin(player, textures, propmap);
 									} catch (Exception e) {
 									}
 									factory.updateSkin(player);
@@ -128,11 +127,8 @@ public class SkinsRestorer extends JavaPlugin {
 
 				@EventHandler(priority = EventPriority.LOWEST)
 				public void onJoin(PlayerJoinEvent e) {
-					if (ReflectionUtil.serverVersion.contains("1_7")) {
-						PacketListenerv1_7.inject(e.getPlayer());
-					} else {
-						PacketListener.inject(e.getPlayer());
-					}
+					PacketListener.inject(e.getPlayer());
+
 				}
 
 			}, this);
@@ -169,8 +165,6 @@ public class SkinsRestorer extends JavaPlugin {
 			return;
 		}
 
-		exe = Executors.newCachedThreadPool();
-
 		Config.load(getResource("config.yml"));
 		Locale.load();
 
@@ -187,7 +181,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
 
-		exe.submit(new Runnable() {
+		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 
 			@Override
 			public void run() {
@@ -237,24 +231,14 @@ public class SkinsRestorer extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		try {
-			if (ReflectionUtil.serverVersion.contains("1_7")) {
-				PacketListenerv1_7.uninjectForAll();
-			} else {
-				PacketListener.uninjectForAll();
-			}
+			for (Player p : Bukkit.getOnlinePlayers())
+				PacketListener.uninject(p);
 		} catch (Exception e) {
-
 		}
-
-		exe.shutdown();
 	}
 
 	public static SkinsRestorer getInstance() {
 		return instance;
-	}
-
-	public ExecutorService getExecutor() {
-		return exe;
 	}
 
 	public boolean isOutdated() {
