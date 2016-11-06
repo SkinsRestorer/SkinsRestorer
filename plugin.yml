@@ -1,5 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
+version: 12.9-BETA
 author: Blackfire62,Th3Tr0LLeR
 commands:
   skinsrestorer:
