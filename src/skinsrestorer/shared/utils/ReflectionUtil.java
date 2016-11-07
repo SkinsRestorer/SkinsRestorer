@@ -7,8 +7,6 @@ import java.lang.reflect.Modifier;
 
 import org.bukkit.Bukkit;
 
-/** Class by Blackfire62 **/
-
 public class ReflectionUtil {
 
 	public static final String serverVersion = null;
@@ -29,11 +27,15 @@ public class ReflectionUtil {
 		} catch (Exception e) {
 			f = clazz.getField(fname);
 		}
+		setFieldAccessible(f);
+		return f;
+	}
+
+	public static void setFieldAccessible(Field f) throws Exception {
 		f.setAccessible(true);
 		Field modifiers = Field.class.getDeclaredField("modifiers");
 		modifiers.setAccessible(true);
 		modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-		return f;
 	}
 
 	public static Object getObject(Object obj, String fname) throws Exception {
@@ -60,17 +62,7 @@ public class ReflectionUtil {
 			try {
 				m = clazz.getMethod(mname);
 			} catch (Exception ex) {
-				for (Method me : clazz.getDeclaredMethods()) {
-					if (me.getName().equalsIgnoreCase(mname))
-						m = me;
-					break;
-				}
-				if (m == null)
-					for (Method me : clazz.getMethods()) {
-						if (me.getName().equalsIgnoreCase(mname))
-							m = me;
-						break;
-					}
+				return m;
 			}
 		}
 		m.setAccessible(true);
@@ -85,17 +77,7 @@ public class ReflectionUtil {
 			try {
 				m = clazz.getMethod(mname, args);
 			} catch (Exception ex) {
-				for (Method me : clazz.getDeclaredMethods()) {
-					if (me.getName().equalsIgnoreCase(mname))
-						m = me;
-					break;
-				}
-				if (m == null)
-					for (Method me : clazz.getMethods()) {
-						if (me.getName().equalsIgnoreCase(mname))
-							m = me;
-						break;
-					}
+				return m;
 			}
 		}
 		m.setAccessible(true);
@@ -106,6 +88,28 @@ public class ReflectionUtil {
 		Constructor<?> c = clazz.getConstructor(args);
 		c.setAccessible(true);
 		return c;
+	}
+
+	public static Object getFirstObject(Class<?> clazz, Class<?> objclass, Object instance) throws Exception {
+		Field f = null;
+		for (Field fi : clazz.getDeclaredFields()) {
+			if (fi.getType().equals(objclass)) {
+				f = fi;
+				break;
+			}
+		}
+
+		if (f == null) {
+			for (Field fi : clazz.getFields()) {
+				if (fi.getType().equals(objclass)) {
+					f = fi;
+					break;
+				}
+			}
+		}
+
+		setFieldAccessible(f);
+		return f.get(instance);
 	}
 
 	public static Enum<?> getEnum(Class<?> clazz, String enumname, String constant) throws Exception {

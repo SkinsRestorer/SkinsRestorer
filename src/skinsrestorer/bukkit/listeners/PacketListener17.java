@@ -1,58 +1,52 @@
 package skinsrestorer.bukkit.listeners;
 
-import java.util.List;
-
 import org.bukkit.entity.Player;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
+import net.minecraft.util.io.netty.channel.Channel;
+import net.minecraft.util.io.netty.channel.ChannelDuplexHandler;
+import net.minecraft.util.io.netty.channel.ChannelHandlerContext;
+import net.minecraft.util.io.netty.channel.ChannelPromise;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-public class PacketListener extends ChannelDuplexHandler {
+public class PacketListener17 extends ChannelDuplexHandler {
 
 	private Player p;
 	private Class<?> PlayOutTileEntityData;
 	private Class<?> PlayOutPlayerInfo;
-	private Enum<?> ADD_PLAYER;
 
-	public PacketListener(Player p) {
+	public PacketListener17(Player p) {
 		this.p = p;
 		try {
 			PlayOutTileEntityData = ReflectionUtil.getNMSClass("PacketPlayOutTileEntityData");
 			PlayOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
-			ADD_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
 		} catch (Exception e) {
 		}
 	}
 
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		if (PlayOutTileEntityData.isInstance(msg)) {
+		try {
+			if (PlayOutTileEntityData.isInstance(msg)) {
 
-			Object tag = ReflectionUtil.getObject(msg, "c");
-			Object owtag = ReflectionUtil.invokeMethod(tag.getClass(), tag, "getCompound",
-					new Class<?>[] { String.class }, "Owner");
+				Object tag = ReflectionUtil.getObject(msg, "e");
+				Object owtag = ReflectionUtil.invokeMethod(tag.getClass(), tag, "getCompound",
+						new Class<?>[] { String.class }, "Owner");
 
-			if (owtag != null) {
-				String owner = owtag.toString();
+				if (owtag != null) {
+					String owner = owtag.toString();
 
-				if (owner.contains("\"\"") || (owner.contains("textures") && owner.contains("Signature:\"\"")))
-					return;
-			}
+					if (owner.contains("\"\"") || (owner.contains("textures") && owner.contains("Signature:\"\"")))
+						return;
+				}
 
-		} else if (PlayOutPlayerInfo.isInstance(msg)) {
+			} else if (PlayOutPlayerInfo.isInstance(msg)) {
+				int action = (int) ReflectionUtil.getObject(msg, "action");
 
-			Object action = ReflectionUtil.getObject(msg, "a");
+				if (action == 0) {
 
-			if (ADD_PLAYER.equals(action)) {
-				List<?> playerInfos = (List<?>) ReflectionUtil.getObject(msg, "b");
-
-				for (Object data : playerInfos) {
-					Object profile = ReflectionUtil.getObject(data, "d");
+					Object profile = ReflectionUtil.getObject(msg, "player");
 					// UUID id = (UUID) ReflectionUtil.getObject(profile, "id");
 					String name = (String) ReflectionUtil.getObject(profile, "name");
 					Object propmap = ReflectionUtil.getObject(profile, "properties");
@@ -64,6 +58,7 @@ public class PacketListener extends ChannelDuplexHandler {
 						} catch (Exception e) {
 						}
 					} else {
+
 						try {
 							String skin = SkinStorage.getPlayerSkin(name);
 							if (skin == null)
@@ -74,25 +69,28 @@ public class PacketListener extends ChannelDuplexHandler {
 						} catch (Exception e) {
 						}
 					}
+
 				}
 			}
 
+			super.write(ctx, msg, promise);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		super.write(ctx, msg, promise);
 	}
 
 	public static void inject(Player p) {
 		try {
-			Object craftHandle = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
 			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
 			Channel channel = (Channel) ReflectionUtil.getFirstObject(manager.getClass(), Channel.class, manager);
 
-			if (channel.pipeline().context("PacketListener") != null)
-				channel.pipeline().remove("PacketListener");
+			if (channel.pipeline().context("PacketListener17") != null)
+				channel.pipeline().remove("PacketListener17");
 
-			channel.pipeline().addAfter("encoder", "PacketListener", new PacketListener(p));
+			channel.pipeline().addAfter("encoder", "PacketListener17", new PacketListener17(p));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -100,13 +98,14 @@ public class PacketListener extends ChannelDuplexHandler {
 
 	public static void uninject(Player p) {
 		try {
-			Object craftHandle = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
+			Object craftOnline = ReflectionUtil.getBukkitClass("entity.CraftPlayer").cast(p);
+			Object craftHandle = ReflectionUtil.invokeMethod(craftOnline.getClass(), craftOnline, "getHandle");
 			Object playerCon = ReflectionUtil.getField(craftHandle.getClass(), "playerConnection").get(craftHandle);
 			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
 			Channel channel = (Channel) ReflectionUtil.getFirstObject(manager.getClass(), Channel.class, manager);
 
-			if (channel.pipeline().context("PacketListener") != null)
-				channel.pipeline().remove("PacketListener");
+			if (channel.pipeline().context("PacketListener17") != null)
+				channel.pipeline().remove("PacketListener17");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

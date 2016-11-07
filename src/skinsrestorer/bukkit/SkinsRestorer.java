@@ -28,6 +28,7 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listeners.LoginListener;
 import skinsrestorer.bukkit.listeners.PacketListener;
+import skinsrestorer.bukkit.listeners.PacketListener17;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -53,8 +54,13 @@ public class SkinsRestorer extends JavaPlugin {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
-		for (Player p : Bukkit.getOnlinePlayers())
-			PacketListener.inject(p);
+		if (ReflectionUtil.serverVersion.contains("1_7")) {
+			for (Player p : Bukkit.getOnlinePlayers())
+				PacketListener17.inject(p);
+		} else {
+			for (Player p : Bukkit.getOnlinePlayers())
+				PacketListener.inject(p);
+		}
 
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
@@ -230,10 +236,12 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		try {
+		if (ReflectionUtil.serverVersion.contains("1_7")) {
+			for (Player p : Bukkit.getOnlinePlayers())
+				PacketListener17.uninject(p);
+		} else {
 			for (Player p : Bukkit.getOnlinePlayers())
 				PacketListener.uninject(p);
-		} catch (Exception e) {
 		}
 	}
 
