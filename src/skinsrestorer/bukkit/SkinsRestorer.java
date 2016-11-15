@@ -133,7 +133,10 @@ public class SkinsRestorer extends JavaPlugin {
 
 				@EventHandler(priority = EventPriority.LOWEST)
 				public void onJoin(PlayerJoinEvent e) {
-					PacketListener.inject(e.getPlayer());
+					if (ReflectionUtil.serverVersion.contains("1_7"))
+						PacketListener17.inject(e.getPlayer());
+					else
+						PacketListener.inject(e.getPlayer());
 
 				}
 
