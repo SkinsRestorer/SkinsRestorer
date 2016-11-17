@@ -26,9 +26,8 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
-import skinsrestorer.bukkit.listeners.LoginListener;
-import skinsrestorer.bukkit.listeners.PacketListener;
-import skinsrestorer.bukkit.listeners.PacketListener17;
+import skinsrestorer.bukkit.packet.PacketListener;
+import skinsrestorer.bukkit.packet.PacketListener17;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -48,19 +47,20 @@ public class SkinsRestorer extends JavaPlugin {
 	private MySQL mysql;
 	private boolean bungeeEnabled;
 	private boolean outdated;
+	private boolean deprecated;
 
 	@Override
 	public void onEnable() {
 		instance = this;
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
+		deprecated = ReflectionUtil.serverVersion.contains("1_7");
 
-		if (ReflectionUtil.serverVersion.contains("1_7")) {
+		if (deprecated)
 			for (Player p : Bukkit.getOnlinePlayers())
 				PacketListener17.inject(p);
-		} else {
+		else
 			for (Player p : Bukkit.getOnlinePlayers())
 				PacketListener.inject(p);
-		}
 
 		try {
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
@@ -68,7 +68,6 @@ public class SkinsRestorer extends JavaPlugin {
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		} catch (Exception e) {
-
 			try {
 				factory = (SkinFactory) Class
 						.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
@@ -188,7 +187,21 @@ public class SkinsRestorer extends JavaPlugin {
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
 
-		Bukkit.getPluginManager().registerEvents(new LoginListener(), this);
+		Bukkit.getPluginManager().registerEvents(new Listener() {
+			@EventHandler(priority = EventPriority.HIGHEST)
+			public void onJoin(final PlayerJoinEvent e) {
+				final Player p = e.getPlayer();
+
+				if (deprecated)
+					PacketListener17.inject(p);
+				else
+					PacketListener.inject(p);
+
+				if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
+						&& (p.isOp() || p.hasPermission("skinsrestorer.cmds")))
+					p.sendMessage(C.c(Locale.OUTDATED));
+			}
+		}, this);
 
 		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 
@@ -231,6 +244,15 @@ public class SkinsRestorer extends JavaPlugin {
 										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
 						}
 					}
+
+				// For my testing, do not touch
+				/*
+				 * try { AuthSession as = MojangAuthAPI.authenticate("username",
+				 * "password");
+				 * 
+				 * System.out.println(MojangAuthAPI.uploadSkin(as.getId(),
+				 * as.getAuthToken(), true)); } catch (Exception e) { }
+				 */
 			}
 
 		});
@@ -239,17 +261,21 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if (ReflectionUtil.serverVersion.contains("1_7")) {
+		if (deprecated)
 			for (Player p : Bukkit.getOnlinePlayers())
 				PacketListener17.uninject(p);
-		} else {
+		else
 			for (Player p : Bukkit.getOnlinePlayers())
 				PacketListener.uninject(p);
-		}
+
 	}
 
 	public static SkinsRestorer getInstance() {
 		return instance;
+	}
+
+	public boolean isDeprecated() {
+		return outdated;
 	}
 
 	public boolean isOutdated() {

@@ -3,7 +3,6 @@ package skinsrestorer.bukkit.commands;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,15 +22,14 @@ public class SkinCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
 
 		if (!(sender instanceof Player)) {
-			sender.sendMessage(ChatColor.RED + "These commands are only for players");
+			sender.sendMessage(Locale.NOT_PLAYER);
 			return true;
 		}
 
 		final Player p = (Player) sender;
 
 		if (!p.hasPermission("skinsrestorer.playercmds")) {
-			p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ Locale.PLAYER_HAS_NO_PERMISSION);
+			p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 

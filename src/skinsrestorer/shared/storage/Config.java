@@ -28,12 +28,12 @@ public class Config {
 	public static List<String> DEFAULT_SKINS = null;
 	public static List<String> DISABLED_SKINS = null;
 	public static boolean MULTIBUNGEE_ENABLED = false;
-	public static String CUSTOMSKINS_USERNAME = null;
-	public static String CUSTOMSKINS_PASSWORD = null;
-	public static String CUSTOMSKINS_NAME = null;
-	public static String CUSTOMSKINS_ID = null;
-	public static String CUSTOMSKINS_AUTHTOKEN = null;
-	public static String CUSTOMSKINS_CLIENTTOKEN = null;
+	public static String CUSTOMSKINS_USERNAME = "username";
+	public static String CUSTOMSKINS_PASSWORD = "password";
+	public static String CUSTOMSKINS_NAME = "";
+	public static String CUSTOMSKINS_ID = "";
+	public static String CUSTOMSKINS_AUTHTOKEN = "";
+	public static String CUSTOMSKINS_CLIENTTOKEN = "";
 	public static boolean UPDATER_ENABLED = true;
 	public static boolean AUTOUPDATE = true;
 
@@ -82,14 +82,16 @@ public class Config {
 			config.set("DisabledSkins.Names", DISABLED_SKINS.toArray());
 		}
 
-		/*
-		 * CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
-		 * CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");
-		 * CUSTOMSKINS_NAME = config.getString("CustomSkins.Name");
-		 * CUSTOMSKINS_ID = config.getString("CustomSkins.ID");
-		 * CUSTOMSKINS_AUTHTOKEN = config.getString("CustomSkins.Authtoken");
-		 * CUSTOMSKINS_CLIENTTOKEN =
-		 * config.getString("CustomSkins.Clienttoken");
-		 */
+		try {
+			CUSTOMSKINS_USERNAME = config.getString("CustomSkins.Username");
+			CUSTOMSKINS_PASSWORD = config.getString("CustomSkins.Password");
+			CUSTOMSKINS_NAME = config.getString("CustomSkins.Name");
+			CUSTOMSKINS_ID = config.getString("CustomSkins.ID");
+			CUSTOMSKINS_AUTHTOKEN = config.getString("CustomSkins.Authtoken");
+			CUSTOMSKINS_CLIENTTOKEN = config.getString("CustomSkins.Clienttoken");
+		} catch (Exception e) {
+
+		}
+
 	}
 }

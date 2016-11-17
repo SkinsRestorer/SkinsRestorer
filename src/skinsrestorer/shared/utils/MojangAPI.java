@@ -18,6 +18,15 @@ public class MojangAPI {
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
+	/**
+	 * 
+	 * @param name
+	 *            - Name of the player
+	 * @return Dash-less UUID (String)
+	 * 
+	 * @throws SkinRequestException
+	 *             - If player is NOT_PREMIUM or server is RATE_LIMITED
+	 */
 	public static String getUUID(String name) throws SkinRequestException {
 		String output = readURL(uuidurl + name);
 
