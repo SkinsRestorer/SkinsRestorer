@@ -1,4 +1,4 @@
-package skinsrestorer.bukkit.listeners;
+package skinsrestorer.bukkit.packet;
 
 import org.bukkit.entity.Player;
 
@@ -87,10 +87,10 @@ public class PacketListener17 extends ChannelDuplexHandler {
 			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
 			Channel channel = (Channel) ReflectionUtil.getFirstObject(manager.getClass(), Channel.class, manager);
 
-			if (channel.pipeline().context("PacketListener17") != null)
-				channel.pipeline().remove("PacketListener17");
+			if (channel.pipeline().context("SkinsRestorer-Listener") != null)
+				channel.pipeline().remove("SkinsRestorer-Listener");
 
-			channel.pipeline().addAfter("encoder", "PacketListener17", new PacketListener17(p));
+			channel.pipeline().addBefore("packet_handler", "SkinsRestorer-Listener", new PacketListener17(p));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,8 +104,8 @@ public class PacketListener17 extends ChannelDuplexHandler {
 			Object manager = ReflectionUtil.getField(playerCon.getClass(), "networkManager").get(playerCon);
 			Channel channel = (Channel) ReflectionUtil.getFirstObject(manager.getClass(), Channel.class, manager);
 
-			if (channel.pipeline().context("PacketListener17") != null)
-				channel.pipeline().remove("PacketListener17");
+			if (channel.pipeline().context("SkinsRestorer-Listener") != null)
+				channel.pipeline().remove("SkinsRestorer-Listener");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

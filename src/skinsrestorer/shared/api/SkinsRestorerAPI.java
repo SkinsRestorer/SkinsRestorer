@@ -6,7 +6,6 @@ import java.io.DataOutputStream;
 import org.bukkit.Bukkit;
 
 import net.minecraft.util.com.google.common.collect.Iterables;
-import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -35,20 +34,15 @@ public class SkinsRestorerAPI {
 				@Override
 				public void run() {
 
-					Object textures = null;
+					if (SkinStorage.getSkinData(skinName) == null)
+						try {
+							MojangAPI.getUUID(skinName);
+						} catch (SkinRequestException e) {
+							e.printStackTrace();
+							return;
+						}
 
-					try {
-						textures = MojangAPI.getSkinProperty(skinName, MojangAPI.getUUID(skinName));
-
-						if (textures == null)
-							throw new SkinRequestException(Locale.NO_SKIN_DATA);
-
-						SkinStorage.setSkinData(skinName, textures);
-						SkinStorage.setPlayerSkin(playerName, skinName);
-					} catch (SkinRequestException e) {
-						SkinStorage.setPlayerSkin(playerName, skinName);
-					}
-
+					SkinStorage.setPlayerSkin(playerName, skinName);
 				}
 
 			}).run();

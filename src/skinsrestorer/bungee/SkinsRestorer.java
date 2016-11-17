@@ -15,14 +15,17 @@ import java.util.concurrent.Executors;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.event.EventHandler;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
-import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -51,7 +54,21 @@ public class SkinsRestorer extends Plugin {
 		else
 			SkinStorage.init(getDataFolder());
 
-		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
+		this.getProxy().getPluginManager().registerListener(this, new Listener() {
+
+			@EventHandler
+			public void onPostLogin(final PostLoginEvent e) {
+				if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
+						&& (e.getPlayer().hasPermission("skinsrestorer.cmds")))
+					e.getPlayer().sendMessage(C.c(Locale.OUTDATED));
+
+				if (Config.DISABLE_ONJOIN_SKINS)
+					return;
+
+				SkinApplier.applySkin(e.getPlayer());
+			}
+
+		});
 		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
 		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
 		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());

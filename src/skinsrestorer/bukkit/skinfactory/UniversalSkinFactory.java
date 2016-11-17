@@ -221,7 +221,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
 			// We finished defining packets, now lets send em
 
-			for (Player pOnline : player.getWorld().getPlayers()) {
+			for (Player pOnline : Bukkit.getOnlinePlayers()) {
 				final Object craftHandle = ReflectionUtil.invokeMethod(pOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 

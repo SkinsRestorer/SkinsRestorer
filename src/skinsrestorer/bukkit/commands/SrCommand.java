@@ -25,8 +25,7 @@ public class SrCommand implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
 		if (!sender.hasPermission("skinsrestorer.cmds") && !sender.isOp()) {
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ Locale.PLAYER_HAS_NO_PERMISSION));
+			sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 
@@ -149,16 +148,17 @@ public class SrCommand implements CommandExecutor {
 					String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
 					String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
 
-					String decoded = Base64Coder.decodeString(value);
-
 					ConsoleCommandSender cons = Bukkit.getConsoleSender();
 
 					cons.sendMessage(C.c("\n&aName: &8" + name));
-					cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
 					cons.sendMessage(C.c("\n&aValue : &8" + value));
 					cons.sendMessage(C.c("\n&aSignature : &8" + signature));
 
+					String decoded = Base64Coder.decodeString(value);
+					cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
+
 					sender.sendMessage(C.c("\n&e" + decoded));
+					sender.sendMessage(C.c("&cMore info in console!"));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

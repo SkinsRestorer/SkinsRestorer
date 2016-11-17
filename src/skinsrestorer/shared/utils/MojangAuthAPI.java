@@ -1,18 +1,13 @@
 package skinsrestorer.shared.utils;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.File;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.net.URLEncoder;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -39,10 +34,10 @@ public class MojangAuthAPI {
 		String clientEnd = "\",\"selectedProfile\"";
 
 		// What we are looking for
-		String authtoken = getStringBetween(output, authBeg, authEnd);
+		String authtoken = MojangAPI.getStringBetween(output, authBeg, authEnd);
 		// Getting the client token just for the sake of comparing with our
 		// generated one
-		String clienttoken = getStringBetween(output, authEnd, clientEnd);
+		String clienttoken = MojangAPI.getStringBetween(output, authEnd, clientEnd);
 
 		if (!clienttoken.equalsIgnoreCase(genClientToken))
 			throw new Exception("Client tokens dont match! Wtf \n" + clienttoken + "\n" + genClientToken);
@@ -53,93 +48,36 @@ public class MojangAuthAPI {
 
 		// There are more instances of the same pattern, better be sure to get
 		// the right one
-		String id = getStringBetween(output, idBeg, nameBeg);
-		String name = getStringBetween(output, idBeg + id + nameBeg, nameEnd);
+		String id = MojangAPI.getStringBetween(output, idBeg, nameBeg);
+		String name = MojangAPI.getStringBetween(output, idBeg + id + nameBeg, nameEnd);
+
+		System.out.println(name + " " + id + " " + authtoken + " " + clienttoken);
 
 		return new AuthSession(name, id, authtoken, clienttoken);
 	}
 
-	// Still error 500, cmonBruh
-	// De-Stroyed for debugging
-	public static String uploadSkin(String id, String authtoken, File image, boolean slim) throws Exception {
-
-		String boundary = "===" + System.currentTimeMillis() + "===";
-		final String line = "\r\n";
-
+	// Forbidden 403
+	// Tested this stuff, it just doesnt work, majong pls
+	public static String uploadSkin(String id, String authtoken, String url, boolean slim) throws Exception {
 		HttpsURLConnection con = (HttpsURLConnection) (new URL(api + "/user/profile/" + id + "/skin").openConnection());
 
-		con.setRequestMethod("PUT");
-		con.setRequestProperty("Authorization", "Bearer " + authtoken);
-		con.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-		con.setDoInput(true);
-		con.setDoOutput(true);
-		con.setUseCaches(false);
-
-		/*
-		 * OutputStream outs = con.getOutputStream(); DataOutputStream out = new
-		 * DataOutputStream(con.getOutputStream());
-		 */
-
-		// Debugging stuff for this API, still doesnt work for me
-
-		StringBuilder builder = new StringBuilder();
-		builder.append(con.getResponseCode()).append(" ").append(con.getResponseMessage()).append("\n");
-
-		Map<String, List<String>> map = con.getHeaderFields();
-		for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-			if (entry.getKey() == null)
-				continue;
-			builder.append(entry.getKey()).append(": ");
-
-			List<String> headerValues = entry.getValue();
-			Iterator<String> it = headerValues.iterator();
-			if (it.hasNext()) {
-				builder.append(it.next());
-
-				while (it.hasNext()) {
-					builder.append(", ").append(it.next());
-				}
-			}
-
-			builder.append(line);
-		}
-
-		System.out.println(builder);
-
-		return "";
-
-	}
-
-	// Error 402 or 500
-	public static String change(String id, String authtoken) throws Exception {
-
-		HttpURLConnection con = (HttpURLConnection) (new URL(api + "/user/profile/" + id + "/skin").openConnection());
+		con.setRequestProperty("Content-Type", "aplication/json");
+		con.setRequestProperty("User-Agent", "SkinsRestorer");
 		con.setRequestMethod("POST");
-		con.setRequestProperty("Authorization", "Bearer " + authtoken);
-		System.out.println(authtoken);
-		con.setDoInput(true);
 		con.setDoOutput(true);
-		con.setUseCaches(false);
 
-		DataOutputStream out = new DataOutputStream(con.getOutputStream());
+		con.addRequestProperty("Authorization", "Bearer " + authtoken);
+		con.setRequestProperty("Authorization", "Bearer " + authtoken);
 
-		out.write(
-				"model=\"slim\"&url=\"http://lh3.googleusercontent.com/8DexHt1uhFcMgCy9jAMoj7hOJPLFj0vN0v6KBXVhz9hcxiPp9c4ZAI7Qa1o5uOuAIG4KG6DwjY6O-4RzQwJS"
-						.getBytes("UTF-8"));
+		OutputStreamWriter out = new OutputStreamWriter(con.getOutputStream());
+
+		out.write("model=" + (slim ? URLEncoder.encode("slim", "UTF-8") : URLEncoder.encode("", "UTF-8")) + "&url="
+				+ URLEncoder.encode("https://skins.minecraft.net/MinecraftSkins/GamerGirl268.png", "UTF-8"));
 
 		out.flush();
-		out.close();
+		con.connect();
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-		String output = "";
-		String rline = null;
-		while ((rline = in.readLine()) != null)
-			output += rline;
-
-		in.close();
-
-		return output;
+		return con.getResponseMessage() + "  " + con.getResponseCode();
 	}
 
 	// Error 402 or 500
@@ -148,7 +86,6 @@ public class MojangAuthAPI {
 		HttpsURLConnection con = (HttpsURLConnection) (new URL(api + "/user/profile/" + id + "/skin").openConnection());
 
 		con.setRequestProperty("Authorization", "Bearer " + authtoken);
-		System.out.println(authtoken);
 		con.setRequestMethod("DELETE");
 		con.setDoInput(true);
 		con.setDoOutput(true);
@@ -167,10 +104,6 @@ public class MojangAuthAPI {
 	}
 
 	// Werks
-	// I wonder how
-	// I wonder why
-	// Because previous methods with the same setup just respond with 402
-	// Maybe mojang skin api is not ready yet?
 	public static String info(String authtoken) throws Exception {
 		HttpURLConnection con = (HttpURLConnection) (new URL(api + "/user").openConnection());
 
@@ -256,28 +189,6 @@ public class MojangAuthAPI {
 		in.close();
 
 		return output;
-	}
-
-	// slightly edited method from MojangAPI.java
-	private static String getStringBetween(String base, String begin, String end) {
-
-		Pattern patbeg = Pattern.compile(Pattern.quote(begin));
-		Pattern patend = Pattern.compile(Pattern.quote(end));
-
-		int resbeg = 0;
-		int resend = base.length() - 1;
-
-		Matcher matbeg = patbeg.matcher(base);
-
-		if (matbeg.find())
-			resbeg = matbeg.end();
-
-		Matcher matend = patend.matcher(base);
-
-		if (matend.find())
-			resend = matend.start();
-
-		return base.substring(resbeg, resend);
 	}
 
 }

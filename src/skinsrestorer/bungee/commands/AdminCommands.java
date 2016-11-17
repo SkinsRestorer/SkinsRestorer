@@ -138,14 +138,14 @@ public class AdminCommands extends Command {
 				return;
 			}
 
-			String decoded = Base64Coder.decodeString(prop.getValue());
-
 			CommandSender cons = ProxyServer.getInstance().getConsole();
 
 			cons.sendMessage(C.c("\n&aName: &8" + prop.getName()));
-			cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
 			cons.sendMessage(C.c("\n&aValue : &8" + prop.getValue()));
 			cons.sendMessage(C.c("\n&aSignature : &8" + prop.getSignature()));
+
+			String decoded = Base64Coder.decodeString(prop.getValue());
+			cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
 
 			sender.sendMessage(C.c("\n&e" + decoded));
 
