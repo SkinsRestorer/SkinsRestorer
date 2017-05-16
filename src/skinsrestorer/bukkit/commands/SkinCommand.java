@@ -29,18 +29,17 @@ public class SkinCommand implements CommandExecutor {
 
 		final Player p = (Player) sender;
 
-		if (!p.hasPermission("skinsrestorer.playercmds")||!p.isOp()) {
+		if (!p.hasPermission("skinsrestorer.playercmds") || !p.isOp()) {
 			p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 
 		// Skin Help
-		if (args.length == 0 || args.length > 1){
+		if (args.length == 0 || args.length > 1) {
 			p.sendMessage(Locale.SR_LINE);
 			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-			if (p.hasPermission("skinsrestorer.cmds")||p.isOp()){
+			if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "     &2/sr &7- &fDisplay Admin commands."));
-			}
 			p.sendMessage(Locale.SR_LINE);
 		}
 		// Set Skin
@@ -57,14 +56,12 @@ public class SkinCommand implements CommandExecutor {
 
 			final String skin = sb.toString();
 
-			if (Config.DISABLED_SKINS_ENABLED) {
-				for (String dskin : Config.DISABLED_SKINS) {
+			if (Config.DISABLED_SKINS_ENABLED)
+				for (String dskin : Config.DISABLED_SKINS)
 					if (skin.equalsIgnoreCase(dskin)) {
 						p.sendMessage(Locale.SKIN_DISABLED);
 						return true;
 					}
-				}
-			}
 
 			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
