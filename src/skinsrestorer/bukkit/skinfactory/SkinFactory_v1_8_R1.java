@@ -39,15 +39,13 @@ public class SkinFactory_v1_8_R1 extends SkinFactory {
 			PacketPlayOutNamedEntitySpawn addNamed = new PacketPlayOutNamedEntitySpawn(ep);
 
 			PacketPlayOutPlayerInfo addInfo = new PacketPlayOutPlayerInfo(EnumPlayerInfoAction.ADD_PLAYER, ep);
-			 int dimension = 0;
-				if (MCoreAPI.check()){
-	            	dimension = MCoreAPI.dimension(p.getWorld());
-	            } else {
-	            	ep.getWorld().worldProvider.getDimension();
-	            }
-			PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(dimension,
-					ep.getWorld().getDifficulty(), ep.getWorld().worldData.getType(),
-					EnumGamemode.getById(p.getGameMode().getValue()));
+			int dimension = 0;
+			if (MCoreAPI.check())
+				dimension = MCoreAPI.dimension(p.getWorld());
+			else
+				ep.getWorld().worldProvider.getDimension();
+			PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(dimension, ep.getWorld().getDifficulty(),
+					ep.getWorld().worldData.getType(), EnumGamemode.getById(p.getGameMode().getValue()));
 
 			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(entId, 0,
 					CraftItemStack.asNMSCopy(p.getItemInHand()));

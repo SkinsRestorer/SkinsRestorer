@@ -61,7 +61,7 @@ public class Config {
 
 		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
-		
+
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
 			DEFAULT_SKINS = new ArrayList<>();
 			DEFAULT_SKINS.add("Steve");
@@ -87,7 +87,8 @@ public class Config {
 		}
 
 	}
-	public static void set(String path, Object value){
+
+	public static void set(String path, Object value) {
 		config.set(path, value);
 	}
 }

@@ -24,10 +24,59 @@ import skinsrestorer.shared.utils.MySQL;
 public class SkinsRestorer extends Plugin {
 
 	private static SkinsRestorer instance;
+
+	public static SkinsRestorer getInstance() {
+		return instance;
+	}
+
 	private MySQL mysql;
 	private boolean multibungee;
 	private ExecutorService exe;
+
 	private boolean outdated;
+
+	public String checkVersion() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124"
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 7)
+				return version;
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
+		}
+		return getVersion();
+	}
+
+	public ExecutorService getExecutor() {
+		return exe;
+	}
+
+	public MySQL getMySQL() {
+		return mysql;
+	}
+
+	public String getVersion() {
+		return getDescription().getVersion();
+	}
+
+	public boolean isMultiBungee() {
+		return multibungee;
+	}
+
+	public boolean isOutdated() {
+		return outdated;
+	}
+
+	@Override
+	public void onDisable() {
+		exe.shutdown();
+	}
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -58,7 +107,7 @@ public class SkinsRestorer extends Plugin {
 
 			@Override
 			public void run() {
-				if (Config.UPDATER_ENABLED) {
+				if (Config.UPDATER_ENABLED)
 					if (checkVersion().equals(getVersion())) {
 						outdated = false;
 						console.sendMessage("");
@@ -84,10 +133,9 @@ public class SkinsRestorer extends Plugin {
 								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
 						console.sendMessage("");
 					}
-				}
 
 				if (Config.DEFAULT_SKINS_ENABLED)
-					for (String skin : Config.DEFAULT_SKINS) {
+					for (String skin : Config.DEFAULT_SKINS)
 						try {
 							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
@@ -95,58 +143,9 @@ public class SkinsRestorer extends Plugin {
 								console.sendMessage(
 										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
 						}
-					}
 			}
 
 		});
 
-	}
-
-	@Override
-	public void onDisable() {
-		exe.shutdown();
-	}
-
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
-
-	public boolean isOutdated() {
-		return outdated;
-	}
-
-	public ExecutorService getExecutor() {
-		return exe;
-	}
-
-	public String checkVersion() {
-		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
-					.openConnection();
-			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
-							.getBytes("UTF-8"));
-			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 7) {
-				return version;
-			}
-		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
-		}
-		return getVersion();
-	}
-
-	public String getVersion() {
-		return getDescription().getVersion();
-	}
-
-	public boolean isMultiBungee() {
-		return multibungee;
-	}
-
-	public MySQL getMySQL() {
-		return mysql;
 	}
 }

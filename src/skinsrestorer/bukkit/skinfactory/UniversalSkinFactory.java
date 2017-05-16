@@ -66,6 +66,11 @@ public class UniversalSkinFactory extends SkinFactory {
 		}
 	}
 
+	private void sendPacket(Object playerConnection, Object packet) throws Exception {
+		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
+				new Class<?>[] { Packet }, new Object[] { packet });
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {
@@ -98,12 +103,11 @@ public class UniversalSkinFactory extends SkinFactory {
 			Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
 			Object worlddata = ReflectionUtil.getObject(world, "worldData");
 			Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-           int dimension;
-			if (MCoreAPI.check()){
-            	dimension = MCoreAPI.dimension(player.getWorld());
-            } else {
-			dimension = (int) ReflectionUtil.getObject(world, "dimension");
-            }
+			int dimension;
+			if (MCoreAPI.check())
+				dimension = MCoreAPI.dimension(player.getWorld());
+			else
+				dimension = (int) ReflectionUtil.getObject(world, "dimension");
 			Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
 			Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
@@ -258,10 +262,5 @@ public class UniversalSkinFactory extends SkinFactory {
 			e.printStackTrace();
 		}
 
-	}
-
-	private void sendPacket(Object playerConnection, Object packet) throws Exception {
-		ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket",
-				new Class<?>[] { Packet }, new Object[] { packet });
 	}
 }

@@ -40,10 +40,50 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 public class SkinsRestorer extends JavaPlugin {
 
 	private static SkinsRestorer instance;
+
+	public static SkinsRestorer getInstance() {
+		return instance;
+	}
+
 	private SkinFactory factory;
 	private MySQL mysql;
 	private boolean bungeeEnabled;
+
 	private boolean outdated;
+
+	public String checkVersion() {
+		try {
+			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+					.openConnection();
+			con.setDoOutput(true);
+			con.setRequestMethod("POST");
+			con.getOutputStream()
+					.write("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124"
+							.getBytes("UTF-8"));
+			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+			if (version.length() <= 13)
+				return version;
+		} catch (Exception ex) {
+			System.out.println("Failed to check for an update on spigot.");
+		}
+		return getVersion();
+	}
+
+	public SkinFactory getFactory() {
+		return factory;
+	}
+
+	public MySQL getMySQL() {
+		return mysql;
+	}
+
+	public String getVersion() {
+		return getDescription().getVersion();
+	}
+
+	public boolean isOutdated() {
+		return outdated;
+	}
 
 	@Override
 	public void onEnable() {
@@ -51,26 +91,26 @@ public class SkinsRestorer extends JavaPlugin {
 		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 		try {
-			//Doesn't support Cauldron and stuff..
+			// Doesn't support Cauldron and stuff..
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
 			console.sendMessage(C.c("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :("));
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		} catch (Exception e) {
 			try {
-				//Checking for old versions
+				// Checking for old versions
 				factory = (SkinFactory) Class
 						.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
 						.newInstance();
 			} catch (Exception ex) {
-				//1.8+++
+				// 1.8+++
 				factory = new UniversalSkinFactory();
 			}
 		}
 		console.sendMessage(C.c("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
 				+ factory.getClass().getSimpleName()));
 
-		//Bungeecord stuff
+		// Bungeecord stuff
 		try {
 			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
 					.getBoolean("settings.bungeecord");
@@ -113,8 +153,8 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 			});
 
-			//Updater stuff
-			if (Config.UPDATER_ENABLED) {
+			// Updater stuff
+			if (Config.UPDATER_ENABLED)
 				if (checkVersion().equals(getVersion())) {
 					outdated = false;
 					console.sendMessage("");
@@ -142,17 +182,15 @@ public class SkinsRestorer extends JavaPlugin {
 							ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
 					console.sendMessage("");
 				}
-			}
 			return;
 		}
-        
-		//Multiverse Core support.
+
+		// Multiverse Core support.
 		MCoreAPI.init();
-		if (MCoreAPI.check()){
+		if (MCoreAPI.check())
 			console.sendMessage(C.c("&aDetected &eMultiverse-Core &aUsing it for dimensions."));
-		}
-		
-		//Config stuff
+
+		// Config stuff
 		Config.load(getResource("config.yml"));
 		Locale.load();
 
@@ -162,13 +200,12 @@ public class SkinsRestorer extends JavaPlugin {
 		else
 			SkinStorage.init(getDataFolder());
 
-		
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 1 * 20);
 
-		//Commands
+		// Commands
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
-		getCommand("skinver").setExecutor(new CommandExecutor(){
+		getCommand("skinver").setExecutor(new CommandExecutor() {
 
 			@Override
 			public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
@@ -178,28 +215,29 @@ public class SkinsRestorer extends JavaPlugin {
 						+ "&8, utilizing Minecraft &a" + ReflectionUtil.serverVersion + "&8."));
 				return false;
 			}
-			
+
 		});
 
 		Bukkit.getPluginManager().registerEvents(new Listener() {
-						
+
 			// LoginEvent happens on attemptLogin so its the best place to set
 			// the skin
 			@EventHandler
-			public void onLogin(PlayerLoginEvent e){
+			public void onLogin(PlayerLoginEvent e) {
 				try {
-					if (Config.DISABLE_ONJOIN_SKINS){
-						factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+					if (Config.DISABLE_ONJOIN_SKINS) {
+						factory.applySkin(e.getPlayer(),
+								SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
 						return;
 					}
-					if (Config.DEFAULT_SKINS_ENABLED){
-						if (SkinStorage.getPlayerSkin(e.getPlayer().getName())==null){
-						List<String> skins = Config.DEFAULT_SKINS;
-						int randomNum = 0 + (int)(Math.random() * skins.size()); 
-						factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
-						return;
+					if (Config.DEFAULT_SKINS_ENABLED)
+						if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
+							List<String> skins = Config.DEFAULT_SKINS;
+							int randomNum = 0 + (int) (Math.random() * skins.size());
+							factory.applySkin(e.getPlayer(),
+									SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
+							return;
 						}
-					}
 					factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
 				} catch (Exception ex) {
 				}
@@ -211,7 +249,7 @@ public class SkinsRestorer extends JavaPlugin {
 			@Override
 			public void run() {
 
-				if (Config.UPDATER_ENABLED) {
+				if (Config.UPDATER_ENABLED)
 					if (checkVersion().equals(getVersion())) {
 						outdated = false;
 						console.sendMessage("");
@@ -235,10 +273,9 @@ public class SkinsRestorer extends JavaPlugin {
 								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
 						console.sendMessage("");
 					}
-				}
 
 				if (Config.DEFAULT_SKINS_ENABLED)
-					for (String skin : Config.DEFAULT_SKINS) {
+					for (String skin : Config.DEFAULT_SKINS)
 						try {
 							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
@@ -246,49 +283,9 @@ public class SkinsRestorer extends JavaPlugin {
 								console.sendMessage(
 										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
 						}
-					}
 			}
 
 		});
 
-	}
-
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
-
-	public boolean isOutdated() {
-		return outdated;
-	}
-
-	public String checkVersion() {
-		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
-					.openConnection();
-			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124")
-							.getBytes("UTF-8"));
-			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 13) {
-				return version;
-			}
-		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
-		}
-		return getVersion();
-	}
-
-	public SkinFactory getFactory() {
-		return factory;
-	}
-
-	public String getVersion() {
-		return getDescription().getVersion();
-	}
-
-	public MySQL getMySQL() {
-		return mysql;
 	}
 }

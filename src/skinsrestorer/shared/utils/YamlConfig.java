@@ -39,19 +39,18 @@ public class YamlConfig {
 			reload();
 		}
 	}
-	
-    public File getFile(){
-    	return file;
-    }
 
-	public void set(String path, Object value) {
-		try {
-			ReflectionUtil.invokeMethod(config.getClass(), config, "set", new Class<?>[] { String.class, Object.class },
-					path, value);
-			save();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	public void copyDefaults(InputStream is) {
+		if (!file.exists() || isEmpty())
+			try {
+				Files.copy(is, file.toPath());
+			} catch (Exception e) {
+				try {
+					Files.copy(is, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
 	}
 
 	public Object get(String path) {
@@ -70,6 +69,26 @@ public class YamlConfig {
 		return get(path);
 	}
 
+	public boolean getBoolean(String path) {
+		return Boolean.parseBoolean(getString(path));
+	}
+
+	public boolean getBoolean(String path, Object defValue) {
+		return Boolean.parseBoolean(getString(path, defValue));
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public int getInt(String path) {
+		return Integer.parseInt(getString(path));
+	}
+
+	public int getInt(String path, Object defValue) {
+		return Integer.parseInt(getString(path, defValue));
+	}
+
 	public String getString(String path) {
 		String s = "";
 		try {
@@ -83,22 +102,6 @@ public class YamlConfig {
 		return get(path, defValue).toString();
 	}
 
-	public boolean getBoolean(String path) {
-		return Boolean.parseBoolean(getString(path));
-	}
-
-	public boolean getBoolean(String path, Object defValue) {
-		return Boolean.parseBoolean(getString(path, defValue));
-	}
-
-	public int getInt(String path) {
-		return Integer.parseInt(getString(path));
-	}
-
-	public int getInt(String path, Object defValue) {
-		return Integer.parseInt(getString(path, defValue));
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<String> getStringList(String path) {
 		try {
@@ -108,6 +111,37 @@ public class YamlConfig {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean isEmpty() {
+		try {
+			Scanner input = new Scanner(file);
+			if (input.hasNextLine()) {
+				input.close();
+				return false;
+			}
+			input.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+	public void reload() {
+		try {
+			Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
+					null, "getProvider", new Class<?>[] { Class.class },
+					new Object[] { Class.forName("net.md_5.bungee.config.YamlConfiguration") });
+
+			config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[] { File.class },
+					new Object[] { file });
+		} catch (Exception e) {
+			try {
+				config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
+						null, "loadConfiguration", new Class<?>[] { File.class }, new Object[] { file });
+			} catch (Exception ex) {
+			}
+		}
 	}
 
 	public void save() {
@@ -133,49 +167,14 @@ public class YamlConfig {
 		}
 	}
 
-	public void reload() {
+	public void set(String path, Object value) {
 		try {
-			Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
-					null, "getProvider", new Class<?>[] { Class.class },
-					new Object[] { Class.forName("net.md_5.bungee.config.YamlConfiguration") });
-
-			config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[] { File.class },
-					new Object[] { file });
-		} catch (Exception e) {
-			try {
-				config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
-						null, "loadConfiguration", new Class<?>[] { File.class }, new Object[] { file });
-			} catch (Exception ex) {
-			}
-		}
-	}
-
-	public void copyDefaults(InputStream is) {
-		if (!file.exists() || isEmpty()) {
-			try {
-				Files.copy(is, file.toPath());
-			} catch (Exception e) {
-				try {
-					Files.copy(is, file.getAbsoluteFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-	}
-
-	public boolean isEmpty() {
-		try {
-			Scanner input = new Scanner(file);
-			if (input.hasNextLine()) {
-				input.close();
-				return false;
-			}
-			input.close();
+			ReflectionUtil.invokeMethod(config.getClass(), config, "set", new Class<?>[] { String.class, Object.class },
+					path, value);
+			save();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return true;
 	}
 
 }

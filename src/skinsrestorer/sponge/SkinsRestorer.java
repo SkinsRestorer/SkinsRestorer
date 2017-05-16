@@ -23,13 +23,26 @@ import skinsrestorer.sponge.listeners.LoginListener;
 public class SkinsRestorer {
 
 	private static SkinsRestorer instance;
+
+	public static SkinsRestorer getInstance() {
+		return instance;
+	}
+
 	private String directory;
-
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
-	private ConfigurationLoader<CommentedConfigurationNode> dataManager;
 
+	private ConfigurationLoader<CommentedConfigurationNode> dataManager;
 	private CommentedConfigurationNode configRoot;
+
 	private CommentedConfigurationNode dataRoot;
+
+	public CommentedConfigurationNode getConfigRoot() {
+		return configRoot;
+	}
+
+	public CommentedConfigurationNode getDataRoot() {
+		return dataRoot;
+	}
 
 	@Listener
 	public void onInitialize(GameInitializationEvent e) {
@@ -73,9 +86,8 @@ public class SkinsRestorer {
 				}
 			}
 
-			if (!data.exists()) {
+			if (!data.exists())
 				data.createNewFile();
-			}
 
 			configManager = HoconConfigurationLoader.builder().setPath(config.toPath()).build();
 			dataManager = HoconConfigurationLoader.builder().setPath(data.toPath()).build();
@@ -85,18 +97,6 @@ public class SkinsRestorer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
-
-	public CommentedConfigurationNode getConfigRoot() {
-		return configRoot;
-	}
-
-	public CommentedConfigurationNode getDataRoot() {
-		return dataRoot;
 	}
 
 	public void saveConfigs() {

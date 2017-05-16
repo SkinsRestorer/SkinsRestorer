@@ -15,13 +15,6 @@ public class SkinApplier {
 
 	private static Class<?> LoginResult;
 
-	public static void init() {
-		try {
-			LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
-		} catch (Exception e){
-			
-		}
-	}
 	public static void applySkin(final ProxiedPlayer p) {
 		SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
 
@@ -37,15 +30,17 @@ public class SkinApplier {
 						return;
 					}
 					LoginResult profile = null;
-					
+
 					try {
-					// NEW BUNGEECORD
-				    profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-							new Class<?>[] { String.class, String.class, Property[].class }, p.getUniqueId().toString(), p.getName(), new Property[] { textures });
-					} catch (Exception e){
+						// NEW BUNGEECORD
+						profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
+								new Class<?>[] { String.class, String.class, Property[].class },
+								p.getUniqueId().toString(), p.getName(), new Property[] { textures });
+					} catch (Exception e) {
 						// FALL BACK TO OLD
 						profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-								new Class<?>[] { String.class, Property[].class }, p.getUniqueId().toString(), new Property[] { textures });		
+								new Class<?>[] { String.class, Property[].class }, p.getUniqueId().toString(),
+								new Property[] { textures });
 					}
 					Property[] present = profile.getProperties();
 					Property[] newprops = new Property[present.length + 1];
@@ -55,13 +50,13 @@ public class SkinApplier {
 					profile.getProperties()[0].setValue(newprops[0].getValue());
 					profile.getProperties()[0].setSignature(newprops[0].getSignature());
 					ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-                   
+
 					if (SkinsRestorer.getInstance().isMultiBungee())
 						sendUpdateRequest(p, textures);
 					else
 						sendUpdateRequest(p, null);
 				} catch (Exception e) {
-					
+
 				}
 			}
 		});
@@ -72,6 +67,14 @@ public class SkinApplier {
 		ProxiedPlayer p = ProxyServer.getInstance().getPlayer(pname);
 		if (p != null)
 			applySkin(p);
+	}
+
+	public static void init() {
+		try {
+			LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
+		} catch (Exception e) {
+
+		}
 	}
 
 	private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {

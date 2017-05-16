@@ -27,12 +27,50 @@ public class MySQL {
 		this.database = database;
 		this.username = username;
 		this.password = password;
-		this.exe = Executors.newCachedThreadPool();
+		exe = Executors.newCachedThreadPool();
 		openConnection();
 	}
 
+	public void closeConnection() {
+		if (isConnected())
+			try {
+				con.close();
+			} catch (SQLException e) {
+				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+			}
+	}
+
+	public void createTable() {
+	}
+
+	public void execute(final PreparedStatement ps) {
+		if (isConnected())
+			exe.execute(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						ps.execute();
+						ps.close();
+					} catch (SQLException e) {
+						System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+					}
+				}
+
+			});
+	}
+
+	public boolean isConnected() {
+		try {
+			return con != null && !con.isClosed();
+		} catch (SQLException e) {
+			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+		}
+		return false;
+	}
+
 	public void openConnection() {
-		if (!isConnected()) {
+		if (!isConnected())
 			exe.execute(new Runnable() {
 				@Override
 				public void run() {
@@ -47,44 +85,6 @@ public class MySQL {
 				}
 
 			});
-		}
-	}
-
-	public void closeConnection() {
-		if (isConnected()) {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
-			}
-		}
-	}
-
-	public boolean isConnected() {
-		try {
-			return con != null && !con.isClosed();
-		} catch (SQLException e) {
-			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
-		}
-		return false;
-	}
-
-	public void execute(final PreparedStatement ps) {
-		if (isConnected()) {
-			exe.execute(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						ps.execute();
-						ps.close();
-					} catch (SQLException e) {
-						System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
-					}
-				}
-
-			});
-		}
 	}
 
 	public PreparedStatement prepareStatement(String query, Object... vars) {
@@ -92,12 +92,11 @@ public class MySQL {
 			if (isConnected()) {
 				PreparedStatement ps = con.prepareStatement(query);
 				int i = 0;
-				if (query.contains("?") && vars.length != 0) {
+				if (query.contains("?") && vars.length != 0)
 					for (Object obj : vars) {
 						i++;
 						ps.setObject(i, obj);
 					}
-				}
 				return ps;
 			}
 		} catch (SQLException e) {
@@ -109,7 +108,7 @@ public class MySQL {
 
 	public CachedRowSet query(final PreparedStatement preparedStatement) {
 		CachedRowSet rowSet = null;
-		if (isConnected()) {
+		if (isConnected())
 			try {
 
 				Future<CachedRowSet> future = exe.submit(new Callable<CachedRowSet>() {
@@ -123,9 +122,8 @@ public class MySQL {
 
 							preparedStatement.close();
 
-							if (crs.next()) {
+							if (crs.next())
 								return crs;
-							}
 						} catch (SQLException e) {
 							System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 						}
@@ -134,16 +132,11 @@ public class MySQL {
 					}
 				});
 
-				if (future.get() != null) {
+				if (future.get() != null)
 					rowSet = future.get();
-				}
 			} catch (Exception e) {
 				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
-		}
 		return rowSet;
-	}
-
-	public void createTable() {
 	}
 }

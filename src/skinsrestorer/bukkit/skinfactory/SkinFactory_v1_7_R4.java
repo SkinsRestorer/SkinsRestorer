@@ -27,9 +27,8 @@ public class SkinFactory_v1_7_R4 extends SkinFactory {
 	@Override
 	public void updateSkin(Player p) {
 		try {
-			if (!p.isOnline()) {
+			if (!p.isOnline())
 				return;
-			}
 			CraftPlayer cp = (CraftPlayer) p;
 			EntityPlayer ep = cp.getHandle();
 			int entId = ep.getId();
@@ -42,18 +41,15 @@ public class SkinFactory_v1_7_R4 extends SkinFactory {
 			PacketPlayOutNamedEntitySpawn addNamed = new PacketPlayOutNamedEntitySpawn(ep);
 
 			PacketPlayOutPlayerInfo addInfo = PacketPlayOutPlayerInfo.addPlayer(ep);
-			 int dim = 0;
-			 PacketPlayOutRespawn respawn = null;
-				if (MCoreAPI.check()){
-	            	dim = MCoreAPI.dimension(p.getWorld());
-	            	respawn = new PacketPlayOutRespawn(dim,
-	    					ep.getWorld().difficulty, ep.getWorld().worldData.getType(),
-	    					EnumGamemode.getById(p.getGameMode().getValue()));
-	            } else {
-	            	respawn = new PacketPlayOutRespawn(((WorldServer) ep.getWorld()).dimension,
-	    					ep.getWorld().difficulty, ep.getWorld().worldData.getType(),
-	    					EnumGamemode.getById(p.getGameMode().getValue()));
-	            }
+			int dim = 0;
+			PacketPlayOutRespawn respawn = null;
+			if (MCoreAPI.check()) {
+				dim = MCoreAPI.dimension(p.getWorld());
+				respawn = new PacketPlayOutRespawn(dim, ep.getWorld().difficulty, ep.getWorld().worldData.getType(),
+						EnumGamemode.getById(p.getGameMode().getValue()));
+			} else
+				respawn = new PacketPlayOutRespawn(((WorldServer) ep.getWorld()).dimension, ep.getWorld().difficulty,
+						ep.getWorld().worldData.getType(), EnumGamemode.getById(p.getGameMode().getValue()));
 
 			PacketPlayOutPosition pos = new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(),
 					l.getPitch(), false);

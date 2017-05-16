@@ -7,15 +7,10 @@ import java.util.concurrent.TimeUnit;
 public class CooldownStorage implements Runnable {
 	private static final ConcurrentHashMap<String, Long> cooldown = new ConcurrentHashMap<>();
 
-	public static void setCooldown(String name, int cooldowntime, TimeUnit timeunit) {
-		cooldown.put(name, timeunit.toMillis(cooldowntime) + System.currentTimeMillis());
-	}
-
 	public static boolean hasCooldown(String name) {
 		Long expire = cooldown.get(name);
-		if (expire != null) {
+		if (expire != null)
 			return expire > System.currentTimeMillis();
-		}
 		return false;
 	}
 
@@ -23,15 +18,17 @@ public class CooldownStorage implements Runnable {
 		cooldown.remove(name);
 	}
 
+	public static void setCooldown(String name, int cooldowntime, TimeUnit timeunit) {
+		cooldown.put(name, timeunit.toMillis(cooldowntime) + System.currentTimeMillis());
+	}
+
 	@Override
 	public void run() {
 		long current = System.currentTimeMillis();
 		Iterator<Long> iterator = CooldownStorage.cooldown.values().iterator();
-		while (iterator.hasNext()) {
-			if (iterator.next() <= current) {
+		while (iterator.hasNext())
+			if (iterator.next() <= current)
 				iterator.remove();
-			}
-		}
 	}
 
 }

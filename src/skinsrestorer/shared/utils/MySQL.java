@@ -29,50 +29,32 @@ public class MySQL {
 		this.database = database;
 		this.username = username;
 		this.password = password;
-		this.exe = Executors.newCachedThreadPool();
+		exe = Executors.newCachedThreadPool();
 		openConnection();
 	}
 
-	public void openConnection() {
-		if (!isConnected()) {
-			exe.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
-								username, password);
-						System.out.println("[SkinsRestorer] Connected to MySQL!");
-						createTable();
-					} catch (SQLException e) {
-						System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
-					}
-				}
-
-			});
-		}
-	}
-
 	public void closeConnection() {
-		if (isConnected()) {
+		if (isConnected())
 			try {
 				con.close();
 			} catch (SQLException e) {
 				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
-		}
 	}
 
-	public boolean isConnected() {
-		try {
-			return con != null && !con.isClosed();
-		} catch (SQLException e) {
-			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
-		}
-		return false;
+	public void createTable() {
+		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
+				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+				+ "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
+				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
+				+ "`Signature` text COLLATE utf8_unicode_ci,"
+				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 	}
 
 	public void execute(final String query, final Object... vars) {
-		if (isConnected()) {
+		if (isConnected())
 			exe.execute(new Runnable() {
 
 				@Override
@@ -87,10 +69,37 @@ public class MySQL {
 				}
 
 			});
-		} else {
+		else {
 			openConnection();
 			execute(query, vars);
 		}
+	}
+
+	public boolean isConnected() {
+		try {
+			return con != null && !con.isClosed();
+		} catch (SQLException e) {
+			System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+		}
+		return false;
+	}
+
+	public void openConnection() {
+		if (!isConnected())
+			exe.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
+								username, password);
+						System.out.println("[SkinsRestorer] Connected to MySQL!");
+						createTable();
+					} catch (SQLException e) {
+						System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
+					}
+				}
+
+			});
 	}
 
 	private PreparedStatement prepareStatement(String query, Object... vars) {
@@ -98,12 +107,11 @@ public class MySQL {
 			if (isConnected()) {
 				PreparedStatement ps = con.prepareStatement(query);
 				int i = 0;
-				if (query.contains("?") && vars.length != 0) {
+				if (query.contains("?") && vars.length != 0)
 					for (Object obj : vars) {
 						i++;
 						ps.setObject(i, obj);
 					}
-				}
 				return ps;
 			} else {
 				openConnection();
@@ -118,7 +126,7 @@ public class MySQL {
 
 	public CachedRowSet query(final String query, final Object... vars) {
 		CachedRowSet rowSet = null;
-		if (isConnected()) {
+		if (isConnected())
 			try {
 
 				Future<CachedRowSet> future = exe.submit(new Callable<CachedRowSet>() {
@@ -150,22 +158,11 @@ public class MySQL {
 			} catch (Exception e) {
 				System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 			}
-		} else {
+		else {
 			openConnection();
 			query(query, vars);
 		}
 
 		return rowSet;
-	}
-
-	public void createTable() {
-		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-				+ "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
-				+ "`Signature` text COLLATE utf8_unicode_ci,"
-				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 	}
 }
