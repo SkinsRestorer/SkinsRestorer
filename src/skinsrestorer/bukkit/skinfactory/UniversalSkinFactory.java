@@ -10,10 +10,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import skinsrestorer.bukkit.MCoreAPI;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-public class UniversalSkinFactory implements SkinFactory {
+public class UniversalSkinFactory extends SkinFactory {
 
 	private Class<?> PlayOutRespawn;
 	private Class<?> EntityHuman;
@@ -65,19 +66,6 @@ public class UniversalSkinFactory implements SkinFactory {
 		}
 	}
 
-	@Override
-	public void applySkin(Player p, Object props, Object propertymap) {
-		try {
-			if (props != null && propertymap != null) {
-				ReflectionUtil.invokeMethod(propertymap, "clear");
-				ReflectionUtil.invokeMethod(propertymap.getClass(), propertymap, "put",
-						new Class[] { Object.class, Object.class }, new Object[] { "textures", props });
-			}
-
-		} catch (Exception e) {
-		}
-	}
-
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {
@@ -110,9 +98,12 @@ public class UniversalSkinFactory implements SkinFactory {
 			Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
 			Object worlddata = ReflectionUtil.getObject(world, "worldData");
 			Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-
-			int dimension = (int) ReflectionUtil.getObject(world, "dimension");
-
+           int dimension;
+			if (MCoreAPI.check()){
+            	dimension = MCoreAPI.dimension(player.getWorld());
+            } else {
+			dimension = (int) ReflectionUtil.getObject(world, "dimension");
+            }
 			Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
 			Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
@@ -219,8 +210,6 @@ public class UniversalSkinFactory implements SkinFactory {
 			Object slot = ReflectionUtil.invokeConstructor(PlayOutHeldItemSlot, new Class<?>[] { int.class },
 					player.getInventory().getHeldItemSlot());
 
-			// We finished defining packets, now lets send em
-
 			for (Player pOnline : Bukkit.getOnlinePlayers()) {
 				final Object craftHandle = ReflectionUtil.invokeMethod(pOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
@@ -266,6 +255,7 @@ public class UniversalSkinFactory implements SkinFactory {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 	}

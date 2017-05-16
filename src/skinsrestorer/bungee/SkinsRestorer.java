@@ -1,14 +1,9 @@
 package skinsrestorer.bungee;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +14,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
-import skinsrestorer.bungee.listeners.MessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -51,14 +45,11 @@ public class SkinsRestorer extends Plugin {
 		else
 			SkinStorage.init(getDataFolder());
 
-		//Needed that, cause bungeecord throws "Illegal access exception otherwise.
-		this.getProxy().getPluginManager().registerListener(this, new LoginListener());
-		
-		
-		this.getProxy().getPluginManager().registerListener(this, new MessageListener());
-		this.getProxy().getPluginManager().registerCommand(this, new AdminCommands());
-		this.getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
-		this.getProxy().registerChannel("SkinsRestorer");
+		getProxy().getPluginManager().registerListener(this, new LoginListener());
+		getProxy().getPluginManager().registerCommand(this, new AdminCommands());
+		getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
+		getProxy().registerChannel("SkinsRestorer");
+		SkinApplier.init();
 
 		multibungee = Config.MULTIBUNGEE_ENABLED
 				|| ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
@@ -157,22 +148,5 @@ public class SkinsRestorer extends Plugin {
 
 	public MySQL getMySQL() {
 		return mysql;
-	}
-
-	public boolean downloadUpdate() {
-		try {
-			InputStream in = new URL("http://api.spiget.org/v1/resources/2124/download").openStream();
-
-			System.out.println(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
-
-			Path target = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath()).toPath();
-
-			Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
-
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
 	}
 }

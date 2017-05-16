@@ -11,7 +11,6 @@ import skinsrestorer.shared.utils.C;
 
 public class LoginListener implements Listener {
 
-	//Needed that, cause bungeecord throws "Illegal access exception otherwise.
 	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPostLogin(final PostLoginEvent e) {
@@ -24,5 +23,5 @@ public class LoginListener implements Listener {
 
 		SkinApplier.applySkin(e.getPlayer());
 	}
-	
+
 }

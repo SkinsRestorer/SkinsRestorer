@@ -14,7 +14,7 @@ public class Config {
 
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
-	public static String ALT_SKIN_PROPERTY_URL = "https://dev.mcapi.ca/profile/";
+	public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/";
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
 	public static String MYSQL_PORT = "3306";
@@ -60,15 +60,8 @@ public class Config {
 		}
 
 		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
-
-		/*
-		 * if (config.get("Updater.AutoUpdate") == null) {
-		 * config.set("Updater.AutoUpdate", false); config.save(); }
-		 * 
-		 * AUTOUPDATE = config.getBoolean("Updater.AutoUpdate");
-		 */
-
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
+		
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {
 			DEFAULT_SKINS = new ArrayList<>();
 			DEFAULT_SKINS.add("Steve");
@@ -93,5 +86,8 @@ public class Config {
 
 		}
 
+	}
+	public static void set(String path, Object value){
+		config.set(path, value);
 	}
 }

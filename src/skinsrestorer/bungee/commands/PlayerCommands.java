@@ -2,6 +2,7 @@ package skinsrestorer.bungee.commands;
 
 import java.util.concurrent.TimeUnit;
 
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -91,7 +92,12 @@ public class PlayerCommands extends Command {
 			});
 			return;
 		} else {
-			sender.sendMessage(Locale.PLAYER_HELP);
+			sender.sendMessage(Locale.SR_LINE);
+			sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+			if (sender.hasPermission("skinsrestorer.cmds")){
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
+			}
+			sender.sendMessage(Locale.SR_LINE);
 		}
 	}
 }

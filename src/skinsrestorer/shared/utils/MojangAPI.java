@@ -1,15 +1,14 @@
 package skinsrestorer.shared.utils;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 
@@ -28,7 +27,9 @@ public class MojangAPI {
 	 *             - If player is NOT_PREMIUM or server is RATE_LIMITED
 	 */
 	public static String getUUID(String name) throws SkinRequestException {
-		String output = readURL(uuidurl + name);
+		String output;
+		try {
+			output = readURL(uuidurl + name);
 
 		if (output.isEmpty())
 			throw new SkinRequestException(Locale.NOT_PREMIUM);
@@ -36,6 +37,10 @@ public class MojangAPI {
 			throw new SkinRequestException(Locale.RATE_LIMITED);
 
 		return output.substring(7, 39);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -46,7 +51,9 @@ public class MojangAPI {
 	 * 
 	 **/
 	public static Object getSkinProperty(String skin, String uuid) throws SkinRequestException {
-		String output = readURL(skinurl + uuid + "?unsigned=false");
+		String output;
+		try {
+			output = readURL(skinurl + uuid + "?unsigned=false");
 
 		String sigbeg = "\"signature\":\"";
 		String mid = "\",\"name\":\"textures\",\"value\":\"";
@@ -56,34 +63,44 @@ public class MojangAPI {
 
 		// Remember kids, output will never, ever be null
 		if (output.isEmpty() || output.contains("\"error\"")) {
-
-			output = readURL(Config.ALT_SKIN_PROPERTY_URL + skin).replace(" ", "");
-
-			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"id\":\"");
-
-			if (output.isEmpty() || uid.toLowerCase().contains("null") || output.contains("\"error\""))
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
-
-			sigbeg = "\",\"signature\":\"";
-			mid = "\"value\":\"";
-			valend = "\"},\"properties_";
-
-			value = getStringBetween(output, mid, sigbeg);
-			signature = getStringBetween(output, sigbeg, valend);
-
-			// Temporar fix for that mcapi BS
-			if (Base64Coder.decodeString(value).contains("}"))
-				throw new SkinRequestException(Locale.ALT_API_FAILED);
+			throw new SkinRequestException(Locale.ALT_API_FAILED);
 		} else {
 			value = getStringBetween(output, mid, valend);
 			signature = getStringBetween(output, sigbeg, mid);
 		}
 
 		return SkinStorage.createProperty("textures", value, signature);
-	}
+		} catch (Exception e) {
+			if (e.getMessage().contains("429")){
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
+			/*try {
+				output = readURL(Config.ALT_PROPERTY_URL + skin);
 
-	private static String readURL(String url) {
-		try {
+                System.out.println(output);
+			String uid = getStringBetween(output, "{\"uuid\":\"", "\",\"id\":\"");
+
+			if (output.isEmpty() || uid.toLowerCase().contains("null") || output.contains("\"error\""))
+				throw new SkinRequestException(Locale.ALT_API_FAILED);
+
+			String sigbeg = "[{\"signature\":";
+			String mid = "\",\"name\":\"textures\",\"value\":\"";
+			String valend = "\"}],\"decoded\"";
+
+			String value = getStringBetween(output, mid, sigbeg);
+			String signature = getStringBetween(output, sigbeg, valend);
+            System.out.println("Value: "+value);
+            System.out.println("Signature: "+signature);
+			return SkinStorage.createProperty("textures", value, signature);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}*/
+		}
+		}
+		return null;
+	}
+	private static String readURL(String url) throws SkinRequestException, MalformedURLException, IOException{
+		
 			HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
 			con.setRequestMethod("GET");
@@ -102,9 +119,6 @@ public class MojangAPI {
 			in.close();
 
 			return output.toString();
-		} catch (Exception e) {
-			return "";
-		}
 	}
 
 	public static String getStringBetween(final String base, final String begin, final String end) {

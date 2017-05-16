@@ -1,6 +1,7 @@
 package skinsrestorer.bukkit.commands;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -24,14 +25,16 @@ public class SrCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
-		if (!sender.hasPermission("skinsrestorer.cmds") && !sender.isOp()) {
+		if (!sender.hasPermission("skinsrestorer.cmds") || !sender.isOp()) {
 			sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 
-		if (args.length == 0)
-			sender.sendMessage(Locale.ADMIN_HELP);
-
+		if (args.length == 0) {
+			sender.sendMessage(Locale.SR_LINE);
+			sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+			sender.sendMessage(Locale.SR_LINE);
+		}
 		else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 2; i < args.length; i++)
@@ -75,6 +78,8 @@ public class SrCommand implements CommandExecutor {
 						}
 
 					SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinsRestorer.getInstance().getFactory().applySkin(p,
+							SkinStorage.getOrCreateSkinForPlayer(p.getName()));
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
@@ -82,9 +87,95 @@ public class SrCommand implements CommandExecutor {
 
 			});
 		} else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-			Locale.load();
-			Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
-			sender.sendMessage(Locale.RELOAD);
+			reloadConfig(sender,Locale.RELOAD);
+			
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
+			sender.sendMessage(Locale.HELP_CONFIG);	
+			
+			
+			
+			
+			
+			//DefaultSkins
+		} else if (args.length >= 2 && args[0].equalsIgnoreCase("defaultSkins")) {
+			if (args[1].equalsIgnoreCase("true")){
+				Config.DEFAULT_SKINS_ENABLED = true;
+				Config.set("DefaultSkins.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Default skins has been enabled.");
+			}else if (args[1].equalsIgnoreCase("false")){
+				Config.DEFAULT_SKINS_ENABLED = false;
+				Config.set("DefaultSkins.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Default skins has been disabled.");
+			}else if (args[1].equalsIgnoreCase("add")){
+				String skin = args[2];
+				List<String> skins = Config.DEFAULT_SKINS;
+				skins.add(skin);
+				Config.set("DefaultSkins.Names", skins);
+				reloadConfig(sender, "&2Added &f"+skin+" &2to the default skins list");
+			}
+			
+		} else if (args.length >= 2 && args[0].equalsIgnoreCase("disabledSkins")) {
+			if (args[1].equalsIgnoreCase("true")){
+				Config.DISABLED_SKINS_ENABLED = true;
+				Config.set("DisabledSkins.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Disabled skins has been enabled.");
+			}else if (args[1].equalsIgnoreCase("false")){
+				Config.DISABLED_SKINS_ENABLED = false;
+				Config.set("DisabledSkins.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Disabled skins has been disabled.");
+			}else if (args[1].equalsIgnoreCase("add")){
+				String skin = args[2];
+				List<String> skins = Config.DISABLED_SKINS;
+				skins.add(skin);
+				Config.set("DisabledSkins.Names", skins);
+				reloadConfig(sender, "&2Added &f"+skin+" &2to the disabled skins list");
+			}
+			
+			
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("joinSkins")) {
+			if (args[1].equalsIgnoreCase("true")){
+				Config.DISABLE_ONJOIN_SKINS = false;
+				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Players will have skins on join.");
+			}else if (args[1].equalsIgnoreCase("false")){
+				Config.DISABLE_ONJOIN_SKINS = true;
+				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));;
+				reloadConfig(sender, "&2Players will not have skins on join.");
+			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("updater")) {
+			if (args[1].equalsIgnoreCase("true")){
+				Config.UPDATER_ENABLED = true;
+				Config.set("Updater.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2The updater has been enabled.");
+			}else if (args[1].equalsIgnoreCase("false")){
+				Config.UPDATER_ENABLED = false;
+				Config.set("Updater.Enabled", String.valueOf(args[1]));
+				reloadConfig(sender, "&2The updater has been disabled.");
+			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinCooldown")) {
+			if (isStringInt(args[1])){
+				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
+				Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
+				reloadConfig(sender, "&2The skin change cooldown has been set to &f"+Integer.valueOf(args[1]));
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		} else if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
+			try {
+				MojangAPI.getSkinProperty("Th3Tr0LLeR", MojangAPI.getUUID("Th3Tr0LLeR"));
+				sender.sendMessage("Good");
+			} catch (SkinRequestException e) {
+				sender.sendMessage(e.getReason());
+			}
 		} else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)
@@ -171,5 +262,20 @@ public class SrCommand implements CommandExecutor {
 
 		return true;
 	}
-
+     public void reloadConfig(CommandSender sender, String msg){
+    	 Locale.load();
+			Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
+			sender.sendMessage(C.c(msg));
+     }
+     public boolean isStringInt(String s)
+     {
+         try
+         {
+             Integer.parseInt(s);
+             return true;
+         } catch (NumberFormatException ex)
+         {
+             return false;
+         }
+     }
 }

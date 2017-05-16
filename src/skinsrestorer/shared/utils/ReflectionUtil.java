@@ -139,6 +139,9 @@ public class ReflectionUtil {
 	public static Class<?> getBukkitClass(String clazz) throws Exception {
 		return Class.forName("org.bukkit.craftbukkit." + serverVersion + "." + clazz);
 	}
+	public static Class<?> getBungeeClass(String path, String clazz) throws Exception {
+		return Class.forName("net.md_5.bungee." + path + "." + clazz);
+	}
 
 	public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs)
 			throws Exception {

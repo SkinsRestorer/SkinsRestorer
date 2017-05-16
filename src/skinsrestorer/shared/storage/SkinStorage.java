@@ -276,7 +276,7 @@ public class SkinStorage {
 				}
 			}
 
-			return null;
+			return name;
 
 		} else {
 			File playerFile = new File(
@@ -303,7 +303,7 @@ public class SkinStorage {
 				e.printStackTrace();
 			}
 
-			return null;
+			return name;
 		}
 	}
 
@@ -373,8 +373,11 @@ public class SkinStorage {
 					if (shouldUpdate) {
 						if (isBungee)
 							skinsrestorer.bungee.SkinApplier.applySkin(name);
-						else
+						else {
+							SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
+									props);
 							SkinsRestorer.getInstance().getFactory().updateSkin(org.bukkit.Bukkit.getPlayer(name));
+						}
 					}
 				} catch (Exception e) {
 				}

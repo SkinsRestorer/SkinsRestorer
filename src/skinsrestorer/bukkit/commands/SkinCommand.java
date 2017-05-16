@@ -8,6 +8,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.ChatColor;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
@@ -28,15 +29,20 @@ public class SkinCommand implements CommandExecutor {
 
 		final Player p = (Player) sender;
 
-		if (!p.hasPermission("skinsrestorer.playercmds")) {
+		if (!p.hasPermission("skinsrestorer.playercmds")||!p.isOp()) {
 			p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
 		}
 
 		// Skin Help
-		if (args.length == 0 || args.length > 1)
-			p.sendMessage(Locale.PLAYER_HELP);
-
+		if (args.length == 0 || args.length > 1){
+			p.sendMessage(Locale.SR_LINE);
+			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+			if (p.hasPermission("skinsrestorer.cmds")||p.isOp()){
+				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "     &2/sr &7- &fDisplay Admin commands."));
+			}
+			p.sendMessage(Locale.SR_LINE);
+		}
 		// Set Skin
 		else if (args.length > 0) {
 			StringBuilder sb = new StringBuilder();
@@ -81,6 +87,8 @@ public class SkinCommand implements CommandExecutor {
 						}
 
 					SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinsRestorer.getInstance().getFactory().applySkin(p,
+							SkinStorage.getOrCreateSkinForPlayer(p.getName()));
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;

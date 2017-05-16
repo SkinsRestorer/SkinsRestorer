@@ -1,15 +1,13 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-load: STARTUP
-version: 12.9.4
+version: 13.0.0
 authors: [Blackfire62, Th3Tr0LLeR]
+softdepend: [Multiverse-Core]
 commands:
   skinsrestorer:
     aliases: [sr]
     description: Admin commands.
   skin:
     description: Sets your skin.
-  clearskin:
-    description: Removes your skin.
-  skins:
-    description: Opens the skins menu.
+  skinver:
+    description: Shows the SR version

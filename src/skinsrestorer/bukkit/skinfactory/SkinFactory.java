@@ -2,23 +2,36 @@ package skinsrestorer.bukkit.skinfactory;
 
 import org.bukkit.entity.Player;
 
-public interface SkinFactory {
+import skinsrestorer.shared.utils.ReflectionUtil;
+
+public abstract class SkinFactory {
 
 	/**
 	 * 
-	 * Applies skin data from SkinStorage on a Player p.
+	 * Applies the skin In other words, sets the skin data, but no changes will
+	 * be visible until you reconnect or force update with
 	 * 
+	 * @see updateSkin
 	 * 
 	 * @param p
 	 *            - Player
 	 * @param props
-	 *            - Property object
-	 * @param propertymap
-	 *            - Additional property map where props should be applied. Set
-	 *            to null if none. We use this for the propertymap inside
-	 *            PlayerInfo packet.
+	 *            - Property Object
 	 */
-	public void applySkin(Player p, Object props, Object propertymap);
+	public void applySkin(Player p, Object props) {
+		try {
+			if (props == null)
+				return;
+			
+			Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
+			Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+			Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+			ReflectionUtil.invokeMethod(propmap, "clear");
+			ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put",
+						new Class[] { Object.class, Object.class }, new Object[] { "textures", props });
+		} catch (Exception e) {
+		}
+	}
 
 	/**
 	 * Instantly updates player's skin
@@ -26,6 +39,6 @@ public interface SkinFactory {
 	 * @param p
 	 *            - Player
 	 */
-	public void updateSkin(Player p);
+	public abstract void updateSkin(Player p);
 
 }
