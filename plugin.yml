@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 13.0.1
+version: 13.0.2
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core]
 commands:

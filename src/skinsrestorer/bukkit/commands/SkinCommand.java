@@ -29,9 +29,12 @@ public class SkinCommand implements CommandExecutor {
 
 		final Player p = (Player) sender;
 
-		if (!p.hasPermission("skinsrestorer.playercmds") || !p.isOp()) {
+		if (!Config.SKINWITHOUTPERM){
+		if (p.hasPermission("skinsrestorer.playercmds") || p.isOp()) {
+		} else {
 			p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
+		}
 		}
 
 		// Skin Help
@@ -93,8 +96,7 @@ public class SkinCommand implements CommandExecutor {
 
 			});
 			return true;
-		}
-
+	}
 		return true;
 	}
 

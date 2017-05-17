@@ -29,11 +29,8 @@ public class AdminCommands extends Command {
 	@Override
 	public void execute(final CommandSender sender, final String[] args) {
 
-		if (!sender.hasPermission("skinsrestorer.cmds")) {
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ Locale.PLAYER_HAS_NO_PERMISSION));
-			return;
-		}
+		if (sender.hasPermission("skinsrestorer.cmds")) {
+		
 
 		if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
 			Locale.load();
@@ -167,7 +164,18 @@ public class AdminCommands extends Command {
 				reloadConfig(sender, "&2The updater has been disabled.");
 			}
 			return;
-		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinCooldown")) {
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinwithoutperm")) {
+			if (args[1].equalsIgnoreCase("true")) {
+				Config.SKINWITHOUTPERM = true;
+				Config.set("SkinWithoutPerm", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Skins will not require permissions.");
+			} else if (args[1].equalsIgnoreCase("false")) {
+				Config.SKINWITHOUTPERM = false;
+				Config.set("SkinWithoutPerm", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Skins will require permissions.");
+			}
+			return;
+		}else if (args.length == 2 && args[0].equalsIgnoreCase("skinCooldown")) {
 			if (isStringInt(args[1])) {
 				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
 				Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
@@ -228,6 +236,12 @@ public class AdminCommands extends Command {
 			sender.sendMessage(Locale.SR_LINE);
 		sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
 		sender.sendMessage(Locale.SR_LINE);
+		}
+		}else{
+			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+					+ Locale.PLAYER_HAS_NO_PERMISSION));
+			return;
+		
 		}
 	}
 

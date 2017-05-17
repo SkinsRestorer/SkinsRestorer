@@ -13,6 +13,7 @@ public class Config {
 			"plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", true);
 
 	public static boolean DISABLE_ONJOIN_SKINS = false;
+	public static boolean SKINWITHOUTPERM = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
 	public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/";
 	public static boolean USE_MYSQL = false;
@@ -35,6 +36,7 @@ public class Config {
 	public static String CUSTOMSKINS_AUTHTOKEN = "";
 	public static String CUSTOMSKINS_CLIENTTOKEN = "";
 	public static boolean UPDATER_ENABLED = true;
+	
 	public static boolean AUTOUPDATE = true;
 
 	public static void load(InputStream is) {
@@ -58,8 +60,14 @@ public class Config {
 			config.set("Updater.Enabled", true);
 			config.save();
 		}
+		
+		if (config.get("SkinWithoutPerm") == null) {
+			config.set("SkinWithoutPerm", false);
+			config.save();
+		}
 
 		UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
+		SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm");
 		DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
 
 		if (DEFAULT_SKINS == null || DEFAULT_SKINS.isEmpty()) {

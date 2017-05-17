@@ -34,10 +34,8 @@ public class SrCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
-		if (!sender.hasPermission("skinsrestorer.cmds") || !sender.isOp()) {
-			sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-			return true;
-		}
+		if (sender.hasPermission("skinsrestorer.cmds") || sender.isOp()) {
+			
 
 		if (args.length == 0) {
 			sender.sendMessage(Locale.SR_LINE);
@@ -152,6 +150,16 @@ public class SrCommand implements CommandExecutor {
 				Config.set("Updater.Enabled", String.valueOf(args[1]));
 				reloadConfig(sender, "&2The updater has been disabled.");
 			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinwithoutperm")) {
+			if (args[1].equalsIgnoreCase("true")) {
+				Config.SKINWITHOUTPERM = true;
+				Config.set("SkinWithoutPerm", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Skins will not require permissions.");
+			} else if (args[1].equalsIgnoreCase("false")) {
+				Config.SKINWITHOUTPERM = false;
+				Config.set("SkinWithoutPerm", String.valueOf(args[1]));
+				reloadConfig(sender, "&2Skins will require permissions.");
+			}
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinCooldown")) {
 			if (isStringInt(args[1])) {
 				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
@@ -249,7 +257,11 @@ public class SrCommand implements CommandExecutor {
 			sender.sendMessage(C.c("&cMore info in console!"));
 
 		}
-
+		} else {
+			sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
+			return true;
+		
+		}
 		return true;
 	}
 

@@ -34,10 +34,13 @@ public class PlayerCommands extends Command {
 
 		final ProxiedPlayer p = (ProxiedPlayer) sender;
 
-		if (!p.hasPermission("skinsrestorer.playercmds")) {
+		if (!Config.SKINWITHOUTPERM){
+		if (p.hasPermission("skinsrestorer.playercmds")) {
+		}else{
 			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
 					+ Locale.PLAYER_HAS_NO_PERMISSION));
 			return;
+		}
 		}
 
 		if (args.length > 0) {
@@ -97,5 +100,6 @@ public class PlayerCommands extends Command {
 						ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
 			sender.sendMessage(Locale.SR_LINE);
 		}
+
 	}
 }
