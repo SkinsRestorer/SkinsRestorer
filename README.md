@@ -9,4 +9,4 @@
  Download Jar from Spigot| 
  https://www.spigotmc.org/resources/skinsrestorer.2124/
  Use our Discord server for issues
- https://discord.gg/DHQvqK
+ https://discord.gg/sAhVsyU
