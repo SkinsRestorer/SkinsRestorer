@@ -79,15 +79,14 @@ public class PlayerCommands extends Command {
 					if (SkinStorage.getSkinData(skin) == null)
 						try {
 							MojangAPI.getUUID(skin);
+						SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinApplier.applySkin(p);
+					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					return;
 						} catch (SkinRequestException e) {
 							p.sendMessage(e.getReason());
 							return;
 						}
-
-					SkinStorage.setPlayerSkin(p.getName(), skin);
-					SkinApplier.applySkin(p);
-					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-					return;
 				}
 
 			});

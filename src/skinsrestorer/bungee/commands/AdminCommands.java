@@ -87,15 +87,14 @@ public class AdminCommands extends Command {
 					if (SkinStorage.getSkinData(skin) == null)
 						try {
 							MojangAPI.getUUID(skin);
+						SkinStorage.setPlayerSkin(p.getName(), skin);
+					SkinApplier.applySkin(p);
+					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+					return;
 						} catch (SkinRequestException e) {
 							sender.sendMessage(e.getReason());
 							return;
 						}
-
-					SkinStorage.setPlayerSkin(p.getName(), skin);
-					SkinApplier.applySkin(p);
-					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-					return;
 				}
 
 			});
