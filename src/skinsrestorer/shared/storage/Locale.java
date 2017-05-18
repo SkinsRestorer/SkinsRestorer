@@ -22,7 +22,7 @@ public class Locale {
 
 	public static String ALT_API_FAILED = "&4Error&8: &cSkin Data API is overloaded, please try again later!";
 	public static String NOT_PREMIUM = "&4Error&8: &cPremium player with that name does not exist.";
-	public static String RATE_LIMITED = "&4Error&8: &cYou are rate limited for this skin! \n&cPlease wait10 minutes before requesting the same skin again.";
+	public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
 	public static String GENERIC_ERROR = "&4Error&8: &cAn error occured while requesting skin data, please try again later!";
 
 	public static String SKIN_DATA_DROPPED = "&2skin data for player %player dropped.";

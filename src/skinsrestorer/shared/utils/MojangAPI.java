@@ -130,7 +130,7 @@ public class MojangAPI {
 			if (output.isEmpty())
 				throw new SkinRequestException(Locale.NOT_PREMIUM);
 			else if (output.contains("\"error\""))
-				throw new SkinRequestException(Locale.RATE_LIMITED);
+				throw new SkinRequestException(Locale.WAIT_A_MINUTE);
 
 			return output.substring(7, 39);
 		} catch (IOException e) {
