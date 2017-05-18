@@ -8,12 +8,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.md_5.bungee.api.ChatColor;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
@@ -42,7 +42,7 @@ public class SkinCommand implements CommandExecutor {
 			p.sendMessage(Locale.SR_LINE);
 			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
 			if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "     &2/sr &7- &fDisplay Admin commands."));
+				p.sendMessage(C.c("&2/sr &7- &fDisplay Admin commands."));
 			p.sendMessage(Locale.SR_LINE);
 		}
 		// Set Skin
