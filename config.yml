@@ -1,13 +1,22 @@
-#This option disables automatic requesting & applying skins on join
-#Commands still work
+##############################
+#  SkinsRestorer Config.yml  #
+##############################
+#by Th3Tr0LLeR & Blackfire62 + xknat 
+
+#This option disables automatic requesting & applying skins on join.
+#Commands still work!
 DisableOnJoinSkins: false
 
-#This is for preventing skin change spam
+#enables /skin without permissions
+#(only works for backend aka spigot servers)
+SkinWithoutPerm: false
+
+#This is for preventing skin change spam 
+#[skinsrestorer.bypasscooldown bypasses this]
 SkinChangeCooldown: 30
  
 #Enable or disable default skins
-#If more nicknames will be in the list, server will
-#always choose a random one
+#If more nicknames will be in the list, server will always choose a random one.
 DefaultSkins:
   Enabled: false
   Names:
@@ -23,10 +32,9 @@ DisabledSkins:
     
 #Multi-Bungee support
 #If you use more proxy servers and you
-#experience issues with skin visibility between proxies
-#enable this option
-#
-#RedisBungee enables this option automatically
+#experience issues with skin visibility between proxies?
+#enable this option!
+#(RedisBungee enables this option automatically)
 MultiBungee:
   Enabled: false
 
@@ -41,7 +49,7 @@ MySQL:
   PlayerTable: Players
   Username: root
   Password: pass
-  
+
+#Enable or disable the updater check.
 Updater:
   Enabled: true
-#Enable or disable the updater check on enable.
