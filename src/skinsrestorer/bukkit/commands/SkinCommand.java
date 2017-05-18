@@ -14,6 +14,7 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
@@ -42,7 +43,7 @@ public class SkinCommand implements CommandExecutor {
 			p.sendMessage(Locale.SR_LINE);
 			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
 			if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', "     &2/sr &7- &fDisplay Admin commands."));
+				p.sendMessage(C.c("&2/sr &7- &fDisplay Admin commands."));
 			p.sendMessage(Locale.SR_LINE);
 		}
 		// Set Skin
@@ -81,10 +82,7 @@ public class SkinCommand implements CommandExecutor {
 					if (SkinStorage.getSkinData(skin) == null)
 						try {
 							MojangAPI.getUUID(skin);
-						} catch (SkinRequestException e) {
-							p.sendMessage(e.getReason());
-							return;
-						}
+						
 
 					SkinStorage.setPlayerSkin(p.getName(), skin);
 					SkinsRestorer.getInstance().getFactory().applySkin(p,
@@ -92,6 +90,10 @@ public class SkinCommand implements CommandExecutor {
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
+						} catch (SkinRequestException e) {
+							p.sendMessage(e.getReason());
+							return;
+						}
 				}
 
 			});

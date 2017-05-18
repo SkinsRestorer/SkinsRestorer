@@ -85,7 +85,7 @@ public class SkinStorage {
 	 * @return Property object
 	 *
 	 **/
-	public static Object getOrCreateSkinForPlayer(final String name) {
+	public static Object getOrCreateSkinForPlayer(final String name)throws SkinRequestException {
 		String skin = getPlayerSkin(name);
 
 		if (skin == null)
@@ -98,21 +98,15 @@ public class SkinStorage {
 		// Schedule skin update for next login
 		final String sname = skin;
 		final Object oldprops = textures;
-		exe.submit(new Runnable() {
-
-			@Override
-			public void run() {
-
+		
 				try {
 					Object props = null;
-					try {
+			
 						props = MojangAPI.getSkinProperty(sname, MojangAPI.getUUID(sname));
-					} catch (SkinRequestException e) {
-						return;
-					}
+			
 
 					if (props == null)
-						return;
+						return props;
 
 					boolean shouldUpdate = false;
 
@@ -144,10 +138,8 @@ public class SkinStorage {
 							SkinsRestorer.getInstance().getFactory().updateSkin(org.bukkit.Bukkit.getPlayer(name));
 						}
 				} catch (Exception e) {
+					throw new SkinRequestException(Locale.WAIT_A_MINUTE);
 				}
-			}
-
-		});
 
 		return textures;
 	}

@@ -77,10 +77,7 @@ public class SrCommand implements CommandExecutor {
 					if (SkinStorage.getSkinData(skin) == null)
 						try {
 							MojangAPI.getUUID(skin);
-						} catch (SkinRequestException e) {
-							sender.sendMessage(e.getReason());
-							return;
-						}
+						
 
 					SkinStorage.setPlayerSkin(p.getName(), skin);
 					SkinsRestorer.getInstance().getFactory().applySkin(p,
@@ -88,6 +85,10 @@ public class SrCommand implements CommandExecutor {
 					SkinsRestorer.getInstance().getFactory().updateSkin(p);
 					sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
+						} catch (SkinRequestException e) {
+							sender.sendMessage(e.getReason());
+							return;
+						}
 				}
 
 			});
