@@ -15,7 +15,7 @@ public class Config {
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static boolean SKINWITHOUTPERM = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
-	public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/";
+	//public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/"; *just leave it here just for history books*//
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
 	public static String MYSQL_PORT = "3306";
