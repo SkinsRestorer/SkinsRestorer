@@ -34,14 +34,17 @@ public class Locale {
 
 	public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
 	public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-			+ "\n\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
+		
+			+ "\n\n    &2/sr config &7- &fhelp page for usefull in game config settings"
+			+ "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
 			+ "\n    &2/sr drop <player> &7- &fDrops player skin data."
 			+ "\n    &2/sr reload &7- &fReloads the config and locale"
 			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
 			+ "\n    &2/sr config &7- &fDisplays the config help.";
 	public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
 			+ "\n\n    &2/sr defaultSkins <true/false/add [skin]> &7- &fConfigures the DefaultSkins section."
-			+ "\n    &2/sr disabledSkins <true/false/add [skin]> &7- &fConfigures the DisabledSkins section."
+			+ "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."		
+			+ "\n    &2/sr disabledSkins <true/false/add [skin]> &7- &fToggles /skin without permissions"
 			+ "\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
 			+ "\n    &2/sr updater <true/false> &7- &fToggles the updater";
 	public static String RELOAD = "&2Config and Locale has been reloaded!";
