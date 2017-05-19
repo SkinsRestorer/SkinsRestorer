@@ -15,7 +15,7 @@ public class Config {
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static boolean SKINWITHOUTPERM = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
-	public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/";
+	//public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/"; *just leave it here just for history books*//
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
 	public static String MYSQL_PORT = "3306";
@@ -43,6 +43,7 @@ public class Config {
 		config.copyDefaults(is);
 		config.reload();
 		DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
+		SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm"), SKINWITHOUTPERM);
 		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
 		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
 		DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
