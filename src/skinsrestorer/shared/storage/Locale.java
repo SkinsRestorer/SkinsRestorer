@@ -33,8 +33,7 @@ public class Locale {
 			+ "\n    &2/skin <skinname> &7-&f Changes your skin.";
 
 	public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
-	public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-		
+	public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"	
 			+ "\n\n    &2/sr config &7- &fhelp page for usefull in game config settings"
 			+ "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
 			+ "\n    &2/sr drop <player> &7- &fDrops player skin data."
