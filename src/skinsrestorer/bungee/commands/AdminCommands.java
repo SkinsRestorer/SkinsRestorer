@@ -142,11 +142,11 @@ public class AdminCommands extends Command {
 
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("joinSkins")) {
 			if (args[1].equalsIgnoreCase("true")) {
-				Config.DISABLE_ONJOIN_SKINS = false;
+				Config.DISABLE_ONJOIN_SKINS = true;
 				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));
 				reloadConfig(sender, "&2Players will have skins on join.");
 			} else if (args[1].equalsIgnoreCase("false")) {
-				Config.DISABLE_ONJOIN_SKINS = true;
+				Config.DISABLE_ONJOIN_SKINS = false;
 				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));
 				;
 				reloadConfig(sender, "&2Players will not have skins on join.");
