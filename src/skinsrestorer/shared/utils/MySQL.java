@@ -90,7 +90,7 @@ public class MySQL {
 				@Override
 				public void run() {
 					try {
-						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
+						con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false",
 								username, password);
 						System.out.println("[SkinsRestorer] Connected to MySQL!");
 						createTable();
