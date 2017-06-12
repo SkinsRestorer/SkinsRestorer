@@ -92,12 +92,14 @@ public class PlayerCommands extends Command {
 			});
 			return;
 		} else {
-			sender.sendMessage(Locale.SR_LINE);
+			if (!Locale.SR_LINE.isEmpty())
+				sender.sendMessage(Locale.SR_LINE);
 			sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
 			if (sender.hasPermission("skinsrestorer.cmds"))
 				sender.sendMessage(
 						ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
-			sender.sendMessage(Locale.SR_LINE);
+			if (!Locale.SR_LINE.isEmpty())
+				sender.sendMessage(Locale.SR_LINE);
 		}
 
 	}
