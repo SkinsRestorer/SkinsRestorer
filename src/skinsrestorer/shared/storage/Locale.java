@@ -40,10 +40,11 @@ public class Locale {
 			+ "\n    &2/sr reload &7- &fReloads the config and locale"
 			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
 	public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
-			+ "\n\n    &2/sr defaultSkins <true/false/add [skin]> &7- &fConfigures the DefaultSkins section."
-			+ "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."		
-			+ "\n    &2/sr disabledSkins <true/false/add [skin]> &7- &fToggles /skin without permissions"
-			+ "\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
+			+ "\n\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
+			+ "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."
+			+ "\n    &2/sr SkinExpiresAfter <time> &7- &fHow long the a skin is cached."
+			+ "\n    &2/sr skinCooldown <time> &7- &f/skin cooldown in minute(s)."		
+			+ "\n    &2/sr defaultSkins <true/false/add [skin]> &7- &fConfigures the DefaultSkins section."		
 			+ "\n    &2/sr updater <true/false> &7- &fToggles the updater";
 	public static String RELOAD = "&2Config and Locale has been reloaded!";
 	public static String NO_SKIN_DATA = "&4Error&8: &cNo skin data acquired! Does this player have a skin?";
