@@ -18,7 +18,7 @@ public abstract class SkinFactory {
 	 * @param props
 	 *            - Property Object
 	 */
-	public void applySkin(Player p, Object props) {
+	public void applySkin(final Player p, Object props) {
 		try {
 			if (props == null)
 				return;
@@ -29,6 +29,7 @@ public abstract class SkinFactory {
 			ReflectionUtil.invokeMethod(propmap, "clear");
 			ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[] { Object.class, Object.class },
 					new Object[] { "textures", props });
+			updateSkin(p);
 		} catch (Exception e) {
 		}
 	}

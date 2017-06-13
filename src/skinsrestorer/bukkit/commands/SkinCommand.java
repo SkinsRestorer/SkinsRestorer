@@ -66,27 +66,25 @@ public class SkinCommand implements CommandExecutor {
 						return true;
 					}
 
-			if (!p.hasPermission("skinsrestorer.bypasscooldown") || p.isOp() && CooldownStorage.hasCooldown(p.getName())) {
+			if (!p.hasPermission("skinsrestorer.bypasscooldown") || !p.isOp() && CooldownStorage.hasCooldown(p.getName())) {
 				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
 				return true;
 			}
 
 			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-			Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
+			Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
 
 				@Override
 				public void run() {
 
-					if (SkinStorage.getSkinData(skin) == null)
-						try {
-							MojangAPI.getUUID(skin);
+				try {
+					MojangAPI.getUUID(skin);
 						
 
 					SkinStorage.setPlayerSkin(p.getName(), skin);
 					SkinsRestorer.getInstance().getFactory().applySkin(p,
-							SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-					SkinsRestorer.getInstance().getFactory().updateSkin(p);
+					SkinStorage.getOrCreateSkinForPlayer(p.getName()));
 					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 					return;
 						} catch (SkinRequestException e) {

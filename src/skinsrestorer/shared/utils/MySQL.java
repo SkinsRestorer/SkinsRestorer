@@ -48,11 +48,23 @@ public class MySQL {
 				+ "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
 				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 		execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
-				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," + "`Value` text COLLATE utf8_unicode_ci,"
+				+ "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL," 
+				+ "`Value` text COLLATE utf8_unicode_ci,"
 				+ "`Signature` text COLLATE utf8_unicode_ci,"
+				+ "`timestamp` text COLLATE utf8_unicode_ci,"
 				+ "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+        try {
+			addColumn();
+		} catch (SQLException e) {
+			if (e.getMessage().contains("doesn't exist")){
+				execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+			}
+		}
 	}
-
+	public void addColumn() throws SQLException{
+		execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+		}
+	
 	public void execute(final String query, final Object... vars) {
 		if (isConnected())
 			exe.execute(new Runnable() {
@@ -64,6 +76,10 @@ public class MySQL {
 						ps.execute();
 						ps.close();
 					} catch (SQLException e) {
+						if (e.getMessage().contains("Duplicate column name")){
+							return;
+						}
+						e.printStackTrace();
 						System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
 					}
 				}

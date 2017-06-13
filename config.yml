@@ -53,3 +53,6 @@ MySQL:
 #Enable or disable the updater check.
 Updater:
   Enabled: true
+  
+#How long the skin will be in the database (in minutes)
+SkinExpiresAfter: 1

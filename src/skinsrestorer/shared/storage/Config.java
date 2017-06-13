@@ -15,6 +15,7 @@ public class Config {
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static boolean SKINWITHOUTPERM = false;
 	public static int SKIN_CHANGE_COOLDOWN = 30;
+	public static int SKIN_EXPIRES_AFTER = 1;
 	//public static String ALT_PROPERTY_URL = "http://mcapi.de/api/user/"; *just leave it here just for history books*//
 	public static boolean USE_MYSQL = false;
 	public static String MYSQL_HOST = "localhost";
@@ -43,8 +44,9 @@ public class Config {
 		config.copyDefaults(is);
 		config.reload();
 		DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
-		SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm"), SKINWITHOUTPERM);
+		SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);
 		SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
+		SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
 		DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
 		DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
 		MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
@@ -59,6 +61,11 @@ public class Config {
 
 		if (config.get("Updater.Enabled") == null) {
 			config.set("Updater.Enabled", true);
+			config.save();
+		}
+		
+		if (config.get("SkinExpiresAfter") == null) {
+			config.set("SkinExpiresAfter", 1);
 			config.save();
 		}
 		

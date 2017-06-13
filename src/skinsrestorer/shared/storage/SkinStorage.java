@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -90,11 +91,14 @@ public class SkinStorage {
 
 		if (skin == null)
 			skin = name.toLowerCase();
-
-		Object textures = getSkinData(skin);
-		if (textures == null)
-			if (Config.DEFAULT_SKINS_ENABLED)
-				textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+        Object textures = null;
+		if (Config.DEFAULT_SKINS_ENABLED){
+			textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+		}
+		textures = getSkinData(skin);
+		if (textures != null){
+			return textures;
+		}
 		// Schedule skin update for next login
 		final String sname = skin;
 		final Object oldprops = textures;
@@ -104,7 +108,6 @@ public class SkinStorage {
 			
 						props = MojangAPI.getSkinProperty(sname, MojangAPI.getUUID(sname));
 			
-
 					if (props == null)
 						return props;
 
@@ -135,7 +138,6 @@ public class SkinStorage {
 						else {
 							SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
 									props);
-							SkinsRestorer.getInstance().getFactory().updateSkin(org.bukkit.Bukkit.getPlayer(name));
 						}
 				} catch (Exception e) {
 					throw new SkinRequestException(Locale.WAIT_A_MINUTE);
@@ -210,12 +212,16 @@ public class SkinStorage {
 		if (Config.USE_MYSQL) {
 
 			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
-
 			if (crs != null)
 				try {
 					String value = crs.getString("Value");
 					String signature = crs.getString("Signature");
+					String timestamp = crs.getString("timestamp");
 
+					if (isOld(Long.valueOf(timestamp))){
+						removeSkinData(name);
+						return null;
+					}
 					return createProperty("textures", value, signature);
 
 				} catch (Exception e) {
@@ -234,26 +240,37 @@ public class SkinStorage {
 
 				BufferedReader buf = new BufferedReader(new FileReader(skinFile));
 
-				String line, value = "", signature = "";
-				for (int i = 0; i < 2; i++)
+				String line, value = "", signature = "", timestamp = "";
+				for (int i = 0; i < 3; i++)
 					if ((line = buf.readLine()) != null)
-						if (value.isEmpty())
+						if (value.isEmpty()){
 							value = line;
-						else
+						}else if (signature.isEmpty()){
 							signature = line;
-
+						}else{
+							timestamp = line;
+						}
 				buf.close();
-
+				if (isOld(Long.valueOf(timestamp))){
+					removeSkinData(name);
+					return null;
+				}
 				return SkinStorage.createProperty("textures", value, signature);
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				removeSkinData(name);
 			}
 
 			return null;
 		}
 	}
-
+    
+	public static boolean isOld(long timestamp){
+		if (timestamp+TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis()){
+			return true;
+		}
+		return false;
+	}
 	public static void init(File pluginFolder) {
 		folder = pluginFolder;
 		File tempFolder = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator);
@@ -363,9 +380,11 @@ public class SkinStorage {
 		name = name.toLowerCase();
 		String value = "";
 		String signature = "";
+		String timestamp = "";
 		try {
 			value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
 			signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
+			timestamp = String.valueOf(System.currentTimeMillis());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -374,17 +393,17 @@ public class SkinStorage {
 			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 
 			if (crs == null)
-				mysql.execute("insert into " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature) values (?,?,?)",
-						name, value, signature);
+				mysql.execute("insert into " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) values (?,?,?,?)",
+						name, value, signature, timestamp);
 			else
-				mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=? where Nick=?", value,
-						signature, name);
+				mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=?, timestamp=? where Nick=?", value,
+						signature, timestamp, name);
 		} else {
 			File skinFile = new File(
 					folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
 			try {
-				if (value.isEmpty() || signature.isEmpty())
+				if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
 					return;
 
 				if (!skinFile.exists())
@@ -392,7 +411,7 @@ public class SkinStorage {
 
 				FileWriter writer = new FileWriter(skinFile);
 
-				writer.write(value + "\n" + signature);
+				writer.write(value + "\n" + signature + "\n" + timestamp);
 				writer.close();
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -134,9 +134,8 @@ public class MojangAPI {
 
 			return output.substring(7, 39);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new SkinRequestException(Locale.WAIT_A_MINUTE);
 		}
-		return null;
 	}
 
 	private static String readURL(String url) throws SkinRequestException, MalformedURLException, IOException {

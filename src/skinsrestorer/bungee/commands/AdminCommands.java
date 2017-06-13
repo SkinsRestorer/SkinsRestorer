@@ -84,7 +84,7 @@ public class AdminCommands extends Command {
 				@Override
 				public void run() {
 
-					if (SkinStorage.getSkinData(skin) == null)
+				
 						try {
 							MojangAPI.getUUID(skin);
 						SkinStorage.setPlayerSkin(p.getName(), skin);

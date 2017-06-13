@@ -42,6 +42,16 @@ public class PlayerCommands extends Command {
 			return;
 		}
 		}
+		
+		// Skin Help
+		if (args.length == 0 || args.length > 1) {
+			p.sendMessage(Locale.SR_LINE);
+			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+			if (p.hasPermission("skinsrestorer.cmds"))
+				p.sendMessage(C.c("&2/sr &7- &fDisplay Admin commands."));
+			p.sendMessage(Locale.SR_LINE);
+			return;
+		}
 
 		if (args.length > 0) {
 
@@ -76,7 +86,7 @@ public class PlayerCommands extends Command {
 				@Override
 				public void run() {
 
-					if (SkinStorage.getSkinData(skin) == null)
+				
 						try {
 							MojangAPI.getUUID(skin);
 						SkinStorage.setPlayerSkin(p.getName(), skin);

@@ -19,7 +19,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
@@ -223,7 +223,7 @@ public class SkinsRestorer extends JavaPlugin {
 			// LoginEvent happens on attemptLogin so its the best place to set
 			// the skin
 			@EventHandler
-			public void onLogin(PlayerLoginEvent e) {
+			public void onLogin(PlayerJoinEvent e) {
 				try {
 					if (Config.DISABLE_ONJOIN_SKINS) {
 						factory.applySkin(e.getPlayer(),
