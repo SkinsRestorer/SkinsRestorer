@@ -113,7 +113,7 @@ public class AdminCommands extends Command {
 			} else if (args[1].equalsIgnoreCase("false")) {
 				Config.DEFAULT_SKINS_ENABLED = false;
 				Config.set("DefaultSkins.Enabled", String.valueOf(args[1]));
-				reloadConfig(sender, "&2Default skins has been disabled.");
+				reloadConfig(sender, "&4Default skins has been disabled.");
 			} else if (args[1].equalsIgnoreCase("add")) {
 				String skin = args[2];
 				List<String> skins = Config.DEFAULT_SKINS;
@@ -130,7 +130,7 @@ public class AdminCommands extends Command {
 			} else if (args[1].equalsIgnoreCase("false")) {
 				Config.DISABLED_SKINS_ENABLED = false;
 				Config.set("DisabledSkins.Enabled", String.valueOf(args[1]));
-				reloadConfig(sender, "&2Disabled skins has been disabled.");
+				reloadConfig(sender, "&4Disabled skins has been disabled.");
 			} else if (args[1].equalsIgnoreCase("add")) {
 				String skin = args[2];
 				List<String> skins = Config.DISABLED_SKINS;
@@ -144,7 +144,7 @@ public class AdminCommands extends Command {
 			if (args[1].equalsIgnoreCase("true")) {
 				Config.DISABLE_ONJOIN_SKINS = true;
 				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));
-				reloadConfig(sender, "&2Players will have skins on join.");
+				reloadConfig(sender, "&4Players will have skins on join.");
 			} else if (args[1].equalsIgnoreCase("false")) {
 				Config.DISABLE_ONJOIN_SKINS = false;
 				Config.set("DisableOnJoinSkins", String.valueOf(args[1]));
@@ -160,7 +160,7 @@ public class AdminCommands extends Command {
 			} else if (args[1].equalsIgnoreCase("false")) {
 				Config.UPDATER_ENABLED = false;
 				Config.set("Updater.Enabled", String.valueOf(args[1]));
-				reloadConfig(sender, "&2The updater has been disabled.");
+				reloadConfig(sender, "&4The updater has been disabled.");
 			}
 			return;
 		} else if (args.length == 2 && args[0].equalsIgnoreCase("skinwithoutperm")) {
@@ -178,10 +178,17 @@ public class AdminCommands extends Command {
 			if (isStringInt(args[1])) {
 				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
 				Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
-				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]));
+				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]) + "&2minute(s)");
 			}
 			return;
-
+		}else if (args.length == 2 && args[0].equalsIgnoreCase("SkinExpiresAfter")) {
+			if (isStringInt(args[1])) {
+				Config.SKIN_EXPIRES_AFTER = Integer.valueOf(args[1]);
+				Config.set("SkinExpiresAfter", Integer.valueOf(args[1]));
+				reloadConfig(sender, "&2The skin cache time is now &f" + Integer.valueOf(args[1]) + "&2minute(s)");
+			}
+			return;
+			
 		} else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
 
 			ProxiedPlayer p = null;
