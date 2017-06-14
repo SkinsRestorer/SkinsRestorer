@@ -14,7 +14,7 @@ SkinWithoutPerm: false
 #How long the skin will be in the database (in minutes)
 SkinExpiresAfter: 1
 
-#This is for preventing skin change spam (in minutes)
+#This is for preventing skin change spam (in seconds)
 #[skinsrestorer.bypasscooldown bypasses this]
 SkinChangeCooldown: 30
  
