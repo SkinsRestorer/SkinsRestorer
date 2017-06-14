@@ -60,12 +60,13 @@ public class SkinCommand implements CommandExecutor {
 			final String skin = sb.toString();
 
 			if (Config.DISABLED_SKINS_ENABLED)
+				if (!p.hasPermission("skinsrestorer.bypassdisabled")&&!p.isOp()){
 				for (String dskin : Config.DISABLED_SKINS)
 					if (skin.equalsIgnoreCase(dskin)) {
 						p.sendMessage(Locale.SKIN_DISABLED);
 						return true;
 					}
-
+				}
 
             if (p.hasPermission("skinsrestorer.bypasscooldown")|| p.isOp()){
             	

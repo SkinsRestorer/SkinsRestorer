@@ -38,7 +38,7 @@ public class Locale {
 			+ "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
 			+ "\n    &2/sr drop <player> &7- &fDrops player skin data."
 			+ "\n    &2/sr reload &7- &fReloads the config and locale"
-			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
+			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
 	public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
 			+ "\n\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
 			+ "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."

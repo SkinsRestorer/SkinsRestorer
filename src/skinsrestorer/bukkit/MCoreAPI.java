@@ -13,7 +13,7 @@ public class MCoreAPI {
 	public static boolean check() {
 		if (mcore != null)
 			return true;
-		return true;
+		return false;
 	}
 
 	//Multiverse-Core dimensions transfer :D
