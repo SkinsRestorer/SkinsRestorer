@@ -11,7 +11,10 @@ DisableOnJoinSkins: false
 #(only works for backend aka spigot servers)
 SkinWithoutPerm: false
 
-#This is for preventing skin change spam 
+#How long the skin will be in the database (in minutes)
+SkinExpiresAfter: 1
+
+#This is for preventing skin change spam (in minutes)
 #[skinsrestorer.bypasscooldown bypasses this]
 SkinChangeCooldown: 30
  
@@ -53,6 +56,3 @@ MySQL:
 #Enable or disable the updater check.
 Updater:
   Enabled: true
-  
-#How long the skin will be in the database (in minutes)
-SkinExpiresAfter: 1

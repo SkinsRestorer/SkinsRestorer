@@ -164,7 +164,13 @@ public class SrCommand implements CommandExecutor {
 			if (isStringInt(args[1])) {
 				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
 				Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
-				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]));
+				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]) + "&2minute(s)");
+			}
+		} else if (args.length == 2 && args[0].equalsIgnoreCase("SkinExpiresAfter")) {
+			if (isStringInt(args[1])) {
+				Config.SKIN_EXPIRES_AFTER = Integer.valueOf(args[1]);
+				Config.set("SkinExpiresAfter", Integer.valueOf(args[1]));
+				reloadConfig(sender, "&2The skin cache time is now &f" + Integer.valueOf(args[1]) + "&2minute(s)");
 			}
 
 		} else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
