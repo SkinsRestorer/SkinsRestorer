@@ -178,7 +178,7 @@ public class AdminCommands extends Command {
 			if (isStringInt(args[1])) {
 				Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
 				Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
-				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]) + "&2minute(s)");
+				reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]) + "&seconds(s)");
 			}
 			return;
 		}else if (args.length == 2 && args[0].equalsIgnoreCase("SkinExpiresAfter")) {
