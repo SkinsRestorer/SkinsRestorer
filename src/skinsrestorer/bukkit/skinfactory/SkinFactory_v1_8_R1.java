@@ -46,7 +46,6 @@ public class SkinFactory_v1_8_R1 extends SkinFactory {
 				ep.getWorld().worldProvider.getDimension();
 			PacketPlayOutRespawn respawn = new PacketPlayOutRespawn(dimension, ep.getWorld().getDifficulty(),
 					ep.getWorld().worldData.getType(), EnumGamemode.getById(p.getGameMode().getValue()));
-
 			PacketPlayOutEntityEquipment itemhand = new PacketPlayOutEntityEquipment(entId, 0,
 					CraftItemStack.asNMSCopy(p.getItemInHand()));
 

@@ -66,11 +66,15 @@ public class SkinCommand implements CommandExecutor {
 						return true;
 					}
 
-			if (!p.hasPermission("skinsrestorer.bypasscooldown") || !p.isOp() && CooldownStorage.hasCooldown(p.getName())) {
-				p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + Config.SKIN_CHANGE_COOLDOWN));
-				return true;
-			}
 
+            if (p.hasPermission("skinsrestorer.bypasscooldown")|| p.isOp()){
+            	
+            }else{
+            	if (CooldownStorage.hasCooldown(p.getName())){
+            		p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+    				return true;
+            	}
+            }
 			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
 			Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {

@@ -17,9 +17,17 @@ public class CooldownStorage implements Runnable {
 	public static void resetCooldown(String name) {
 		cooldown.remove(name);
 	}
-
+    public static int getCooldown(String name){
+    	int asd = Integer.valueOf(String.format("%d",
+    		    TimeUnit.MILLISECONDS.toSeconds(cooldown.get(name)) - 
+    		    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(cooldown.get(name)))));
+    	int asd2 = Integer.valueOf(String.format("%d",
+    		    TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - 
+    		    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis()))));
+    	return asd - asd2;
+    }
 	public static void setCooldown(String name, int cooldowntime, TimeUnit timeunit) {
-		cooldown.put(name, timeunit.toMillis(cooldowntime) + System.currentTimeMillis());
+		cooldown.put(name, System.currentTimeMillis()+timeunit.toMillis(cooldowntime));
 	}
 
 	@Override

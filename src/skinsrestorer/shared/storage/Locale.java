@@ -13,7 +13,7 @@ public class Locale {
 
 	public static String NOT_PLAYER = "&4Error&8: &cYou need to be a player!";
 	public static String NOT_ONLINE = "&4Error&8: &cPlayer is not online!";
-	public static String SKIN_COOLDOWN = "&eYou can change your skin only once per %s seconds.";
+	public static String SKIN_COOLDOWN_NEW = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
 	public static String SKIN_CHANGE_SUCCESS = "&2Your skin has been changed.";
 
 	public static String PLAYER_HAS_NO_PERMISSION = "&4Error&8: &cYou don't have permission to do this.";

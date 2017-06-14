@@ -103,11 +103,12 @@ public class UniversalSkinFactory extends SkinFactory {
 			Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
 			Object worlddata = ReflectionUtil.getObject(world, "worldData");
 			Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-			int dimension;
-			if (MCoreAPI.check())
+			int dimension = 0;
+			if (MCoreAPI.check()){
 				dimension = MCoreAPI.dimension(player.getWorld());
-			else
+			}else{
 				dimension = (int) ReflectionUtil.getObject(world, "dimension");
+			}
 			Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
 			Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 

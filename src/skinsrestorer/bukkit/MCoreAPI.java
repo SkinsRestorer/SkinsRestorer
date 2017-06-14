@@ -13,15 +13,16 @@ public class MCoreAPI {
 	public static boolean check() {
 		if (mcore != null)
 			return true;
-		return false;
+		return true;
 	}
 
+	//Multiverse-Core dimensions transfer :D
 	public static int dimension(World world) {
-		if (getWorldScale(world) == 1)
+		if (getWorldScale(world) == 1||getWorldScale(world) == 14)
 			return 0;
-		if (getWorldScale(world) == 8)
+		if (getWorldScale(world) == 8||getWorldScale(world) == 13)
 			return -1;
-		if (getWorldScale(world) == 16)
+		if (getWorldScale(world) == 16||getWorldScale(world) == 12)
 			return 1;
 		return 0;
 	}
@@ -32,7 +33,6 @@ public class MCoreAPI {
 
 	public static void init() {
 		Plugin plugin = Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");
-
 		if (plugin instanceof MultiverseCore)
 			mcore = (MultiverseCore) plugin;
 	}

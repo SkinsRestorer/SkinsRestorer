@@ -110,6 +110,14 @@ public class SkinsRestorer extends JavaPlugin {
 		console.sendMessage(C.c("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
 				+ factory.getClass().getSimpleName()));
 
+		
+		// Multiverse Core support.
+				MCoreAPI.init();
+				if (MCoreAPI.check())
+					console.sendMessage(C.c("&aDetected &eMultiverse-Core &aUsing it for dimensions."));
+		
+		
+		
 		// Bungeecord stuff
 		try {
 			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
@@ -184,11 +192,6 @@ public class SkinsRestorer extends JavaPlugin {
 				}
 			return;
 		}
-
-		// Multiverse Core support.
-		MCoreAPI.init();
-		if (MCoreAPI.check())
-			console.sendMessage(C.c("&aDetected &eMultiverse-Core &aUsing it for dimensions."));
 
 		// Config stuff
 		Config.load(getResource("config.yml"));
