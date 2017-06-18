@@ -4,29 +4,33 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import net.minecraft.util.com.google.common.collect.Iterables;
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 public class SkinsRestorerAPI {
 
+	
 	/**
 	 * Used for instant skin applying.
 	 *
 	 * @param player
 	 *            = Player's instance (either ProxiedPlayer or Player)
 	 */
-	public static void applySkin(Object player) {
+	public static void applySkin(Object player, Object props) {
 		// Trying to use Bukkit.
 		try {
-			skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().updateSkin((org.bukkit.entity.Player) player);
+			skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);;
 		} catch (Throwable t) {
 			// On fail trying to use Bungee.
 			skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
 		}
 	}
+	
 
 	/**
 	 * This method is used to get player's skin name.
@@ -39,6 +43,19 @@ public class SkinsRestorerAPI {
 	 */
 	public static String getSkinName(String playerName) {
 		return SkinStorage.getPlayerSkin(playerName);
+	}
+	
+	/**
+	 * This method is used to get player's skin name.
+	 *
+	 * When player has no skin OR his skin name equals his username, returns
+	 * null (this is because of cache clean ups)
+	 *
+	 * @param playerName
+	 *            = Player's nick name
+	 */
+	public static Object getSkin(String skinName) {
+		return SkinStorage.getSkinData(skinName);
 	}
 
 	/**
@@ -88,15 +105,14 @@ public class SkinsRestorerAPI {
 				@Override
 				public void run() {
 
-					if (SkinStorage.getSkinData(skinName) == null)
-						try {
-							MojangAPI.getUUID(skinName);
-						} catch (SkinRequestException e) {
-							e.printStackTrace();
-							return;
-						}
-
+					try {
+					MojangAPI.getUUID(skinName);
 					SkinStorage.setPlayerSkin(playerName, skinName);
+					SkinStorage.setSkinData(playerName, SkinStorage.getOrCreateSkinForPlayer(skinName));
+					
+				} catch (SkinRequestException e) {
+					e.printStackTrace();
+				}
 				}
 
 			}).run();

@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +109,7 @@ public class SkinStorage {
 				try {
 					Object props = null;
 			
-						props = MojangAPI.getSkinProperty(sname, MojangAPI.getUUID(sname));
+						props = MojangAPI.getSkinProperty(MojangAPI.getUUID(sname));
 			
 					if (props == null)
 						return props;
@@ -219,8 +222,11 @@ public class SkinStorage {
 					String timestamp = crs.getString("timestamp");
 
 					if (isOld(Long.valueOf(timestamp))){
-						removeSkinData(name);
-						return null;
+						//removeSkinData(name); Remove that cause its useless
+						Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
+						if (skin!=null){
+							SkinStorage.setSkinData(name, skin);
+						}
 					}
 					return createProperty("textures", value, signature);
 
@@ -253,8 +259,11 @@ public class SkinStorage {
 						}
 				buf.close();
 				if (isOld(Long.valueOf(timestamp))){
-					removeSkinData(name);
-					return null;
+					//removeSkinData(name);
+					Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
+					if (skin!=null){
+						SkinStorage.setSkinData(name, skin);
+					}
 				}
 				return SkinStorage.createProperty("textures", value, signature);
 
@@ -420,5 +429,73 @@ public class SkinStorage {
 			}
 		}
 	}
+	public static Map<String, Object> getSkins(int number){
+		HashMap<String, Object> thingy = new HashMap<String, Object>();
+		Map<String, Object> list = new TreeMap<String, Object>(thingy);
+		String path  = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
+        File folder = new File(path);
+        String[] fileNames = folder.list();
+        int i = 0;
+        for (String file : fileNames){
+        	if (i >= number){
+        	list.put(file.replace(".skin", ""), SkinStorage.getSkinDataMenu(file.replace(".skin", "")));
+        	}
+        	i++;
+        }
+		return list;
+	}
+	
+	
+	//Getting skin data for menu
+	public static Object getSkinDataMenu(String name) {
+		name = name.toLowerCase();
+		if (Config.USE_MYSQL) {
 
+			CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+			if (crs != null)
+				try {
+					String value = crs.getString("Value");
+					String signature = crs.getString("Signature");
+					@SuppressWarnings("unused")
+					String timestamp = crs.getString("timestamp");
+
+					return createProperty("textures", value, signature);
+
+				} catch (Exception e) {
+					System.out.println("[SkinsRestorer] Unsupported player format.. removing ("+name+").");
+				}
+
+			return null;
+
+		} else {
+			File skinFile = new File(
+					folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+
+			try {
+				if (!skinFile.exists())
+					return null;
+
+				BufferedReader buf = new BufferedReader(new FileReader(skinFile));
+
+				@SuppressWarnings("unused")
+				String line, value = "", signature = "", timestamp = "";
+				for (int i = 0; i < 3; i++)
+					if ((line = buf.readLine()) != null)
+						if (value.isEmpty()){
+							value = line;
+						}else if (signature.isEmpty()){
+							signature = line;
+						}else{
+							timestamp = line;
+						}
+				buf.close();
+				return SkinStorage.createProperty("textures", value, signature);
+
+			} catch (Exception e) {
+				System.out.println("[SkinsRestorer] Unsupported player format.. removing ("+name+").");
+			}
+
+			return null;
+		}
+	}
 }

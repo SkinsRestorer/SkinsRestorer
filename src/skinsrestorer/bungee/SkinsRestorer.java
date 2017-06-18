@@ -85,7 +85,7 @@ public class SkinsRestorer extends Plugin {
 		instance = this;
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();
-
+		MojangAPI.get().loadProxies();
 		exe = Executors.newCachedThreadPool();
 
 		if (Config.USE_MYSQL)
@@ -137,7 +137,7 @@ public class SkinsRestorer extends Plugin {
 				if (Config.DEFAULT_SKINS_ENABLED)
 					for (String skin : Config.DEFAULT_SKINS)
 						try {
-							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin)));
+							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
 							if (SkinStorage.getSkinData(skin) == null)
 								console.sendMessage(

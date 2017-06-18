@@ -12,7 +12,7 @@ DisableOnJoinSkins: false
 SkinWithoutPerm: false
 
 #How long the skin will be in the database (in minutes)
-SkinExpiresAfter: 1
+SkinExpiresAfter: 5
 
 #This is for preventing skin change spam (in seconds)
 #[skinsrestorer.bypasscooldown bypasses this]

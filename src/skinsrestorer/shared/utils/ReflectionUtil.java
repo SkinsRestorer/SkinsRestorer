@@ -96,7 +96,18 @@ public class ReflectionUtil {
 		m.setAccessible(true);
 		return m;
 	}
+    public static <T> Field getField(Class<?> target, String name, Class<T> fieldType, int index) {
+        for (final Field field : target.getDeclaredFields()) {
+            if ((name == null || field.getName().equals(name)) && fieldType.isAssignableFrom(field.getType()) && index-- <= 0) {
+                field.setAccessible(true);
+                return field;
+            }
+        }
 
+        if (target.getSuperclass() != null)
+            return getField(target.getSuperclass(), name, fieldType, index);
+        throw new IllegalArgumentException("Cannot find field with type " + fieldType);
+    }
 	public static Method getMethod(Class<?> clazz, String mname, Class<?>... args) throws Exception {
 		Method m = null;
 		try {

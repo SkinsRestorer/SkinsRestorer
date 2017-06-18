@@ -175,7 +175,7 @@ public class SrCommand implements CommandExecutor {
 
 		} else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
 			try {
-				MojangAPI.getSkinProperty("Th3Tr0LLeR", MojangAPI.getUUID("Th3Tr0LLeR"));
+				MojangAPI.getSkinProperty(MojangAPI.getUUID("Th3Tr0LLeR"));
 				sender.sendMessage("Good");
 			} catch (SkinRequestException e) {
 				sender.sendMessage(e.getReason());

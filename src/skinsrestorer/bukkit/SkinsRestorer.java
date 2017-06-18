@@ -23,8 +23,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
+import skinsrestorer.bukkit.menu.SkinsGUI;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
@@ -196,6 +198,7 @@ public class SkinsRestorer extends JavaPlugin {
 		// Config stuff
 		Config.load(getResource("config.yml"));
 		Locale.load();
+		MojangAPI.get().loadProxies();
 
 		if (Config.USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
@@ -208,6 +211,7 @@ public class SkinsRestorer extends JavaPlugin {
 		// Commands
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
+		getCommand("skins").setExecutor(new GUICommand());
 		getCommand("skinver").setExecutor(new CommandExecutor() {
 
 			@Override
@@ -220,7 +224,7 @@ public class SkinsRestorer extends JavaPlugin {
 			}
 
 		});
-
+        Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
 		Bukkit.getPluginManager().registerEvents(new Listener() {
 
 			// LoginEvent happens on attemptLogin so its the best place to set
@@ -280,7 +284,7 @@ public class SkinsRestorer extends JavaPlugin {
 				if (Config.DEFAULT_SKINS_ENABLED)
 					for (String skin : Config.DEFAULT_SKINS)
 						try {
-							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(skin, MojangAPI.getUUID(skin)));
+							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
 							if (SkinStorage.getSkinData(skin) == null)
 								console.sendMessage(

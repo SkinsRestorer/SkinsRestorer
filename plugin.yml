@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: 13.0.8
+version: 13.1
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core]
 commands:
@@ -11,3 +11,5 @@ commands:
     description: Sets your skin.
   skinver:
     description: Shows the SR version
+  skins:
+    description: Opens skins GUI
