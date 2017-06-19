@@ -27,6 +27,7 @@ public class UniversalSkinFactory extends SkinFactory {
 	private Class<?> Packet;
 	private Class<?> CraftItemStack;
 	private Class<?> PlayOutHeldItemSlot;
+	private Class<?> EnumPlayerInfoAction;
 
 	private Enum<?> PEACEFUL;
 	private Enum<?> REMOVE_PLAYER;
@@ -52,10 +53,20 @@ public class UniversalSkinFactory extends SkinFactory {
 			PlayOutEntityDestroy = ReflectionUtil.getNMSClass("PacketPlayOutEntityDestroy");
 			PlayOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
 			PlayOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn");
-
+			try {
+			EnumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction");
+			}catch (Exception e){
+			}
 			PEACEFUL = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL");
+			try {
 			REMOVE_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
 			ADD_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
+			}catch (Exception e){
+				System.out.print("AISIIIIIIIII");
+				//1.8 or below
+				REMOVE_PLAYER = ReflectionUtil.getEnum(EnumPlayerInfoAction, "REMOVE_PLAYER");
+				ADD_PLAYER = ReflectionUtil.getEnum(EnumPlayerInfoAction, "ADD_PLAYER");
+			}
 			MAINHAND = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "MAINHAND");
 			OFFHAND = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "OFFHAND");
 			HEAD = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "HEAD");
@@ -63,6 +74,7 @@ public class UniversalSkinFactory extends SkinFactory {
 			FEET = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "FEET");
 			LEGS = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumItemSlot"), "LEGS");
 		} catch (Exception e) {
+
 		}
 	}
 
@@ -84,19 +96,19 @@ public class UniversalSkinFactory extends SkinFactory {
 			List<Object> set = new ArrayList<>();
 			set.add(ep);
 			Iterable<?> iterable = set;
-
-			Object removeInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
+            Object removeInfo = null;
+            Object removeEntity = null;
+            Object addNamed = null;
+            Object addInfo = null;
+   
+			removeInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
 					new Class<?>[] { REMOVE_PLAYER.getClass(), Iterable.class }, REMOVE_PLAYER, iterable);
-
-			Object removeEntity = ReflectionUtil.invokeConstructor(PlayOutEntityDestroy, new Class<?>[] { int[].class },
+			removeEntity = ReflectionUtil.invokeConstructor(PlayOutEntityDestroy, new Class<?>[] { int[].class },
 					new int[] { player.getEntityId() });
-
-			Object addNamed = ReflectionUtil.invokeConstructor(PlayOutNamedEntitySpawn, new Class<?>[] { EntityHuman },
+			addNamed = ReflectionUtil.invokeConstructor(PlayOutNamedEntitySpawn, new Class<?>[] { EntityHuman },
 					ep);
-
-			Object addInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
+			addInfo = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo,
 					new Class<?>[] { ADD_PLAYER.getClass(), Iterable.class }, ADD_PLAYER, iterable);
-
 			// Slowly getting from object to object till i get what I need for
 			// the respawn packet
 			Object world = ReflectionUtil.invokeMethod(ep, "getWorld");

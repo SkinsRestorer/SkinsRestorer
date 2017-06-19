@@ -397,7 +397,6 @@ public class SkinStorage {
 			signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
 			timestamp = String.valueOf(System.currentTimeMillis());
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 
 		if (Config.USE_MYSQL) {

@@ -4,10 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import net.minecraft.util.com.google.common.collect.Iterables;
-import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -55,7 +51,12 @@ public class SkinsRestorerAPI {
 	 *            = Player's nick name
 	 */
 	public static Object getSkin(String skinName) {
-		return SkinStorage.getSkinData(skinName);
+		try {
+			return SkinStorage.getOrCreateSkinForPlayer(skinName);
+		} catch (SkinRequestException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -108,10 +109,9 @@ public class SkinsRestorerAPI {
 					try {
 					MojangAPI.getUUID(skinName);
 					SkinStorage.setPlayerSkin(playerName, skinName);
-					SkinStorage.setSkinData(playerName, SkinStorage.getOrCreateSkinForPlayer(skinName));
+					SkinStorage.setSkinData(skinName, SkinStorage.getOrCreateSkinForPlayer(skinName));
 					
-				} catch (SkinRequestException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
 				}
 				}
 
@@ -120,7 +120,7 @@ public class SkinsRestorerAPI {
 			org.bukkit.entity.Player p = null;
 
 			try {
-				p = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+				p = net.minecraft.util.com.google.common.collect.Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 			} catch (Exception e) {
 				p = Bukkit.getOnlinePlayers().iterator().next();
 			}
