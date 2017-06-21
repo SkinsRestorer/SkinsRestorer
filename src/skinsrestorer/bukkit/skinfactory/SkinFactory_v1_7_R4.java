@@ -89,7 +89,10 @@ public class SkinFactory_v1_7_R4 extends SkinFactory {
 					});
 					continue;
 				}
-				if (pOnline.canSee(p)) {
+				/*Now checks if the player is in the same world and if can see the player
+				 * I did that to try to prevent player duplications.
+				 */
+				if (pOnline.canSee(p)&&pOnline.getWorld().equals(p.getWorld())) {
 					con.sendPacket(removeEntity);
 					con.sendPacket(removeInfo);
 					con.sendPacket(addInfo);
@@ -99,6 +102,10 @@ public class SkinFactory_v1_7_R4 extends SkinFactory {
 					con.sendPacket(chestplate);
 					con.sendPacket(leggings);
 					con.sendPacket(boots);
+				}else{
+					//Only sends player update packet
+					con.sendPacket(removeInfo);
+					con.sendPacket(addInfo);
 				}
 			}
 		} catch (Exception e) {

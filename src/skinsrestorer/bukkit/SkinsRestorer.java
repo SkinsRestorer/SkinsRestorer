@@ -42,7 +42,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 public class SkinsRestorer extends JavaPlugin {
 
 	private static SkinsRestorer instance;
-
+	ConsoleCommandSender con = Bukkit.getConsoleSender();
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
@@ -53,6 +53,10 @@ public class SkinsRestorer extends JavaPlugin {
 
 	private boolean outdated;
 
+	public void log(String msg){
+		con.sendMessage(C.c("&e[&2SkinsRestorer&e] &r"+msg));
+	}
+	
 	public String checkVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
@@ -66,7 +70,7 @@ public class SkinsRestorer extends JavaPlugin {
 			if (version.length() <= 13)
 				return version;
 		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
+			log("&cFailed to check for an update on spigot.");
 		}
 		return getVersion();
 	}
@@ -90,12 +94,11 @@ public class SkinsRestorer extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		instance = this;
-		final ConsoleCommandSender console = Bukkit.getConsoleSender();
 
 		try {
 			// Doesn't support Cauldron and stuff..
 			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
-			console.sendMessage(C.c("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :("));
+			log("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :(");
 			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		} catch (Exception e) {
@@ -109,14 +112,14 @@ public class SkinsRestorer extends JavaPlugin {
 				factory = new UniversalSkinFactory();
 			}
 		}
-		console.sendMessage(C.c("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
-				+ factory.getClass().getSimpleName()));
+		log("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
+				+ factory.getClass().getSimpleName());
 
 		
 		// Multiverse Core support.
 				MCoreAPI.init();
 				if (MCoreAPI.check())
-					console.sendMessage(C.c("&aDetected &eMultiverse-Core &aUsing it for dimensions."));
+					log("&aDetected &eMultiverse-Core &aUsing it for dimensions.");
 		
 		
 		
@@ -167,30 +170,30 @@ public class SkinsRestorer extends JavaPlugin {
 			if (Config.UPDATER_ENABLED)
 				if (checkVersion().equals(getVersion())) {
 					outdated = false;
-					console.sendMessage("");
-					console.sendMessage(ChatColor.GREEN + "    +===============+");
-					console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-					console.sendMessage(ChatColor.GREEN + "    |---------------|");
-					console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
-					console.sendMessage(ChatColor.GREEN + "    +===============+");
-					console.sendMessage("");
-					console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-					console.sendMessage(ChatColor.GREEN + "    The latest version!");
-					console.sendMessage("");
+					log("&a----------------------------------------------");
+					log(ChatColor.GREEN + "    +===============+");
+					log(ChatColor.GREEN + "    | SkinsRestorer |");
+					log(ChatColor.GREEN + "    |---------------|");
+					log(ChatColor.GREEN + "    |  Bungee Mode  |");
+					log(ChatColor.GREEN + "    +===============+");
+					log("&a----------------------------------------------");
+					log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+					log(ChatColor.GREEN + "    The latest version!");
+					log("&a----------------------------------------------");
 				} else {
 					outdated = true;
-					console.sendMessage("");
-					console.sendMessage(ChatColor.GREEN + "    +===============+");
-					console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-					console.sendMessage(ChatColor.GREEN + "    |---------------|");
-					console.sendMessage(ChatColor.GREEN + "    |  Bungee Mode  |");
-					console.sendMessage(ChatColor.GREEN + "    +===============+");
-					console.sendMessage("");
-					console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-					console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-					console.sendMessage(
+					log("&a----------------------------------------------");
+					log(ChatColor.GREEN + "    +===============+");
+					log(ChatColor.GREEN + "    | SkinsRestorer |");
+					log(ChatColor.GREEN + "    |---------------|");
+					log(ChatColor.GREEN + "    |  Bungee Mode  |");
+					log(ChatColor.GREEN + "    +===============+");
+					log("&a----------------------------------------------");
+					log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+					log(ChatColor.RED + "    A new version is available! Download it at:");
+					log(
 							ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-					console.sendMessage("");
+					log("&a----------------------------------------------");
 				}
 			return;
 		}
@@ -259,26 +262,26 @@ public class SkinsRestorer extends JavaPlugin {
 				if (Config.UPDATER_ENABLED)
 					if (checkVersion().equals(getVersion())) {
 						outdated = false;
-						console.sendMessage("");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage("");
-						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-						console.sendMessage(ChatColor.GREEN + "    The latest version!");
-						console.sendMessage("");
+						log("&a----------------------------------------------");
+						log(ChatColor.GREEN + "    +===============+");
+						log(ChatColor.GREEN + "    | SkinsRestorer |");
+						log(ChatColor.GREEN + "    +===============+");
+						log("&a----------------------------------------------");
+						log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						log(ChatColor.GREEN + "    The latest version!");
+						log("&a----------------------------------------------");
 					} else {
 						outdated = true;
-						console.sendMessage("");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage("");
-						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-						console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-						console.sendMessage(
+						log("");
+						log(ChatColor.GREEN + "    +===============+");
+						log(ChatColor.GREEN + "    | SkinsRestorer |");
+						log(ChatColor.GREEN + "    +===============+");
+						log("&a----------------------------------------------");
+						log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						log(ChatColor.RED + "    A new version is available! Download it at:");
+						log(
 								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-						console.sendMessage("");
+						log("&a----------------------------------------------");
 					}
 
 				if (Config.DEFAULT_SKINS_ENABLED)
@@ -287,7 +290,7 @@ public class SkinsRestorer extends JavaPlugin {
 							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
 							if (SkinStorage.getSkinData(skin) == null)
-								console.sendMessage(
+								log(
 										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
 						}
 			}

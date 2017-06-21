@@ -199,7 +199,6 @@ public class SkinStorage {
 				return skin;
 
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 
 			return name;

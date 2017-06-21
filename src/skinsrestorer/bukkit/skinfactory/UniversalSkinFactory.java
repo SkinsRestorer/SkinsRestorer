@@ -252,7 +252,10 @@ public class UniversalSkinFactory extends SkinFactory {
 					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 					continue;
 				}
-				if (pOnline.canSee(player)) {
+				/*Now checks if the player is in the same world and if can see the player
+				 * I did that to try to prevent player duplications.
+				 */
+				if (pOnline.getWorld().equals(player.getWorld())&&pOnline.canSee(player)) {
 					sendPacket(playerCon, removeEntity);
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
@@ -268,6 +271,10 @@ public class UniversalSkinFactory extends SkinFactory {
 					sendPacket(playerCon, chestplate);
 					sendPacket(playerCon, leggings);
 					sendPacket(playerCon, boots);
+				}else{
+					//Only sends player update packet
+					sendPacket(playerCon, removeInfo);
+					sendPacket(playerCon, addInfo);
 				}
 			}
 		} catch (Exception e) {

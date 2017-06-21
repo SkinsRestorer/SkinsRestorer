@@ -17,6 +17,7 @@ import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -24,7 +25,7 @@ import skinsrestorer.shared.utils.MySQL;
 public class SkinsRestorer extends Plugin {
 
 	private static SkinsRestorer instance;
-
+	final CommandSender con = getProxy().getConsole();
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
@@ -35,6 +36,11 @@ public class SkinsRestorer extends Plugin {
 
 	private boolean outdated;
 
+	@SuppressWarnings("deprecation")
+	public void log(String msg){
+		con.sendMessage(C.c("&e[&2SkinsRestorer&2] &r"+msg));
+	}
+	
 	public String checkVersion() {
 		try {
 			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
@@ -48,7 +54,7 @@ public class SkinsRestorer extends Plugin {
 			if (version.length() <= 7)
 				return version;
 		} catch (Exception ex) {
-			System.out.println("Failed to check for an update on spigot.");
+			System.out.println("&cFailed to check for an update on spigot.");
 		}
 		return getVersion();
 	}
@@ -78,10 +84,8 @@ public class SkinsRestorer extends Plugin {
 		exe.shutdown();
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable() {
-		final CommandSender console = getProxy().getConsole();
 		instance = this;
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();
@@ -110,28 +114,26 @@ public class SkinsRestorer extends Plugin {
 				if (Config.UPDATER_ENABLED)
 					if (checkVersion().equals(getVersion())) {
 						outdated = false;
-						console.sendMessage("");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage("");
-						console.sendMessage(ChatColor.GREEN + "    STABLE BUILD");
-						console.sendMessage("");
-						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-						console.sendMessage(ChatColor.GREEN + "    The latest version!");
-						console.sendMessage("");
+						log("&a----------------------------------------------");
+						log(ChatColor.GREEN + "    +===============+");
+						log(ChatColor.GREEN + "    | SkinsRestorer |");
+						log(ChatColor.GREEN + "    +===============+");
+						log("&a----------------------------------------------");
+						log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+						log(ChatColor.GREEN + "    The latest version!");
+						log("&a----------------------------------------------");
 					} else {
 						outdated = true;
-						console.sendMessage("");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage(ChatColor.GREEN + "    | SkinsRestorer |");
-						console.sendMessage(ChatColor.GREEN + "    +===============+");
-						console.sendMessage("");
-						console.sendMessage(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-						console.sendMessage(ChatColor.RED + "    A new version is available! Download it at:");
-						console.sendMessage(
+						log("&a----------------------------------------------");
+						log(ChatColor.GREEN + "    +===============+");
+						log(ChatColor.GREEN + "    | SkinsRestorer |");
+						log(ChatColor.GREEN + "    +===============+");
+						log("&a----------------------------------------------");
+						log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+						log(ChatColor.RED + "    A new version is available! Download it at:");
+						log(
 								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
-						console.sendMessage("");
+						log("&a----------------------------------------------");
 					}
 
 				if (Config.DEFAULT_SKINS_ENABLED)
@@ -140,7 +142,7 @@ public class SkinsRestorer extends Plugin {
 							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
 						} catch (SkinRequestException e) {
 							if (SkinStorage.getSkinData(skin) == null)
-								console.sendMessage(
+								log(
 										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
 						}
 			}
