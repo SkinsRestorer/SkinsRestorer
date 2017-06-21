@@ -255,7 +255,7 @@ public class UniversalSkinFactory extends SkinFactory {
 				/*Now checks if the player is in the same world and if can see the player
 				 * I did that to try to prevent player duplications.
 				 */
-				if (pOnline.getWorld().equals(player.getWorld())&&pOnline.canSee(player)) {
+				if (pOnline.getWorld().equals(player.getWorld())&&pOnline.canSee(player)&&player.isOnline()) {
 					sendPacket(playerCon, removeEntity);
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
