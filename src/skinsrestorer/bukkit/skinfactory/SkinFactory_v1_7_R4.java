@@ -79,11 +79,17 @@ public class SkinFactory_v1_7_R4 extends SkinFactory {
 					craftOnline.updateScaledHealth();
 					craftOnline.getHandle().triggerHealthUpdate();
 					craftOnline.updateInventory();
+					if (pOnline.isOp()) {
+						//Fix for the command blocks bug.
+						pOnline.setOp(false);
+						pOnline.setOp(true);
+					}
 					Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
 
 						@Override
 						public void run() {
 							craftOnline.getHandle().updateAbilities();
+							
 						}
 
 					});

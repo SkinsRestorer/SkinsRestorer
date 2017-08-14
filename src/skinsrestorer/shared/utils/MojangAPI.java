@@ -177,6 +177,7 @@ public class MojangAPI {
     	return r.nextInt(High-1) + 1;
     }
 	private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
+
 		HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
 		
 		con.setRequestMethod("GET");

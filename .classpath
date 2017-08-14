@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test server SkinsRestorer/spigot-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test server SkinsRestorer/spigot-1.11.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test Bungee/BungeeCord.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test server SkinsRestorer/Multiverse-Core-2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/spongeforge-1.11.2-2315-6.1.0-BETA-2385.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test server SkinsRestorer/craftbukkit.jar"/>
+	<classpathentry kind="lib" path="C:/Users/mari  sladkiq/Desktop/Spigot Stuff/Test server SkinsRestorer/spigot-protocol.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

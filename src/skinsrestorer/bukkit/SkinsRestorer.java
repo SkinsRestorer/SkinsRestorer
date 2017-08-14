@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,17 +61,15 @@ public class SkinsRestorer extends JavaPlugin {
 	
 	public String checkVersion() {
 		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+			HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
 					.openConnection();
 			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124"
-							.getBytes("UTF-8"));
+			con.setRequestMethod("GET");
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
 			if (version.length() <= 13)
 				return version;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			log("&cFailed to check for an update on spigot.");
 		}
 		return getVersion();

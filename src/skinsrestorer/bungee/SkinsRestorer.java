@@ -2,10 +2,11 @@ package skinsrestorer.bungee;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
@@ -25,7 +26,7 @@ import skinsrestorer.shared.utils.MySQL;
 public class SkinsRestorer extends Plugin {
 
 	private static SkinsRestorer instance;
-	final CommandSender con = getProxy().getConsole();
+	 CommandSender con = null;
 	public static SkinsRestorer getInstance() {
 		return instance;
 	}
@@ -38,23 +39,21 @@ public class SkinsRestorer extends Plugin {
 
 	@SuppressWarnings("deprecation")
 	public void log(String msg){
-		con.sendMessage(C.c("&e[&2SkinsRestorer&2] &r"+msg));
+		con.sendMessage(C.c("&e[&2SkinsRestorer&e] &r"+msg));
 	}
 	
 	public String checkVersion() {
 		try {
-			HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+			HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
 					.openConnection();
 			con.setDoOutput(true);
-			con.setRequestMethod("POST");
-			con.getOutputStream()
-					.write("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=2124"
-							.getBytes("UTF-8"));
+			con.setRequestMethod("GET");
 			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 7)
+			if (version.length() <= 13)
 				return version;
 		} catch (Exception ex) {
-			System.out.println("&cFailed to check for an update on spigot.");
+			ex.printStackTrace();
+			log("&cFailed to check for an update on spigot.");
 		}
 		return getVersion();
 	}
@@ -91,6 +90,7 @@ public class SkinsRestorer extends Plugin {
 		Locale.load();
 		MojangAPI.get().loadProxies();
 		exe = Executors.newCachedThreadPool();
+		con = getProxy().getConsole();
 
 		if (Config.USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,

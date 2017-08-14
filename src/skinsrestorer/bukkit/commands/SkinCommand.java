@@ -76,6 +76,7 @@ public class SkinCommand implements CommandExecutor {
     				return true;
             	}
             }
+            CooldownStorage.resetCooldown(p.getName());
 			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
 			Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {

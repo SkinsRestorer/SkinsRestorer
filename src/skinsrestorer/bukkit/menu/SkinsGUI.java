@@ -149,6 +149,15 @@ public class SkinsGUI extends ItemStack implements Listener {
     		    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
     		    player.closeInventory();
     		}else if (e.getCurrentItem().getType()==Material.STAINED_GLASS_PANE&&e.getCurrentItem().getDurability()==14){
+    			if (SkinStorage.getPlayerSkin(player.getName())==null) {
+    				SkinStorage.removePlayerSkin(player.getName());
+        		    Object props = SkinStorage.createProperty("textures", "", "");
+        			SkinsRestorer.getInstance().getFactory().applySkin(player, props);
+        			SkinsRestorer.getInstance().getFactory().updateSkin(player);
+        		    player.closeInventory();
+    				e.setCancelled(true);
+    				return;
+    			}
     			if (!SkinStorage.getPlayerSkin(player.getName()).equalsIgnoreCase(player.getName())){
     		    SkinStorage.removePlayerSkin(player.getName());
     		    Object props = SkinStorage.createProperty("textures", "", "");
