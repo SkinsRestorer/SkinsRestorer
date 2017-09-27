@@ -201,7 +201,6 @@ public class SkinsRestorer extends JavaPlugin {
 		// Config stuff
 		Config.load(getResource("config.yml"));
 		Locale.load();
-		MojangAPI.get().loadProxies();
 
 		if (Config.USE_MYSQL)
 			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,

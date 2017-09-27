@@ -35,8 +35,9 @@ public class CooldownStorage implements Runnable {
 		long current = System.currentTimeMillis();
 		Iterator<Long> iterator = CooldownStorage.cooldown.values().iterator();
 		while (iterator.hasNext())
-			if (iterator.next() <= current)
+			if (iterator.next() <= current) {
 				iterator.remove();
+			}
 	}
 
 }

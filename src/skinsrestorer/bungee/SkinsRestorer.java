@@ -88,7 +88,6 @@ public class SkinsRestorer extends Plugin {
 		instance = this;
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();
-		MojangAPI.get().loadProxies();
 		exe = Executors.newCachedThreadPool();
 		con = getProxy().getConsole();
 
