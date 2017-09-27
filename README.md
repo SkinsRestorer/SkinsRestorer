@@ -8,4 +8,8 @@
  
  Download Jar from Spigot| [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/).
  Use our Discord server for issues | [click here](https://discord.me/skinsrestorer).
+<<<<<<< HEAD
  Chek our awsome website! | [click here](https://skinsrestorer.net/).
+=======
+ Chek our awsome website! | [click here](https://skinsrestorer.net/).
+>>>>>>> 80381373ca0fd58ba19a4a69170c2447c0f0f333
