@@ -29,7 +29,7 @@ public class GUICommand implements CommandExecutor {
 		}
 		SkinsGUI.getMenus().put(p.getName(), 0);
         p.openInventory(SkinsGUI.getGUI(0));
-        p.sendMessage("ยง2Opening the Skins Menu.");
+        p.sendMessage("ง2Opening the Skins Menu.");
 		return false;
 	}
 }

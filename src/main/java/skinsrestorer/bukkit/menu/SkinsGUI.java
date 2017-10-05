@@ -34,7 +34,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 	}
 
 	public static Inventory getGUI(int page){
-		Inventory inventory = Bukkit.createInventory(null, 54, "Â§9Skins Menu - Page "+page);
+		Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page "+page);
 		int skinNumber = 36*page;
 		Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
 		inventory.setItem(36, createGlass(0));
@@ -86,11 +86,11 @@ public class SkinsGUI extends ItemStack implements Listener {
 		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
 		ItemMeta meta = is.getItemMeta();
 		if (color==5) {
-			meta.setDisplayName(C.c("&a&lÂ»&7 Next Page&a&l Â»"));
+			meta.setDisplayName(C.c("&a&l»&7 Next Page&a&l Â»"));
 		}else if (color==4){
-			meta.setDisplayName(C.c("&e&lÂ«&7 Previous Page&e&l Â«"));
+			meta.setDisplayName(C.c("&e&l«&7 Previous Page&e&l Â«"));
 		}else if (color==14){
-			meta.setDisplayName(C.c("&c&lâ€“&7 Remove Skin&c&l â€“"));
+			meta.setDisplayName(C.c("&c&l–&7 Remove Skin&c&l –"));
 		}else{
 			meta.setDisplayName(" ");
 		}
