@@ -11,7 +11,7 @@ import skinsrestorer.bukkit.menu.SkinsGUI;
 import skinsrestorer.shared.storage.Locale;
 
 public class GUICommand implements CommandExecutor {
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
 
@@ -29,7 +29,7 @@ public class GUICommand implements CommandExecutor {
 		}
 		SkinsGUI.getMenus().put(p.getName(), 0);
         p.openInventory(SkinsGUI.getGUI(0));
-        p.sendMessage("ง2Opening the Skins Menu.");
+        p.sendMessage("ยง2Opening the Skins Menu.");
 		return false;
 	}
 }

@@ -27,15 +27,15 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.ReflectionUtil;
 public class SkinsGUI extends ItemStack implements Listener {
-	
+
 	private static HashMap<String, Integer> openedMenus = new HashMap<String, Integer>();
-	
-	public SkinsGUI(){	
+
+	public SkinsGUI(){
 	}
-	
+
 	public static Inventory getGUI(int page){
-		Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page "+page);
-		int skinNumber = 36*page; 
+		Inventory inventory = Bukkit.createInventory(null, 54, "Â§9Skins Menu - Page "+page);
+		int skinNumber = 36*page;
 		Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
 		inventory.setItem(36, createGlass(0));
 		inventory.setItem(37, createGlass(0));
@@ -46,7 +46,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 		inventory.setItem(42, createGlass(0));
 		inventory.setItem(43, createGlass(0));
 		inventory.setItem(44, createGlass(0));
-		
+
 		//Middle button //remove skin
 		inventory.setItem(48, createGlass(14));
 		inventory.setItem(49, createGlass(14));
@@ -55,15 +55,15 @@ public class SkinsGUI extends ItemStack implements Listener {
 		inventory.setItem(45, createGlass(15));
 		inventory.setItem(46, createGlass(15));
 		inventory.setItem(47, createGlass(15));
-				
+
 		//button place next
 		inventory.setItem(53, createGlass(15));
 		inventory.setItem(52, createGlass(15));
 		inventory.setItem(51, createGlass(15));
-		
+
 		for (String s : skinsList.keySet()){
 			if (skinsList.get(s)!=null){
-			
+
 			//if page is not 0, adding Previous Page button.
 			if (page!=0){
 				inventory.setItem(45, createGlass(4));
@@ -86,11 +86,11 @@ public class SkinsGUI extends ItemStack implements Listener {
 		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
 		ItemMeta meta = is.getItemMeta();
 		if (color==5) {
-			meta.setDisplayName(C.c("&a&l»&7 Next Page&a&l »"));
+			meta.setDisplayName(C.c("&a&lÂ»&7 Next Page&a&l Â»"));
 		}else if (color==4){
-			meta.setDisplayName(C.c("&e&l«&7 Previous Page&e&l «"));
+			meta.setDisplayName(C.c("&e&lÂ«&7 Previous Page&e&l Â«"));
 		}else if (color==14){
-			meta.setDisplayName(C.c("&c&l–&7 Remove Skin&c&l –"));
+			meta.setDisplayName(C.c("&c&lâ€“&7 Remove Skin&c&l â€“"));
 		}else{
 			meta.setDisplayName(" ");
 		}
@@ -109,7 +109,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 		is = setSkin(is, ((Property) s).getValue());
 		return is;
 	}
-	
+
     private static ItemStack setSkin(ItemStack head, String b64stringtexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         PropertyMap propertyMap = profile.getProperties();
@@ -129,7 +129,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         head.setItemMeta(headMeta);
         return head;
     }
-    
+
     @EventHandler
     public void onCLick(InventoryClickEvent e){
     	if (!e.getInventory().getName().contains("Skins Menu")){
@@ -176,11 +176,11 @@ public class SkinsGUI extends ItemStack implements Listener {
     			int currentPage = getMenus().get(player.getName());
     			getMenus().put(player.getName(), currentPage-1);
     			player.openInventory(getGUI(currentPage-1));
-    		} 
+    		}
     	}
     	e.setCancelled(true);
     }
-	
+
 	public static HashMap<String, Integer> getMenus(){
 		return openedMenus;
 	}
