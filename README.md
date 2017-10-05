@@ -13,3 +13,5 @@
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/).
  Discord | [click here](https://discord.me/skinsrestorer).
  Website | [click here](https://skinsrestorer.net/).
+ 
+ [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorer.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorer)
