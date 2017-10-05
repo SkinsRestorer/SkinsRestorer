@@ -120,7 +120,7 @@ public class SkinsRestorerAPI {
 			org.bukkit.entity.Player p = null;
 
 			try {
-				p = net.minecraft.util.com.google.common.collect.Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+				p = com.google.common.collect.Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
 			} catch (Exception e) {
 				p = Bukkit.getOnlinePlayers().iterator().next();
 			}
