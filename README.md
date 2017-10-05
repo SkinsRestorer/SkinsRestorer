@@ -10,8 +10,10 @@
   		  
  Supported versions: 1.8.x | 1.9.x | 1.10.x | 1.11.x | 1.12.x
  
- Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/).
- Discord | [click here](https://discord.me/skinsrestorer).
- Website | [click here](https://skinsrestorer.net/).
+ Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
+ 
+ Discord | [click here](https://discord.me/skinsrestorer)
+ 
+ Website | [click here](https://skinsrestorer.net/)
  
  [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorer.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorer)
