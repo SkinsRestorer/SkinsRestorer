@@ -8,7 +8,7 @@
  --------------
  Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/FlexPipe/Waterfall/Sponge servers
   		  
- Supported versions: 1.8.x | 1.9.x | 1.10.x | 1.11.x | 1.12.x
+ Supported versions: 1.8.x - 1.12.x
  
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
  

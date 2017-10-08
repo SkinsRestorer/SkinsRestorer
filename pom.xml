@@ -112,7 +112,7 @@
         <relocations>
           <relocation>
             <pattern>org.bstats</pattern>
-            <shadedPattern>com.skinsrestorer</shadedPattern>
+            <shadedPattern>skinsrestorer</shadedPattern>
           </relocation>
         </relocations>
       </configuration>
