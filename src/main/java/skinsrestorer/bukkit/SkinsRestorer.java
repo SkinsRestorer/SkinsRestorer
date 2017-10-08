@@ -24,6 +24,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import org.bstats.bukkit.Metrics;
+
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
@@ -92,6 +94,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		
 		instance = this;
 
 		try {
@@ -295,5 +298,6 @@ public class SkinsRestorer extends JavaPlugin {
 
 		});
 
+		Metrics metrics = new Metrics(this);
 	}
 }

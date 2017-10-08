@@ -8,6 +8,8 @@ import java.util.concurrent.Executors;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.bstats.bungeecord.Metrics;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -85,6 +87,8 @@ public class SkinsRestorer extends Plugin {
 
 	@Override
 	public void onEnable() {
+		Metrics metrics = new Metrics(this);
+		
 		instance = this;
 		Config.load(getResourceAsStream("config.yml"));
 		Locale.load();

@@ -13,6 +13,8 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
+import org.bstats.sponge.Metrics;
+
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -21,6 +23,8 @@ import skinsrestorer.sponge.listeners.LoginListener;
 
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "1.0", description = "Restore & Change your skin!", authors = "Blackfire62")
 public class SkinsRestorer {
+	
+    private Metrics metrics;
 
 	private static SkinsRestorer instance;
 

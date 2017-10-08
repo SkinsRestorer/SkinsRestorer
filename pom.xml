@@ -11,8 +11,8 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
   <repositories>
     <repository>
@@ -32,12 +32,16 @@
         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
    </repository>
    <repository>
-   		<id>bungeecord-repo2</id>
+   		<id>luck-repo</id>
    		<url>https://ci.lucko.me/plugin/repository/everything</url>
    </repository>
    <repository>
    		<id>minecraft-repo</id>
    		<url>https://repo.prok.pw</url>
+   </repository>
+   <repository>
+  		<id>bstats-repo</id>
+  		<url>http://repo.bstats.org/content/repositories/releases/</url>
    </repository>
   </repositories>
   <dependencies>
@@ -48,15 +52,9 @@
       	<scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>io.netty</groupId>
-    	<artifactId>netty-all</artifactId>
-    	<version>4.0.0.Beta3</version>
-	</dependency>
-    <dependency>
     	<groupId>org.spigotmc</groupId>
     	<artifactId>spigot-api</artifactId>
     	<version>1.12.2-R0.1-SNAPSHOT</version>
-    	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>com.onarandombox.multiversecore</groupId>
@@ -72,22 +70,61 @@
         <groupId>net.md-5</groupId>
         <artifactId>bungeecord-api</artifactId>
         <version>1.12-SNAPSHOT</version>
-        <type>jar</type>
-        <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>net.md-5</groupId>
         <artifactId>bungeecord-proxy</artifactId>
         <version>1.12-SNAPSHOT</version>
-        <type>jar</type>
-        <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>com.mojang</groupId>
         <artifactId>authlib</artifactId>
         <version>1.5.21</version>
-        <type>jar</type>
-        <scope>provided</scope>
     </dependency>
+    <dependency>
+  		<groupId>org.bstats</groupId>
+  		<artifactId>bstats-bukkit</artifactId>
+  		<version>1.2</version>
+	</dependency>
+	    <dependency>
+  		<groupId>org.bstats</groupId>
+  		<artifactId>bstats-bungeecord</artifactId>
+  		<version>1.2</version>
+	</dependency>
+	    <dependency>
+  		<groupId>org.bstats</groupId>
+  		<artifactId>bstats-sponge</artifactId>
+  		<version>1.2</version>
+	</dependency>
   </dependencies>
+  <build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-shade-plugin</artifactId>
+      <version>2.4</version>
+      <configuration>
+        <artifactSet>
+          <includes>
+            <include>org.bstats:*</include>
+          </includes>
+        </artifactSet>
+        <relocations>
+          <relocation>
+            <pattern>org.bstats</pattern>
+            <shadedPattern>com.skinsrestorer</shadedPattern>
+          </relocation>
+        </relocations>
+      </configuration>
+      <executions>
+        <execution>
+          <phase>package</phase>
+          <goals>
+            <goal>shade</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 </project>
