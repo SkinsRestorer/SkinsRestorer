@@ -1,0 +1,4 @@
+name: SkinsRestorer
+main: skinsrestorer.bungee.SkinsRestorer
+version: 13.2-SNAPSHOT
+author: Th3Tr0LLeR
