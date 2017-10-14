@@ -25,3 +25,4 @@ hs_err_pid*
 # Eclipse weirdness
 .classpath
 .project
+dependency-reduced-pom.xml
