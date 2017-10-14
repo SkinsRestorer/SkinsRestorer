@@ -70,12 +70,14 @@ public class SkinCommand implements CommandExecutor {
 
             if (p.hasPermission("skinsrestorer.bypasscooldown")|| p.isOp()){
             	
-            }else{
+            }
+            else {
             	if (CooldownStorage.hasCooldown(p.getName())){
             		p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
     				return true;
             	}
             }
+            
             CooldownStorage.resetCooldown(p.getName());
 			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 

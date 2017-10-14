@@ -21,7 +21,10 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.listeners.LoginListener;
 
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "1.0", description = "Restore & Change your skin!", authors = "Blackfire62")
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "1.0", 
+	description = "Restore & Change your skin!", 
+	authors = "Th3Tr0LLeR, Blackfire62")
+
 public class SkinsRestorer {
 	
     private Metrics metrics;
