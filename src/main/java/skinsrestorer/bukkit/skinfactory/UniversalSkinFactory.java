@@ -85,6 +85,7 @@ public class UniversalSkinFactory extends SkinFactory {
 	@SuppressWarnings("deprecation")
 	@Override
 	public void updateSkin(Player player) {
+		
 		if (!player.isOnline())
 			return;
 
@@ -227,6 +228,7 @@ public class UniversalSkinFactory extends SkinFactory {
 					player.getInventory().getHeldItemSlot());
 
 			for (Player pOnline : Bukkit.getOnlinePlayers()) {
+				
 				final Object craftHandle = ReflectionUtil.invokeMethod(pOnline, "getHandle");
 				Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 
@@ -235,6 +237,7 @@ public class UniversalSkinFactory extends SkinFactory {
 					sendPacket(playerCon, removeInfo);
 					sendPacket(playerCon, addInfo);
 					sendPacket(playerCon, respawn);
+					
 					Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
 						@Override
 						public void run() {
@@ -250,11 +253,6 @@ public class UniversalSkinFactory extends SkinFactory {
 					ReflectionUtil.invokeMethod(pOnline, "updateScaledHealth");
 					ReflectionUtil.invokeMethod(pOnline, "updateInventory");
 					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
-					if (pOnline.isOp()) {
-						//Fix for the command blocks bug.
-						pOnline.setOp(false);
-						pOnline.setOp(true);
-					}
 					continue;
 				}
 				/*Now checks if the player is in the same world and if can see the player

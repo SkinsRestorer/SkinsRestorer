@@ -4,13 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.sql.rowset.CachedRowSet;
 
@@ -428,7 +428,7 @@ public class SkinStorage {
 		}
 	}
 	public static Map<String, Object> getSkins(int number){
-		HashMap<String, Object> thingy = new HashMap<String, Object>();
+		ConcurrentHashMap<String, Object> thingy = new ConcurrentHashMap<String, Object>();
 		Map<String, Object> list = new TreeMap<String, Object>(thingy);
 		String path  = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
         File folder = new File(path);
