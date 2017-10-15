@@ -15,6 +15,7 @@ public class Locale {
 	public static String NOT_ONLINE = "&4Error&8: &cPlayer is not online!";
 	public static String SKIN_COOLDOWN_NEW = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
 	public static String SKIN_CHANGE_SUCCESS = "&2Your skin has been changed.";
+	public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
 
 	public static String PLAYER_HAS_NO_PERMISSION = "&4Error&8: &cYou don't have permission to do this.";
 	public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an Administrator.";
@@ -30,7 +31,8 @@ public class Locale {
 
 	public static String SR_LINE = "&7&m----------------------------------------";
 	public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
-			+ "\n    &2/skin <skinname> &7-&f Changes your skin.";
+			+ "\n    &2/skin <skinname> &7-&f Changes your skin."
+			+ "\n    &2/skin clear &7-&f Clears your skin!";
 
 	public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
 	public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"	
@@ -38,7 +40,8 @@ public class Locale {
 			+ "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
 			+ "\n    &2/sr drop <player> &7- &fDrops player skin data."
 			+ "\n    &2/sr reload &7- &fReloads the config and locale"
-			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
+			+ "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
+			+ "\n    &2/sr status &7- &fChecks if Mojang API is available.";
 	public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
 			+ "\n\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
 			+ "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."
@@ -48,6 +51,7 @@ public class Locale {
 			+ "\n    &2/sr updater <true/false> &7- &fToggles the updater";
 	public static String RELOAD = "&2Config and Locale has been reloaded!";
 	public static String NO_SKIN_DATA = "&4Error&8: &cNo skin data acquired! Does this player have a skin?";
+	public static String STATUS_OK = "&aMojang API connection successful!";
 
 	public static String OUTDATED = "&4You are running an outdated version of SKINSRESTORER!\n&cPlease update to latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
 

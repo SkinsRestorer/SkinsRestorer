@@ -173,13 +173,16 @@ public class SrCommand implements CommandExecutor {
 				reloadConfig(sender, "&2The skin cache time is now &f" + Integer.valueOf(args[1]) + "&2minute(s)");
 			}
 
-		} else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
+		} 
+		
+		else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
 			try {
-				MojangAPI.getSkinProperty(MojangAPI.getUUID("Th3Tr0LLeR"));
-				sender.sendMessage("Good");
+				MojangAPI.getSkinProperty(MojangAPI.getUUID("Notch"));
+				sender.sendMessage(Locale.STATUS_OK);
 			} catch (SkinRequestException e) {
 				sender.sendMessage(e.getReason());
 			}
+		
 		else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 1; i < args.length; i++)
@@ -188,15 +191,9 @@ public class SrCommand implements CommandExecutor {
 			SkinStorage.removeSkinData(sb.toString());
 
 			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
-		} else if (args.length > 1 && args[0].equalsIgnoreCase("remove")) {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 1; i < args.length; i++)
-				sb.append(args[i]);
-
-			SkinStorage.removePlayerSkin(sb.toString());
-
-			sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
-		} else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
+		} 
+		
+		else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
 
 			Player p = null;
 

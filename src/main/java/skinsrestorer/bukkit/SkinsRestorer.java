@@ -216,18 +216,7 @@ public class SkinsRestorer extends JavaPlugin {
 		getCommand("skinsrestorer").setExecutor(new SrCommand());
 		getCommand("skin").setExecutor(new SkinCommand());
 		getCommand("skins").setExecutor(new GUICommand());
-		getCommand("skinver").setExecutor(new CommandExecutor() {
-
-			@Override
-			public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
-				sender.sendMessage(C.c("&8This server is kindly running &aSkinsRestorer &e"
-						+ SkinsRestorer.getInstance().getVersion() + "&8, made with love by &c"
-						+ SkinsRestorer.getInstance().getDescription().getAuthors().get(0)
-						+ "&8, utilizing Minecraft &a" + ReflectionUtil.serverVersion + "&8."));
-				return false;
-			}
-
-		});
+		
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
 		Bukkit.getPluginManager().registerEvents(new Listener() {
 

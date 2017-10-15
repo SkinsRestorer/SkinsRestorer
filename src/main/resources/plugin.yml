@@ -10,7 +10,5 @@ commands:
     description: Admin commands.
   skin:
     description: Sets your skin.
-  skinver:
-    description: Shows the SR version
   skins:
     description: Opens skins GUI

@@ -29,14 +29,32 @@ public class SkinCommand implements CommandExecutor {
 
 		final Player p = (Player) sender;
 
-		if (!Config.SKINWITHOUTPERM){
-		if (p.hasPermission("skinsrestorer.playercmds") || p.isOp()) {
-		} else {
+		if (!Config.SKINWITHOUTPERM) {
+			if (p.hasPermission("skinsrestorer.playercmds") || p.isOp()) {
+		} 
+		else {
 			p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
 			return true;
+			}
 		}
-		}
-
+		// Skin Clear
+		if (args.length == 1 && args[0].equalsIgnoreCase("clear")) {
+			Object props = null;
+					
+			if (SkinStorage.getPlayerSkin(p.getName()).equalsIgnoreCase(p.getName())){
+				   p.sendMessage(Locale.NO_SKIN_DATA);
+				   return true;
+			}
+			
+			SkinStorage.removePlayerSkin(p.getName());
+			props = SkinStorage.createProperty("textures", "", "");
+			SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+			SkinsRestorer.getInstance().getFactory().updateSkin(p);
+			p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+			
+			return true;
+			}
+		
 		// Skin Help
 		if (args.length == 0 || args.length > 1) {
 			p.sendMessage(Locale.SR_LINE);
@@ -45,8 +63,9 @@ public class SkinCommand implements CommandExecutor {
 				p.sendMessage(C.c("    &2/sr &7- &fDisplay Admin commands."));
 			p.sendMessage(Locale.SR_LINE);
 		}
+		
 		// Set Skin
-		else if (args.length > 0) {
+		if (args.length > 0) {
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < args.length; i++)
 				if (args.length == 1)
@@ -107,4 +126,4 @@ public class SkinCommand implements CommandExecutor {
 		return true;
 	}
 
-}
+  }
