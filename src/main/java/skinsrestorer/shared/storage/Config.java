@@ -12,6 +12,7 @@ public class Config {
 	private static YamlConfig config = new YamlConfig(
 			"plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", true);
 
+	// v This is a hidden feature v
 	public static boolean DISABLE_ONJOIN_SKINS = false;
 	public static boolean SKINWITHOUTPERM = false;
 	public static int SKIN_EXPIRES_AFTER = 1;

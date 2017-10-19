@@ -53,7 +53,7 @@ public class Locale {
 	public static String NO_SKIN_DATA = "&4Error&8: &cNo skin data acquired! Does this player have a skin?";
 	public static String STATUS_OK = "&aMojang API connection successful!";
 
-	public static String OUTDATED = "&4You are running an outdated version of SKINSRESTORER!\n&cPlease update to latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
+	public static String OUTDATED = "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
 
 	public static void load() {
 		try {

@@ -3,10 +3,6 @@
 ##############################
 #by Th3Tr0LLeR & Blackfire62 + xknat 
 
-#This option disables automatic requesting & applying skins on join.
-#Commands still work!
-DisableOnJoinSkins: false
-
 #enables /skin without permissions
 #(only works for backend aka spigot servers)
 SkinWithoutPerm: false
