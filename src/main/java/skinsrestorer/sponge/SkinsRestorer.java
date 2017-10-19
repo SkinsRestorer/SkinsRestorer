@@ -13,6 +13,8 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 
+import com.google.inject.Inject;
+
 import org.bstats.sponge.Metrics;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -27,6 +29,7 @@ import skinsrestorer.sponge.listeners.LoginListener;
 
 public class SkinsRestorer {
 	
+	@Inject
     private Metrics metrics;
 
 	private static SkinsRestorer instance;

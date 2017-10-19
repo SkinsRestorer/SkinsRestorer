@@ -253,6 +253,10 @@ public class UniversalSkinFactory extends SkinFactory {
 					ReflectionUtil.invokeMethod(pOnline, "updateScaledHealth");
 					ReflectionUtil.invokeMethod(pOnline, "updateInventory");
 					ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
+					if (pOnline.isOp()) {
+						pOnline.setOp(false);
+						pOnline.setOp(true);
+					}
 					continue;
 				}
 				/*Now checks if the player is in the same world and if can see the player

@@ -77,6 +77,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>craftbukkit</artifactId>
+      <version>1.9.4-R0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
       <version>1.12.2-R0.1-SNAPSHOT</version>
@@ -110,6 +116,12 @@
       <groupId>com.mojang</groupId>
       <artifactId>authlib</artifactId>
       <version>1.5.21</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>4.1.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

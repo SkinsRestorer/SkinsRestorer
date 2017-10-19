@@ -56,6 +56,16 @@
       	<scope>test</scope>
     </dependency>
     <dependency>
+    	<groupId>org.bukkit</groupId>
+    	<artifactId>craftbukkit</artifactId>
+    	<version>1.8.8-R0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.bukkit</groupId>
+    	<artifactId>craftbukkit</artifactId>
+    	<version>1.9.4-R0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
     	<groupId>org.spigotmc</groupId>
     	<artifactId>spigot-api</artifactId>
     	<version>1.12.2-R0.1-SNAPSHOT</version>
@@ -100,6 +110,12 @@
   		<artifactId>bstats-sponge</artifactId>
   		<version>1.2</version>
 	</dependency>
+	<dependency>
+    	<groupId>com.google.inject</groupId>
+    	<artifactId>guice</artifactId>
+    	<version>4.1.0</version>
+	</dependency>
+	
   </dependencies>
   <build>
   <plugins>
