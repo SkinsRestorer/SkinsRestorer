@@ -30,7 +30,7 @@ import skinsrestorer.sponge.listeners.LoginListener;
 public class SkinsRestorer {
 	
 	@Inject
-    private Metrics metrics;
+	private Metrics metrics;
 
 	private static SkinsRestorer instance;
 
