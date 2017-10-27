@@ -16,4 +16,4 @@
 
  Website | [click here](https://skinsrestorer.net/)
 
- [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorer.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorer)
+ [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX)
