@@ -35,7 +35,7 @@ public class MojangAPI {
 	}
 
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
-
+	private static final String mcstatus = "https://use.gameapis.net/mc/extra/status";
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	/**
@@ -81,7 +81,8 @@ public class MojangAPI {
 
 			return SkinStorage.createProperty("textures", value, signature);
 		} catch (Exception e) {
-           return getSkinPropertyProxy(uuid);
+		   System.out.println("[SkinsRestorer] Failed to get proxy. Maybe you have an issue with your firewall?");
+           return false;
 		}
 	}
 	public static String getStringBetween(final String base, final String begin, final String end) {

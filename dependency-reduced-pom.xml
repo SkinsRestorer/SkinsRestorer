@@ -64,10 +64,6 @@
       <id>bstats-repo</id>
       <url>http://repo.bstats.org/content/repositories/releases/</url>
     </repository>
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-    </repository>
   </repositories>
   <dependencies>
     <dependency>
@@ -124,3 +120,4 @@
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 </project>
+

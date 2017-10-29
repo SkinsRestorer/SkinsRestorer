@@ -28,7 +28,7 @@ public class ProxyManager {
 	}
 	public static List<String> updateProxies() {
 		proxies = new ArrayList<String>();
-		String url = "https://getmeproxy.com/api/v1.0/api.php?key=c84d1076312bcf1e875c94d4e20692f5&checked=1&p=https&s=5&list=text";
+		String url = "https://getmeproxy.com/api/v1.0/api.php?key=c84d1076312bcf1e875c94d4e20692f5&checked=1&s=5&list=text";
 		try {
 			List<String> pp = readURL(url);
 			proxies = pp;
