@@ -1,15 +1,6 @@
 package skinsrestorer.bukkit;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.List;
-
-import javax.net.ssl.HttpsURLConnection;
-
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -20,9 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-
-import org.bstats.bukkit.Metrics;
-
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
@@ -39,252 +27,255 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
+import java.net.URL;
+import java.util.List;
+
 public class SkinsRestorer extends JavaPlugin {
 
-	private static SkinsRestorer instance;
-	ConsoleCommandSender con = Bukkit.getConsoleSender();
-	public static SkinsRestorer getInstance() {
-		return instance;
-	}
+    private static SkinsRestorer instance;
+    ConsoleCommandSender con = Bukkit.getConsoleSender();
+    private SkinFactory factory;
+    private MySQL mysql;
+    private boolean bungeeEnabled;
+    private boolean outdated;
 
-	private SkinFactory factory;
-	private MySQL mysql;
-	private boolean bungeeEnabled;
+    public static SkinsRestorer getInstance() {
+        return instance;
+    }
 
-	private boolean outdated;
+    public void log(String msg) {
+        con.sendMessage(C.c("&e[&2SkinsRestorer&e] &r" + msg));
+    }
 
-	public void log(String msg){
-		con.sendMessage(C.c("&e[&2SkinsRestorer&e] &r"+msg));
-	}
-	
-	public String checkVersion() {
-		try {
-			HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
-					.openConnection();
-			con.setDoOutput(true);
-			con.setRequestMethod("GET");
-			String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-			if (version.length() <= 13)
-				return version;
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			log("&cFailed to check for an update on spigot.");
-		}
-		return getVersion();
-	}
+    public String checkVersion() {
+        try {
+            HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
+                    .openConnection();
+            con.setDoOutput(true);
+            con.setRequestMethod("GET");
+            String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+            if (version.length() <= 13)
+                return version;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            log("&cFailed to check for an update on spigot.");
+        }
+        return getVersion();
+    }
 
-	public SkinFactory getFactory() {
-		return factory;
-	}
+    public SkinFactory getFactory() {
+        return factory;
+    }
 
-	public MySQL getMySQL() {
-		return mysql;
-	}
+    public MySQL getMySQL() {
+        return mysql;
+    }
 
-	public String getVersion() {
-		return getDescription().getVersion();
-	}
+    public String getVersion() {
+        return getDescription().getVersion();
+    }
 
-	public boolean isOutdated() {
-		return outdated;
-	}
+    public boolean isOutdated() {
+        return outdated;
+    }
 
-	@Override
-	public void onEnable() {
-		
-		instance = this;
+    @Override
+    public void onEnable() {
 
-		try {
-			// Doesn't support Cauldron and stuff..
-			Class.forName("net.minecraftforge.cauldron.CauldronHooks");
-			log("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :(");
-			Bukkit.getPluginManager().disablePlugin(this);
-			return;
-		} catch (Exception e) {
-			try {
-				// Checking for old versions
-				factory = (SkinFactory) Class
-						.forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
-						.newInstance();
-			} catch (Exception ex) {
-				// 1.8+++
-				factory = new UniversalSkinFactory();
-			}
-		}
-		log("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
-				+ factory.getClass().getSimpleName());
+        instance = this;
 
-		
-		// Multiverse Core support.
-				MCoreAPI.init();
-				if (MCoreAPI.check())
-					log("&aDetected &eMultiverse-Core &aUsing it for dimensions.");
-		
-		
-		
-		// Bungeecord stuff
-		try {
-			bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
-					.getBoolean("settings.bungeecord");
-		} catch (Exception e) {
-			bungeeEnabled = false;
-		}
+        try {
+            // Doesn't support Cauldron and stuff..
+            Class.forName("net.minecraftforge.cauldron.CauldronHooks");
+            log("&aSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :(");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        } catch (Exception e) {
+            try {
+                // Checking for old versions
+                factory = (SkinFactory) Class
+                        .forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
+                        .newInstance();
+            } catch (Exception ex) {
+                // 1.8+++
+                factory = new UniversalSkinFactory();
+            }
+        }
+        log("&aDetected Minecraft &e" + ReflectionUtil.serverVersion + "&a, using &e"
+                + factory.getClass().getSimpleName());
 
-		if (bungeeEnabled) {
 
-			Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-			Bukkit.getMessenger().registerIncomingPluginChannel(this, "SkinsRestorer", new PluginMessageListener() {
-				@Override
-				public void onPluginMessageReceived(String channel, final Player player, final byte[] message) {
-					if (!channel.equals("SkinsRestorer"))
-						return;
+        // Multiverse Core support.
+        MCoreAPI.init();
+        if (MCoreAPI.check())
+            log("&aDetected &eMultiverse-Core &aUsing it for dimensions.");
 
-					Bukkit.getScheduler().runTaskAsynchronously(getInstance(), new Runnable() {
 
-						@Override
-						public void run() {
+        // Bungeecord stuff
+        try {
+            bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
+                    .getBoolean("settings.bungeecord");
+        } catch (Exception e) {
+            bungeeEnabled = false;
+        }
 
-							DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+        if (bungeeEnabled) {
 
-							try {
-								String subchannel = in.readUTF();
+            Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, "SkinsRestorer", new PluginMessageListener() {
+                @Override
+                public void onPluginMessageReceived(String channel, final Player player, final byte[] message) {
+                    if (!channel.equals("SkinsRestorer"))
+                        return;
 
-								if (subchannel.equalsIgnoreCase("SkinUpdate")) {
-									try {
-										factory.applySkin(player,
-												SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-									} catch (Exception e) {
-									}
-									factory.updateSkin(player);
-								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			});
+                    Bukkit.getScheduler().runTaskAsynchronously(getInstance(), new Runnable() {
 
-			// Updater stuff
-			if (Config.UPDATER_ENABLED)
-				if (checkVersion().equals(getVersion())) {
-					outdated = false;
-					log("&a----------------------------------------------");
-					log(ChatColor.GREEN + "    +===============+");
-					log(ChatColor.GREEN + "    | SkinsRestorer |");
-					log(ChatColor.GREEN + "    |---------------|");
-					log(ChatColor.GREEN + "    |  Bungee Mode  |");
-					log(ChatColor.GREEN + "    +===============+");
-					log("&a----------------------------------------------");
-					log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
-					log(ChatColor.GREEN + "    The latest version!");
-					log("&a----------------------------------------------");
-				} else {
-					outdated = true;
-					log("&a----------------------------------------------");
-					log(ChatColor.GREEN + "    +===============+");
-					log(ChatColor.GREEN + "    | SkinsRestorer |");
-					log(ChatColor.GREEN + "    |---------------|");
-					log(ChatColor.GREEN + "    |  Bungee Mode  |");
-					log(ChatColor.GREEN + "    +===============+");
-					log("&a----------------------------------------------");
-					log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-					log(ChatColor.RED + "    A new version is available! Download it at:");
-					log(
-							ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-					log("&a----------------------------------------------");
-				}
-			return;
-		}
+                        @Override
+                        public void run() {
 
-		// Config stuff
-		Config.load(getResource("config.yml"));
-		Locale.load();
+                            DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
-		if (Config.USE_MYSQL)
-			SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
-					Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
-		else
-			SkinStorage.init(getDataFolder());
+                            try {
+                                String subchannel = in.readUTF();
 
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 1 * 20);
+                                if (subchannel.equalsIgnoreCase("SkinUpdate")) {
+                                    try {
+                                        factory.applySkin(player,
+                                                SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                    } catch (Exception e) {
+                                    }
+                                    factory.updateSkin(player);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            });
 
-		// Commands
-		getCommand("skinsrestorer").setExecutor(new SrCommand());
-		getCommand("skin").setExecutor(new SkinCommand());
-		getCommand("skins").setExecutor(new GUICommand());
-		
+            // Updater stuff
+            if (Config.UPDATER_ENABLED)
+                if (checkVersion().equals(getVersion())) {
+                    outdated = false;
+                    log("&a----------------------------------------------");
+                    log(ChatColor.GREEN + "    +===============+");
+                    log(ChatColor.GREEN + "    | SkinsRestorer |");
+                    log(ChatColor.GREEN + "    |---------------|");
+                    log(ChatColor.GREEN + "    |  Bungee Mode  |");
+                    log(ChatColor.GREEN + "    +===============+");
+                    log("&a----------------------------------------------");
+                    log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+                    log(ChatColor.GREEN + "    The latest version!");
+                    log("&a----------------------------------------------");
+                } else {
+                    outdated = true;
+                    log("&a----------------------------------------------");
+                    log(ChatColor.GREEN + "    +===============+");
+                    log(ChatColor.GREEN + "    | SkinsRestorer |");
+                    log(ChatColor.GREEN + "    |---------------|");
+                    log(ChatColor.GREEN + "    |  Bungee Mode  |");
+                    log(ChatColor.GREEN + "    +===============+");
+                    log("&a----------------------------------------------");
+                    log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+                    log(ChatColor.RED + "    A new version is available! Download it at:");
+                    log(
+                            ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
+                    log("&a----------------------------------------------");
+                }
+            return;
+        }
+
+        // Config stuff
+        Config.load(getResource("config.yml"));
+        Locale.load();
+
+        if (Config.USE_MYSQL)
+            SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
+                    Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
+        else
+            SkinStorage.init(getDataFolder());
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 1 * 20);
+
+        // Commands
+        getCommand("skinsrestorer").setExecutor(new SrCommand());
+        getCommand("skin").setExecutor(new SkinCommand());
+        getCommand("skins").setExecutor(new GUICommand());
+
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
-		Bukkit.getPluginManager().registerEvents(new Listener() {
+        Bukkit.getPluginManager().registerEvents(new Listener() {
 
-			// LoginEvent happens on attemptLogin so its the best place to set
-			// the skin
-			@EventHandler
-			public void onLogin(PlayerJoinEvent e) {
-				try {
-					if (Config.DISABLE_ONJOIN_SKINS) {
-						factory.applySkin(e.getPlayer(),
-								SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
-						return;
-					}
-					if (Config.DEFAULT_SKINS_ENABLED)
-						if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-							List<String> skins = Config.DEFAULT_SKINS;
-							int randomNum = 0 + (int) (Math.random() * skins.size());
-							factory.applySkin(e.getPlayer(),
-									SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
-							return;
-						}
-					factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-				} catch (Exception ex) {
-				}
-			}
-		}, this);
+            // LoginEvent happens on attemptLogin so its the best place to set
+            // the skin
+            @EventHandler
+            public void onLogin(PlayerJoinEvent e) {
+                try {
+                    if (Config.DISABLE_ONJOIN_SKINS) {
+                        factory.applySkin(e.getPlayer(),
+                                SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+                        return;
+                    }
+                    if (Config.DEFAULT_SKINS_ENABLED)
+                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
+                            List<String> skins = Config.DEFAULT_SKINS;
+                            int randomNum = 0 + (int) (Math.random() * skins.size());
+                            factory.applySkin(e.getPlayer(),
+                                    SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
+                            return;
+                        }
+                    factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
+                } catch (Exception ex) {
+                }
+            }
+        }, this);
 
-		Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
 
-			@Override
-			public void run() {
+            @Override
+            public void run() {
 
-				if (Config.UPDATER_ENABLED)
-					if (checkVersion().equals(getVersion())) {
-						outdated = false;
-						log("&a----------------------------------------------");
-						log(ChatColor.GREEN + "    +===============+");
-						log(ChatColor.GREEN + "    | SkinsRestorer |");
-						log(ChatColor.GREEN + "    +===============+");
-						log("&a----------------------------------------------");
-						log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-						log(ChatColor.GREEN + "    The latest version!");
-						log("&a----------------------------------------------");
-					} else {
-						outdated = true;
-						log("");
-						log(ChatColor.GREEN + "    +===============+");
-						log(ChatColor.GREEN + "    | SkinsRestorer |");
-						log(ChatColor.GREEN + "    +===============+");
-						log("&a----------------------------------------------");
-						log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
-						log(ChatColor.RED + "    A new version is available! Download it at:");
-						log(
-								ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-						log("&a----------------------------------------------");
-					}
+                if (Config.UPDATER_ENABLED)
+                    if (checkVersion().equals(getVersion())) {
+                        outdated = false;
+                        log("&a----------------------------------------------");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+                        log(ChatColor.GREEN + "    The latest version!");
+                        log("&a----------------------------------------------");
+                    } else {
+                        outdated = true;
+                        log("");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+                        log(ChatColor.RED + "    A new version is available! Download it at:");
+                        log(
+                                ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124/");
+                        log("&a----------------------------------------------");
+                    }
 
-				if (Config.DEFAULT_SKINS_ENABLED)
-					for (String skin : Config.DEFAULT_SKINS)
-						try {
-							SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
-						} catch (SkinRequestException e) {
-							if (SkinStorage.getSkinData(skin) == null)
-								log(
-										ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
-						}
-			}
+                if (Config.DEFAULT_SKINS_ENABLED)
+                    for (String skin : Config.DEFAULT_SKINS)
+                        try {
+                            SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
+                        } catch (SkinRequestException e) {
+                            if (SkinStorage.getSkinData(skin) == null)
+                                log(
+                                        ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
+                        }
+            }
 
-		});
+        });
 
-		@SuppressWarnings("unused")
-		Metrics metrics = new Metrics(this);
-	}
+        @SuppressWarnings("unused")
+        Metrics metrics = new Metrics(this);
+    }
 }

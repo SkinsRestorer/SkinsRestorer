@@ -2,8 +2,8 @@ package skinsrestorer.sponge.storage;
 
 public class SkinStorage {
 
-	// private MySQL mysql;
+    // private MySQL mysql;
 
-	// private ConfigurationLoader<CommentedConfigurationNode> storageLoader;
+    // private ConfigurationLoader<CommentedConfigurationNode> storageLoader;
 
 }

@@ -1,7 +1,5 @@
 package skinsrestorer.bungee.commands;
 
-import java.util.concurrent.TimeUnit;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -17,102 +15,104 @@ import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
+import java.util.concurrent.TimeUnit;
+
 public class PlayerCommands extends Command {
 
-	public PlayerCommands() {
-		super("skin", null);
-	}
+    public PlayerCommands() {
+        super("skin", null);
+    }
 
-	@SuppressWarnings("deprecation")
-	@Override
-	public void execute(CommandSender sender, final String[] args) {
+    @SuppressWarnings("deprecation")
+    @Override
+    public void execute(CommandSender sender, final String[] args) {
 
-		if (!(sender instanceof ProxiedPlayer)) {
-			sender.sendMessage(Locale.NOT_PLAYER);
-			return;
-		}
+        if (!(sender instanceof ProxiedPlayer)) {
+            sender.sendMessage(Locale.NOT_PLAYER);
+            return;
+        }
 
-		final ProxiedPlayer p = (ProxiedPlayer) sender;
+        final ProxiedPlayer p = (ProxiedPlayer) sender;
 
-		if (!Config.SKINWITHOUTPERM){
-		if (p.hasPermission("skinsrestorer.playercmds")) {
-		}else{
-			sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-					+ Locale.PLAYER_HAS_NO_PERMISSION));
-			return;
-		}
-		}
-		
-		// Skin Help
-		if (args.length == 0 || args.length > 1) {
-			p.sendMessage(Locale.SR_LINE);
-			p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-			if (p.hasPermission("skinsrestorer.cmds"))
-				p.sendMessage(C.c("    &2/sr &7- &fDisplay Admin commands."));
-			p.sendMessage(Locale.SR_LINE);
-			return;
-		}
+        if (!Config.SKINWITHOUTPERM) {
+            if (p.hasPermission("skinsrestorer.playercmds")) {
+            } else {
+                sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+                        + Locale.PLAYER_HAS_NO_PERMISSION));
+                return;
+            }
+        }
 
-		if (args.length > 0) {
+        // Skin Help
+        if (args.length == 0 || args.length > 1) {
+            p.sendMessage(Locale.SR_LINE);
+            p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+            if (p.hasPermission("skinsrestorer.cmds"))
+                p.sendMessage(C.c("    &2/sr &7- &fDisplay Admin commands."));
+            p.sendMessage(Locale.SR_LINE);
+            return;
+        }
 
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < args.length; i++)
-				if (args.length == 1)
-					sb.append(args[i]);
-				else if (args.length > 1)
-					if (i + 1 == args.length)
-						sb.append(args[i]);
-					else
-						sb.append(args[i] + " ");
+        if (args.length > 0) {
 
-			final String skin = sb.toString();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < args.length; i++)
+                if (args.length == 1)
+                    sb.append(args[i]);
+                else if (args.length > 1)
+                    if (i + 1 == args.length)
+                        sb.append(args[i]);
+                    else
+                        sb.append(args[i] + " ");
 
-			if (Config.DISABLED_SKINS_ENABLED)
-				if (!p.hasPermission("skinsrestorer.bypassdisabled")){
-				for (String dskin : Config.DISABLED_SKINS)
-					if (skin.equalsIgnoreCase(dskin)) {
-						p.sendMessage(Locale.SKIN_DISABLED);
-						return;
-					}
-				}
+            final String skin = sb.toString();
 
-			if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-				p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
-				return;
-			}
-			CooldownStorage.resetCooldown(p.getName());
-			CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+            if (Config.DISABLED_SKINS_ENABLED)
+                if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
+                    for (String dskin : Config.DISABLED_SKINS)
+                        if (skin.equalsIgnoreCase(dskin)) {
+                            p.sendMessage(Locale.SKIN_DISABLED);
+                            return;
+                        }
+                }
 
-			ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+            if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                return;
+            }
+            CooldownStorage.resetCooldown(p.getName());
+            CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-				@Override
-				public void run() {
+            ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
 
-				
-						try {
-							MojangAPI.getUUID(skin);
-						SkinStorage.setPlayerSkin(p.getName(), skin);
-					SkinApplier.applySkin(p);
-					p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-					return;
-						} catch (SkinRequestException e) {
-							p.sendMessage(e.getReason());
-							return;
-						}
-				}
+                @Override
+                public void run() {
 
-			});
-			return;
-		} else {
-			if (!Locale.SR_LINE.isEmpty())
-				sender.sendMessage(Locale.SR_LINE);
-			sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-			if (sender.hasPermission("skinsrestorer.cmds"))
-				sender.sendMessage(
-						ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
-			if (!Locale.SR_LINE.isEmpty())
-				sender.sendMessage(Locale.SR_LINE);
-		}
 
-	}
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(e.getReason());
+                        return;
+                    }
+                }
+
+            });
+            return;
+        } else {
+            if (!Locale.SR_LINE.isEmpty())
+                sender.sendMessage(Locale.SR_LINE);
+            sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+            if (sender.hasPermission("skinsrestorer.cmds"))
+                sender.sendMessage(
+                        ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
+            if (!Locale.SR_LINE.isEmpty())
+                sender.sendMessage(Locale.SR_LINE);
+        }
+
+    }
 }
