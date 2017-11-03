@@ -35,7 +35,6 @@ public class MojangAPI {
 	}
 
 	private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
-	private static final String mcstatus = "https://use.gameapis.net/mc/extra/status";
 	private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
 
 	/**

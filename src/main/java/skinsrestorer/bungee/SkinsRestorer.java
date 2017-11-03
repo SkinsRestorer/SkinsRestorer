@@ -85,6 +85,7 @@ public class SkinsRestorer extends Plugin {
 		exe.shutdown();
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void onEnable() {
 		Metrics metrics = new Metrics(this);

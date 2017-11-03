@@ -284,6 +284,7 @@ public class SkinsRestorer extends JavaPlugin {
 
 		});
 
+		@SuppressWarnings("unused")
 		Metrics metrics = new Metrics(this);
 	}
 }

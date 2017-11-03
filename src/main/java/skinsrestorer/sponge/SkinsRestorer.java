@@ -29,6 +29,7 @@ import skinsrestorer.sponge.listeners.LoginListener;
 
 public class SkinsRestorer {
 	
+	@SuppressWarnings("unused")
 	@Inject
 	private Metrics metrics;
 
