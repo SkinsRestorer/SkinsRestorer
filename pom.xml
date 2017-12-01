@@ -43,6 +43,10 @@
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
+        <repository>
+            <id>inventive-repo</id>
+            <url>https://repo.inventivetalent.org/content/groups/public/</url>
+        </repository>
     </repositories>
     <dependencies>
         <dependency>
@@ -101,6 +105,16 @@
             <artifactId>guice</artifactId>
             <version>4.1.0</version>
         </dependency>
+        <dependency>
+        	<groupId>org.inventivetalent.spiget-update</groupId>
+        	<artifactId>bukkit</artifactId>
+        	<version>1.4.0</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>org.inventivetalent.spiget-update</groupId>
+        	<artifactId>bungee</artifactId>
+        	<version>1.4.0</version>
+    	</dependency>
     </dependencies>
     <build>
         <plugins>
@@ -112,11 +126,16 @@
                     <artifactSet>
                         <includes>
                             <include>org.bstats:*</include>
+                            <include>org.inventivetalent.*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
+                            <shadedPattern>skinsrestorer</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.inventivetalent</pattern>
                             <shadedPattern>skinsrestorer</shadedPattern>
                         </relocation>
                     </relocations>

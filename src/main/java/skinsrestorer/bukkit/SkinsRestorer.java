@@ -2,8 +2,11 @@ package skinsrestorer.bukkit;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
+
+import org.inventivetalent.update.spiget.SpigetUpdate;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
@@ -26,9 +30,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -49,22 +51,6 @@ public class SkinsRestorer extends JavaPlugin {
         logger.info("[SkinsRestorer] " + msg);
     }
 
-    public String checkVersion() {
-        try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
-                    .openConnection();
-            con.setDoOutput(true);
-            con.setRequestMethod("GET");
-            String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-            if (version.length() <= 13)
-                return version;
-        } catch (Exception e) {
-            e.printStackTrace();
-            log("Failed to check for an update on Spigot.");
-        }
-        return getVersion();
-    }
-
     public SkinFactory getFactory() {
         return factory;
     }
@@ -83,6 +69,11 @@ public class SkinsRestorer extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        Metrics metrics = new Metrics(this);
+        SpigetUpdate updater = new SpigetUpdate(this, 2124);
+        updater.setVersionComparator(VersionComparator.EQUAL);
+        updater.setVersionComparator(VersionComparator.SEM_VER_SNAPSHOT);
 
         instance = this;
 
@@ -155,35 +146,46 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
             });
+            if (Config.UPDATER_ENABLED) {
+                updater.checkForUpdate(new UpdateCallback() {
+                    @Override
+                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                        if (hasDirectDownload) {
+                            log("----------------------------------------------");
+                            log("    +===============+");
+                            log("    | SkinsRestorer |");
+                            log("    |---------------|");
+                            log("    |  Bungee Mode  |");
+                            log("    +===============+");
+                            log("----------------------------------------------");
+                            log("    Current version: " + getVersion());
+                            log("    A new version is available! Downloading it now...");
+                            log("----------------------------------------------");
+                            if (updater.downloadUpdate()) {
+                                log("Update download successful, will be applied on next restart");
+                            } else {
+                                // Update failed
+                                log("Update download failed, reason is " + updater.getFailReason());
+                            }
+                        }
+                    }
 
-            // Updater stuff
-            if (Config.UPDATER_ENABLED)
-                if (checkVersion().equals(getVersion())) {
-                    outdated = false;
-                    log("----------------------------------------------");
-                    log("    +===============+");
-                    log("    | SkinsRestorer |");
-                    log("    |---------------|");
-                    log("    |  Bungee Mode  |");
-                    log("    +===============+");
-                    log("----------------------------------------------");
-                    log("    Current version: " + getVersion());
-                    log("    This is the latest version!");
-                    log("&a----------------------------------------------");
-                } else {
-                    outdated = true;
-                    log("----------------------------------------------");
-                    log("    +===============+");
-                    log("    | SkinsRestorer |");
-                    log("    |---------------|");
-                    log("    |  Bungee Mode  |");
-                    log("    +===============+");
-                    log("----------------------------------------------");
-                    log("    Current version: " + getVersion());
-                    log("    A new version is available! Download it at:");
-                    log("    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-                    log("----------------------------------------------");
-                }
+                    @Override
+                    public void upToDate() {
+                        log("----------------------------------------------");
+                        log("    +===============+");
+                        log("    | SkinsRestorer |");
+                        log("    |---------------|");
+                        log("    |  Bungee Mode  |");
+                        log("    +===============+");
+                        log("----------------------------------------------");
+                        log("    Current version: " + getVersion());
+                        log("    This is the latest version!");
+                        log("----------------------------------------------");
+                    }
+                });
+            }
+
             return;
         }
 
@@ -236,29 +238,41 @@ public class SkinsRestorer extends JavaPlugin {
             @Override
             public void run() {
 
-                if (Config.UPDATER_ENABLED)
-                    if (checkVersion().equals(getVersion())) {
-                        outdated = false;
-                        log("----------------------------------------------");
-                        log("    +===============+");
-                        log("    | SkinsRestorer |");
-                        log("    +===============+");
-                        log("----------------------------------------------");
-                        log("    Current version: " + getVersion());
-                        log("    This is the latest version!");
-                        log("----------------------------------------------");
-                    } else {
-                        outdated = true;
-                        log("----------------------------------------------");
-                        log("    +===============+");
-                        log("    | SkinsRestorer |");
-                        log("    +===============+");
-                        log("----------------------------------------------");
-                        log("    Current version: " + getVersion());
-                        log("    A new version is available! Download it at:");
-                        log("    https://www.spigotmc.org/resources/skinsrestorer.2124/");
-                        log("----------------------------------------------");
-                    }
+                if (Config.UPDATER_ENABLED) {
+                    updater.checkForUpdate(new UpdateCallback() {
+                        @Override
+                        public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                            if (hasDirectDownload) {
+                                log("----------------------------------------------");
+                                log("    +===============+");
+                                log("    | SkinsRestorer |");
+                                log("    +===============+");
+                                log("----------------------------------------------");
+                                log("    Current version: " + getVersion());
+                                log("    A new version is available! Downloading it now...");
+                                log("----------------------------------------------");
+                                if (updater.downloadUpdate()) {
+                                    log("Update download successful, will be applied on next restart");
+                                } else {
+                                    // Update failed
+                                    log("Update download failed, reason is " + updater.getFailReason());
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void upToDate() {
+                            log("----------------------------------------------");
+                            log("    +===============+");
+                            log("    | SkinsRestorer |");
+                            log("    +===============+");
+                            log("----------------------------------------------");
+                            log("    Current version: " + getVersion());
+                            log("    This is the latest version!");
+                            log("----------------------------------------------");
+                        }
+                    });
+                }
 
                 if (Config.DEFAULT_SKINS_ENABLED)
                     for (String skin : Config.DEFAULT_SKINS)
@@ -272,7 +286,5 @@ public class SkinsRestorer extends JavaPlugin {
 
         });
 
-        @SuppressWarnings("unused")
-        Metrics metrics = new Metrics(this);
     }
 }

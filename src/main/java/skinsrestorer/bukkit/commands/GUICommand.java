@@ -21,14 +21,14 @@ public class GUICommand implements CommandExecutor {
 
         final Player p = (Player) sender;
 
-        if (!p.hasPermission("skinsrestorer.playercmds.menu")) {
+        if (!p.hasPermission("skinsrestorer.playercmds")) {
             p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
                     + Locale.PLAYER_HAS_NO_PERMISSION);
             return true;
         }
         SkinsGUI.getMenus().put(p.getName(), 0);
         p.openInventory(SkinsGUI.getGUI(0));
-        p.sendMessage("�2Opening the Skins Menu.");
+        p.sendMessage("§2Opening the Skins Menu.");
         return false;
     }
 }
