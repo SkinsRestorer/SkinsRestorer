@@ -143,8 +143,7 @@ public class SkinsRestorer extends Plugin {
                             SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
                         } catch (SkinRequestException e) {
                             if (SkinStorage.getSkinData(skin) == null)
-                                log(
-                                        ChatColor.RED + "Default Skin '" + skin + "' request error: " + e.getReason());
+                                log(ChatColor.RED + "Default Skin '" + skin + "' request error:" + e.getReason());
                         }
             }
 

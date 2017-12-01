@@ -39,11 +39,6 @@ public class SkinCommand implements CommandExecutor {
         if (args.length == 1 && args[0].equalsIgnoreCase("clear")) {
             Object props = null;
 
-            if (SkinStorage.getPlayerSkin(p.getName()).equalsIgnoreCase(p.getName())) {
-                p.sendMessage(Locale.NO_SKIN_DATA);
-                return true;
-            }
-
             SkinStorage.removePlayerSkin(p.getName());
             props = SkinStorage.createProperty("textures", "", "");
             SkinsRestorer.getInstance().getFactory().applySkin(p, props);
