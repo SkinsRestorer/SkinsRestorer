@@ -15,9 +15,6 @@ import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.updater.bungee.SpigetUpdate;
-import skinsrestorer.shared.utils.updater.core.UpdateCallback;
-import skinsrestorer.shared.utils.updater.core.VersionComparator;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -89,9 +86,6 @@ public class SkinsRestorer extends Plugin {
     @Override
     public void onEnable() {
         Metrics metrics = new Metrics(this);
-        SpigetUpdate updater = new SpigetUpdate(this, 2124);
-        updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER_BETA);
 
         instance = this;
         Config.load(getResourceAsStream("config.yml"));
@@ -119,38 +113,29 @@ public class SkinsRestorer extends Plugin {
             @Override
             public void run() {
                 if (Config.UPDATER_ENABLED)
-                    updater.checkForUpdate(new UpdateCallback() {
-                        @Override
-                        public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                            if (hasDirectDownload) {
-                                log("----------------------------------------------");
-                                log("    +===============+");
-                                log("    | SkinsRestorer |");
-                                log("    +===============+");
-                                log("----------------------------------------------");
-                                log("    Current version: " + getVersion());
-                                log("    A new version is available! Downloading it now...");
-                                log("----------------------------------------------");
-                                if (updater.downloadUpdate()) {
-                                    log("Update download successful, will be applied on next restart");
-                                } else {
-                                    // Update failed
-                                    log("Update download failed, reason is " + updater.getFailReason());
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void upToDate() {
-                            log("----------------------------------------------");
-                            log("    +===============+");
-                            log("    | SkinsRestorer |");
-                            log("    +===============+");
-                            log("----------------------------------------------");
-                            log("    Current version: " + getVersion());
-                            log("    This is the latest version!");
-                            log("----------------------------------------------");
-                        }});
+                    if (checkVersion().equals(getVersion())) {
+                        outdated = false;
+                        log("&a----------------------------------------------");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+                        log(ChatColor.GREEN + "    The latest version!");
+                        log("&a----------------------------------------------");
+                    } else {
+                        outdated = true;
+                        log("&a----------------------------------------------");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+                        log(ChatColor.RED + "    A new version is available! Download it at:");
+                        log(
+                                ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
+                        log("&a----------------------------------------------");
+                    }
 
                 if (Config.DEFAULT_SKINS_ENABLED)
                     for (String skin : Config.DEFAULT_SKINS)
