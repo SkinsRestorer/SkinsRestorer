@@ -126,16 +126,11 @@
                     <artifactSet>
                         <includes>
                             <include>org.bstats:*</include>
-                            <include>org.inventivetalent.*</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.inventivetalent</pattern>
                             <shadedPattern>skinsrestorer</shadedPattern>
                         </relocation>
                     </relocations>
