@@ -1,6 +1,6 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
-version: ${project.version}
+version: 13.2-SNAPSHOT
 description: Ability to restore/change skins on servers! (Offline and Online Mode). (Bungee/Bukkit/Sponge)
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core]

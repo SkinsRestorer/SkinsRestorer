@@ -3,10 +3,6 @@ package skinsrestorer.bukkit;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
-import org.inventivetalent.update.spiget.SpigetUpdate;
-import org.inventivetalent.update.spiget.UpdateCallback;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,6 +25,9 @@ import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
+import skinsrestorer.shared.utils.updater.bukkit.SpigetUpdate;
+import skinsrestorer.shared.utils.updater.core.UpdateCallback;
+import skinsrestorer.shared.utils.updater.core.VersionComparator;
 
 import java.io.*;
 import java.util.List;
@@ -41,7 +40,6 @@ public class SkinsRestorer extends JavaPlugin {
     private SkinFactory factory;
     private MySQL mysql;
     private boolean bungeeEnabled;
-    private boolean outdated;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -63,17 +61,13 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
-    public boolean isOutdated() {
-        return outdated;
-    }
-
     @Override
     public void onEnable() {
 
         Metrics metrics = new Metrics(this);
         SpigetUpdate updater = new SpigetUpdate(this, 2124);
         updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER_SNAPSHOT);
+        updater.setVersionComparator(VersionComparator.SEM_VER_BETA);
 
         instance = this;
 

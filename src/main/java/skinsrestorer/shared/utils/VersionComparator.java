@@ -64,10 +64,10 @@ public abstract class VersionComparator {
     /**
      * Same as {@link VersionComparator#SEM_VER}, but supports version names with '-SNAPSHOT' prefixes
      */
-    public static final VersionComparator SEM_VER_SNAPSHOT = new VersionComparator() {
+    public static final VersionComparator SEM_VER_BETA = new VersionComparator() {
         @Override
         public boolean isNewer(String currentVersion, String checkVersion) {
-            currentVersion = currentVersion.replace("-BETA", "");
+            currentVersion = currentVersion.replace("-SNAPSHOT", "");
             checkVersion = checkVersion.replace("-BETA", "");
 
             return SEM_VER.isNewer(currentVersion, checkVersion);
