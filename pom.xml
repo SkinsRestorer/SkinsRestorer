@@ -96,16 +96,6 @@
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-sponge</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>4.1.0</version>
-        </dependency>
-        <dependency>
         	<groupId>org.inventivetalent.spiget-update</groupId>
         	<artifactId>bukkit</artifactId>
         	<version>1.4.0</version>
