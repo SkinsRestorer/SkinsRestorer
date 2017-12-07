@@ -119,31 +119,29 @@ public class SkinsRestorer extends Plugin {
             @Override
             public void run() {
                 if (Config.UPDATER_ENABLED)
-                    updater.checkForUpdate(new UpdateCallback() {
-                        @Override
-                        public void updateAvailable(String newVersion, String downloadUrl) {
-                            log("----------------------------------------------");
-                            log("    +===============+");
-                            log("    | SkinsRestorer |");
-                            log("    +===============+");
-                            log("----------------------------------------------");
-                            log("    Current version: " + getVersion());
-                            log("    A new version is available! Downloading it now...");
-                            log("----------------------------------------------");
-                            }
-                        }
-
-                        @Override
-                        public void upToDate() {
-                            log("----------------------------------------------");
-                            log("    +===============+");
-                            log("    | SkinsRestorer |");
-                            log("    +===============+");
-                            log("----------------------------------------------");
-                            log("    Current version: " + getVersion());
-                            log("    This is the latest version!");
-                            log("----------------------------------------------");
-                        };
+                    if (checkVersion().equals(getVersion())) {
+                        outdated = false;
+                        log("&a----------------------------------------------");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.GREEN + getVersion());
+                        log(ChatColor.GREEN + "    The latest version!");
+                        log("&a----------------------------------------------");
+                    } else {
+                        outdated = true;
+                        log("&a----------------------------------------------");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log(ChatColor.GREEN + "    | SkinsRestorer |");
+                        log(ChatColor.GREEN + "    +===============+");
+                        log("&a----------------------------------------------");
+                        log(ChatColor.AQUA + "    Current version: " + ChatColor.RED + getVersion());
+                        log(ChatColor.RED + "    A new version is available! Download it at:");
+                        log(
+                                ChatColor.YELLOW + "    https://www.spigotmc.org/resources/skinsrestorer.2124");
+                        log("&a----------------------------------------------");
+                    }
 
                 if (Config.DEFAULT_SKINS_ENABLED)
                     for (String skin : Config.DEFAULT_SKINS)

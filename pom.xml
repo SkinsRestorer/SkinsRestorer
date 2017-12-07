@@ -24,10 +24,6 @@
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
         <repository>
-            <id>sponge-repo</id>
-            <url>http://repo.spongepowered.org/Sponge/maven/</url>
-        </repository>
-        <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
@@ -98,11 +94,6 @@
         <dependency>
         	<groupId>org.inventivetalent.spiget-update</groupId>
         	<artifactId>bukkit</artifactId>
-        	<version>1.4.0</version>
-    	</dependency>
-    	<dependency>
-        	<groupId>org.inventivetalent.spiget-update</groupId>
-        	<artifactId>bungee</artifactId>
         	<version>1.4.0</version>
     	</dependency>
     </dependencies>
