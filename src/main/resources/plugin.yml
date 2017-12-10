@@ -15,5 +15,7 @@ commands:
 permissions:
    skinsrestorer.playercmds:
      description: Allows access to all main commands.
+     default: op
    skinsrestorer.cmds:
      description: Allows access to administrative commands.
+     default: op
