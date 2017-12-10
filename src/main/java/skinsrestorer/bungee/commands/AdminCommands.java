@@ -2,6 +2,7 @@ package skinsrestorer.bungee.commands;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.connection.InitialHandler;
@@ -262,6 +263,6 @@ public class AdminCommands extends Command {
     public void reloadConfig(CommandSender sender, String msg) {
         Locale.load();
         Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
-        sender.sendMessage(C.c(msg));
+        sender.sendMessage(new TextComponent(C.c(msg)));
     }
 }

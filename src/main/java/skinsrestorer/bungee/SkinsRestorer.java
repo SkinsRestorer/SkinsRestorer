@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 public class SkinsRestorer extends Plugin {
 
     private static SkinsRestorer instance;
-	CommandSender console = getProxy().getConsole();
     private MySQL mysql;
     private boolean multibungee;
     private ExecutorService exe;
@@ -36,7 +35,7 @@ public class SkinsRestorer extends Plugin {
         return instance;
     }
 
-    public String checkVersion() {
+    public String checkVersion(CommandSender console) {
         try {
             HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
                     .openConnection();
@@ -111,8 +110,11 @@ public class SkinsRestorer extends Plugin {
 
             @Override
             public void run() {
+            	
+            	CommandSender console = getProxy().getConsole();
+            	
                 if (Config.UPDATER_ENABLED)
-                    if (checkVersion().equals(getVersion())) {
+                    if (checkVersion(console).equals(getVersion())) {
                         outdated = false;
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
@@ -146,6 +148,5 @@ public class SkinsRestorer extends Plugin {
             }
 
         });
-
     }
 }
