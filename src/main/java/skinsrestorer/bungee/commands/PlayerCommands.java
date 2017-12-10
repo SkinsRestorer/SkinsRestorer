@@ -1,8 +1,8 @@
 package skinsrestorer.bungee.commands;
 
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import skinsrestorer.bungee.SkinApplier;
@@ -14,7 +14,6 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-
 import java.util.concurrent.TimeUnit;
 
 public class PlayerCommands extends Command {
@@ -22,13 +21,21 @@ public class PlayerCommands extends Command {
     public PlayerCommands() {
         super("skin", null);
     }
+    
+	//Method called for the commands help.
+	public void help(ProxiedPlayer p) {
+        p.sendMessage(new TextComponent(Locale.SR_LINE));
+        p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
+        if (p.hasPermission("skinsrestorer.cmds"))
+            p.sendMessage(new TextComponent(C.c("    &2/sr &7- &fDisplay Admin commands.")));
+        p.sendMessage(new TextComponent(Locale.SR_LINE));
+	}
 
-    @SuppressWarnings("deprecation")
     @Override
     public void execute(CommandSender sender, final String[] args) {
 
         if (!(sender instanceof ProxiedPlayer)) {
-            sender.sendMessage(Locale.NOT_PLAYER);
+            sender.sendMessage(new TextComponent(Locale.NOT_PLAYER));
             return;
         }
 
@@ -37,82 +44,79 @@ public class PlayerCommands extends Command {
         if (!Config.SKINWITHOUTPERM) {
             if (p.hasPermission("skinsrestorer.playercmds")) {
             } else {
-                sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-                        + Locale.PLAYER_HAS_NO_PERMISSION));
+                sender.sendMessage(new TextComponent(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
+                        + Locale.PLAYER_HAS_NO_PERMISSION)));
                 return;
             }
         }
 
         // Skin Help
-        if (args.length == 0 || args.length > 1) {
-            p.sendMessage(Locale.SR_LINE);
-            p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-            if (p.hasPermission("skinsrestorer.cmds"))
-                p.sendMessage(C.c("    &2/sr &7- &fDisplay Admin commands."));
-            p.sendMessage(Locale.SR_LINE);
+        if (args.length == 0 || args.length > 2) {
+            help(p);
             return;
         }
+        
+        //SKin Clear
+        if (args.length == 1) {
+        	if (args[0].equalsIgnoreCase("clear")) {
+            	// Skin Clear code was supposed to be here...? -Logics4
+        		
+        		help(p); //Remove this method once the code is here.
+        		return;
+        	} else {
+        		help(p);
+        		return;
+        	}
+        }
 
-        if (args.length > 0) {
+        if (args.length == 2) {
+        	if (args[0].equalsIgnoreCase("set")) {
+        		
+                StringBuilder sb = new StringBuilder();
+                sb.append(args[1]);
 
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < args.length; i++)
-                if (args.length == 1)
-                    sb.append(args[i]);
-                else if (args.length > 1)
-                    if (i + 1 == args.length)
-                        sb.append(args[i]);
-                    else
-                        sb.append(args[i] + " ");
+                final String skin = sb.toString();
+                
+                if (Config.DISABLED_SKINS_ENABLED)
+                    if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
+                        for (String dskin : Config.DISABLED_SKINS)
+                            if (skin.equalsIgnoreCase(dskin)) {
+                                p.sendMessage(new TextComponent(Locale.SKIN_DISABLED));
+                                return;
+                            }
+                    }
 
-            final String skin = sb.toString();
+                if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                    p.sendMessage(new TextComponent(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+                    return;
+                }
+                CooldownStorage.resetCooldown(p.getName());
+                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-            if (Config.DISABLED_SKINS_ENABLED)
-                if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
-                    for (String dskin : Config.DISABLED_SKINS)
-                        if (skin.equalsIgnoreCase(dskin)) {
-                            p.sendMessage(Locale.SKIN_DISABLED);
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
+                    @Override
+                    public void run() {
+
+
+                        try {
+                            MojangAPI.getUUID(skin);
+                            SkinStorage.setPlayerSkin(p.getName(), skin);
+                            SkinApplier.applySkin(p);
+                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                            return;
+                        } catch (SkinRequestException e) {
+                            p.sendMessage(new TextComponent(e.getReason()));
                             return;
                         }
-                }
-
-            if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-                p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
-                return;
-            }
-            CooldownStorage.resetCooldown(p.getName());
-            CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-
-            ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-
-                @Override
-                public void run() {
-
-
-                    try {
-                        MojangAPI.getUUID(skin);
-                        SkinStorage.setPlayerSkin(p.getName(), skin);
-                        SkinApplier.applySkin(p);
-                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                        return;
-                    } catch (SkinRequestException e) {
-                        p.sendMessage(e.getReason());
-                        return;
                     }
-                }
 
-            });
-            return;
-        } else {
-            if (!Locale.SR_LINE.isEmpty())
-                sender.sendMessage(Locale.SR_LINE);
-            sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-            if (sender.hasPermission("skinsrestorer.cmds"))
-                sender.sendMessage(
-                        ChatColor.translateAlternateColorCodes('&', "    &2/sr &7- &fDisplay Admin commands."));
-            if (!Locale.SR_LINE.isEmpty())
-                sender.sendMessage(Locale.SR_LINE);
+                });
+                return;
+        	} else {
+        		help(p);
+        		return;
+        	}
         }
-
     }
 }

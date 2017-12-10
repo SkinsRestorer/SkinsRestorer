@@ -2,7 +2,6 @@ package skinsrestorer.shared.storage;
 
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.YamlConfig;
-
 import java.io.File;
 import java.lang.reflect.Field;
 
@@ -24,9 +23,9 @@ public class Locale {
     public static String SKIN_DATA_SAVED = "&2Skin data saved successfully.";
     public static String SR_LINE = "&7&m----------------------------------------";
     public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
-            + "\n    &2/skin <skinname> &7-&f Changes your skin."
-            + "\n    &2/skin clear &7-&f Clears your skin!";
-    public static String HELP_SR = "    &2/sr &7- &fDisplay Admin commands.";
+            + "\n    &2/skin set <skinname> &7-&f Changes your skin."
+            + "\n    &2/skin clear &7-&f Clears your skin.";
+    public static String HELP_SR = "    &2/sr &7- &fDisplay admin commands.";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
             + "\n\n    &2/sr config &7- &fhelp page for usefull in game config settings"
