@@ -14,13 +14,13 @@ public class Locale {
     public static String SKIN_CHANGE_SUCCESS = "&2Your skin has been changed.";
     public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
     public static String PLAYER_HAS_NO_PERMISSION = "&4Error&8: &cYou don't have permission to do this.";
-    public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an Administrator.";
+    public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
     public static String UNKNOWN_COMMAND = "&cUnknown command. Type \"/help\" for help.";
     public static String ALT_API_FAILED = "&4Error&8: &cSkin Data API is overloaded, please try again later!";
     public static String NOT_PREMIUM = "&4Error&8: &cPremium player with that name does not exist.";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occured while requesting skin data, please try again later!";
-    public static String SKIN_DATA_DROPPED = "&2skin data for player %player dropped.";
+    public static String SKIN_DATA_DROPPED = "&2Skin data for player %player dropped.";
     public static String SKIN_DATA_SAVED = "&2Skin data saved successfully.";
     public static String SR_LINE = "&7&m----------------------------------------";
     public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
@@ -60,7 +60,7 @@ public class Locale {
                 f.set(null, C.c(locale.getString(f.getName(), f.get(null))));
             }
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Can't read messages.yml! Try removing it and restarting.");
+            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restarting.");
         }
     }
 }
