@@ -53,7 +53,7 @@ public class SkinCommand implements CommandExecutor {
             p.sendMessage(Locale.SR_LINE);
             p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
             if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
-                p.sendMessage(C.c("    &2/sr &7- &fDisplay Admin commands."));
+                p.sendMessage(Locale.HELP_SR);
             p.sendMessage(Locale.SR_LINE);
         }
 

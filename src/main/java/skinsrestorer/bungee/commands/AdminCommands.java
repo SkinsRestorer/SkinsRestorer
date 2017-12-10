@@ -259,7 +259,6 @@ public class AdminCommands extends Command {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public void reloadConfig(CommandSender sender, String msg) {
         Locale.load();
         Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
