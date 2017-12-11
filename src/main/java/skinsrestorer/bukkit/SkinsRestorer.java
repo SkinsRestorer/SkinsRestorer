@@ -33,7 +33,6 @@ import java.util.List;
 public class SkinsRestorer extends JavaPlugin {
 
     private static SkinsRestorer instance;
-    ConsoleCommandSender console = getServer().getConsoleSender();
     private SkinFactory factory;
     private MySQL mysql;
     private boolean bungeeEnabled;
@@ -53,9 +52,12 @@ public class SkinsRestorer extends JavaPlugin {
     public String getVersion() {
         return getDescription().getVersion();
     }
+    
 
     @Override
     public void onEnable() {
+    	
+        ConsoleCommandSender console = getServer().getConsoleSender();
 
     	@SuppressWarnings("unused")
         Metrics metrics = new Metrics(this);
