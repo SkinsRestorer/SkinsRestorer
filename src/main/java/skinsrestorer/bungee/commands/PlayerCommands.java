@@ -44,8 +44,7 @@ public class PlayerCommands extends Command {
         if (!Config.SKINWITHOUTPERM) {
             if (p.hasPermission("skinsrestorer.playercmds")) {
             } else {
-                sender.sendMessage(new TextComponent(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-                        + Locale.PLAYER_HAS_NO_PERMISSION)));
+                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION);
                 return;
             }
         }
@@ -67,6 +66,7 @@ public class PlayerCommands extends Command {
         		StringBuilder sb = new StringBuilder();
                 sb.append(args[0]);
 
+		//skin <skin>
                 final String skin = sb.toString();
                 
                 if (Config.DISABLED_SKINS_ENABLED)
@@ -108,6 +108,7 @@ public class PlayerCommands extends Command {
         	}
         }
 
+	//skin set
         if (args.length == 2) {
         	if (args[0].equalsIgnoreCase("set")) {
         		
