@@ -22,8 +22,7 @@ public class GUICommand implements CommandExecutor {
         final Player p = (Player) sender;
 
         if (!p.hasPermission("skinsrestorer.playercmds")) {
-            p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-                    + Locale.PLAYER_HAS_NO_PERMISSION);
+            p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
             return true;
         }
         SkinsGUI.getMenus().put(p.getName(), 0);

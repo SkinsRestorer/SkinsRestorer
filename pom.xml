@@ -43,6 +43,7 @@
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
+<<<<<<< HEAD
         <repository>
         	<!-- InventiveTalent's Repository (needed for Spiget-Update) -->
             <id>inventive-repo</id>
@@ -59,6 +60,13 @@
         	<!-- Bukkit API -->
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
+=======
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+>>>>>>> ff18da10cb1fc5c704b08a20eef9f55b0197a9ec
             <version>1.12.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -97,6 +105,7 @@
             <artifactId>bstats-bungeecord-lite</artifactId>
             <version>1.2</version>
         </dependency>
+<<<<<<< HEAD
         <dependency>
         	<!-- Spiget-Update (for the updater) -->
         	<groupId>org.inventivetalent.spiget-update</groupId>
@@ -109,6 +118,8 @@
     		<artifactId>spigot</artifactId>
     		<version>1.7.10-R0.1-SNAPSHOT</version>
     	</dependency>
+=======
+>>>>>>> ff18da10cb1fc5c704b08a20eef9f55b0197a9ec
     </dependencies>
     <build>
         <plugins>

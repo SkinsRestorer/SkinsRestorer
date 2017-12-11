@@ -240,22 +240,22 @@ public class SrCommand implements CommandExecutor {
 
                         ConsoleCommandSender cons = Bukkit.getConsoleSender();
 
-                        cons.sendMessage(C.c("\n&aName: &8" + name));
-                        cons.sendMessage(C.c("\n&aValue : &8" + value));
-                        cons.sendMessage(C.c("\n&aSignature : &8" + signature));
+                        cons.sendMessage("\n§aName: §8" + name);
+                        cons.sendMessage("\n§aValue : §8" + value);
+                        cons.sendMessage("\n§aSignature : §8" + signature);
 
                         String decoded = Base64Coder.decodeString(value);
-                        cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
+                        cons.sendMessage("\n§aValue Decoded: §e" + decoded);
 
-                        sender.sendMessage(C.c("\n&e" + decoded));
-                        sender.sendMessage(C.c("&cMore info in console!"));
+                        sender.sendMessage("\n§e" + decoded);
+                        sender.sendMessage("§cMore info in console!");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                     sender.sendMessage(Locale.NO_SKIN_DATA);
                     return true;
                 }
-                sender.sendMessage(C.c("&cMore info in console!"));
+                sender.sendMessage("§cMore info in console!");
 
             }
         } else {
