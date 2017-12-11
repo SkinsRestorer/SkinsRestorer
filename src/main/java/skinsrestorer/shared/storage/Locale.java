@@ -8,7 +8,6 @@ import java.lang.reflect.Field;
 public class Locale {
 
     public static String SR_LINE = "&7&m----------------------------------------";
-//    public static String UNKNOWN_COMMAND = "&cUnknown command. Type \"/help\" for help."; #history books
     public static String PLAYER_HAS_NO_PERMISSION = "&4Error&8: &cYou don't have permission to do this.";
     public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
             + "\n    &2/skin set <skinname> &7-&f Changes your skin."
@@ -28,7 +27,6 @@ public class Locale {
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String NOT_ONLINE = "&4Error&8: &cPlayer is not online!";
     public static String SKIN_DATA_DROPPED = "&2Skin data for player %player dropped.";
-//    public static String SKIN_DATA_SAVED = "&2Skin data saved successfully."; #history books
     public static String RELOAD = "&2Config and Locale has been reloaded!";
     public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
             + "\n\n    &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
@@ -43,10 +41,9 @@ public class Locale {
     public static String STATUS_OK = "&aMojang API connection successful!";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
-    public static String OUTDATED = "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
     public static String NOT_PLAYER = "&4Error&8: &cYou need to be a player!";
-    private static YamlConfig locale = new YamlConfig(
-            "plugins" + File.separator + "SkinsRestorer" + File.separator + "", "msgs");
+
+    private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages");
 
     public static void load() {
         try {
