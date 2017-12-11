@@ -56,7 +56,7 @@ public class PlayerCommands extends Command {
             return;
         }
         
-        //SKin Clear
+        //Skin Clear and Skin (name)
         if (args.length == 1) {
         	if (args[0].equalsIgnoreCase("clear")) {
             	// Skin Clear code was supposed to be here...? -Logics4
@@ -64,8 +64,47 @@ public class PlayerCommands extends Command {
         		help(p); //Remove this method once the code is here.
         		return;
         	} else {
-        		help(p);
-        		return;
+        		StringBuilder sb = new StringBuilder();
+                sb.append(args[0]);
+
+                final String skin = sb.toString();
+                
+                if (Config.DISABLED_SKINS_ENABLED)
+                    if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
+                        for (String dskin : Config.DISABLED_SKINS)
+                            if (skin.equalsIgnoreCase(dskin)) {
+                                p.sendMessage(new TextComponent(Locale.SKIN_DISABLED));
+                                return;
+                            }
+                    }
+
+                if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                    p.sendMessage(new TextComponent(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+                    return;
+                }
+                CooldownStorage.resetCooldown(p.getName());
+                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
+
+                    @Override
+                    public void run() {
+
+
+                        try {
+                            MojangAPI.getUUID(skin);
+                            SkinStorage.setPlayerSkin(p.getName(), skin);
+                            SkinApplier.applySkin(p);
+                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                            return;
+                        } catch (SkinRequestException e) {
+                            p.sendMessage(new TextComponent(e.getReason()));
+                            return;
+                        }
+                    }
+
+                });
+                return;
         	}
         }
 
