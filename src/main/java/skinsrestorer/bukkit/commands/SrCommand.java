@@ -30,7 +30,8 @@ public class SrCommand implements CommandExecutor {
         }
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
         if (sender.hasPermission("skinsrestorer.cmds") || sender.isOp()) {
@@ -52,6 +53,7 @@ public class SrCommand implements CommandExecutor {
                             sb.append(args[i] + " ");
 
                 final String skin = sb.toString();
+                
                 Player player = Bukkit.getPlayer(args[1]);
 
                 if (player == null)
@@ -209,6 +211,7 @@ public class SrCommand implements CommandExecutor {
                             else
                                 name += args[i] + " ";
 
+                    
                     p = Bukkit.getPlayer(name);
 
                     if (p == null) {
