@@ -4,7 +4,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.bstats.bungeecord.MetricsLite;
+import org.bstats.bungeecord.Metrics;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
@@ -80,7 +80,7 @@ public class SkinsRestorer extends Plugin {
     public void onEnable() {
     	
         @SuppressWarnings("unused")
-        MetricsLite metrics = new MetricsLite(this);
+        Metrics metrics = new Metrics(this);
         
         SpigetUpdate updater = new SpigetUpdate(this, 2124);
         updater.setVersionComparator(VersionComparator.EQUAL);

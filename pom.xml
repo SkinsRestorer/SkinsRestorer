@@ -14,112 +14,66 @@
     </properties>
     <repositories>
         <repository>
-        	<!-- SpigotMC Repository (for Bukkit API) -->
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-        	<!-- Multiverse-Core Repository -->
             <id>onarandombox</id>
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
         <repository>
-        	<!-- BungeeCord Repository -->
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
-        	<!-- Lucko's Repository (needed for BungeeCord-Proxy) -->
             <id>luck-repo</id>
             <url>https://ci.lucko.me/plugin/repository/everything</url>
-		</repository>
+        </repository>
         <repository>
-        	<!-- KCauldron's Repository (needed for Mojang AuthLib) -->
             <id>minecraft-repo</id>
             <url>https://repo.prok.pw</url>
         </repository>
         <repository>
-        	<!-- bStats Repository (needed for Metrics) -->
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
-<<<<<<< HEAD
-        <repository>
-        	<!-- InventiveTalent's Repository (needed for Spiget-Update) -->
-            <id>inventive-repo</id>
-            <url>https://repo.inventivetalent.org/content/groups/public/</url>
-        </repository>
-        <repository>
-        	<!-- Mikeprimm's Repository (needed for Spigot 1.7.10-1.8.x Protocol Hack compatibility) -->
-        	<id>mikeprimm-repo</id>
-        	<url>http://repo.mikeprimm.com</url>
-        </repository>
-    </repositories>
-    <dependencies>
-        <dependency>
-        	<!-- Bukkit API -->
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-=======
     </repositories>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
->>>>>>> ff18da10cb1fc5c704b08a20eef9f55b0197a9ec
             <version>1.12.2-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-        	<!-- Multiverse-Core (compatibility reasons) -->
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
             <version>2.5.1</version>
         </dependency>
         <dependency>
-        	<!-- BungeeCord API -->
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.12-SNAPSHOT</version>
         </dependency>
         <dependency>
-        	<!-- BungeeCord-Proxy (needed for BungeeCord) -->
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
         </dependency>
         <dependency>
-        	<!-- Mojang AuthLib (needed for SkinsGUI) -->
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
         </dependency>
         <dependency>
-        	<!-- bStats Lite (Metrics) for Bukkit -->
             <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit-lite</artifactId>
+            <artifactId>bstats-bukkit</artifactId>
             <version>1.2</version>
         </dependency>
         <dependency>
-            <!-- bStats Lite (Metrics) for BungeeCord -->
             <groupId>org.bstats</groupId>
-            <artifactId>bstats-bungeecord-lite</artifactId>
+            <artifactId>bstats-bungeecord</artifactId>
             <version>1.2</version>
         </dependency>
-<<<<<<< HEAD
-        <dependency>
-        	<!-- Spiget-Update (for the updater) -->
-        	<groupId>org.inventivetalent.spiget-update</groupId>
-        	<artifactId>bukkit</artifactId>
-        	<version>1.4.0</version>
-    	</dependency>
-    	<dependency>
-    		<!-- Spigot 1.7.10-1.8.x Protocol Hack (for compatibility) -->
-    		<groupId>org.spigotmc</groupId>
-    		<artifactId>spigot</artifactId>
-    		<version>1.7.10-R0.1-SNAPSHOT</version>
-    	</dependency>
-=======
->>>>>>> ff18da10cb1fc5c704b08a20eef9f55b0197a9ec
     </dependencies>
     <build>
         <plugins>
@@ -136,7 +90,7 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer.bStatsMetrics</shadedPattern>
+                            <shadedPattern>skinsrestorer</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

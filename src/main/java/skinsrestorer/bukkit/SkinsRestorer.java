@@ -1,6 +1,6 @@
 package skinsrestorer.bukkit;
 
-import org.bstats.bukkit.MetricsLite;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -63,7 +63,7 @@ public class SkinsRestorer extends JavaPlugin {
         ConsoleCommandSender console = getServer().getConsoleSender();
 
     	@SuppressWarnings("unused")
-        MetricsLite metrics = new MetricsLite(this);
+        Metrics metrics = new Metrics(this);
         
         SpigetUpdate updater = new SpigetUpdate(this, 2124);
         updater.setVersionComparator(VersionComparator.EQUAL);
