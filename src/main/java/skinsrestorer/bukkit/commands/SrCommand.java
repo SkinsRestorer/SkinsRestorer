@@ -30,7 +30,8 @@ public class SrCommand implements CommandExecutor {
         }
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
         if (sender.hasPermission("skinsrestorer.cmds") || sender.isOp()) {
@@ -52,6 +53,7 @@ public class SrCommand implements CommandExecutor {
                             sb.append(args[i] + " ");
 
                 final String skin = sb.toString();
+                
                 Player player = Bukkit.getPlayer(args[1]);
 
                 if (player == null)
@@ -209,6 +211,7 @@ public class SrCommand implements CommandExecutor {
                             else
                                 name += args[i] + " ";
 
+                    
                     p = Bukkit.getPlayer(name);
 
                     if (p == null) {
@@ -237,22 +240,22 @@ public class SrCommand implements CommandExecutor {
 
                         ConsoleCommandSender cons = Bukkit.getConsoleSender();
 
-                        cons.sendMessage("\n§aName: §8" + name);
-                        cons.sendMessage("\n§aValue : §8" + value);
-                        cons.sendMessage("\n§aSignature : §8" + signature);
+                        cons.sendMessage(C.c("\n&aName: &8" + name));
+                        cons.sendMessage(C.c("\n&aValue : &8" + value));
+                        cons.sendMessage(C.c("\n&aSignature : &8" + signature));
 
                         String decoded = Base64Coder.decodeString(value);
-                        cons.sendMessage("\n§aValue Decoded: §e" + decoded);
+                        cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
 
-                        sender.sendMessage("\n§e" + decoded);
-                        sender.sendMessage("§cMore info in console!");
+                        sender.sendMessage(C.c("\n&e" + decoded));
+                        sender.sendMessage(C.c("&cMore info in console!"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                     sender.sendMessage(Locale.NO_SKIN_DATA);
                     return true;
                 }
-                sender.sendMessage("§cMore info in console!");
+                sender.sendMessage(C.c("&cMore info in console!"));
 
             }
         } else {
