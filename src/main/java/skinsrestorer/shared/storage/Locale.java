@@ -60,7 +60,7 @@ public class Locale {
                 f.set(null, C.c(locale.getString(f.getName(), f.get(null))));
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your mc server.");
+            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }
