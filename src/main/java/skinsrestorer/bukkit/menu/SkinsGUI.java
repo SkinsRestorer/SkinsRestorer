@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
@@ -29,7 +28,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public static Inventory getGUI(int page) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "�9Skins Menu - Page " + page);
+        Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page " + page);
         int skinNumber = 36 * page;
         Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
         inventory.setItem(36, createGlass(0));
@@ -82,11 +81,11 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
         ItemMeta meta = is.getItemMeta();
         if (color == 5) {
-            meta.setDisplayName(C.c("&a&l�&7 Next Page&a&l »"));
+            meta.setDisplayName("§a§l»§7 Next Page§a§l »");
         } else if (color == 4) {
-            meta.setDisplayName(C.c("&e&l�&7 Previous Page&e&l «"));
+            meta.setDisplayName("§e§l»§7 Previous Page§e§l «");
         } else if (color == 14) {
-            meta.setDisplayName(C.c("&c&l�&7 Remove Skin&c&l �"));
+            meta.setDisplayName("§c§l»§7 Remove Skin§c§l »");
         } else {
             meta.setDisplayName(" ");
         }
@@ -99,7 +98,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<String>();
-        lore.add("\u00a72Click to select this skin");
+        lore.add("§2Click to select this skin");
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);

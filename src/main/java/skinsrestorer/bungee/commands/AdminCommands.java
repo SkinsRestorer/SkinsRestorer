@@ -228,24 +228,23 @@ public class AdminCommands extends Command {
 
                 CommandSender cons = ProxyServer.getInstance().getConsole();
 
-                cons.sendMessage(C.c("\n&aName: &8" + prop.getName()));
-                cons.sendMessage(C.c("\n&aValue : &8" + prop.getValue()));
-                cons.sendMessage(C.c("\n&aSignature : &8" + prop.getSignature()));
+                cons.sendMessage("\n§aName: §8" + prop.getName());
+                cons.sendMessage("\n§aValue : §8" + prop.getValue());
+                cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
 
                 String decoded = Base64Coder.decodeString(prop.getValue());
-                cons.sendMessage(C.c("\n&aValue Decoded: &e" + decoded));
+                cons.sendMessage("\n§aValue Decoded: §e" + decoded);
 
-                sender.sendMessage(C.c("\n&e" + decoded));
+                sender.sendMessage("\n§e" + decoded);
 
-                sender.sendMessage(C.c("&cMore info in console!"));
+                sender.sendMessage("§cMore info in console!");
             } else {
                 sender.sendMessage(Locale.SR_LINE);
                 sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
                 sender.sendMessage(Locale.SR_LINE);
             }
         } else {
-            sender.sendMessage(C.c("&c[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-                    + Locale.PLAYER_HAS_NO_PERMISSION));
+            sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
             return;
 
         }

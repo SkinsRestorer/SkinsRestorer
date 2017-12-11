@@ -27,7 +27,10 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.updater.bukkit.SpigetUpdate;
 import skinsrestorer.shared.utils.updater.core.UpdateCallback;
 import skinsrestorer.shared.utils.updater.core.VersionComparator;
-import java.io.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.File;
 import java.util.List;
 
 public class SkinsRestorer extends JavaPlugin {

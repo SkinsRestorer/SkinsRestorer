@@ -20,7 +20,7 @@ public class SkinCommand implements CommandExecutor {
 	public void help(Player p) {
         p.sendMessage(Locale.SR_LINE);
         p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-        if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
+        if (p.hasPermission("skinsrestorer.cmds"))
             p.sendMessage(Locale.HELP_SR);
         p.sendMessage(Locale.SR_LINE);
 	}
