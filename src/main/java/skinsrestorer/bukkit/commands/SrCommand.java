@@ -30,6 +30,7 @@ public class SrCommand implements CommandExecutor {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
