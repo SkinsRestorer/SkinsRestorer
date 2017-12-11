@@ -29,6 +29,8 @@
 package skinsrestorer.shared.utils.updater.bukkit;
 
 import org.bukkit.Bukkit;
+import static org.bukkit.Bukkit.getServer;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,6 +76,9 @@ public class SpigetUpdate extends SpigetUpdateAbstract {
 	}
 
 	public boolean downloadUpdate() {
+
+		ConsoleCommandSender console = getServer().getConsoleSender();
+
 		if (latestResourceInfo == null) {
 			failReason = DownloadFailReason.NOT_CHECKED;
 			return false;// Update not yet checked
@@ -109,16 +114,16 @@ public class SpigetUpdate extends SpigetUpdateAbstract {
 			return false;
 		}
 
-		log.info("[SpigetUpdate] Downloading update...");
+		console.sendMessage("§e[§2SkinsRestorer§e] §eDownloading update...");
 		dispatch(UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, getUserAgent(), new DownloadCallback() {
 			@Override
 			public void finished() {
-				log.info("[SpigetUpdate] Update saved as " + updateFile.getPath());
+				console.sendMessage("§e[§2SkinsRestorer§e] §eUpdate saved as " + updateFile.getPath());
 			}
 
 			@Override
 			public void error(Exception exception) {
-				log.log(Level.WARNING, "[SpigetUpdate] Could not download update", exception);
+				log.log(Level.WARNING, "Could not download update", exception);
 			}
 		}));
 
