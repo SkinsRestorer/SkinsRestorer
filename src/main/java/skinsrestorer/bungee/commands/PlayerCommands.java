@@ -44,7 +44,7 @@ public class PlayerCommands extends Command {
         if (!Config.SKINWITHOUTPERM) {
             if (p.hasPermission("skinsrestorer.playercmds")) {
             } else {
-                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION);
+                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
                 return;
             }
         }
