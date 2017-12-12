@@ -4,11 +4,10 @@
 
  # Note
  This is a fork of the original plugin, refactored to support Maven for easy, automated building and continuous integration.
- Unfortunately, 1.7.10 support had to be removed.
  --------------
  Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/FlexPipe/Waterfall servers
 
- Supported versions: 1.8.x - 1.12.x
+ Supported versions: 1.7.10 (Protocol Hack) - 1.12.x
 
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
 
