@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.menu.SkinsGUI;
 import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.utils.C;
 
 public class GUICommand implements CommandExecutor {
 
@@ -14,7 +15,7 @@ public class GUICommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "These commands are only for players");
+            sender.sendMessage(C.c(Locale.PLAYERS_ONLY));
             return true;
         }
 
@@ -26,7 +27,7 @@ public class GUICommand implements CommandExecutor {
         }
         SkinsGUI.getMenus().put(p.getName(), 0);
         p.openInventory(SkinsGUI.getGUI(0));
-        p.sendMessage("§2Opening the Skins Menu.");
+        p.sendMessage(C.c(Locale.MENU_OPEN));
         return false;
     }
 }

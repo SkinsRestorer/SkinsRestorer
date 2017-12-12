@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
@@ -81,11 +82,11 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
         ItemMeta meta = is.getItemMeta();
         if (color == 5) {
-            meta.setDisplayName("§a§l»§7 Next Page§a§l »");
+            meta.setDisplayName(C.c(Locale.NEXT_PAGE));
         } else if (color == 4) {
-            meta.setDisplayName("§e§l»§7 Previous Page§e§l «");
+            meta.setDisplayName(C.c(Locale.PREVIOUS_PAGE));
         } else if (color == 14) {
-            meta.setDisplayName("§c§l»§7 Remove Skin§c§l »");
+            meta.setDisplayName(C.c(Locale.REMOVE_SKIN));
         } else {
             meta.setDisplayName(" ");
         }
@@ -98,7 +99,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<String>();
-        lore.add("§2Click to select this skin");
+        lore.add(C.c(Locale.SELECT_SKIN));
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);

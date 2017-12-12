@@ -44,6 +44,12 @@ public class Locale {
     public static String WAIT_A_MINUTE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
     public static String NOT_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
     public static String OUTDATED = "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
+    public static String MENU_OPEN = "&2Opening the skins menu...";
+    public static String PLAYERS_ONLY = "&4These commands are only for players!";
+    public static String NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
+    public static String PREVIOUS_PAGE = "&e&l»&7 Previous Page&e&l «";
+    public static String REMOVE_SKIN = "&c&l»&7 Remove Skin&c&l »";
+    public static String SELECT_SKIN = "&2Click to select this skin";
 
     private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages");
 
