@@ -101,6 +101,7 @@ public class SkinsRestorer extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new AdminCommands());
         getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
         getProxy().registerChannel("SkinsRestorer");
+        getProxy().registerChannel("BungeeCord");
         SkinApplier.init();
 
         multibungee = Config.MULTIBUNGEE_ENABLED
