@@ -12,6 +12,7 @@ import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class LoginListener implements Listener {
 
@@ -34,7 +35,16 @@ public class LoginListener implements Listener {
                 return;
         }
 
-        SkinsRestorer.getInstance().getProxy().getScheduler();
-        SkinApplier.applySkin(e.getPlayer());
+        if (e.getPlayer().getPendingConnection().isOnlineMode()) {
+            SkinsRestorer.getInstance().getProxy().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
+
+                @Override
+                public void run() {
+                    SkinApplier.applySkin(e.getPlayer());
+                }
+            }, 10, TimeUnit.MILLISECONDS);
+        } else {
+            SkinApplier.applySkin(e.getPlayer());
         }
+    }
 }
