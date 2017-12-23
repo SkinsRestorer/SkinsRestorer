@@ -213,7 +213,8 @@ public class SkinsRestorer extends JavaPlugin {
                         if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
                             List<String> skins = Config.DEFAULT_SKINS;
                             int randomNum = 0 + (int) (Math.random() * skins.size());
-                            factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
+                            factory.applySkin(e.getPlayer(),
+                                    SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
                             return;
                         }
                     factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));

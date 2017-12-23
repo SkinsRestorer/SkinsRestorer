@@ -1,7 +1,7 @@
 name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
-description: Ability to restore/change skins on servers!
+description: Ability to restore/change skins on servers! (Offline and Online Mode). (Bungee/Bukkit/Sponge)
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core]
 commands:
@@ -15,11 +15,15 @@ commands:
 permissions:
    skinsrestorer.playercmds:
      description: Allows access to all main commands.
+     default: op
    skinsrestorer.playercmds.menu:
-     description: Allows access to the /skins menu
+     description: Allows access to the /skins command.
    skinsrestorer.cmds:
      description: Allows access to administrative commands.
-   skinsrestorer.bypassdisabled:
-     description: Allows access to disabled skins.
+     default: op
    skinsrestorer.bypasscooldown:
-     description: Bypasses the skin change cooldown (if any).
+     description: Bypasses any set cooldowns in the config.
+     default: op
+   skinsrestorer.bypassdisabled:
+     description: Allows access to disabled skins in the config.
+     default: op

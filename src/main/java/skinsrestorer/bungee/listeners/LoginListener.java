@@ -26,13 +26,13 @@ public class LoginListener implements Listener {
             return;
 
         if (Config.DEFAULT_SKINS_ENABLED) {
-                List<String> skins = Config.DEFAULT_SKINS;
-                try {
-                    SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
-                    SkinsRestorer.getInstance().getProxy().getScheduler();
-                    SkinApplier.applySkin(e.getPlayer());
-                } catch (MojangAPI.SkinRequestException ex) {}
-                return;
+            List<String> skins = Config.DEFAULT_SKINS;
+            try {
+                SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
+                SkinsRestorer.getInstance().getProxy().getScheduler();
+                SkinApplier.applySkin(e.getPlayer());
+            } catch (MojangAPI.SkinRequestException ex) {}
+            return;
         }
 
         if (e.getPlayer().getPendingConnection().isOnlineMode()) {

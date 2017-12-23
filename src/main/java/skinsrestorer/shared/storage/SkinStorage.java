@@ -84,6 +84,7 @@ public class SkinStorage {
      *
      * @return Property object
      **/
+    @SuppressWarnings("deprecation")
 	public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
@@ -91,11 +92,7 @@ public class SkinStorage {
             skin = name.toLowerCase();
         Object textures = null;
         if (Config.DEFAULT_SKINS_ENABLED) {
-            try {
-                textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+            textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
         }
         textures = getSkinData(skin);
         if (textures != null) {
@@ -130,23 +127,18 @@ public class SkinStorage {
                 shouldUpdate = !oldurl.equals(newurl);
             } catch (Exception e) {
                 shouldUpdate = true;
-                System.out.println(e);
             }
 
             setSkinData(sname, props);
 
             if (shouldUpdate)
-                try {
-                    if (isBungee)
-                        skinsrestorer.bungee.SkinApplier.applySkin(name);
-                    else {
-                        SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), props);
-                    }
-                } catch (Exception e){
-                    System.out.println(e);
+                if (isBungee)
+                    skinsrestorer.bungee.SkinApplier.applySkin(name);
+                else {
+                    SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
+                            props);
                 }
         } catch (Exception e) {
-            System.out.println(e);
             throw new SkinRequestException(Locale.WAIT_A_MINUTE);
         }
 

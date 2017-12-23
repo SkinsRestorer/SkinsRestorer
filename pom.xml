@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.2-SNAPSHOT</version>
+    <version>13.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -34,9 +34,14 @@
             <url>https://ci.lucko.me/plugin/repository/everything</url>
 		</repository>
         <repository>
+        	<!-- Minecraft's Repository (needed for Mojang AuthLib) -->
+            <id>minecraft-repo</id>
+            <url>https://libraries.minecraft.net</url>
+        </repository>
+        <repository>
         	<!-- bStats Repository (needed for Metrics) -->
             <id>bstats-repo</id>
-            <url>https://repo.bstats.org/content/repositories/releases/</url>
+            <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
         <repository>
         	<!-- InventiveTalent's Repository (needed for Spiget-Update) -->
@@ -47,11 +52,6 @@
         	<!-- Mikeprimm's Repository (needed for Spigot 1.7.10-1.8.x Protocol Hack compatibility) -->
         	<id>mikeprimm-repo</id>
         	<url>http://repo.mikeprimm.com</url>
-        </repository>
-        <!-- Mojang's Repository (needed for Mojang AuthLib) -->
-        <repository>
-            <id>mojang-repo</id>
-            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -141,8 +141,8 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory> <!-- (your resources folder location) -->
-                <filtering>true</filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
     </build>
