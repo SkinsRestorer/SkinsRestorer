@@ -34,11 +34,6 @@
             <url>https://ci.lucko.me/plugin/repository/everything</url>
 		</repository>
         <repository>
-        	<!-- KCauldron's Repository (needed for Mojang AuthLib) -->
-            <id>minecraft-repo</id>
-            <url>https://repo.prok.pw</url>
-        </repository>
-        <repository>
         	<!-- bStats Repository (needed for Metrics) -->
             <id>bstats-repo</id>
             <url>https://repo.bstats.org/content/repositories/releases/</url>
@@ -52,6 +47,11 @@
         	<!-- Mikeprimm's Repository (needed for Spigot 1.7.10-1.8.x Protocol Hack compatibility) -->
         	<id>mikeprimm-repo</id>
         	<url>http://repo.mikeprimm.com</url>
+        </repository>
+        <!-- Mojang's Repository (needed for Mojang AuthLib) -->
+        <repository>
+            <id>mojang-repo</id>
+            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
     <dependencies>
