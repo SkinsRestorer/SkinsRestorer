@@ -41,7 +41,7 @@
         <repository>
         	<!-- bStats Repository (needed for Metrics) -->
             <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
+            <url>https://repo.bstats.org/content/repositories/releases/</url>
         </repository>
         <repository>
         	<!-- InventiveTalent's Repository (needed for Spiget-Update) -->
@@ -139,5 +139,11 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory> <!-- (your resources folder location) -->
+                <filtering>true</filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+            </resource>
+        </resources>
     </build>
 </project>
