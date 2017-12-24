@@ -1,6 +1,8 @@
 package skinsrestorer.shared.api;
 
 import org.bukkit.Bukkit;
+
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -93,21 +95,13 @@ public class SkinsRestorerAPI {
      */
     public static void setSkin(final String playerName, final String skinName) {
         try {
-            new Thread(new Runnable() {
+            try {
+                MojangAPI.getUUID(skinName);
+                SkinStorage.setPlayerSkin(playerName, skinName);
+                SkinStorage.setSkinData(skinName, SkinStorage.getOrCreateSkinForPlayer(skinName));
 
-                @Override
-                public void run() {
-
-                    try {
-                        MojangAPI.getUUID(skinName);
-                        SkinStorage.setPlayerSkin(playerName, skinName);
-                        SkinStorage.setSkinData(skinName, SkinStorage.getOrCreateSkinForPlayer(skinName));
-
-                    } catch (Exception e) {
-                    }
-                }
-
-            }).run();
+            } catch (Exception e) {
+            }
         } catch (Throwable t) {
             org.bukkit.entity.Player p = null;
 

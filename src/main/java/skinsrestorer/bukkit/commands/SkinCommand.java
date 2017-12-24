@@ -89,26 +89,20 @@ public class SkinCommand implements CommandExecutor {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-
-                        try {
-                            MojangAPI.getUUID(skin);
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            		try {
+                        MojangAPI.getUUID(skin);
 
 
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinsRestorer.getInstance().getFactory().applySkin(p,
-                                    SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                            p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(e.getReason());
-                            return;
-                        }
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinsRestorer.getInstance().getFactory().applySkin(p,
+                                SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(e.getReason());
+                        return;
                     }
-
                 });
                 return true;
         	}
@@ -144,26 +138,18 @@ public class SkinCommand implements CommandExecutor {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), new Runnable() {
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
 
-                    @Override
-                    public void run() {
-
-                        try {
-                            MojangAPI.getUUID(skin);
-
-
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinsRestorer.getInstance().getFactory().applySkin(p,
-                                    SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                            p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(e.getReason());
-                            return;
-                        }
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+						SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(e.getReason());
+                        return;
                     }
-
                 });
                 return true;
         	} else {
