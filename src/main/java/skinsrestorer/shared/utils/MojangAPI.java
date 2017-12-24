@@ -61,7 +61,7 @@ public class MojangAPI {
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get proxy. Maybe you have an issue with your firewall?");
+            System.out.println("[SkinsRestorer] Failed to get proxy.");
             return false;
         }
     }

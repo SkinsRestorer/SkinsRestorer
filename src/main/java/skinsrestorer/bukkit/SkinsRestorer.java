@@ -2,6 +2,9 @@ package skinsrestorer.bukkit;
 
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -195,6 +198,17 @@ public class SkinsRestorer extends JavaPlugin {
         getCommand("skinsrestorer").setExecutor(new SrCommand());
         getCommand("skin").setExecutor(new SkinCommand());
         getCommand("skins").setExecutor(new GUICommand());
+        getCommand("skinver").setExecutor(new CommandExecutor() {
+
+            public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
+                sender.sendMessage("§8This server is running §aSkinsRestorer §e"
+                        + SkinsRestorer.getInstance().getVersion() + "§8, made with love by §c"
+                        + SkinsRestorer.getInstance().getDescription().getAuthors().get(0)
+                        + "§8, utilizing Minecraft §a" + ReflectionUtil.serverVersion + "§8.");
+                return false;
+            }
+
+        });
 
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
         Bukkit.getPluginManager().registerEvents(new Listener() {
