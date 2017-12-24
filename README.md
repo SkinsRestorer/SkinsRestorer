@@ -1,5 +1,5 @@
 							---------------------
-							 SkinsRestorer Maven
+							 SkinsRestorer Maven 
 							---------------------
 
  # Note
