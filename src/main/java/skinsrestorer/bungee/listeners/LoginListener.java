@@ -1,5 +1,6 @@
 package skinsrestorer.bungee.listeners;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -20,12 +21,13 @@ public class LoginListener implements Listener {
     public void onServerChange(final PostLoginEvent e) {
         if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
                 && e.getPlayer().hasPermission("skinsrestorer.cmds"))
-            e.getPlayer().sendMessage(C.c(Locale.OUTDATED));
+            e.getPlayer().sendMessage(new TextComponent(C.c(Locale.OUTDATED)));
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
         if (Config.DEFAULT_SKINS_ENABLED) {
+        	@SuppressWarnings("unused")
             List<String> skins = Config.DEFAULT_SKINS;
             try {
                 SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
