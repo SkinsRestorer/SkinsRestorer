@@ -27,7 +27,7 @@ public class PlayerCommands extends Command {
         p.sendMessage(new TextComponent(Locale.SR_LINE));
         p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
         if (p.hasPermission("skinsrestorer.cmds"))
-            p.sendMessage(new TextComponent(C.c("    &2/sr &7- &fDisplay Admin commands.")));
+            p.sendMessage(new TextComponent(Locale.HELP_SR));
         p.sendMessage(new TextComponent(Locale.SR_LINE));
 	}
 
