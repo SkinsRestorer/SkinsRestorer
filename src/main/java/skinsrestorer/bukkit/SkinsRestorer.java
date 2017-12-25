@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import skinsrestorer.bukkit.MCoreAPI;
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
@@ -217,24 +218,26 @@ public class SkinsRestorer extends JavaPlugin {
             // the skin
             @EventHandler
             public void onLogin(PlayerJoinEvent e) {
-                try {
-                    if (Config.DISABLE_ONJOIN_SKINS) {
-                        factory.applySkin(e.getPlayer(),
-                                SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
-                        return;
-                    }
-                    if (Config.DEFAULT_SKINS_ENABLED)
-                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-                            List<String> skins = Config.DEFAULT_SKINS;
-                            int randomNum = 0 + (int) (Math.random() * skins.size());
-                            factory.applySkin(e.getPlayer(),
-                                    SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
-                            return;
-                        }
-                    factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                } catch (Exception ex) {
-                }
-            }
+            	Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+	                try {
+	                    if (Config.DISABLE_ONJOIN_SKINS) {
+	                        factory.applySkin(e.getPlayer(),
+	                                SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+	                        return;
+	                    }
+	                    if (Config.DEFAULT_SKINS_ENABLED)
+	                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
+	                            List<String> skins = Config.DEFAULT_SKINS;
+	                            int randomNum = 0 + (int) (Math.random() * skins.size());
+	                            factory.applySkin(e.getPlayer(),
+	                                    SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
+	                            return;
+	                        }
+	                    factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
+	                } catch (Exception ex) {
+	                }
+                });
+	        }
         }, this);
 
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {

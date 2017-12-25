@@ -1,6 +1,9 @@
 package skinsrestorer.bukkit.skinfactory;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 public abstract class SkinFactory {
@@ -14,19 +17,21 @@ public abstract class SkinFactory {
      * @see updateSkin
      */
     public void applySkin(final Player p, Object props) {
-        try {
-            if (props == null)
-                return;
-
-            Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
-            Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-            Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-            ReflectionUtil.invokeMethod(propmap, "clear");
-            ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class},
-                    new Object[]{"textures", props});
-            updateSkin(p);
-        } catch (Exception e) {
-        }
+    	Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+	        try {
+	            if (props == null)
+	                return;
+	
+	            Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
+	            Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+	            Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+	            ReflectionUtil.invokeMethod(propmap, "clear");
+	            ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class},
+	                    new Object[]{"textures", props});
+	            updateSkin(p);
+	        } catch (Exception e) {
+	        }
+    	});
     }
 
     /**
