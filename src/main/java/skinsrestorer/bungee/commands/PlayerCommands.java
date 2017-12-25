@@ -84,24 +84,17 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-
-
-                        try {
-                            MojangAPI.getUUID(skin);
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinApplier.applySkin(p);
-                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(new TextComponent(e.getReason()));
-                            return;
-                        }
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(new TextComponent(e.getReason()));
+                        return;
                     }
-
                 });
                 return;
         	}
@@ -132,24 +125,17 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-
-
-                        try {
-                            MojangAPI.getUUID(skin);
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinApplier.applySkin(p);
-                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(new TextComponent(e.getReason()));
-                            return;
-                        }
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(new TextComponent(e.getReason()));
+                        return;
                     }
-
                 });
                 return;
         	} else {
