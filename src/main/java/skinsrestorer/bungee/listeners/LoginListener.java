@@ -27,7 +27,6 @@ public class LoginListener implements Listener {
             return;
 
         if (Config.DEFAULT_SKINS_ENABLED) {
-        	@SuppressWarnings("unused")
             List<String> skins = Config.DEFAULT_SKINS;
             try {
                 SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());

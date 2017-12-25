@@ -15,8 +15,6 @@ import java.util.List;
 public class ProxyManager {
 
     public static List<String> proxies = new ArrayList<String>();
-    static String key = "c84d1076312bcf1e875c94d4e20692f5";
-
     private static String inputLine;
 
     public static List<String> getList() {
