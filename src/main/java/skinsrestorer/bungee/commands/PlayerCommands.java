@@ -20,15 +20,15 @@ public class PlayerCommands extends Command {
     public PlayerCommands() {
         super("skin", null);
     }
-    
-	//Method called for the commands help.
-	public void help(ProxiedPlayer p) {
+
+    //Method called for the commands help.
+    public void help(ProxiedPlayer p) {
         p.sendMessage(new TextComponent(Locale.SR_LINE));
         p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
         if (p.hasPermission("skinsrestorer.cmds"))
             p.sendMessage(new TextComponent(Locale.HELP_SR));
         p.sendMessage(new TextComponent(Locale.SR_LINE));
-	}
+    }
 
     @Override
     public void execute(CommandSender sender, final String[] args) {
@@ -53,21 +53,21 @@ public class PlayerCommands extends Command {
             help(p);
             return;
         }
-        
+
         //Skin Clear and Skin (name)
         if (args.length == 1) {
-        	if (args[0].equalsIgnoreCase("clear")) {
-            	// Skin Clear code was supposed to be here...? -Logics4
-        		
-        		help(p); //Remove this method once the code is here.
-        		return;
-        	} else {
-        		StringBuilder sb = new StringBuilder();
+            if (args[0].equalsIgnoreCase("clear")) {
+                // Skin Clear code was supposed to be here...? -Logics4
+
+                help(p); //Remove this method once the code is here.
+                return;
+            } else {
+                StringBuilder sb = new StringBuilder();
                 sb.append(args[0]);
 
-		//skin <skin>
+                //skin <skin>
                 final String skin = sb.toString();
-                
+
                 if (Config.DISABLED_SKINS_ENABLED)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
                         for (String dskin : Config.DISABLED_SKINS)
@@ -84,38 +84,31 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-
-
-                        try {
-                            MojangAPI.getUUID(skin);
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinApplier.applySkin(p);
-                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(new TextComponent(e.getReason()));
-                            return;
-                        }
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(new TextComponent(e.getReason()));
+                        return;
                     }
-
                 });
                 return;
-        	}
+            }
         }
 
-	//skin set
+        //skin set
         if (args.length == 2) {
-        	if (args[0].equalsIgnoreCase("set")) {
-        		
+            if (args[0].equalsIgnoreCase("set")) {
+
                 StringBuilder sb = new StringBuilder();
                 sb.append(args[1]);
 
                 final String skin = sb.toString();
-                
+
                 if (Config.DISABLED_SKINS_ENABLED)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
                         for (String dskin : Config.DISABLED_SKINS)
@@ -132,30 +125,23 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-
-
-                        try {
-                            MojangAPI.getUUID(skin);
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinApplier.applySkin(p);
-                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                            return;
-                        } catch (SkinRequestException e) {
-                            p.sendMessage(new TextComponent(e.getReason()));
-                            return;
-                        }
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        return;
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(new TextComponent(e.getReason()));
+                        return;
                     }
-
                 });
                 return;
-        	} else {
-        		help(p);
-        		return;
-        	}
+            } else {
+                help(p);
+                return;
+            }
         }
     }
 }
