@@ -40,7 +40,8 @@ public class MojangAPI {
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
+            System.out.println("[SkinsRestorer] Switching to proxy to get skin property." + e);
+            e.printStackTrace();
             return getSkinPropertyProxy(uuid);
         }
     }
@@ -61,7 +62,8 @@ public class MojangAPI {
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get proxy.");
+            System.out.println("[SkinsRestorer] Failed to get proxy." + e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -107,7 +109,8 @@ public class MojangAPI {
 
             return output.substring(7, 39);
         } catch (IOException e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
+            System.out.println("[SkinsRestorer] Switching to proxy to get skin property." + e);
+            e.printStackTrace();
             return getUUIDProxy(name);
         }
     }
@@ -124,6 +127,7 @@ public class MojangAPI {
 
             return output.substring(7, 39);
         } catch (IOException e) {
+            System.out.println(e);
             throw new SkinRequestException(e.getMessage());
         }
     }
@@ -138,8 +142,6 @@ public class MojangAPI {
     }
 
     private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
-
-
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
@@ -191,17 +193,12 @@ public class MojangAPI {
     }
 
     public static class SkinRequestException extends Exception {
-
-        private static final long serialVersionUID = 5969055162529998032L;
         private String reason;
-
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
-
         public String getReason() {
             return reason;
         }
-
     }
 }
