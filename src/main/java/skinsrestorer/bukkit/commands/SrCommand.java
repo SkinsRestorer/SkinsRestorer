@@ -34,7 +34,7 @@ public class SrCommand implements CommandExecutor {
     @Override
     public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
-        if (sender.hasPermission("skinsrestorer.cmds") || sender.isOp()) {
+        if (sender.hasPermission("skinsrestorer.cmds")) {
 
 
             if (args.length == 0) {

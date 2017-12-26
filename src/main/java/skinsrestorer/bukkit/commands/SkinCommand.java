@@ -36,7 +36,8 @@ public class SkinCommand implements CommandExecutor {
         final Player p = (Player) sender;
 
         if (!Config.SKINWITHOUTPERM) {
-            if (p.hasPermission("skinsrestorer.playercmds") || p.isOp()) {
+            if (p.hasPermission("skinsrestorer.playercmds")) {
+                help(p);
             } else {
                 p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
                 return true;

@@ -40,10 +40,11 @@ public class PlayerCommands extends Command {
 
         final ProxiedPlayer p = (ProxiedPlayer) sender;
 
-        if (Config.SKINWITHOUTPERM = true) {
-            if (p.hasPermission("skinsrestorer.playercmds")) {}
-            else {
-                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
+        if (!Config.SKINWITHOUTPERM) {
+            if (p.hasPermission("skinsrestorer.playercmds")) {
+                help(p);
+            } else {
+                p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
                 return;
             }
         }
