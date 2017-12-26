@@ -1,9 +1,9 @@
 							---------------------
-							 SkinsRestorer Maven
+							    SkinsRestorer
 							---------------------
 
  # Note
- This is a fork of the original plugin, refactored to support Maven for easy, automated building and continuous integration.
+ This is a development repo for SkinsRestorer, used for making and testing new plugin features.
  --------------
  Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/FlexPipe/Waterfall servers
 
