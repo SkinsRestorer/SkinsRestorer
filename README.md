@@ -5,7 +5,7 @@
  # Note
  This is a development repo for SkinsRestorer, used for making and testing new plugin features.
  --------------
- Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/FlexPipe/Waterfall servers
+ Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/Waterfall servers
 
  Supported versions: 1.7.10 (Protocol Hack) - 1.12.x
 
