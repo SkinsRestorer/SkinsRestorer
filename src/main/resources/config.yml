@@ -2,7 +2,7 @@
 #  SkinsRestorer Config.yml  #
 ##############################
 
-# enables /skin without permissions
+# If set to true, /skin can be used without a permission.
 SkinWithoutPerm: false
 
 # How long are the skins stored in database (in minutes)
@@ -18,10 +18,7 @@ DefaultSkins:
   Names:
     - Steve
     
-#Disable skin names
-#Put skins you want to disable on the list
-#Player wont be able to set these skins
-#[skinsrestorer.bypassdisabled bypasses this]
+# Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
   Names:
