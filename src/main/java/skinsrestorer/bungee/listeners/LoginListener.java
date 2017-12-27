@@ -29,27 +29,26 @@ public class LoginListener implements Listener {
                 return;
 
             if (Config.DEFAULT_SKINS_ENABLED) {
-                @SuppressWarnings("unused")
-                List<String> skins = Config.DEFAULT_SKINS;
                 try {
+                    List<String> skins = Config.DEFAULT_SKINS;
+                    int randomNum = 0 + (int) (Math.random() * skins.size());
                     SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
                     SkinsRestorer.getInstance().getProxy().getScheduler();
+                    SkinStorage.setPlayerSkin(e.getPlayer().getName(), skins.get(randomNum));
                     SkinApplier.applySkin(e.getPlayer());
-                } catch (MojangAPI.SkinRequestException ex) {}
-                return;
+                    return;
+                } catch (MojangAPI.SkinRequestException ex) {
+                  ex.printStackTrace();
+                }
             }
 
-            if (e.getPlayer().getPendingConnection().isOnlineMode()) {
-                SkinsRestorer.getInstance().getProxy().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
+            SkinsRestorer.getInstance().getProxy().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
 
                     @Override
                     public void run() {
                         SkinApplier.applySkin(e.getPlayer());
                     }
                 }, 10, TimeUnit.MILLISECONDS);
-            } else {
-                SkinApplier.applySkin(e.getPlayer());
-            }
-        });
+            });
     }
 }
