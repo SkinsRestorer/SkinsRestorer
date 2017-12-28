@@ -18,11 +18,13 @@ public class SkinCommand implements CommandExecutor {
 	
 	//Method called for the commands help.
 	public void help(Player p) {
-        p.sendMessage(Locale.SR_LINE);
+        if (!Locale.SR_LINE.isEmpty())
+            p.sendMessage(Locale.SR_LINE);
         p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
         if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
             p.sendMessage(Locale.HELP_SR);
-        p.sendMessage(Locale.SR_LINE);
+        if (!Locale.SR_LINE.isEmpty())
+            p.sendMessage(Locale.SR_LINE);
 	}
 
     @Override
