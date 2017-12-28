@@ -23,11 +23,13 @@ public class PlayerCommands extends Command {
 
     //Method called for the commands help.
     public void help(ProxiedPlayer p) {
-        p.sendMessage(new TextComponent(Locale.SR_LINE));
+        if (!Locale.SR_LINE.isEmpty())
+            p.sendMessage(new TextComponent(Locale.SR_LINE));
         p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
         if (p.hasPermission("skinsrestorer.cmds"))
             p.sendMessage(new TextComponent(Locale.HELP_SR));
-        p.sendMessage(new TextComponent(Locale.SR_LINE));
+        if (!Locale.SR_LINE.isEmpty())
+            p.sendMessage(new TextComponent(Locale.SR_LINE));
     }
 
     @Override
