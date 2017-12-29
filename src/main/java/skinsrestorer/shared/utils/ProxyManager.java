@@ -34,13 +34,14 @@ public class ProxyManager {
         try {
             List<String> pp = readURL(url);
             proxies = pp;
-        } catch (IOException | SkinRequestException e) {
+        } catch (IOException e) {
+            System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
         }
         return proxies;
     }
 
-    private static List<String> readURL(String url) throws IOException, SkinRequestException {
+    private static List<String> readURL(String url) throws IOException {
         try {
             HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
@@ -67,8 +68,9 @@ public class ProxyManager {
             in.close();
             return proxies;
         } catch (IOException e) {
+            System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
-            return getList();
+            return updateProxies();
         }
     }
 }

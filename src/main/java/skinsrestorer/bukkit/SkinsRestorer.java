@@ -100,8 +100,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Bungeecord stuff
         try {
-            bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml"))
-                    .getBoolean("settings.bungeecord");
+            bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
         } catch (Exception e) {
             bungeeEnabled = false;
         }
@@ -184,6 +183,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         // Config stuff
+        saveDefaultConfig();
         Config.load(getResource("config.yml"));
         Locale.load();
 

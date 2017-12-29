@@ -33,9 +33,8 @@ public class LoginListener implements Listener {
                     List<String> skins = Config.DEFAULT_SKINS;
                     int randomNum = 0 + (int) (Math.random() * skins.size());
                     SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
-                    SkinsRestorer.getInstance().getProxy().getScheduler();
                     SkinStorage.setPlayerSkin(e.getPlayer().getName(), skins.get(randomNum));
-                    SkinApplier.applySkin(e.getPlayer());
+                    SkinApplier.applySkin(e.getPlayer().getName());
                     return;
                 } catch (MojangAPI.SkinRequestException ex) {
                   ex.printStackTrace();
