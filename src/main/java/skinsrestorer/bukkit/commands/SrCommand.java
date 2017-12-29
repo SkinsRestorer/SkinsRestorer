@@ -37,9 +37,11 @@ public class SrCommand implements CommandExecutor {
 
 
             if (args.length == 0) {
-                sender.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                    sender.sendMessage(Locale.SR_LINE);
                 sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-                sender.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                    sender.sendMessage(Locale.SR_LINE);
             } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 2; i < args.length; i++)

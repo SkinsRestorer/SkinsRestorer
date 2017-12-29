@@ -239,9 +239,11 @@ public class AdminCommands extends Command {
 
                 sender.sendMessage("§cMore info in console!");
             } else {
-                sender.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                    sender.sendMessage(Locale.SR_LINE);
                 sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-                sender.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                    sender.sendMessage(Locale.SR_LINE);
             }
         } else {
             sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
