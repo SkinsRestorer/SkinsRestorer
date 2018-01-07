@@ -6,7 +6,7 @@
 SkinWithoutPerm: false
 
 # How long are the skins stored in database (in minutes)
-SkinExpiresAfter: 5
+SkinExpiresAfter: 1584
 
 # Timeout for skin changing (set to 0 to disable)
 SkinChangeCooldown: 30

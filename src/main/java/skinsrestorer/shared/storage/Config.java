@@ -10,7 +10,7 @@ public class Config {
 
     public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
     public static boolean SKINWITHOUTPERM = false;
-    public static int SKIN_EXPIRES_AFTER = 1;
+    public static int SKIN_EXPIRES_AFTER = 1584;
     public static int SKIN_CHANGE_COOLDOWN = 30;
     public static boolean DEFAULT_SKINS_ENABLED = false;
     public static List<String> DEFAULT_SKINS = null;
