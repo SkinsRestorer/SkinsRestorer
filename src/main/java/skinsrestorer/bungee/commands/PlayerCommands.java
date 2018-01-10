@@ -13,6 +13,7 @@ import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+
 import java.util.concurrent.TimeUnit;
 
 public class PlayerCommands extends Command {
@@ -32,7 +33,6 @@ public class PlayerCommands extends Command {
             p.sendMessage(new TextComponent(Locale.SR_LINE));
     }
 
-    @Override
     public void execute(CommandSender sender, final String[] args) {
 
         if (!(sender instanceof ProxiedPlayer)) {
@@ -50,8 +50,7 @@ public class PlayerCommands extends Command {
                 } else {
                     p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
                 }
-            }
-            else {
+            } else {
                 help(p);
             }
         }

@@ -1,8 +1,6 @@
 package skinsrestorer.shared.api;
 
 import org.bukkit.Bukkit;
-
-import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
@@ -71,6 +69,7 @@ public class SkinsRestorerAPI {
     /**
      * Used to remove player's skin.
      * You have to use apply method if you want instant results.
+     *
      * @param playername = Player's nick name
      */
     public static void removeSkin(String playername) {

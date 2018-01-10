@@ -1,4 +1,4 @@
-package skinsrestorer.bukkit.menu;
+package skinsrestorer.bukkit;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -13,7 +13,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;

@@ -194,9 +194,11 @@ public class MojangAPI {
 
     public static class SkinRequestException extends Exception {
         private String reason;
+
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
+
         public String getReason() {
             return reason;
         }

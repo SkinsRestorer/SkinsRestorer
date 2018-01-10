@@ -14,8 +14,7 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.updater.bungee.SpigetUpdate;
-import skinsrestorer.shared.utils.updater.core.VersionComparator;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -78,13 +77,9 @@ public class SkinsRestorer extends Plugin {
 
     @Override
     public void onEnable() {
-    	
+
         @SuppressWarnings("unused")
         MetricsLite metrics = new MetricsLite(this);
-        
-        SpigetUpdate updater = new SpigetUpdate(this, 2124);
-        updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER_BETA);
 
         instance = this;
         Config.load(getResourceAsStream("config.yml"));
@@ -110,9 +105,9 @@ public class SkinsRestorer extends Plugin {
 
             @Override
             public void run() {
-            	
-            	CommandSender console = getProxy().getConsole();
-            	
+
+                CommandSender console = getProxy().getConsole();
+
                 if (Config.UPDATER_ENABLED)
                     if (checkVersion(console).equals(getVersion())) {
                         outdated = false;

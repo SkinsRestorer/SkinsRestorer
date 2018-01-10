@@ -23,7 +23,6 @@ target/
 hs_err_pid*
 
 # IDE weirdness
-dependency-reduced-pom.xml
 .idea/
 skinsrestorer.iml
 .classpath

@@ -12,12 +12,13 @@ import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+
 import java.util.concurrent.TimeUnit;
 
 public class SkinCommand implements CommandExecutor {
-	
-	//Method called for the commands help.
-	public void help(Player p) {
+
+    //Method called for the commands help.
+    public void help(Player p) {
         if (!Locale.SR_LINE.isEmpty())
             p.sendMessage(Locale.SR_LINE);
         p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
@@ -25,7 +26,7 @@ public class SkinCommand implements CommandExecutor {
             p.sendMessage(Locale.HELP_SR);
         if (!Locale.SR_LINE.isEmpty())
             p.sendMessage(Locale.SR_LINE);
-	}
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
@@ -45,16 +46,16 @@ public class SkinCommand implements CommandExecutor {
                 return true;
             }
         }
-        
+
         // Skin Help
         if (args.length == 0 || args.length > 2) {
             help(p);
             return true;
         }
-        
+
         // Skin Clear and Skin (name)
         if (args.length == 1) {
-        	if (args[0].equalsIgnoreCase("clear")) {
+            if (args[0].equalsIgnoreCase("clear")) {
                 Object props = null;
 
                 SkinStorage.removePlayerSkin(p.getName());
@@ -64,7 +65,7 @@ public class SkinCommand implements CommandExecutor {
                 p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
 
                 return true;
-        	} else {
+            } else {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append(args[0]);
@@ -93,7 +94,7 @@ public class SkinCommand implements CommandExecutor {
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-            		try {
+                    try {
                         MojangAPI.getUUID(skin);
 
 
@@ -108,13 +109,13 @@ public class SkinCommand implements CommandExecutor {
                     }
                 });
                 return true;
-        	}
+            }
         }
-        
+
         // Skin Set
         if (args.length == 2) {
-        	if (args[0].equalsIgnoreCase("set")) {
-        		
+            if (args[0].equalsIgnoreCase("set")) {
+
                 StringBuilder sb = new StringBuilder();
                 sb.append(args[1]);
 
@@ -146,7 +147,7 @@ public class SkinCommand implements CommandExecutor {
                         MojangAPI.getUUID(skin);
 
                         SkinStorage.setPlayerSkin(p.getName(), skin);
-						SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                        SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
                         p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
@@ -155,11 +156,11 @@ public class SkinCommand implements CommandExecutor {
                     }
                 });
                 return true;
-        	} else {
-        		help(p);
-        		return true;
-        	}
+            } else {
+                help(p);
+                return true;
+            }
         }
-		return true;
+        return true;
     }
 }

@@ -85,7 +85,7 @@ public class SkinStorage {
      * @return Property object
      **/
     @SuppressWarnings("deprecation")
-	public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null)

@@ -37,17 +37,17 @@ public class LoginListener implements Listener {
                     SkinApplier.applySkin(e.getPlayer().getName());
                     return;
                 } catch (MojangAPI.SkinRequestException ex) {
-                  ex.printStackTrace();
+                    ex.printStackTrace();
                 }
             }
 
             SkinsRestorer.getInstance().getProxy().getScheduler().schedule(SkinsRestorer.getInstance(), new Runnable() {
 
-                    @Override
-                    public void run() {
-                        SkinApplier.applySkin(e.getPlayer());
-                    }
-                }, 10, TimeUnit.MILLISECONDS);
-            });
+                @Override
+                public void run() {
+                    SkinApplier.applySkin(e.getPlayer());
+                }
+            }, 10, TimeUnit.MILLISECONDS);
+        });
     }
 }

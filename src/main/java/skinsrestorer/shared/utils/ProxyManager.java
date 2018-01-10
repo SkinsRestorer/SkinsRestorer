@@ -1,16 +1,10 @@
 package skinsrestorer.shared.utils;
 
-import com.sun.org.apache.bcel.internal.classfile.Unknown;
-import io.netty.channel.unix.IovArray;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
