@@ -2,6 +2,7 @@ name: SkinsRestorer
 main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: Ability to restore/change skins on servers! (Offline and Online Mode)
+website: https://skinsrestorer.net/
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core]
 commands:
