@@ -192,13 +192,10 @@ public class MojangAPI {
 
     public static class SkinRequestException extends Exception {
 
-        private static final long serialVersionUID = 5969055162529998032L;
         private String reason;
-
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
-
         public String getReason() {
             return reason;
         }
