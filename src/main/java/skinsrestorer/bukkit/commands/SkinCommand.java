@@ -38,18 +38,16 @@ public class SkinCommand implements CommandExecutor {
 
         final Player p = (Player) sender;
 
-        if (!Config.SKINWITHOUTPERM) {
-            if (p.hasPermission("skinsrestorer.playercmds")) {
-                help(p);
-            } else {
-                p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                return true;
-            }
-        }
-
         // Skin Help
         if (args.length == 0 || args.length > 2) {
-            help(p);
+            if (!Config.SKINWITHOUTPERM) {
+                if (p.hasPermission("skinsrestorer.playercmds")) {
+                    help(p);
+                } else {
+                    p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
+                    return true;
+                }
+            }
             return true;
         }
 
@@ -81,7 +79,7 @@ public class SkinCommand implements CommandExecutor {
                             }
                     }
 
-                if (p.hasPermission("skinsrestorer.bypasscooldown") || p.isOp()) {
+                if (p.hasPermission("skinsrestorer.bypasscooldown")) {
 
                 } else {
                     if (CooldownStorage.hasCooldown(p.getName())) {
@@ -96,7 +94,6 @@ public class SkinCommand implements CommandExecutor {
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
                         MojangAPI.getUUID(skin);
-
 
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p,
@@ -130,7 +127,7 @@ public class SkinCommand implements CommandExecutor {
                             }
                     }
 
-                if (p.hasPermission("skinsrestorer.bypasscooldown") || p.isOp()) {
+                if (p.hasPermission("skinsrestorer.bypasscooldown")) {
 
                 } else {
                     if (CooldownStorage.hasCooldown(p.getName())) {

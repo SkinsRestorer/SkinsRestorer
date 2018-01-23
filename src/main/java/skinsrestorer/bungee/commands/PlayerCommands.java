@@ -58,11 +58,22 @@ public class PlayerCommands extends Command {
         //Skin Clear and Skin (name)
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("clear")) {
-                // Skin Clear code was supposed to be here...? -Logics4
+                CooldownStorage.resetCooldown(p.getName());
+                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                help(p); //Remove this method once the code is here.
-                return;
-            } else {
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        SkinStorage.removePlayerSkin(p.getName());
+                        SkinStorage.setPlayerSkin(p.getName(), p.getName());
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                        return;
+                    } catch (Exception e) {
+                        return;
+                    }
+                });
+            }
+            else {
                 StringBuilder sb = new StringBuilder();
                 sb.append(args[0]);
 
