@@ -2,6 +2,7 @@ name: ${project.name}
 main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}
+website: https://skinsrestorer.net/
 authors: [Th3Tr0LLeR]
 softdepend: [Multiverse-Core, MultiWorld]
 commands:
