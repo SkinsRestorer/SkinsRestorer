@@ -1,9 +1,9 @@
-name: SkinsRestorer
+name: ${project.name}
 main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
-description: Ability to restore/change skins on servers! (Offline and Online Mode)
+description: ${project.description}
 authors: [Th3Tr0LLeR]
-softdepend: [Multiverse-Core]
+softdepend: [Multiverse-Core, MultiWorld]
 commands:
   skinsrestorer:
     aliases: [sr]

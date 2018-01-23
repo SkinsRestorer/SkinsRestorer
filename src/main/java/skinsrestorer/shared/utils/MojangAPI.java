@@ -29,19 +29,18 @@ public class MojangAPI {
         try {
             output = readURL(skinurl + uuid + "?unsigned=false");
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
+            String sigbeg = "\",\"signature\":\"";
+            String mid = "[{\"name\":\"textures\",\"value\":\"";
             String valend = "\"}]";
 
             String signature = "", value = "";
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
+            value = getStringBetween(output, mid, sigbeg);
+            signature = getStringBetween(output, sigbeg, valend);
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property." + e);
-            e.printStackTrace();
+            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
             return getSkinPropertyProxy(uuid);
         }
     }
@@ -51,19 +50,18 @@ public class MojangAPI {
         try {
             output = readURLProxy(skinurl + uuid + "?unsigned=false");
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
+            String sigbeg = "\",\"signature\":\"";
+            String mid = "[{\"name\":\"textures\",\"value\":\"";
             String valend = "\"}]";
 
             String signature = "", value = "";
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
+            value = getStringBetween(output, mid, sigbeg);
+            signature = getStringBetween(output, sigbeg, valend);;
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get proxy." + e);
-            e.printStackTrace();
+            System.out.println("[SkinsRestorer] Failed to get proxy.");
             return false;
         }
     }
@@ -109,8 +107,7 @@ public class MojangAPI {
 
             return output.substring(7, 39);
         } catch (IOException e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property." + e);
-            e.printStackTrace();
+            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
             return getUUIDProxy(name);
         }
     }
@@ -127,7 +124,6 @@ public class MojangAPI {
 
             return output.substring(7, 39);
         } catch (IOException e) {
-            System.out.println(e);
             throw new SkinRequestException(e.getMessage());
         }
     }
@@ -142,6 +138,8 @@ public class MojangAPI {
     }
 
     private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
+
+
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
@@ -193,6 +191,8 @@ public class MojangAPI {
     }
 
     public static class SkinRequestException extends Exception {
+
+        private static final long serialVersionUID = 5969055162529998032L;
         private String reason;
 
         public SkinRequestException(String reason) {
@@ -202,5 +202,6 @@ public class MojangAPI {
         public String getReason() {
             return reason;
         }
+
     }
 }
