@@ -53,14 +53,7 @@ public class AdminCommands extends Command {
 
             } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
                 StringBuilder sb = new StringBuilder();
-                for (int i = 2; i < args.length; i++)
-                    if (args.length == 3)
-                        sb.append(args[i]);
-                    else if (args.length > 3)
-                        if (i + 1 == args.length)
-                            sb.append(args[i]);
-                        else
-                            sb.append(args[i] + " ");
+                sb.append(args[2]);
 
                 final String skin = sb.toString();
                 ProxiedPlayer player = ProxyServer.getInstance().getPlayer(args[1]);
@@ -83,8 +76,6 @@ public class AdminCommands extends Command {
 
                     @Override
                     public void run() {
-
-
                         try {
                             MojangAPI.getUUID(skin);
                             SkinStorage.setPlayerSkin(p.getName(), skin);
