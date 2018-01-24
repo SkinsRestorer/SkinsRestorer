@@ -1,5 +1,6 @@
 package skinsrestorer.bungee;
 
+import com.google.common.io.ByteStreams;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,8 +17,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,11 +71,6 @@ public class SkinsRestorer extends Plugin {
     }
 
     @Override
-    public void onDisable() {
-        exe.shutdown();
-    }
-
-    @Override
     public void onEnable() {
 
         @SuppressWarnings("unused")
@@ -117,7 +112,7 @@ public class SkinsRestorer extends Plugin {
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    The latest version!"));
+                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    This is the latest version!"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                     } else {
                         outdated = true;

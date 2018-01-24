@@ -56,7 +56,7 @@ public class SkinApplier {
                     else
                         sendUpdateRequest(p, null);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
         });
@@ -73,7 +73,7 @@ public class SkinApplier {
         try {
             LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -91,6 +91,7 @@ public class SkinApplier {
 
             p.getServer().sendData("SkinsRestorer", b.toByteArray());
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -190,7 +190,6 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         // Config stuff
-        saveDefaultConfig();
         Config.load(getResource("config.yml"));
         Locale.load();
 

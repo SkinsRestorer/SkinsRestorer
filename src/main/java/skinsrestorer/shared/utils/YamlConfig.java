@@ -25,21 +25,6 @@ public class YamlConfig {
         reload();
     }
 
-    public YamlConfig(String path, String name, boolean wait) {
-        File direc = new File(path);
-        if (!direc.exists())
-            direc.mkdirs();
-        file = new File(path + name + ".yml");
-        if (!wait) {
-            try {
-                file.createNewFile();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            reload();
-        }
-    }
-
     public void copyDefaults(InputStream is) {
         if (!file.exists() || isEmpty())
             try {
@@ -102,7 +87,6 @@ public class YamlConfig {
         return get(path, defValue).toString();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getStringList(String path) {
         try {
             return (List<String>) ReflectionUtil.invokeMethod(config.getClass(), config, "getStringList",
