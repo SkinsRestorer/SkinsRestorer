@@ -95,65 +95,7 @@ public class SrCommand implements CommandExecutor {
             } else if (args.length == 1 && args[0].equalsIgnoreCase("reload"))
                 reloadConfig(sender, Locale.RELOAD);
             else if (args.length == 1 && args[0].equalsIgnoreCase("config"))
-                sender.sendMessage(Locale.HELP_CONFIG);
-            else if (args.length >= 2 && args[0].equalsIgnoreCase("defaultSkins")) {
-                if (args[1].equalsIgnoreCase("true")) {
-                    Config.set("DefaultSkins.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&2Default skins has been enabled.");
-                } else if (args[1].equalsIgnoreCase("false")) {
-                    Config.set("DefaultSkins.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&4Default skins has been disabled.");
-                } else if (args[1].equalsIgnoreCase("add")) {
-                    String skin = args[2];
-                    List<String> skins = Config.DEFAULT_SKINS;
-                    skins.add(skin);
-                    Config.set("DefaultSkins.Names", skins);
-                    reloadConfig(sender, "&2Added &f" + skin + " &2to the default skins list");
-                }
-
-            } else if (args.length >= 2 && args[0].equalsIgnoreCase("disabledSkins")) {
-                if (args[1].equalsIgnoreCase("true")) {
-                    Config.set("DisabledSkins.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&2Disabled skins has been enabled.");
-                } else if (args[1].equalsIgnoreCase("false")) {
-                    Config.set("DisabledSkins.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&4Disabled skins has been disabled.");
-                } else if (args[1].equalsIgnoreCase("add")) {
-                    String skin = args[2];
-                    List<String> skins = Config.DISABLED_SKINS;
-                    skins.add(skin);
-                    Config.set("DisabledSkins.Names", skins);
-                    reloadConfig(sender, "&2Added &f" + skin + " &2to the disabled skins list");
-                }
-
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("updater")) {
-                if (args[1].equalsIgnoreCase("true")) {
-                    Config.set("Updater.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&2The updater has been enabled.");
-                } else if (args[1].equalsIgnoreCase("false")) {
-                    Config.set("Updater.Enabled", String.valueOf(args[1]));
-                    reloadConfig(sender, "&4The updater has been disabled.");
-                }
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("skinwithoutperm")) {
-                if (args[1].equalsIgnoreCase("true")) {
-                    Config.set("SkinWithoutPerm", String.valueOf(args[1]));
-                    reloadConfig(sender, "&2Skins will not require permissions.");
-                } else if (args[1].equalsIgnoreCase("false")) {
-                    Config.set("SkinWithoutPerm", String.valueOf(args[1]));
-                    reloadConfig(sender, "&2Skins will require permissions.");
-                }
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("skinCooldown")) {
-                if (isStringInt(args[1])) {
-                    Config.SKIN_CHANGE_COOLDOWN = Integer.valueOf(args[1]);
-                    Config.set("SkinChangeCooldown", Integer.valueOf(args[1]));
-                    reloadConfig(sender, "&2The skin change cooldown has been set to &f" + Integer.valueOf(args[1]) + "&seconds(s)");
-                }
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("SkinExpiresAfter")) {
-                if (isStringInt(args[1])) {
-                    Config.SKIN_EXPIRES_AFTER = Integer.valueOf(args[1]);
-                    Config.set("SkinExpiresAfter", Integer.valueOf(args[1]));
-                    reloadConfig(sender, "&2The skin cache time is now &f" + Integer.valueOf(args[1]) + "&2minute(s)");
-                }
+                sender.sendMessage(C.c("&e[&2SkinsRestorer&e] &2/sr config has been removed from SkinsRestorer. Farewell!"));
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
                 try {
@@ -238,10 +180,9 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage("§cMore info in console!");
 
             }
-        } else {
-            sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-            return true;
-
+            else {
+                sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
+                return true;
         }
         return true;
     }

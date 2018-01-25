@@ -20,8 +20,7 @@ public class Locale {
     public static String SKIN_CHANGE_SUCCESS = "&e[&2SkinsRestorer&e] &2Your skin has been changed.";
     public static String SKIN_CLEAR_SUCCESS = "&e[&2SkinsRestorer&e] &2Your skin has been cleared.";
     public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-            + "\n\n   &2/sr config &7- &fhelp page for usefull in game config settings"
-            + "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
+            + "\n\n   &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
             + "\n    &2/sr drop <player> &7- &fDrops player skin data."
             + "\n    &2/sr reload &7- &fReloads the config and locale"
             + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
@@ -29,13 +28,6 @@ public class Locale {
     public static String NOT_ONLINE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlayer is not online!";
     public static String SKIN_DATA_DROPPED = "&e[&2SkinsRestorer&e] &2Skin data for player %player dropped.";
     public static String RELOAD = "&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!";
-    public static String HELP_CONFIG = "  &2&lSkinsRestorer &7- &c&lConfig"
-            + "\n\n   &2/sr joinSkins <true/false> &7- &fToggles the skins on join."
-            + "\n    &2/sr SkinWithoutPerm <true/false> &7- &fConfigures the DisabledSkins section."
-            + "\n    &2/sr SkinExpiresAfter <time> &7- &fHow long the a skin is cached."
-            + "\n    &2/sr skinCooldown <time> &7- &f/skin cooldown in minute(s)."
-            + "\n    &2/sr defaultSkins <true/false/add [skin]> &7- &fConfigures the DefaultSkins section."
-            + "\n    &2/sr updater <true/false> &7- &fToggles the updater";
     public static String SKIN_DISABLED = "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
     public static String ALT_API_FAILED = "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
     public static String NO_SKIN_DATA = "&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this player have a skin?";
