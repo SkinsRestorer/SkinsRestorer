@@ -98,7 +98,8 @@ public class SkinCommand implements CommandExecutor {
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p,
                                 SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty())
+                            p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(e.getReason());
@@ -145,7 +146,8 @@ public class SkinCommand implements CommandExecutor {
 
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty())
+                            p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(e.getReason());
