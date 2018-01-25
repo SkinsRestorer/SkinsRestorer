@@ -101,7 +101,8 @@ public class PlayerCommands extends Command {
                         MojangAPI.getUUID(skin);
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
-                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty())
+                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(new TextComponent(e.getReason()));
@@ -142,7 +143,8 @@ public class PlayerCommands extends Command {
                         MojangAPI.getUUID(skin);
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
-                        p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                        if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty())
+                            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(new TextComponent(e.getReason()));
