@@ -1,15 +1,16 @@
 package skinsrestorer.bungee;
 
-import com.google.common.io.ByteStreams;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.MetricsLite;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
@@ -19,15 +20,13 @@ import skinsrestorer.shared.utils.MySQL;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.nio.file.Files;
 
 public class SkinsRestorer extends Plugin {
 
     private static SkinsRestorer instance;
     private MySQL mysql;
     private boolean multibungee;
-    private ExecutorService exe;
     private boolean outdated;
 
     public static SkinsRestorer getInstance() {
@@ -50,10 +49,6 @@ public class SkinsRestorer extends Plugin {
         return getVersion();
     }
 
-    public ExecutorService getExecutor() {
-        return exe;
-    }
-
     public MySQL getMySQL() {
         return mysql;
     }
@@ -70,6 +65,29 @@ public class SkinsRestorer extends Plugin {
         return outdated;
     }
 
+    File configFile = new File(getDataFolder(), "config.yml");
+
+    public void createDefaultConfig() {
+        try {
+            if (!getDataFolder().exists())
+                getDataFolder().mkdir();
+
+            File file = new File(getDataFolder(), "config.yml");
+
+            if (!file.exists()) {
+                try (InputStream in = getResourceAsStream("config.yml")) {
+                    Files.copy(in, file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            final Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onEnable() {
 
@@ -77,15 +95,21 @@ public class SkinsRestorer extends Plugin {
         MetricsLite metrics = new MetricsLite(this);
 
         instance = this;
-        Config.load(getResourceAsStream("config.yml"));
+        createDefaultConfig();
         Locale.load();
-        exe = Executors.newCachedThreadPool();
 
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
-        else
+        if (configuration.getsTRI) {
+            SkinStorage.init(mysql = new MySQL(
+                    Config.MYSQL_HOST,
+                    Config.MYSQL_PORT,
+                    Config.MYSQL_DATABASE,
+                    Config.MYSQL_USERNAME,
+                    Config.MYSQL_PASSWORD)
+            );
+        }
+        else {
             SkinStorage.init(getDataFolder());
+        }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener());
         getProxy().getPluginManager().registerCommand(this, new AdminCommands());
@@ -93,10 +117,9 @@ public class SkinsRestorer extends Plugin {
         getProxy().registerChannel("SkinsRestorer");
         SkinApplier.init();
 
-        multibungee = Config.MULTIBUNGEE_ENABLED
-                || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
-        exe.submit(new Runnable() {
+        getProxy().getScheduler().runAsync(new Runnable() {
 
             @Override
             public void run() {
@@ -136,7 +159,6 @@ public class SkinsRestorer extends Plugin {
                                 console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
                         }
             }
-
         });
     }
 }

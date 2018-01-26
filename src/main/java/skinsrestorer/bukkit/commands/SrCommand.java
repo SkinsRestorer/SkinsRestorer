@@ -8,7 +8,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
@@ -17,24 +16,13 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.Collection;
-import java.util.List;
 
 public class SrCommand implements CommandExecutor {
-
-    public boolean isStringInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
 
     @Override
     public boolean onCommand(final CommandSender sender, Command arg1, String arg2, String[] args) {
 
         if (sender.hasPermission("skinsrestorer.cmds")) {
-
 
             if (args.length == 0) {
                 if (!Locale.SR_LINE.isEmpty())
@@ -42,6 +30,7 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage(Locale.HELP_ADMIN.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
                 if (!Locale.SR_LINE.isEmpty())
                     sender.sendMessage(Locale.SR_LINE);
+
             } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 2; i < args.length; i++)
@@ -74,15 +63,10 @@ public class SrCommand implements CommandExecutor {
 
                     @Override
                     public void run() {
-
-
                         try {
                             MojangAPI.getUUID(skin);
-
-
                             SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinsRestorer.getInstance().getFactory().applySkin(p,
-                                    SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                            SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
                             sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                             return;
                         } catch (SkinRequestException e) {
@@ -93,8 +77,11 @@ public class SrCommand implements CommandExecutor {
 
                 });
             } else if (args.length == 1 && args[0].equalsIgnoreCase("reload"))
-                reloadConfig(sender, Locale.RELOAD);
-            else if (args.length == 1 && args[0].equalsIgnoreCase("config"))
+                Locale.load();
+                SkinsRestorer.getInstance().reloadConfig();
+                sender.sendMessage(C.c(Locale.RELOAD));
+
+                if (args.length == 1 && args[0].equalsIgnoreCase("config"))
                 sender.sendMessage(C.c("&e[&2SkinsRestorer&e] &2/sr config has been removed from SkinsRestorer. Farewell!"));
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("status"))
@@ -185,11 +172,5 @@ public class SrCommand implements CommandExecutor {
                 return true;
         }
         return true;
-    }
-
-    public void reloadConfig(CommandSender sender, String msg) {
-        Locale.load();
-        Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
-        sender.sendMessage(C.c(msg));
     }
 }

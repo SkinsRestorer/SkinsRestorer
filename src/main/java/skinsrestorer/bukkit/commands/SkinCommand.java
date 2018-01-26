@@ -4,9 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -16,6 +16,8 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import java.util.concurrent.TimeUnit;
 
 public class SkinCommand implements CommandExecutor {
+
+    FileConfiguration config = SkinsRestorer.getInstance().getConfig();
 
     //Method called for the commands help.
     public void help(Player p) {
@@ -40,15 +42,16 @@ public class SkinCommand implements CommandExecutor {
 
         // Skin Help
         if (args.length == 0 || args.length > 2) {
-            if (!Config.SKINWITHOUTPERM) {
+            if (config.getBoolean("SkinWithoutPerm") == false) {
                 if (p.hasPermission("skinsrestorer.playercmds")) {
                     help(p);
                 } else {
                     p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
                 }
             }
-            return true;
+            else {
+                help(p);
+            }
         }
 
         // Skin Clear and Skin (name)
@@ -70,9 +73,9 @@ public class SkinCommand implements CommandExecutor {
 
                 final String skin = sb.toString();
 
-                if (Config.DISABLED_SKINS_ENABLED)
-                    if (!p.hasPermission("skinsrestorer.bypassdisabled") && !p.isOp()) {
-                        for (String dskin : Config.DISABLED_SKINS)
+                if (config.getBoolean("DisabledSkins.Enabled") == true)
+                    if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
+                        for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
                                 p.sendMessage(Locale.SKIN_DISABLED);
                                 return true;
@@ -89,7 +92,7 @@ public class SkinCommand implements CommandExecutor {
                 }
 
                 CooldownStorage.resetCooldown(p.getName());
-                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+                CooldownStorage.setCooldown(p.getName(), config.getInt("SkinChangeCooldown"), TimeUnit.SECONDS);
 
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
@@ -118,9 +121,9 @@ public class SkinCommand implements CommandExecutor {
 
                 final String skin = sb.toString();
 
-                if (Config.DISABLED_SKINS_ENABLED)
+                if (config.getBoolean("DisabledSkins.Enabled") == true)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled") && !p.isOp()) {
-                        for (String dskin : Config.DISABLED_SKINS)
+                        for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
                                 p.sendMessage(Locale.SKIN_DISABLED);
                                 return true;
@@ -137,7 +140,7 @@ public class SkinCommand implements CommandExecutor {
                 }
 
                 CooldownStorage.resetCooldown(p.getName());
-                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+                CooldownStorage.setCooldown(p.getName(), config.getInt("SkinChangeCooldown"), TimeUnit.SECONDS);
 
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {

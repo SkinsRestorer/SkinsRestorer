@@ -2,6 +2,7 @@ package skinsrestorer.bukkit;
 
 import org.bstats.bukkit.MetricsLite;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
@@ -24,7 +25,6 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
-import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -73,6 +73,9 @@ public class SkinsRestorer extends JavaPlugin {
         updater.setVersionComparator(VersionComparator.SEM_VER);
 
         instance = this;
+        this.saveDefaultConfig();
+        Locale.load();
+        FileConfiguration config = this.getConfig();
 
         try {
             // Doesn't support Cauldron and stuff..
@@ -146,7 +149,7 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
             });
-            if (Config.UPDATER_ENABLED) {
+            if (config.getBoolean("Updater.Enabled") == true) {
                 updater.checkForUpdate(new UpdateCallback() {
                     @Override
                     public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -189,13 +192,14 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
-        // Config stuff
-        Config.load(getResource("config.yml"));
-        Locale.load();
-
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
+        if (config.getBoolean("MySQL.Enabled") == true)
+            SkinStorage.init(mysql = new MySQL(
+                    config.getString("MySQL.Host"),
+                    config.getString("MySQL.Port"),
+                    config.getString("MySQL.Database"),
+                    config.getString("MySQL.Username"),
+                    config.getString("MySQL.Password")
+            ));
         else
             SkinStorage.init(getDataFolder());
 
@@ -225,14 +229,14 @@ public class SkinsRestorer extends JavaPlugin {
             public void onLogin(PlayerJoinEvent e) {
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
-                        if (Config.DISABLE_ONJOIN_SKINS) {
+                        if (config.getBoolean("DisableOnJoinSkins") == true) {
                             factory.applySkin(e.getPlayer(),
                                     SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
                             return;
                         }
-                        if (Config.DEFAULT_SKINS_ENABLED)
+                        if (config.getBoolean("DefaultSkins.Enabled") == true)
                             if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-                                List<String> skins = Config.DEFAULT_SKINS;
+                                List<String> skins = config.getStringList("DefaultSkins.Names");
                                 int randomNum = 0 + (int) (Math.random() * skins.size());
                                 factory.applySkin(e.getPlayer(),
                                         SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
@@ -250,7 +254,7 @@ public class SkinsRestorer extends JavaPlugin {
             @Override
             public void run() {
 
-                if (Config.UPDATER_ENABLED) {
+                if (config.getBoolean("Updater.Enabled") == true) {
                     updater.checkForUpdate(new UpdateCallback() {
                         @Override
                         public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -286,8 +290,8 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
 
-                if (Config.DEFAULT_SKINS_ENABLED)
-                    for (String skin : Config.DEFAULT_SKINS)
+                if (config.getBoolean("DefaultSkins.Enabled") == true)
+                    for (String skin : config.getStringList("DefaultSkins.Names"))
                         try {
                             SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
                         } catch (SkinRequestException e) {

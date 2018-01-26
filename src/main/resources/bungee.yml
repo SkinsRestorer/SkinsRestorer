@@ -1,4 +1,4 @@
-name: SkinsRestorer
+name: ${project.name}
 main: skinsrestorer.bungee.SkinsRestorer
 version: ${project.version}
 author: Th3Tr0LLeR

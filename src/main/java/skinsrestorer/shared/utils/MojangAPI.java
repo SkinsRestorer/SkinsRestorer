@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 
 public class MojangAPI {
 
+    private static final int RATE_LIMIT_ID = 429;
+    private static final int FORBIDDEN_ID = 403;
     private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
     private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
     private static MojangAPI mojangapi = new MojangAPI();
@@ -138,8 +140,6 @@ public class MojangAPI {
     }
 
     private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
-
-
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");

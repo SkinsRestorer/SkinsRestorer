@@ -17,8 +17,6 @@ import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
-import java.util.List;
-
 public class AdminCommands extends Command {
 
     public AdminCommands() {
@@ -30,7 +28,6 @@ public class AdminCommands extends Command {
     public void execute(final CommandSender sender, final String[] args) {
 
         if (sender.hasPermission("skinsrestorer.cmds")) {
-
 
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 Locale.load();

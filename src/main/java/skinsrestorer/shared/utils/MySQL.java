@@ -1,7 +1,5 @@
 package skinsrestorer.shared.utils;
 
-import skinsrestorer.shared.storage.Config;
-
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;

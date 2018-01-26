@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.3</version>
+    <version>13.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -74,13 +74,6 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- BungeeCord-Proxy module -->
-        <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
