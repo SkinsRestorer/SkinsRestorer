@@ -24,7 +24,7 @@ hs_err_pid*
 
 # IDE weirdness
 .idea/
-skinsrestorer.iml
+*.iml
 .classpath
 .settings/
 .project

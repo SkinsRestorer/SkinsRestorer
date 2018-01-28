@@ -1,7 +1,8 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.bukkit.utils;
 
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.bukkit.storage.Locale;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.shared.utils.ProxyManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,8 +15,6 @@ import java.util.regex.Pattern;
 
 public class MojangAPI {
 
-    private static final int RATE_LIMIT_ID = 429;
-    private static final int FORBIDDEN_ID = 403;
     private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
     private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
     private static MojangAPI mojangapi = new MojangAPI();
@@ -103,7 +102,7 @@ public class MojangAPI {
             output = readURL(uuidurl + name);
 
             if (output.isEmpty())
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
             else if (output.contains("\"error\""))
                 return getUUIDProxy(name);
 
@@ -120,9 +119,9 @@ public class MojangAPI {
             output = readURLProxy(uuidurl + name);
 
             if (output.isEmpty())
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
             else if (output.contains("\"error\""))
-                throw new SkinRequestException(Locale.ALT_API_FAILED);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.ALT_API_FAILED);
 
             return output.substring(7, 39);
         } catch (IOException e) {

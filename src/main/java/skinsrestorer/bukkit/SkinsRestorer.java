@@ -1,5 +1,6 @@
 package skinsrestorer.bukkit;
 
+import com.google.common.base.Charsets;
 import org.bstats.bukkit.MetricsLite;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,17 +26,15 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
+import skinsrestorer.bukkit.storage.Locale;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.bukkit.utils.MojangAPI;
+import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bukkit.utils.MySQL;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
+import java.io.*;
 import java.util.List;
 
 public class SkinsRestorer extends JavaPlugin {
@@ -44,6 +43,8 @@ public class SkinsRestorer extends JavaPlugin {
     private SkinFactory factory;
     private MySQL mysql;
     private boolean bungeeEnabled;
+    public static YamlConfiguration LANG;
+    public static File LANG_FILE;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -61,6 +62,71 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
+    private void loadLang() {
+        File lang = new File(getDataFolder(), "messages.yml");
+        OutputStream out = null;
+        InputStream defLangStream = this.getResource("messages.yml");
+        if (!lang.exists()) {
+            try {
+                getDataFolder().mkdir();
+                lang.createNewFile();
+                if (defLangStream != null) {
+                    out = new FileOutputStream(lang);
+                    int read;
+                    byte[] bytes = new byte[1024];
+
+                    while ((read = defLangStream.read(bytes)) != -1) {
+                        out.write(bytes, 0, read);
+                    }
+                    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defLangStream, Charsets.UTF_8));
+                    Locale.setFile(defConfig);
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace(); // So they notice
+                this.setEnabled(false); // Without it loaded, we can't send them messages
+            } finally {
+                if (defLangStream != null) {
+                    try {
+                        defLangStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (out != null) {
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+        }
+
+        YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
+        for (Locale item : Locale.values()) {
+            if (conf.getString(item.getPath()) == null) {
+                conf.set(item.getPath(), item.getDefault());
+            }
+        }
+
+        Locale.setFile(conf);
+        try {
+            conf.save(lang);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public YamlConfiguration getLang() {
+        return LANG;
+    }
+
+    public File getLangFile() {
+        return LANG_FILE;
+    }
+
     public void onEnable() {
 
         ConsoleCommandSender console = getServer().getConsoleSender();
@@ -74,7 +140,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         instance = this;
         this.saveDefaultConfig();
-        Locale.load();
+        loadLang();
         FileConfiguration config = this.getConfig();
 
         try {
@@ -105,7 +171,6 @@ public class SkinsRestorer extends JavaPlugin {
         if(getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
             console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
             Bukkit.getPluginManager().disablePlugin(this);
-            return;
         }
 
         // Bungeecord stuff
@@ -209,6 +274,9 @@ public class SkinsRestorer extends JavaPlugin {
         getCommand("skinsrestorer").setExecutor(new SrCommand());
         getCommand("skin").setExecutor(new SkinCommand());
         getCommand("skins").setExecutor(new GUICommand());
+        /**
+         * This is deprecated, since it like never works in a combination with BungeeCord.
+         * If you so desperately want to know the version -> /version SkinsRestorer
         getCommand("skinver").setExecutor(new CommandExecutor() {
 
             public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
@@ -220,6 +288,7 @@ public class SkinsRestorer extends JavaPlugin {
             }
 
         });
+        */
 
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
         Bukkit.getPluginManager().registerEvents(new Listener() {

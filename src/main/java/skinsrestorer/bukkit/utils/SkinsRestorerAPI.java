@@ -1,9 +1,9 @@
-package skinsrestorer.shared.api;
+package skinsrestorer.bukkit.utils;
 
 import org.bukkit.Bukkit;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -19,11 +19,10 @@ public class SkinsRestorerAPI {
     public static void applySkin(Object player, Object props) {
         // Trying to use Bukkit.
         try {
-            skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);
-            ;
+            SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);
         } catch (Throwable t) {
             // On fail trying to use Bungee.
-            skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
+            //skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
         }
     }
 

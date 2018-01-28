@@ -12,7 +12,7 @@ public class CooldownStorage implements Runnable {
         Long expire = cooldown.get(name);
         if (expire != null)
             return expire > System.currentTimeMillis();
-        return false;
+        else return false;
     }
 
     public static void resetCooldown(String name) {

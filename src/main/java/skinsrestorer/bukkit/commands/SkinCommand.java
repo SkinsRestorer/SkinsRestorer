@@ -7,11 +7,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.bukkit.storage.Locale;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.bukkit.utils.MojangAPI;
+import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,20 +21,18 @@ public class SkinCommand implements CommandExecutor {
 
     //Method called for the commands help.
     public void help(Player p) {
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(Locale.SR_LINE);
-        p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-        if (p.hasPermission("skinsrestorer.cmds") || p.isOp())
-            p.sendMessage(Locale.HELP_SR);
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(Locale.SR_LINE);
+        p.sendMessage(Locale.SR_LINE.toString());
+        p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+        if (p.hasPermission("skinsrestorer.cmds"))
+            p.sendMessage(Locale.HELP_SR.toString());
+        p.sendMessage(Locale.SR_LINE.toString());
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(Locale.NOT_PLAYER);
+            sender.sendMessage(Locale.TITLE.toString() + Locale.NOT_PLAYER);
             return true;
         }
 
@@ -46,7 +44,7 @@ public class SkinCommand implements CommandExecutor {
                 if (p.hasPermission("skinsrestorer.playercmds")) {
                     help(p);
                 } else {
-                    p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
+                    p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
                 }
             }
             else {
@@ -63,7 +61,7 @@ public class SkinCommand implements CommandExecutor {
                 props = SkinStorage.createProperty("textures", "", "");
                 SkinsRestorer.getInstance().getFactory().applySkin(p, props);
                 SkinsRestorer.getInstance().getFactory().updateSkin(p);
-                p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+                p.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CLEAR_SUCCESS);
 
                 return true;
             } else {
@@ -77,7 +75,7 @@ public class SkinCommand implements CommandExecutor {
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
                         for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
-                                p.sendMessage(Locale.SKIN_DISABLED);
+                                p.sendMessage(Locale.TITLE.toString() + Locale.SKIN_DISABLED);
                                 return true;
                             }
                     }
@@ -86,7 +84,7 @@ public class SkinCommand implements CommandExecutor {
 
                 } else {
                     if (CooldownStorage.hasCooldown(p.getName())) {
-                        p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                        p.sendMessage(Locale.TITLE + Locale.SKIN_COOLDOWN_NEW.toString().replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
                         return true;
                     }
                 }
@@ -101,7 +99,7 @@ public class SkinCommand implements CommandExecutor {
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p,
                                 SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        p.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(e.getReason());
@@ -125,7 +123,7 @@ public class SkinCommand implements CommandExecutor {
                     if (!p.hasPermission("skinsrestorer.bypassdisabled") && !p.isOp()) {
                         for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
-                                p.sendMessage(Locale.SKIN_DISABLED);
+                                p.sendMessage(Locale.TITLE.toString() + Locale.SKIN_DISABLED);
                                 return true;
                             }
                     }
@@ -134,7 +132,7 @@ public class SkinCommand implements CommandExecutor {
 
                 } else {
                     if (CooldownStorage.hasCooldown(p.getName())) {
-                        p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                        p.sendMessage(Locale.TITLE + Locale.SKIN_COOLDOWN_NEW.toString().replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
                         return true;
                     }
                 }
@@ -148,7 +146,7 @@ public class SkinCommand implements CommandExecutor {
 
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                        p.sendMessage(Locale.TITLE.toString() +Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(e.getReason());
