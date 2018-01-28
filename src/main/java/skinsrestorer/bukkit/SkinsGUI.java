@@ -1,4 +1,4 @@
-package skinsrestorer.bukkit.menu;
+package skinsrestorer.bukkit;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
@@ -13,10 +13,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.C;
+import skinsrestorer.bukkit.storage.Locale;
+import skinsrestorer.bukkit.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
@@ -82,11 +80,11 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
         ItemMeta meta = is.getItemMeta();
         if (color == 5) {
-            meta.setDisplayName(C.c(Locale.NEXT_PAGE));
+            meta.setDisplayName(Locale.NEXT_PAGE.toString());
         } else if (color == 4) {
-            meta.setDisplayName(C.c(Locale.PREVIOUS_PAGE));
+            meta.setDisplayName(Locale.PREVIOUS_PAGE.toString());
         } else if (color == 14) {
-            meta.setDisplayName(C.c(Locale.REMOVE_SKIN));
+            meta.setDisplayName(Locale.REMOVE_SKIN.toString());
         } else {
             meta.setDisplayName(" ");
         }
@@ -99,7 +97,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<String>();
-        lore.add(C.c(Locale.SELECT_SKIN));
+        lore.add(Locale.SELECT_SKIN.toString());
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
@@ -147,7 +145,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                 SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
                 SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                player.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
                 player.closeInventory();
             } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getDurability() == 14) {
                 if (SkinStorage.getPlayerSkin(player.getName()) == null) {
@@ -164,10 +162,10 @@ public class SkinsGUI extends ItemStack implements Listener {
                     Object props = SkinStorage.createProperty("textures", "", "");
                     SkinsRestorer.getInstance().getFactory().applySkin(player, props);
                     SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    player.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
                     player.closeInventory();
                 } else {
-                    player.sendMessage(Locale.NO_SKIN_DATA);
+                    player.sendMessage(Locale.TITLE.toString() + Locale.NO_SKIN_DATA);
                 }
             } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
                 int currentPage = getMenus().get(player.getName());

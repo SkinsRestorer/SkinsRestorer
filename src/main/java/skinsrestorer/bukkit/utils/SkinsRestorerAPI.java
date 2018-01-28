@@ -1,11 +1,9 @@
-package skinsrestorer.shared.api;
+package skinsrestorer.bukkit.utils;
 
 import org.bukkit.Bukkit;
-
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -21,18 +19,16 @@ public class SkinsRestorerAPI {
     public static void applySkin(Object player, Object props) {
         // Trying to use Bukkit.
         try {
-            skinsrestorer.bukkit.SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);
-            ;
+            SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);
         } catch (Throwable t) {
             // On fail trying to use Bungee.
-            skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
+            //skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
         }
     }
 
 
     /**
      * This method is used to get player's skin name.
-     * <p>
      * When player has no skin OR his skin name equals his username, returns
      * null (this is because of cache clean ups)
      *
@@ -44,7 +40,6 @@ public class SkinsRestorerAPI {
 
     /**
      * This method is used to get player's skin name.
-     * <p>
      * When player has no skin OR his skin name equals his username, returns
      * null (this is because of cache clean ups)
      *
@@ -72,7 +67,6 @@ public class SkinsRestorerAPI {
 
     /**
      * Used to remove player's skin.
-     * <p>
      * You have to use apply method if you want instant results.
      *
      * @param playername = Player's nick name
@@ -83,10 +77,8 @@ public class SkinsRestorerAPI {
 
     /**
      * This method is used to set player's skin.
-     * <p>
-     * Keep in mind it just sets the skin, <b>you have to apply the skin using
-     * another method! </b>
-     * <p>
+     * Keep in mind it just sets the skin, you have to apply the skin using
+     * another method!
      * Method will not do anything if it fails to get the skin from MojangAPI or
      * database!
      *
@@ -95,13 +87,9 @@ public class SkinsRestorerAPI {
      */
     public static void setSkin(final String playerName, final String skinName) {
         try {
-            try {
-                MojangAPI.getUUID(skinName);
-                SkinStorage.setPlayerSkin(playerName, skinName);
-                SkinStorage.setSkinData(skinName, SkinStorage.getOrCreateSkinForPlayer(skinName));
-
-            } catch (Exception e) {
-            }
+            MojangAPI.getUUID(skinName);
+            SkinStorage.setPlayerSkin(playerName, skinName);
+            SkinStorage.setSkinData(skinName, SkinStorage.getOrCreateSkinForPlayer(skinName));
         } catch (Throwable t) {
             org.bukkit.entity.Player p = null;
 

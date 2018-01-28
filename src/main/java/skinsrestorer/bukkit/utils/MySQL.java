@@ -1,6 +1,7 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.bukkit.utils;
 
-import skinsrestorer.shared.storage.Config;
+import org.bukkit.configuration.file.FileConfiguration;
+import skinsrestorer.bukkit.SkinsRestorer;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -12,10 +13,7 @@ import java.util.concurrent.Future;
 
 public class MySQL {
 
-    /**
-     * Class by Blackfire62
-     **/
-
+    private static FileConfiguration config = SkinsRestorer.getInstance().getConfig();
     private Connection con;
     private String host, port, database, username, password;
     private ExecutorService exe;
@@ -40,11 +38,11 @@ public class MySQL {
     }
 
     public void createTable() {
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
+        execute("CREATE TABLE IF NOT EXISTS `" + config.getString("MySQL.PlayerTable") + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
+        execute("CREATE TABLE IF NOT EXISTS `" + config.getString("MySQL.SkinTable") + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Value` text COLLATE utf8_unicode_ci,"
                 + "`Signature` text COLLATE utf8_unicode_ci,"
@@ -54,13 +52,13 @@ public class MySQL {
             addColumn();
         } catch (SQLException e) {
             if (e.getMessage().contains("doesn't exist")) {
-                execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+                execute("ALTER TABLE `" + config.getString("MySQL.SkinTable") + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
             }
         }
     }
 
     public void addColumn() throws SQLException {
-        execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        execute("ALTER TABLE `" + config.getString("MySQL.SkinTable") + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
     public void execute(final String query, final Object... vars) {

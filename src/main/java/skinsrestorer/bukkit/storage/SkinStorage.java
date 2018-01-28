@@ -1,10 +1,11 @@
-package skinsrestorer.shared.storage;
+package skinsrestorer.bukkit.storage;
 
+import org.bukkit.configuration.file.FileConfiguration;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.bukkit.utils.MojangAPI;
+import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bukkit.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.rowset.CachedRowSet;
@@ -22,29 +23,21 @@ import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
 
+    private static FileConfiguration config = SkinsRestorer.getInstance().getConfig();
     private static Class<?> property;
     private static MySQL mysql;
     private static File folder;
     private static ExecutorService exe;
-    private static boolean isBungee;
 
     static {
         try {
             exe = Executors.newCachedThreadPool();
             property = Class.forName("com.mojang.authlib.properties.Property");
-            isBungee = false;
         } catch (Exception e) {
             try {
-                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-                isBungee = true;
+                property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
             } catch (Exception ex) {
-                try {
-                    property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
-                    isBungee = false;
-                } catch (Exception exc) {
-                    System.out.println(
-                            "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
-                }
+                System.out.println("[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
             }
         }
     }
@@ -85,14 +78,15 @@ public class SkinStorage {
      * @return Property object
      **/
     @SuppressWarnings("deprecation")
-	public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null)
             skin = name.toLowerCase();
         Object textures = null;
-        if (Config.DEFAULT_SKINS_ENABLED) {
-            textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+        if (config.getBoolean("DefaultSkins.Enabled") == true) {
+            textures = getSkinData(config.getStringList("DefaultSkins.Names").get(new Random().nextInt(config.getStringList("DefaultSkins.Names").size())));
+
         }
         textures = getSkinData(skin);
         if (textures != null) {
@@ -121,9 +115,7 @@ public class SkinStorage {
 
             try {
                 value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(oldprops, "getValue"));
-
                 String oldurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
-
                 shouldUpdate = !oldurl.equals(newurl);
             } catch (Exception e) {
                 shouldUpdate = true;
@@ -132,15 +124,10 @@ public class SkinStorage {
             setSkinData(sname, props);
 
             if (shouldUpdate)
-                if (isBungee)
-                    skinsrestorer.bungee.SkinApplier.applySkin(name);
-                else {
-                    SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
-                            props);
-                }
-        } catch (Exception e) {
-            throw new SkinRequestException(Locale.WAIT_A_MINUTE);
-        }
+                SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), props);
+            } catch (Exception e) {
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.WAIT_A_MINUTE);
+            }
 
         return textures;
     }
@@ -152,9 +139,9 @@ public class SkinStorage {
      */
     public static String getPlayerSkin(String name) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL) {
+        if (config.getBoolean("MySQL.Enabled") == true) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
+            CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
 
             if (crs != null)
                 try {
@@ -206,9 +193,9 @@ public class SkinStorage {
      **/
     public static Object getSkinData(String name) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL) {
+        if (config.getBoolean("MySQL.Enabled") == true) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+            CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
             if (crs != null)
                 try {
                     String value = crs.getString("Value");
@@ -219,7 +206,7 @@ public class SkinStorage {
                         //removeSkinData(name); Remove that cause its useless
                         Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
                         if (skin != null) {
-                            SkinStorage.setSkinData(name, skin);
+                            setSkinData(name, skin);
                         }
                     }
                     return createProperty("textures", value, signature);
@@ -232,9 +219,7 @@ public class SkinStorage {
             return null;
 
         } else {
-            File skinFile = new File(
-                    folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
-
+            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
             try {
                 if (!skinFile.exists())
                     return null;
@@ -253,10 +238,9 @@ public class SkinStorage {
                         }
                 buf.close();
                 if (isOld(Long.valueOf(timestamp))) {
-                    //removeSkinData(name);
                     Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
                     if (skin != null) {
-                        SkinStorage.setSkinData(name, skin);
+                        setSkinData(name, skin);
                     }
                 }
                 return SkinStorage.createProperty("textures", value, signature);
@@ -271,7 +255,7 @@ public class SkinStorage {
     }
 
     public static boolean isOld(long timestamp) {
-        if (timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis()) {
+        if (timestamp + TimeUnit.MINUTES.toMillis(config.getInt("SkinExpiresAfter")) <= System.currentTimeMillis()) {
             return true;
         }
         return false;
@@ -296,11 +280,10 @@ public class SkinStorage {
      **/
     public static void removePlayerSkin(String name) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL)
-            mysql.execute("delete from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
+        if (config.getBoolean("MySQL.Enabled") == true)
+            mysql.execute("delete from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
         else {
-            File playerFile = new File(
-                    folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             if (playerFile.exists())
                 playerFile.delete();
@@ -315,12 +298,10 @@ public class SkinStorage {
      **/
     public static void removeSkinData(String name) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL)
-            mysql.execute("delete from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+        if (config.getBoolean("MySQL.Enabled") == true)
+            mysql.execute("delete from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
         else {
-            File skinFile = new File(
-                    folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
-
+            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
             if (skinFile.exists())
                 skinFile.delete();
         }
@@ -335,13 +316,13 @@ public class SkinStorage {
      **/
     public static void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL) {
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
+        if (config.getBoolean("MySQL.Enabled") == true) {
+            CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
 
             if (crs == null)
-                mysql.execute("insert into " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)", name, skin);
+                mysql.execute("insert into " + config.getString("MySQL.PlayerTable") + " (Nick, Skin) values (?,?)", name, skin);
             else
-                mysql.execute("update " + Config.MYSQL_PLAYERTABLE + " set Skin=? where Nick=?", skin, name);
+                mysql.execute("update " + config.getString("MySQL.PlayerTable") + " set Skin=? where Nick=?", skin, name);
         } else {
             File playerFile = new File(
                     folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
@@ -383,14 +364,14 @@ public class SkinStorage {
         } catch (Exception e) {
         }
 
-        if (Config.USE_MYSQL) {
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+        if (config.getBoolean("MySQL.Enabled") == true) {
+            CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
 
             if (crs == null)
-                mysql.execute("insert into " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) values (?,?,?,?)",
+                mysql.execute("insert into " + config.getString("MySQL.SkinTable") + " (Nick, Value, Signature, timestamp) values (?,?,?,?)",
                         name, value, signature, timestamp);
             else
-                mysql.execute("update " + Config.MYSQL_SKINTABLE + " set Value=?, Signature=?, timestamp=? where Nick=?", value,
+                mysql.execute("update " + config.getString("MySQL.SkinTable") + " set Value=?, Signature=?, timestamp=? where Nick=?", value,
                         signature, timestamp, name);
         } else {
             File skinFile = new File(
@@ -422,7 +403,7 @@ public class SkinStorage {
         int i = 0;
         for (String file : fileNames) {
             if (i >= number) {
-                list.put(file.replace(".skin", ""), SkinStorage.getSkinDataMenu(file.replace(".skin", "")));
+                list.put(file.replace(".skin", ""), getSkinDataMenu(file.replace(".skin", "")));
             }
             i++;
         }
@@ -433,9 +414,9 @@ public class SkinStorage {
     //Getting skin data for menu
     public static Object getSkinDataMenu(String name) {
         name = name.toLowerCase();
-        if (Config.USE_MYSQL) {
+        if (config.getBoolean("MySQL.Enabled") == true) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+            CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
             if (crs != null)
                 try {
                     String value = crs.getString("Value");

@@ -1,45 +1,36 @@
 ##############################
 #  SkinsRestorer Config.yml  #
 ##############################
-#by Th3Tr0LLeR & Blackfire62 + xknat 
 
-#enables /skin without permissions
-#(only works for backend aka spigot servers)
+# If set to true, /skin can be used without a permission.
 SkinWithoutPerm: false
 
-#How long the skin will be in the database (in minutes)
-SkinExpiresAfter: 5
+# How long are the skins stored in database (in minutes)
+SkinExpiresAfter: 1584
 
-#This is for preventing skin change spam (in seconds)
-#[skinsrestorer.bypasscooldown bypasses this]
+# Timeout for skin changing (set to 0 to disable)
 SkinChangeCooldown: 30
  
-#Enable or disable default skins
-#If more nicknames will be in the list, server will always choose a random one.
+# Enable or disable default skins
+# If there is more than one, the plugin will choose a random one.
 DefaultSkins:
   Enabled: false
   Names:
     - Steve
     
-#Disable skin names
-#Put skins you want to disable on the list
-#Player wont be able to set these skins
-#[skinsrestorer.bypassdisabled bypasses this]
+# Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
   Names:
     - Steve
     
-#Multi-Bungee support
-#If you use more proxy servers and you
-#experience issues with skin visibility between proxies?
-#enable this option!
-#(RedisBungee enables this option automatically)
+# Multi-Bungee support
+# Enable this if you have issues with skins in multi-proxy environments
+# (This is automatically enabled if you have RedisBungee)
 MultiBungee:
   Enabled: false
 
-# MySQL database for large servers
-# or just to boost the performance
+# Settings for MySQL skin storage (recommended for big BungeeCord networks)
 MySQL:
   Enabled: false
   Host: localhost
@@ -50,6 +41,6 @@ MySQL:
   Username: root
   Password: pass
 
-#Enable or disable the updater check.
+# Enable or disable the updater.
 Updater:
   Enabled: true

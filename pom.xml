@@ -4,128 +4,145 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.2</version>
+    <version>13.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <name>SkinsRestorer</name>
+    <description>Ability to restore/change skins on servers! (Offline and Online Mode)</description>
+
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <repositories>
         <repository>
-        	<!-- SpigotMC Repository (for Bukkit API) -->
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-        	<!-- Multiverse-Core Repository -->
-            <id>onarandombox</id>
+            <id>multiverse-repo</id>
             <url>http://repo.onarandombox.com/content/groups/public</url>
         </repository>
         <repository>
-        	<!-- BungeeCord Repository -->
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
-        	<!-- Lucko's Repository (needed for BungeeCord-Proxy) -->
             <id>luck-repo</id>
             <url>https://ci.lucko.me/plugin/repository/everything</url>
-		</repository>
+        </repository>
         <repository>
-        	<!-- Minecraft's Repository (needed for Mojang AuthLib) -->
             <id>minecraft-repo</id>
             <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
-        	<!-- bStats Repository (needed for Metrics) -->
             <id>bstats-repo</id>
             <url>http://repo.bstats.org/content/repositories/releases/</url>
         </repository>
         <repository>
-        	<!-- InventiveTalent's Repository (needed for Spiget-Update) -->
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
         <repository>
-        	<!-- Mikeprimm's Repository (needed for Spigot 1.7.10-1.8.x Protocol Hack compatibility) -->
-        	<id>mikeprimm-repo</id>
-        	<url>http://repo.mikeprimm.com</url>
+            <id>mikeprimm-repo</id>
+            <url>http://repo.mikeprimm.com</url>
         </repository>
     </repositories>
     <dependencies>
+        <!-- Spigot API -->
         <dependency>
-        	<!-- Bukkit API -->
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
             <version>1.12.2-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- Multiverse-Core -->
         <dependency>
-        	<!-- Multiverse-Core (compatibility reasons) -->
             <groupId>com.onarandombox.multiversecore</groupId>
             <artifactId>Multiverse-Core</artifactId>
             <version>2.5.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
         </dependency>
+        <!-- BungeeCord API -->
         <dependency>
-        	<!-- BungeeCord API -->
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
             <version>1.12-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- Mojang Auth Library (needed for SkinsGUI) -->
         <dependency>
-        	<!-- BungeeCord-Proxy (needed for BungeeCord) -->
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-proxy</artifactId>
-            <version>1.12-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-        	<!-- Mojang AuthLib (needed for SkinsGUI) -->
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- bStats Lite for Bukkit -->
         <dependency>
-        	<!-- bStats Lite (Metrics) for Bukkit -->
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit-lite</artifactId>
             <version>1.2</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- bStats Lite for BungeeCord -->
         <dependency>
-            <!-- bStats Lite (Metrics) for BungeeCord -->
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord-lite</artifactId>
             <version>1.2</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- Spiget Updater for Bukkit -->
         <dependency>
-        	<!-- Spiget-Update (for the updater) -->
-        	<groupId>org.inventivetalent.spiget-update</groupId>
-        	<artifactId>bukkit</artifactId>
-        	<version>1.4.0</version>
-    	</dependency>
-    	<dependency>
-    		<!-- Spigot 1.7.10-1.8.x Protocol Hack (for compatibility) -->
-    		<groupId>org.spigotmc</groupId>
-    		<artifactId>spigot</artifactId>
-    		<version>1.7.10-R0.1-SNAPSHOT</version>
-    	</dependency>
+            <groupId>org.inventivetalent.spiget-update</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Spigot 1.7.10 API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.7.10-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
+        <finalName>SkinsRestorer</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>org.bstats:*</include>
-                        </includes>
-                    </artifactSet>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer.bStatsMetrics</shadedPattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.inventivetalent</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

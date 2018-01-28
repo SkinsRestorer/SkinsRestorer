@@ -1,7 +1,8 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.bukkit.utils;
 
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.bukkit.storage.Locale;
+import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.shared.utils.ProxyManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,14 +30,14 @@ public class MojangAPI {
         try {
             output = readURL(skinurl + uuid + "?unsigned=false");
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
+            String sigbeg = "\",\"signature\":\"";
+            String mid = "[{\"name\":\"textures\",\"value\":\"";
             String valend = "\"}]";
 
             String signature = "", value = "";
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
+            value = getStringBetween(output, mid, sigbeg);
+            signature = getStringBetween(output, sigbeg, valend);
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
@@ -50,14 +51,14 @@ public class MojangAPI {
         try {
             output = readURLProxy(skinurl + uuid + "?unsigned=false");
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
+            String sigbeg = "\",\"signature\":\"";
+            String mid = "[{\"name\":\"textures\",\"value\":\"";
             String valend = "\"}]";
 
             String signature = "", value = "";
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
+            value = getStringBetween(output, mid, sigbeg);
+            signature = getStringBetween(output, sigbeg, valend);;
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
@@ -101,7 +102,7 @@ public class MojangAPI {
             output = readURL(uuidurl + name);
 
             if (output.isEmpty())
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
             else if (output.contains("\"error\""))
                 return getUUIDProxy(name);
 
@@ -118,9 +119,9 @@ public class MojangAPI {
             output = readURLProxy(uuidurl + name);
 
             if (output.isEmpty())
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
             else if (output.contains("\"error\""))
-                throw new SkinRequestException(Locale.ALT_API_FAILED);
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.ALT_API_FAILED);
 
             return output.substring(7, 39);
         } catch (IOException e) {
@@ -138,8 +139,6 @@ public class MojangAPI {
     }
 
     private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
-
-
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
@@ -192,13 +191,10 @@ public class MojangAPI {
 
     public static class SkinRequestException extends Exception {
 
-        private static final long serialVersionUID = 5969055162529998032L;
         private String reason;
-
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
-
         public String getReason() {
             return reason;
         }

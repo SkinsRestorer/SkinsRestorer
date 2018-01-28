@@ -4,32 +4,28 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.MetricsLite;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
-import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.updater.bungee.SpigetUpdate;
-import skinsrestorer.shared.utils.updater.core.VersionComparator;
+
 import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.nio.file.Files;
 
 public class SkinsRestorer extends Plugin {
 
     private static SkinsRestorer instance;
     private MySQL mysql;
     private boolean multibungee;
-    private ExecutorService exe;
     private boolean outdated;
+    public static YamlConfiguration LANG;
+    public static File LANG_FILE;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -51,10 +47,6 @@ public class SkinsRestorer extends Plugin {
         return getVersion();
     }
 
-    public ExecutorService getExecutor() {
-        return exe;
-    }
-
     public MySQL getMySQL() {
         return mysql;
     }
@@ -71,31 +63,84 @@ public class SkinsRestorer extends Plugin {
         return outdated;
     }
 
-    @Override
-    public void onDisable() {
-        exe.shutdown();
+    File configFile = new File(getDataFolder(), "config.yml");
+
+    public void createDefaultConfig() {
+        try {
+            if (!getDataFolder().exists())
+                getDataFolder().mkdir();
+
+            File file = new File(getDataFolder(), "config.yml");
+
+            if (!file.exists()) {
+                try (InputStream in = getResourceAsStream("config.yml")) {
+                    Files.copy(in, file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            final Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadLang() {
+        File lang = new File(getDataFolder(), "lang.yml");
+        if (!lang.exists()) {
+            try {
+                getDataFolder().mkdir();
+                lang.createNewFile();
+                InputStream defConfigStream = this.getResource("messages.yml");
+                if (defConfigStream != null) {
+                    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+                    defConfig.save(lang);
+                    Lang.setFile(defConfig);
+                    return defConfig;
+                }
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
+        for(Lang item:Lang.values()) {
+            if (conf.getString(item.getPath()) == null) {
+                conf.set(item.getPath(), item.getDefault());
+            }
+        }
+        Lang.setFile(conf);
+        SkinsRestorer.LANG = conf;
+        SkinsRestorer.LANG_FILE = lang;
+        try {
+            conf.save(getLangFile());
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onEnable() {
-    	
+
         @SuppressWarnings("unused")
         MetricsLite metrics = new MetricsLite(this);
-        
-        SpigetUpdate updater = new SpigetUpdate(this, 2124);
-        updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER_BETA);
 
         instance = this;
-        Config.load(getResourceAsStream("config.yml"));
-        Locale.load();
-        exe = Executors.newCachedThreadPool();
+        createDefaultConfig();
+        loadLang();
 
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
-        else
+        if (configuration.get) {
+            SkinStorage.init(mysql = new MySQL(
+                    Config.MYSQL_HOST,
+                    Config.MYSQL_PORT,
+                    Config.MYSQL_DATABASE,
+                    Config.MYSQL_USERNAME,
+                    Config.MYSQL_PASSWORD)
+            );
+        }
+        else {
             SkinStorage.init(getDataFolder());
+        }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener());
         getProxy().getPluginManager().registerCommand(this, new AdminCommands());
@@ -103,16 +148,15 @@ public class SkinsRestorer extends Plugin {
         getProxy().registerChannel("SkinsRestorer");
         SkinApplier.init();
 
-        multibungee = Config.MULTIBUNGEE_ENABLED
-                || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
-        exe.submit(new Runnable() {
+        getProxy().getScheduler().runAsync(new Runnable() {
 
             @Override
             public void run() {
-            	
-            	CommandSender console = getProxy().getConsole();
-            	
+
+                CommandSender console = getProxy().getConsole();
+
                 if (Config.UPDATER_ENABLED)
                     if (checkVersion(console).equals(getVersion())) {
                         outdated = false;
@@ -122,7 +166,7 @@ public class SkinsRestorer extends Plugin {
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    The latest version!"));
+                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    This is the latest version!"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                     } else {
                         outdated = true;
@@ -146,7 +190,6 @@ public class SkinsRestorer extends Plugin {
                                 console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
                         }
             }
-
         });
     }
 }
