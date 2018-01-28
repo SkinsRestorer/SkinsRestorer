@@ -2,9 +2,9 @@ package skinsrestorer.bukkit.skinfactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import skinsrestorer.bukkit.MCoreAPI;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
@@ -115,18 +115,13 @@ public class UniversalSkinFactory extends SkinFactory {
                 Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
                 Object worlddata = ReflectionUtil.getObject(world, "worldData");
                 Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
+                
                 int dimension = 0;
-                if (MCoreAPI.check()) {
-                    dimension = MCoreAPI.dimension(player.getWorld());
-                } else {
-                    dimension = (int) ReflectionUtil.getObject(world, "dimension");
-                    if (dimension == 8 || dimension == 13)
-                        dimension = 0;
-                    if (dimension == 1 || dimension == 14)
-                        dimension = -1;
-                    if (dimension == 16 || dimension == 12)
-                        dimension = 1;
-                }
+                if (player.getWorld().getEnvironment().equals(Environment.NETHER))
+                	dimension = -1;
+                if (player.getWorld().getEnvironment().equals(Environment.THE_END))
+                	dimension = 1;
+                
                 Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
                 Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 

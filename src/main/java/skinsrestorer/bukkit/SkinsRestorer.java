@@ -162,11 +162,6 @@ public class SkinsRestorer extends JavaPlugin {
         }
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
-        // Multiverse Core support.
-        MCoreAPI.init();
-        if (MCoreAPI.check())
-            console.sendMessage("§e[§2SkinsRestorer§e] §aDetected §eMultiverse-Core§a! Using it for dimensions.");
-
         // Detect ChangeSkin
         if(getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
             console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
