@@ -1,9 +1,11 @@
 package skinsrestorer.bungee.storage;
 
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import skinsrestorer.bukkit.storage.Locale;
-import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bungee.storage.Locale;
+import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.bungee.utils.MojangAPI;
+import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bungee.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.rowset.CachedRowSet;

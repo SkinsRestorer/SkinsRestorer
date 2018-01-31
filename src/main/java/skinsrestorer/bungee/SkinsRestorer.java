@@ -11,7 +11,10 @@ import org.bstats.bungeecord.MetricsLite;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bungee.storage.Locale;
+import skinsrestorer.bungee.storage.SkinStorage;
+import skinsrestorer.bungee.utils.MySQL;
+import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -96,7 +99,7 @@ public class SkinsRestorer extends Plugin {
                 if (defConfigStream != null) {
                     YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
                     defConfig.save(lang);
-                    Lang.setFile(defConfig);
+                    Locale.setFile(defConfig);
                     return defConfig;
                 }
             } catch(IOException e) {
@@ -104,12 +107,12 @@ public class SkinsRestorer extends Plugin {
             }
         }
         YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-        for(Lang item:Lang.values()) {
+        for(Locale item:Locale.values()) {
             if (conf.getString(item.getPath()) == null) {
                 conf.set(item.getPath(), item.getDefault());
             }
         }
-        Lang.setFile(conf);
+        Locale.setFile(conf);
         SkinsRestorer.LANG = conf;
         SkinsRestorer.LANG_FILE = lang;
         try {

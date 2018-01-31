@@ -1,4 +1,4 @@
-package skinsrestorer.bukkit.utils;
+package skinsrestorer.bungee.utils;
 
 import org.bukkit.Bukkit;
 import skinsrestorer.bukkit.SkinsRestorer;
@@ -17,9 +17,8 @@ public class SkinsRestorerAPI {
      * @param player = Player's instance (either ProxiedPlayer or Player)
      */
     public static void applySkin(Object player, Object props) {
-        // Trying to use Bukkit.
         try {
-            SkinsRestorer.getInstance().getFactory().applySkin((org.bukkit.entity.Player) player, props);
+            skinsrestorer.bungee.SkinApplier.applySkin((net.md_5.bungee.api.connection.ProxiedPlayer) player);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -107,7 +106,7 @@ public class SkinsRestorerAPI {
                     out.writeUTF(playerName);
                     out.writeUTF(skinName);
 
-                    p.sendPluginMessage(skinsrestorer.bukkit.SkinsRestorer.getInstance(), "BungeeCord",
+                    p.sendPluginMessage(SkinsRestorer.getInstance(), "BungeeCord",
                             b.toByteArray());
 
                     out.close();
