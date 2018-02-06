@@ -183,10 +183,8 @@ public class MojangAPI {
 
         while ((line = in.readLine()) != null)
             output.append(line);
-
-        in.close();
-
-        return output.toString();
+            in.close();
+            return output.toString();
     }
 
     public static class SkinRequestException extends Exception {

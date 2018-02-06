@@ -3,8 +3,7 @@ main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}
 website: https://skinsrestorer.net/
-authors: [Th3Tr0LLeR]
-softdepend: [Multiverse-Core, MultiWorld]
+authors: [Th3Tr0LLeR, DoNotSpamPls]
 commands:
   skinsrestorer:
     aliases: [sr]
@@ -15,6 +14,8 @@ commands:
     description: Opens skins GUI
   skinver:
     description: Shows the plugin version.
+  getsrproxy:
+    description: dev command.
 permissions:
    skinsrestorer.playercmds:
      description: Allows access to all main commands.

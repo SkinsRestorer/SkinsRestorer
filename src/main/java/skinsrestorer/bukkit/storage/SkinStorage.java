@@ -32,7 +32,7 @@ public class SkinStorage {
     static {
         try {
             exe = Executors.newCachedThreadPool();
-            property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+            property = Class.forName("com.mojang.authlib.properties.Property");
         } catch (Exception e) {
             try {
                 property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");

@@ -2,6 +2,7 @@ package skinsrestorer.shared.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,6 +15,21 @@ public class ProxyManager {
     public static List<String> proxies = new ArrayList<String>();
     private static String inputLine;
 
+    public void loadProxies() {
+        String line;
+        try (
+                InputStream is = getClass().getResourceAsStream("proxy.txt");
+                InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            while ((line = br.readLine()) != null) {
+                proxies.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static List<String> getList() {
         if (proxies.isEmpty()) {
             System.out.print("[SkinsRestorer] Proxy list is empty. Getting one.");
@@ -24,10 +40,11 @@ public class ProxyManager {
 
     public static List<String> updateProxies() {
         proxies = new ArrayList<String>();
-        String url = "https://getmeproxy.com/api/v1.0/api.php?key=c84d1076312bcf1e875c94d4e20692f5&checked=1&s=5&list=text";
+        String url = "https://mcapi.me/McAPI.php?apikey=ihAet4antmkBNdYu43&list=text";
         try {
             List<String> pp = readURL(url);
             proxies = pp;
+            System.out.println(proxies);
         } catch (IOException e) {
             System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
@@ -47,11 +64,11 @@ public class ProxyManager {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), Charset.forName("UTF-8")));
             String str = "";
-            int limit = 5;
+            int limit = 30;
             while ((inputLine = in.readLine()) != null) {
                 str = inputLine;
             }
-            String[] asd = str.split("<br>");
+            String[] asd = str.split("<br/>");
             for (String d : asd) {
                 if (limit == 0) {
                     break;
@@ -64,7 +81,7 @@ public class ProxyManager {
         } catch (IOException e) {
             System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
-            return updateProxies();
+            return proxies;
         }
     }
 }

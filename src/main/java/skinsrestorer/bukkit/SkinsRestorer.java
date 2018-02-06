@@ -2,17 +2,12 @@ package skinsrestorer.bukkit;
 
 import com.google.common.base.Charsets;
 import org.bstats.bukkit.MetricsLite;
-
-import org.bukkit.configuration.file.FileConfiguration;
-import org.inventivetalent.update.spiget.SpigetUpdate;
-import org.inventivetalent.update.spiget.UpdateCallback;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,7 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-
+import org.inventivetalent.update.spiget.SpigetUpdate;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
@@ -32,6 +29,7 @@ import skinsrestorer.bukkit.utils.MojangAPI;
 import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.bukkit.utils.MySQL;
 import skinsrestorer.shared.storage.CooldownStorage;
+import skinsrestorer.shared.utils.ProxyManager;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.*;
@@ -175,6 +173,14 @@ public class SkinsRestorer extends JavaPlugin {
             bungeeEnabled = false;
         }
 
+        File f = new File("/plugins/SkinsRestorer/proxy.txt");
+        if(f.exists()){
+            System.out.println("success");
+        }
+        else{
+            System.out.println("fail");
+        }
+
         if (bungeeEnabled) {
 
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -269,6 +275,14 @@ public class SkinsRestorer extends JavaPlugin {
         getCommand("skinsrestorer").setExecutor(new SrCommand());
         getCommand("skin").setExecutor(new SkinCommand());
         getCommand("skins").setExecutor(new GUICommand());
+        getCommand("getsrproxy").setExecutor(new CommandExecutor() {
+            @Override
+            public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+                ProxyManager.getList();
+                commandSender.sendMessage("yeah we did that");
+                return true;
+            }
+        });
         /**
          * This is deprecated, since it like never works in a combination with BungeeCord.
          * If you so desperately want to know the version -> /version SkinsRestorer
@@ -294,8 +308,8 @@ public class SkinsRestorer extends JavaPlugin {
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
                         if (config.getBoolean("DisableOnJoinSkins") == true) {
-                            factory.applySkin(e.getPlayer(),
-                                    SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+                            // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+                            // shouldn't it just skip it if it's true?
                             return;
                         }
                         if (config.getBoolean("DefaultSkins.Enabled") == true)
