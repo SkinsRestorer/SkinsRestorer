@@ -2,7 +2,6 @@ package skinsrestorer.bungee.storage;
 
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.bungee.storage.Locale;
 import skinsrestorer.bungee.utils.MojangAPI;
 import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.bungee.utils.MySQL;
@@ -120,11 +119,11 @@ public class SkinStorage {
             setSkinData(sname, props);
 
             if (shouldUpdate) {
-                    skinsrestorer.bungee.SkinApplier.applySkin(name);
-                }
-            } catch (Exception e) {
-                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
-             }
+                skinsrestorer.bungee.SkinApplier.applySkin(name);
+            }
+        } catch (Exception e) {
+            throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+        }
 
         return textures;
     }

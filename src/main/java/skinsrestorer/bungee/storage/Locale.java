@@ -53,9 +53,9 @@ public enum Locale {
     REMOVE_SKIN("REMOVE_SKIN", "&c&l»&7 Remove Skin&c&l »"),
     SELECT_SKIN("SELECT_SKIN", "&2Click to select this skin");
 
+    private static YamlConfiguration LANG;
     private final String path;
     private final String def;
-    private static YamlConfiguration LANG;
 
     /**
      * Lang enum constructor.

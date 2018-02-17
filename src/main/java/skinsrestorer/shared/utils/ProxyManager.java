@@ -15,21 +15,6 @@ public class ProxyManager {
     public static List<String> proxies = new ArrayList<String>();
     private static String inputLine;
 
-    public void loadProxies() {
-        String line;
-        try (
-                InputStream is = getClass().getResourceAsStream("proxy.txt");
-                InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
-                BufferedReader br = new BufferedReader(isr);
-        ) {
-            while ((line = br.readLine()) != null) {
-                proxies.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static List<String> getList() {
         if (proxies.isEmpty()) {
             System.out.print("[SkinsRestorer] Proxy list is empty. Getting one.");
@@ -82,6 +67,21 @@ public class ProxyManager {
             System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
             return proxies;
+        }
+    }
+
+    public void loadProxies() {
+        String line;
+        try (
+                InputStream is = getClass().getResourceAsStream("proxy.txt");
+                InputStreamReader isr = new InputStreamReader(is, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+        ) {
+            while ((line = br.readLine()) != null) {
+                proxies.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

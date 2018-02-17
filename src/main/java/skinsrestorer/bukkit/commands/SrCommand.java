@@ -27,9 +27,7 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage(Locale.SR_LINE.toString());
                 sender.sendMessage(Locale.HELP_ADMIN.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
                 sender.sendMessage(Locale.SR_LINE.toString());
-            }
-
-            else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
+            } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 2; i < args.length; i++)
                     if (args.length == 3)
@@ -74,28 +72,20 @@ public class SrCommand implements CommandExecutor {
                     }
 
                 });
-            }
-
-            else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 SkinsRestorer.getInstance().reloadConfig();
                 SkinsRestorer.getInstance().saveDefaultConfig();
                 sender.sendMessage(Locale.TITLE.toString() + Locale.RELOAD);
-            }
-
-            else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
-            }
-
-            else if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
+            } else if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
                 try {
                     MojangAPI.getSkinProperty(MojangAPI.getUUID("Notch"));
                     sender.sendMessage(Locale.TITLE.toString() + Locale.STATUS_OK);
                 } catch (SkinRequestException e) {
                     sender.sendMessage(e.getReason());
                 }
-            }
-
-            else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
+            } else if (args.length > 1 && args[0].equalsIgnoreCase("drop")) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 1; i < args.length; i++)
                     sb.append(args[i]);
@@ -103,9 +93,7 @@ public class SrCommand implements CommandExecutor {
                 SkinStorage.removeSkinData(sb.toString());
 
                 sender.sendMessage(Locale.TITLE + Locale.SKIN_DATA_DROPPED.toString().replace("%player", sb.toString()));
-            }
-
-            else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
+            } else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
 
                 Player p = null;
 
@@ -172,8 +160,7 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage("§cMore info in console!");
 
             }
-        }
-        else {
+        } else {
             sender.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
             return true;
         }

@@ -2,15 +2,18 @@ package skinsrestorer.bungee.commands;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.connection.LoginResult.Property;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.bungee.storage.SkinStorage;
+import skinsrestorer.bungee.utils.MojangAPI;
+import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
+
+import java.io.File;
+import java.io.IOException;
 
 public class AdminCommands extends Command {
 
@@ -19,17 +22,21 @@ public class AdminCommands extends Command {
     }
 
     @SuppressWarnings("deprecation")
-    @Override
     public void execute(final CommandSender sender, final String[] args) {
 
         if (sender.hasPermission("skinsrestorer.cmds")) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                Locale.load();
-                Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+                File file = new File(SkinsRestorer.getInstance().getDataFolder(), "config.yml");
+                try {
+                    ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 sender.sendMessage(Locale.RELOAD);
+            }
 
-            } else if (args.length == 2 && args[0].equalsIgnoreCase("drop")) {
+            else if (args.length == 2 && args[0].equalsIgnoreCase("drop")) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 2; i < args.length; i++)
                     if (args.length == 3)
@@ -64,7 +71,7 @@ public class AdminCommands extends Command {
 
                 final ProxiedPlayer p = player;
 
-                SkinsRestorer.getInstance().getExecutor().submit(new Runnable() {
+                SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(new Runnable() {
 
                     @Override
                     public void run() {
@@ -83,7 +90,7 @@ public class AdminCommands extends Command {
                 });
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
-                sender.sendMessage(C.c("&e[&2SkinsRestorer&e] &2/sr config has been removed from SkinsRestorer. Farewell!"));
+                sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
                 return;
 
             } else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
@@ -115,26 +122,31 @@ public class AdminCommands extends Command {
                     }
                 }
 
-                InitialHandler h = (InitialHandler) p.getPendingConnection();
-                Property prop = h.getLoginProfile().getProperties()[0];
+                /**
+                 * There is no viable way to make this work without BungeeCord-Proxy.
+                 * This will be removed from the file in a few releases
 
-                if (prop == null) {
-                    sender.sendMessage(Locale.NO_SKIN_DATA);
-                    return;
-                }
+                 InitialHandler h = (InitialHandler) p.getPendingConnection();
+                 Property prop = h.getLoginProfile().getProperties()[0];
 
-                CommandSender cons = ProxyServer.getInstance().getConsole();
+                 if (prop == null) {
+                 sender.sendMessage(Locale.NO_SKIN_DATA);
+                 return;
+                 }
 
-                cons.sendMessage("\n§aName: §8" + prop.getName());
-                cons.sendMessage("\n§aValue : §8" + prop.getValue());
-                cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
+                 CommandSender cons = ProxyServer.getInstance().getConsole();
 
-                String decoded = Base64Coder.decodeString(prop.getValue());
-                cons.sendMessage("\n§aValue Decoded: §e" + decoded);
+                 cons.sendMessage("\n§aName: §8" + prop.getName());
+                 cons.sendMessage("\n§aValue : §8" + prop.getValue());
+                 cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
 
-                sender.sendMessage("\n§e" + decoded);
+                 String decoded = Base64Coder.decodeString(prop.getValue());
+                 cons.sendMessage("\n§aValue Decoded: §e" + decoded);
 
-                sender.sendMessage("§cMore info in console!");
+                 sender.sendMessage("\n§e" + decoded);
+
+                 sender.sendMessage("§cMore info in console!");
+                 **/
             } else {
                 if (!Locale.SR_LINE.isEmpty())
                     sender.sendMessage(Locale.SR_LINE);
@@ -147,20 +159,5 @@ public class AdminCommands extends Command {
             return;
 
         }
-    }
-
-    public boolean isStringInt(String s) {
-        try {
-            Integer.parseInt(s);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
-
-    public void reloadConfig(CommandSender sender, String msg) {
-        Locale.load();
-        Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
-        sender.sendMessage(new TextComponent(C.c(msg)));
     }
 }

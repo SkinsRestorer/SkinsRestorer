@@ -37,12 +37,12 @@ import java.util.List;
 
 public class SkinsRestorer extends JavaPlugin {
 
+    public static YamlConfiguration LANG;
+    public static File LANG_FILE;
     private static SkinsRestorer instance;
     private SkinFactory factory;
     private MySQL mysql;
     private boolean bungeeEnabled;
-    public static YamlConfiguration LANG;
-    public static File LANG_FILE;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -81,8 +81,8 @@ public class SkinsRestorer extends JavaPlugin {
                     return;
                 }
             } catch (IOException e) {
-                e.printStackTrace(); // So they notice
-                this.setEnabled(false); // Without it loaded, we can't send them messages
+                e.printStackTrace();
+                this.setEnabled(false);
             } finally {
                 if (defLangStream != null) {
                     try {
@@ -161,24 +161,16 @@ public class SkinsRestorer extends JavaPlugin {
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
         // Detect ChangeSkin
-        if(getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
+        if (getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
             console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
             Bukkit.getPluginManager().disablePlugin(this);
         }
 
         // Bungeecord stuff
         try {
-            bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
+            bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
         } catch (Exception e) {
             bungeeEnabled = false;
-        }
-
-        File f = new File("/plugins/SkinsRestorer/proxy.txt");
-        if(f.exists()){
-            System.out.println("success");
-        }
-        else{
-            System.out.println("fail");
         }
 
         if (bungeeEnabled) {
@@ -215,7 +207,8 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
             });
-            if (config.getBoolean("Updater.Enabled") == true) {
+
+            if (config.getBoolean("Updater.Enabled")) {
                 updater.checkForUpdate(new UpdateCallback() {
                     @Override
                     public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -258,7 +251,7 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
-        if (config.getBoolean("MySQL.Enabled") == true)
+        if (config.getBoolean("MySQL.Enabled"))
             SkinStorage.init(mysql = new MySQL(
                     config.getString("MySQL.Host"),
                     config.getString("MySQL.Port"),
@@ -286,18 +279,18 @@ public class SkinsRestorer extends JavaPlugin {
         /**
          * This is deprecated, since it like never works in a combination with BungeeCord.
          * If you so desperately want to know the version -> /version SkinsRestorer
-        getCommand("skinver").setExecutor(new CommandExecutor() {
+         getCommand("skinver").setExecutor(new CommandExecutor() {
 
-            public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
-                sender.sendMessage("§8This server is running §aSkinsRestorer §e"
-                        + SkinsRestorer.getInstance().getVersion() + "§8, made with love by §c"
-                        + SkinsRestorer.getInstance().getDescription().getAuthors().get(0)
-                        + "§8, utilizing Minecraft §a" + ReflectionUtil.serverVersion + "§8.");
-                return false;
-            }
+         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
+         sender.sendMessage("§8This server is running §aSkinsRestorer §e"
+         + SkinsRestorer.getInstance().getVersion() + "§8, made with love by §c"
+         + SkinsRestorer.getInstance().getDescription().getAuthors().get(0)
+         + "§8, utilizing Minecraft §a" + ReflectionUtil.serverVersion + "§8.");
+         return false;
+         }
 
-        });
-        */
+         });
+         */
 
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
         Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -307,12 +300,12 @@ public class SkinsRestorer extends JavaPlugin {
             public void onLogin(PlayerJoinEvent e) {
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
-                        if (config.getBoolean("DisableOnJoinSkins") == true) {
+                        if (config.getBoolean("DisableOnJoinSkins")) {
                             // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
                             // shouldn't it just skip it if it's true?
                             return;
                         }
-                        if (config.getBoolean("DefaultSkins.Enabled") == true)
+                        if (config.getBoolean("DefaultSkins.Enabled"))
                             if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
                                 List<String> skins = config.getStringList("DefaultSkins.Names");
                                 int randomNum = 0 + (int) (Math.random() * skins.size());
@@ -332,7 +325,7 @@ public class SkinsRestorer extends JavaPlugin {
             @Override
             public void run() {
 
-                if (config.getBoolean("Updater.Enabled") == true) {
+                if (config.getBoolean("Updater.Enabled")) {
                     updater.checkForUpdate(new UpdateCallback() {
                         @Override
                         public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -368,13 +361,15 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
 
-                if (config.getBoolean("DefaultSkins.Enabled") == true)
+                if (config.getBoolean("DefaultSkins.Enabled"))
                     for (String skin : config.getStringList("DefaultSkins.Names"))
                         try {
                             SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
+                            console.sendMessage("we tried to do that");
                         } catch (SkinRequestException e) {
                             if (SkinStorage.getSkinData(skin) == null)
                                 console.sendMessage("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error: " + e.getReason());
+                                console.sendMessage("we tried to do that but couldnt");
                         }
             }
 

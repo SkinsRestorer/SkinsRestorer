@@ -68,8 +68,7 @@ public class PlayerCommands extends Command {
                         return;
                     }
                 });
-            }
-            else {
+            } else {
                 StringBuilder sb = new StringBuilder();
                 sb.append(args[0]);
 

@@ -1,8 +1,7 @@
 package skinsrestorer.bungee.listeners;
 
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import skinsrestorer.bungee.SkinApplier;
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class LoginListener implements Listener {
 
     @EventHandler
-    public void onServerChange(final PostLoginEvent e) {
+    public void onServerChange(final ServerConnectEvent e) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
                     && e.getPlayer().hasPermission("skinsrestorer.cmds"))
