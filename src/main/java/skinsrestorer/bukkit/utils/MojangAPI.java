@@ -1,5 +1,9 @@
 package skinsrestorer.bukkit.utils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import skinsrestorer.bukkit.storage.Locale;
 import skinsrestorer.bukkit.storage.SkinStorage;
 import skinsrestorer.shared.utils.ProxyManager;
@@ -16,7 +20,7 @@ import java.util.regex.Pattern;
 public class MojangAPI {
 
     private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
-    private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
+    private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static MojangAPI mojangapi = new MojangAPI();
 
     /**
@@ -28,18 +32,21 @@ public class MojangAPI {
     public static Object getSkinProperty(String uuid) throws SkinRequestException {
         String output;
         try {
-            output = readURL(skinurl + uuid + "?unsigned=false");
+            output = readURL(skinurl.replace("%uuid%", uuid));
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
 
-            String sigbeg = "\",\"signature\":\"";
-            String mid = "[{\"name\":\"textures\",\"value\":\"";
-            String valend = "\"}]";
+            if(obj.has("raw")) {
+                JsonObject raw = obj.getAsJsonObject("raw");
+                JsonArray properties = raw.getAsJsonArray("properties");
+                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-            String signature = "", value = "";
+                String signature = propertiesObject.get("signature").getAsString();
+                String value = propertiesObject.get("value").getAsString();
 
-            value = getStringBetween(output, mid, sigbeg);
-            signature = getStringBetween(output, sigbeg, valend);
-
-            return SkinStorage.createProperty("textures", value, signature);
+                return SkinStorage.createProperty("textures", value, signature);
+            }
+            return false;
         } catch (Exception e) {
             System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
             return getSkinPropertyProxy(uuid);
@@ -47,24 +54,28 @@ public class MojangAPI {
     }
 
     public static Object getSkinPropertyProxy(String uuid) throws SkinRequestException {
-        String output;
         try {
-            output = readURLProxy(skinurl + uuid + "?unsigned=false");
+            String output;
+            output = readURLProxy(skinurl.replace("%uuid%", uuid));
 
-            String sigbeg = "\",\"signature\":\"";
-            String mid = "[{\"name\":\"textures\",\"value\":\"";
-            String valend = "\"}]";
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
 
-            String signature = "", value = "";
+            if(obj.has("raw")) {
+                JsonObject raw = obj.getAsJsonObject("raw");
+                JsonArray properties = raw.getAsJsonArray("properties");
+                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-            value = getStringBetween(output, mid, sigbeg);
-            signature = getStringBetween(output, sigbeg, valend);;
+                String signature = propertiesObject.get("signature").getAsString();
+                String value = propertiesObject.get("value").getAsString();
 
-            return SkinStorage.createProperty("textures", value, signature);
+                return SkinStorage.createProperty("textures", value, signature);
+            }
         } catch (Exception e) {
             System.out.println("[SkinsRestorer] Failed to get proxy.");
             return false;
         }
+        return false;
     }
 
     public static String getStringBetween(final String base, final String begin, final String end) {
@@ -97,33 +108,42 @@ public class MojangAPI {
      * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
      */
     public static String getUUID(String name) throws SkinRequestException {
-        String output;
         try {
-            output = readURL(uuidurl + name);
+            String output;
+            output = readURL(uuidurl.replace("%name%", name));
 
-            if (output.isEmpty())
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
+
+            if (output.isEmpty()) {
                 throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
-            else if (output.contains("\"error\""))
+            }
+            else if (obj.has("error")) {
                 return getUUIDProxy(name);
+            }
 
-            return output.substring(7, 39);
+            return obj.get("id").getAsString();
         } catch (IOException e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
+            System.out.println("[SkinsRestorer] Switching to proxy to get UUID.");
             return getUUIDProxy(name);
         }
     }
 
     public static String getUUIDProxy(String name) throws SkinRequestException {
-        String output;
         try {
-            output = readURLProxy(uuidurl + name);
+            String output;
+            output = readURLProxy(uuidurl.replace("%name%", name));
+
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
-            else if (output.contains("\"error\""))
-                throw new SkinRequestException(Locale.TITLE.toString() + Locale.ALT_API_FAILED);
+            else if (obj.has("error")) {
+                return getUUIDProxy(name);
+            }
 
-            return output.substring(7, 39);
+            return obj.get("id").getAsString();
         } catch (IOException e) {
             throw new SkinRequestException(e.getMessage());
         }
@@ -183,16 +203,18 @@ public class MojangAPI {
 
         while ((line = in.readLine()) != null)
             output.append(line);
-            in.close();
-            return output.toString();
+        in.close();
+        return output.toString();
     }
 
     public static class SkinRequestException extends Exception {
 
         private String reason;
+
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
+
         public String getReason() {
             return reason;
         }

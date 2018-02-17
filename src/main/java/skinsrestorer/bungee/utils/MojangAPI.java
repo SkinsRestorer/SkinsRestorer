@@ -7,6 +7,7 @@ import skinsrestorer.shared.utils.ProxyManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.*;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -57,7 +58,8 @@ public class MojangAPI {
             String signature = "", value = "";
 
             value = getStringBetween(output, mid, sigbeg);
-            signature = getStringBetween(output, sigbeg, valend);;
+            signature = getStringBetween(output, sigbeg, valend);
+            ;
 
             return SkinStorage.createProperty("textures", value, signature);
         } catch (Exception e) {
@@ -191,9 +193,11 @@ public class MojangAPI {
     public static class SkinRequestException extends Exception {
 
         private String reason;
+
         public SkinRequestException(String reason) {
             this.reason = reason;
         }
+
         public String getReason() {
             return reason;
         }

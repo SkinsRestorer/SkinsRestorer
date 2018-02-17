@@ -13,21 +13,24 @@ import skinsrestorer.bungee.commands.PlayerCommands;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.storage.Locale;
 import skinsrestorer.bungee.storage.SkinStorage;
+import skinsrestorer.bungee.utils.MojangAPI;
 import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.bungee.utils.MySQL;
 
 import javax.net.ssl.HttpsURLConnection;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 
 public class SkinsRestorer extends Plugin {
 
+    public static YamlConfiguration LANG;
+    public static File LANG_FILE;
     private static SkinsRestorer instance;
+    File configFile = new File(getDataFolder(), "config.yml");
     private MySQL mysql;
     private boolean multibungee;
     private boolean outdated;
-    public static YamlConfiguration LANG;
-    public static File LANG_FILE;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -65,8 +68,6 @@ public class SkinsRestorer extends Plugin {
         return outdated;
     }
 
-    File configFile = new File(getDataFolder(), "config.yml");
-
     public void createDefaultConfig() {
         try {
             if (!getDataFolder().exists())
@@ -82,7 +83,7 @@ public class SkinsRestorer extends Plugin {
                 }
             }
 
-            final Configuration configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+            final Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,12 +102,12 @@ public class SkinsRestorer extends Plugin {
                     Locale.setFile(defConfig);
                     return defConfig;
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-        for(Locale item:Locale.values()) {
+        for (Locale item : Locale.values()) {
             if (conf.getString(item.getPath()) == null) {
                 conf.set(item.getPath(), item.getDefault());
             }
@@ -116,7 +117,7 @@ public class SkinsRestorer extends Plugin {
         SkinsRestorer.LANG_FILE = lang;
         try {
             conf.save(getLangFile());
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -129,18 +130,19 @@ public class SkinsRestorer extends Plugin {
 
         instance = this;
         createDefaultConfig();
+        Configuration config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
         loadLang();
 
-        if (configuration.get) {
+        if (config.getBoolean("MySQL.Enabled") == true) {
             SkinStorage.init(mysql = new MySQL(
-                    Config.MYSQL_HOST,
-                    Config.MYSQL_PORT,
-                    Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME,
-                    Config.MYSQL_PASSWORD)
+                    config.getString("MySQL.Host"),
+                    config.getString("MySQL.Port"),
+                    config.getString("MySQL.Database"),
+                    config.getString("MySQL.Username"),
+                    config.getString("MySQL.Password")
+                    )
             );
-        }
-        else {
+        } else {
             SkinStorage.init(getDataFolder());
         }
 
@@ -150,7 +152,7 @@ public class SkinsRestorer extends Plugin {
         getProxy().registerChannel("SkinsRestorer");
         SkinApplier.init();
 
-        multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multibungee = config.getBoolean("MultiBungee.Enabled") == true || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         getProxy().getScheduler().runAsync(new Runnable() {
 
@@ -159,7 +161,7 @@ public class SkinsRestorer extends Plugin {
 
                 CommandSender console = getProxy().getConsole();
 
-                if (Config.UPDATER_ENABLED)
+                if (config.getBoolean("Updater.Enabled") == true)
                     if (checkVersion(console).equals(getVersion())) {
                         outdated = false;
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
@@ -183,8 +185,8 @@ public class SkinsRestorer extends Plugin {
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                     }
 
-                if (Config.DEFAULT_SKINS_ENABLED)
-                    for (String skin : Config.DEFAULT_SKINS)
+                if (config.getBoolean("DefaultSkins.Enabled") == true)
+                    for (String skin : config.getStringList("DefaultSkins.Names"))
                         try {
                             SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
                         } catch (SkinRequestException e) {

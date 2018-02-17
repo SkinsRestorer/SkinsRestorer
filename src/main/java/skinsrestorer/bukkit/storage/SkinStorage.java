@@ -84,7 +84,7 @@ public class SkinStorage {
         if (skin == null)
             skin = name.toLowerCase();
         Object textures = null;
-        if (config.getBoolean("DefaultSkins.Enabled") == true) {
+        if (config.getBoolean("DefaultSkins.Enabled")) {
             textures = getSkinData(config.getStringList("DefaultSkins.Names").get(new Random().nextInt(config.getStringList("DefaultSkins.Names").size())));
 
         }
@@ -125,9 +125,9 @@ public class SkinStorage {
 
             if (shouldUpdate)
                 SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), props);
-            } catch (Exception e) {
-                throw new SkinRequestException(Locale.TITLE.toString() + Locale.WAIT_A_MINUTE);
-            }
+        } catch (Exception e) {
+            throw new SkinRequestException(Locale.TITLE.toString() + Locale.WAIT_A_MINUTE);
+        }
 
         return textures;
     }
@@ -139,7 +139,7 @@ public class SkinStorage {
      */
     public static String getPlayerSkin(String name) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true) {
+        if (config.getBoolean("MySQL.Enabled")) {
 
             CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
 
@@ -193,7 +193,7 @@ public class SkinStorage {
      **/
     public static Object getSkinData(String name) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true) {
+        if (config.getBoolean("MySQL.Enabled")) {
 
             CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
             if (crs != null)
@@ -280,7 +280,7 @@ public class SkinStorage {
      **/
     public static void removePlayerSkin(String name) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true)
+        if (config.getBoolean("MySQL.Enabled"))
             mysql.execute("delete from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
         else {
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
@@ -298,7 +298,7 @@ public class SkinStorage {
      **/
     public static void removeSkinData(String name) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true)
+        if (config.getBoolean("MySQL.Enabled"))
             mysql.execute("delete from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
         else {
             File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
@@ -316,7 +316,7 @@ public class SkinStorage {
      **/
     public static void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true) {
+        if (config.getBoolean("MySQL.Enabled")) {
             CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.PlayerTable") + " where Nick=?", name);
 
             if (crs == null)
@@ -364,7 +364,7 @@ public class SkinStorage {
         } catch (Exception e) {
         }
 
-        if (config.getBoolean("MySQL.Enabled") == true) {
+        if (config.getBoolean("MySQL.Enabled")) {
             CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
 
             if (crs == null)
@@ -414,7 +414,7 @@ public class SkinStorage {
     //Getting skin data for menu
     public static Object getSkinDataMenu(String name) {
         name = name.toLowerCase();
-        if (config.getBoolean("MySQL.Enabled") == true) {
+        if (config.getBoolean("MySQL.Enabled")) {
 
             CachedRowSet crs = mysql.query("select * from " + config.getString("MySQL.SkinTable") + " where Nick=?", name);
             if (crs != null)

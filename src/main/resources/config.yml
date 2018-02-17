@@ -36,10 +36,16 @@ MySQL:
   Host: localhost
   Port: 3306
   Database: db
-  SkinTable: Skins
-  PlayerTable: Players
   Username: root
   Password: pass
+
+# If you have your own proxies and don't want to use our own, fill this option
+Proxies:
+  Enabled: false
+  List:
+    # - 123.123.123.123:12345
+    # - 123.123.123.123:12345
+    # - 123.123.123.123:12345
 
 # Enable or disable the updater.
 Updater:

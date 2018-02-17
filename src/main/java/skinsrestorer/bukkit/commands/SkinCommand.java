@@ -19,15 +19,6 @@ public class SkinCommand implements CommandExecutor {
 
     FileConfiguration config = SkinsRestorer.getInstance().getConfig();
 
-    //Method called for the commands help.
-    public void help(Player p) {
-        p.sendMessage(Locale.SR_LINE.toString());
-        p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-        if (p.hasPermission("skinsrestorer.cmds"))
-            p.sendMessage(Locale.HELP_SR.toString());
-        p.sendMessage(Locale.SR_LINE.toString());
-    }
-
     @Override
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
 
@@ -40,15 +31,23 @@ public class SkinCommand implements CommandExecutor {
 
         // Skin Help
         if (args.length == 0 || args.length > 2) {
-            if (config.getBoolean("SkinWithoutPerm") == false) {
-                if (p.hasPermission("skinsrestorer.playercmds")) {
-                    help(p);
-                } else {
-                    p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
+            if (config.getBoolean("SkinWithoutPerm")) {
+                p.sendMessage(Locale.SR_LINE.toString());
+                p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+                if (p.hasPermission("skinsrestorer.cmds"))
+                    p.sendMessage(Locale.HELP_SR.toString());
+                p.sendMessage(Locale.SR_LINE.toString());
                 }
-            }
-            else {
-                help(p);
+                else {
+                    if (p.hasPermission("skinsrestorer.playercmds")) {
+                        p.sendMessage(Locale.SR_LINE.toString());
+                        p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+                        if (p.hasPermission("skinsrestorer.cmds"))
+                            p.sendMessage(Locale.HELP_SR.toString());
+                        p.sendMessage(Locale.SR_LINE.toString());
+                    } else {
+                        p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
+                    }
             }
         }
 
@@ -71,7 +70,7 @@ public class SkinCommand implements CommandExecutor {
 
                 final String skin = sb.toString();
 
-                if (config.getBoolean("DisabledSkins.Enabled") == true)
+                if (config.getBoolean("DisabledSkins.Enabled"))
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
                         for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
@@ -119,7 +118,7 @@ public class SkinCommand implements CommandExecutor {
 
                 final String skin = sb.toString();
 
-                if (config.getBoolean("DisabledSkins.Enabled") == true)
+                if (config.getBoolean("DisabledSkins.Enabled"))
                     if (!p.hasPermission("skinsrestorer.bypassdisabled") && !p.isOp()) {
                         for (String dskin : config.getStringList("DisabledSkins.Names"))
                             if (skin.equalsIgnoreCase(dskin)) {
@@ -146,7 +145,7 @@ public class SkinCommand implements CommandExecutor {
 
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        p.sendMessage(Locale.TITLE.toString() +Locale.SKIN_CHANGE_SUCCESS);
+                        p.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
                         return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(e.getReason());
@@ -155,7 +154,24 @@ public class SkinCommand implements CommandExecutor {
                 });
                 return true;
             } else {
-                help(p);
+                if (config.getBoolean("SkinWithoutPerm")) {
+                    p.sendMessage(Locale.SR_LINE.toString());
+                    p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+                    if (p.hasPermission("skinsrestorer.cmds"))
+                        p.sendMessage(Locale.HELP_SR.toString());
+                    p.sendMessage(Locale.SR_LINE.toString());
+                }
+                else {
+                    if (p.hasPermission("skinsrestorer.playercmds")) {
+                        p.sendMessage(Locale.SR_LINE.toString());
+                        p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+                        if (p.hasPermission("skinsrestorer.cmds"))
+                            p.sendMessage(Locale.HELP_SR.toString());
+                        p.sendMessage(Locale.SR_LINE.toString());
+                    } else {
+                        p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
+                    }
+                }
                 return true;
             }
         }
