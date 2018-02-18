@@ -133,9 +133,6 @@ public class MojangAPI {
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            if (output.isEmpty())
-                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
-
             if (obj.has("status")) {
                 if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                     System.out.println("[SkinsRestorer] Switching to Mojang to get UUID.");
@@ -143,9 +140,8 @@ public class MojangAPI {
                 }
             }
 
-            if (obj.get("id").getAsString().equalsIgnoreCase("null")) {
+            if (obj.get("id").getAsString().equalsIgnoreCase("null"))
                 throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
-            }
 
             return obj.get("id").getAsString();
         } catch (IOException e) {
