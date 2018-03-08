@@ -2,7 +2,6 @@ package skinsrestorer.sponge.utils;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.profile.property.ProfileProperty;
-import skinsrestorer.bukkit.SkinsRestorer;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
