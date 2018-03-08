@@ -38,23 +38,23 @@ public class SkinCommand implements CommandExecutor {
                     p.sendMessage(Locale.HELP_SR.toString());
                 p.sendMessage(Locale.SR_LINE.toString());
                 }
-                else {
-                    if (p.hasPermission("skinsrestorer.playercmds")) {
-                        p.sendMessage(Locale.SR_LINE.toString());
-                        p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-                        if (p.hasPermission("skinsrestorer.cmds"))
-                            p.sendMessage(Locale.HELP_SR.toString());
-                        p.sendMessage(Locale.SR_LINE.toString());
-                    } else {
-                        p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
-                    }
+            else {
+                if (p.hasPermission("skinsrestorer.playercmds")) {
+                    p.sendMessage(Locale.SR_LINE.toString());
+                    p.sendMessage(Locale.HELP_PLAYER.toString().replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+                    if (p.hasPermission("skinsrestorer.cmds"))
+                        p.sendMessage(Locale.HELP_SR.toString());
+                    p.sendMessage(Locale.SR_LINE.toString());
+                } else {
+                    p.sendMessage(Locale.TITLE.toString() + Locale.PLAYER_HAS_NO_PERMISSION);
+                }
             }
         }
 
         // Skin Clear and Skin (name)
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("clear")) {
-            	if(sender.hasPermission("skinsrestorer.playercmds")) {
+            	if(sender.hasPermission("skinsrestorer.playercmds") || config.getBoolean("SkinWithoutPerm")) {
                     Object props = null;
 
                     SkinStorage.removePlayerSkin(p.getName());
@@ -69,7 +69,7 @@ public class SkinCommand implements CommandExecutor {
             		return false;
             	}
             } else {
-            	if(sender.hasPermission("skinsrestorer.playercmds")) {
+            	if(sender.hasPermission("skinsrestorer.playercmds") || config.getBoolean("SkinWithoutPerm")) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(args[0]);
 
@@ -121,7 +121,7 @@ public class SkinCommand implements CommandExecutor {
         // Skin Set
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("set")) {
-            	if(sender.hasPermission("skinsrestorer.playercmds")) {
+            	if(sender.hasPermission("skinsrestorer.playercmds") || config.getBoolean("SkinWithoutPerm")) {
                     StringBuilder sb = new StringBuilder();
                     sb.append(args[1]);
 
