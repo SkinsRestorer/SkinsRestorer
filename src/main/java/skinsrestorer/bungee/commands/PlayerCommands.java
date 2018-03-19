@@ -23,7 +23,7 @@ public class PlayerCommands extends Command {
     }
 
     //Method called for the commands help.
-    public void help(ProxiedPlayer p) {
+    private void help(ProxiedPlayer p) {
         if (!Locale.SR_LINE.isEmpty())
             p.sendMessage(new TextComponent(Locale.SR_LINE));
         p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
@@ -48,7 +48,7 @@ public class PlayerCommands extends Command {
                 if (p.hasPermission("skinsrestorer.playercmds")) {
                     help(p);
                 } else {
-                    p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
+                    p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
                 }
             } else {
                 help(p);
@@ -62,22 +62,15 @@ public class PlayerCommands extends Command {
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        SkinStorage.removePlayerSkin(p.getName());
-                        SkinStorage.setPlayerSkin(p.getName(), p.getName());
-                        SkinApplier.applySkin(p);
-                        p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
-                        return;
-                    } catch (Exception e) {
-                        return;
-                    }
+                    SkinStorage.removePlayerSkin(p.getName());
+                    SkinStorage.setPlayerSkin(p.getName(), p.getName());
+                    SkinApplier.applySkin(p);
+                    p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
                 });
             } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append(args[0]);
 
                 //skin <skin>
-                final String skin = sb.toString();
+                final String skin = args[0];
 
                 if (Config.DISABLED_SKINS_ENABLED)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
@@ -101,10 +94,8 @@ public class PlayerCommands extends Command {
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
                         p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                        return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(new TextComponent(e.getReason()));
-                        return;
                     }
                 });
                 return;
@@ -115,10 +106,7 @@ public class PlayerCommands extends Command {
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("set")) {
 
-                StringBuilder sb = new StringBuilder();
-                sb.append(args[1]);
-
-                final String skin = sb.toString();
+                final String skin = args[1];
 
                 if (Config.DISABLED_SKINS_ENABLED)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
@@ -142,16 +130,12 @@ public class PlayerCommands extends Command {
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
                         p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                        return;
                     } catch (SkinRequestException e) {
                         p.sendMessage(new TextComponent(e.getReason()));
-                        return;
                     }
                 });
-                return;
             } else {
                 help(p);
-                return;
             }
         }
     }

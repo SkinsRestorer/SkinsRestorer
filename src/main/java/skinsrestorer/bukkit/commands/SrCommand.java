@@ -6,7 +6,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
@@ -15,6 +14,8 @@ import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 
 public class SrCommand implements CommandExecutor {
@@ -33,11 +34,10 @@ public class SrCommand implements CommandExecutor {
                 for (int i = 2; i < args.length; i++)
                     if (args.length == 3)
                         sb.append(args[i]);
-                    else if (args.length > 3)
-                        if (i + 1 == args.length)
-                            sb.append(args[i]);
-                        else
-                            sb.append(args[i] + " ");
+                    else if (i + 1 == args.length)
+                        sb.append(args[i]);
+                    else
+                        sb.append(args[i]).append(" ");
 
                 final String skin = sb.toString();
                 Player player = Bukkit.getPlayer(args[1]);
@@ -56,22 +56,15 @@ public class SrCommand implements CommandExecutor {
 
                 final Player p = player;
 
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            MojangAPI.getUUID(skin);
-                            SkinStorage.setPlayerSkin(p.getName(), skin);
-                            SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                            sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                            return;
-                        } catch (SkinRequestException e) {
-                            sender.sendMessage(e.getReason());
-                            return;
-                        }
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    try {
+                        MojangAPI.getUUID(skin);
+                        SkinStorage.setPlayerSkin(p.getName(), skin);
+                        SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                        sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    } catch (SkinRequestException e) {
+                        sender.sendMessage(e.getReason());
                     }
-
                 });
             } else if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 Locale.load();
@@ -94,9 +87,9 @@ public class SrCommand implements CommandExecutor {
                 SkinStorage.removeSkinData(sb.toString());
 
                 sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
-            } else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
+            } else if (args[0].equalsIgnoreCase("props")) {
 
-                Player p = null;
+                Player p;
 
                 if (args.length == 1) {
                     if (!(sender instanceof Player)) {
@@ -104,18 +97,17 @@ public class SrCommand implements CommandExecutor {
                         return true;
                     }
                     p = (Player) sender;
-                } else if (args.length > 1) {
-                    String name = "";
+                } else {
+                    StringBuilder name = new StringBuilder();
                     for (int i = 1; i < args.length; i++)
                         if (args.length == 2)
-                            name += args[i];
-                        else if (args.length > 2)
-                            if (i + 1 == args.length)
-                                name += args[i];
-                            else
-                                name += args[i] + " ";
+                            name.append(args[i]);
+                        else if (i + 1 == args.length)
+                            name.append(args[i]);
+                        else
+                            name.append(args[i]).append(" ");
 
-                    p = Bukkit.getPlayer(name);
+                    p = Bukkit.getPlayer(name.toString());
 
                     if (p == null) {
                         sender.sendMessage(Locale.NOT_ONLINE);
@@ -147,10 +139,10 @@ public class SrCommand implements CommandExecutor {
                         cons.sendMessage("\n§aValue : §8" + value);
                         cons.sendMessage("\n§aSignature : §8" + signature);
 
-                        String decoded = Base64Coder.decodeString(value);
-                        cons.sendMessage("\n§aValue Decoded: §e" + decoded);
+                        byte[] decoded = Base64.getDecoder().decode(value);
+                        cons.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
 
-                        sender.sendMessage("\n§e" + decoded);
+                        sender.sendMessage("\n§e" + Arrays.toString(decoded));
                         sender.sendMessage("§cMore info in console!");
                     }
                 } catch (Exception e) {

@@ -4,7 +4,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.md_5.bungee.config.YamlConfiguration;
 import org.bstats.bungeecord.MetricsLite;
 import skinsrestorer.bungee.commands.AdminCommands;
 import skinsrestorer.bungee.commands.PlayerCommands;
@@ -17,7 +16,8 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 public class SkinsRestorer extends Plugin {
@@ -31,7 +31,7 @@ public class SkinsRestorer extends Plugin {
         return instance;
     }
 
-    public String checkVersion(CommandSender console) {
+    private String checkVersion(CommandSender console) {
         try {
             HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124").openConnection();
             con.setDoOutput(true);
@@ -120,14 +120,14 @@ public class SkinsRestorer extends Plugin {
                     console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                 }
 
-                if (Config.DEFAULT_SKINS_ENABLED)
-                    for (String skin : Config.DEFAULT_SKINS)
-                        try {
-                            SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
-                        } catch (SkinRequestException e) {
-                            if (SkinStorage.getSkinData(skin) == null)
-                                console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
-                        }
+            if (Config.DEFAULT_SKINS_ENABLED)
+                for (String skin : Config.DEFAULT_SKINS)
+                    try {
+                        SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
+                    } catch (SkinRequestException e) {
+                        if (SkinStorage.getSkinData(skin) == null)
+                            console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
+                    }
         });
     }
 }

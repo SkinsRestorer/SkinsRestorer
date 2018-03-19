@@ -30,7 +30,7 @@ public class LoginListener implements Listener {
             if (Config.DEFAULT_SKINS_ENABLED) {
                 try {
                     List<String> skins = Config.DEFAULT_SKINS;
-                    int randomNum = 0 + (int) (Math.random() * skins.size());
+                    int randomNum = (int) (Math.random() * skins.size());
                     SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName());
                     SkinStorage.setPlayerSkin(e.getPlayer().getName(), skins.get(randomNum));
                     SkinApplier.applySkin(e.getPlayer().getName());

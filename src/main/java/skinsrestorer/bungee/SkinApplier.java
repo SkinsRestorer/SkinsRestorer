@@ -10,54 +10,51 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class SkinApplier {
 
     private static Class<?> LoginResult;
 
     public static void applySkin(final ProxiedPlayer p) {
-        SkinsRestorer.getInstance().getExecutorService().submit(new Runnable() {
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            try {
+                Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(p.getName());
 
-            @Override
-            public void run() {
-                try {
-                    Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(p.getName());
+                InitialHandler handler = (InitialHandler) p.getPendingConnection();
 
-                    InitialHandler handler = (InitialHandler) p.getPendingConnection();
-
-                    if (handler.isOnlineMode()) {
-                        sendUpdateRequest(p, textures);
-                        return;
-                    }
-                    LoginResult profile = null;
-
-                    try {
-                        // NEW BUNGEECORD
-                        profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-                                new Class<?>[]{String.class, String.class, Property[].class},
-                                p.getUniqueId().toString(), p.getName(), new Property[]{textures});
-                    } catch (Exception e) {
-                        // FALL BACK TO OLD
-                        profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-                                new Class<?>[]{String.class, Property[].class}, p.getUniqueId().toString(),
-                                new Property[]{textures});
-                    }
-                    Property[] present = profile.getProperties();
-                    Property[] newprops = new Property[present.length + 1];
-                    System.arraycopy(present, 0, newprops, 0, present.length);
-                    newprops[present.length] = textures;
-                    profile.getProperties()[0].setName(newprops[0].getName());
-                    profile.getProperties()[0].setValue(newprops[0].getValue());
-                    profile.getProperties()[0].setSignature(newprops[0].getSignature());
-                    ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-
-                    if (SkinsRestorer.getInstance().isMultiBungee())
-                        sendUpdateRequest(p, textures);
-                    else
-                        sendUpdateRequest(p, null);
-                } catch (Exception e) {
-
+                if (handler.isOnlineMode()) {
+                    sendUpdateRequest(p, textures);
+                    return;
                 }
+                LoginResult profile;
+
+                try {
+                    // NEW BUNGEECORD
+                    profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
+                            new Class<?>[]{String.class, String.class, Property[].class},
+                            p.getUniqueId().toString(), p.getName(), new Property[]{textures});
+                } catch (Exception e) {
+                    // FALL BACK TO OLD
+                    profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
+                            new Class<?>[]{String.class, Property[].class}, p.getUniqueId().toString(),
+                            new Property[]{textures});
+                }
+                Property[] present = profile.getProperties();
+                Property[] newprops = new Property[present.length + 1];
+                System.arraycopy(present, 0, newprops, 0, present.length);
+                newprops[present.length] = textures;
+                profile.getProperties()[0].setName(newprops[0].getName());
+                profile.getProperties()[0].setValue(newprops[0].getValue());
+                profile.getProperties()[0].setSignature(newprops[0].getSignature());
+                ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
+
+                if (SkinsRestorer.getInstance().isMultiBungee())
+                    sendUpdateRequest(p, textures);
+                else
+                    sendUpdateRequest(p, null);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -73,7 +70,7 @@ public class SkinApplier {
         try {
             LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 
@@ -90,7 +87,8 @@ public class SkinApplier {
             }
 
             p.getServer().sendData("SkinsRestorer", b.toByteArray());
-        } catch (Exception e) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

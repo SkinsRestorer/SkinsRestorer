@@ -4,15 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.storage.CooldownStorage;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +34,7 @@ public class SkinCommand implements CommandExecutor {
                 if (p.hasPermission("skinsrestorer.cmds"))
                     p.sendMessage(Locale.HELP_SR);
                 p.sendMessage(Locale.SR_LINE);
-            }
-            else {
+            } else {
                 if (p.hasPermission("skinsrestorer.playercmds")) {
                     p.sendMessage(Locale.SR_LINE);
                     p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
@@ -52,7 +50,7 @@ public class SkinCommand implements CommandExecutor {
         // Skin Clear and Skin (name)
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("clear")) {
-                if(sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds")) {
                     Object props;
 
                     SkinStorage.removePlayerSkin(p.getName());
@@ -67,7 +65,7 @@ public class SkinCommand implements CommandExecutor {
                     return false;
                 }
             } else {
-                if(sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds")) {
 
                     final String skin = args[0];
 
@@ -115,7 +113,7 @@ public class SkinCommand implements CommandExecutor {
         // Skin Set
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("set")) {
-                if(sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds")) {
 
                     final String skin = args[1];
 
@@ -163,8 +161,7 @@ public class SkinCommand implements CommandExecutor {
                     if (p.hasPermission("skinsrestorer.cmds"))
                         p.sendMessage(Locale.HELP_SR);
                     p.sendMessage(Locale.SR_LINE);
-                }
-                else {
+                } else {
                     if (p.hasPermission("skinsrestorer.playercmds")) {
                         p.sendMessage(Locale.SR_LINE);
                         p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));

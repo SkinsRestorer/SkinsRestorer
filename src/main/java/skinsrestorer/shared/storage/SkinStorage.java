@@ -8,16 +8,11 @@ import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.rowset.CachedRowSet;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
@@ -25,12 +20,10 @@ public class SkinStorage {
     private static Class<?> property;
     private static MySQL mysql;
     private static File folder;
-    private static ExecutorService exe;
     private static boolean isBungee;
 
     static {
         try {
-            exe = Executors.newCachedThreadPool();
             property = Class.forName("com.mojang.authlib.properties.Property");
             isBungee = false;
         } catch (Exception e) {
@@ -49,30 +42,14 @@ public class SkinStorage {
         }
     }
 
-    /**
-     * Returns property object with filled data depending on the server version
-     * and type
-     *
-     * @param name
-     * @param value
-     * @param signature
-     * @return Property object (either oldMojang, newMojang or Bungee one)
-     */
     public static Object createProperty(String name, String value, String signature) {
         try {
             return ReflectionUtil.invokeConstructor(property,
                     new Class<?>[]{String.class, String.class, String.class}, name, value, signature);
         } catch (Exception e) {
+            e.printStackTrace();
         }
-
         return null;
-    }
-
-    /*
-     * Return the executor service which hosts all the skin updates
-     */
-    public static ExecutorService getExecutor() {
-        return exe;
     }
 
     /**
@@ -84,15 +61,14 @@ public class SkinStorage {
      *
      * @return Property object
      **/
-    @SuppressWarnings("deprecation")
     public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null)
             skin = name.toLowerCase();
-        Object textures = null;
+        Object textures;
         if (Config.DEFAULT_SKINS_ENABLED) {
-            textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+            getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
         }
         textures = getSkinData(skin);
         if (textures != null) {
@@ -100,17 +76,17 @@ public class SkinStorage {
         }
         // Schedule skin update for next login
         final String sname = skin;
-        final Object oldprops = textures;
+        final Object oldprops = null;
 
         try {
-            Object props = null;
+            Object props;
 
             props = MojangAPI.getSkinProperty(MojangAPI.getUUID(sname));
 
             if (props == null)
-                return props;
+                return null;
 
-            boolean shouldUpdate = false;
+            boolean shouldUpdate;
 
             String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
 
@@ -120,7 +96,8 @@ public class SkinStorage {
             String newurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
             try {
-                value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(oldprops, "getValue"));
+                assert false;
+                value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
 
                 String oldurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
@@ -189,12 +166,14 @@ public class SkinStorage {
 
                 buf.close();
 
+                assert skin != null;
                 if (skin.equalsIgnoreCase(name))
                     playerFile.delete();
 
                 return skin;
 
-            } catch (Exception e) {
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             return name;
@@ -270,11 +249,8 @@ public class SkinStorage {
         }
     }
 
-    public static boolean isOld(long timestamp) {
-        if (timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis()) {
-            return true;
-        }
-        return false;
+    private static boolean isOld(long timestamp) {
+        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     }
 
     public static void init(File pluginFolder) {
@@ -381,6 +357,7 @@ public class SkinStorage {
             signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
             timestamp = String.valueOf(System.currentTimeMillis());
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
         if (Config.USE_MYSQL) {
@@ -420,6 +397,7 @@ public class SkinStorage {
         File folder = new File(path);
         String[] fileNames = folder.list();
         int i = 0;
+        assert fileNames != null;
         for (String file : fileNames) {
             if (i >= number) {
                 list.put(file.replace(".skin", ""), SkinStorage.getSkinDataMenu(file.replace(".skin", "")));

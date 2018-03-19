@@ -18,10 +18,11 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
 
-    private static HashMap<String, Integer> openedMenus = new HashMap<String, Integer>();
+    private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
 
     public SkinsGUI() {
     }
@@ -76,15 +77,15 @@ public class SkinsGUI extends ItemStack implements Listener {
         return inventory;
     }
 
-    public static ItemStack createGlass(int color) {
+    private static ItemStack createGlass(int color) {
         ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
         ItemMeta meta = is.getItemMeta();
         if (color == 5) {
-            meta.setDisplayName(Locale.NEXT_PAGE.toString());
+            meta.setDisplayName(Locale.NEXT_PAGE);
         } else if (color == 4) {
-            meta.setDisplayName(Locale.PREVIOUS_PAGE.toString());
+            meta.setDisplayName(Locale.PREVIOUS_PAGE);
         } else if (color == 14) {
-            meta.setDisplayName(Locale.REMOVE_SKIN.toString());
+            meta.setDisplayName(Locale.REMOVE_SKIN);
         } else {
             meta.setDisplayName(" ");
         }
@@ -93,11 +94,11 @@ public class SkinsGUI extends ItemStack implements Listener {
         return is;
     }
 
-    public static ItemStack createSkull(Object s, String name) {
+    private static ItemStack createSkull(Object s, String name) {
         ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
-        List<String> lore = new ArrayList<String>();
-        lore.add(Locale.SELECT_SKIN.toString());
+        List<String> lore = new ArrayList<>();
+        lore.add(Locale.SELECT_SKIN);
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
@@ -116,16 +117,14 @@ public class SkinsGUI extends ItemStack implements Listener {
         Class<?> headMetaClass = headMeta.getClass();
         try {
             ReflectionUtil.getField(headMetaClass, "profile", GameProfile.class, 0).set(headMeta, profile);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
         head.setItemMeta(headMeta);
         return head;
     }
 
-    public static HashMap<String, Integer> getMenus() {
+    public static ConcurrentHashMap<String, Integer> getMenus() {
         return openedMenus;
     }
 
@@ -157,7 +156,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                if (!SkinStorage.getPlayerSkin(player.getName()).equalsIgnoreCase(player.getName())) {
+                if (!Objects.requireNonNull(SkinStorage.getPlayerSkin(player.getName())).equalsIgnoreCase(player.getName())) {
                     SkinStorage.removePlayerSkin(player.getName());
                     Object props = SkinStorage.createProperty("textures", "", "");
                     SkinsRestorer.getInstance().getFactory().applySkin(player, props);

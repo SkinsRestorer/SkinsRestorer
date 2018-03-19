@@ -13,7 +13,6 @@ public abstract class SkinFactory {
      *
      * @param p     - Player
      * @param props - Property Object
-     * @see updateSkin
      */
     public void applySkin(final Player p, Object props) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
@@ -25,10 +24,10 @@ public abstract class SkinFactory {
                 Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
                 Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
                 ReflectionUtil.invokeMethod(propmap, "clear");
-                ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class},
-                        new Object[]{"textures", props});
+                ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class}, "textures", props);
                 updateSkin(p);
             } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }

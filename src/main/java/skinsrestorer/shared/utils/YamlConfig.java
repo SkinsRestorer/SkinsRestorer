@@ -58,7 +58,7 @@ public class YamlConfig {
         return Boolean.parseBoolean(getString(path));
     }
 
-    public boolean getBoolean(String path, Object defValue) {
+    public boolean getBoolean(String path, Boolean defValue) {
         return Boolean.parseBoolean(getString(path, defValue));
     }
 
@@ -70,16 +70,13 @@ public class YamlConfig {
         return Integer.parseInt(getString(path));
     }
 
-    public int getInt(String path, Object defValue) {
+    public int getInt(String path, Integer defValue) {
         return Integer.parseInt(getString(path, defValue));
     }
 
-    public String getString(String path) {
-        String s = "";
-        try {
-            s = get(path).toString();
-        } catch (Exception e) {
-        }
+    private String getString(String path) {
+        String s;
+        s = get(path).toString();
         return s;
     }
 
@@ -97,7 +94,7 @@ public class YamlConfig {
         return null;
     }
 
-    public boolean isEmpty() {
+    private boolean isEmpty() {
         try {
             Scanner input = new Scanner(file);
             if (input.hasNextLine()) {
@@ -115,37 +112,37 @@ public class YamlConfig {
         try {
             Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
                     null, "getProvider", new Class<?>[]{Class.class},
-                    new Object[]{Class.forName("net.md_5.bungee.config.YamlConfiguration")});
+                    Class.forName("net.md_5.bungee.config.YamlConfiguration"));
 
-            config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[]{File.class},
-                    new Object[]{file});
+            config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[]{File.class}, file);
         } catch (Exception e) {
             try {
                 config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
-                        null, "loadConfiguration", new Class<?>[]{File.class}, new Object[]{file});
+                        null, "loadConfiguration", new Class<?>[]{File.class}, file);
             } catch (Exception ex) {
+                e.printStackTrace();
             }
         }
     }
 
-    public void save() {
+    private void save() {
         try {
             Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
                     null, "getProvider", new Class<?>[]{Class.class},
-                    new Object[]{Class.forName("net.md_5.bungee.config.YamlConfiguration")});
+                    Class.forName("net.md_5.bungee.config.YamlConfiguration"));
 
             ReflectionUtil.invokeMethod(provider.getClass(), provider, "save",
                     new Class<?>[]{Class.forName("net.md_5.bungee.config.Configuration"), File.class}, config, file);
         } catch (Exception e) {
             try {
-                ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[]{File.class},
-                        new Object[]{file});
+                ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[]{File.class}, file);
             } catch (Exception ex) {
                 try {
                     ReflectionUtil.invokeMethod(config.getClass(), config, "save",
                             new Class<?>[]{Class.forName("org.bukkit.configuration.Configuration"), File.class},
                             config, file);
                 } catch (Exception exc) {
+                    e.printStackTrace();
                 }
             }
         }
