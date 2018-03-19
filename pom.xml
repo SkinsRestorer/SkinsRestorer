@@ -38,6 +38,10 @@
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>luck-repo</id>
+            <url>https://ci.lucko.me/plugin/repository/everything/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -51,6 +55,13 @@
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
+            <version>1.12-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- BungeeCord-Proxy module (required for SkinApplier) -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

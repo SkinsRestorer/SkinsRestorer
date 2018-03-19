@@ -1,10 +1,10 @@
-package skinsrestorer.bungee.storage;
+package skinsrestorer.shared.storage;
 
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.bungee.utils.MojangAPI;
-import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.bungee.utils.MySQL;
+import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.rowset.CachedRowSet;
@@ -26,13 +26,26 @@ public class SkinStorage {
     private static MySQL mysql;
     private static File folder;
     private static ExecutorService exe;
+    private static boolean isBungee;
 
     static {
         try {
             exe = Executors.newCachedThreadPool();
-            property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+            property = Class.forName("com.mojang.authlib.properties.Property");
+            isBungee = false;
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+            try {
+                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+                isBungee = true;
+            } catch (Exception ex) {
+                try {
+                    property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
+                    isBungee = false;
+                } catch (Exception exc) {
+                    System.out.println(
+                            "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+                }
+            }
         }
     }
 
@@ -118,9 +131,13 @@ public class SkinStorage {
 
             setSkinData(sname, props);
 
-            if (shouldUpdate) {
-                skinsrestorer.bungee.SkinApplier.applySkin(name);
-            }
+            if (shouldUpdate)
+                if (isBungee)
+                    skinsrestorer.bungee.SkinApplier.applySkin(name);
+                else {
+                    SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
+                            props);
+                }
         } catch (Exception e) {
             throw new SkinRequestException(Locale.WAIT_A_MINUTE);
         }
@@ -209,7 +226,7 @@ public class SkinStorage {
 
                 } catch (Exception e) {
                     removeSkinData(name);
-                    System.out.println("[BSkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                    System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
                 }
 
             return null;
@@ -246,7 +263,7 @@ public class SkinStorage {
 
             } catch (Exception e) {
                 removeSkinData(name);
-                System.out.println("[BSkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
             }
 
             return null;
@@ -429,7 +446,7 @@ public class SkinStorage {
                     return createProperty("textures", value, signature);
 
                 } catch (Exception e) {
-                    System.out.println("[BSkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                    System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
                 }
 
             return null;
@@ -459,7 +476,7 @@ public class SkinStorage {
                 return SkinStorage.createProperty("textures", value, signature);
 
             } catch (Exception e) {
-                System.out.println("[BSkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
             }
 
             return null;

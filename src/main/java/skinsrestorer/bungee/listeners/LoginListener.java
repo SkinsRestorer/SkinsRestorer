@@ -1,11 +1,16 @@
 package skinsrestorer.bungee.listeners;
 
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +22,7 @@ public class LoginListener implements Listener {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
                     && e.getPlayer().hasPermission("skinsrestorer.cmds"))
-                e.getPlayer().sendMessage(new TextComponent(C.c(Locale.OUTDATED)));
+                e.getPlayer().sendMessage(new TextComponent(Locale.OUTDATED));
 
             if (Config.DISABLE_ONJOIN_SKINS)
                 return;

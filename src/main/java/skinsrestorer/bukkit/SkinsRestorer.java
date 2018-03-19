@@ -1,13 +1,8 @@
 package skinsrestorer.bukkit;
 
-import com.google.common.base.Charsets;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,13 +18,13 @@ import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
-import skinsrestorer.bukkit.storage.Locale;
-import skinsrestorer.bukkit.storage.SkinStorage;
-import skinsrestorer.bukkit.utils.MojangAPI;
-import skinsrestorer.bukkit.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.bukkit.utils.MySQL;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.utils.ProxyManager;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.*;
@@ -37,8 +32,6 @@ import java.util.List;
 
 public class SkinsRestorer extends JavaPlugin {
 
-    public static YamlConfiguration LANG;
-    public static File LANG_FILE;
     private static SkinsRestorer instance;
     private SkinFactory factory;
     private MySQL mysql;
@@ -60,71 +53,6 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
-    private void loadLang() {
-        File lang = new File(getDataFolder(), "messages.yml");
-        OutputStream out = null;
-        InputStream defLangStream = this.getResource("messages.yml");
-        if (!lang.exists()) {
-            try {
-                getDataFolder().mkdir();
-                lang.createNewFile();
-                if (defLangStream != null) {
-                    out = new FileOutputStream(lang);
-                    int read;
-                    byte[] bytes = new byte[1024];
-
-                    while ((read = defLangStream.read(bytes)) != -1) {
-                        out.write(bytes, 0, read);
-                    }
-                    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defLangStream, Charsets.UTF_8));
-                    Locale.setFile(defConfig);
-                    return;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                this.setEnabled(false);
-            } finally {
-                if (defLangStream != null) {
-                    try {
-                        defLangStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (out != null) {
-                    try {
-                        out.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        }
-
-        YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
-        for (Locale item : Locale.values()) {
-            if (conf.getString(item.getPath()) == null) {
-                conf.set(item.getPath(), item.getDefault());
-            }
-        }
-
-        Locale.setFile(conf);
-        try {
-            conf.save(lang);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public YamlConfiguration getLang() {
-        return LANG;
-    }
-
-    public File getLangFile() {
-        return LANG_FILE;
-    }
-
     public void onEnable() {
 
         ConsoleCommandSender console = getServer().getConsoleSender();
@@ -137,27 +65,10 @@ public class SkinsRestorer extends JavaPlugin {
         updater.setVersionComparator(VersionComparator.SEM_VER);
 
         instance = this;
-        this.saveDefaultConfig();
-        loadLang();
-        FileConfiguration config = this.getConfig();
+        factory = new UniversalSkinFactory();
+        Config.load(getResource("config.yml"));
+        Locale.load();
 
-        try {
-            // Doesn't support Cauldron and stuff..
-            Class.forName("net.minecraftforge.cauldron.CauldronHooks");
-            console.sendMessage("§e[§2SkinsRestorer§e] §cSkinsRestorer doesn't support Cauldron, Thermos or KCauldron, Sorry :(");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } catch (Exception e) {
-            try {
-                // Checking for old versions
-                factory = (SkinFactory) Class
-                        .forName("skinsrestorer.bukkit.skinfactory.SkinFactory_" + ReflectionUtil.serverVersion)
-                        .newInstance();
-            } catch (Exception ex) {
-                // 1.8+++
-                factory = new UniversalSkinFactory();
-            }
-        }
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
         // Detect ChangeSkin
@@ -208,7 +119,7 @@ public class SkinsRestorer extends JavaPlugin {
                 }
             });
 
-            if (config.getBoolean("Updater.Enabled")) {
+            if (Config.UPDATER_ENABLED) {
                 updater.checkForUpdate(new UpdateCallback() {
                     @Override
                     public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -251,13 +162,14 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
-        if (config.getBoolean("MySQL.Enabled"))
+        // Initialise MySQL
+        if (Config.USE_MYSQL)
             SkinStorage.init(mysql = new MySQL(
-                    config.getString("MySQL.Host"),
-                    config.getString("MySQL.Port"),
-                    config.getString("MySQL.Database"),
-                    config.getString("MySQL.Username"),
-                    config.getString("MySQL.Password")
+                    Config.MYSQL_HOST,
+                    Config.MYSQL_PORT,
+                    Config.MYSQL_DATABASE,
+                    Config.MYSQL_USERNAME,
+                    Config.MYSQL_PASSWORD
             ));
         else
             SkinStorage.init(getDataFolder());
@@ -268,29 +180,6 @@ public class SkinsRestorer extends JavaPlugin {
         getCommand("skinsrestorer").setExecutor(new SrCommand());
         getCommand("skin").setExecutor(new SkinCommand());
         getCommand("skins").setExecutor(new GUICommand());
-        getCommand("getsrproxy").setExecutor(new CommandExecutor() {
-            @Override
-            public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-                ProxyManager.getList();
-                commandSender.sendMessage("yeah we did that");
-                return true;
-            }
-        });
-        /**
-         * This is deprecated, since it like never works in a combination with BungeeCord.
-         * If you so desperately want to know the version -> /version SkinsRestorer
-         getCommand("skinver").setExecutor(new CommandExecutor() {
-
-         public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] arg3) {
-         sender.sendMessage("§8This server is running §aSkinsRestorer §e"
-         + SkinsRestorer.getInstance().getVersion() + "§8, made with love by §c"
-         + SkinsRestorer.getInstance().getDescription().getAuthors().get(0)
-         + "§8, utilizing Minecraft §a" + ReflectionUtil.serverVersion + "§8.");
-         return false;
-         }
-
-         });
-         */
 
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
         Bukkit.getPluginManager().registerEvents(new Listener() {
@@ -300,14 +189,14 @@ public class SkinsRestorer extends JavaPlugin {
             public void onLogin(PlayerJoinEvent e) {
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                     try {
-                        if (config.getBoolean("DisableOnJoinSkins")) {
+                        if (Config.DISABLE_ONJOIN_SKINS) {
                             // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
                             // shouldn't it just skip it if it's true?
                             return;
                         }
-                        if (config.getBoolean("DefaultSkins.Enabled"))
+                        if (Config.DEFAULT_SKINS_ENABLED)
                             if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-                                List<String> skins = config.getStringList("DefaultSkins.Names");
+                                List<String> skins = Config.DEFAULT_SKINS;
                                 int randomNum = 0 + (int) (Math.random() * skins.size());
                                 factory.applySkin(e.getPlayer(),
                                         SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
@@ -325,7 +214,7 @@ public class SkinsRestorer extends JavaPlugin {
             @Override
             public void run() {
 
-                if (config.getBoolean("Updater.Enabled")) {
+                if (Config.UPDATER_ENABLED) {
                     updater.checkForUpdate(new UpdateCallback() {
                         @Override
                         public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -361,15 +250,13 @@ public class SkinsRestorer extends JavaPlugin {
                     });
                 }
 
-                if (config.getBoolean("DefaultSkins.Enabled"))
-                    for (String skin : config.getStringList("DefaultSkins.Names"))
+                if (Config.DEFAULT_SKINS_ENABLED)
+                    for (String skin : Config.DEFAULT_SKINS)
                         try {
                             SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
-                            console.sendMessage("we tried to do that");
                         } catch (SkinRequestException e) {
                             if (SkinStorage.getSkinData(skin) == null)
                                 console.sendMessage("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error: " + e.getReason());
-                                console.sendMessage("we tried to do that but couldnt");
                         }
             }
 

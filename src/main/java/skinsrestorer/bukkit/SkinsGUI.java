@@ -13,8 +13,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import skinsrestorer.bukkit.storage.Locale;
-import skinsrestorer.bukkit.storage.SkinStorage;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
@@ -145,7 +145,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                 SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
                 SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                player.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
+                player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 player.closeInventory();
             } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getDurability() == 14) {
                 if (SkinStorage.getPlayerSkin(player.getName()) == null) {
@@ -162,10 +162,10 @@ public class SkinsGUI extends ItemStack implements Listener {
                     Object props = SkinStorage.createProperty("textures", "", "");
                     SkinsRestorer.getInstance().getFactory().applySkin(player, props);
                     SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                    player.sendMessage(Locale.TITLE.toString() + Locale.SKIN_CHANGE_SUCCESS);
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                     player.closeInventory();
                 } else {
-                    player.sendMessage(Locale.TITLE.toString() + Locale.NO_SKIN_DATA);
+                    player.sendMessage(Locale.NO_SKIN_DATA);
                 }
             } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
                 int currentPage = getMenus().get(player.getName());

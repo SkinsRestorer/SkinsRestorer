@@ -1,4 +1,6 @@
-package skinsrestorer.sponge.utils;
+package skinsrestorer.shared.utils;
+
+import skinsrestorer.shared.storage.Config;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -38,23 +40,53 @@ public class MySQL {
     }
 
     public void createTable() {
+        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
+                + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
+                + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Value` text COLLATE utf8_unicode_ci,"
+                + "`Signature` text COLLATE utf8_unicode_ci,"
+                + "`timestamp` text COLLATE utf8_unicode_ci,"
+                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+        try {
+            addColumn();
+        } catch (SQLException e) {
+            if (e.getMessage().contains("doesn't exist")) {
+                execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+            }
+        }
     }
 
-    public void execute(final PreparedStatement ps) {
+    public void addColumn() throws SQLException {
+        execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+    }
+
+    public void execute(final String query, final Object... vars) {
         if (isConnected())
             exe.execute(new Runnable() {
 
                 @Override
                 public void run() {
                     try {
+                        PreparedStatement ps = prepareStatement(query, vars);
                         ps.execute();
                         ps.close();
                     } catch (SQLException e) {
+                        if (e.getMessage().contains("Duplicate column name")) {
+                            return;
+                        }
+                        e.printStackTrace();
                         System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
                     }
                 }
 
             });
+        else {
+            openConnection();
+            execute(query, vars);
+        }
     }
 
     public boolean isConnected() {
@@ -72,7 +104,7 @@ public class MySQL {
                 @Override
                 public void run() {
                     try {
-                        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database,
+                        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false",
                                 username, password);
                         System.out.println("[SkinsRestorer] Connected to MySQL!");
                         createTable();
@@ -84,7 +116,7 @@ public class MySQL {
             });
     }
 
-    public PreparedStatement prepareStatement(String query, Object... vars) {
+    private PreparedStatement prepareStatement(String query, Object... vars) {
         try {
             if (isConnected()) {
                 PreparedStatement ps = con.prepareStatement(query);
@@ -95,6 +127,9 @@ public class MySQL {
                         ps.setObject(i, obj);
                     }
                 return ps;
+            } else {
+                openConnection();
+                return prepareStatement(query, vars);
             }
         } catch (SQLException e) {
             System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
@@ -103,7 +138,7 @@ public class MySQL {
         return null;
     }
 
-    public CachedRowSet query(final PreparedStatement preparedStatement) {
+    public CachedRowSet query(final String query, final Object... vars) {
         CachedRowSet rowSet = null;
         if (isConnected())
             try {
@@ -112,15 +147,17 @@ public class MySQL {
                     @Override
                     public CachedRowSet call() {
                         try {
-                            ResultSet rs = preparedStatement.executeQuery();
+                            PreparedStatement ps = prepareStatement(query, vars);
+
+                            ResultSet rs = ps.executeQuery();
                             CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
                             crs.populate(rs);
                             rs.close();
-
-                            preparedStatement.close();
+                            ps.close();
 
                             if (crs.next())
                                 return crs;
+
                         } catch (SQLException e) {
                             System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
                         }
@@ -131,9 +168,15 @@ public class MySQL {
 
                 if (future.get() != null)
                     rowSet = future.get();
+
             } catch (Exception e) {
                 System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
             }
+        else {
+            openConnection();
+            query(query, vars);
+        }
+
         return rowSet;
     }
 }

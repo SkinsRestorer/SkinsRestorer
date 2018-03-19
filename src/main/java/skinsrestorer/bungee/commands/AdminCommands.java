@@ -2,18 +2,18 @@ package skinsrestorer.bungee.commands;
 
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.config.ConfigurationProvider;
-import net.md_5.bungee.config.YamlConfiguration;
+import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.connection.LoginResult;
+import java.util.Base64;
 import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.bungee.storage.SkinStorage;
-import skinsrestorer.bungee.utils.MojangAPI;
-import skinsrestorer.bungee.utils.MojangAPI.SkinRequestException;
-
-import java.io.File;
-import java.io.IOException;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.MojangAPI;
 
 public class AdminCommands extends Command {
 
@@ -27,13 +27,9 @@ public class AdminCommands extends Command {
         if (sender.hasPermission("skinsrestorer.cmds")) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                File file = new File(SkinsRestorer.getInstance().getDataFolder(), "config.yml");
-                try {
-                    ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                sender.sendMessage(Locale.RELOAD);
+                Locale.load();
+                Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+                sender.sendMessage(new TextComponent(Locale.RELOAD));
             }
 
             else if (args.length == 2 && args[0].equalsIgnoreCase("drop")) {
@@ -71,22 +67,17 @@ public class AdminCommands extends Command {
 
                 final ProxiedPlayer p = player;
 
-                SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(new Runnable() {
-
-                    @Override
-                    public void run() {
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
                         try {
                             MojangAPI.getUUID(skin);
                             SkinStorage.setPlayerSkin(p.getName(), skin);
                             SkinApplier.applySkin(p);
                             sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                             return;
-                        } catch (SkinRequestException e) {
+                        } catch (MojangAPI.SkinRequestException e) {
                             sender.sendMessage(e.getReason());
                             return;
                         }
-                    }
-
                 });
 
             } else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
@@ -122,12 +113,8 @@ public class AdminCommands extends Command {
                     }
                 }
 
-                /**
-                 * There is no viable way to make this work without BungeeCord-Proxy.
-                 * This will be removed from the file in a few releases
-
                  InitialHandler h = (InitialHandler) p.getPendingConnection();
-                 Property prop = h.getLoginProfile().getProperties()[0];
+                 LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
 
                  if (prop == null) {
                  sender.sendMessage(Locale.NO_SKIN_DATA);
@@ -140,13 +127,12 @@ public class AdminCommands extends Command {
                  cons.sendMessage("\n§aValue : §8" + prop.getValue());
                  cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
 
-                 String decoded = Base64Coder.decodeString(prop.getValue());
-                 cons.sendMessage("\n§aValue Decoded: §e" + decoded);
+                 byte[] decoded = Base64.getDecoder().decode(prop.getValue());
+                 cons.sendMessage("\n§aValue Decoded: §e" + decoded.toString());
 
                  sender.sendMessage("\n§e" + decoded);
 
                  sender.sendMessage("§cMore info in console!");
-                 **/
             } else {
                 if (!Locale.SR_LINE.isEmpty())
                     sender.sendMessage(Locale.SR_LINE);
