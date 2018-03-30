@@ -135,11 +135,15 @@ public class MojangAPI {
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            if (output.isEmpty()) {
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
-            } else if (obj.has("error")) {
-                return getUUIDMojang(name);
+            if (obj.has("status")) {
+                if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    System.out.println("[SkinsRestorer] Switching to Mojang to get UUID.");
+                    return getUUIDMojang(name);
+                }
             }
+
+            if (obj.get("id").getAsString().equalsIgnoreCase("null"))
+                throw new SkinRequestException(Locale.TITLE.toString() + Locale.NOT_PREMIUM);
 
             return obj.get("id").getAsString();
         } catch (IOException e) {
@@ -309,4 +313,25 @@ public class MojangAPI {
             this.signature = signature;
         }
     }
+
+    private static class HTTPResponse {
+        private String output;
+        private int status;
+
+        public String getOutput() {
+            return output;
+        }
+
+        public void setOutput(String output) {
+            this.output = output;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
+    }    
 }
