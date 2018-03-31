@@ -33,10 +33,10 @@ public class AdminCommands extends Command {
                 Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
                 sender.sendMessage(new TextComponent(Locale.RELOAD));
             } else if (args.length == 2 && args[0].equalsIgnoreCase("drop")) {
-                StringBuilder sb = new StringBuilder();
+                String nick = args[1];
 
-                SkinStorage.removeSkinData(sb.toString());
-                sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", sb.toString()));
+                SkinStorage.removeSkinData(nick);
+                sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", nick));
 
             } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
 
@@ -72,52 +72,45 @@ public class AdminCommands extends Command {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
 
             } else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
-
+                // sr props <player>
                 ProxiedPlayer p;
 
                 if (args.length == 1) {
                     if (!(sender instanceof ProxiedPlayer)) {
                         sender.sendMessage(Locale.NOT_PLAYER);
                     }
-                    p = (ProxiedPlayer) sender;
-                } else {
-                    StringBuilder name = new StringBuilder();
-                    for (int i = 1; i < args.length; i++)
-                        if (args.length == 2)
-                            name.append(args[i]);
-                        else if (i + 1 == args.length)
-                            name.append(args[i]);
-                        else
-                            name.append(args[i]).append(" ");
+                }
 
-                    p = ProxyServer.getInstance().getPlayer(name.toString());
+                if (args.length == 2) {
+                    String nick = args[1];
 
+                    p = ProxyServer.getInstance().getPlayer(nick);
                     if (p == null) {
                         sender.sendMessage(Locale.NOT_ONLINE);
                         return;
                     }
+
+                    InitialHandler h = (InitialHandler) p.getPendingConnection();
+                    LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
+
+                    if (prop == null) {
+                        sender.sendMessage(Locale.NO_SKIN_DATA);
+                        return;
+                    }
+
+                    CommandSender cons = ProxyServer.getInstance().getConsole();
+
+                    cons.sendMessage("\n§aName: §8" + prop.getName());
+                    cons.sendMessage("\n§aValue : §8" + prop.getValue());
+                    cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
+
+                    byte[] decoded = Base64.getDecoder().decode(prop.getValue());
+                    cons.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+
+                    sender.sendMessage("\n§e" + Arrays.toString(decoded));
+
+                    sender.sendMessage("§cMore info in console!");
                 }
-
-                InitialHandler h = (InitialHandler) p.getPendingConnection();
-                LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
-
-                if (prop == null) {
-                    sender.sendMessage(Locale.NO_SKIN_DATA);
-                    return;
-                }
-
-                CommandSender cons = ProxyServer.getInstance().getConsole();
-
-                cons.sendMessage("\n§aName: §8" + prop.getName());
-                cons.sendMessage("\n§aValue : §8" + prop.getValue());
-                cons.sendMessage("\n§aSignature : §8" + prop.getSignature());
-
-                byte[] decoded = Base64.getDecoder().decode(prop.getValue());
-                cons.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
-
-                sender.sendMessage("\n§e" + Arrays.toString(decoded));
-
-                sender.sendMessage("§cMore info in console!");
             } else {
                 if (!Locale.SR_LINE.isEmpty())
                     sender.sendMessage(Locale.SR_LINE);
