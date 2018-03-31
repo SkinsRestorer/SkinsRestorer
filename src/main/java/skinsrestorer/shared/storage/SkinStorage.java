@@ -66,9 +66,9 @@ public class SkinStorage {
 
         if (skin == null)
             skin = name.toLowerCase();
-        Object textures;
+        Object textures = null;
         if (Config.DEFAULT_SKINS_ENABLED) {
-            getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+            textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
         }
         textures = getSkinData(skin);
         if (textures != null) {
@@ -76,17 +76,17 @@ public class SkinStorage {
         }
         // Schedule skin update for next login
         final String sname = skin;
-        final Object oldprops = null;
+        final Object oldprops = textures;
 
         try {
-            Object props;
+            Object props = null;
 
             props = MojangAPI.getSkinProperty(MojangAPI.getUUID(sname));
 
             if (props == null)
-                return null;
+                return props;
 
-            boolean shouldUpdate;
+            boolean shouldUpdate = false;
 
             String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
 
@@ -96,8 +96,7 @@ public class SkinStorage {
             String newurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
             try {
-                assert false;
-                value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
+                value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(oldprops, "getValue"));
 
                 String oldurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
