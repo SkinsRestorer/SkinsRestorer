@@ -1,5 +1,6 @@
 package skinsrestorer.shared.storage;
 
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.YamlConfig;
 
 import java.io.File;
@@ -61,7 +62,7 @@ public class Locale {
                 if (f.getType() != String.class)
                     continue;
 
-                f.set(null, locale.getString(f.getName(), f.get(null)));
+                f.set(null, C.c(locale.getString(f.getName(), f.get(null))));
             }
         } catch (Exception e) {
             System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
