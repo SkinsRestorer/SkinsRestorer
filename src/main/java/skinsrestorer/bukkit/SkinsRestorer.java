@@ -101,8 +101,7 @@ public class SkinsRestorer extends JavaPlugin {
                             try {
                                 factory.applySkin(player,
                                         SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            } catch (IOException ignored) {
                             }
                             factory.updateSkin(player);
                         }
