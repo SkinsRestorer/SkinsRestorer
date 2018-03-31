@@ -53,8 +53,7 @@ public class SkinApplier {
                     sendUpdateRequest(p, textures);
                 else
                     sendUpdateRequest(p, null);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         });
 
@@ -80,6 +79,8 @@ public class SkinApplier {
 
         if(p.getServer() == null)
             return;
+
+        System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
