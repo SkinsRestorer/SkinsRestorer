@@ -38,6 +38,33 @@ public class AdminCommands extends Command {
                 SkinStorage.removeSkinData(nick);
                 sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", nick));
 
+            } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
+                // Todo: Add /sr clear <player> to admin help and implement that command in bukkit
+                String nick = args[1];
+                ProxiedPlayer player = ProxyServer.getInstance().getPlayer(nick);
+
+                if (player == null)
+                    for (ProxiedPlayer pl : ProxyServer.getInstance().getPlayers())
+                        if (pl.getName().startsWith(args[1])) {
+                            player = pl;
+                            break;
+                        }
+
+                if (player == null) {
+                    sender.sendMessage(Locale.NOT_ONLINE);
+                    return;
+                }
+
+                final ProxiedPlayer p = player;
+
+                // Todo: Make sure to check if DefaultSkins are enabled and set the correct skin
+                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                    SkinStorage.removePlayerSkin(p.getName());
+                    SkinStorage.setPlayerSkin(p.getName(), p.getName());
+                    SkinApplier.applySkin(p);
+                    p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                });
+
             } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
 
                 final String skin = args[2];
