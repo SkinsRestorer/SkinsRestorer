@@ -17,8 +17,7 @@ public class ReflectionUtil {
             Class.forName("org.bukkit.Bukkit");
             setObject(ReflectionUtil.class, null, "serverVersion", Bukkit.getServer().getClass().getPackage().getName()
                     .substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1));
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 
