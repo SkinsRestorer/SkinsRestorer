@@ -75,6 +75,12 @@ public class SkinApplier {
     }
 
     private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
+        if(p == null)
+            return;
+
+        if(p.getServer() == null)
+            return;
+
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
         try {
