@@ -23,6 +23,7 @@ public class Locale {
             + "\n\n   &2/sr config &7- &fhelp page for usefull in game config settings"
             + "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
             + "\n    &2/sr drop <player> &7- &fDrops player skin data."
+            + "\n    &2/sr clear <player> &7- &fClears player data."
             + "\n    &2/sr reload &7- &fReloads the config and locale"
             + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
     public static String ADMIN_SET_SKIN = "&e[&2SkinsRestorer&e] &2You set %player's skin.";
