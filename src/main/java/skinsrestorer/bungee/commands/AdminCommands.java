@@ -42,7 +42,6 @@ public class AdminCommands extends Command {
             sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", nick));
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("clear")) {
-            // Todo: Add /sr clear <player> to admin help and implement that command in bukkit
             String nick = args[1];
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(nick);
 
