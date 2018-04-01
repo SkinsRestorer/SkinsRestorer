@@ -78,13 +78,9 @@ public class SkinCommand implements CommandExecutor {
                                 }
                         }
 
-                    if (p.hasPermission("skinsrestorer.bypasscooldown")) {
-                        return false;
-                    } else {
-                        if (CooldownStorage.hasCooldown(p.getName())) {
-                            p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
-                            return true;
-                        }
+                    if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                        p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                        return true;
                     }
 
                     CooldownStorage.resetCooldown(p.getName());
