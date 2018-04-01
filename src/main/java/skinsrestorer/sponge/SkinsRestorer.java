@@ -74,7 +74,11 @@ public class SkinsRestorer {
             File config = new File(directory + File.separator + "config.conf");
             File data = new File(directory + File.separator + "data.conf");
 
-            if (config.exists()) {
+            // Throws
+            // [21:31:02 ERROR] [STDERR]: java.lang.NullPointerException
+            //         [21:31:02 ERROR] [STDERR]:      at skinsrestorer.sponge.SkinsRestorer.reloadConfigs(SkinsRestorer.java:84)
+            //         [21:31:02 ERROR] [STDERR]:      at skinsrestorer.sponge.SkinsRestorer.onInitialize(SkinsRestorer.java:52)
+            /*if (!config.exists()) {
                 config.createNewFile();
                 try {
                     Files.copy(this.getClass().getResource("config.conf").openStream(),
@@ -82,7 +86,7 @@ public class SkinsRestorer {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
+            }*/
 
             if (!data.exists())
                 data.createNewFile();

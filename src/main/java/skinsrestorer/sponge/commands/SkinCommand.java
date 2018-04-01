@@ -58,7 +58,8 @@ public class SkinCommand implements CommandExecutor {
 
         SkinsRestorer.getInstance().saveConfigs();
 
-        p.sendMessage(Text.builder("Your skin has been changed.").color(TextColors.DARK_BLUE).build());
+        p.sendMessage(Text.builder("Your skin has been changed.").color(TextColors.DARK_GREEN).build());
+        p.sendMessage(Text.builder("Please rejoin to see it active.").color(TextColors.DARK_GREEN).build());
 
         return CommandResult.success();
     }
