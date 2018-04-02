@@ -13,6 +13,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.listeners.LoginListener;
+import skinsrestorer.sponge.utils.SkinApplier;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,6 +30,8 @@ public class SkinsRestorer {
     private ConfigurationLoader<CommentedConfigurationNode> dataManager;
     private CommentedConfigurationNode configRoot;
     private CommentedConfigurationNode dataRoot;
+
+    private SkinApplier skinApplier;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -59,9 +62,11 @@ public class SkinsRestorer {
 
         CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
-                .executor(new SkinCommand()).build();
+                .executor(new SkinCommand(this)).build();
 
         Sponge.getCommandManager().register(this, skinCommand, "skin");
+
+        this.skinApplier = new SkinApplier(this);
     }
 
     public void reloadConfigs() {
@@ -110,4 +115,11 @@ public class SkinsRestorer {
         }
     }
 
+    public SkinApplier getSkinApplier() {
+        return skinApplier;
+    }
+
+    public void setSkinApplier(SkinApplier skinApplier) {
+        this.skinApplier = skinApplier;
+    }
 }

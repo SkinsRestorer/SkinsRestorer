@@ -1,14 +1,21 @@
 package skinsrestorer.sponge.commands;
 
+import com.flowpowered.math.vector.Vector3d;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.entity.living.player.tab.TabList;
+import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 import skinsrestorer.sponge.SkinsRestorer;
 import skinsrestorer.sponge.utils.MojangAPI;
 
@@ -16,6 +23,11 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class SkinCommand implements CommandExecutor {
+    private SkinsRestorer plugin;
+
+    public SkinCommand(SkinsRestorer plugin) {
+        this.plugin = plugin;
+    }
 
     @Override
     public CommandResult execute(CommandSource source, CommandContext args) throws CommandException {
@@ -58,10 +70,10 @@ public class SkinCommand implements CommandExecutor {
 
         SkinsRestorer.getInstance().saveConfigs();
 
+        plugin.getSkinApplier().updatePlayerSkin(p);
+
         p.sendMessage(Text.builder("Your skin has been changed.").color(TextColors.DARK_GREEN).build());
-        p.sendMessage(Text.builder("Please rejoin to see it active.").color(TextColors.DARK_GREEN).build());
 
         return CommandResult.success();
     }
-
 }
