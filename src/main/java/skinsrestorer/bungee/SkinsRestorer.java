@@ -84,7 +84,7 @@ public class SkinsRestorer extends Plugin {
             SkinStorage.init(getDataFolder());
         }
 
-        getProxy().getPluginManager().registerListener(this, new LoginListener());
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerCommand(this, new AdminCommands());
         getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
         getProxy().registerChannel("SkinsRestorer");

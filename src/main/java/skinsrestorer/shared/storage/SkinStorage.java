@@ -63,56 +63,60 @@ public class SkinStorage {
      **/
     public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
-
-        if (skin == null)
+        if (skin == null) {
             skin = name.toLowerCase();
+        }
+
         Object textures = null;
         if (Config.DEFAULT_SKINS_ENABLED) {
             textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
         }
+
         textures = getSkinData(skin);
+
         if (textures != null) {
             return textures;
         }
+
         // Schedule skin update for next login
         final String sname = skin;
         final Object oldprops = textures;
-
+        // No cached skin found, get from MojangAPI, save and return
         try {
             Object props = null;
 
-            props = MojangAPI.getSkinProperty(MojangAPI.getUUID(sname));
-
-            if (props == null)
-                return props;
+            textures = MojangAPI.getSkinProperty(MojangAPI.getUUID(sname));
 
             boolean shouldUpdate = false;
 
-            String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(props, "getValue"));
+            String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(textures, "getValue"));
 
             String urlbeg = "url\":\"";
             String urlend = "\"}}";
 
             String newurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
-            try {
+            // TODO: This is useless! oldprops is always null and always triggers an "shouldUpdate".
+            /*try {
                 value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(oldprops, "getValue"));
 
                 String oldurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
 
+                System.out.println("oldurl: " + oldurl);
+
                 shouldUpdate = !oldurl.equals(newurl);
             } catch (Exception e) {
+                e.printStackTrace();
                 shouldUpdate = true;
-            }
+            }*/
 
-            setSkinData(sname, props);
+            setSkinData(sname, textures);
 
             if (shouldUpdate)
                 if (isBungee)
                     skinsrestorer.bungee.SkinApplier.applySkin(name);
                 else {
-                    SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name),
-                            props);
+                    SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), textures);
                 }
         } catch (Exception e) {
             throw new SkinRequestException(Locale.WAIT_A_MINUTE);
@@ -198,6 +202,7 @@ public class SkinStorage {
                         Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
                         if (skin != null) {
                             SkinStorage.setSkinData(name, skin);
+                            //TODO: return skin object from MojangAPI instead old one!
                         }
                     }
                     return createProperty("textures", value, signature);
@@ -235,6 +240,7 @@ public class SkinStorage {
                     Object skin = MojangAPI.getSkinProperty(MojangAPI.getUUID(name));
                     if (skin != null) {
                         SkinStorage.setSkinData(name, skin);
+                        //TODO: return skin object from MojangAPI instead old one!
                     }
                 }
                 return SkinStorage.createProperty("textures", value, signature);
