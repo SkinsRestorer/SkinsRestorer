@@ -110,6 +110,7 @@ public class SrCommand implements CommandExecutor {
                 SkinsRestorer.getInstance().getFactory().applySkin(p, props);
                 SkinsRestorer.getInstance().getFactory().updateSkin(p);
                 p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+                sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
             });
         } else if (args[0].equalsIgnoreCase("props")) {
 

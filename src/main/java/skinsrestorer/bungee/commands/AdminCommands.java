@@ -65,6 +65,7 @@ public class AdminCommands extends Command {
                 SkinStorage.setPlayerSkin(p.getName(), p.getName());
                 SkinApplier.applySkin(p);
                 p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
             });
 
         } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
