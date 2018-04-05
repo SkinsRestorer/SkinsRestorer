@@ -3,6 +3,7 @@ package skinsrestorer.bukkit;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,6 +27,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -79,6 +81,13 @@ public class SkinsRestorer extends JavaPlugin {
         // Bungeecord stuff
         try {
             bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
+
+            // sometimes it does not get the right "bungeecord: true" setting
+            // we will try it again with the old function from SR 13.3
+            // https://github.com/DoNotSpamPls/SkinsRestorerX/blob/cbddd95ac36acb5b1afff2b9f48d0fc5b5541cb0/src/main/java/skinsrestorer/bukkit/SkinsRestorer.java#L109
+            if (!bungeeEnabled) {
+                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
+            }
         } catch (Exception e) {
             bungeeEnabled = false;
         }
