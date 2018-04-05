@@ -91,14 +91,14 @@ public class PlayerCommands extends Command {
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        MojangAPI.getUUID(skin);
+                    //try {
+                        // MojangAPI.getUUID(skin);  WTF is this <.<
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
                         p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                    } catch (SkinRequestException e) {
-                        p.sendMessage(new TextComponent(e.getReason()));
-                    }
+                    //} catch (SkinRequestException e) {
+                    //    p.sendMessage(new TextComponent(e.getReason()));
+                    //}
                 });
                 return;
             }

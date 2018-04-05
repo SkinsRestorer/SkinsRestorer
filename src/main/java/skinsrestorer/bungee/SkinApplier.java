@@ -28,10 +28,7 @@ public class SkinApplier {
             if (p != null) {
                 uuid = p.getUniqueId().toString();
                 handler = (InitialHandler) p.getPendingConnection();
-            } else {
-                uuid = MojangAPI.getUUID(nick);
             }
-
             Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(nick);
 
             if (handler.isOnlineMode()) {
@@ -39,6 +36,10 @@ public class SkinApplier {
                     sendUpdateRequest(p, textures);
                     return;
                 }
+                // Online mode => get real IP from API
+                uuid = MojangAPI.getUUID(nick);
+
+                // Offline mode use offline uuid
             } else {
                 uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + nick).getBytes(StandardCharsets.UTF_8)).toString();
             }

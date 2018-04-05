@@ -63,6 +63,7 @@ public class SkinStorage {
      **/
     public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
         String skin = getPlayerSkin(name);
+
         if (skin == null) {
             skin = name.toLowerCase();
         }
@@ -118,7 +119,10 @@ public class SkinStorage {
                 else {
                     SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), textures);
                 }
+        } catch (SkinRequestException e) {
+            throw new SkinRequestException(e.getReason());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new SkinRequestException(Locale.WAIT_A_MINUTE);
         }
 

@@ -190,6 +190,8 @@ public class MojangAPI {
             return obj.get("id").getAsString();
         } catch (IOException e) {
             throw new SkinRequestException(e.getMessage());
+        } catch (ProxyReadException e) {
+            throw new SkinRequestException(e.getReason());
         }
     }
 
@@ -226,12 +228,15 @@ public class MojangAPI {
         return output.toString();
     }
 
-    private static String readURLProxy(String url) throws IOException {
+    private static String readURLProxy(String url) throws IOException, ProxyReadException {
         HttpURLConnection con;
         String ip;
         int port;
         String proxyStr;
         List<String> list = ProxyManager.getList();
+        if (list == null || list.isEmpty())
+            throw new ProxyReadException(Locale.GENERIC_ERROR);
+
         proxyStr = list.get(rand(list.size() - 1));
         String[] realProxy = proxyStr.split(":");
         ip = realProxy[0];
@@ -262,6 +267,20 @@ public class MojangAPI {
         private String reason;
 
         public SkinRequestException(String reason) {
+            this.reason = reason;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+    }
+
+    public static class ProxyReadException extends Exception {
+
+        private String reason;
+
+        public ProxyReadException(String reason) {
             this.reason = reason;
         }
 

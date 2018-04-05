@@ -80,7 +80,7 @@ public class SkinCommand implements CommandExecutor {
 
                     Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                         try {
-                            MojangAPI.getUUID(skin);
+                            // MojangAPI.getUUID(skin);
 
                             SkinStorage.setPlayerSkin(p.getName(), skin);
                             SkinsRestorer.getInstance().getFactory().applySkin(p,
