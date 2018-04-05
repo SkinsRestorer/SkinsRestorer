@@ -28,29 +28,21 @@ public class SkinCommand implements CommandExecutor {
 
         // Skin Help
         if (args.length == 0 || args.length > 2) {
-            if (Config.SKINWITHOUTPERM) {
+            if (p.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
                 p.sendMessage(Locale.SR_LINE);
                 p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
                 if (p.hasPermission("skinsrestorer.cmds"))
                     p.sendMessage(Locale.HELP_SR);
                 p.sendMessage(Locale.SR_LINE);
             } else {
-                if (p.hasPermission("skinsrestorer.playercmds")) {
-                    p.sendMessage(Locale.SR_LINE);
-                    p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-                    if (p.hasPermission("skinsrestorer.cmds"))
-                        p.sendMessage(Locale.HELP_SR);
-                    p.sendMessage(Locale.SR_LINE);
-                } else {
-                    p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                }
+                p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
             }
         }
 
         // Skin Clear and Skin (name)
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("clear")) {
-                if (sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
                     Object props;
 
                     SkinStorage.removePlayerSkin(p.getName());
@@ -65,7 +57,7 @@ public class SkinCommand implements CommandExecutor {
                     return false;
                 }
             } else {
-                if (sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
 
                     final String skin = args[0];
 
@@ -109,7 +101,7 @@ public class SkinCommand implements CommandExecutor {
         // Skin Set
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("set")) {
-                if (sender.hasPermission("skinsrestorer.playercmds")) {
+                if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
 
                     final String skin = args[1];
 

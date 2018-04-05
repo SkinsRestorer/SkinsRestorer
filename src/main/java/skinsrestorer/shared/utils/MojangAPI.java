@@ -198,8 +198,12 @@ public class MojangAPI {
     }
 
     private static int rand(int High) {
-        Random r = new Random();
-        return r.nextInt(High - 1) + 1;
+        try {
+            Random r = new Random();
+            return r.nextInt(High - 1) + 1;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     private static String readURL(String url) throws IOException {

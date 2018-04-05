@@ -24,13 +24,17 @@ public class PlayerCommands extends Command {
 
     //Method called for the commands help.
     private void help(ProxiedPlayer p) {
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(new TextComponent(Locale.SR_LINE));
-        p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
-        if (p.hasPermission("skinsrestorer.cmds"))
-            p.sendMessage(new TextComponent(Locale.HELP_SR));
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(new TextComponent(Locale.SR_LINE));
+        if (p.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
+            if (!Locale.SR_LINE.isEmpty())
+                p.sendMessage(new TextComponent(Locale.SR_LINE));
+            p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
+            if (p.hasPermission("skinsrestorer.cmds"))
+                p.sendMessage(new TextComponent(Locale.HELP_SR));
+            if (!Locale.SR_LINE.isEmpty())
+                p.sendMessage(new TextComponent(Locale.SR_LINE));
+        } else {
+            p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
+        }
     }
 
     public void execute(CommandSender sender, final String[] args) {
@@ -44,19 +48,16 @@ public class PlayerCommands extends Command {
 
         // Skin Help
         if (args.length == 0 || args.length > 2) {
-            if (!Config.SKINWITHOUTPERM) {
-                if (p.hasPermission("skinsrestorer.playercmds")) {
-                    help(p);
-                } else {
-                    p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                }
-            } else {
-                help(p);
-            }
+            help(p);
         }
 
         //Skin Clear and Skin (name)
         if (args.length == 1) {
+            if (!p.hasPermission("skinsrestorer.playercmds") && !Config.SKINWITHOUTPERM) {
+                p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
+                return;
+            }
+
             if (args[0].equalsIgnoreCase("clear")) {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
@@ -105,6 +106,11 @@ public class PlayerCommands extends Command {
 
         //skin set
         if (args.length == 2) {
+            if (!p.hasPermission("skinsrestorer.playercmds") && !Config.SKINWITHOUTPERM) {
+                p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
+                return;
+            }
+
             if (args[0].equalsIgnoreCase("set")) {
 
                 final String skin = args[1];
