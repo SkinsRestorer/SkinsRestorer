@@ -78,16 +78,17 @@ public class SkinCommand implements CommandExecutor {
                     CooldownStorage.resetCooldown(p.getName());
                     CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
+                    String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
                     Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                         try {
                             // MojangAPI.getUUID(skin);
-
                             SkinStorage.setPlayerSkin(p.getName(), skin);
                             SkinsRestorer.getInstance().getFactory().applySkin(p,
                                     SkinStorage.getOrCreateSkinForPlayer(p.getName()));
                             p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                         } catch (SkinRequestException e) {
                             p.sendMessage(e.getReason());
+                            SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
                         }
                     });
                     return true;
