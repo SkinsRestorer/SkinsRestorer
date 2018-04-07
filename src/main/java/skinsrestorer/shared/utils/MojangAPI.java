@@ -157,16 +157,19 @@ public class MojangAPI {
         try {
             output = readURL(uuidurl_mojang.replace("%name%", name));
 
+            if (output.isEmpty())
+                throw new SkinRequestException(Locale.NOT_PREMIUM);
+
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            if (output.isEmpty()) {
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
-            } else if (obj.has("error")) {
+            if (obj.has("error")) {
+                System.out.println("[SkinsRestorer] Switching to proxy to get UUID.");
                 return getUUIDProxy(name);
             }
 
             return obj.get("id").getAsString();
+
         } catch (IOException e) {
             System.out.println("[SkinsRestorer] Switching to proxy to get UUID.");
             return getUUIDProxy(name);
