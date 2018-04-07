@@ -22,7 +22,7 @@ public class Config {
     public static String MYSQL_PORT = "3306";
     public static String MYSQL_DATABASE = "db";
     public static String MYSQL_SKINTABLE = "Skins";
-    public static String MYSQL_PLAYERTABLE = "Skins";
+    public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_USERNAME = "admin";
     public static String MYSQL_PASSWORD = "pass";
     public static boolean UPDATER_ENABLED = true;
