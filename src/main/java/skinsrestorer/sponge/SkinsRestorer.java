@@ -1,5 +1,6 @@
 package skinsrestorer.sponge;
 
+import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
@@ -16,8 +17,7 @@ import skinsrestorer.sponge.listeners.LoginListener;
 import skinsrestorer.sponge.utils.SkinApplier;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import org.bstats.sponge.MetricsLite;
 
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "13.4-SNAPSHOT")
 
@@ -44,6 +44,9 @@ public class SkinsRestorer {
     public CommentedConfigurationNode getDataRoot() {
         return dataRoot;
     }
+
+    @Inject
+    private MetricsLite metrics;
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
