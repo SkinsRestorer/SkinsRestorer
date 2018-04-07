@@ -29,6 +29,8 @@ public class LoginListener implements Listener {
     public void onServerChange(final LoginEvent e) {
         e.registerIntent(plugin);
 
+        String nick = e.getConnection().getName();
+
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
@@ -37,21 +39,25 @@ public class LoginListener implements Listener {
             public void run() {
                 if (Config.DEFAULT_SKINS_ENABLED) {
                     try {
+                        if (MojangAPI.getUUID(nick) != null) {
+                            SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
+                            return;
+                        }
+
                         List<String> skins = Config.DEFAULT_SKINS;
                         int randomNum = (int) (Math.random() * skins.size());
-                        SkinStorage.getOrCreateSkinForPlayer(e.getConnection().getName());
-                        SkinStorage.setPlayerSkin(e.getConnection().getName(), skins.get(randomNum));
-                        SkinApplier.applySkin(null, e.getConnection().getName(), (InitialHandler) e.getConnection());
+                        SkinStorage.getOrCreateSkinForPlayer(nick);
+                        SkinStorage.setPlayerSkin(nick, skins.get(randomNum));
+                        SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
                         return;
-                    } catch (MojangAPI.SkinRequestException ex) {
-                        ex.printStackTrace();
+                    } catch (MojangAPI.SkinRequestException ignored) {
+                        ignored.printStackTrace();
                     } finally {
                         e.completeIntent(plugin);
                     }
                 }
 
-                SkinApplier.applySkin(null, e.getConnection().getName(), (InitialHandler) e.getConnection());
-
+                SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
                 e.completeIntent(plugin);
             }
         });
