@@ -39,19 +39,26 @@ public class LoginListener implements Listener {
             public void run() {
                 if (Config.DEFAULT_SKINS_ENABLED) {
                     try {
-                        if (MojangAPI.getUUID(nick) != null) {
+                        // don't apply to premium players when enabled
+                        if (!Config.DEFAULT_SKINS_PREMIUM) {
+                            // check if player is premium
+                            if (MojangAPI.getUUID(nick) != null) {
+                                // apply skin from player instead of default skin from cinfig
+                                SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
+                                return;
+                            }
+                        }
+
+                        // check if player has an other skin set so we won't overwrite it
+                        if (SkinStorage.getPlayerSkin(nick) == null) {
+                            List<String> skins = Config.DEFAULT_SKINS;
+                            int randomNum = (int) (Math.random() * skins.size());
+                            //SkinStorage.getOrCreateSkinForPlayer(nick);
+                            SkinStorage.setPlayerSkin(nick, skins.get(randomNum));
                             SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
                             return;
                         }
-
-                        List<String> skins = Config.DEFAULT_SKINS;
-                        int randomNum = (int) (Math.random() * skins.size());
-                        SkinStorage.getOrCreateSkinForPlayer(nick);
-                        SkinStorage.setPlayerSkin(nick, skins.get(randomNum));
-                        SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
-                        return;
                     } catch (MojangAPI.SkinRequestException ignored) {
-                        ignored.printStackTrace();
                     } finally {
                         e.completeIntent(plugin);
                     }

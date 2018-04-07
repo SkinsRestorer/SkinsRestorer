@@ -7,6 +7,7 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import java.io.*;
 import java.util.Map;
@@ -68,10 +69,12 @@ public class SkinStorage {
             skin = name.toLowerCase();
         }
 
+        // System.out.println("Skin: " + skin);
+
         Object textures = null;
-        if (Config.DEFAULT_SKINS_ENABLED) {
-            textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
-        }
+        // if (Config.DEFAULT_SKINS_ENABLED) {
+        //     textures = getSkinData(Config.DEFAULT_SKINS.get(new Random().nextInt(Config.DEFAULT_SKINS.size())));
+        // }
 
         textures = getSkinData(skin);
 
@@ -138,7 +141,7 @@ public class SkinStorage {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 
             if (crs != null)
                 try {
@@ -194,7 +197,7 @@ public class SkinStorage {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
             if (crs != null)
                 try {
                     String value = crs.getString("Value");
@@ -207,6 +210,7 @@ public class SkinStorage {
                         if (skin != null) {
                             SkinStorage.setSkinData(name, skin);
                             //TODO: return skin object from MojangAPI instead old one!
+                            //return skin;
                         }
                     }
                     return createProperty("textures", value, signature);

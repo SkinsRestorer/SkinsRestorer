@@ -1,5 +1,6 @@
 package skinsrestorer.bungee.commands;
 
+import javafx.scene.control.Skin;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
