@@ -1,6 +1,5 @@
 package skinsrestorer.bungee.commands;
 
-import javafx.scene.control.Skin;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -91,7 +90,7 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
+                // String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
                     //try {
                         // MojangAPI.getUUID(skin);  WTF is this <.<

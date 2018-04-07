@@ -2,6 +2,7 @@ package skinsrestorer.shared.utils;
 
 import skinsrestorer.shared.storage.Config;
 
+import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
@@ -58,7 +59,7 @@ public class MySQL {
         execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
-    public void execute(final String query, final Object... vars) {
+    public void execute_old(final String query, final Object... vars) {
         if (isConnected())
             exe.execute(() -> {
                 try {
@@ -74,6 +75,26 @@ public class MySQL {
                     System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
                 }
             });
+        else {
+            openConnection();
+            execute(query, vars);
+        }
+    }
+
+    public void execute(final String query, final Object... vars) {
+        if (isConnected())
+            try {
+                PreparedStatement ps = prepareStatement(query, vars);
+                assert ps != null;
+                ps.execute();
+                ps.close();
+            } catch (SQLException e) {
+                if (e.getMessage().contains("Duplicate column name")) {
+                    return;
+                }
+                e.printStackTrace();
+                System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+            }
         else {
             openConnection();
             execute(query, vars);
@@ -163,5 +184,40 @@ public class MySQL {
         }
 
         return rowSet;
+    }
+
+    public RowSet query2(final String query, final Object... vars) {
+        RowSet rowSet = null;
+
+        if (isConnected())
+            try {
+                try {
+                    PreparedStatement ps = prepareStatement(query, vars);
+
+                    assert ps != null;
+                    ResultSet rs = ps.executeQuery();
+                    CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
+                    crs.populate(rs);
+                    rs.close();
+                    ps.close();
+
+                    if (crs.next())
+                        return crs;
+
+                } catch (SQLException e) {
+                    System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+                }
+
+                return null;
+
+            } catch (Exception e) {
+                System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+            }
+        else {
+            openConnection();
+            query2(query, vars);
+        }
+
+        return null;
     }
 }

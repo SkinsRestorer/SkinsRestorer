@@ -140,7 +140,6 @@ public class SkinStorage {
     public static String getPlayerSkin(String name) {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
-
             RowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 
             if (crs != null)
@@ -325,7 +324,7 @@ public class SkinStorage {
     public static void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_PLAYERTABLE + " where Nick=?", name);
 
             if (crs == null)
                 mysql.execute("insert into " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) values (?,?)", name, skin);
@@ -374,7 +373,7 @@ public class SkinStorage {
         }
 
         if (Config.USE_MYSQL) {
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
 
             if (crs == null)
                 mysql.execute("insert into " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) values (?,?,?,?)",
@@ -426,7 +425,7 @@ public class SkinStorage {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
 
-            CachedRowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " where Nick=?", name);
             if (crs != null)
                 try {
                     String value = crs.getString("Value");
