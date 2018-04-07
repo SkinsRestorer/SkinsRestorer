@@ -149,7 +149,7 @@ public class SkinStorage {
 
                     if (skin.isEmpty() || skin.equalsIgnoreCase(name)) {
                         removePlayerSkin(name);
-                        skin = name;
+                        return null;
                     }
 
                     return skin;
@@ -158,7 +158,7 @@ public class SkinStorage {
                     e.printStackTrace();
                 }
 
-            return name;
+            return null;
 
         } else {
             File playerFile = new File(

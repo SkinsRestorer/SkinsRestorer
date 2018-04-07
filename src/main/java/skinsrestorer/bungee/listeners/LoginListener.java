@@ -45,6 +45,7 @@ public class LoginListener implements Listener {
                             if (MojangAPI.getUUID(nick) != null) {
                                 // apply skin from player instead of default skin from cinfig
                                 SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
+                                e.completeIntent(plugin);
                                 return;
                             }
                         }
@@ -53,13 +54,13 @@ public class LoginListener implements Listener {
                         if (SkinStorage.getPlayerSkin(nick) == null) {
                             List<String> skins = Config.DEFAULT_SKINS;
                             int randomNum = (int) (Math.random() * skins.size());
-                            //SkinStorage.getOrCreateSkinForPlayer(nick);
+                            SkinStorage.getOrCreateSkinForPlayer(nick);
                             SkinStorage.setPlayerSkin(nick, skins.get(randomNum));
                             SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
+                            e.completeIntent(plugin);
                             return;
                         }
-                    } catch (MojangAPI.SkinRequestException ignored) {
-                    } finally {
+                    } catch (Exception ignored) {
                         e.completeIntent(plugin);
                     }
                 }
