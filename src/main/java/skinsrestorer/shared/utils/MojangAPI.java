@@ -37,7 +37,7 @@ public class MojangAPI {
      *
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public static Object getSkinProperty(String uuid) {
+    public static Object getSkinProperty(String uuid, boolean tryNext) {
         String output;
         try {
             output = readURL(skinurl.replace("%uuid%", uuid));
@@ -60,7 +60,11 @@ public class MojangAPI {
         }
     }
 
-    private static Object getSkinPropertyMojang(String uuid) {
+    public static Object getSkinProperty(String uuid) {
+        return getSkinProperty(uuid, true);
+    }
+
+    private static Object getSkinPropertyMojang(String uuid, boolean tryNext) {
         String output;
         try {
             output = readURL(skinurl_mojang.replace("%uuid%", uuid));
@@ -79,7 +83,11 @@ public class MojangAPI {
         }
     }
 
-    private static Object getSkinPropertyProxy(String uuid) {
+    public static Object getSkinPropertyMojang(String uuid) {
+        return getSkinPropertyMojang(uuid, true);
+    }
+
+    private static Object getSkinPropertyProxy(String uuid, boolean tryNext) {
         String output;
         try {
             output = readURLProxy(skinurl_mojang.replace("%uuid%", uuid));
@@ -96,6 +104,10 @@ public class MojangAPI {
             System.out.println("[SkinsRestorer] Failed to get skin property from proxy.");
             return false;
         }
+    }
+
+    public static Object getSkinPropertyProxy(String uuid) {
+        return getSkinPropertyProxy(uuid, true);
     }
 
     public static String getStringBetween(final String base, final String begin, final String end) {

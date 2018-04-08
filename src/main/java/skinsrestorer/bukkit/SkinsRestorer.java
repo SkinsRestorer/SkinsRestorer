@@ -215,6 +215,8 @@ public class SkinsRestorer extends JavaPlugin {
 
                             factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
                         }
+
+                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
                     } catch (SkinRequestException ignored) {
                     }
                 });
