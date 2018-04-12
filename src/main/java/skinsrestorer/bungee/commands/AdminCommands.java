@@ -13,9 +13,11 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 
 public class AdminCommands extends Command {
 
@@ -100,7 +102,28 @@ public class AdminCommands extends Command {
 
         } else if (args.length == 1 && args[0].equalsIgnoreCase("config")) {
             sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("status")) {
 
+            sender.sendMessage("Checking needed services for SR to work properly...");
+
+            ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                ServiceChecker checker = new ServiceChecker();
+                checker.checkServices();
+
+                ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+                List<String> results = response.getResults();
+
+                for (String result : results) {
+                    sender.sendMessage(result);
+                }
+                sender.sendMessage("Working UUID API count: " + response.getWorkingUUID());
+                sender.sendMessage("Working Profile API count: " + response.getWorkingProfile());
+                if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
+                    sender.sendMessage("The plugin is currently in a working state.");
+                else
+                    sender.sendMessage("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect");
+                sender.sendMessage("Finished checking services..");
+            });
         } else if (args.length > 0 && args[0].equalsIgnoreCase("props")) {
             // sr props <player>
             ProxiedPlayer p;
