@@ -21,6 +21,7 @@ DefaultSkins:
 # Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
+  ApplyForPremium: false
   Names:
     - Steve
     

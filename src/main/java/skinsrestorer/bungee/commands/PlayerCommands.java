@@ -90,7 +90,7 @@ public class PlayerCommands extends Command {
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-                String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
+                // String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
                     //try {
                         // MojangAPI.getUUID(skin);  WTF is this <.<
