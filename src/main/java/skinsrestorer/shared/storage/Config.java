@@ -27,6 +27,11 @@ public class Config {
     public static String MYSQL_USERNAME = "admin";
     public static String MYSQL_PASSWORD = "pass";
     public static boolean UPDATER_ENABLED = true;
+
+    // Proxies
+    public static boolean CUSTOM_PROXIES_ENABLED = false;
+    public static List<String> CUSTOM_PROXIES_LIST = null;
+
     private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config");
 
     public static void load(InputStream is) {
@@ -52,6 +57,10 @@ public class Config {
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm");
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
+
+        // Proxies
+        CUSTOM_PROXIES_ENABLED = config.getBoolean("Proxies.Enabled", CUSTOM_PROXIES_ENABLED);
+        CUSTOM_PROXIES_LIST = config.getStringList("Proxies.List");
     }
 
     public static void set(String path, Object value) {

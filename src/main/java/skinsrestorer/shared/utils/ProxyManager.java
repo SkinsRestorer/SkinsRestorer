@@ -1,5 +1,7 @@
 package skinsrestorer.shared.utils;
 
+import skinsrestorer.shared.storage.Config;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +24,16 @@ public class ProxyManager {
     }
 
     private static List<String> updateProxies() {
+        // Check if user added custom proxies in config.yml
+        // If yes: use them!
+        if (Config.CUSTOM_PROXIES_ENABLED) {
+            System.out.println("[SkinsRestorer] Loading custom proxies set in config.yml...");
+            return loadCustomConfigProxies();
+        }
+
+        // load proxies from remote API
+        System.out.println("[SkinsRestorer] Loading proxies from remote API...");
+
         proxies = new ArrayList<>();
         String url = "https://mcapi.me/McAPI.php?apikey=ihAet4antmkBNdYu43&list=text";
         try {
@@ -30,6 +42,18 @@ public class ProxyManager {
             System.out.print("[SkinsRestorer] We couldn't update the proxy list. This usually indicates a firewall problem. A detailed error is below.");
             e.printStackTrace();
         }
+        return proxies;
+    }
+
+    private static List<String> loadCustomConfigProxies() {
+        if (Config.CUSTOM_PROXIES_LIST == null)
+            return null;
+
+        if (Config.CUSTOM_PROXIES_LIST.isEmpty())
+            return null;
+
+        proxies.addAll(Config.CUSTOM_PROXIES_LIST);
+
         return proxies;
     }
 
