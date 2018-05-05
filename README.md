@@ -15,4 +15,4 @@
 
  Website | [click here](https://skinsrestorer.net/)
 
- [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX)
+ [![Build Status](https://api.travis-ci.org/McLive/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/McLive/SkinsRestorerX)
