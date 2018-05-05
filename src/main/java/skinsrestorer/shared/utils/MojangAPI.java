@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 
@@ -56,7 +57,7 @@ public class MojangAPI {
             return null;
         } catch (Exception e) {
             if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to Mojang to get skin property.");
+                System.out.println("[SkinsRestorer] Switching to Mojang to get skin property. (" + uuid + ")");
                 return getSkinPropertyMojang(uuid);
             }
         }
@@ -81,8 +82,8 @@ public class MojangAPI {
             }
             return null;
         } catch (Exception e) {
-            if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
+            if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
+                System.out.println("[SkinsRestorer] Switching to proxy to get skin property. (" + uuid + ")");
                 return getSkinPropertyProxy(uuid);
             }
         }
@@ -107,32 +108,8 @@ public class MojangAPI {
             }
             return null;
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get skin property from proxy.");
+            System.out.println("[SkinsRestorer] Failed to get skin property from proxy. (" + uuid + ")");
             return null;
-        }
-    }
-
-    public static String getStringBetween(final String base, final String begin, final String end) {
-        try {
-            Pattern patbeg = Pattern.compile(Pattern.quote(begin));
-            Pattern patend = Pattern.compile(Pattern.quote(end));
-
-            int resbeg = 0;
-            int resend = base.length() - 1;
-
-            Matcher matbeg = patbeg.matcher(base);
-
-            while (matbeg.find())
-                resbeg = matbeg.end();
-
-            Matcher matend = patend.matcher(base);
-
-            while (matend.find())
-                resend = matend.start();
-
-            return base.substring(resbeg, resend);
-        } catch (Exception e) {
-            return base;
         }
     }
 
@@ -152,7 +129,7 @@ public class MojangAPI {
             if (obj.has("status")) {
                 if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                     if (tryNext) {
-                        System.out.println("[SkinsRestorer] Switching to Mojang to get UUID.");
+                        System.out.println("[SkinsRestorer] Switching to Mojang to get UUID. (" + name + ")");
                         return getUUIDMojang(name);
                     }
                     return null;
@@ -165,7 +142,7 @@ public class MojangAPI {
             return obj.get("id").getAsString();
         } catch (IOException e) {
             if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to Mojang to get UUID.");
+                System.out.println("[SkinsRestorer] Switching to Mojang to get UUID. (" + name + ")");
                 return getUUIDMojang(name);
             }
         }
@@ -188,8 +165,8 @@ public class MojangAPI {
             JsonObject obj = element.getAsJsonObject();
 
             if (obj.has("error")) {
-                if (tryNext) {
-                    System.out.println("[SkinsRestorer] Switching to proxy to get UUID.");
+                if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
+                    System.out.println("[SkinsRestorer] Switching to proxy to get UUID. (" + name + ")");
                     return getUUIDProxy(name);
                 }
                 return null;
@@ -198,8 +175,8 @@ public class MojangAPI {
             return obj.get("id").getAsString();
 
         } catch (IOException e) {
-            if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to proxy to get UUID.");
+            if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
+                System.out.println("[SkinsRestorer] Switching to proxy to get UUID. (" + name + ")");
                 return getUUIDProxy(name);
             }
         }

@@ -1,5 +1,8 @@
 package skinsrestorer.shared.storage;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.MojangAPI;
@@ -95,10 +98,14 @@ public class SkinStorage {
 
             String value = Base64Coder.decodeString((String) ReflectionUtil.invokeMethod(textures, "getValue"));
 
-            String urlbeg = "url\":\"";
-            String urlend = "\"}}";
+            JsonElement element = new JsonParser().parse(value);
+            JsonObject obj = element.getAsJsonObject();
+            JsonObject textureObj = obj.get("textures").getAsJsonObject();
 
-            String newurl = MojangAPI.getStringBetween(value, urlbeg, urlend);
+            String newurl;
+            if (textureObj.has("SKIN")) {
+                newurl = textureObj.get("SKIN").getAsJsonObject().get("url").getAsString();
+            }
 
             // TODO: This is useless! oldprops is always null and always triggers an "shouldUpdate".
             /*try {

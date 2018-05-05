@@ -28,6 +28,7 @@ public class Locale {
             + "\n    &2/sr reload &7- &fReloads the config and locale"
             + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
     public static String ADMIN_SET_SKIN = "&e[&2SkinsRestorer&e] &2You set %player's skin.";
+    public static String INVALID_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username.";
     public static String NOT_ONLINE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlayer is not online!";
     public static String SKIN_DATA_DROPPED = "&e[&2SkinsRestorer&e] &2Skin data for player %player dropped.";
     public static String RELOAD = "&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!";

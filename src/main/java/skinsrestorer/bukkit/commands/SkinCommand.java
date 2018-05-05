@@ -10,6 +10,7 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
@@ -60,6 +61,11 @@ public class SkinCommand implements CommandExecutor {
                 if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
 
                     final String skin = args[0];
+
+                    if (skin.length() > 16 || !C.validUsername(skin)) {
+                        p.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+                        return true;
+                    }
 
                     if (Config.DISABLED_SKINS_ENABLED)
                         if (!p.hasPermission("skinsrestorer.bypassdisabled")) {

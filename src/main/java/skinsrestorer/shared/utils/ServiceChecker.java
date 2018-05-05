@@ -61,16 +61,26 @@ public class ServiceChecker {
         // ##### UUID requests #####
         try {
             String uuid = MojangAPI.getUUID("Notch", false);
-            response.addResult("MineTools UUID §a✔ Notch UUID: §b" + uuid);
-            response.incrementWorkingUUID();
+
+            if (uuid != null && !uuid.equalsIgnoreCase("null")) {
+                response.addResult("MineTools UUID §a✔ Notch UUID: §b" + uuid);
+                response.incrementWorkingUUID();
+            } else {
+                response.addResult("MineTools UUID §c✘ Error getting UUID: null");
+            }
         } catch (MojangAPI.SkinRequestException e) {
             response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getReason());
         }
 
         try {
             String uuid = MojangAPI.getUUIDMojang("Notch", false);
-            response.addResult("Mojang-API UUID §a✔ Notch UUID: §b" + uuid);
-            response.incrementWorkingUUID();
+
+            if (uuid != null && !uuid.equalsIgnoreCase("null")) {
+                response.addResult("Mojang-API UUID §a✔ Notch UUID: §b" + uuid);
+                response.incrementWorkingUUID();
+            } else {
+                response.addResult("Mojang-API UUID §c✘ Error getting UUID: null");
+            }
         } catch (MojangAPI.SkinRequestException e) {
             response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getReason());
         }

@@ -17,7 +17,6 @@ public class ProxyManager {
 
     public static List<String> getList() {
         if (proxies.isEmpty()) {
-            System.out.print("[SkinsRestorer] Proxy list is empty. Getting one.");
             return updateProxies();
         }
         return proxies;
@@ -31,6 +30,10 @@ public class ProxyManager {
             return loadCustomConfigProxies();
         }
 
+        // Disabled since the remote API has been shutdown
+        return proxies;
+
+        /*
         // load proxies from remote API
         System.out.println("[SkinsRestorer] Loading proxies from remote API...");
 
@@ -43,6 +46,7 @@ public class ProxyManager {
             e.printStackTrace();
         }
         return proxies;
+        */
     }
 
     private static List<String> loadCustomConfigProxies() {
