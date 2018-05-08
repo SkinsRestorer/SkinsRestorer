@@ -75,7 +75,7 @@ public class PlayerCommands extends Command {
                 //skin <skin>
                 final String skin = args[0];
 
-                if (skin.length() > 16 || !C.validUsername(skin)) {
+                if (!C.validUsername(skin)) {
                     p.sendMessage(new TextComponent(Locale.INVALID_PLAYER.replace("%player", skin)));
                     return;
                 }
@@ -121,6 +121,11 @@ public class PlayerCommands extends Command {
             if (args[0].equalsIgnoreCase("set")) {
 
                 final String skin = args[1];
+
+                if (!C.validUsername(skin)) {
+                    p.sendMessage(new TextComponent(Locale.INVALID_PLAYER.replace("%player", skin)));
+                    return;
+                }
 
                 if (Config.DISABLED_SKINS_ENABLED)
                     if (!p.hasPermission("skinsrestorer.bypassdisabled")) {

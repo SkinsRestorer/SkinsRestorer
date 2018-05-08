@@ -62,7 +62,7 @@ public class SkinCommand implements CommandExecutor {
 
                     final String skin = args[0];
 
-                    if (skin.length() > 16 || !C.validUsername(skin)) {
+                    if (!C.validUsername(skin)) {
                         p.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
                         return true;
                     }
@@ -94,6 +94,8 @@ public class SkinCommand implements CommandExecutor {
                             p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                         } catch (SkinRequestException e) {
                             p.sendMessage(e.getReason());
+
+                            // set custom skin name back to old one if there is an exception
                             SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
                         }
                     });
@@ -111,6 +113,11 @@ public class SkinCommand implements CommandExecutor {
                 if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
 
                     final String skin = args[1];
+
+                    if (!C.validUsername(skin)) {
+                        p.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+                        return true;
+                    }
 
                     if (Config.DISABLED_SKINS_ENABLED)
                         if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
