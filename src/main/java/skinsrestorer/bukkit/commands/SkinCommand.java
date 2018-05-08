@@ -44,6 +44,15 @@ public class SkinCommand implements CommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("clear")) {
                 if (sender.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
+
+                    if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                        p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                        return true;
+                    }
+
+                    CooldownStorage.resetCooldown(p.getName());
+                    CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+
                     Object props;
 
                     SkinStorage.removePlayerSkin(p.getName());

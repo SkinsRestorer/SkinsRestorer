@@ -60,6 +60,12 @@ public class PlayerCommands extends Command {
             }
 
             if (args[0].equalsIgnoreCase("clear")) {
+
+                if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                    p.sendMessage(new TextComponent(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+                    return;
+                }
+
                 CooldownStorage.resetCooldown(p.getName());
                 CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
