@@ -13,6 +13,7 @@ import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.List;
@@ -33,6 +34,11 @@ public class LoginListener implements Listener {
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
+
+        if (!C.validUsername(nick)) {
+            System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+            return;
+        }
 
         SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
             @Override

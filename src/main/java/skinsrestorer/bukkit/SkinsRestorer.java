@@ -20,6 +20,7 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -195,12 +196,18 @@ public class SkinsRestorer extends JavaPlugin {
                             // shouldn't it just skip it if it's true?
                             return;
                         }
+
+                        if (!C.validUsername(e.getPlayer().getName())) {
+                            System.out.println("[SkinsRestorer] Not applying skin to " + e.getPlayer().getName() + " (invalid username).");
+                            return;
+                        }
+
                         if (Config.DEFAULT_SKINS_ENABLED) {
                             // don't apply to premium players when enabled
                             if (!Config.DEFAULT_SKINS_PREMIUM) {
                                 // check if player is premium
                                 if (MojangAPI.getUUID(e.getPlayer().getName()) != null) {
-                                    // apply skin from player instead of default skin from cinfig
+                                    // apply skin from player instead of default skin from config
                                     factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
                                     return;
                                 }
