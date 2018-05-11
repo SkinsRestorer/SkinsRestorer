@@ -9,6 +9,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.sponge.SkinsRestorer;
 import skinsrestorer.sponge.utils.MojangAPI;
 
@@ -31,6 +32,12 @@ public class SkinCommand implements CommandExecutor {
         }
         Player p = (Player) source;
         String name = p.getName().toLowerCase();
+
+        if (!p.hasPermission("skinsrestorer.playercmds")) {
+            p.sendMessage(Text.builder(Locale.PLAYER_HAS_NO_PERMISSION).build());
+            return CommandResult.empty();
+        }
+
         String skin = args.<String>getOne("skin").get().toLowerCase();
         Collection<ProfileProperty> props = p.getProfile().getPropertyMap().get("textures");
 
