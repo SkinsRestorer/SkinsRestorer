@@ -64,10 +64,19 @@ public class SkinsRestorer {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Login.class, new LoginListener());
 
         CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
-                .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
-                .executor(new SkinCommand(this)).build();
+				.arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
+				.permission("skinsrestorer.playercmds")
+				.executor(new SkinCommand(this)).build();
 
-        Sponge.getCommandManager().register(this, skinCommand, "skin");
+		Sponge.getCommandManager().register(this, skinCommand, "skin");
+
+		CommandSpec setskinCommand = CommandSpec.builder().description(Text.of("Set someone skin"))
+				.arguments(GenericArguments.onlyOne(GenericArguments.player(Text.of("player"))),
+						GenericArguments.remainingJoinedStrings(Text.of("skin")))
+				.permission("skinsrestorer.admincmds")
+				.executor(new SetSkinCommand(this)).build();
+
+		Sponge.getCommandManager().register(this, setskinCommand, "setskin");
 
         this.skinApplier = new SkinApplier(this);
     }
