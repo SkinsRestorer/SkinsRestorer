@@ -38,17 +38,20 @@ public class SkinApplier {
         Location<World> loc = p.getLocation();
         Vector3d rotation = p.getRotation();
 
-        World other = null;
-        for (World w : Sponge.getServer().getWorlds()) {
-            if (other != null)
+        WorldProperties other = null;
+        for (WorldProperties w : Sponge.getServer().getAllWorldProperties()) {
+            if (other != null) {
                 break;
-
-            if (!w.equals(p.getWorld()))
+            }
+            
+            if (!w.getUniqueId().equals(p.getWorld().getUniqueId())) {
+            	Sponge.getServer().loadWorld(w.getUniqueId());
                 other = w;
+            }
         }
 
         if (other != null) {
-            p.setLocation(other.getSpawnLocation());
+            p.setLocation(Sponge.getServer().getWorld(other.getUniqueId()).get().getSpawnLocation());
             p.setLocationAndRotation(loc, rotation);
         }
     }
