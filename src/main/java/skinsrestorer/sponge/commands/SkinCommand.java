@@ -33,11 +33,6 @@ public class SkinCommand implements CommandExecutor {
         Player p = (Player) source;
         String name = p.getName().toLowerCase();
 
-        if (!p.hasPermission("skinsrestorer.playercmds")) {
-            p.sendMessage(Text.builder(Locale.PLAYER_HAS_NO_PERMISSION).build());
-            return CommandResult.empty();
-        }
-
         String skin = args.<String>getOne("skin").get().toLowerCase();
         Collection<ProfileProperty> props = p.getProfile().getPropertyMap().get("textures");
 
