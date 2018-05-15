@@ -65,6 +65,7 @@ public class SkinsRestorer {
 
         CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
+                .permission("skinsrestorer.playercmds")
                 .executor(new SkinCommand(this)).build();
 
         Sponge.getCommandManager().register(this, skinCommand, "skin");
