@@ -12,6 +12,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
+import skinsrestorer.sponge.commands.SetSkinCommand;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.listeners.LoginListener;
 import skinsrestorer.sponge.utils.SkinApplier;
@@ -63,7 +64,7 @@ public class SkinsRestorer {
         if (!Sponge.getServer().getOnlineMode())
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Login.class, new LoginListener());
 
-        CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
+        	CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
 				.arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
 				.permission("skinsrestorer.playercmds")
 				.executor(new SkinCommand(this)).build();
