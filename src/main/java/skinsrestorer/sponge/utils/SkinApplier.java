@@ -1,10 +1,9 @@
 package skinsrestorer.sponge.utils;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.tab.TabList;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
-import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
@@ -17,25 +16,45 @@ import skinsrestorer.sponge.SkinsRestorer;
  * Created by McLive on 02.04.2018.
  */
 public class SkinApplier {
+	
+    private Player receiver;
+	
     public SkinApplier(SkinsRestorer plugin) {
     }
+   
 
     public void updatePlayerSkin(Player p) {
-        // Update tablist for player with modified profile
-        TabList tab = p.getTabList();
-        tab.removeEntry(p.getUniqueId());
-        TabListEntry playerTablist = TabListEntry.builder()
-                .list(tab)
-                .profile(p.getProfile())
-                .displayName(Text.of(p.getDisplayNameData().displayName().get()))
-                .latency(p.getConnection().getLatency())
-                .gameMode(p.getGameModeData().type().get())
-                .build();
-        tab.addEntry(playerTablist);
+    	receiver = p;
+    	
+    	sendUpdate();
+    }
+    
+    private void sendUpdate() {
+        sendUpdateSelf();
 
-        // Simulate respawn to see skin active
-        Location<World> loc = p.getLocation();
-        Vector3d rotation = p.getRotation();
+        //triggers an update for others player to see the new skin
+        Sponge.getServer().getOnlinePlayers().stream()
+                .filter(onlinePlayer -> onlinePlayer.canSee(receiver))
+                .forEach(onlinePlayer -> {
+                    //removes the entity and display the new skin
+                    onlinePlayer.offer(Keys.VANISH, true);
+                    onlinePlayer.offer(Keys.VANISH, false);
+                });
+    }
+
+    private void sendUpdateSelf() {
+        receiver.getTabList().removeEntry(receiver.getUniqueId());
+        receiver.getTabList().addEntry(TabListEntry.builder()
+                .displayName(receiver.getDisplayNameData().displayName().get())
+                .latency(receiver.getConnection().getLatency())
+                .list(receiver.getTabList())
+                .gameMode(receiver.getGameModeData().type().get())
+                .profile(receiver.getProfile())
+                .build());
+
+     // Simulate respawn to see skin active
+        Location<World> loc = receiver.getLocation();
+        Vector3d rotation = receiver.getRotation();
 
         WorldProperties other = null;
         for (WorldProperties w : Sponge.getServer().getAllWorldProperties()) {
@@ -43,15 +62,16 @@ public class SkinApplier {
                 break;
             }
             
-            if (!w.getUniqueId().equals(p.getWorld().getUniqueId())) {
+            if (!w.getUniqueId().equals(receiver.getWorld().getUniqueId())) {
             	Sponge.getServer().loadWorld(w.getUniqueId());
                 other = w;
             }
         }
 
         if (other != null) {
-            p.setLocation(Sponge.getServer().getWorld(other.getUniqueId()).get().getSpawnLocation());
-            p.setLocationAndRotation(loc, rotation);
-        }
+        	receiver.setLocation(Sponge.getServer().getWorld(other.getUniqueId()).get().getSpawnLocation());
+        	receiver.setLocationAndRotation(loc, rotation);
+}
     }
+    
 }
