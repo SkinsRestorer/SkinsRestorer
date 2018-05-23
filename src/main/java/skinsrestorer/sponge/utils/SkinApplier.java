@@ -16,30 +16,24 @@ import skinsrestorer.sponge.SkinsRestorer;
  * Created by McLive on 02.04.2018.
  */
 public class SkinApplier {
-	
+
     private Player receiver;
-	
+
     public SkinApplier(SkinsRestorer plugin) {
     }
-   
+
 
     public void updatePlayerSkin(Player p) {
     	receiver = p;
-    	
+
     	sendUpdate();
     }
-    
+
     private void sendUpdate() {
         sendUpdateSelf();
 
-        //triggers an update for others player to see the new skin
-        Sponge.getServer().getOnlinePlayers().stream()
-                .filter(onlinePlayer -> onlinePlayer.canSee(receiver))
-                .forEach(onlinePlayer -> {
-                    //removes the entity and display the new skin
-                    onlinePlayer.offer(Keys.VANISH, true);
-                    onlinePlayer.offer(Keys.VANISH, false);
-                });
+        receiver.offer(Keys.VANISH, true);
+        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(SkinsRestorer.getInstance());
     }
 
     private void sendUpdateSelf() {
@@ -61,7 +55,7 @@ public class SkinApplier {
             if (other != null) {
                 break;
             }
-            
+
             if (!w.getUniqueId().equals(receiver.getWorld().getUniqueId())) {
             	Sponge.getServer().loadWorld(w.getUniqueId());
                 other = w;
@@ -73,5 +67,5 @@ public class SkinApplier {
         	receiver.setLocationAndRotation(loc, rotation);
 }
     }
-    
+
 }
