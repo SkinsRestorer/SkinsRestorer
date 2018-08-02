@@ -30,11 +30,13 @@ public class SkinCommand implements CommandExecutor {
         // Skin Help
         if (args.length == 0 || args.length > 2) {
             if (p.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
-                p.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                        p.sendMessage(Locale.SR_LINE);
                 p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
                 if (p.hasPermission("skinsrestorer.cmds"))
                     p.sendMessage(Locale.HELP_SR);
-                p.sendMessage(Locale.SR_LINE);
+                if (!Locale.SR_LINE.isEmpty())
+                        p.sendMessage(Locale.SR_LINE);
             } else {
                 p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
             }
