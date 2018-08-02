@@ -4,11 +4,13 @@ import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.bstats.sponge.MetricsLite;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
@@ -18,7 +20,6 @@ import skinsrestorer.sponge.listeners.LoginListener;
 import skinsrestorer.sponge.utils.SkinApplier;
 
 import java.io.File;
-import org.bstats.sponge.MetricsLite;
 
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "13.4-SNAPSHOT")
 
@@ -61,8 +62,7 @@ public class SkinsRestorer {
             ex.printStackTrace();
         }
 
-        if (!Sponge.getServer().getOnlineMode())
-            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Login.class, new LoginListener());
+
 
         CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
@@ -80,6 +80,13 @@ public class SkinsRestorer {
 		Sponge.getCommandManager().register(this, setskinCommand, "setskin");
 
         this.skinApplier = new SkinApplier(this);
+    }
+
+    @Listener
+    public void onServerStared(GameStartedServerEvent event) {
+        if (!Sponge.getServer().getOnlineMode()) {
+            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Login.class, new LoginListener());
+        }
     }
 
     public void reloadConfigs() {
