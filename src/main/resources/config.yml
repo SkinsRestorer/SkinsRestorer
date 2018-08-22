@@ -13,8 +13,9 @@ SkinChangeCooldown: 30
 
 
 # Set the language you will use - Files are located in /SkinsRestorer/languages directory
-# Default: english
-Language: english
+# You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
+# Default: english - english.yml
+Locale: english
 
 # Enable or disable default skins
 # If there is more than one, the plugin will choose a random one.

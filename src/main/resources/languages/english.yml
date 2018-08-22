@@ -17,9 +17,6 @@ help: "    &2/sr &7- &fDisplay admin commands.";
 # Message sent when the premium account with specified username does not exist
 notPremium: "&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.";
 
-# Message sent to player that is on cooldown when using /skin command too fast
-skinCooldownNew: "&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin again in &e%s &cseconds.";
-
 # Message sent to player whose skin was changed
 skinChangeSuccess: "&e[&2SkinsRestorer&e] &2Your skin has been changed.";
 
@@ -54,18 +51,47 @@ skinDataDropped: "&e[&2SkinsRestorer&e] &2Skin data for player %player dropped."
 # Message sent when the /sr reload command execution was successful
 reload: "&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!";
 
-#
+# Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
+skinCooldownNew: "&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin again in &e%s &cseconds.";
+
+# Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
+
+# Unknown
 altApiFailed: "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
+
+# Unknown
 noSkinData: "&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this player have a skin?";
+
+# Unknown
 statusOk: "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
+
+# Unknown
 genericError: "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while requesting skin data, please try again later!";
+
+# Unknown
 waitMinute: "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
-notPlayer: "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
-outdated: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
+
+# Message sent when server has an outdated version of SR
+outdated: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest";
+
+# Unknown
 menuOpen: "&2Opening the skins menu...";
+
+# Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!";
+
+# Unknown
+notPlayer: "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
+
+# Next page
 nextPage: "&a&l»&7 Next Page&a&l »";
+
+# Previus page
 previusPage: "&e&l»&7 Previous Page&e&l «";
+
+# Unknown
 removeSkin: "&c&l»&7 Remove Skin&c&l »";
+
+# Unknown
 selectSkin: "&2Click to select this skin";
