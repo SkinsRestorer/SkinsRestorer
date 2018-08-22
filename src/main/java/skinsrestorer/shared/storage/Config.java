@@ -28,6 +28,9 @@ public class Config {
     public static String MYSQL_PASSWORD = "pass";
     public static boolean UPDATER_ENABLED = true;
 
+	// UPCOMING MULTIPLE LANGUAGE SUPPORT
+    public static String LOCALE_FILE = "english.yml";
+
     // Proxies
     public static boolean CUSTOM_PROXIES_ENABLED = false;
     public static List<String> CUSTOM_PROXIES_LIST = null;
