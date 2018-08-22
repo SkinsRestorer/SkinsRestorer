@@ -10,21 +10,26 @@ SkinExpiresAfter: 1584
 
 # Timeout for skin changing (set to 0 to disable)
 SkinChangeCooldown: 30
- 
+
+
+# Set the language you will use - Files are located in /SkinsRestorer/languages directory
+# Default: english
+Language: english
+
 # Enable or disable default skins
 # If there is more than one, the plugin will choose a random one.
 DefaultSkins:
   Enabled: false
   Names:
     - Steve
-    
+
 # Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
   ApplyForPremium: false
   Names:
     - Steve
-    
+
 # Multi-Bungee support
 # Enable this if you have issues with skins in multi-proxy environments
 # (This is automatically enabled if you have RedisBungee)
