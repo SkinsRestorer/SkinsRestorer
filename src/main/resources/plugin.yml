@@ -3,7 +3,7 @@ main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}
 website: https://skinsrestorer.net/
-authors: [Th3Tr0LLeR, DoNotSpamPls, Blackfire62]
+authors: [Th3Tr0LLeR, DoNotSpamPls, Blackfire62, McLive]
 commands:
   skinsrestorer:
     aliases: [sr]
