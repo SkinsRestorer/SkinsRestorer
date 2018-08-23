@@ -63,7 +63,8 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/bungeecord-proxy-1.12-SNAPSHOT.jar</systemPath>
         </dependency>
         <!-- Sponge API -->
         <dependency>
