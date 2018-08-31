@@ -87,7 +87,7 @@ public class SkinsRestorer extends Plugin {
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerCommand(this, new AdminCommands());
         getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
-        getProxy().registerChannel("SkinsRestorer");
+        getProxy().registerChannel("skinsrestorer:skinchange");
         SkinApplier.init();
 
         multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;

@@ -115,7 +115,7 @@ public class SkinApplier {
                 out.writeUTF(textures.getSignature());
             }
 
-            p.getServer().sendData("SkinsRestorer", b.toByteArray());
+            p.getServer().sendData("skinsrestorer:skinchange", b.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.4-SNAPSHOT</version>
+    <version>13.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -48,14 +48,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.13.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- BungeeCord API -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.13-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- BungeeCord-Proxy module (required for SkinApplier) -->

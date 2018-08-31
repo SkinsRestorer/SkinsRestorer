@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -126,12 +128,27 @@ public class UniversalSkinFactory extends SkinFactory {
 
                 int gmid = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
-                Object respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
-                        new Class<?>[]{int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()},
-                        dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null,
-                                "getById", new Class<?>[]{int.class}, new Object[]{gmid}));
+                Object respawn;
+                try {
+                    respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                            new Class<?>[]{
+                                    int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
+                            },
+                            dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                } catch (Exception ignored) {
+                    // 1.13.x needs the dimensionManager instead of dimension id
+                    Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
+                    Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
+                    Object dimensionManger = m.invoke(null, dimension);
 
-                Object pos = null;
+                    respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                            new Class<?>[]{
+                                    dimensionManagerClass, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
+                            },
+                            dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                }
+
+                Object pos;
 
                 try {
                     // 1.9+

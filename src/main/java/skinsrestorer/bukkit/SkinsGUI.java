@@ -78,7 +78,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     private static ItemStack createGlass(int color) {
-        ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 3);
+        ItemStack is = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1, (short) 3);
         ItemMeta meta = is.getItemMeta();
         if (color == 5) {
             meta.setDisplayName(Locale.NEXT_PAGE);
@@ -95,7 +95,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     private static ItemStack createSkull(Object s, String name) {
-        ItemStack is = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        ItemStack is = new ItemStack(Material.SKELETON_SKULL, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<>();
         lore.add(Locale.SELECT_SKIN);
@@ -139,14 +139,14 @@ public class SkinsGUI extends ItemStack implements Listener {
                 e.setCancelled(true);
                 return;
             }
-            if (e.getCurrentItem().getType() == Material.SKULL_ITEM) {
+            if (e.getCurrentItem().getType() == Material.SKELETON_SKULL) {
                 Object skin = SkinStorage.getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
                 SkinsRestorer.getInstance().getFactory().updateSkin(player);
                 player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 player.closeInventory();
-            } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getDurability() == 14) {
+            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getDurability() == 14) {
                 if (SkinStorage.getPlayerSkin(player.getName()) == null) {
                     SkinStorage.removePlayerSkin(player.getName());
                     Object props = SkinStorage.createProperty("textures", "", "");
@@ -166,11 +166,11 @@ public class SkinsGUI extends ItemStack implements Listener {
                 } else {
                     player.sendMessage(Locale.NO_SKIN_DATA);
                 }
-            } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
+            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
                 int currentPage = getMenus().get(player.getName());
                 getMenus().put(player.getName(), currentPage + 1);
                 player.openInventory(getGUI(currentPage + 1));
-            } else if (e.getCurrentItem().getType() == Material.STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Previous Page")) {
+            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Previous Page")) {
                 int currentPage = getMenus().get(player.getName());
                 getMenus().put(player.getName(), currentPage - 1);
                 player.openInventory(getGUI(currentPage - 1));
