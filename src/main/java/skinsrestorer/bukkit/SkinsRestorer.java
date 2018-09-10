@@ -95,9 +95,9 @@ public class SkinsRestorer extends JavaPlugin {
 
         if (bungeeEnabled) {
 
-            Bukkit.getMessenger().registerOutgoingPluginChannel(this, "skinsrestorer:skinchange");
-            Bukkit.getMessenger().registerIncomingPluginChannel(this, "skinsrestorer:skinchange", (channel, player, message) -> {
-                if (!channel.equals("skinsrestorer:skinchange"))
+            Bukkit.getMessenger().registerOutgoingPluginChannel(this, "skinsrestorer:change");
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, "skinsrestorer:change", (channel, player, message) -> {
+                if (!channel.equals("skinsrestorer:change"))
                     return;
 
                 Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
