@@ -32,11 +32,14 @@ public class LoginListener implements Listener {
 
         String nick = e.getConnection().getName();
 
-        if (Config.DISABLE_ONJOIN_SKINS)
+        if (Config.DISABLE_ONJOIN_SKINS) {
+            e.completeIntent(plugin);
             return;
+        }
 
         if (!C.validUsername(nick)) {
             System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+            e.completeIntent(plugin);
             return;
         }
 
