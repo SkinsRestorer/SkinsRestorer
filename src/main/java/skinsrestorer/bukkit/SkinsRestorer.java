@@ -89,7 +89,7 @@ public class SkinsRestorer extends JavaPlugin {
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             bungeeEnabled = false;
         }
 
