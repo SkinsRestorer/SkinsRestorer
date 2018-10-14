@@ -51,7 +51,7 @@ public class SkinsRestorer extends Plugin {
     }
 
     public String getVersion() {
-        return getDescription().getVersion();
+        return getDescription().getVersion().replace("-SNAPSHOT", "");
     }
 
     public boolean isMultiBungee() {
