@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.5-SNAPSHOT</version>
+    <version>13.5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
