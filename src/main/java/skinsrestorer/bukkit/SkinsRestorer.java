@@ -197,7 +197,8 @@ public class SkinsRestorer extends JavaPlugin {
                             return;
                         }
 
-                        if (!C.validUsername(e.getPlayer().getName())) {
+                        // Don't change skin if player has no custom skin-name set and his username is invalid
+                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null && !C.validUsername(e.getPlayer().getName())) {
                             System.out.println("[SkinsRestorer] Not applying skin to " + e.getPlayer().getName() + " (invalid username).");
                             return;
                         }
