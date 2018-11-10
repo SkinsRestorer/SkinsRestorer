@@ -21,13 +21,13 @@ Locale: english
 # If there is more than one, the plugin will choose a random one.
 DefaultSkins:
   Enabled: false
+  ApplyForPremium: false
   Names:
     - Steve
 
 # Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
-  ApplyForPremium: false
   Names:
     - Steve
 
