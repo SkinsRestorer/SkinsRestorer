@@ -58,40 +58,43 @@ skinCooldownNew: "&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin ag
 skinDisabled: "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
 
 # Unknown
-altApiFailed: "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
-
-# Unknown
 noSkinData: "&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this player have a skin?";
 
-# Unknown
-statusOk: "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
-
-# Unknown
+# When proxy returned skin is empty
 genericError: "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while requesting skin data, please try again later!";
 
-# Unknown
+# Cooldown message
 waitMinute: "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
 
 # Message sent when server has an outdated version of SR
 outdated: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest";
 
-# Unknown
-menuOpen: "&2Opening the skins menu...";
-
 # Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!";
 
-# Unknown
+# When none Player try's to set a skin
 notPlayer: "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
 
-# Next page
+# === GUI ===
+# /skins message
+menuOpen: "&2Opening the skins menu...";
+
+# Next page [GUI]
 nextPage: "&a&l»&7 Next Page&a&l »";
 
-# Previus page
+# Previus page [GUI]
 previusPage: "&e&l»&7 Previous Page&e&l «";
 
-# Unknown
+# Clear skin [GUI]
 removeSkin: "&c&l»&7 Remove Skin&c&l »";
 
-# Unknown
+# item lore for skulls [GUI]
 selectSkin: "&2Click to select this skin";
+
+# === DEBUG ===
+
+# old debug
+statusOk: "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
+
+# old debug
+altApiFailed: "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
