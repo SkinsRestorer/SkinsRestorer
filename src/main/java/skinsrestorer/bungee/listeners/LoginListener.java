@@ -29,8 +29,12 @@ public class LoginListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerChange(final LoginEvent e) {
         e.registerIntent(plugin);
-
         String nick = e.getConnection().getName();
+
+        if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED) {
+            e.completeIntent(plugin);
+            return;
+        }
 
         if (Config.DISABLE_ONJOIN_SKINS) {
             e.completeIntent(plugin);
@@ -71,7 +75,7 @@ public class LoginListener implements Listener {
                             return;
                         }
                     } catch (Exception ignored) {
-                        e.completeIntent(plugin);
+                        // e.completeIntent(plugin);
                     }
                 }
 

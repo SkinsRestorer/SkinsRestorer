@@ -27,6 +27,7 @@ public class Config {
     public static String MYSQL_USERNAME = "admin";
     public static String MYSQL_PASSWORD = "pass";
     public static boolean UPDATER_ENABLED = true;
+    public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
 
 	// UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
@@ -60,6 +61,7 @@ public class Config {
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm");
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
+        NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled");
 
         // Proxies
         CUSTOM_PROXIES_ENABLED = config.getBoolean("Proxies.Enabled", CUSTOM_PROXIES_ENABLED);
