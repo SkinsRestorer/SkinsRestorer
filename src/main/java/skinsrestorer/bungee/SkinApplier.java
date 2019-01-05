@@ -43,28 +43,18 @@ public class SkinApplier {
             } else {
                 uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + nick).getBytes(StandardCharsets.UTF_8)).toString();
             }
-            LoginResult profile;
 
-            try {
-                // NEW BUNGEECORD
-                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-                        new Class<?>[]{String.class, String.class, Property[].class},
-                        uuid, nick, new Property[]{textures});
-            } catch (Exception e) {
-                // FALL BACK TO OLD
-                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
-                        new Class<?>[]{String.class, Property[].class}, uuid,
-                        new Property[]{textures});
+            LoginResult profile = handler.getLoginProfile();
+
+            if (profile == null) {
+                profile = new LoginResult(null, null, new Property[]{textures});
+                // System.out.println("Created new LoginResult:");
+                // System.out.println(profile.getProperties()[0]);
             }
-            Property[] present = profile.getProperties();
-            Property[] newprops = new Property[present.length + 1];
-            System.arraycopy(present, 0, newprops, 0, present.length);
-            newprops[present.length] = textures;
-            profile.getProperties()[0].setName(newprops[0].getName());
-            profile.getProperties()[0].setValue(newprops[0].getValue());
-            profile.getProperties()[0].setSignature(newprops[0].getSignature());
-            // System.out.println("Profile:");
-            // System.out.println(profile.getProperties()[0]);
+
+            Property[] newprops = new Property[]{textures};
+
+            profile.setProperties(newprops);
             ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
             if (SkinsRestorer.getInstance().isMultiBungee()) {
@@ -74,7 +64,8 @@ public class SkinApplier {
                 if (p != null)
                     sendUpdateRequest(p, null);
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
