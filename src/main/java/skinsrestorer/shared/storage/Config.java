@@ -61,7 +61,7 @@ public class Config {
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm");
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
-        NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled");
+        NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
 
         // Proxies
         CUSTOM_PROXIES_ENABLED = config.getBoolean("Proxies.Enabled", CUSTOM_PROXIES_ENABLED);
