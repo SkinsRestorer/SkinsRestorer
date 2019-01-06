@@ -78,8 +78,13 @@ public class LoginListener implements Listener {
                         // e.completeIntent(plugin);
                     }
                 }
+                try {
+                    SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
+                } catch (MojangAPI.SkinRequestException ignored) {
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
 
-                SkinApplier.applySkin(null, nick, (InitialHandler) e.getConnection());
                 e.completeIntent(plugin);
             }
         });

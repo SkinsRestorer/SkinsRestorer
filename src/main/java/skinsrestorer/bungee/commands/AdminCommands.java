@@ -65,9 +65,16 @@ public class AdminCommands extends Command {
             ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
                 SkinStorage.removePlayerSkin(p.getName());
                 SkinStorage.setPlayerSkin(p.getName(), p.getName());
-                SkinApplier.applySkin(p);
-                p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
-                sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
+                try {
+                    SkinApplier.applySkin(p);
+                    p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
+                } catch (MojangAPI.SkinRequestException e) {
+                    e.printStackTrace();
+                    p.sendMessage(e.getReason());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             });
 
         } else if (args.length > 2 && args[0].equalsIgnoreCase("set")) {
@@ -97,6 +104,8 @@ public class AdminCommands extends Command {
                     sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 } catch (MojangAPI.SkinRequestException e) {
                     sender.sendMessage(e.getReason());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
 

@@ -19,62 +19,59 @@ public class SkinApplier {
 
     private static Class<?> LoginResult;
 
-    public static void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) {
-        try {
-            String uuid = null;
-            if (p == null && handler == null)
-                return;
+    public static void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
+        String uuid = null;
+        if (p == null && handler == null)
+            return;
 
-            if (p != null) {
-                uuid = p.getUniqueId().toString();
-                handler = (InitialHandler) p.getPendingConnection();
-            }
-            Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(nick);
-
-            if (handler.isOnlineMode()) {
-                if (p != null) {
-                    sendUpdateRequest(p, textures);
-                    return;
-                }
-                // Online mode => get real IP from API
-                uuid = MojangAPI.getUUID(nick);
-
-                // Offline mode use offline uuid
-            } else {
-                uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + nick).getBytes(StandardCharsets.UTF_8)).toString();
-            }
-
-            LoginResult profile = handler.getLoginProfile();
-
-            if (profile == null) {
-                profile = new LoginResult(null, null, new Property[]{textures});
-                // System.out.println("Created new LoginResult:");
-                // System.out.println(profile.getProperties()[0]);
-            }
-
-            Property[] newprops = new Property[]{textures};
-
-            profile.setProperties(newprops);
-            ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-
-            if (SkinsRestorer.getInstance().isMultiBungee()) {
-                if (p != null)
-                    sendUpdateRequest(p, textures);
-            } else {
-                if (p != null)
-                    sendUpdateRequest(p, null);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (p != null) {
+            uuid = p.getUniqueId().toString();
+            handler = (InitialHandler) p.getPendingConnection();
         }
+        Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(nick);
+
+        if (handler.isOnlineMode()) {
+            if (p != null) {
+                sendUpdateRequest(p, textures);
+                return;
+            }
+            // Online mode => get real IP from API
+            uuid = MojangAPI.getUUID(nick);
+
+            // Offline mode use offline uuid
+        } else {
+            uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + nick).getBytes(StandardCharsets.UTF_8)).toString();
+        }
+
+        LoginResult profile = handler.getLoginProfile();
+
+        if (profile == null) {
+            profile = new LoginResult(null, null, new Property[]{textures});
+            // System.out.println("Created new LoginResult:");
+            // System.out.println(profile.getProperties()[0]);
+        }
+
+        Property[] newprops = new Property[]{textures};
+
+        profile.setProperties(newprops);
+        ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
+
+        if (SkinsRestorer.getInstance().isMultiBungee()) {
+            if (p != null)
+                sendUpdateRequest(p, textures);
+        } else {
+            if (p != null)
+                sendUpdateRequest(p, null);
+        }
+
     }
 
-    public static void applySkin(final String pname) {
+    public static void applySkin(final String pname) throws Exception {
         ProxiedPlayer p = ProxyServer.getInstance().getPlayer(pname);
         applySkin(p, pname, null);
     }
 
-    public static void applySkin(final ProxiedPlayer p) {
+    public static void applySkin(final ProxiedPlayer p) throws Exception {
         applySkin(p, p.getName(), null);
     }
 

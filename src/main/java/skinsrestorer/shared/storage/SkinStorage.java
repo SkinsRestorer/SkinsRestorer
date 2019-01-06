@@ -65,7 +65,7 @@ public class SkinStorage {
      *
      * @return Property object
      **/
-    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+    public static Object getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null) {
@@ -130,13 +130,19 @@ public class SkinStorage {
                     SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), textures);
                 }
         } catch (SkinRequestException e) {
-            throw new SkinRequestException(e.getReason());
+            if (!silent)
+                throw new SkinRequestException(e.getReason());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+            if (!silent)
+                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
         }
 
         return textures;
+    }
+
+    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+        return getOrCreateSkinForPlayer(name, false);
     }
 
     /*

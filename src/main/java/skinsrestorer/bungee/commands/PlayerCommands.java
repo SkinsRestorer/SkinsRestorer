@@ -73,8 +73,15 @@ public class PlayerCommands extends Command {
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
                     SkinStorage.removePlayerSkin(p.getName());
                     SkinStorage.setPlayerSkin(p.getName(), p.getName());
-                    SkinApplier.applySkin(p);
-                    p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                    try {
+                        SkinApplier.applySkin(p);
+                        p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                    } catch (MojangAPI.SkinRequestException e) {
+                        e.printStackTrace();
+                        p.sendMessage(new TextComponent(e.getReason()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
             } else {
 
@@ -104,14 +111,16 @@ public class PlayerCommands extends Command {
 
                 // String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    //try {
+                    try {
                         // MojangAPI.getUUID(skin);  WTF is this <.<
                         SkinStorage.setPlayerSkin(p.getName(), skin);
                         SkinApplier.applySkin(p);
                         p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                    //} catch (SkinRequestException e) {
-                    //    p.sendMessage(new TextComponent(e.getReason()));
-                    //}
+                    } catch (SkinRequestException e) {
+                        p.sendMessage(new TextComponent(e.getReason()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 });
                 return;
             }
@@ -157,6 +166,8 @@ public class PlayerCommands extends Command {
                         p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
                     } catch (SkinRequestException e) {
                         p.sendMessage(new TextComponent(e.getReason()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             } else {
