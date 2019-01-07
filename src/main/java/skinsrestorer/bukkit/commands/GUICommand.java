@@ -11,7 +11,6 @@ public class GUICommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
-
         if (!(sender instanceof Player)) {
             sender.sendMessage(Locale.PLAYERS_ONLY);
             return true;
@@ -23,9 +22,10 @@ public class GUICommand implements CommandExecutor {
             p.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
             return true;
         }
+
         SkinsGUI.getMenus().put(p.getName(), 0);
         p.openInventory(SkinsGUI.getGUI(0));
         p.sendMessage(Locale.MENU_OPEN);
-        return false;
+        return true;
     }
 }
