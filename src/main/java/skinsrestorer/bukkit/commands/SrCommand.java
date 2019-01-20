@@ -112,7 +112,7 @@ public class SrCommand implements CommandExecutor {
                     sender.sendMessage("Working UUID API count: " + response.getWorkingUUID());
                     sender.sendMessage("Working Profile API count: " + response.getWorkingProfile());
                     if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
-                        sender.sendMessage("The plugin is currently in a working state.");
+                        sender.sendMessage("The plugin currently is in a working state.");
                     else
                         sender.sendMessage("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect");
                     sender.sendMessage("Finished checking services..");

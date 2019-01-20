@@ -86,11 +86,11 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = MojangAPI.getUUIDProxy("Notch");
-            response.addResult("Mojang-API (Proxy) UUID §a✔ Notch UUID: §b" + uuid);
+            String uuid = MojangAPI.getUUIDBackup("Notch");
+            response.addResult("Mojang-API (Backup) UUID §a✔ Notch UUID: §b" + uuid);
             response.incrementWorkingUUID();
         } catch (Exception e) {
-            response.addResult("Mojang-API (Proxy) UUID §c✘ Error getting UUID: " + e.getMessage());
+            response.addResult("Mojang-API (Backup) UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         // ##### Profile requests #####
@@ -108,12 +108,12 @@ public class ServiceChecker {
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        profile = MojangAPI.getSkinPropertyProxy("069a79f444e94726a5befca90e38aaf5");
+        profile = MojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
         if (profile != null) {
-            response.addResult("Mojang-API (Proxy) Profile §a✔ Notch Profile: §b" + profile.toString());
+            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + profile.toString());
             response.incrementWorkingProfile();
         } else
-            response.addResult("Mojang-API (Proxy) Profile §c✘ Error getting Profile: null");
+            response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
 
         return true;
     }

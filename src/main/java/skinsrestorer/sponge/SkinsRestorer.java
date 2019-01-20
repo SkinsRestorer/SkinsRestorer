@@ -62,22 +62,20 @@ public class SkinsRestorer {
             ex.printStackTrace();
         }
 
-
-
         CommandSpec skinCommand = CommandSpec.builder().description(Text.of("Set your skin"))
                 .arguments(GenericArguments.onlyOne(GenericArguments.string(Text.of("skin"))))
                 .permission("skinsrestorer.playercmds")
                 .executor(new SkinCommand(this)).build();
 
-		Sponge.getCommandManager().register(this, skinCommand, "skin");
+        Sponge.getCommandManager().register(this, skinCommand, "skin");
 
-		CommandSpec setskinCommand = CommandSpec.builder().description(Text.of("Set someone skin"))
-				.arguments(GenericArguments.onlyOne(GenericArguments.player(Text.of("player"))),
-						GenericArguments.remainingJoinedStrings(Text.of("skin")))
-				.permission("skinsrestorer.admincmds")
-				.executor(new SetSkinCommand(this)).build();
+        CommandSpec setskinCommand = CommandSpec.builder().description(Text.of("Set someone skin"))
+                .arguments(GenericArguments.onlyOne(GenericArguments.player(Text.of("player"))),
+                        GenericArguments.remainingJoinedStrings(Text.of("skin")))
+                .permission("skinsrestorer.admincmds")
+                .executor(new SetSkinCommand(this)).build();
 
-		Sponge.getCommandManager().register(this, setskinCommand, "setskin");
+        Sponge.getCommandManager().register(this, setskinCommand, "setskin");
 
         this.skinApplier = new SkinApplier(this);
     }

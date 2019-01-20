@@ -17,16 +17,17 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.List;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class MojangAPI {
 
     private static final String uuidurl = "https://api.minetools.eu/uuid/%name%";
     private static final String uuidurl_mojang = "https://api.mojang.com/users/profiles/minecraft/%name%";
+    private static final String uuidurl_backup = "https://api.ashcon.app/mojang/v2/user/%name%";
 
     private static final String skinurl = "https://api.minetools.eu/profile/%uuid%";
     private static final String skinurl_mojang = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
+    private static final String skinurl_backup = "https://api.ashcon.app/mojang/v2/user/%uuid%";
 
     private static MojangAPI mojangapi = new MojangAPI();
 
@@ -56,10 +57,8 @@ public class MojangAPI {
             }
             return null;
         } catch (Exception e) {
-            if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to Mojang to get skin property. (" + uuid + ")");
+            if (tryNext)
                 return getSkinPropertyMojang(uuid);
-            }
         }
         return null;
     }
@@ -69,6 +68,8 @@ public class MojangAPI {
     }
 
     public static Object getSkinPropertyMojang(String uuid, boolean tryNext) {
+        System.out.println("[SkinsRestorer] Trying Mojang API to get skin property for " + uuid + ".");
+
         String output;
         try {
             output = readURL(skinurl_mojang.replace("%uuid%", uuid));
@@ -80,12 +81,11 @@ public class MojangAPI {
             if (property.valuesFromJson(obj)) {
                 return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
             }
+
             return null;
         } catch (Exception e) {
-            if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
-                System.out.println("[SkinsRestorer] Switching to proxy to get skin property. (" + uuid + ")");
-                return getSkinPropertyProxy(uuid);
-            }
+            if (tryNext)
+                return getSkinPropertyBackup(uuid);
         }
         return null;
     }
@@ -94,21 +94,25 @@ public class MojangAPI {
         return getSkinPropertyMojang(uuid, true);
     }
 
-    public static Object getSkinPropertyProxy(String uuid) {
+    public static Object getSkinPropertyBackup(String uuid) {
+        System.out.println("[SkinsRestorer] Trying backup API to get skin property for " + uuid + ".");
+
         String output;
         try {
-            output = readURLProxy(skinurl_mojang.replace("%uuid%", uuid));
+            output = readURL(skinurl_backup.replace("%uuid%", uuid));
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
+            JsonObject textures = obj.get("textures").getAsJsonObject();
+            JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
             Property property = new Property();
+            property.setValue(rawTextures.get("value").getAsString());
+            property.setSignature(rawTextures.get("signature").getAsString());
 
-            if (property.valuesFromJson(obj)) {
-                return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
-            }
-            return null;
+            return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get skin property from proxy. (" + uuid + ")");
+            System.out.println("[SkinsRestorer] Failed to get skin property from backup API. (" + uuid + ")");
             return null;
         }
     }
@@ -128,10 +132,8 @@ public class MojangAPI {
 
             if (obj.has("status")) {
                 if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    if (tryNext) {
-                        System.out.println("[SkinsRestorer] Switching to Mojang to get UUID. (" + name + ")");
+                    if (tryNext)
                         return getUUIDMojang(name);
-                    }
                     return null;
                 }
             }
@@ -141,10 +143,8 @@ public class MojangAPI {
 
             return obj.get("id").getAsString();
         } catch (IOException e) {
-            if (tryNext) {
-                System.out.println("[SkinsRestorer] Switching to Mojang to get UUID. (" + name + ")");
+            if (tryNext)
                 return getUUIDMojang(name);
-            }
         }
         return null;
     }
@@ -154,6 +154,8 @@ public class MojangAPI {
     }
 
     public static String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
+        System.out.println("[SkinsRestorer] Trying Mojang API to get UUID for player " + name + ".");
+
         String output;
         try {
             output = readURL(uuidurl_mojang.replace("%name%", name));
@@ -165,20 +167,16 @@ public class MojangAPI {
             JsonObject obj = element.getAsJsonObject();
 
             if (obj.has("error")) {
-                if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
-                    System.out.println("[SkinsRestorer] Switching to proxy to get UUID. (" + name + ")");
-                    return getUUIDProxy(name);
-                }
+                if (tryNext)
+                    return getUUIDBackup(name);
                 return null;
             }
 
             return obj.get("id").getAsString();
 
         } catch (IOException e) {
-            if (tryNext && Config.CUSTOM_PROXIES_ENABLED) {
-                System.out.println("[SkinsRestorer] Switching to proxy to get UUID. (" + name + ")");
-                return getUUIDProxy(name);
-            }
+            if (tryNext)
+                return getUUIDBackup(name);
         }
         return null;
     }
@@ -187,25 +185,26 @@ public class MojangAPI {
         return getUUIDMojang(name, true);
     }
 
-    public static String getUUIDProxy(String name) throws SkinRequestException {
+    public static String getUUIDBackup(String name) throws SkinRequestException {
+        System.out.println("[SkinsRestorer] Trying backup API to get UUID for player " + name + ".");
+
         String output;
         try {
-            output = readURLProxy(uuidurl_mojang.replace("%name%", name));
+            output = readURL(uuidurl_backup.replace("%name%", name));
 
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            if (output.isEmpty()) {
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
-            } else if (obj.has("error")) {
+            if (obj.has("code")) {
+                if (obj.get("code").getAsInt() == 404) {
+                    throw new SkinRequestException(Locale.NOT_PREMIUM);
+                }
                 throw new SkinRequestException(Locale.ALT_API_FAILED);
             }
 
-            return obj.get("id").getAsString();
+            return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException e) {
             throw new SkinRequestException(e.getMessage());
-        } catch (ProxyReadException e) {
-            throw new SkinRequestException(e.getReason());
         }
     }
 
@@ -242,66 +241,11 @@ public class MojangAPI {
         return output.toString();
     }
 
-    private static String readURLProxy(String url) throws IOException, ProxyReadException {
-        HttpURLConnection con;
-        String ip;
-        int port;
-        String proxyStr;
-        List<String> list = ProxyManager.getList();
-        if (list == null || list.isEmpty())
-            throw new ProxyReadException(Locale.GENERIC_ERROR);
-
-        proxyStr = list.get(rand(list.size() - 1));
-        String[] realProxy = proxyStr.split(":");
-        if (realProxy.length != 2)
-            throw new ProxyReadException(Locale.GENERIC_ERROR);
-
-        ip = realProxy[0];
-        port = Integer.valueOf(realProxy[1]);
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
-        con = (HttpURLConnection) new URL(url).openConnection(proxy);
-
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "SkinsRestorer");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
-        con.setDoOutput(true);
-
-        String line;
-        StringBuilder output = new StringBuilder();
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-        while ((line = in.readLine()) != null)
-            output.append(line);
-
-        in.close();
-
-        return output.toString();
-    }
-
     public static class SkinRequestException extends Exception {
 
         private String reason;
 
         public SkinRequestException(String reason) {
-            this.reason = reason;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public String getMessage() {
-            return reason;
-        }
-
-    }
-
-    public static class ProxyReadException extends Exception {
-
-        private String reason;
-
-        public ProxyReadException(String reason) {
             this.reason = reason;
         }
 
@@ -381,5 +325,5 @@ public class MojangAPI {
         public void setStatus(int status) {
             this.status = status;
         }
-    }    
+    }
 }
