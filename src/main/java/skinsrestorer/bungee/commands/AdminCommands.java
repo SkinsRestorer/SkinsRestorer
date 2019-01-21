@@ -61,12 +61,11 @@ public class AdminCommands extends Command {
 
             final ProxiedPlayer p = player;
 
-            // Todo: Make sure to check if DefaultSkins are enabled and set the correct skin
             ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+                String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
                 SkinStorage.removePlayerSkin(p.getName());
-                SkinStorage.setPlayerSkin(p.getName(), p.getName());
                 try {
-                    SkinApplier.applySkin(p);
+                    SkinApplier.applySkin(p, skin, null);
                     p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
                     sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
                 } catch (MojangAPI.SkinRequestException e) {

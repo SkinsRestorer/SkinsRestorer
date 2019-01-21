@@ -488,8 +488,6 @@ public class SkinStorage {
     }
 
 
-    // Todo: Implement in bungee plugin on join
-    // Todo: Implement in bungee plugin to get the skin name for /skin clear
     // If clear is true, it doesn't return the custom skin a user has set
     public static String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         if (Config.DEFAULT_SKINS_ENABLED) {
@@ -506,8 +504,8 @@ public class SkinStorage {
                 }
             }
 
-            // return default skin name if user has no custom skin set
-            if (SkinStorage.getPlayerSkin(player) == null) {
+            // return default skin name if user has no custom skin set or we want to clear to default
+            if (SkinStorage.getPlayerSkin(player) == null || clear) {
                 List<String> skins = Config.DEFAULT_SKINS;
                 int randomNum = (int) (Math.random() * skins.size());
                 return skins.get(randomNum);
