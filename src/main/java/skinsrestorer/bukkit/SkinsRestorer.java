@@ -203,35 +203,9 @@ public class SkinsRestorer extends JavaPlugin {
                             return;
                         }
 
-                        if (Config.DEFAULT_SKINS_ENABLED) {
-                            // don't apply to premium players when enabled
-                            if (!Config.DEFAULT_SKINS_PREMIUM) {
-                                // check if player is premium
-                                try {
-                                    if (MojangAPI.getUUID(e.getPlayer().getName()) != null) {
-                                        // apply skin from player instead of default skin from config
-                                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                                        return;
-                                    }
-                                } catch (SkinRequestException ignored) {
-                                    // Player is not premium catching exception here to continue
-                                }
-                            }
+                        String skin = SkinStorage.getDefaultSkinNameIfEnabled(e.getPlayer().getName());
 
-                            // apply default skin if user has no custom skin set
-                            if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-                                List<String> skins = Config.DEFAULT_SKINS;
-                                int randomNum = (int) (Math.random() * skins.size());
-                                factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
-                                return;
-                            }
-
-                            // apply the custom skin user has set
-                            factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                        }
-
-                        // apply the custom skin user has set
-                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
+                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skin));
                     } catch (SkinRequestException ignored) {
                     }
                 });

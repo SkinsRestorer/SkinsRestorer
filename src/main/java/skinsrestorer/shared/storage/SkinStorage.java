@@ -13,6 +13,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -484,5 +485,44 @@ public class SkinStorage {
 
             return null;
         }
+    }
+
+
+    // Todo: Implement in bungee plugin on join
+    // Todo: Implement in bungee plugin to get the skin name for /skin clear
+    // If clear is true, it doesn't return the custom skin a user has set
+    public static String getDefaultSkinNameIfEnabled(String player, boolean clear) {
+        if (Config.DEFAULT_SKINS_ENABLED) {
+            // dont return default skin name for premium players if enabled
+            if (!Config.DEFAULT_SKINS_PREMIUM) {
+                // check if player is premium
+                try {
+                    if (MojangAPI.getUUID(player) != null) {
+                        // player is premium, return his skin name instead of default skin
+                        return player;
+                    }
+                } catch (SkinRequestException ignored) {
+                    // Player is not premium catching exception here to continue returning a default skin name
+                }
+            }
+
+            // return default skin name if user has no custom skin set
+            if (SkinStorage.getPlayerSkin(player) == null) {
+                List<String> skins = Config.DEFAULT_SKINS;
+                int randomNum = (int) (Math.random() * skins.size());
+                return skins.get(randomNum);
+            }
+        }
+
+        // return the player name if we want to clear the skin
+        if (clear)
+            return player;
+
+        // return the custom skin user has set
+        return SkinStorage.getPlayerSkin(player);
+    }
+
+    public static String getDefaultSkinNameIfEnabled(String player) {
+        return getDefaultSkinNameIfEnabled(player, false);
     }
 }

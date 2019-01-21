@@ -148,16 +148,18 @@ public class SrCommand implements CommandExecutor {
                     return true;
                 }
 
-                // Todo: Make sure to check if DefaultSkins are enabled and set the correct skin
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    Object props;
+                    String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
 
-                    SkinStorage.removePlayerSkin(p.getName());
-                    props = SkinStorage.createProperty("textures", "", "");
-                    SkinsRestorer.getInstance().getFactory().applySkin(p, props);
-                    SkinsRestorer.getInstance().getFactory().updateSkin(p);
-                    p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
-                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
+                    try {
+                        SkinStorage.removePlayerSkin(p.getName());
+                        SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(skin));
+                        SkinsRestorer.getInstance().getFactory().updateSkin(p);
+                        p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+                        sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
+                    } catch (SkinRequestException ignored) {
+
+                    }
                 });
                 return true;
             }

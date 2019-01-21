@@ -53,23 +53,16 @@ public class SkinCommand implements CommandExecutor {
                     return true;
                 }
 
-                if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-                    p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
+
+                // If skin change was successfull, remove custom skin from storage
+                if (this.setSkin(p, skin, false)) {
+                    SkinStorage.removePlayerSkin(p.getName());
+
+                    p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+
                     return true;
                 }
-
-                CooldownStorage.resetCooldown(p.getName());
-                CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-
-                Object props;
-
-                SkinStorage.removePlayerSkin(p.getName());
-                props = SkinStorage.createProperty("textures", "", "");
-                SkinsRestorer.getInstance().getFactory().applySkin(p, props);
-                SkinsRestorer.getInstance().getFactory().updateSkin(p);
-                p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
-
-                return true;
             }
 
             case "set": {
@@ -106,9 +99,15 @@ public class SkinCommand implements CommandExecutor {
     }
 
     private void setSkin(Player p, String skin) {
+        this.setSkin(p, skin, true);
+    }
+
+    // if save is false, we won't save the skin skin name
+    // because default skin names shouldn't be saved as the users custom skin
+    private boolean setSkin(Player p, String skin, boolean save) {
         if (!C.validUsername(skin)) {
             p.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
-            return;
+            return false;
         }
 
         if (Config.DISABLED_SKINS_ENABLED)
@@ -116,13 +115,13 @@ public class SkinCommand implements CommandExecutor {
                 for (String dskin : Config.DISABLED_SKINS)
                     if (skin.equalsIgnoreCase(dskin)) {
                         p.sendMessage(Locale.SKIN_DISABLED);
-                        return;
+                        return false;
                     }
             }
 
         if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
             p.sendMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
-            return;
+            return false;
         }
 
         CooldownStorage.resetCooldown(p.getName());
@@ -131,15 +130,18 @@ public class SkinCommand implements CommandExecutor {
         String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             try {
-                SkinStorage.setPlayerSkin(p.getName(), skin);
-                SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
+                if (save)
+                    SkinStorage.setPlayerSkin(p.getName(), skin);
+                SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(skin));
                 p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
             } catch (SkinRequestException e) {
                 p.sendMessage(e.getReason());
 
                 // set custom skin name back to old one if there is an exception
-                SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+                if (save)
+                    SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
             }
         });
+        return true;
     }
 }
