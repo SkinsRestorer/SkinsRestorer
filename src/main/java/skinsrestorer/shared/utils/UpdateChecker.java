@@ -8,20 +8,20 @@ import org.inventivetalent.update.spiget.ResourceVersion;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by McLive on 21.01.2019.
+ * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
  */
 public class UpdateChecker {
     public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
-    private String currentVersion;
+    public String currentVersion;
     private Logger log;
     private String userAgent;
     private VersionComparator versionComparator = VersionComparator.SEM_VER_SNAPSHOT;
@@ -64,5 +64,9 @@ public class UpdateChecker {
 
     public void setUserAgent(String userAgent) {
         this.userAgent = userAgent;
+    }
+
+    public ResourceInfo getLatestResourceInfo() {
+        return this.latestResourceInfo;
     }
 }

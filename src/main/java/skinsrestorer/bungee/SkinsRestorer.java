@@ -104,18 +104,8 @@ public class SkinsRestorer extends Plugin {
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion()));
-                        if (hasDirectDownload) {
-                            /*console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
-                            if (updater.downloadUpdate()) {
-                                console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
-                            } else {
-                                // Update failed
-                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updater.getFailReason());
-                            }*/
-                        } else {
-                            console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
-                            console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    " + downloadUrl));
-                        }
+                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
+                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    " + downloadUrl));
                         console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
                     }
 

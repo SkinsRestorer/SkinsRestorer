@@ -34,6 +34,7 @@ public class SkinsRestorer extends JavaPlugin {
     private MySQL mysql;
     private boolean bungeeEnabled;
     private UpdateChecker updateChecker;
+    private UpdateDownloader updateDownloader;
     private CommandSender console;
 
     public static SkinsRestorer getInstance() {
@@ -52,6 +53,10 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
+    public UpdateChecker getUpdateChecker() {
+        return this.updateChecker;
+    }
+
     public void onEnable() {
         console = getServer().getConsoleSender();
 
@@ -59,6 +64,7 @@ public class SkinsRestorer extends JavaPlugin {
         MetricsLite metrics = new MetricsLite(this);
 
         updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
+        updateDownloader = new UpdateDownloader(this);
 
         instance = this;
         factory = new UniversalSkinFactory();
@@ -176,13 +182,13 @@ public class SkinsRestorer extends JavaPlugin {
                         console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
                         console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
                         if (hasDirectDownload) {
-                            /*console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
-                            if (updater.downloadUpdate()) {
+                            console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
+                            if (updateDownloader.downloadUpdate()) {
                                 console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
                             } else {
                                 // Update failed
-                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updater.getFailReason());
-                            }*/
+                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updateDownloader.getFailReason());
+                            }
                         } else {
                             console.sendMessage("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
                             console.sendMessage("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
