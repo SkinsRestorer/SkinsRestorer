@@ -4,9 +4,6 @@ import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -14,13 +11,13 @@ import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
+import skinsrestorer.bukkit.listener.PlayerJoin;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
@@ -30,7 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class SkinsRestorer extends JavaPlugin {
 
@@ -184,33 +180,7 @@ public class SkinsRestorer extends JavaPlugin {
         getCommand("skins").setExecutor(new GUICommand());
 
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-
-            // LoginEvent happens on attemptLogin so its the best place to set the skin
-            @EventHandler
-            public void onLogin(PlayerJoinEvent e) {
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        if (Config.DISABLE_ONJOIN_SKINS) {
-                            // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
-                            // shouldn't it just skip it if it's true?
-                            return;
-                        }
-
-                        // Don't change skin if player has no custom skin-name set and his username is invalid
-                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null && !C.validUsername(e.getPlayer().getName())) {
-                            System.out.println("[SkinsRestorer] Not applying skin to " + e.getPlayer().getName() + " (invalid username).");
-                            return;
-                        }
-
-                        String skin = SkinStorage.getDefaultSkinNameIfEnabled(e.getPlayer().getName());
-
-                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skin));
-                    } catch (SkinRequestException ignored) {
-                    }
-                });
-            }
-        }, this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
 
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 
