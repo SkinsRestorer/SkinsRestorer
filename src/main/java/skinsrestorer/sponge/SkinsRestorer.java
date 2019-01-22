@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.bstats.sponge.MetricsLite;
+import org.bstats.sponge.MetricsLite2;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -48,7 +48,7 @@ public class SkinsRestorer {
     }
 
     @Inject
-    private MetricsLite metrics;
+    private MetricsLite2 metrics;
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
