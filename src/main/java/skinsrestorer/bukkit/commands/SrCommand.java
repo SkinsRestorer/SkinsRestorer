@@ -115,7 +115,7 @@ public class SrCommand implements CommandExecutor {
                         sender.sendMessage("The plugin currently is in a working state.");
                     else
                         sender.sendMessage("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect");
-                    sender.sendMessage("Finished checking services..");
+                    sender.sendMessage("Finished checking services.");
                 });
                 return true;
             }

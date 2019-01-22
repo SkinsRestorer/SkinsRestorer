@@ -6,8 +6,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.MetricsLite;
 import org.inventivetalent.update.spiget.UpdateCallback;
-import skinsrestorer.bungee.commands.AdminCommands;
-import skinsrestorer.bungee.commands.PlayerCommands;
+import skinsrestorer.bungee.commands.SrCommand;
+import skinsrestorer.bungee.commands.SkinCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
@@ -73,8 +73,8 @@ public class SkinsRestorer extends Plugin {
         }
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
-        getProxy().getPluginManager().registerCommand(this, new AdminCommands());
-        getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
+        getProxy().getPluginManager().registerCommand(this, new SrCommand());
+        getProxy().getPluginManager().registerCommand(this, new SkinCommand());
         getProxy().registerChannel("sr:skinchange");
         SkinApplier.init();
 
