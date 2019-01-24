@@ -5,9 +5,9 @@
  # SkinsRestorerX [![Build Status](https://api.travis-ci.org/McLive/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/McLive/SkinsRestorerX)
  This is a development repo for SkinsRestorer, used for making and testing new plugin features.
  --------------
- Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/Waterfall servers.
+ Restoring offline mode skins & changing skins for Spigot/BungeeCord/Waterfall servers.
  
- Supported versions: Minecraft 1.8.8 - 1.12.x
+ Supported versions: Minecraft 1.8.8 - 1.13.x
 
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
  
@@ -16,3 +16,6 @@
  Discord | [click here](https://discord.me/skinsrestorer)
 
  Website | [click here](https://skinsrestorer.net/)
+
+## License
+SkinsRestorer is licensed under GNU General Public License v3.0. Please see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE) for more info.
