@@ -18,4 +18,4 @@
  Website | [click here](https://skinsrestorer.net/)
 
 ## License
-SkinsRestorer is licensed under GNU General Public License v3.0. Please see [`LICENSE.txt`](https://github.com/Th3Tr0LLeR/SkinsRestorer---Maro/blob/master/LICENSE) for more info.
+SkinsRestorer is licensed under GNU General Public License v3.0. Please see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE) for more info.
