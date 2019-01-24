@@ -60,17 +60,9 @@ public class SkinsRestorer extends Plugin {
         Config.load(getResourceAsStream("config.yml"));
         Locale.load();
 
-        if (Config.USE_MYSQL) {
-            SkinStorage.init(mysql = new MySQL(
-                    Config.MYSQL_HOST,
-                    Config.MYSQL_PORT,
-                    Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME,
-                    Config.MYSQL_PASSWORD
-            ));
-        } else {
-            SkinStorage.init(getDataFolder());
-        }
+        // Init storage
+        if (!this.initStorage())
+            return;
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
         getProxy().getPluginManager().registerCommand(this, new SrCommand());
@@ -90,6 +82,36 @@ public class SkinsRestorer extends Plugin {
                             console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
                     }
         });
+    }
+
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (Config.USE_MYSQL) {
+            try {
+                this.mysql = new MySQL(
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD
+                );
+
+                this.mysql.openConnection();
+                this.mysql.createTable();
+
+                SkinStorage.init(this.mysql);
+                return true;
+
+            } catch (Exception e) {
+                console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                getProxy().getPluginManager().unregisterListeners(this);
+                getProxy().getPluginManager().unregisterCommands(this);
+                return false;
+            }
+        }
+
+        SkinStorage.init(getDataFolder());
+        return true;
     }
 
     private void checkUpdate() {

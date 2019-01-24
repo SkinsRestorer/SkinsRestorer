@@ -7,30 +7,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.bukkit.utils.Helper;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.*;
 
 public class SrCommand implements CommandExecutor {
-    private Player getPlayerFromNick(String nick) {
-        Player player = Bukkit.getPlayer(nick);
-
-        if (player == null)
-            for (Player pl : Bukkit.getOnlinePlayers())
-                if (pl.getName().startsWith(nick)) {
-                    player = pl;
-                    break;
-                }
-
-        return player;
-    }
-
     private void sendHelp(CommandSender sender) {
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(Locale.SR_LINE);
@@ -55,32 +41,21 @@ public class SrCommand implements CommandExecutor {
 
         switch (cmd) {
             case "set": {
-                if (args.length < 3) {
-                    this.sendHelp(sender);
-                    return true;
-                }
-
-                final Player p = this.getPlayerFromNick(args[1]);
-                final String skin = args[2];
-
-                if (p == null) {
-                    sender.sendMessage(Locale.NOT_ONLINE);
-                    return true;
-                }
-
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        MojangAPI.getUUID(skin);
-                        SkinStorage.setPlayerSkin(p.getName(), skin);
-                        SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(p.getName()));
-                        sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                    } catch (SkinRequestException e) {
-                        sender.sendMessage(e.getReason());
-                    }
-                });
+                sender.sendMessage("This command has been removed.");
+                sender.sendMessage("Please use /skin set <player> <skin> now.");
                 return true;
             }
 
+            case "clear": {
+                sender.sendMessage("This command has been removed.");
+                sender.sendMessage("Please use /skin clear <player> now.");
+                return true;
+            }
+
+            case "config": {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
+                return true;
+            }
 
             case "reload": {
                 Locale.load();
@@ -88,13 +63,6 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage(Locale.RELOAD);
                 return true;
             }
-
-
-            case "config": {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!");
-                return true;
-            }
-
 
             case "status": {
                 sender.sendMessage("Checking needed services for SR to work properly...");
@@ -120,7 +88,6 @@ public class SrCommand implements CommandExecutor {
                 return true;
             }
 
-
             case "drop": {
                 if (args.length < 2) {
                     this.sendHelp(sender);
@@ -129,41 +96,12 @@ public class SrCommand implements CommandExecutor {
 
                 String nick = args[1];
 
-                SkinStorage.removeSkinData(nick);
-                sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", nick));
-                return true;
-            }
-
-
-            case "clear": {
-                if (args.length < 2) {
-                    this.sendHelp(sender);
-                    return true;
-                }
-
-                final Player p = this.getPlayerFromNick(args[1]);
-
-                if (p == null) {
-                    sender.sendMessage(Locale.NOT_ONLINE);
-                    return true;
-                }
-
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
-
-                    try {
-                        SkinStorage.removePlayerSkin(p.getName());
-                        SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(skin));
-                        SkinsRestorer.getInstance().getFactory().updateSkin(p);
-                        p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
-                        sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName()));
-                    } catch (SkinRequestException ignored) {
-
-                    }
+                    SkinStorage.removeSkinData(nick);
+                    sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", nick));
                 });
                 return true;
             }
-
 
             case "props": {
                 if (!(sender instanceof Player)) {
@@ -176,7 +114,7 @@ public class SrCommand implements CommandExecutor {
                     return true;
                 }
 
-                final Player p = this.getPlayerFromNick(args[1]);
+                final Player p = Helper.getPlayerFromNick(args[1]);
 
                 if (p == null) {
                     sender.sendMessage(Locale.NOT_ONLINE);
@@ -222,7 +160,6 @@ public class SrCommand implements CommandExecutor {
                 sender.sendMessage("§cMore info in console!");
                 return true;
             }
-
 
             default: {
                 return true;

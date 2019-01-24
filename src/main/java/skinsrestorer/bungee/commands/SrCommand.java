@@ -7,12 +7,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
-import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.bungee.utils.Helper;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
@@ -33,22 +32,7 @@ public class SrCommand extends Command {
             sender.sendMessage(new TextComponent(Locale.SR_LINE));
     }
 
-    private ProxiedPlayer getPlayerFromNick(String nick) {
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(nick);
-
-        if (player == null)
-            for (ProxiedPlayer pl : ProxyServer.getInstance().getPlayers())
-                if (pl.getName().startsWith(nick)) {
-                    player = pl;
-                    break;
-                }
-
-        return player;
-    }
-
-
     public void execute(final CommandSender sender, final String[] args) {
-
         if (!sender.hasPermission("skinsrestorer.cmds")) {
             sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
             return;
@@ -63,31 +47,19 @@ public class SrCommand extends Command {
 
         switch (cmd) {
             case "set": {
-                if (args.length < 3) {
-                    this.sendHelp(sender);
-                    return;
-                }
+                sender.sendMessage(new TextComponent("This command has been removed."));
+                sender.sendMessage(new TextComponent("Please use /skin set <player> <skin> now."));
+                return;
+            }
 
-                final ProxiedPlayer p = this.getPlayerFromNick(args[1]);
-                final String skin = args[2];
+            case "clear": {
+                sender.sendMessage(new TextComponent("This command has been removed."));
+                sender.sendMessage(new TextComponent("Please use /skin clear player> now."));
+                return;
+            }
 
-                if (p == null) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));
-                    return;
-                }
-
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        MojangAPI.getUUID(skin);
-                        SkinStorage.setPlayerSkin(p.getName(), skin);
-                        SkinApplier.applySkin(p);
-                        sender.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-                    } catch (MojangAPI.SkinRequestException e) {
-                        sender.sendMessage(new TextComponent(e.getReason()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
+            case "config": {
+                sender.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!"));
                 return;
             }
 
@@ -95,11 +67,6 @@ public class SrCommand extends Command {
                 Locale.load();
                 Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
                 sender.sendMessage(new TextComponent(Locale.RELOAD));
-                return;
-            }
-
-            case "config": {
-                sender.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §2/sr config has been removed from SkinsRestorer. Farewell!"));
                 return;
             }
 
@@ -135,37 +102,9 @@ public class SrCommand extends Command {
 
                 String nick = args[1];
 
-                SkinStorage.removeSkinData(nick);
-                sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", nick)));
-                return;
-            }
-
-            case "clear": {
-                if (args.length < 2) {
-                    this.sendHelp(sender);
-                    return;
-                }
-
-                final ProxiedPlayer p = this.getPlayerFromNick(args[1]);
-
-                if (p == null) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));
-                    return;
-                }
-
                 ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
-                    SkinStorage.removePlayerSkin(p.getName());
-                    try {
-                        SkinApplier.applySkin(p, skin, null);
-                        p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
-                        sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_ISSUER.replace("%player", p.getName())));
-                    } catch (MojangAPI.SkinRequestException e) {
-                        e.printStackTrace();
-                        p.sendMessage(new TextComponent(e.getReason()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    SkinStorage.removeSkinData(nick);
+                    sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", nick)));
                 });
                 return;
             }
@@ -181,7 +120,7 @@ public class SrCommand extends Command {
                     return;
                 }
 
-                final ProxiedPlayer p = this.getPlayerFromNick(args[1]);
+                final ProxiedPlayer p = Helper.getPlayerFromNick(args[1]);
 
                 if (p == null) {
                     sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));

@@ -24,15 +24,13 @@ public class MySQL {
         this.username = username;
         this.password = password;
         exe = Executors.newCachedThreadPool();
-        try {
-            con = openConnection();
-            createTable();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+            //con = openConnection();
+            //createTable();
+
     }
 
-    private void createTable() {
+    public void createTable() {
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
@@ -56,11 +54,12 @@ public class MySQL {
         execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
-    private Connection openConnection() throws SQLException {
+    public Connection openConnection() throws SQLException {
         Connection con = null;
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false", username, password);
 
         System.out.println("[SkinsRestorer] Connected to MySQL!");
+        this.con = con;
         return con;
     }
 
@@ -73,9 +72,9 @@ public class MySQL {
         return false;
     }
 
-    private Connection getConnection() {
+    public Connection getConnection() {
         try {
-            if(!this.con.isValid(1)) {
+            if(con == null || !this.con.isValid(1)) {
                 System.out.println("[SkinsRestorer] MySQL connection lost! Creation a new one.");
                 con = this.openConnection();
             }

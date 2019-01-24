@@ -488,6 +488,21 @@ public class SkinStorage {
     }
 
 
+    public static boolean forceUpdateSkinData(String skin) {
+        try {
+            Object textures = MojangAPI.getSkinPropertyBackup(MojangAPI.getUUIDBackup(skin));
+            if (textures != null) {
+                SkinStorage.setSkinData(skin, textures);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     // If clear is true, it doesn't return the custom skin a user has set
     public static String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         if (Config.DEFAULT_SKINS_ENABLED) {
@@ -508,7 +523,9 @@ public class SkinStorage {
             if (SkinStorage.getPlayerSkin(player) == null || clear) {
                 List<String> skins = Config.DEFAULT_SKINS;
                 int randomNum = (int) (Math.random() * skins.size());
-                return skins.get(randomNum);
+                String randomSkin = skins.get(randomNum);
+                // return player name if there are no default skins set
+                return randomSkin != null ? randomSkin : player;
             }
         }
 

@@ -77,6 +77,7 @@ public class SkinsRestorer extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
             console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
         // Check if we are running in bungee mode
@@ -113,17 +114,9 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
-        // Initialise MySQL
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(
-                    Config.MYSQL_HOST,
-                    Config.MYSQL_PORT,
-                    Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME,
-                    Config.MYSQL_PASSWORD
-            ));
-        else
-            SkinStorage.init(getDataFolder());
+        // Init storage
+        if (!this.initStorage())
+            return;
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 20);
 
@@ -148,6 +141,35 @@ public class SkinsRestorer extends JavaPlugin {
                     }
         });
 
+    }
+
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (Config.USE_MYSQL) {
+            try {
+                this.mysql = new MySQL(
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD
+                );
+
+                this.mysql.openConnection();
+                this.mysql.createTable();
+
+                SkinStorage.init(this.mysql);
+                return true;
+
+            } catch (Exception e) {
+                console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return false;
+            }
+        }
+
+        SkinStorage.init(getDataFolder());
+        return true;
     }
 
     private void checkBungeeMode() {

@@ -13,7 +13,8 @@ public class Locale {
     public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
             + "\n   &2/skin set <skinname> &7-&f Changes your skin."
             + "\n    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-            + "\n    &2/skin clear &7-&f Clears your skin.";
+            + "\n    &2/skin clear &7-&f Clears your skin."
+            + "\n    &2/skin update &7-&f Forces update of your skin.";
     public static String HELP_SR = "    &2/sr &7- &fDisplay admin commands.";
     public static String NOT_PREMIUM = "&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.";
     public static String SKIN_COOLDOWN_NEW = "&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin again in &e%s &cseconds.";
@@ -22,11 +23,12 @@ public class Locale {
     public static String SKIN_CLEAR_ISSUER = "&e[&2SkinsRestorer&e] &2Skin cleared for player %player.";
     public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
             + "\n\n   &2/sr config &7- &fhelp page for usefull in game config settings"
-            + "\n    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
             + "\n    &2/sr drop <player> &7- &fDrops player skin data."
-            + "\n    &2/sr clear <player> &7- &fClears player data."
             + "\n    &2/sr reload &7- &fReloads the config and locale"
-            + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties";
+            + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
+            + "\n    &2/skin update [player] &7- &fForces skin update"
+            + "\n    &2/skin clear [player] &7- &fClears your/another player data."
+            + "\n    &2/skin set <player> <skin name> &7- &fChanges your/another skin";
     public static String ADMIN_SET_SKIN = "&e[&2SkinsRestorer&e] &2You set %player's skin.";
     public static String INVALID_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username.";
     public static String NOT_ONLINE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlayer is not online!";
@@ -46,6 +48,10 @@ public class Locale {
     public static String PREVIOUS_PAGE = "&e&l»&7 Previous Page&e&l «";
     public static String REMOVE_SKIN = "&c&l»&7 Remove Skin&c&l »";
     public static String SELECT_SKIN = "&2Click to select this skin";
+
+    public static String ERROR_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cAn error happened while updating your skin. Please try again later!";
+    public static String SUCCESS_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &2Your skin has been updated.";
+    public static String SUCCESS_UPDATING_SKIN_ISSUER = "&e[&2SkinsRestorer&e] &2Skin updated for player %player.";
 
     private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages");
 
