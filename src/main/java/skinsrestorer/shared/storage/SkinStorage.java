@@ -534,7 +534,10 @@ public class SkinStorage {
             return player;
 
         // return the custom skin user has set
-        return SkinStorage.getPlayerSkin(player);
+        String skin = SkinStorage.getPlayerSkin(player);
+
+        // null if player has no custom skin, we'll return his name then
+        return skin == null ? player : skin;
     }
 
     public static String getDefaultSkinNameIfEnabled(String player) {
