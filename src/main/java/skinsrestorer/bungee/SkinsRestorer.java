@@ -1,5 +1,8 @@
 package skinsrestorer.bungee;
 
+import co.aikar.commands.BungeeCommandIssuer;
+import co.aikar.commands.BungeeCommandManager;
+import co.aikar.commands.ConditionFailedException;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,6 +18,7 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.Permission;
 import skinsrestorer.shared.utils.UpdateChecker;
 
 public class SkinsRestorer extends Plugin {
@@ -65,8 +69,10 @@ public class SkinsRestorer extends Plugin {
             return;
 
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
-        getProxy().getPluginManager().registerCommand(this, new SrCommand());
-        getProxy().getPluginManager().registerCommand(this, new SkinCommand());
+
+        // Init commands
+        this.initCommands();
+
         getProxy().registerChannel("sr:skinchange");
         SkinApplier.init();
 
@@ -82,6 +88,29 @@ public class SkinsRestorer extends Plugin {
                             console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
                     }
         });
+    }
+
+    private void initCommands() {
+        BungeeCommandManager manager = new BungeeCommandManager(this);
+        // optional: enable unstable api to use help
+        manager.enableUnstableAPI("help");
+
+        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
+            BungeeCommandIssuer issuer = context.getIssuer();
+            if (issuer.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM)
+                return;
+
+            throw new ConditionFailedException("You don't have access to change your skin.");
+        }));
+        // Use with @Conditions("permOrSkinWithoutPerm")
+
+        if (Config.USE_NEW_PERMISSIONS)
+            Permission.newPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+        else
+            Permission.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+
+        manager.registerCommand(new SkinCommand());
+        manager.registerCommand(new SrCommand());
     }
 
     private boolean initStorage() {

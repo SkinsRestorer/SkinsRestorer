@@ -42,6 +42,10 @@
             <id>luck-repo</id>
             <url>https://ci.lucko.me/plugin/repository/everything/</url>
         </repository>
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -126,6 +130,30 @@
             <artifactId>slf4j-jdk14</artifactId>
             <version>1.7.25</version>
         </dependency>
+        <!-- ACF for paper/spigot -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ACF for bungee -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-bungee</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ACF for sponge -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-sponge</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.name}</finalName>
@@ -137,6 +165,9 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -153,6 +184,10 @@
                         <relocation>
                             <pattern>org.inventivetalent</pattern>
                             <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

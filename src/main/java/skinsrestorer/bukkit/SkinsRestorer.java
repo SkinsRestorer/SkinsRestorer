@@ -1,5 +1,8 @@
 package skinsrestorer.bukkit;
 
+import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.PaperCommandManager;
 import org.bstats.bukkit.MetricsLite;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,11 +19,8 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.ReflectionUtil;
-import skinsrestorer.shared.utils.UpdateChecker;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -120,10 +120,8 @@ public class SkinsRestorer extends JavaPlugin {
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 20);
 
-        // Commands
-        getCommand("skinsrestorer").setExecutor(new SrCommand());
-        getCommand("skin").setExecutor(new SkinCommand());
-        getCommand("skins").setExecutor(new GUICommand());
+        // Init commands
+        this.initCommands();
 
         // Events
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
@@ -141,6 +139,30 @@ public class SkinsRestorer extends JavaPlugin {
                     }
         });
 
+    }
+
+    private void initCommands() {
+        PaperCommandManager manager = new PaperCommandManager(this);
+        // optional: enable unstable api to use help
+        manager.enableUnstableAPI("help");
+
+        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
+            BukkitCommandIssuer issuer = context.getIssuer();
+            if (issuer.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM)
+                return;
+
+            throw new ConditionFailedException("You don't have access to change your skin.");
+        }));
+        // Use with @Conditions("permOrSkinWithoutPerm")
+
+        if (Config.USE_NEW_PERMISSIONS)
+            Permission.newPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+        else
+            Permission.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+
+        manager.registerCommand(new SkinCommand());
+        manager.registerCommand(new SrCommand());
+        manager.registerCommand(new GUICommand());
     }
 
     private boolean initStorage() {

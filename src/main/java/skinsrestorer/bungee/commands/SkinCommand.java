@@ -1,13 +1,15 @@
 package skinsrestorer.bungee.commands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.annotation.*;
+import co.aikar.commands.contexts.OnlineProxiedPlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Command;
 import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.bungee.utils.PlayerArgs;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -18,177 +20,97 @@ import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 import java.util.concurrent.TimeUnit;
 
-public class SkinCommand extends Command {
-
-    public SkinCommand() {
-        super("skin", null);
+@CommandAlias("skin") @CommandPermission("%skin")
+public class SkinCommand extends BaseCommand {
+    @HelpCommand
+    public static void onHelp(CommandSender sender, CommandHelp help) {
+        sender.sendMessage(new TextComponent("SkinsRestorer Help"));
+        help.showHelp();
     }
 
-    private boolean checkPerm(CommandSender sender, String perm) {
-        return sender.hasPermission(perm) || Config.SKINWITHOUTPERM;
+
+    @Subcommand("clear") @CommandPermission("%skinClear")
+    @Description("Clears your skin.")
+    public void onSkinClear(ProxiedPlayer p) {
+        this.onSkinClearOther(p, new OnlineProxiedPlayer(p));
     }
 
-    //Method called for the commands help.
-    private void help(CommandSender p) {
-        if (p.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM) {
-            if (!Locale.SR_LINE.isEmpty())
-                p.sendMessage(new TextComponent(Locale.SR_LINE));
-            p.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
-            if (p.hasPermission("skinsrestorer.cmds"))
-                p.sendMessage(new TextComponent(Locale.HELP_SR));
-            if (!Locale.SR_LINE.isEmpty())
-                p.sendMessage(new TextComponent(Locale.SR_LINE));
-        } else {
-            p.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-        }
+    @Subcommand("clear") @CommandPermission("%skinClearOther")
+    @CommandCompletion("@players")
+    @Description("Clears the skin of another player.")
+    public void onSkinClearOther(CommandSender sender, OnlineProxiedPlayer target) {
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            ProxiedPlayer p = target.getPlayer();
+            String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
+
+            // remove users custom skin and set default skin / his skin
+            SkinStorage.removePlayerSkin(p.getName());
+            if (this.setSkin(p, skin, false)) {
+                p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
+                if (!sender.getName().equals(target.getPlayer().getName()))
+                    sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName())));
+            }
+        });
     }
 
-    public void execute(CommandSender sender, final String[] args) {
-        // Skin Help
-        if (args.length < 1) {
-            this.help(sender);
-            return;
-        }
 
-        String cmd = args[0].toLowerCase();
+    @Subcommand("update") @CommandPermission("%skinUpdate")
+    @Description("Updates your skin.")
+    public void onSkinUpdate(ProxiedPlayer p) {
+        this.onSkinUpdateOther(p, new OnlineProxiedPlayer(p));
+    }
 
-        switch (cmd) {
-            case "clear": {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds.clear")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
+    @Subcommand("update") @CommandPermission("%skinUpdateOther")
+    @CommandCompletion("@players")
+    @Description("Updates the skin of another player.")
+    public void onSkinUpdateOther(CommandSender sender, OnlineProxiedPlayer target) {
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            ProxiedPlayer p = target.getPlayer();
+            String skin = SkinStorage.getPlayerSkin(p.getName());
 
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
+            // User has no custom skin set, get the default skin name / his skin
+            if (skin == null)
+                skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
 
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));
-                    return;
-                }
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.clear.other")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    ProxiedPlayer pl = pArgs.getPlayer();
-                    String skin = SkinStorage.getDefaultSkinNameIfEnabled(pl.getName(), true);
-
-                    // remove users custom skin and set default skin / his skin
-                    SkinStorage.removePlayerSkin(pl.getName());
-                    if (this.setSkin(pl, skin, false)) {
-                        pl.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
-                    }
-                });
+            if (!SkinStorage.forceUpdateSkinData(skin)) {
+                p.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));
                 return;
             }
 
-            case "update": {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds.update")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
+            if (this.setSkin(p, skin, false)) {
+                p.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN));
+                if (!sender.getName().equals(target.getPlayer().getName())) {
+                    sender.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName())));
                 }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
-
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));
-                    return;
-                }
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.update.other")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    ProxiedPlayer pl = pArgs.getPlayer();
-                    String skin = SkinStorage.getPlayerSkin(pl.getName());
-
-                    // User has no custom skin set, get the default skin name / his skin
-                    if (skin == null)
-                        skin = SkinStorage.getDefaultSkinNameIfEnabled(pl.getName(), true);
-
-                    if (!SkinStorage.forceUpdateSkinData(skin)) {
-                        pl.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));
-                        return;
-                    }
-
-                    if (this.setSkin(pl, skin, false)) {
-                        pl.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN));
-                    }
-                });
-
-                return;
             }
-
-            case "set": {
-                if (args.length < 2) {
-                    if (this.checkPerm(sender, "skinsrestorer.playercmds"))
-                        this.help(sender);
-                    else
-                        sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args, 2);
-
-                if (args.length > 2 && !pArgs.foundPlayer()) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_ONLINE));
-                    return;
-                }
-
-                String skin = args[1];
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.other")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                if (pArgs.isOtherPlayer())
-                    skin = args[2];
-
-                final String finalSkin = skin;
-
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    this.setSkin(pArgs.getPlayer(), finalSkin);
-                });
-                return;
-            }
-
-            // Skin <name>
-            default: {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds")) {
-                    sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION));
-                    return;
-                }
-
-                if (args.length > 1) {
-                    this.help(sender);
-                    return;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
-
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(new TextComponent(Locale.NOT_PLAYER));
-                    return;
-                }
-
-                final String skin = args[0];
-                ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-                    this.setSkin(pArgs.getPlayer(), skin);
-                });
-                return;
-            }
-        }
+        });
     }
+
+
+    @Subcommand("set") @CommandPermission("%skinSet")
+    @Description("Sets your skin.")
+    public void onSkinSet(ProxiedPlayer p, String skin) {
+        this.onSkinSetOther(p, new OnlineProxiedPlayer(p), skin);
+    }
+
+    @Subcommand("set") @CommandPermission("%skinSetOther")
+    @CommandCompletion("@players")
+    @Description("Sets the skin of another player.")
+    public void onSkinSetOther(CommandSender sender, OnlineProxiedPlayer target, String skin) {
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            this.setSkin(target.getPlayer(), skin);
+            if (!sender.getName().equals(target.getPlayer().getName())) {
+                sender.sendMessage(new TextComponent(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
+            }
+        });
+    }
+
+
+    @CatchUnknown @CommandPermission("%skinSet")
+    public void onDefault(ProxiedPlayer p, String[] args) {
+        this.onSkinSetOther(p, new OnlineProxiedPlayer(p), args[0]);
+    }
+
 
     private void setSkin(ProxiedPlayer p, String skin) {
         this.setSkin(p, skin, true);

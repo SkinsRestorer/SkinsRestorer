@@ -1,180 +1,117 @@
 package skinsrestorer.bukkit.commands;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.annotation.*;
+import co.aikar.commands.contexts.OnlinePlayer;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.bukkit.utils.PlayerArgs;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.concurrent.TimeUnit;
 
-public class SkinCommand implements CommandExecutor {
+/**
+ * Created by McLive on 24.01.2019.
+ */
 
-    private boolean checkPerm(CommandSender p, String perm) {
-        return p.hasPermission(perm) || Config.SKINWITHOUTPERM;
+@CommandAlias("skin") @CommandPermission("%skin")
+public class SkinCommand extends BaseCommand {
+    @HelpCommand
+    public static void onHelp(CommandSender sender, CommandHelp help) {
+        sender.sendMessage("SkinsRestorer Help");
+        help.showHelp();
     }
 
-    private void sendHelp(CommandSender p) {
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(Locale.SR_LINE);
-        p.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
-        if (p.hasPermission("skinsrestorer.cmds"))
-            p.sendMessage(Locale.HELP_SR);
-        if (!Locale.SR_LINE.isEmpty())
-            p.sendMessage(Locale.SR_LINE);
+
+    @Subcommand("clear") @CommandPermission("%skinClear")
+    @Description("Clears your skin.")
+    public void onSkinClear(Player p) {
+        this.onSkinClearOther(p, new OnlinePlayer(p));
     }
 
-    public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
-        if (args.length < 1) {
-            this.sendHelp(sender);
-            return true;
-        }
+    @Subcommand("clear") @CommandPermission("%skinClearOther")
+    @CommandCompletion("@players")
+    @Description("Clears the skin of another player.")
+    public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            Player p = target.getPlayer();
+            String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
 
-        String cmd = args[0].toLowerCase();
-
-        switch (cmd) {
-            case "clear": {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
-
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(Locale.NOT_ONLINE);
-                    return true;
-                }
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.clear.other")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    Player pl = pArgs.getPlayer();
-                    String skin = SkinStorage.getDefaultSkinNameIfEnabled(pl.getName(), true);
-
-                    // remove users custom skin and set default skin / his skin
-                    SkinStorage.removePlayerSkin(pl.getName());
-                    if (this.setSkin(pl, skin, false)) {
-                        pl.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
-                    }
-                });
-                return true;
+            // remove users custom skin and set default skin / his skin
+            SkinStorage.removePlayerSkin(p.getName());
+            if (this.setSkin(p, skin, false)) {
+                p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
+                if (!sender.getName().equals(target.getPlayer().getName()))
+                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName()));
             }
-
-            case "update": {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds.update")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
-
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(Locale.NOT_ONLINE);
-                    return false;
-                }
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.update.other")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return false;
-                }
-
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    Player pl = pArgs.getPlayer();
-                    String skin = SkinStorage.getPlayerSkin(pl.getName());
-
-                    // User has no custom skin set, get the default skin name / his skin
-                    if (skin == null)
-                        skin = SkinStorage.getDefaultSkinNameIfEnabled(pl.getName(), true);
-
-                    if (!SkinStorage.forceUpdateSkinData(skin)) {
-                        pl.sendMessage(Locale.ERROR_UPDATING_SKIN);
-                        return;
-                    }
-
-                    if (this.setSkin(pl, skin, false)) {
-                        pl.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
-                    }
-                });
-                return true;
-            }
-
-            case "set": {
-                if (args.length < 2) {
-                    if (this.checkPerm(sender, "skinsrestorer.playercmds"))
-                        this.sendHelp(sender);
-                    else
-                        sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args, 2);
-
-                if (args.length > 2 && !pArgs.foundPlayer()) {
-                    sender.sendMessage(Locale.NOT_ONLINE);
-                    return true;
-                }
-
-                String skin = args[1];
-
-                if (pArgs.isOtherPlayer() && !sender.hasPermission("skinsrestorer.playercmds.other")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                if (pArgs.isOtherPlayer())
-                    skin = args[2];
-
-                final String finalSkin = skin;
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    this.setSkin(pArgs.getPlayer(), finalSkin);
-                });
-                return true;
-            }
-
-            // Skin <name>
-            default: {
-                if (!this.checkPerm(sender, "skinsrestorer.playercmds")) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION);
-                    return true;
-                }
-
-                if (args.length > 1) {
-                    this.sendHelp(sender);
-                    return true;
-                }
-
-                final PlayerArgs pArgs = new PlayerArgs(sender, args);
-
-                if (!pArgs.foundPlayer()) {
-                    sender.sendMessage(Locale.NOT_PLAYER);
-                    return true;
-                }
-
-                final String skin = args[0];
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    this.setSkin(pArgs.getPlayer(), skin);
-                });
-                return true;
-            }
-        }
+        });
     }
+
+
+    @Subcommand("update") @CommandPermission("%skinUpdate")
+    @Description("Updates your skin.")
+    public void onSkinUpdate(Player p) {
+        this.onSkinUpdateOther(p, new OnlinePlayer(p));
+    }
+
+    @Subcommand("update") @CommandPermission("%skinUpdateOther")
+    @CommandCompletion("@players")
+    @Description("Updates the skin of another player.")
+    public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            Player p = target.getPlayer();
+            String skin = SkinStorage.getPlayerSkin(p.getName());
+
+            // User has no custom skin set, get the default skin name / his skin
+            if (skin == null)
+                skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
+
+            if (!SkinStorage.forceUpdateSkinData(skin)) {
+                p.sendMessage(Locale.ERROR_UPDATING_SKIN);
+                return;
+            }
+
+            if (this.setSkin(p, skin, false)) {
+                p.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
+                if (!sender.getName().equals(target.getPlayer().getName())) {
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName()));
+                }
+            }
+        });
+    }
+
+
+    @Subcommand("set") @CommandPermission("%skinSet")
+    @Description("Sets your skin.")
+    public void onSkinSet(Player p, String skin) {
+        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    }
+
+    @Subcommand("set") @CommandPermission("%skinSetOther")
+    @CommandCompletion("@players")
+    @Description("Sets the skin of another player.")
+    public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            this.setSkin(target.getPlayer(), skin);
+            if (!sender.getName().equals(target.getPlayer().getName())) {
+                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
+            }
+        });
+    }
+
+
+    @CatchUnknown @CommandPermission("%skinSet")
+    public void onDefault(Player p, String[] args) {
+        this.onSkinSetOther(p, new OnlinePlayer(p), args[0]);
+    }
+
 
     private void setSkin(Player p, String skin) {
         this.setSkin(p, skin, true);
@@ -211,7 +148,7 @@ public class SkinCommand implements CommandExecutor {
                 SkinStorage.setPlayerSkin(p.getName(), skin);
             SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(skin));
             p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-        } catch (SkinRequestException e) {
+        } catch (MojangAPI.SkinRequestException e) {
             p.sendMessage(e.getReason());
 
             // set custom skin name back to old one if there is an exception
