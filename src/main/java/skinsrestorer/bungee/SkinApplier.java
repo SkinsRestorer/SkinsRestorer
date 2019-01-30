@@ -46,7 +46,15 @@ public class SkinApplier {
         LoginResult profile = handler.getLoginProfile();
 
         if (profile == null) {
-            profile = new LoginResult(null, null, new Property[]{textures});
+            try {
+                // NEW BUNGEECORD (id, name, property)
+                profile = new LoginResult(null, null, new Property[]{textures});
+            } catch (Error error) {
+                // FALL BACK TO OLD (id, property)
+                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
+                        new Class<?>[]{String.class, Property[].class},
+                        null, new Property[]{textures});
+            }
             // System.out.println("Created new LoginResult:");
             // System.out.println(profile.getProperties()[0]);
         }
