@@ -97,6 +97,13 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Sets the skin of another player.")
     public void onSkinSetOther(CommandSender sender, OnlineProxiedPlayer target, String skin) {
+        if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
+            if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
+                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
+        }
+
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             this.setSkin(target.getPlayer(), skin);
             if (!sender.getName().equals(target.getPlayer().getName())) {

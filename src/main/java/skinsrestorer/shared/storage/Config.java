@@ -29,8 +29,9 @@ public class Config {
     public static boolean UPDATER_ENABLED = true;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean USE_NEW_PERMISSIONS = false;
+    public static boolean PER_SKIN_PERMISSIONS = false;
 
-	// UPCOMING MULTIPLE LANGUAGE SUPPORT
+    // UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
 
     // Proxies
@@ -63,6 +64,7 @@ public class Config {
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
         USE_NEW_PERMISSIONS = config.getBoolean("Permissions.NewPermissions", USE_NEW_PERMISSIONS);
+        PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
 
         // Permissions
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
@@ -70,6 +72,9 @@ public class Config {
         // Proxies
         CUSTOM_PROXIES_ENABLED = config.getBoolean("Proxies.Enabled", CUSTOM_PROXIES_ENABLED);
         CUSTOM_PROXIES_LIST = config.getStringList("Proxies.List");
+
+        if (PER_SKIN_PERMISSIONS && !USE_NEW_PERMISSIONS)
+            System.out.println("[SkinsRestorer] Warning: PerSkinPermissions only work with Permissions.NewPermissions set to true!");
     }
 
     public static void set(String path, Object value) {

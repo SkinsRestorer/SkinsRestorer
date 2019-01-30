@@ -10,6 +10,7 @@ public class Locale {
 
     public static String SR_LINE = "&7&m----------------------------------------";
     public static String PLAYER_HAS_NO_PERMISSION = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to do this.";
+    public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin.";
     public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
             + "\n   &2/skin set <skinname> &7-&f Changes your skin."
             + "\n    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
