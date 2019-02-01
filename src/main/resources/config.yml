@@ -3,7 +3,7 @@
 ##############################
 
 # If set to true, /skin can be used without a permission.
-SkinWithoutPerm: false
+SkinWithoutPerm: true
 
 # How long are the skins stored in database (in minutes)
 SkinExpiresAfter: 1584
@@ -11,11 +11,19 @@ SkinExpiresAfter: 1584
 # Timeout for skin changing (set to 0 to disable)
 SkinChangeCooldown: 30
 
-
 # Set the language you will use - Files are located in /SkinsRestorer/languages directory
 # You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
 # Default: english - english.yml
 Locale: english
+
+#The new Permissions System information can be foud on our wiki here: 
+# https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+Permissions:
+  NewPermissions: true
+  
+#allows the usage of per skin perm. example: skinsrestorer.skin.notch OR skinsrestorer.skin.xknat
+# !~ requires  NewPermissions: true 
+PerSkinPermissions: false
 
 # Enable or disable default skins
 # If there is more than one, the plugin will choose a random one.
@@ -23,13 +31,14 @@ DefaultSkins:
   Enabled: false
   ApplyForPremium: false
   Names:
-    - Steve
+    - xknat
 
 # Skins in this list will be disabled, so users can't set t
 DisabledSkins:
   Enabled: false
   Names:
     - Steve
+    - Owner
 
 # Multi-Bungee support
 # Enable this if you have issues with skins in multi-proxy environments
@@ -45,14 +54,6 @@ MySQL:
   Database: db
   Username: root
   Password: pass
-
-# If you have your own proxies and don't want to use our own, fill this option
-Proxies:
-  Enabled: false
-  List:
-    # - 123.123.123.123:12345
-    # - 123.123.123.123:12345
-    # - 123.123.123.123:12345
 
 # Enable or disable the updater.
 Updater:
