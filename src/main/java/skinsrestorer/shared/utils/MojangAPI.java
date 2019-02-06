@@ -99,7 +99,7 @@ public class MojangAPI {
 
         String output;
         try {
-            output = readURL(skinurl_backup.replace("%uuid%", uuid));
+            output = readURL(skinurl_backup.replace("%uuid%", uuid), 10000);
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
             JsonObject textures = obj.get("textures").getAsJsonObject();
@@ -190,7 +190,7 @@ public class MojangAPI {
 
         String output;
         try {
-            output = readURL(uuidurl_backup.replace("%name%", name));
+            output = readURL(uuidurl_backup.replace("%name%", name), 10000);
 
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
@@ -222,12 +222,16 @@ public class MojangAPI {
     }
 
     private static String readURL(String url) throws IOException {
+        return readURL(url, 5000);
+    }
+
+    private static String readURL(String url, int timeout) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "SkinsRestorer");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
+        con.setConnectTimeout(timeout);
+        con.setReadTimeout(timeout);
         con.setDoOutput(true);
 
         String line;
