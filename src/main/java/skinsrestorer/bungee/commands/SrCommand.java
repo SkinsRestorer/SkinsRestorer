@@ -12,6 +12,7 @@ import net.md_5.bungee.connection.LoginResult;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
@@ -58,6 +59,16 @@ public class SrCommand extends BaseCommand {
                 sender.sendMessage(new TextComponent("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect"));
             sender.sendMessage(new TextComponent("Finished checking services."));
         });
+    }
+
+
+    @Subcommand("drop") @CommandPermission("%srDrop")
+    @CommandCompletion("@players")
+    @Description("Displays the players skin data.")
+    public void onDrop(CommandSender sender, OnlineProxiedPlayer target) {
+        String player = target.getPlayer().getName();
+        SkinStorage.removeSkinData(player);
+        sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
     }
 
 

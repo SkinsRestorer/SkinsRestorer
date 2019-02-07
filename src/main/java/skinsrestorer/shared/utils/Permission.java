@@ -27,6 +27,7 @@ public class Permission {
 
             {"srReload", "skinsrestorer.admincommand.reload"},
             {"srStatus", "skinsrestorer.admincommand.status"},
+            {"srDrop", "skinsrestorer.admincommand.drop"},
             {"srProps", "skinsrestorer.admincommand.props"},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
@@ -47,6 +48,7 @@ public class Permission {
 
             {"srReload", "skinsrestorer.cmds"},
             {"srStatus", "skinsrestorer.cmds"},
+            {"srDrop", "skinsrestorer.cmds"},
             {"srProps", "skinsrestorer.cmds"},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
