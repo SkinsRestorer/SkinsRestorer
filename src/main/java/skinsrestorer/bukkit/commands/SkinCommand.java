@@ -47,9 +47,10 @@ public class SkinCommand extends BaseCommand {
             // remove users custom skin and set default skin / his skin
             SkinStorage.removePlayerSkin(p.getName());
             if (this.setSkin(p, skin, false)) {
-                p.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName()));
+                else
+                    sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
             }
         });
     }
@@ -74,15 +75,15 @@ public class SkinCommand extends BaseCommand {
                 skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
 
             if (!SkinStorage.forceUpdateSkinData(skin)) {
-                p.sendMessage(Locale.ERROR_UPDATING_SKIN);
+                sender.sendMessage(Locale.ERROR_UPDATING_SKIN);
                 return;
             }
 
             if (this.setSkin(p, skin, false)) {
-                p.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
-                if (!sender.getName().equals(target.getPlayer().getName())) {
+                if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName()));
-                }
+                else
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
             }
         });
     }
@@ -107,9 +108,8 @@ public class SkinCommand extends BaseCommand {
 
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             this.setSkin(target.getPlayer(), skin);
-            if (!sender.getName().equals(target.getPlayer().getName())) {
+            if (!sender.getName().equals(target.getPlayer().getName()))
                 sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
-            }
         });
     }
 

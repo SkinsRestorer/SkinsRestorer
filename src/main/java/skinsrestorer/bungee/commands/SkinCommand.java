@@ -46,9 +46,10 @@ public class SkinCommand extends BaseCommand {
             // remove users custom skin and set default skin / his skin
             SkinStorage.removePlayerSkin(p.getName());
             if (this.setSkin(p, skin, false)) {
-                p.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName())));
+                else
+                    sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_SUCCESS));
             }
         });
     }
@@ -73,15 +74,15 @@ public class SkinCommand extends BaseCommand {
                 skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
 
             if (!SkinStorage.forceUpdateSkinData(skin)) {
-                p.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));
+                sender.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));
                 return;
             }
 
             if (this.setSkin(p, skin, false)) {
-                p.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN));
-                if (!sender.getName().equals(target.getPlayer().getName())) {
+                if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName())));
-                }
+                else
+                    sender.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN));
             }
         });
     }
