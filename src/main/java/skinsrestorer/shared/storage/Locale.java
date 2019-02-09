@@ -54,10 +54,11 @@ public class Locale {
     public static String SUCCESS_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &2Your skin has been updated.";
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&e[&2SkinsRestorer&e] &2Skin updated for player %player.";
 
-    private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages");
+    private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
 
     public static void load() {
         try {
+            locale.saveDefaultConfig();
             locale.reload();
 
             for (Field f : Locale.class.getFields()) {

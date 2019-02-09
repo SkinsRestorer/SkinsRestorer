@@ -11,6 +11,8 @@ SkinExpiresAfter: 1584
 # Timeout for skin changing (set to 0 to disable)
 SkinChangeCooldown: 30
 
+DisableOnJoinSkins: false
+
 # Set the language you will use - Files are located in /SkinsRestorer/languages directory
 # You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
 # Default: english - english.yml
@@ -54,6 +56,8 @@ MySQL:
   Database: db
   Username: root
   Password: pass
+  SkinTable: 'Skins'
+  PlayerTable: 'Players'
 
 # Enable or disable the updater.
 Updater:
