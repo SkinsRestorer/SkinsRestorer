@@ -45,7 +45,7 @@ public class SkinCommand extends BaseCommand {
 
             // remove users custom skin and set default skin / his skin
             SkinStorage.removePlayerSkin(p.getName());
-            if (this.setSkin(p, skin, false)) {
+            if (this.setSkin(sender, p, skin, false)) {
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName())));
                 else
@@ -78,7 +78,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (this.setSkin(p, skin, false)) {
+            if (this.setSkin(sender, p, skin, false)) {
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(new TextComponent(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName())));
                 else
@@ -106,9 +106,10 @@ public class SkinCommand extends BaseCommand {
         }
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            this.setSkin(target.getPlayer(), skin);
-            if (!sender.getName().equals(target.getPlayer().getName())) {
-                sender.sendMessage(new TextComponent(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
+            if (this.setSkin(sender, target.getPlayer(), skin)) {
+                if (!sender.getName().equals(target.getPlayer().getName())) {
+                    sender.sendMessage(new TextComponent(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
+                }
             }
         });
     }
@@ -120,34 +121,34 @@ public class SkinCommand extends BaseCommand {
     }
 
 
-    private void setSkin(ProxiedPlayer p, String skin) {
-        this.setSkin(p, skin, true);
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
+        return this.setSkin(sender, p, skin, true);
     }
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(ProxiedPlayer p, String skin, boolean save) {
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save) {
         if (!C.validUsername(skin)) {
-            p.sendMessage(new TextComponent(Locale.INVALID_PLAYER.replace("%player", skin)));
+            sender.sendMessage(new TextComponent(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
 
         if (Config.DISABLED_SKINS_ENABLED)
-            if (!p.hasPermission("skinsrestorer.bypassdisabled")) {
+            if (!sender.hasPermission("skinsrestorer.bypassdisabled")) {
                 for (String dskin : Config.DISABLED_SKINS)
                     if (skin.equalsIgnoreCase(dskin)) {
-                        p.sendMessage(new TextComponent(Locale.SKIN_DISABLED));
+                        sender.sendMessage(new TextComponent(Locale.SKIN_DISABLED));
                         return false;
                     }
             }
 
-        if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-            p.sendMessage(new TextComponent(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
+            sender.sendMessage(new TextComponent(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
             return false;
         }
 
-        CooldownStorage.resetCooldown(p.getName());
-        CooldownStorage.setCooldown(p.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+        CooldownStorage.resetCooldown(sender.getName());
+        CooldownStorage.setCooldown(sender.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
         try {
@@ -161,7 +162,7 @@ public class SkinCommand extends BaseCommand {
             p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
             return true;
         } catch (SkinRequestException e) {
-            p.sendMessage(new TextComponent(e.getReason()));
+            sender.sendMessage(new TextComponent(e.getReason()));
 
             // set custom skin name back to old one if there is an exception
             this.rollback(p, oldSkinName, save);
