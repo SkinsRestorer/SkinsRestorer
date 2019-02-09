@@ -7,7 +7,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.bstats.bungeecord.MetricsLite;
+import org.bstats.bungeecord.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.commands.SkinCommand;
@@ -15,11 +15,8 @@ import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.Permission;
-import skinsrestorer.shared.utils.UpdateChecker;
 
 public class SkinsRestorer extends Plugin {
 
@@ -53,7 +50,10 @@ public class SkinsRestorer extends Plugin {
     @Override
     public void onEnable() {
         @SuppressWarnings("unused")
-        MetricsLite metrics = new MetricsLite(this);
+        Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
 
         console = getProxy().getConsole();
 

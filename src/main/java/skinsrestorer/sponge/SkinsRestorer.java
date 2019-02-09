@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.bstats.sponge.MetricsLite2;
+import org.bstats.sponge.Metrics2;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
@@ -14,6 +14,7 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
+import skinsrestorer.shared.utils.MetricsCounter;
 import skinsrestorer.sponge.commands.SetSkinCommand;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.listeners.LoginListener;
@@ -48,7 +49,7 @@ public class SkinsRestorer {
     }
 
     @Inject
-    private MetricsLite2 metrics;
+    private Metrics2 metrics;
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
@@ -85,6 +86,10 @@ public class SkinsRestorer {
         if (!Sponge.getServer().getOnlineMode()) {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Login.class, new LoginListener());
         }
+
+        metrics.addCustomChart(new Metrics2.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
     }
 
     public void reloadConfigs() {
