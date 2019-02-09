@@ -61,6 +61,8 @@ public class SkinsRestorer extends Plugin {
         this.checkUpdate();
 
         instance = this;
+
+        // Init config files
         Config.load(getResourceAsStream("config.yml"));
         Locale.load();
 
@@ -68,6 +70,7 @@ public class SkinsRestorer extends Plugin {
         if (!this.initStorage())
             return;
 
+        // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
 
         // Init commands

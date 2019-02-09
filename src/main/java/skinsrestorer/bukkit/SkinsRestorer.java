@@ -68,6 +68,8 @@ public class SkinsRestorer extends JavaPlugin {
 
         instance = this;
         factory = new UniversalSkinFactory();
+
+        // Init config files
         Config.load(getResource("config.yml"));
         Locale.load();
 
@@ -118,12 +120,10 @@ public class SkinsRestorer extends JavaPlugin {
         if (!this.initStorage())
             return;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 20);
-
         // Init commands
         this.initCommands();
 
-        // Events
+        // Init listener
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
 
