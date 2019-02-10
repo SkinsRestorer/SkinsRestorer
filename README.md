@@ -7,7 +7,7 @@
  --------------
  Restoring offline mode skins & changing skins for Spigot/BungeeCord/Waterfall servers.
  
- Supported versions: Minecraft 1.8.8 - 1.13.x
+ Supported versions: Minecraft 1.8.0 - 1.13.x
 
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
  
