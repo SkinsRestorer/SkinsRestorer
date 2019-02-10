@@ -35,7 +35,7 @@ public class Permission {
             {"skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
             {"sr", "skinsrestorer.cmds"},
 
-            {"skins", "skinsrestorer.playercmds"},
+            {"skins", "skinsrestorer.playercmds.menu"},
 
             {"skinSet", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
             {"skinSetOther", "skinsrestorer.cmds"},
