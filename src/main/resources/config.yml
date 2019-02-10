@@ -4,14 +4,16 @@
 ##############################
 #
 # We from SRTeam thank you for using our plugin!
-# If you are confused or need help chek out the wiki: https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
-# not working or get error?? -> Discord: https://discord.me/SkinsRestorer/
+# For more information        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
+# For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
+# not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
+# For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
 
 # If true, players can change skins without permission.
 SkinWithoutPerm: true
 
-# How long are the skins stored in database (in minutes)
-SkinExpiresAfter: 1584
+# Time skins are stored in database before we request again (in minutes)
+SkinExpiresAfter: 720
 
 # Timeout for changing skins (set to 0 to disable)
 SkinChangeCooldown: 30
@@ -37,6 +39,7 @@ DefaultSkins:
   ApplyForPremium: false
   Names:
     - xknat
+    - McLive
 
 # Skins in this list will be disabled, so users can't set t
 DisabledSkins:
