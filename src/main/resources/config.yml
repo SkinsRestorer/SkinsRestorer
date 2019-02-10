@@ -64,6 +64,10 @@ MySQL:
   SkinTable: 'Skins'
   PlayerTable: 'Players'
 
+# <!! Warning !!>
+# Enabling this will stop SkinsRestorer to change skins on join.
+DisableOnJoinSkins: false
+
 # Enable or disable the updater.
 Updater:
   Enabled: true
