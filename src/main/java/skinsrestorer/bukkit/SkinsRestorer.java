@@ -1,36 +1,27 @@
 package skinsrestorer.bukkit;
 
-import org.bstats.bukkit.MetricsLite;
+import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.PaperCommandManager;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import skinsrestorer.bukkit.commands.GUICommand;
 import skinsrestorer.bukkit.commands.SkinCommand;
 import skinsrestorer.bukkit.commands.SrCommand;
+import skinsrestorer.bukkit.listener.PlayerJoin;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.ReflectionUtil;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.io.*;
 
 public class SkinsRestorer extends JavaPlugin {
 
@@ -38,6 +29,9 @@ public class SkinsRestorer extends JavaPlugin {
     private SkinFactory factory;
     private MySQL mysql;
     private boolean bungeeEnabled;
+    private UpdateChecker updateChecker;
+    private UpdateDownloader updateDownloader;
+    private CommandSender console;
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -55,19 +49,26 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
-    public void onEnable() {
+    public UpdateChecker getUpdateChecker() {
+        return this.updateChecker;
+    }
 
-        ConsoleCommandSender console = getServer().getConsoleSender();
+    public void onEnable() {
+        console = getServer().getConsoleSender();
 
         @SuppressWarnings("unused")
-        MetricsLite metrics = new MetricsLite(this);
+        Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
 
-        SpigetUpdate updater = new SpigetUpdate(this, 2124);
-        updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER);
+        updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
+        updateDownloader = new UpdateDownloader(this);
 
         instance = this;
         factory = new UniversalSkinFactory();
+
+        // Init config files
         Config.load(getResource("config.yml"));
         Locale.load();
 
@@ -77,31 +78,22 @@ public class SkinsRestorer extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
             console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
             Bukkit.getPluginManager().disablePlugin(this);
+            return;
         }
 
-        // Bungeecord stuff
-        try {
-            bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
+        // Check if we are running in bungee mode
+        this.checkBungeeMode();
 
-            // sometimes it does not get the right "bungeecord: true" setting
-            // we will try it again with the old function from SR 13.3
-            // https://github.com/DoNotSpamPls/SkinsRestorerX/blob/cbddd95ac36acb5b1afff2b9f48d0fc5b5541cb0/src/main/java/skinsrestorer/bukkit/SkinsRestorer.java#L109
-            if (!bungeeEnabled) {
-                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
-            }
-        } catch (Throwable e) {
-            bungeeEnabled = false;
-        }
+        // Check for updates
+        this.checkUpdate(bungeeEnabled);
 
         if (bungeeEnabled) {
-
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
                 if (!channel.equals("sr:skinchange"))
                     return;
 
                 Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
-
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
@@ -120,155 +112,22 @@ public class SkinsRestorer extends JavaPlugin {
                     }
                 });
             });
-
-            if (Config.UPDATER_ENABLED) {
-                updater.checkForUpdate(new UpdateCallback() {
-                    @Override
-                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                        if (hasDirectDownload) {
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
-                            console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            if (updater.downloadUpdate()) {
-                                console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
-                            } else {
-                                // Update failed
-                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updater.getFailReason());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void upToDate() {
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion());
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    This is the latest version!");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                    }
-                });
-            }
-
             return;
         }
 
-        // Initialise MySQL
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(
-                    Config.MYSQL_HOST,
-                    Config.MYSQL_PORT,
-                    Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME,
-                    Config.MYSQL_PASSWORD
-            ));
-        else
-            SkinStorage.init(getDataFolder());
+        // Init storage
+        if (!this.initStorage())
+            return;
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CooldownStorage(), 0, 20);
+        // Init commands
+        this.initCommands();
 
-        // Commands
-        getCommand("skinsrestorer").setExecutor(new SrCommand());
-        getCommand("skin").setExecutor(new SkinCommand());
-        getCommand("skins").setExecutor(new GUICommand());
-
+        // Init listener
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
-        Bukkit.getPluginManager().registerEvents(new Listener() {
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
 
-            // LoginEvent happens on attemptLogin so its the best place to set the skin
-            @EventHandler
-            public void onLogin(PlayerJoinEvent e) {
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    try {
-                        if (Config.DISABLE_ONJOIN_SKINS) {
-                            // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
-                            // shouldn't it just skip it if it's true?
-                            return;
-                        }
-
-                        // Don't change skin if player has no custom skin-name set and his username is invalid
-                        if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null && !C.validUsername(e.getPlayer().getName())) {
-                            System.out.println("[SkinsRestorer] Not applying skin to " + e.getPlayer().getName() + " (invalid username).");
-                            return;
-                        }
-
-                        if (Config.DEFAULT_SKINS_ENABLED) {
-                            // don't apply to premium players when enabled
-                            if (!Config.DEFAULT_SKINS_PREMIUM) {
-                                // check if player is premium
-                                if (MojangAPI.getUUID(e.getPlayer().getName()) != null) {
-                                    // apply skin from player instead of default skin from config
-                                    factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                                    return;
-                                }
-                            }
-
-                            if (SkinStorage.getPlayerSkin(e.getPlayer().getName()) == null) {
-                                List<String> skins = Config.DEFAULT_SKINS;
-                                int randomNum = (int) (Math.random() * skins.size());
-                                factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(skins.get(randomNum)));
-                                return;
-                            }
-
-                            factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                        }
-
-                        factory.applySkin(e.getPlayer(), SkinStorage.getOrCreateSkinForPlayer(e.getPlayer().getName()));
-                    } catch (SkinRequestException ignored) {
-                    }
-                });
-            }
-        }, this);
-
+        // Preload default skins
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-
-            if (Config.UPDATER_ENABLED) {
-                updater.checkForUpdate(new UpdateCallback() {
-                    @Override
-                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                        if (hasDirectDownload) {
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
-                            console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                            if (updater.downloadUpdate()) {
-                                console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
-                            } else {
-                                // Update failed
-                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updater.getFailReason());
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void upToDate() {
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion());
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    This is the latest version!");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                    }
-                });
-            }
-
             if (Config.DEFAULT_SKINS_ENABLED)
                 for (String skin : Config.DEFAULT_SKINS)
                     try {
@@ -279,5 +138,126 @@ public class SkinsRestorer extends JavaPlugin {
                     }
         });
 
+    }
+
+    private void initCommands() {
+        PaperCommandManager manager = new PaperCommandManager(this);
+        // optional: enable unstable api to use help
+        manager.enableUnstableAPI("help");
+
+        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
+            BukkitCommandIssuer issuer = context.getIssuer();
+            if (issuer.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM)
+                return;
+
+            throw new ConditionFailedException("You don't have access to change your skin.");
+        }));
+        // Use with @Conditions("permOrSkinWithoutPerm")
+
+        if (Config.USE_NEW_PERMISSIONS)
+            Permission.newPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+        else
+            Permission.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+
+        new CommandPropertiesManager(manager, getResource("command-messages.properties"));
+
+        manager.registerCommand(new SkinCommand());
+        manager.registerCommand(new SrCommand());
+        manager.registerCommand(new GUICommand());
+    }
+
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (Config.USE_MYSQL) {
+            try {
+                this.mysql = new MySQL(
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD
+                );
+
+                this.mysql.openConnection();
+                this.mysql.createTable();
+
+                SkinStorage.init(this.mysql);
+                return true;
+
+            } catch (Exception e) {
+                console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                Bukkit.getPluginManager().disablePlugin(this);
+                return false;
+            }
+        }
+
+        SkinStorage.init(getDataFolder());
+        return true;
+    }
+
+    private void checkBungeeMode() {
+        try {
+            bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
+
+            // sometimes it does not get the right "bungeecord: true" setting
+            // we will try it again with the old function from SR 13.3
+            // https://github.com/DoNotSpamPls/SkinsRestorerX/blob/cbddd95ac36acb5b1afff2b9f48d0fc5b5541cb0/src/main/java/skinsrestorer/bukkit/SkinsRestorer.java#L109
+            if (!bungeeEnabled) {
+                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
+            }
+        } catch (Throwable e) {
+            bungeeEnabled = false;
+        }
+    }
+
+    private void checkUpdate(boolean bungeeMode) {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            if (Config.UPDATER_ENABLED) {
+                updateChecker.checkForUpdate(new UpdateCallback() {
+                    @Override
+                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+                        if (bungeeMode) {
+                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
+                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+                        }
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
+                        if (hasDirectDownload) {
+                            console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
+                            if (updateDownloader.downloadUpdate()) {
+                                console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
+                            } else {
+                                // Update failed
+                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updateDownloader.getFailReason());
+                            }
+                        } else {
+                            console.sendMessage("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
+                            console.sendMessage("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
+                        }
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    }
+
+                    @Override
+                    public void upToDate() {
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+                        if (bungeeMode) {
+                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
+                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+                        }
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion());
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    This is the latest version!");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    }
+                });
+            }
+        });
     }
 }

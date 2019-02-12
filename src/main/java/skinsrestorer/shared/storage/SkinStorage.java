@@ -13,6 +13,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -65,7 +66,7 @@ public class SkinStorage {
      *
      * @return Property object
      **/
-    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+    public static Object getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null) {
@@ -130,13 +131,19 @@ public class SkinStorage {
                     SkinsRestorer.getInstance().getFactory().applySkin(org.bukkit.Bukkit.getPlayer(name), textures);
                 }
         } catch (SkinRequestException e) {
-            throw new SkinRequestException(e.getReason());
+            if (!silent)
+                throw new SkinRequestException(e.getReason());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+            if (!silent)
+                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
         }
 
         return textures;
+    }
+
+    public static Object getOrCreateSkinForPlayer(final String name) throws SkinRequestException {
+        return getOrCreateSkinForPlayer(name, false);
     }
 
     /*
@@ -478,5 +485,62 @@ public class SkinStorage {
 
             return null;
         }
+    }
+
+
+    public static boolean forceUpdateSkinData(String skin) {
+        try {
+            Object textures = MojangAPI.getSkinPropertyBackup(MojangAPI.getUUIDBackup(skin));
+            if (textures != null) {
+                SkinStorage.setSkinData(skin, textures);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    // If clear is true, it doesn't return the custom skin a user has set
+    public static String getDefaultSkinNameIfEnabled(String player, boolean clear) {
+        if (Config.DEFAULT_SKINS_ENABLED) {
+            // dont return default skin name for premium players if enabled
+            if (!Config.DEFAULT_SKINS_PREMIUM) {
+                // check if player is premium
+                try {
+                    if (MojangAPI.getUUID(player) != null) {
+                        // player is premium, return his skin name instead of default skin
+                        return player;
+                    }
+                } catch (SkinRequestException ignored) {
+                    // Player is not premium catching exception here to continue returning a default skin name
+                }
+            }
+
+            // return default skin name if user has no custom skin set or we want to clear to default
+            if (SkinStorage.getPlayerSkin(player) == null || clear) {
+                List<String> skins = Config.DEFAULT_SKINS;
+                int randomNum = (int) (Math.random() * skins.size());
+                String randomSkin = skins.get(randomNum);
+                // return player name if there are no default skins set
+                return randomSkin != null ? randomSkin : player;
+            }
+        }
+
+        // return the player name if we want to clear the skin
+        if (clear)
+            return player;
+
+        // return the custom skin user has set
+        String skin = SkinStorage.getPlayerSkin(player);
+
+        // null if player has no custom skin, we'll return his name then
+        return skin == null ? player : skin;
+    }
+
+    public static String getDefaultSkinNameIfEnabled(String player) {
+        return getDefaultSkinNameIfEnabled(player, false);
     }
 }
