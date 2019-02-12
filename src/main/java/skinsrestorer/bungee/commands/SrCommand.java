@@ -23,7 +23,6 @@ import java.util.List;
 public class SrCommand extends BaseCommand {
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage(new TextComponent("SkinsRestorer Admin Help"));
         help.showHelp();
     }
 

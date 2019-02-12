@@ -16,17 +16,12 @@ import skinsrestorer.bukkit.listener.PlayerJoin;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.Callable;
+import java.io.*;
 
 public class SkinsRestorer extends JavaPlugin {
 
@@ -163,6 +158,8 @@ public class SkinsRestorer extends JavaPlugin {
             Permission.newPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
         else
             Permission.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
+
+        new CommandPropertiesManager(manager, getResource("command-messages.properties"));
 
         manager.registerCommand(new SkinCommand());
         manager.registerCommand(new SrCommand());

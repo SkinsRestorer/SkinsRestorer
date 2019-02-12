@@ -112,6 +112,8 @@ public class SkinsRestorer extends Plugin {
         else
             Permission.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
 
+        new CommandPropertiesManager(manager, getResourceAsStream("command-messages.properties"));
+
         manager.registerCommand(new SkinCommand());
         manager.registerCommand(new SrCommand());
     }

@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 public class SkinCommand extends BaseCommand {
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage(new TextComponent("SkinsRestorer Help"));
         help.showHelp();
     }
 
