@@ -16,8 +16,6 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.MojangAPI;
 
-import java.util.List;
-
 public class LoginListener implements Listener {
 
     private SkinsRestorer plugin;
@@ -48,19 +46,16 @@ public class LoginListener implements Listener {
             return;
         }
 
-        SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                String skin = SkinStorage.getDefaultSkinNameIfEnabled(nick);
-                try {
-                    SkinApplier.applySkin(null, skin, (InitialHandler) e.getConnection());
-                } catch (MojangAPI.SkinRequestException ignored) {
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-
-                e.completeIntent(plugin);
+        SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            String skin = SkinStorage.getDefaultSkinNameIfEnabled(nick);
+            try {
+                SkinApplier.applySkin(null, skin, (InitialHandler) e.getConnection());
+            } catch (MojangAPI.SkinRequestException ignored) {
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
+
+            e.completeIntent(plugin);
         });
     }
 
