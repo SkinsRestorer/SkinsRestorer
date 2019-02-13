@@ -27,6 +27,7 @@ public class Config {
     public static String MYSQL_USERNAME = "admin";
     public static String MYSQL_PASSWORD = "pass";
     public static boolean UPDATER_ENABLED = true;
+    public static boolean UPDATER_PERIODIC = true;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean USE_NEW_PERMISSIONS = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
@@ -56,6 +57,7 @@ public class Config {
         MYSQL_USERNAME = config.getString("MySQL.Username", MYSQL_USERNAME);
         MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
         UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
+        UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm");
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");

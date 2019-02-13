@@ -18,6 +18,8 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
+import java.util.concurrent.TimeUnit;
+
 public class SkinsRestorer extends Plugin {
 
     private static SkinsRestorer instance;
@@ -57,8 +59,13 @@ public class SkinsRestorer extends Plugin {
 
         console = getProxy().getConsole();
 
-        updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
-        this.checkUpdate();
+        if (Config.UPDATER_ENABLED) {
+            this.updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.checkUpdate(true);
+
+            if (Config.UPDATER_PERIODIC)
+                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 30, 30, TimeUnit.MINUTES);
+        }
 
         instance = this;
 
@@ -151,35 +158,41 @@ public class SkinsRestorer extends Plugin {
     }
 
     private void checkUpdate() {
-        ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
-            if (Config.UPDATER_ENABLED) {
-                updateChecker.checkForUpdate(new UpdateCallback() {
-                    @Override
-                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    " + downloadUrl));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    }
+        this.checkUpdate(false);
+    }
 
-                    @Override
-                    public void upToDate() {
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    This is the latest version!"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    }
-                });
-            }
+    private void checkUpdate(boolean showUpToDate) {
+        ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
+            updateChecker.checkForUpdate(new UpdateCallback() {
+                @Override
+                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                    outdated = true;
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion()));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    " + downloadUrl));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                }
+
+                @Override
+                public void upToDate() {
+                    if (!showUpToDate)
+                        return;
+
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    This is the latest version!"));
+                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                }
+            });
         });
     }
 }

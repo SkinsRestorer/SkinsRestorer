@@ -62,9 +62,6 @@ public class SkinsRestorer extends JavaPlugin {
         metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
 
-        updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
-        updateDownloader = new UpdateDownloader(this);
-
         instance = this;
         factory = new UniversalSkinFactory();
 
@@ -85,7 +82,16 @@ public class SkinsRestorer extends JavaPlugin {
         this.checkBungeeMode();
 
         // Check for updates
-        this.checkUpdate(bungeeEnabled);
+        if (Config.UPDATER_ENABLED) {
+            this.updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
+            this.updateDownloader = new UpdateDownloader(this);
+            this.checkUpdate(bungeeEnabled);
+
+            if (Config.UPDATER_PERIODIC)
+                this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                    this.checkUpdate(bungeeEnabled, false);
+                }, 20 * 60 * 30, 20 * 60 * 30);
+        }
 
         if (bungeeEnabled) {
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
@@ -213,53 +219,58 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private void checkUpdate(boolean bungeeMode) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            if (Config.UPDATER_ENABLED) {
-                updateChecker.checkForUpdate(new UpdateCallback() {
-                    @Override
-                    public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                        if (bungeeMode) {
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-                        }
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
-                        if (hasDirectDownload) {
-                            console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
-                            if (updateDownloader.downloadUpdate()) {
-                                console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
-                            } else {
-                                // Update failed
-                                console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updateDownloader.getFailReason());
-                            }
-                        } else {
-                            console.sendMessage("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
-                        }
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                    }
+        this.checkUpdate(bungeeMode, true);
+    }
 
-                    @Override
-                    public void upToDate() {
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
-                        if (bungeeMode) {
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
-                            console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-                        }
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion());
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a    This is the latest version!");
-                        console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+    private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            updateChecker.checkForUpdate(new UpdateCallback() {
+                @Override
+                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+                    if (bungeeMode) {
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
                     }
-                });
-            }
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion());
+                    if (hasDirectDownload) {
+                        console.sendMessage("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
+                        if (updateDownloader.downloadUpdate()) {
+                            console.sendMessage("§e[§2SkinsRestorer§e] Update downloaded successfully, it will be applied on the next restart.");
+                        } else {
+                            // Update failed
+                            console.sendMessage("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + updateDownloader.getFailReason());
+                        }
+                    } else {
+                        console.sendMessage("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
+                    }
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                }
+
+                @Override
+                public void upToDate() {
+                    if (!showUpToDate)
+                        return;
+
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+                    if (bungeeMode) {
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |---------------|");
+                        console.sendMessage("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+                    }
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    +===============+");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion());
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a    This is the latest version!");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                }
+            });
         });
     }
 }
