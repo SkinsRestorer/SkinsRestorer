@@ -27,7 +27,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @Subcommand("reload") @CommandPermission("%srReload")
-    @Description("Reloads the configuration file.")
+    @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
         Locale.load();
         Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
@@ -36,7 +36,7 @@ public class SrCommand extends BaseCommand {
 
 
     @Subcommand("status") @CommandPermission("%srStatus")
-    @Description("Checks needed API services for this plugin to work.")
+    @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         sender.sendMessage(new TextComponent("Checking needed services for SR to work properly..."));
 
@@ -63,7 +63,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("drop") @CommandPermission("%srDrop")
     @CommandCompletion("@players")
-    @Description("Displays the players skin data.")
+    @Description("%helpSrDrop")
     public void onDrop(CommandSender sender, OnlineProxiedPlayer target) {
         String player = target.getPlayer().getName();
         SkinStorage.removeSkinData(player);
@@ -73,7 +73,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("props") @CommandPermission("%srProps")
     @CommandCompletion("@players")
-    @Description("Displays the players actual skin as properties.")
+    @Description("%helpSrProps")
     public void onProps(CommandSender sender, OnlineProxiedPlayer target) {
         InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
         LoginResult.Property prop = h.getLoginProfile().getProperties()[0];

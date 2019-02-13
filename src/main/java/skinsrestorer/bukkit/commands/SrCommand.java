@@ -31,7 +31,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @Subcommand("reload") @CommandPermission("%srReload")
-    @Description("Reloads the configuration file.")
+    @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
         Locale.load();
         Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
@@ -40,7 +40,7 @@ public class SrCommand extends BaseCommand {
 
 
     @Subcommand("status") @CommandPermission("%srStatus")
-    @Description("Checks needed API services for this plugin to work.")
+    @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         sender.sendMessage("Checking needed services for SR to work properly...");
 
@@ -67,7 +67,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("drop") @CommandPermission("%srDrop")
     @CommandCompletion("@players")
-    @Description("Displays the players skin data.")
+    @Description("%helpSrDrop")
     public void onDrop(CommandSender sender, OnlinePlayer target) {
         String player = target.getPlayer().getName();
         SkinStorage.removeSkinData(player);
@@ -77,7 +77,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("props") @CommandPermission("%srProps")
     @CommandCompletion("@players")
-    @Description("Displays the players actual skin as properties.")
+    @Description("%helpSrProps")
     public void onProps(CommandSender sender, OnlinePlayer target) {
         try {
             Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");

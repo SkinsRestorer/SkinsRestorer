@@ -1,6 +1,7 @@
 package skinsrestorer.shared.utils;
 
 import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,7 +10,7 @@ import java.util.stream.Stream;
 /**
  * Created by McLive on 25.01.2019.
  */
-public class Permission {
+public class CommandReplacements {
     public static Map<String, String> newPermissions = Stream.of(new String[][]{
             {"skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command"},
             {"sr", "skinsrestorer.admincommand"},
@@ -50,6 +51,19 @@ public class Permission {
             {"srStatus", "skinsrestorer.cmds"},
             {"srDrop", "skinsrestorer.cmds"},
             {"srProps", "skinsrestorer.cmds"},
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
+
+    public static Map<String, String> descriptions = Stream.of(new String[][]{
+            {"%helpSkinClear", Locale.HELP_SKIN_CLEAR},
+            {"%helpSkinClearOther", Locale.HELP_SKIN_CLEAR_OTHER},
+            {"%helpSkinUpdate", Locale.HELP_SKIN_UPDATE},
+            {"%helpSkinUpdateOther", Locale.HELP_SKIN_UPDATE_OTHER},
+            {"%helpSkinSet", Locale.HELP_SKIN_SET},
+            {"%helpSkinSetOther", Locale.HELP_SKIN_SET_OTHER},
+            {"%helpSrReload", Locale.HELP_SR_RELOAD},
+            {"%helpSrStatus", Locale.HELP_SR_STATUS},
+            {"%helpSrDrop", Locale.HELP_SR_DROP},
+            {"%helpSrProps", Locale.HELP_SR_PROPS},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
 }

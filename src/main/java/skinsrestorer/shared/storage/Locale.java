@@ -57,7 +57,18 @@ public class Locale {
             + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
             + "\n    &2/skin update [player] &7- &fForces skin update"
             + "\n    &2/skin clear [player] &7- &fClears your/another player data."
-            + "\n    &2/skin set <player> <skin name> &7- &fChanges your/another skin";    
+            + "\n    &2/skin set <player> <skin name> &7- &fChanges your/another skin";
+
+    public static String HELP_SKIN_CLEAR = "Clears your skin.";
+    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
+    public static String HELP_SKIN_UPDATE = "Updates your skin.";
+    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
+    public static String HELP_SKIN_SET = "Sets your skin.";
+    public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
+    public static String HELP_SR_RELOAD = "Reloads the configuration file.";
+    public static String HELP_SR_STATUS = "Checks needed API services for this plugin to work.";
+    public static String HELP_SR_DROP = "Drops the players skin data.";
+    public static String HELP_SR_PROPS = "Displays the players actual skin as properties.";
 
     private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
 

@@ -30,14 +30,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("clear") @CommandPermission("%skinClear")
-    @Description("Clears your skin.")
+    @Description("%helpSkinClear")
     public void onSkinClear(Player p) {
         this.onSkinClearOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("clear") @CommandPermission("%skinClearOther")
     @CommandCompletion("@players")
-    @Description("Clears the skin of another player.")
+    @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             Player p = target.getPlayer();
@@ -56,14 +56,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("update") @CommandPermission("%skinUpdate")
-    @Description("Updates your skin.")
+    @Description("%helpSkinUpdate")
     public void onSkinUpdate(Player p) {
         this.onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("update") @CommandPermission("%skinUpdateOther")
     @CommandCompletion("@players")
-    @Description("Updates the skin of another player.")
+    @Description("%helpSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             Player p = target.getPlayer();
@@ -89,14 +89,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("set") @CommandPermission("%skinSet")
-    @Description("Sets your skin.")
+    @Description("%helpSkinSet")
     public void onSkinSet(Player p, String skin) {
         this.onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
-    @Description("Sets the skin of another player.")
+    @Description("%helpSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!sender.hasPermission("skinsrestorer.skin." + skin)) {

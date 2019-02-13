@@ -29,14 +29,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("clear") @CommandPermission("%skinClear")
-    @Description("Clears your skin.")
+    @Description("%helpSkinClear")
     public void onSkinClear(ProxiedPlayer p) {
         this.onSkinClearOther(p, new OnlineProxiedPlayer(p));
     }
 
     @Subcommand("clear") @CommandPermission("%skinClearOther")
     @CommandCompletion("@players")
-    @Description("Clears the skin of another player.")
+    @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, OnlineProxiedPlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ProxiedPlayer p = target.getPlayer();
@@ -55,14 +55,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("update") @CommandPermission("%skinUpdate")
-    @Description("Updates your skin.")
+    @Description("%helpSkinUpdate")
     public void onSkinUpdate(ProxiedPlayer p) {
         this.onSkinUpdateOther(p, new OnlineProxiedPlayer(p));
     }
 
     @Subcommand("update") @CommandPermission("%skinUpdateOther")
     @CommandCompletion("@players")
-    @Description("Updates the skin of another player.")
+    @Description("%helpSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, OnlineProxiedPlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ProxiedPlayer p = target.getPlayer();
@@ -88,14 +88,14 @@ public class SkinCommand extends BaseCommand {
 
 
     @Subcommand("set") @CommandPermission("%skinSet")
-    @Description("Sets your skin.")
+    @Description("%helpSkinSet")
     public void onSkinSet(ProxiedPlayer p, String skin) {
         this.onSkinSetOther(p, new OnlineProxiedPlayer(p), skin);
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
-    @Description("Sets the skin of another player.")
+    @Description("%helpSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlineProxiedPlayer target, String skin) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
