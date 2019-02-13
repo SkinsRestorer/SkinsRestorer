@@ -62,10 +62,10 @@ public class LoginListener implements Listener {
     @EventHandler
     public void onServerChange(final ServerConnectEvent e) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()
-                    && e.getPlayer().hasPermission("skinsrestorer.cmds"))
-                e.getPlayer().sendMessage(new TextComponent(Locale.OUTDATED));
+            if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()) {
+                if (e.getPlayer().hasPermission("skinsrestorer.admincommand") || e.getPlayer().hasPermission("skinsrestorer.cmds"))
+                    e.getPlayer().sendMessage(new TextComponent(Locale.OUTDATED));
+            }
         });
     }
-
 }
