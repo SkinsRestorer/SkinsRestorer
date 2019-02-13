@@ -11,6 +11,8 @@
 
  Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
  
+ Wiki | [click here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
+ 
  Jenkins | [click here](https://ci.freecraft.eu/job/SkinsRestorerX/)
 
  Discord | [click here](https://discord.me/skinsrestorer)
