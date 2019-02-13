@@ -8,6 +8,17 @@ import java.lang.reflect.Field;
 
 public class Locale {
 
+    public static String HELP_SKIN_CLEAR = "Clears your skin.";
+    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
+    public static String HELP_SKIN_UPDATE = "Updates your skin.";
+    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
+    public static String HELP_SKIN_SET = "Sets your skin.";
+    public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
+    public static String HELP_SR_RELOAD = "Reloads the configuration file.";
+    public static String HELP_SR_STATUS = "Checks needed API services for this plugin to work.";
+    public static String HELP_SR_DROP = "Drops the players skin data.";
+    public static String HELP_SR_PROPS = "Displays the players actual skin as properties.";
+    
     public static String PLAYER_HAS_NO_PERMISSION = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to do this.";
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin.";
     public static String SKIN_DISABLED = "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
@@ -43,33 +54,7 @@ public class Locale {
     public static String NOT_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
     public static String OUTDATED = "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
 
-    public static String SR_LINE = "&7&m----------------------------------------";
-    public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
-            + "\n   &2/skin set <skinname> &7-&f Changes your skin."
-            + "\n    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-            + "\n    &2/skin clear &7-&f Clears your skin."
-            + "\n    &2/skin update &7-&f Forces update of your skin.";
-    public static String HELP_SR = "    &2/sr &7- &fDisplay admin commands.";
-    public static String HELP_ADMIN = "  &2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-            + "\n\n   &2/sr config &7- &fhelp page for usefull in game config settings"
-            + "\n    &2/sr drop <player> &7- &fDrops player skin data."
-            + "\n    &2/sr reload &7- &fReloads the config and locale"
-            + "\n    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
-            + "\n    &2/skin update [player] &7- &fForces skin update"
-            + "\n    &2/skin clear [player] &7- &fClears your/another player data."
-            + "\n    &2/skin set <player> <skin name> &7- &fChanges your/another skin";
-
-    public static String HELP_SKIN_CLEAR = "Clears your skin.";
-    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
-    public static String HELP_SKIN_UPDATE = "Updates your skin.";
-    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
-    public static String HELP_SKIN_SET = "Sets your skin.";
-    public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
-    public static String HELP_SR_RELOAD = "Reloads the configuration file.";
-    public static String HELP_SR_STATUS = "Checks needed API services for this plugin to work.";
-    public static String HELP_SR_DROP = "Drops the players skin data.";
-    public static String HELP_SR_PROPS = "Displays the players actual skin as properties.";
-
+    
     private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
 
     public static void load() {
