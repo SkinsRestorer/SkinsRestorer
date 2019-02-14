@@ -6,8 +6,11 @@
 # We from SRTeam thank you for using our plugin!
 # For more information        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
 # For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
-# not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
+# Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+# Not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
+#
 # For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
+
 
 # If true, players can change skins without permission.
 SkinWithoutPerm: true
@@ -15,7 +18,8 @@ SkinWithoutPerm: true
 # Time skins are stored in database before we request again (in minutes)
 SkinExpiresAfter: 720
 
-# Timeout for changing skins (set to 0 to disable)
+# Players cooldown when changing skins (set to 0 to disable)
+# Can be bypassed with 'skinsrestorer.bypasscooldown'
 SkinChangeCooldown: 30
 
 # Set the language you will use - Files are located in /SkinsRestorer/languages directory
@@ -28,8 +32,9 @@ Locale: english
 Permissions:
   NewPermissions: true
   
-# Allows the usage of per skin perm. example: skinsrestorer.skin.notch OR skinsrestorer.skin.xknat
-# !~ requires  NewPermissions: true 
+# Allows the usage of per skin perm. 
+# Example: skinsrestorer.skin.notch OR skinsrestorer.skin.xknat
+# !~ requires  'NewPermissions: true' 
 PerSkinPermissions: false
 
 # Enable or disable default skins
@@ -41,7 +46,8 @@ DefaultSkins:
     - xknat
     - McLive
 
-# Skins in this list will be disabled, so users can't set t
+# Skins in this list will be disabled, so users can't set it.
+# Can by bypassed with 'skinsrestorer.bypassdisabled'
 DisabledSkins:
   Enabled: false
   Names:
