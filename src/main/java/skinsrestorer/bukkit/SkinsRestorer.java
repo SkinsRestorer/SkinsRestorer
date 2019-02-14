@@ -65,10 +65,6 @@ public class SkinsRestorer extends JavaPlugin {
         instance = this;
         factory = new UniversalSkinFactory();
 
-        // Init config files
-        Config.load(getResource("config.yml"));
-        Locale.load();
-
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
         // Detect ChangeSkin
@@ -120,6 +116,10 @@ public class SkinsRestorer extends JavaPlugin {
             });
             return;
         }
+
+        // Init config files
+        Config.load(getResource("config.yml"));
+        Locale.load();
 
         // Init storage
         if (!this.initStorage())
