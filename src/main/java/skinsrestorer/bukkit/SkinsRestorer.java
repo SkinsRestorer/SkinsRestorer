@@ -204,6 +204,12 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private void checkBungeeMode() {
+        File bungeeModeDisabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disableBungeeMode");
+        if (bungeeModeDisabled.exists()) {
+            bungeeEnabled = false;
+            return;
+        }
+
         try {
             bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
 
