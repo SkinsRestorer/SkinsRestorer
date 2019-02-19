@@ -85,7 +85,11 @@ Updater:
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
 NoSkinIfLoginCanceled: true
 
-#end 
+# Use old skin help
+UseOldSkinHelp: false
+
+
+# end
 
 # Usefull Links #
 # Website: https://skinsrestorer.net/

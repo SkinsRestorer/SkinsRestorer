@@ -23,8 +23,11 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     @HelpCommand
-    public static void onHelp(CommandSender sender, CommandHelp help) {
-        help.showHelp();
+    public void onHelp(CommandSender sender, CommandHelp help) {
+        if (Config.USE_OLD_SKIN_HELP)
+            sendHelp(sender);
+        else
+            help.showHelp();
     }
 
 
@@ -177,5 +180,13 @@ public class SkinCommand extends BaseCommand {
     private void rollback(ProxiedPlayer p, String oldSkinName, boolean save) {
         if (save)
             SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+    }
+
+    private void sendHelp(CommandSender sender) {
+        if (!Locale.SR_LINE.isEmpty())
+            sender.sendMessage(new TextComponent(Locale.SR_LINE));
+        sender.sendMessage(new TextComponent(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
+        if (!Locale.SR_LINE.isEmpty())
+            sender.sendMessage(new TextComponent(Locale.SR_LINE));
     }
 }

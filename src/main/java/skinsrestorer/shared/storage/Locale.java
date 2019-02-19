@@ -7,6 +7,11 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 public class Locale {
+    public static String SR_LINE = "&7&m----------------------------------------";
+    public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
+            + "\n   &2/skin <skinname> &7-&f Changes your skin."
+            + "\n    &2/skin update &7-&f Updates your skin."
+            + "\n    &2/skin clear &7-&f Clears your skin.";
 
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";

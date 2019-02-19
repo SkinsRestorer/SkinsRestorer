@@ -23,7 +23,7 @@ import java.util.List;
  * Created by McLive on 24.01.2019.
  */
 
-@CommandAlias("sr") @CommandPermission("%sr")
+@CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-@CommandAlias("sr") @CommandPermission("%sr")
+@CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
