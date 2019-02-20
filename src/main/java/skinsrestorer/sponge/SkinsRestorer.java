@@ -22,7 +22,7 @@ import skinsrestorer.sponge.utils.SkinApplier;
 
 import java.io.File;
 
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "13.5.3-SNAPSHOT")
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "13.6.1")
 
 public class SkinsRestorer {
 
