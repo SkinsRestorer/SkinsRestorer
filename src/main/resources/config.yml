@@ -85,7 +85,7 @@ Updater:
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
 NoSkinIfLoginCanceled: true
 
-# Use old skin help
+# True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
 UseOldSkinHelp: false
 
 
