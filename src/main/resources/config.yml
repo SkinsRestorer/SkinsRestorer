@@ -8,9 +8,9 @@
 # For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 # Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
 # Not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
-#
 # For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
 
+# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true
 
 # If true, players can change skins without permission.
 SkinWithoutPerm: true
