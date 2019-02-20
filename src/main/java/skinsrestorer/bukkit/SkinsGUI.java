@@ -20,6 +20,7 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+// Todo: MySQL support
 public class SkinsGUI extends ItemStack implements Listener {
 
     private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
@@ -27,48 +28,104 @@ public class SkinsGUI extends ItemStack implements Listener {
     public SkinsGUI() {
     }
 
+    public static enum GlassType {
+        NONE, PREV, NEXT, DELETE
+    }
+
+    public static class GuiGlass {
+        public GuiGlass(GlassType glassType) {
+            this.glassType = glassType;
+            this.create();
+        }
+
+        private void create() {
+            switch (glassType) {
+                case NONE: {
+                    this.itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+                    this.text = "";
+                    break;
+                }
+
+                case PREV: {
+                    this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
+                    this.text = Locale.PREVIOUS_PAGE;
+                    break;
+                }
+
+                case NEXT: {
+                    this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+                    this.text = Locale.NEXT_PAGE;
+                    break;
+                }
+
+                case DELETE: {
+                    this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                    this.text = Locale.REMOVE_SKIN;
+                    break;
+                }
+            }
+
+            this.itemMeta = this.itemStack.getItemMeta();
+            this.itemMeta.setDisplayName(text);
+            this.itemStack.setItemMeta(this.itemMeta);
+        }
+
+        private GlassType glassType;
+        private ItemStack itemStack;
+        private ItemMeta itemMeta;
+        private String text;
+
+        public ItemStack getItemStack() {
+            return itemStack;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
     public static Inventory getGUI(int page) {
         Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page " + page);
         int skinNumber = 36 * page;
         Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
-        inventory.setItem(36, createGlass(0));
-        inventory.setItem(37, createGlass(0));
-        inventory.setItem(38, createGlass(0));
-        inventory.setItem(39, createGlass(0));
-        inventory.setItem(40, createGlass(0));
-        inventory.setItem(41, createGlass(0));
-        inventory.setItem(42, createGlass(0));
-        inventory.setItem(43, createGlass(0));
-        inventory.setItem(44, createGlass(0));
+        inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(38, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(39, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(40, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(41, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(42, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(43, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(44, new GuiGlass(GlassType.NONE).getItemStack());
 
         //Middle button //remove skin
-        inventory.setItem(48, createGlass(14));
-        inventory.setItem(49, createGlass(14));
-        inventory.setItem(50, createGlass(14));
+        inventory.setItem(48, new GuiGlass(GlassType.DELETE).getItemStack());
+        inventory.setItem(49, new GuiGlass(GlassType.DELETE).getItemStack());
+        inventory.setItem(50, new GuiGlass(GlassType.DELETE).getItemStack());
         //button place next
-        inventory.setItem(45, createGlass(15));
-        inventory.setItem(46, createGlass(15));
-        inventory.setItem(47, createGlass(15));
+        inventory.setItem(45, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(46, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(47, new GuiGlass(GlassType.NONE).getItemStack());
 
         //button place next
-        inventory.setItem(53, createGlass(15));
-        inventory.setItem(52, createGlass(15));
-        inventory.setItem(51, createGlass(15));
+        inventory.setItem(53, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(52, new GuiGlass(GlassType.NONE).getItemStack());
+        inventory.setItem(51, new GuiGlass(GlassType.NONE).getItemStack());
 
         for (String s : skinsList.keySet()) {
             if (skinsList.get(s) != null) {
 
                 //if page is not 0, adding Previous Page button.
                 if (page != 0) {
-                    inventory.setItem(45, createGlass(4));
-                    inventory.setItem(46, createGlass(4));
-                    inventory.setItem(47, createGlass(4));
+                    inventory.setItem(45, new GuiGlass(GlassType.PREV).getItemStack());
+                    inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
+                    inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
                 }
                 //if the page is full, adding Next Page button.
                 if (inventory.firstEmpty() == -1) {
-                    inventory.setItem(53, createGlass(5));
-                    inventory.setItem(52, createGlass(5));
-                    inventory.setItem(51, createGlass(5));
+                    inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
+                    inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
+                    inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
                     continue;
                 }
                 inventory.addItem(createSkull(skinsList.get(s), s));
@@ -77,25 +134,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         return inventory;
     }
 
-    private static ItemStack createGlass(int color) {
-        ItemStack is = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1, (short) 3);
-        ItemMeta meta = is.getItemMeta();
-        if (color == 5) {
-            meta.setDisplayName(Locale.NEXT_PAGE);
-        } else if (color == 4) {
-            meta.setDisplayName(Locale.PREVIOUS_PAGE);
-        } else if (color == 14) {
-            meta.setDisplayName(Locale.REMOVE_SKIN);
-        } else {
-            meta.setDisplayName(" ");
-        }
-        is.setItemMeta(meta);
-        is.setDurability((short) color);
-        return is;
-    }
-
     private static ItemStack createSkull(Object s, String name) {
-        ItemStack is = new ItemStack(Material.SKELETON_SKULL, 1, (short) 3);
+        ItemStack is = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<>();
         lore.add(Locale.SELECT_SKIN);
@@ -134,48 +174,38 @@ public class SkinsGUI extends ItemStack implements Listener {
             return;
         }
         Player player = (Player) e.getWhoClicked();
-        if (e.getCurrentItem() != null) {
-            if (!e.getCurrentItem().hasItemMeta()) {
-                e.setCancelled(true);
-                return;
-            }
-            if (e.getCurrentItem().getType() == Material.SKELETON_SKULL) {
-                Object skin = SkinStorage.getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
-                SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
-                SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
-                SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                player.closeInventory();
-            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getDurability() == 14) {
-                if (SkinStorage.getPlayerSkin(player.getName()) == null) {
-                    SkinStorage.removePlayerSkin(player.getName());
-                    Object props = SkinStorage.createProperty("textures", "", "");
-                    SkinsRestorer.getInstance().getFactory().applySkin(player, props);
-                    SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                    player.closeInventory();
-                    e.setCancelled(true);
-                    return;
-                }
-                if (!Objects.requireNonNull(SkinStorage.getPlayerSkin(player.getName())).equalsIgnoreCase(player.getName())) {
-                    SkinStorage.removePlayerSkin(player.getName());
-                    Object props = SkinStorage.createProperty("textures", "", "");
-                    SkinsRestorer.getInstance().getFactory().applySkin(player, props);
-                    SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-                    player.closeInventory();
-                } else {
-                    player.sendMessage(Locale.NO_SKIN_DATA);
-                }
-            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
-                int currentPage = getMenus().get(player.getName());
-                getMenus().put(player.getName(), currentPage + 1);
-                player.openInventory(getGUI(currentPage + 1));
-            } else if (e.getCurrentItem().getType() == Material.WHITE_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Previous Page")) {
-                int currentPage = getMenus().get(player.getName());
-                getMenus().put(player.getName(), currentPage - 1);
-                player.openInventory(getGUI(currentPage - 1));
-            }
+
+        if (e.getCurrentItem() == null) {
+            e.setCancelled(true);
+            return;
         }
+
+        if (!e.getCurrentItem().hasItemMeta()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // Todo use setSkin function from SkinCommand.class
+        if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+            Object skin = SkinStorage.getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
+            SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
+            SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
+            SkinsRestorer.getInstance().getFactory().updateSkin(player);
+            player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+            player.closeInventory();
+        } else if (e.getCurrentItem().getType() == Material.RED_STAINED_GLASS_PANE) {
+            player.performCommand("skinsrestorer:skin clear");
+            player.closeInventory();
+        } else if (e.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
+            int currentPage = getMenus().get(player.getName());
+            getMenus().put(player.getName(), currentPage + 1);
+            player.openInventory(getGUI(currentPage + 1));
+        } else if (e.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Previous Page")) {
+            int currentPage = getMenus().get(player.getName());
+            getMenus().put(player.getName(), currentPage - 1);
+            player.openInventory(getGUI(currentPage - 1));
+        }
+
         e.setCancelled(true);
     }
 }
