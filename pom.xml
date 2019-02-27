@@ -201,8 +201,12 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics</shadedPattern>
+                            <pattern>org.bstats.bukkit</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats.bungeecord</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.inventivetalent</pattern>
