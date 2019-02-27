@@ -3,17 +3,15 @@ package skinsrestorer.velocity.command;
 import co.aikar.commands.*;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
-import com.velocitypowered.api.command.Command;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.serializer.ComponentSerializers;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.optional.qual.MaybePresent;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.CommandReplacements;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.velocity.SkinsRestorer;
@@ -27,7 +25,8 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("deprecation")
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
-    @Default @CommandPermission("%skinSet")
+    @Default
+    @Description("%helpSkinSet")
     public void onDefault(CommandSource source, @Optional @Single String skin, CommandHelp help) throws InvalidCommandArgument {
         if (skin == null || skin.equalsIgnoreCase("help")) {
             this.onHelp(source, help);
@@ -36,6 +35,9 @@ public class SkinCommand extends BaseCommand {
 
         if(!(source instanceof Player))
             throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+
+        if (!source.hasPermission(CommandReplacements.getPermissionReplacements().get("skinSet")))
+            throw new ConditionFailedException(MessageKeys.PERMISSION_DENIED);
 
         this.onSkinSetOther(source, new OnlinePlayer((Player) source), skin);
     }

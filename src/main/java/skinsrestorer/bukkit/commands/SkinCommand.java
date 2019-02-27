@@ -1,9 +1,8 @@
 package skinsrestorer.bukkit.commands;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
+import co.aikar.commands.*;
 import co.aikar.commands.annotation.*;
-import co.aikar.commands.contexts.OnlinePlayer;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +12,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.CommandReplacements;
 import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.concurrent.TimeUnit;
@@ -23,6 +23,22 @@ import java.util.concurrent.TimeUnit;
 
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
+    @Default
+    @Description("%helpSkinSet")
+    public void onDefault(CommandSender sender, @Optional @Single String skin, CommandHelp help) throws InvalidCommandArgument {
+        if (skin == null || skin.equalsIgnoreCase("help")) {
+            this.onHelp(sender, help);
+            return;
+        }
+
+        if(!(sender instanceof Player))
+            throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
+
+        if (!sender.hasPermission(CommandReplacements.getPermissionReplacements().get("skinSet")))
+            throw new ConditionFailedException(MessageKeys.PERMISSION_DENIED);
+
+        this.onSkinSetOther(sender, new OnlinePlayer((Player) sender), skin);
+    }
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {
         if (Config.USE_OLD_SKIN_HELP)
@@ -114,12 +130,6 @@ public class SkinCommand extends BaseCommand {
                     sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
             }
         });
-    }
-
-
-    @CatchUnknown @CommandPermission("%skinSet")
-    public void onDefault(Player p, String[] args) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), args[0]);
     }
 
 

@@ -95,11 +95,7 @@ public class SkinsRestorer {
         }));
         // Use with @Conditions("permOrSkinWithoutPerm")
 
-        if (Config.USE_NEW_PERMISSIONS)
-            CommandReplacements.newPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
-        else
-            CommandReplacements.oldPermissions.entrySet().forEach(e -> manager.getCommandReplacements().addReplacement(e.getKey(), e.getValue()));
-
+        CommandReplacements.getPermissionReplacements().forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
         new CommandPropertiesManager(manager, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
