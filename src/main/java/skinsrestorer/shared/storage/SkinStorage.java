@@ -40,8 +40,12 @@ public class SkinStorage {
                     property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
                     isBungee = false;
                 } catch (Exception exc) {
-                    System.out.println(
-                            "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+                    try {
+                        property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
+                    } catch (Exception exce) {
+                        System.out.println(
+                                "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+                    }
                 }
             }
         }

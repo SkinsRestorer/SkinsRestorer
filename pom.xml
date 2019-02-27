@@ -46,6 +46,10 @@
             <id>aikar</id>
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
+        <repository>
+            <id>velocity-repo</id>
+            <url>https://repo.velocitypowered.com/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -76,6 +80,20 @@
             <artifactId>spongeapi</artifactId>
             <version>7.0.0</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- VelocityPowered API -->
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- BungeeCord config -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>1.13-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         <!-- Mojang Auth Library (needed for SkinsGUI) -->
         <dependency>
@@ -148,6 +166,11 @@
             <artifactId>acf-sponge</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-velocity</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
         <!-- gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -188,6 +211,10 @@
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
                             <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.md_5.bungee.config</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
