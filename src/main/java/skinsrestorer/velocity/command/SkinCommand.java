@@ -26,20 +26,14 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     @Default
+    public void onDefault(CommandSource source) {
+        this.onHelp(source, this.getCurrentCommandManager().generateCommandHelp());
+    }
+
+    @Default @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
-    public void onDefault(CommandSource source, @Optional @Single String skin, CommandHelp help) throws InvalidCommandArgument {
-        if (skin == null || skin.equalsIgnoreCase("help")) {
-            this.onHelp(source, help);
-            return;
-        }
-
-        if(!(source instanceof Player))
-            throw new InvalidCommandArgument(MessageKeys.NOT_ALLOWED_ON_CONSOLE, false);
-
-        if (!source.hasPermission(CommandReplacements.getPermissionReplacements().get("skinSet")))
-            throw new ConditionFailedException(MessageKeys.PERMISSION_DENIED);
-
-        this.onSkinSetOther(source, new OnlinePlayer((Player) source), skin);
+    public void onSkinSetShort(Player p, @Single String skin) {
+        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
 
     @HelpCommand
