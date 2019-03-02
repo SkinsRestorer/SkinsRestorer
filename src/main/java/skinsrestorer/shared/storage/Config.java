@@ -36,9 +36,11 @@ public class Config {
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
 
-    private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", false);
+    // private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", false);
+    private static YamlConfig config;
 
-    public static void load(InputStream is) {
+    public static void load(String path, InputStream is) {
+        config = new YamlConfig(path + File.separator, "config", false);
         config.saveDefaultConfig(is);
         config.reload();
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS); //hidden

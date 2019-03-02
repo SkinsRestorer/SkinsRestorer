@@ -56,10 +56,12 @@ public class Locale {
     public static String OUTDATED = "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
 
     
-    private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
+    //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
+    private static YamlConfig locale;
 
-    public static void load() {
+    public static void load(String path) {
         try {
+            locale = new YamlConfig(path + File.separator, "messages", true);
             locale.saveDefaultConfig();
             locale.reload();
 

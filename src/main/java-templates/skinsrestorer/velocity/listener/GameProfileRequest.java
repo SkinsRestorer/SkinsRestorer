@@ -3,18 +3,11 @@ package skinsrestorer.velocity.listener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
-import com.velocitypowered.api.util.GameProfile;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.velocity.SkinsRestorer;
 import skinsrestorer.velocity.utils.SkinApplier;
-
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by McLive on 16.02.2019.

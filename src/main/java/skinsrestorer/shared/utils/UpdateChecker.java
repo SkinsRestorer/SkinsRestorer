@@ -11,6 +11,9 @@ import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +55,60 @@ public class UpdateChecker {
         } catch (Exception var3) {
             this.log.log(Level.WARNING, "Failed to get resource info from spiget.org", var3);
         }
+    }
+
+    public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
+        List<String> upToDateMessages = new LinkedList<String>();
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        if (bungeeMode) {
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+        }
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    This is the latest version!");
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+
+        return upToDateMessages;
+    }
+
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode) {
+        return this.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, bungeeMode, false, null);
+
+    }
+
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
+        List<String> updateAvailableMessages = new LinkedList<String>();
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        if (bungeeMode) {
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+        }
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
+
+        if (updateDownloader && hasDirectDownload) {
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
+            if (failReason == null) {
+                updateAvailableMessages.add("§e[§2SkinsRestorer§e]     Update downloaded successfully, it will be applied on the next restart.");
+            } else {
+                // Update failed
+                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + failReason);
+            }
+        } else {
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
+        }
+
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+
+        return updateAvailableMessages;
     }
 
     public boolean isVersionNewer(String oldVersion, String newVersion) {

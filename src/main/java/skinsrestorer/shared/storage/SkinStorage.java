@@ -8,15 +8,13 @@ import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.Property;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import java.io.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -25,33 +23,60 @@ public class SkinStorage {
     private static Class<?> property;
     private static MySQL mysql;
     private static File folder;
-    private static boolean isBungee;
+    private static boolean isBungee = false;
+    private static boolean isVelocity = false;
+    private static boolean isSponge = false;
 
     static {
         try {
-            property = Class.forName("com.mojang.authlib.properties.Property");
-            isBungee = false;
-        } catch (Exception e) {
+            property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
+            isSponge = true;
+        } catch (Exception exe) {
             try {
-                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-                isBungee = true;
-            } catch (Exception ex) {
+                property = Class.forName("com.mojang.authlib.properties.Property");
+            } catch (Exception e) {
                 try {
-                    property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
-                    isBungee = false;
-                } catch (Exception exc) {
+                    property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+                    isBungee = true;
+                } catch (Exception ex) {
                     try {
-                        property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
-                    } catch (Exception exce) {
-                        System.out.println(
-                                "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+                        property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
+                    } catch (Exception exc) {
+                        try {
+                            property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
+                            isVelocity = true;
+                        } catch (Exception exce) {
+                            System.out.println(
+                                    "[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
+                        }
                     }
                 }
             }
         }
     }
 
+    public static void preloadDefaultSkins() {
+        if (Config.DEFAULT_SKINS_ENABLED)
+            Config.DEFAULT_SKINS.forEach(skin -> {
+                try {
+                    SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
+                } catch (MojangAPI.SkinRequestException e) {
+                    if (SkinStorage.getSkinData(skin) == null)
+                        System.out.println("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error: " + e.getReason());
+                }
+            });
+    }
+
     public static Object createProperty(String name, String value, String signature) {
+        // use our own propery class if we are on skinsrestorer.sponge
+        if (isSponge) {
+            Property p = new Property();
+            p.setName(name);
+            p.setValue(value);
+            p.setSignature(signature);
+            return p;
+        }
+
         try {
             return ReflectionUtil.invokeConstructor(property,
                     new Class<?>[]{String.class, String.class, String.class}, name, value, signature);

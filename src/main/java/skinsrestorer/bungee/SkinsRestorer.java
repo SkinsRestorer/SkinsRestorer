@@ -18,6 +18,7 @@ import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class SkinsRestorer extends Plugin {
@@ -28,6 +29,7 @@ public class SkinsRestorer extends Plugin {
     private boolean outdated;
     private UpdateChecker updateChecker;
     private CommandSender console;
+    private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     public static SkinsRestorer getInstance() {
         return instance;
@@ -47,6 +49,10 @@ public class SkinsRestorer extends Plugin {
 
     public boolean isOutdated() {
         return outdated;
+    }
+
+    public String getConfigPath() {
+        return configPath;
     }
 
     @Override
@@ -70,8 +76,8 @@ public class SkinsRestorer extends Plugin {
         instance = this;
 
         // Init config files
-        Config.load(getResourceAsStream("config.yml"));
-        Locale.load();
+        Config.load(configPath, getResourceAsStream("config.yml"));
+        Locale.load(configPath);
 
         // Init storage
         if (!this.initStorage())
@@ -87,17 +93,6 @@ public class SkinsRestorer extends Plugin {
         SkinApplier.init();
 
         multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
-
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            if (Config.DEFAULT_SKINS_ENABLED)
-                for (String skin : Config.DEFAULT_SKINS)
-                    try {
-                        SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
-                    } catch (SkinRequestException e) {
-                        if (SkinStorage.getSkinData(skin) == null)
-                            console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
-                    }
-        });
     }
 
     private void initCommands() {
@@ -117,7 +112,7 @@ public class SkinsRestorer extends Plugin {
         CommandReplacements.getPermissionReplacements().forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
 
         manager.registerCommand(new SkinCommand());
         manager.registerCommand(new SrCommand());
@@ -150,6 +145,9 @@ public class SkinsRestorer extends Plugin {
         }
 
         SkinStorage.init(getDataFolder());
+
+        // Preload default skins
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), SkinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -163,15 +161,10 @@ public class SkinsRestorer extends Plugin {
                 @Override
                 public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                     outdated = true;
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion()));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    " + downloadUrl));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+
+                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
+                        console.sendMessage(new TextComponent(msg));
+                    });
                 }
 
                 @Override
@@ -179,14 +172,9 @@ public class SkinsRestorer extends Plugin {
                     if (!showUpToDate)
                         return;
 
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    This is the latest version!"));
-                    console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
+                    updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
+                        console.sendMessage(new TextComponent(msg));
+                    });
                 }
             });
         });

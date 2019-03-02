@@ -11,7 +11,6 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.CommandReplacements;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.velocity.SkinsRestorer;

@@ -3,7 +3,9 @@ package skinsrestorer.velocity;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.VelocityCommandIssuer;
 import co.aikar.commands.VelocityCommandManager;
+import co.aikar.commands.annotation.Single;
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -13,37 +15,49 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.ComponentSerializers;
 import org.checkerframework.checker.optional.qual.MaybePresent;
+import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.CommandPropertiesManager;
 import skinsrestorer.shared.utils.CommandReplacements;
 import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.UpdateChecker;
 import skinsrestorer.velocity.command.SkinCommand;
 import skinsrestorer.velocity.command.SrCommand;
 import skinsrestorer.velocity.listener.GameProfileRequest;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
  * Created by McLive on 16.02.2019.
  */
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "13.6.1",
-        description = "Skins for offline mode servers.",
-        authors = "McLive")
+@Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}", description = "${project.description}", authors = "McLive")
 public class SkinsRestorer {
+    @Getter
     private final ProxyServer proxy;
+    @Getter
     private final Logger logger;
+    @Getter
     private final Path dataFolder;
-    private MySQL mysql;
+    @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    @Getter
+    private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+
+    private boolean outdated;
+    private CommandSource console;
+    private UpdateChecker updateChecker;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
@@ -55,10 +69,20 @@ public class SkinsRestorer {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
         logger.info("Enabling SkinsRestorer v" + getVersion());
+        console = this.proxy.getConsoleCommandSource();
+
+        // Check for updates
+        if (Config.UPDATER_ENABLED) {
+            this.updateChecker = new UpdateChecker(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Velocity");
+            this.checkUpdate(true);
+
+            if (Config.UPDATER_PERIODIC)
+                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(30, TimeUnit.MINUTES).delay(30, TimeUnit.MINUTES).schedule();
+        }
 
         // Init config files
-        Config.load(getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load();
+        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(configPath);
 
         // Init storage
         if (!this.initStorage())
@@ -98,7 +122,7 @@ public class SkinsRestorer {
         CommandReplacements.getPermissionReplacements().forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
 
         manager.registerCommand(new SkinCommand(this));
         manager.registerCommand(new SrCommand(this));
@@ -108,7 +132,7 @@ public class SkinsRestorer {
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
-                this.mysql = new MySQL(
+                MySQL mysql = new MySQL(
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -116,10 +140,10 @@ public class SkinsRestorer {
                         Config.MYSQL_PASSWORD
                 );
 
-                this.mysql.openConnection();
-                this.mysql.createTable();
+                mysql.openConnection();
+                mysql.createTable();
 
-                SkinStorage.init(this.mysql);
+                SkinStorage.init(mysql);
                 return true;
 
             } catch (Exception e) {
@@ -129,27 +153,43 @@ public class SkinsRestorer {
         }
 
         SkinStorage.init(this.getDataFolder().toFile());
+
+        // Preload default skins
+        this.getService().execute(SkinStorage::preloadDefaultSkins);
         return true;
+    }
+
+    private void checkUpdate() {
+        this.checkUpdate(false);
+    }
+
+    private void checkUpdate(boolean showUpToDate) {
+        getService().execute(() -> {
+            updateChecker.checkForUpdate(new UpdateCallback() {
+                @Override
+                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                    outdated = true;
+
+                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
+                        console.sendMessage(deserialize(msg));
+                    });
+                }
+
+                @Override
+                public void upToDate() {
+                    if (!showUpToDate)
+                        return;
+
+                    updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
+                        console.sendMessage(deserialize(msg));
+                    });
+                }
+            });
+        });
     }
 
     public TextComponent deserialize(String string) {
         return ComponentSerializers.LEGACY.deserialize(string);
-    }
-
-    public ProxyServer getProxy() {
-        return proxy;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public Path getDataFolder() {
-        return dataFolder;
-    }
-
-    public ExecutorService getService() {
-        return service;
     }
 
     public String getVersion() {

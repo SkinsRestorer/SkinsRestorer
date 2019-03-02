@@ -33,8 +33,8 @@ public class SrCommand extends BaseCommand {
     @Subcommand("reload") @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load();
-        Config.load(SkinsRestorer.getInstance().getResource("config.yml"));
+        Locale.load(SkinsRestorer.getInstance().getConfigPath());
+        Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"));
         sender.sendMessage(Locale.RELOAD);
     }
 

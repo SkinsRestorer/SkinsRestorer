@@ -9,6 +9,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
+import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
@@ -29,8 +30,8 @@ public class SrCommand extends BaseCommand {
     @Subcommand("reload") @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load();
-        Config.load(SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+        Locale.load(SkinsRestorer.getInstance().getConfigPath());
+        Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
         sender.sendMessage(new TextComponent(Locale.RELOAD));
     }
 
