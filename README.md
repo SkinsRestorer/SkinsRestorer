@@ -2,7 +2,7 @@
 							    SkinsRestorer
 							---------------------
 
- # SkinsRestorerX [![Build Status](https://api.travis-ci.org/McLive/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/McLive/SkinsRestorerX)
+ # SkinsRestorerX [![Build Status](https://travis-ci.org/SkinsRestorer/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/SkinsRestorer/SkinsRestorerX)
  This is a development repo for SkinsRestorer, used for making and testing new plugin features.
  --------------
  Restoring offline mode skins & changing skins for Spigot/BungeeCord/Waterfall servers.
@@ -13,7 +13,7 @@
  
  Wiki | [click here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
  
- Jenkins | [click here](https://ci.freecraft.eu/job/SkinsRestorerX/)
+ Jenkins | [click here](https://ci.freecraft.eu/v2/job/SkinsRestorerX/)
 
  Discord | [click here](https://discord.me/skinsrestorer)
 
