@@ -446,20 +446,34 @@ public class SkinStorage {
     }
 
     public static Map<String, Object> getSkins(int number) {
-        ConcurrentHashMap<String, Object> thingy = new ConcurrentHashMap<String, Object>();
-        Map<String, Object> list = new TreeMap<String, Object>(thingy);
-        String path = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
-        File folder = new File(path);
-        String[] fileNames = folder.list();
-        int i = 0;
-        assert fileNames != null;
-        for (String file : fileNames) {
-            if (i >= number) {
-                list.put(file.replace(".skin", ""), SkinStorage.getSkinDataMenu(file.replace(".skin", "")));
+        if (Config.USE_MYSQL) {
+            Map<String, Object> list = new TreeMap<String, Object>();
+            RowSet crs = mysql.query("select * from " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
+            int i = 0;
+            try {
+                do {
+                    if (i >= number)
+                        list.put(crs.getString("Nick"), createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                    i++;
+                } while (crs.next());
+            } catch (java.sql.SQLException ignored) {
             }
-            i++;
+            return list;
+        } else {
+            Map<String, Object> list = new TreeMap<String, Object>();
+            String path = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
+            File folder = new File(path);
+            String[] fileNames = folder.list();
+            int i = 0;
+            assert fileNames != null;
+            for (String file : fileNames) {
+                if (i >= number) {
+                    list.put(file.replace(".skin", ""), SkinStorage.getSkinDataMenu(file.replace(".skin", "")));
+                }
+                i++;
+            }
+            return list;
         }
-        return list;
     }
 
 
