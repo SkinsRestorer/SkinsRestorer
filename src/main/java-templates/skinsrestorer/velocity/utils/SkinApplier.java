@@ -1,8 +1,7 @@
 package skinsrestorer.velocity.utils;
 
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
-import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -78,7 +77,7 @@ public class SkinApplier {
                     out.writeUTF(textures.getSignature());
                 }
 
-                serverConnection.sendPluginMessage(new LegacyChannelIdentifier("sr:skinchange"), b.toByteArray());
+                serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("sr", "skinchance"), b.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
