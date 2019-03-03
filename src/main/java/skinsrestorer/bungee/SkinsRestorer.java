@@ -3,6 +3,7 @@ package skinsrestorer.bungee;
 import co.aikar.commands.BungeeCommandIssuer;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.ConditionFailedException;
+import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -16,48 +17,31 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.*;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin {
-
+    @Getter
     private static SkinsRestorer instance;
-    private MySQL mysql;
-    private boolean multibungee;
+    @Getter
+    private boolean multiBungee;
+    @Getter
     private boolean outdated;
-    private UpdateChecker updateChecker;
-    private CommandSender console;
+    @Getter
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
-    public static SkinsRestorer getInstance() {
-        return instance;
-    }
-
-    public MySQL getMySQL() {
-        return mysql;
-    }
+    private CommandSender console;
+    private UpdateChecker updateChecker;
 
     public String getVersion() {
-        return getDescription().getVersion().replace("-SNAPSHOT", "");
+        return getDescription().getVersion();
     }
 
-    public boolean isMultiBungee() {
-        return multibungee;
-    }
-
-    public boolean isOutdated() {
-        return outdated;
-    }
-
-    public String getConfigPath() {
-        return configPath;
-    }
 
     @Override
     public void onEnable() {
-        @SuppressWarnings("unused")
         Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
@@ -92,7 +76,7 @@ public class SkinsRestorer extends Plugin {
         getProxy().registerChannel("sr:skinchange");
         SkinApplier.init();
 
-        multibungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
     }
 
     private void initCommands() {
@@ -122,7 +106,7 @@ public class SkinsRestorer extends Plugin {
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
-                this.mysql = new MySQL(
+                MySQL mysql = new MySQL(
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -130,10 +114,10 @@ public class SkinsRestorer extends Plugin {
                         Config.MYSQL_PASSWORD
                 );
 
-                this.mysql.openConnection();
-                this.mysql.createTable();
+                mysql.openConnection();
+                mysql.createTable();
 
-                SkinStorage.init(this.mysql);
+                SkinStorage.init(mysql);
                 return true;
 
             } catch (Exception e) {

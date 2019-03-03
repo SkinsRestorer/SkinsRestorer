@@ -3,6 +3,7 @@ package skinsrestorer.bukkit;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
+import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -19,49 +20,31 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.*;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 import java.io.*;
 
+@SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-
+    @Getter
     private static SkinsRestorer instance;
+    @Getter
     private SkinFactory factory;
-    private MySQL mysql;
-    private boolean bungeeEnabled;
+    @Getter
     private UpdateChecker updateChecker;
-    private UpdateDownloader updateDownloader;
-    private CommandSender console;
+    @Getter
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
-    public static SkinsRestorer getInstance() {
-        return instance;
-    }
-
-    public SkinFactory getFactory() {
-        return factory;
-    }
-
-    public MySQL getMySQL() {
-        return mysql;
-    }
+    private boolean bungeeEnabled;
+    private UpdateDownloader updateDownloader;
+    private CommandSender console;
 
     public String getVersion() {
         return getDescription().getVersion();
     }
 
-    public UpdateChecker getUpdateChecker() {
-        return this.updateChecker;
-    }
-
-    public String getConfigPath() {
-        return configPath;
-    }
-
     public void onEnable() {
         console = getServer().getConsoleSender();
 
-        @SuppressWarnings("unused")
         Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
@@ -166,7 +149,7 @@ public class SkinsRestorer extends JavaPlugin {
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
-                this.mysql = new MySQL(
+                MySQL mysql = new MySQL(
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -174,10 +157,10 @@ public class SkinsRestorer extends JavaPlugin {
                         Config.MYSQL_PASSWORD
                 );
 
-                this.mysql.openConnection();
-                this.mysql.createTable();
+                mysql.openConnection();
+                mysql.createTable();
 
-                SkinStorage.init(this.mysql);
+                SkinStorage.init(mysql);
                 return true;
 
             } catch (Exception e) {
