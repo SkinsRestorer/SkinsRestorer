@@ -77,7 +77,7 @@ public class SkinApplier {
                     out.writeUTF(textures.getSignature());
                 }
 
-                serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("sr", "skinchance"), b.toByteArray());
+                serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("sr", "skinchange"), b.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
