@@ -22,6 +22,7 @@ permissions:
      default: op
    skinsrestorer.command.clear:
      description: Allows access to clear your skin.
+     default: op
    skinsrestorer.command.update:
      description: Allows access to update your skin.
      default: op
