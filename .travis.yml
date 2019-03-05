@@ -1,5 +1,8 @@
+sudo: false
 language: java
 jdk:
   - oraclejdk8
   - oraclejdk9
-sudo: false
+cache:
+  directories:
+  - $HOME/.m2

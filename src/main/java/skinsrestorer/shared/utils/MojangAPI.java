@@ -1,22 +1,33 @@
 package skinsrestorer.shared.utils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
-import java.util.List;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class MojangAPI {
 
-    private static final String uuidurl = "https://api.mojang.com/users/profiles/minecraft/";
-    private static final String skinurl = "https://sessionserver.mojang.com/session/minecraft/profile/";
+    private static final String uuidurl = "https://api.minetools.eu/uuid/%name%";
+    private static final String uuidurl_mojang = "https://api.mojang.com/users/profiles/minecraft/%name%";
+    private static final String uuidurl_backup = "https://api.ashcon.app/mojang/v2/user/%name%";
+
+    private static final String skinurl = "https://api.minetools.eu/profile/%uuid%";
+    private static final String skinurl_mojang = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
+    private static final String skinurl_backup = "https://api.ashcon.app/mojang/v2/user/%uuid%";
+
     private static MojangAPI mojangapi = new MojangAPI();
+
+    // TODO Deal with duplicated code
 
     /**
      * Returned object needs to be casted to either BungeeCord's property or
@@ -24,69 +35,81 @@ public class MojangAPI {
      *
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public static Object getSkinProperty(String uuid) throws SkinRequestException {
+    public static Object getSkinProperty(String uuid, boolean tryNext) {
         String output;
         try {
-            output = readURL(skinurl + uuid + "?unsigned=false");
+            output = readURL(skinurl.replace("%uuid%", uuid));
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
-            String valend = "\"}]";
+            Property property = new Property();
 
-            String signature = "", value = "";
+            if (obj.has("raw")) {
+                JsonObject raw = obj.getAsJsonObject("raw");
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
-
-            return SkinStorage.createProperty("textures", value, signature);
+                if (property.valuesFromJson(raw)) {
+                    return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+                }
+            }
+            return null;
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
-            return getSkinPropertyProxy(uuid);
+            if (tryNext)
+                return getSkinPropertyMojang(uuid);
         }
+        return null;
     }
 
-    public static Object getSkinPropertyProxy(String uuid) throws SkinRequestException {
+    public static Object getSkinProperty(String uuid) {
+        return getSkinProperty(uuid, true);
+    }
+
+    public static Object getSkinPropertyMojang(String uuid, boolean tryNext) {
+        System.out.println("[SkinsRestorer] Trying Mojang API to get skin property for " + uuid + ".");
+
         String output;
         try {
-            output = readURLProxy(skinurl + uuid + "?unsigned=false");
+            output = readURL(skinurl_mojang.replace("%uuid%", uuid));
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
 
-            String sigbeg = "\"signature\":\"";
-            String mid = "\",\"name\":\"textures\",\"value\":\"";
-            String valend = "\"}]";
+            Property property = new Property();
 
-            String signature = "", value = "";
+            if (property.valuesFromJson(obj)) {
+                return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+            }
 
-            value = getStringBetween(output, mid, valend);
-            signature = getStringBetween(output, sigbeg, mid);
-
-            return SkinStorage.createProperty("textures", value, signature);
+            return null;
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get proxy. Maybe you have an issue with your firewall?");
-            return false;
+            if (tryNext)
+                return getSkinPropertyBackup(uuid);
         }
+        return null;
     }
 
-    public static String getStringBetween(final String base, final String begin, final String end) {
+    public static Object getSkinPropertyMojang(String uuid) {
+        return getSkinPropertyMojang(uuid, true);
+    }
+
+    public static Object getSkinPropertyBackup(String uuid) {
+        System.out.println("[SkinsRestorer] Trying backup API to get skin property for " + uuid + ".");
+
+        String output;
         try {
-            Pattern patbeg = Pattern.compile(Pattern.quote(begin));
-            Pattern patend = Pattern.compile(Pattern.quote(end));
+            output = readURL(skinurl_backup.replace("%uuid%", uuid), 10000);
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
+            JsonObject textures = obj.get("textures").getAsJsonObject();
+            JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
-            int resbeg = 0;
-            int resend = base.length() - 1;
+            Property property = new Property();
+            property.setValue(rawTextures.get("value").getAsString());
+            property.setSignature(rawTextures.get("signature").getAsString());
 
-            Matcher matbeg = patbeg.matcher(base);
+            return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
 
-            while (matbeg.find())
-                resbeg = matbeg.end();
-
-            Matcher matend = patend.matcher(base);
-
-            while (matend.find())
-                resend = matend.start();
-
-            return base.substring(resbeg, resend);
         } catch (Exception e) {
-            return base;
+            System.out.println("[SkinsRestorer] Failed to get skin property from backup API. (" + uuid + ")");
+            return null;
         }
     }
 
@@ -95,34 +118,87 @@ public class MojangAPI {
      * @return Dash-less UUID (String)
      * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
      */
-    public static String getUUID(String name) throws SkinRequestException {
+    public static String getUUID(String name, boolean tryNext) throws SkinRequestException {
         String output;
         try {
-            output = readURL(uuidurl + name);
+            output = readURL(uuidurl.replace("%name%", name));
 
-            if (output.isEmpty())
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
+
+            if (obj.has("status")) {
+                if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    if (tryNext)
+                        return getUUIDMojang(name);
+                    return null;
+                }
+            }
+
+            if (obj.get("id").getAsString().equalsIgnoreCase("null"))
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
-            else if (output.contains("\"error\""))
-                return getUUIDProxy(name);
 
-            return output.substring(7, 39);
+            return obj.get("id").getAsString();
         } catch (IOException e) {
-            System.out.println("[SkinsRestorer] Switching to proxy to get skin property.");
-            return getUUIDProxy(name);
+            if (tryNext)
+                return getUUIDMojang(name);
         }
+        return null;
     }
 
-    public static String getUUIDProxy(String name) throws SkinRequestException {
+    public static String getUUID(String name) throws SkinRequestException {
+        return getUUID(name, true);
+    }
+
+    public static String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
+        System.out.println("[SkinsRestorer] Trying Mojang API to get UUID for player " + name + ".");
+
         String output;
         try {
-            output = readURLProxy(uuidurl + name);
+            output = readURL(uuidurl_mojang.replace("%name%", name));
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
-            else if (output.contains("\"error\""))
-                throw new SkinRequestException(Locale.ALT_API_FAILED);
 
-            return output.substring(7, 39);
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
+
+            if (obj.has("error")) {
+                if (tryNext)
+                    return getUUIDBackup(name);
+                return null;
+            }
+
+            return obj.get("id").getAsString();
+
+        } catch (IOException e) {
+            if (tryNext)
+                return getUUIDBackup(name);
+        }
+        return null;
+    }
+
+    public static String getUUIDMojang(String name) throws SkinRequestException {
+        return getUUIDMojang(name, true);
+    }
+
+    public static String getUUIDBackup(String name) throws SkinRequestException {
+        System.out.println("[SkinsRestorer] Trying backup API to get UUID for player " + name + ".");
+
+        String output;
+        try {
+            output = readURL(uuidurl_backup.replace("%name%", name), 10000);
+
+            JsonElement element = new JsonParser().parse(output);
+            JsonObject obj = element.getAsJsonObject();
+
+            if (obj.has("code")) {
+                if (obj.get("code").getAsInt() == 404) {
+                    throw new SkinRequestException(Locale.NOT_PREMIUM);
+                }
+                throw new SkinRequestException(Locale.ALT_API_FAILED);
+            }
+
+            return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException e) {
             throw new SkinRequestException(e.getMessage());
         }
@@ -132,20 +208,27 @@ public class MojangAPI {
         return mojangapi;
     }
 
-    public static int rand(int High) {
-        Random r = new Random();
-        return r.nextInt(High - 1) + 1;
+    private static int rand(int High) {
+        try {
+            Random r = new Random();
+            return r.nextInt(High - 1) + 1;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
-    private static String readURL(String url) throws MalformedURLException, IOException, SkinRequestException {
+    private static String readURL(String url) throws IOException {
+        return readURL(url, 5000);
+    }
 
-
+    private static String readURL(String url, int timeout) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+        MetricsCounter.incrAPI(url);
 
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "SkinsRestorer");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
+        con.setConnectTimeout(timeout);
+        con.setReadTimeout(timeout);
         con.setDoOutput(true);
 
         String line;
@@ -156,43 +239,11 @@ public class MojangAPI {
             output.append(line);
 
         in.close();
-        return output.toString();
-    }
-
-    private static String readURLProxy(String url) throws MalformedURLException, IOException, SkinRequestException {
-        HttpURLConnection con = null;
-        String ip = null;
-        int port = 0;
-        String proxyStr = null;
-        List<String> list = ProxyManager.getList();
-        proxyStr = list.get(rand(list.size() - 1));
-        String[] realProxy = proxyStr.split(":");
-        ip = realProxy[0];
-        port = Integer.valueOf(realProxy[1]);
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
-        con = (HttpURLConnection) new URL(url).openConnection(proxy);
-
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "SkinsRestorer");
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
-        con.setDoOutput(true);
-
-        String line;
-        StringBuilder output = new StringBuilder();
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-        while ((line = in.readLine()) != null)
-            output.append(line);
-
-        in.close();
-
         return output.toString();
     }
 
     public static class SkinRequestException extends Exception {
 
-        private static final long serialVersionUID = 5969055162529998032L;
         private String reason;
 
         public SkinRequestException(String reason) {
@@ -203,5 +254,77 @@ public class MojangAPI {
             return reason;
         }
 
+        public String getMessage() {
+            return reason;
+        }
+
+    }
+
+    private static class Property {
+        private String name;
+        private String value;
+        private String signature;
+
+        boolean valuesFromJson(JsonObject obj) {
+            if (obj.has("properties")) {
+                JsonArray properties = obj.getAsJsonArray("properties");
+                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
+
+                String signature = propertiesObject.get("signature").getAsString();
+                String value = propertiesObject.get("value").getAsString();
+
+                this.setSignature(signature);
+                this.setValue(value);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        String getValue() {
+            return value;
+        }
+
+        void setValue(String value) {
+            this.value = value;
+        }
+
+        String getSignature() {
+            return signature;
+        }
+
+        void setSignature(String signature) {
+            this.signature = signature;
+        }
+    }
+
+    private static class HTTPResponse {
+        private String output;
+        private int status;
+
+        public String getOutput() {
+            return output;
+        }
+
+        public void setOutput(String output) {
+            this.output = output;
+        }
+
+        public int getStatus() {
+            return status;
+        }
+
+        public void setStatus(int status) {
+            this.status = status;
+        }
     }
 }
