@@ -16,7 +16,7 @@
 SkinWithoutPerm: true
 
 # Time skins are stored in database before we request again (in minutes)
-SkinExpiresAfter: 720
+SkinExpiresAfter: 360
 
 # Players cooldown when changing skins (set to 0 to disable)
 # Can be bypassed with 'skinsrestorer.bypasscooldown'
