@@ -91,6 +91,15 @@ UseOldSkinHelp: false
 
 # end
 
+#Usefull tools:
+#Vectier Thailand has made some super cool "Custom Skin" tools that you can use!
+#SkinFile Generator:
+#With SkinFile Generator you can upload your own custom skin to get a unique .skin file that you can put in your skins folder to use with skinsrestorer. 
+#check it out here: https://riflowth.github.io/SkinFile-Generator/
+#SkinSystem :
+#With SkinSystem you as a server owner can connect authme (and forum) with the SkinSystem website that you can host to give your players the ability to upload custom skins.
+#Check it out here: https://github.com/riflowth/SkinSystem
+
 # Usefull Links #
 # Website: https://skinsrestorer.net/
 # Wiki https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
