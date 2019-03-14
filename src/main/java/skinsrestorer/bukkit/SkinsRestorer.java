@@ -62,6 +62,22 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
+        // Detect MundoSK
+        if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
+            try {
+                YamlConfig mundoConfig = new YamlConfig("plugins" + File.separator + "MundoSK" + File.separator, "config", false);
+                mundoConfig.reload();
+                if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: true'§c.");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §cThat setting is located in §e/plugins/MundoSK/config.yml");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §cYou have to disable it to get SkinsRestorer to work.");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         // Check if we are running in bungee mode
         this.checkBungeeMode();
 
