@@ -17,6 +17,8 @@ import org.spongepowered.api.text.Text;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.commands.SrCommand;
@@ -55,13 +57,13 @@ public class SkinsRestorer {
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateChecker(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Sponge");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Sponge");
             this.checkUpdate(bungeeEnabled);
 
             if (Config.UPDATER_PERIODIC)
                 Sponge.getScheduler().createTaskBuilder().execute(() -> {
                     this.checkUpdate(bungeeEnabled, false);
-                }).interval(30, TimeUnit.MINUTES).delay(30, TimeUnit.MINUTES);
+                }).interval(30, TimeUnit.MINUTES).delay(5, TimeUnit.MINUTES);
         }
 
         // Init config files

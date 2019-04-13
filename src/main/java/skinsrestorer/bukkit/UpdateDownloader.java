@@ -19,7 +19,7 @@ import java.util.logging.Level;
 public class UpdateDownloader {
     private SkinsRestorer plugin;
 
-    private DownloadFailReason failReason;
+    public DownloadFailReason failReason;
     private ResourceInfo latestResourceInfo;
 
     public UpdateDownloader(SkinsRestorer plugin) {
@@ -113,7 +113,7 @@ public class UpdateDownloader {
      *
      * @return the plugin file name
      */
-    private File getPluginFile() {
+    public File getPluginFile() {
         if (!(plugin instanceof JavaPlugin)) {
             return null;
         }

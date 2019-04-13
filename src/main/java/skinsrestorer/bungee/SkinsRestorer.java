@@ -16,6 +16,8 @@ import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.File;
@@ -50,11 +52,11 @@ public class SkinsRestorer extends Plugin {
         console = getProxy().getConsole();
 
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 30, 30, TimeUnit.MINUTES);
+                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 5, 5, TimeUnit.MINUTES);
         }
 
         instance = this;

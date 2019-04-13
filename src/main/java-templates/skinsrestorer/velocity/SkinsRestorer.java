@@ -3,30 +3,27 @@ package skinsrestorer.velocity;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.VelocityCommandIssuer;
 import co.aikar.commands.VelocityCommandManager;
-import co.aikar.commands.annotation.Single;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
-import com.velocitypowered.api.plugin.PluginManager;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.ComponentSerializers;
-import org.checkerframework.checker.optional.qual.MaybePresent;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.CommandPropertiesManager;
 import skinsrestorer.shared.utils.CommandReplacements;
 import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.UpdateChecker;
+import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.velocity.command.SkinCommand;
 import skinsrestorer.velocity.command.SrCommand;
 import skinsrestorer.velocity.listener.GameProfileRequest;
@@ -73,11 +70,11 @@ public class SkinsRestorer {
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateChecker(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Velocity");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Velocity");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(30, TimeUnit.MINUTES).delay(30, TimeUnit.MINUTES).schedule();
+                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(5, TimeUnit.MINUTES).delay(5, TimeUnit.MINUTES).schedule();
         }
 
         // Init config files

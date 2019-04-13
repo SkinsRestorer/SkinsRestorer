@@ -1,4 +1,4 @@
-package skinsrestorer.shared.utils;
+package skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -13,7 +13,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
