@@ -63,7 +63,7 @@ public class SkinsRestorer {
             if (Config.UPDATER_PERIODIC)
                 Sponge.getScheduler().createTaskBuilder().execute(() -> {
                     this.checkUpdate(bungeeEnabled, false);
-                }).interval(30, TimeUnit.MINUTES).delay(5, TimeUnit.MINUTES);
+                }).interval(5, TimeUnit.MINUTES).delay(5, TimeUnit.MINUTES);
         }
 
         // Init config files
