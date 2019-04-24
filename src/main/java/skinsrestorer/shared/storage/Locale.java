@@ -43,8 +43,8 @@ public class Locale {
 
     public static String MENU_OPEN = "&2Opening the skins menu...";
     public static String NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
-    public static String PREVIOUS_PAGE = "&e&l»&7 Previous Page&e&l «";
-    public static String REMOVE_SKIN = "&c&l»&7 Remove Skin&c&l »";
+    public static String PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
+    public static String REMOVE_SKIN = "&c&l»&7 Remove Skin&c&l «";
     public static String SELECT_SKIN = "&2Click to select this skin";
 
     public static String ADMIN_SET_SKIN = "&e[&2SkinsRestorer&e] &2You set %player's skin.";
