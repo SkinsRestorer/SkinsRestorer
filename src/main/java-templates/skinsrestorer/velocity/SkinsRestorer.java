@@ -14,7 +14,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.ComponentSerializers;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
@@ -186,7 +186,7 @@ public class SkinsRestorer {
     }
 
     public TextComponent deserialize(String string) {
-        return ComponentSerializers.LEGACY.deserialize(string);
+        return LegacyComponentSerializer.INSTANCE.deserialize(string);
     }
 
     public String getVersion() {

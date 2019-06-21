@@ -50,6 +50,10 @@
             <id>velocity-repo</id>
             <url>https://repo.velocitypowered.com/snapshots/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -85,7 +89,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- BungeeCord config -->
@@ -166,10 +170,11 @@
             <artifactId>acf-sponge</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
+        <!-- temporary fix for https://github.com/aikar/commands/pull/216 -->
         <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>acf-velocity</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <groupId>com.github.egg82</groupId>
+            <artifactId>commands</artifactId>
+            <version>fix~velocity-SNAPSHOT</version>
         </dependency>
         <!-- gson -->
         <dependency>
