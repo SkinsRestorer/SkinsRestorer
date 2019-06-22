@@ -186,7 +186,7 @@ public class SkinsRestorer {
     }
 
     public TextComponent deserialize(String string) {
-        return LegacyComponentSerializer.INSTANCE.deserialize(string);
+        return LegacyComponentSerializer.legacy().deserialize(string);
     }
 
     public String getVersion() {
