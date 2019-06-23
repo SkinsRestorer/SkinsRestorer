@@ -5,7 +5,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.serializer.ComponentSerializers;
+import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -114,7 +114,7 @@ public class SkinCommand extends BaseCommand {
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!source.hasPermission("skinsrestorer.skin." + skin)) {
-                source.sendMessage(ComponentSerializers.LEGACY.deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
                 return;
             }
         }
@@ -122,7 +122,7 @@ public class SkinCommand extends BaseCommand {
         plugin.getService().execute(() -> {
             if (this.setSkin(source, target.getPlayer(), skin)) {
                 if (!getSenderName(source).equals(target.getPlayer().getUsername())) {
-                    source.sendMessage(ComponentSerializers.LEGACY.deserialize(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getUsername())));
+                    source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getUsername())));
                 }
             }
         });
