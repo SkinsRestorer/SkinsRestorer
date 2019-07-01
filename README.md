@@ -14,7 +14,7 @@ Restoring offline mode skins & changing skins for Spigot, BungeeCord and Waterfa
 > Supported versions: Minecraft 1.8.0 - 1.14.x
 
 #### RTFM
-Please read the [wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki) before requesting help via [discord](https://discord.me/skinsrestorer).
+Please read the [wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki) before requesting help via [discord](https://discord.me/skinsrestorer)[.](https://www.youtube.com/watch?v=bFtcLJVN8yg)
 
 |  | |
 |----------|-------------:|
