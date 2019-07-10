@@ -1,9 +1,7 @@
 package skinsrestorer.shared.utils;
 
-import com.google.gson.internal.bind.SqlDateTypeAdapter;
 import skinsrestorer.shared.storage.Config;
 
-import javax.sql.RowSet;
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
@@ -25,9 +23,8 @@ public class MySQL {
         this.password = password;
         exe = Executors.newCachedThreadPool();
 
-            //con = openConnection();
-            //createTable();
-
+        //con = openConnection();
+        //createTable();
     }
 
     public void createTable() {
@@ -35,22 +32,14 @@ public class MySQL {
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Value` text COLLATE utf8_unicode_ci,"
                 + "`Signature` text COLLATE utf8_unicode_ci,"
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-        try {
-            addColumn();
-        } catch (Exception e) {
-            if (e.getMessage().contains("doesn't exist")) {
-                execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
-            }
-        }
-    }
 
-    private void addColumn() {
         execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
@@ -74,7 +63,7 @@ public class MySQL {
 
     public Connection getConnection() {
         try {
-            if(con == null || !this.con.isValid(1)) {
+            if (con == null || !this.con.isValid(1)) {
                 System.out.println("[SkinsRestorer] MySQL connection lost! Creation a new one.");
                 con = this.openConnection();
             }
@@ -151,13 +140,12 @@ public class MySQL {
             assert ps != null;
             ps.execute();
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate column name")) {
+            if (e.getErrorCode() == 1060) {
                 return;
             }
             e.printStackTrace();
             System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
         }
-
     }
 
     public CachedRowSet query(final String query, final Object... vars) {
