@@ -50,7 +50,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             });
 
         } catch (Exception e) {
-            this.log.log(Level.WARNING, "Failed to get release info from api.github.com.");
+            // this.log.log(Level.WARNING, "Failed to get release info from api.github.com.");
         }
     }
 

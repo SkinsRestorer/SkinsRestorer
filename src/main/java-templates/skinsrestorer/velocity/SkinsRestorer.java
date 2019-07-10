@@ -74,7 +74,7 @@ public class SkinsRestorer {
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(5, TimeUnit.MINUTES).delay(5, TimeUnit.MINUTES).schedule();
+                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         }
 
         // Init config files

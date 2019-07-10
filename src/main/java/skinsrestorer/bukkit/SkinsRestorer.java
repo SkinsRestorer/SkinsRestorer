@@ -92,7 +92,7 @@ public class SkinsRestorer extends JavaPlugin {
             if (Config.UPDATER_PERIODIC)
                 this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
                     this.checkUpdate(bungeeEnabled, false);
-                }, 20 * 60 * 5, 20 * 60 * 5);
+                }, 20 * 60 * 10, 20 * 60 * 10);
         }
 
         if (bungeeEnabled) {

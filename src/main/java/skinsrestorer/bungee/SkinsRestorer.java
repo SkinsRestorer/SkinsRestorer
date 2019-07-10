@@ -56,7 +56,7 @@ public class SkinsRestorer extends Plugin {
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 5, 5, TimeUnit.MINUTES);
+                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
 
         instance = this;
