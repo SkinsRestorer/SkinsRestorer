@@ -1,55 +1,110 @@
 ##############################
 #  SkinsRestorer Config.yml  #
+#  Generated on 13.6         #
 ##############################
-#by Th3Tr0LLeR & Blackfire62 + xknat 
+#
+# We from SRTeam thank you for using our plugin!
+# For more information        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
+# For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
+# Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+# Not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
+# For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
 
-#enables /skin without permissions
-#(only works for backend aka spigot servers)
-SkinWithoutPerm: false
+# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true
 
-#How long the skin will be in the database (in minutes)
-SkinExpiresAfter: 5
+# If true, players can change skins without permission.
+SkinWithoutPerm: true
 
-#This is for preventing skin change spam (in seconds)
-#[skinsrestorer.bypasscooldown bypasses this]
+# Time skins are stored in database before we request again (in minutes)
+SkinExpiresAfter: 90
+
+# Players cooldown when changing skins (set to 0 to disable)
+# Can be bypassed with 'skinsrestorer.bypasscooldown'
 SkinChangeCooldown: 30
- 
-#Enable or disable default skins
-#If more nicknames will be in the list, server will always choose a random one.
+
+# Set the language you will use - Files are located in /SkinsRestorer/languages directory
+# You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
+# Default: english - english.yml
+Locale: english
+
+# The new Permissions System information can be foud on our wiki here:
+# https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+Permissions:
+  NewPermissions: true
+  
+# Allows the usage of per skin perm. 
+# Example: skinsrestorer.skin.notch OR skinsrestorer.skin.xknat
+# !~ requires  'NewPermissions: true' 
+PerSkinPermissions: false
+
+# Enable or disable default skins
+# If there is more than one, the plugin will choose a random one.
 DefaultSkins:
   Enabled: false
+  ApplyForPremium: false
   Names:
-    - Steve
-    
-#Disable skin names
-#Put skins you want to disable on the list
-#Player wont be able to set these skins
-#[skinsrestorer.bypassdisabled bypasses this]
+    - xknat
+    - McLive
+
+# Skins in this list will be disabled, so users can't set it.
+# Can by bypassed with 'skinsrestorer.bypassdisabled'
 DisabledSkins:
   Enabled: false
   Names:
     - Steve
-    
-#Multi-Bungee support
-#If you use more proxy servers and you
-#experience issues with skin visibility between proxies?
-#enable this option!
-#(RedisBungee enables this option automatically)
+    - Owner
+
+# Multi-Bungee support
+# Enable this if you have issues with skins in multi-proxy environments
+# If your using bungee and you have the plugin in all spigot servers and it still does not work, turn this on.
+# (This is automatically enabled if you have RedisBungee)
 MultiBungee:
   Enabled: false
 
-# MySQL database for large servers
-# or just to boost the performance
+# Settings for MySQL skin storage (recommended for big BungeeCord networks)
+# !~ IF YOU USE BUNGEE, DO NOT mysql Spigot ~!
 MySQL:
   Enabled: false
   Host: localhost
   Port: 3306
   Database: db
-  SkinTable: Skins
-  PlayerTable: Players
   Username: root
   Password: pass
+  SkinTable: 'Skins'
+  PlayerTable: 'Players'
 
-#Enable or disable the updater check.
+# <!! Warning !!>
+# Enabling this will stop SkinsRestorer to change skins on join.
+DisableOnJoinSkins: false
+
+# Enable or disable the updater.
 Updater:
   Enabled: true
+  PeriodicChecks: true
+
+# Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
+NoSkinIfLoginCanceled: true
+
+# True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
+UseOldSkinHelp: false
+
+
+# End #
+
+# Useful tools:
+# Vectier Thailand has made some super cool "Custom Skin" tools that you can use!
+#
+# SkinFile Generator:
+# With SkinFile Generator you can upload your own custom skin to get a unique .skin file that you can put in your skins folder to use with SkinsRestorer.
+# Check it out here: https://riflowth.github.io/SkinFile-Generator/
+#
+# SkinSystem :
+# With SkinSystem you as a server owner can connect AuthMe (and forum) with the SkinSystem website that you can host to give your players the ability to upload custom skins.
+# Check it out here: https://github.com/riflowth/SkinSystem
+#
+# Useful Links #
+# Website: https://skinsrestorer.net/
+# Wiki https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
+# spigot: https://www.spigotmc.org/resources/skinsrestorer.2124/
+# github: https://github.com/SkinsRestorer/SkinsRestorerX/
+# discord: https://discord.me/SkinsRestorer/
