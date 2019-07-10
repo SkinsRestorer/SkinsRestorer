@@ -1,0 +1,50 @@
+SR_LINE: §7§m----------------------------------------
+HELP_PLAYER: |2-
+    §2§lSkinsRestorer §7- §f§lv%ver%
+     §2/skin <skinname> §7-§f Cambia tu Skin.
+      §2/skin update §7-§f Actualiza tu Skin.
+      §2/skin clear §7-§f Borra tu Skin.
+HELP_SKIN_CLEAR: Borra tu Skin.
+HELP_SKIN_CLEAR_OTHER: Borra la Skin de otro jugador.
+HELP_SKIN_UPDATE: Actualiza tu Skin.
+HELP_SKIN_UPDATE_OTHER: Actualiza la Skin de otro jugador.
+HELP_SKIN_SET: Selecciona tu Skin.
+HELP_SKIN_SET_OTHER: Selecciona la Skin de otro jugador.
+HELP_SR_RELOAD: Actualiza el archivo de configuración.
+HELP_SR_STATUS: Comprueba los servicios API necesarios para que el plugin funcione.
+HELP_SR_DROP: Retira la Skin Data del jugador.
+HELP_SR_PROPS: Muestra en propiedades la Skin actual del jugador.
+PLAYER_HAS_NO_PERMISSION_SKIN: '§e[§2SkinsRestorer§e] §4Error§8: §cNo tienes permiso para
+  seleccionar esta Skin.'
+SKIN_DISABLED: '§e[§2SkinsRestorer§e] §4Error§8: §cEsta Skin está desactivada por un administrador.'
+NOT_PREMIUM: '§e[§2SkinsRestorer§e] §4Error§8: §cNo existe un jugador premium con
+  ese nombre.'
+INVALID_PLAYER: '§e[§2SkinsRestorer§e] §4Error§8: §c%player no es un nombre de usuario válido.'
+SKIN_COOLDOWN_NEW: '§e[§2SkinsRestorer§e] §4Error§8: §cPuedes cambiar tu Skin de nuevo
+  en §e%s §csegundos.'
+SKIN_CHANGE_SUCCESS: §e[§2SkinsRestorer§e] §2Tu Skin ha sido cambiada.
+SKIN_CLEAR_SUCCESS: §e[§2SkinsRestorer§e] §2Tu Skin ha sido borrada.
+SKIN_CLEAR_ISSUER: §e[§2SkinsRestorer§e] §2Skin borrada para el jugador %player.
+SUCCESS_UPDATING_SKIN: §e[§2SkinsRestorer§e] §2Tu Skin ha sido actualizada.
+SUCCESS_UPDATING_SKIN_OTHER: §e[§2SkinsRestorer§e] §2Skin actualizada para el jugador %player.
+ERROR_UPDATING_SKIN: '§e[§2SkinsRestorer§e] §4Error§8: §cHa ocurrido un error al actualizar
+  tu Skin. ¡Inténtalo de nuevo mas tarde!'
+GENERIC_ERROR: '§e[§2SkinsRestorer§e] §4Error§8: §cHa ocurrido un error al solicitar la
+  Skin Data. ¡Inténtalo de nuevo mas tarde!'
+WAIT_A_MINUTE: '§e[§2SkinsRestorer§e] §4Error§8: §cPor favor, espera un minuto antes de volver a solicitar
+  esa Skin de nuevo. (Rate Limited)'
+MENU_OPEN: §2Abriendo el menú de Skins...
+NEXT_PAGE: §a§l»§7 Pág. Siguiente§a§l »
+PREVIOUS_PAGE: §e§l«§7 Pág. Anterior§e§l «
+REMOVE_SKIN: §c§l»§7 Eliminar Skin§c§l «
+SELECT_SKIN: §2Click para seleccionar esta Skin
+ADMIN_SET_SKIN: §e[§2SkinsRestorer§e] §2Seleccionaste la Skin del jugador %player.
+SKIN_DATA_DROPPED: §e[§2SkinsRestorer§e] §2Skin Data para el jugador %player retirada.
+STATUS_OK: §e[§2SkinsRestorer§e] §2¡Conexión satisfactoria con el API de Mojang!
+ALT_API_FAILED: '§e[§2SkinsRestorer§e] §4Error§8: §¡cLa Skin Data API está sobrecargada, por favor
+  intentalo mas tarde!'
+NO_SKIN_DATA: '§e[§2SkinsRestorer§e] §4Error§8: §c¡Data de la Skin no adquirida! ¿Este jugador
+  tiene una Skin?'
+RELOAD: §e[§2SkinsRestorer§e] §2¡La configuración y el locale fueron actualizados!
+OUTDATED: "§e[§2SkinsRestorer§e] §4¡Estás usando una versión desactualizada de SkinsRestorer!\n\
+ §cPor favor, actualiza a la ultima versión en Spigot: \n§ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
