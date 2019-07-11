@@ -11,6 +11,7 @@ This is a development repo for SkinsRestorer, used for making and testing new pl
 
 Restoring offline mode skins & changing skins for Spigot, BungeeCord and Waterfall servers.
  
+> Supported on Java8 ([openjdk](https://openjdk.java.net/install/) | Oracle Java) 
 > Supported versions: Minecraft 1.8.0 - 1.14.x
 
 |  | |
