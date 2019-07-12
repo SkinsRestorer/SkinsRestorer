@@ -37,6 +37,7 @@ public class SkinsRestorer extends JavaPlugin {
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private boolean bungeeEnabled;
+    private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
 
@@ -225,11 +226,17 @@ public class SkinsRestorer extends JavaPlugin {
             updateChecker.checkForUpdate(new UpdateCallback() {
                 @Override
                 public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    String failReason = null;
-                    if (hasDirectDownload)
-                        if (!updateDownloader.downloadUpdate())
-                            failReason = updateDownloader.getFailReason().toString();
+                    if (updateDownloaded)
+                        return;
 
+                    String failReason = null;
+                    if (hasDirectDownload) {
+                        if (updateDownloader.downloadUpdate()) {
+                            updateDownloaded = true;
+                        } else {
+                            failReason = updateDownloader.getFailReason().toString();
+                        }
+                    }
                     updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg -> {
                         console.sendMessage(msg);
                     });
