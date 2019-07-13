@@ -1,0 +1,40 @@
+HELP_SKIN_CLEAR: Îți șterge skin-ul.
+HELP_SKIN_CLEAR_OTHER: Șterge skin-ul unui jucător.
+HELP_SKIN_UPDATE: Îți actualizează skin-ul.
+HELP_SKIN_UPDATE_OTHER: Actualizează skin-ul unui jucător.
+HELP_SKIN_SET: Îți setează skin-ul.
+HELP_SKIN_SET_OTHER: Setează skin-ul unui jucător.
+HELP_SR_RELOAD: Reîncarcă configurația fișierelor.
+HELP_SR_STATUS: Verifică necesitățile servicilor API pentru ca acest plugin să funcționeze.
+HELP_SR_DROP: Șterge skin-urile jucătorilor.
+HELP_SR_PROPS: Arată skin-ul actual al jucătorilor ca si proprietate. pentru a face asta.'
+PLAYER_HAS_NO_PERMISSION: '&e[&2SkinsRestorer&e] &4Eroare&8: &cNu ai permisiunea să faci asta.'
+PLAYER_HAS_NO_PERMISSION_SKIN: '&e[&2SkinsRestorer&e] &4Eroare&8: &cNu ai permisiunea să setezi acest skin.'
+SKIN_DISABLED: '&e[&2SkinsRestorer&e] &4Eroare&8: &cAcest skin este dezactivat de către un administrator.'
+NOT_PREMIUM: '&e[&2SkinsRestorer&e] &4Eroare&8: &cNu există un jucător premium cu acest nume.'
+NOT_ONLINE: '&e[&2SkinsRestorer&e] &4Eroare&8: &cJucătorul nu este online!'
+INVALID_PLAYER: '&e[&2SkinsRestorer&e] &4Eroare&8: &c%player nu este un nume valid.'
+SKIN_COOLDOWN_NEW: '&e[&2SkinsRestorer&e] &4Eroare&8: &cÎți poți schimba skin-ul din nou în &e%s &csecunde.'
+SKIN_CHANGE_SUCCESS: '&e[&2SkinsRestorer&e] &2Skin-ul tău a fost schimbat.'
+SKIN_CLEAR_SUCCESS: '&e[&2SkinsRestorer&e] &2Skin-ul tău a fost șters.'
+SKIN_CLEAR_ISSUER: '&e[&2SkinsRestorer&e] &2Skin-ul lui %player a fost șters.'
+SUCCESS_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &2Skin-ul tău a fost actualizat.'
+SUCCESS_UPDATING_SKIN_OTHER: '&e[&2SkinsRestorer&e] &2Skin-ul lui %player a fost actualizat.'
+ERROR_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &4Eroare&8: &cA apărut o eroare atunci când skin-ul se actualiza. Încearcă mai târziu!'
+GENERIC_ERROR: '&e[&2SkinsRestorer&e] &4Eroare&8: &cA apărut o eroare atunci când s-a făcut cererea datelor skin-ului. Încearcă mai târziu!'
+WAIT_A_MINUTE: '&e[&2SkinsRestorer&e] &4Eroare&8: &cTe rog asteaptă un minut înainte de a face o cerere pentru acel skin. (Rată Limitată)'
+MENU_OPEN: '&2Se deschide meniul skin-urilor...'
+NEXT_PAGE: '&a&l»&7 Pagina Următoare&a&l »'
+PREVIOUS_PAGE: '&e&l»&7 Pagina Anterioară&e&l «'
+REMOVE_SKIN: '&c&l»&7 Șterge skin-ul&c&l »'
+SELECT_SKIN: '&2Apasă pentru a selecta acest skin'
+ADMIN_SET_SKIN: '&e[&2SkinsRestorer&e] &2I-ai setat skin-ul lui %player.'
+SKIN_DATA_DROPPED: '&e[&2SkinsRestorer&e] &2Informațiile skin-ului lui %player au fost șterse.'
+STATUS_OK: '&e[&2SkinsRestorer&e] &2Conectat cu succes la API-ul Mojang!'
+ALT_API_FAILED: '&e[&2SkinsRestorer&e] &4Eroare&8: &cAPI-ul skin-urilor este supraîncărcat. Încearcă mai târziu!'
+NO_SKIN_DATA: '&e[&2SkinsRestorer&e] &4Eroare&8: &cDatele skin-ului nu au fost obținute! Acest jucător are skin?'
+RELOAD: '&e[&2SkinsRestorer&e] &2Configurația și Mesajele au fost reîncărcate!'
+PLAYERS_ONLY: '&4Aceste comenzi pot fi folosite doar de către jucători!'
+NOT_PLAYER: '&e[&2SkinsRestorer&e] &4Eroare&8: &cTrebuie să fi un jucător!'
+OUTDATED: "&e[&2SkinsRestorer&e] &4Folosești o versiune învechită a pluginului SkinsRestorer!\n\
+  &cTe rog actualizează pluginul cu ultima versiune de pe Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
