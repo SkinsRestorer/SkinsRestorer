@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Objects;
 
 public class ReflectionUtil {
 
@@ -16,7 +17,7 @@ public class ReflectionUtil {
             Class.forName("org.bukkit.Bukkit");
             setObject(ReflectionUtil.class, null, "serverVersion", Bukkit.getServer().getClass().getPackage().getName()
                     .substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -28,7 +29,7 @@ public class ReflectionUtil {
         return Class.forName("net.md_5.bungee." + path + "." + clazz);
     }
 
-    public static Constructor<?> getConstructor(Class<?> clazz, Class<?>... args) throws Exception {
+    private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... args) throws Exception {
         Constructor<?> c = clazz.getConstructor(args);
         c.setAccessible(true);
         return c;
@@ -52,8 +53,8 @@ public class ReflectionUtil {
         throw new Exception("Enum constant not found " + constant);
     }
 
-    public static Field getField(Class<?> clazz, String fname) throws Exception {
-        Field f = null;
+    private static Field getField(Class<?> clazz, String fname) throws Exception {
+        Field f;
         try {
             f = clazz.getDeclaredField(fname);
         } catch (Exception e) {
@@ -78,19 +79,20 @@ public class ReflectionUtil {
                     break;
                 }
 
+        assert f != null;
         setFieldAccessible(f);
         return f.get(instance);
     }
 
-    public static Method getMethod(Class<?> clazz, String mname) throws Exception {
-        Method m = null;
+    private static Method getMethod(Class<?> clazz, String mname) {
+        Method m;
         try {
             m = clazz.getDeclaredMethod(mname);
         } catch (Exception e) {
             try {
                 m = clazz.getMethod(mname);
             } catch (Exception ex) {
-                return m;
+                return null;
             }
         }
         m.setAccessible(true);
@@ -110,15 +112,15 @@ public class ReflectionUtil {
         throw new IllegalArgumentException("Cannot find field with type " + fieldType);
     }
 
-    public static Method getMethod(Class<?> clazz, String mname, Class<?>... args) throws Exception {
-        Method m = null;
+    private static Method getMethod(Class<?> clazz, String mname, Class<?>... args) {
+        Method m;
         try {
             m = clazz.getDeclaredMethod(mname, args);
         } catch (Exception e) {
             try {
                 m = clazz.getMethod(mname, args);
             } catch (Exception ex) {
-                return m;
+                return null;
             }
         }
         m.setAccessible(true);
@@ -142,27 +144,27 @@ public class ReflectionUtil {
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws Exception {
-        return getMethod(clazz, method).invoke(obj, new Object[]{});
+        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs)
             throws Exception {
-        return getMethod(clazz, method, args).invoke(obj, initargs);
+        return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initargs);
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initargs) throws Exception {
-        return getMethod(clazz, method).invoke(obj, initargs);
+        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initargs);
     }
 
     public static Object invokeMethod(Object obj, String method) throws Exception {
-        return getMethod(obj.getClass(), method).invoke(obj, new Object[]{});
+        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
     }
 
     public static Object invokeMethod(Object obj, String method, Object[] initargs) throws Exception {
-        return getMethod(obj.getClass(), method).invoke(obj, initargs);
+        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initargs);
     }
 
-    public static void setFieldAccessible(Field f) throws Exception {
+    private static void setFieldAccessible(Field f) throws Exception {
         f.setAccessible(true);
         Field modifiers = Field.class.getDeclaredField("modifiers");
         modifiers.setAccessible(true);

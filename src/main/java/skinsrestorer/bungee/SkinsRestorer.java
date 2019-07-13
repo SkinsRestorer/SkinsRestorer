@@ -1,152 +1,168 @@
 package skinsrestorer.bungee;
 
+import co.aikar.commands.BungeeCommandIssuer;
+import co.aikar.commands.BungeeCommandManager;
+import co.aikar.commands.ConditionFailedException;
+import lombok.Getter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
-import skinsrestorer.bungee.commands.AdminCommands;
-import skinsrestorer.bungee.commands.PlayerCommands;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import skinsrestorer.bungee.commands.SrCommand;
+import skinsrestorer.bungee.commands.SkinCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.updater.bungee.SpigetUpdate;
-import skinsrestorer.shared.utils.updater.core.VersionComparator;
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
+import skinsrestorer.shared.utils.*;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+@SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin {
-
+    @Getter
     private static SkinsRestorer instance;
-    private MySQL mysql;
-    private boolean multibungee;
-    private ExecutorService exe;
+    @Getter
+    private boolean multiBungee;
+    @Getter
     private boolean outdated;
+    @Getter
+    private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
-    public static SkinsRestorer getInstance() {
-        return instance;
-    }
-
-    public String checkVersion(CommandSender console) {
-        try {
-            HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=2124")
-                    .openConnection();
-            con.setDoOutput(true);
-            con.setRequestMethod("GET");
-            String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-            if (version.length() <= 13)
-                return version;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cFailed to check for an update on Spigot."));
-        }
-        return getVersion();
-    }
-
-    public ExecutorService getExecutor() {
-        return exe;
-    }
-
-    public MySQL getMySQL() {
-        return mysql;
-    }
+    private CommandSender console;
+    private UpdateChecker updateChecker;
 
     public String getVersion() {
         return getDescription().getVersion();
     }
 
-    public boolean isMultiBungee() {
-        return multibungee;
-    }
-
-    public boolean isOutdated() {
-        return outdated;
-    }
-
-    @Override
-    public void onDisable() {
-        exe.shutdown();
-    }
 
     @Override
     public void onEnable() {
-    	
-        @SuppressWarnings("unused")
         Metrics metrics = new Metrics(this);
-        
-        SpigetUpdate updater = new SpigetUpdate(this, 2124);
-        updater.setVersionComparator(VersionComparator.EQUAL);
-        updater.setVersionComparator(VersionComparator.SEM_VER_BETA);
+        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+
+        console = getProxy().getConsole();
+
+        if (Config.UPDATER_ENABLED) {
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.checkUpdate(true);
+
+            if (Config.UPDATER_PERIODIC)
+                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+        }
 
         instance = this;
-        Config.load(getResourceAsStream("config.yml"));
-        Locale.load();
-        exe = Executors.newCachedThreadPool();
 
-        if (Config.USE_MYSQL)
-            SkinStorage.init(mysql = new MySQL(Config.MYSQL_HOST, Config.MYSQL_PORT, Config.MYSQL_DATABASE,
-                    Config.MYSQL_USERNAME, Config.MYSQL_PASSWORD));
-        else
-            SkinStorage.init(getDataFolder());
+        // Init config files
+        Config.load(configPath, getResourceAsStream("config.yml"));
+        Locale.load(configPath);
 
-        getProxy().getPluginManager().registerListener(this, new LoginListener());
-        getProxy().getPluginManager().registerCommand(this, new AdminCommands());
-        getProxy().getPluginManager().registerCommand(this, new PlayerCommands());
-        getProxy().registerChannel("SkinsRestorer");
+        // Init storage
+        if (!this.initStorage())
+            return;
+
+        // Init listener
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
+
+        // Init commands
+        this.initCommands();
+
+        getProxy().registerChannel("sr:skinchange");
         SkinApplier.init();
 
-        multibungee = Config.MULTIBUNGEE_ENABLED
-                || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+    }
 
-        exe.submit(new Runnable() {
+    private void initCommands() {
+        BungeeCommandManager manager = new BungeeCommandManager(this);
+        // optional: enable unstable api to use help
+        manager.enableUnstableAPI("help");
 
-            @Override
-            public void run() {
-            	
-            	CommandSender console = getProxy().getConsole();
-            	
-                if (Config.UPDATER_ENABLED)
-                    if (checkVersion(console).equals(getVersion())) {
-                        outdated = false;
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §a" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    The latest version!"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    } else {
-                        outdated = true;
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a    +===============+"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §b    Current version: §c" + getVersion()));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §e    https://www.spigotmc.org/resources/skinsrestorer.2124"));
-                        console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §a----------------------------------------------"));
-                    }
+        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
+            BungeeCommandIssuer issuer = context.getIssuer();
+            if (issuer.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM)
+                return;
 
-                if (Config.DEFAULT_SKINS_ENABLED)
-                    for (String skin : Config.DEFAULT_SKINS)
-                        try {
-                            SkinStorage.setSkinData(skin, MojangAPI.getSkinProperty(MojangAPI.getUUID(skin)));
-                        } catch (SkinRequestException e) {
-                            if (SkinStorage.getSkinData(skin) == null)
-                                console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error:" + e.getReason()));
-                        }
+            throw new ConditionFailedException("You don't have access to change your skin.");
+        }));
+        // Use with @Conditions("permOrSkinWithoutPerm")
+
+        CommandReplacements.getPermissionReplacements().forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+
+        new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
+
+        manager.registerCommand(new SkinCommand());
+        manager.registerCommand(new SrCommand());
+    }
+
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (Config.USE_MYSQL) {
+            try {
+                MySQL mysql = new MySQL(
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD
+                );
+
+                mysql.openConnection();
+                mysql.createTable();
+
+                SkinStorage.init(mysql);
+                return true;
+
+            } catch (Exception e) {
+                console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                getProxy().getPluginManager().unregisterListeners(this);
+                getProxy().getPluginManager().unregisterCommands(this);
+                return false;
             }
+        }
 
+        SkinStorage.init(getDataFolder());
+
+        // Preload default skins
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), SkinStorage::preloadDefaultSkins);
+        return true;
+    }
+
+    private void checkUpdate() {
+        this.checkUpdate(false);
+    }
+
+    private void checkUpdate(boolean showUpToDate) {
+        ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
+            updateChecker.checkForUpdate(new UpdateCallback() {
+                @Override
+                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                    outdated = true;
+
+                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
+                        console.sendMessage(new TextComponent(msg));
+                    });
+                }
+
+                @Override
+                public void upToDate() {
+                    if (!showUpToDate)
+                        return;
+
+                    updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
+                        console.sendMessage(new TextComponent(msg));
+                    });
+                }
+            });
         });
     }
 }

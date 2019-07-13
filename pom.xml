@@ -4,12 +4,13 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.2-SNAPSHOT</version>
+    <version>13.7.1</version>
     <packaging>jar</packaging>
 
+    <name>SkinsRestorer</name>
+    <description>Ability to restore/change skins on servers! (Offline and Online Mode)</description>
+
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <repositories>
@@ -18,94 +19,214 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>onarandombox</id>
-            <url>http://repo.onarandombox.com/content/groups/public</url>
-        </repository>
-        <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
-            <id>luck-repo</id>
-            <url>https://ci.lucko.me/plugin/repository/everything</url>
+            <id>sponge</id>
+            <url>https://repo.spongepowered.org/maven</url>
         </repository>
         <repository>
             <id>minecraft-repo</id>
-            <url>https://repo.prok.pw</url>
+            <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
             <id>bstats-repo</id>
-            <url>http://repo.bstats.org/content/repositories/releases/</url>
+            <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>luck-repo</id>
+            <url>https://ci.lucko.me/plugin/repository/everything/</url>
+        </repository>
+        <repository>
+            <id>aikar</id>
+            <url>https://repo.aikar.co/content/groups/aikar/</url>
+        </repository>
+        <repository>
+            <id>velocity-repo</id>
+            <url>https://repo.velocitypowered.com/snapshots/</url>
+        </repository>
     </repositories>
     <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.14-pre5-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.onarandombox.multiversecore</groupId>
-            <artifactId>Multiverse-Core</artifactId>
-            <version>2.5.1</version>
-        </dependency>
+        <!-- BungeeCord API -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-api</artifactId>
-            <version>1.12-SNAPSHOT</version>
+            <version>1.13-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- BungeeCord-Proxy module (required for SkinApplier) -->
         <dependency>
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/libs/bungeecord-proxy-1.12-SNAPSHOT.jar</systemPath>
         </dependency>
+        <!-- Sponge API -->
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>spongeapi</artifactId>
+            <version>7.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- VelocityPowered API -->
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- BungeeCord config -->
+        <dependency>
+            <groupId>net.md-5</groupId>
+            <artifactId>bungeecord-config</artifactId>
+            <version>1.13-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Mojang Auth Library (needed for SkinsGUI) -->
         <dependency>
             <groupId>com.mojang</groupId>
             <artifactId>authlib</artifactId>
             <version>1.5.21</version>
+            <scope>provided</scope>
         </dependency>
+        <!-- bStats Lite for Bukkit -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.2</version>
+            <version>1.4</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- bStats Lite for BungeeCord -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
-            <version>1.2</version>
+            <version>1.4</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- bStats Lite for Sponge -->
         <dependency>
-        	<groupId>org.inventivetalent.spiget-update</groupId>
-        	<artifactId>bukkit</artifactId>
-        	<version>1.4.0</version>
-    	</dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-sponge</artifactId>
+            <version>1.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Spiget Updater for Bukkit -->
+        <dependency>
+            <groupId>org.inventivetalent.spiget-update</groupId>
+            <artifactId>bukkit</artifactId>
+            <version>1.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
+        </dependency>
+        <!-- HikariCP (SQLite/MySQL) -->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>2.7.6</version>
+        </dependency>
+        <!-- slf4j (required by Hikari) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+        </dependency>
+        <!-- ACF for paper/spigot -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ACF for bungee -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-bungee</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ACF for skinsrestorer.sponge -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-sponge</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- ACF for velocity -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-velocity</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
+        </dependency>
+        <!-- gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.20</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4</version>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
                 <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>org.bstats:*</include>
-                        </includes>
-                    </artifactSet>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer</shadedPattern>
+                            <pattern>org.bstats.bukkit</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats.bungeecord</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.inventivetalent</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.md_5.bungee.config</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -118,6 +239,26 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
     </build>
 </project>

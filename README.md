@@ -1,19 +1,28 @@
 							---------------------
-							 SkinsRestorer Maven
+							    SkinsRestorer
 							---------------------
 
- # Note
- This is a fork of the original plugin, refactored to support Maven for easy, automated building and continuous integration.
- Unfortunately, 1.7.10 support had to be removed.
- --------------
- Restoring offline mode skins & changing skins for Spigot/CraftBukkit/BungeeCord/FlexPipe/Waterfall servers
+ ### SkinsRestorerX [![Build Status](https://travis-ci.org/SkinsRestorer/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/SkinsRestorer/SkinsRestorerX)
+ 
 
- Supported versions: 1.8.x - 1.12.x
+---
 
- Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/)
+This is a development repo for SkinsRestorer, used for making and testing new plugin features
 
- Discord | [click here](https://discord.me/skinsrestorer)
+Restoring offline mode skins & changing skins for Spigot, BungeeCord and Waterfall servers.
+ 
+> Supported on Java8 ([openjdk](https://openjdk.java.net/install/) | Oracle Java) 
+> Supported versions: Minecraft 1.8.0 - 1.14.x
 
- Website | [click here](https://skinsrestorer.net/)
+|  | |
+|----------|-------------:|
+| Spigot Page | [click here](https://www.spigotmc.org/resources/skinsrestorer.2124/) |
+| Wiki | [click here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/) |
+| Jenkins | [click here](https://ci.freecraft.eu/v2/job/SkinsRestorerX/) |
+| Discord | [click here](https://discord.me/skinsrestorer) |
+| Website | [click here](https://skinsrestorer.net/) |
 
- [![Build Status](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/DoNotSpamPls/SkinsRestorerX)
+ 
+
+## License
+SkinsRestorer is licensed under GNU General Public License v3.0. Please see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE) for more info.

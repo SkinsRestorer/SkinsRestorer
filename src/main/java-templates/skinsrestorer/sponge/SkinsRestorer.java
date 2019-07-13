@@ -1,0 +1,184 @@
+package skinsrestorer.sponge;
+
+import co.aikar.commands.SpongeCommandManager;
+import com.google.inject.Inject;
+import lombok.Getter;
+import org.bstats.sponge.Metrics2;
+import org.inventivetalent.update.spiget.UpdateCallback;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
+import skinsrestorer.shared.utils.*;
+import skinsrestorer.sponge.commands.SkinCommand;
+import skinsrestorer.sponge.commands.SrCommand;
+import skinsrestorer.sponge.listeners.LoginListener;
+import skinsrestorer.sponge.utils.SkinApplier;
+
+import java.io.File;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
+
+@Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}")
+public class SkinsRestorer {
+    @Getter
+    private static SkinsRestorer instance;
+    @Getter
+    private String configPath;
+    @Getter
+    private SkinApplier skinApplier;
+
+    @Inject @Getter
+    private Logger logger;
+
+    @Inject
+    private Metrics2 metrics;
+
+    private UpdateChecker updateChecker;
+    private CommandSource console;
+    private boolean bungeeEnabled = false;
+
+    @Listener
+    public void onInitialize(GameInitializationEvent e) {
+        instance = this;
+        console = Sponge.getServer().getConsole();
+        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
+
+        // Check for updates
+        if (Config.UPDATER_ENABLED) {
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Sponge");
+            this.checkUpdate(bungeeEnabled);
+
+            if (Config.UPDATER_PERIODIC)
+                Sponge.getScheduler().createTaskBuilder().execute(() -> {
+                    this.checkUpdate(bungeeEnabled, false);
+                }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+        }
+
+        // Init config files
+        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(configPath);
+
+        // Init storage
+        if (!this.initStorage())
+            return;
+
+        // Init commands
+        this.initCommands();
+
+        // Init SkinApplier
+        this.skinApplier = new SkinApplier(this);
+    }
+
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        if (!Sponge.getServer().getOnlineMode()) {
+            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
+        }
+
+        metrics.addCustomChart(new Metrics2.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+    }
+
+    private void initCommands() {
+        Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
+            SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);
+            // optional: enable unstable api to use help
+            manager.enableUnstableAPI("help");
+
+            CommandReplacements.getPermissionReplacements().forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+            CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+
+            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+
+            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(new SrCommand(this));
+            //manager.registerCommand(new GUICommand());
+        });
+    }
+
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (Config.USE_MYSQL) {
+            try {
+                MySQL mysql = new MySQL(
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD
+                );
+
+                mysql.openConnection();
+                mysql.createTable();
+
+                SkinStorage.init(mysql);
+                return true;
+
+            } catch (Exception e) {
+                System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                return false;
+            }
+        }
+
+        SkinStorage.init(new File(configPath));
+
+        // Preload default skins
+        Sponge.getScheduler().createAsyncExecutor(this).execute(SkinStorage::preloadDefaultSkins);
+        return true;
+    }
+
+    private void checkUpdate(boolean bungeeMode) {
+        this.checkUpdate(bungeeMode, true);
+    }
+
+    private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> {
+            updateChecker.checkForUpdate(new UpdateCallback() {
+                @Override
+                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(msg -> {
+                        console.sendMessage(parseMessage(msg));
+                    });
+                }
+
+                @Override
+                public void upToDate() {
+                    if (!showUpToDate)
+                        return;
+
+                    updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> {
+                        console.sendMessage(parseMessage(msg));
+                    });
+                }
+            });
+        });
+    }
+
+    public Text parseMessage(String msg) {
+        return Text.builder(msg).build();
+    }
+
+    public String getVersion() {
+        Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("skinsrestorer");
+
+        if (!plugin.isPresent())
+            return "";
+
+        Optional<String> version = plugin.get().getVersion();
+
+        return version.orElse("");
+    }
+}
