@@ -7,12 +7,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 public class Locale {
-    public static String SR_LINE = "&7&m----------------------------------------";
-    public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
-            + "\n   &2/skin <skinname> &7-&f Changes your skin."
-            + "\n    &2/skin update &7-&f Updates your skin."
-            + "\n    &2/skin clear &7-&f Clears your skin.";
-
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
@@ -55,6 +49,11 @@ public class Locale {
     public static String RELOAD = "&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!";
     public static String OUTDATED = "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
 
+    public static String SR_LINE = "&7&m----------------------------------------";
+    public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
+            + "\n   &2/skin <skinname> &7-&f Changes your skin."
+            + "\n    &2/skin update &7-&f Updates your skin."
+            + "\n    &2/skin clear &7-&f Clears your skin.";
     
     //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
     private static YamlConfig locale;
