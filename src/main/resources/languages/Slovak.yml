@@ -1,0 +1,100 @@
+# String used as a divider
+line: "&7&m----------------------------------------";
+
+# String sent to player when they do not have permission to use a command
+playerNoPermission: "&e[&2SkinsRestorer&e] &4Chyba&8: &cNemáš povolenie na toto";
+
+# Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
+helpPlayer:
+    - "    &2&lSkinsRestorer &7- &f&lv%ver%"
+    - "    &2/skin set <skinname> &7-&f Zmení tvoj vzh¾ad"
+    - "    &2/skin <skinname> &7-&f skrátená verzia \"/skin set\"."
+    - "    &2/skin clear &7-&f Resetne tvoj vzh¾ad.";
+
+# Message line sent when requesting SkinsRestorer help and having skinsrestorer.cmds permission
+help: "    &2/sr &7- &fZobraz príkazy len pre správcov";
+
+# Message sent when the premium account with specified username does not exist
+notPremium: "&e[&2SkinsRestorer&e] &4Chyba&8: &cNeexistuje platený úèet zo zadaným nickom.";
+
+# Message sent to player whose skin was changed
+skinChangeSuccess: "&e[&2SkinsRestorer&e] &2Tvoj vzh¾ad bol zmenený.";
+
+# Message sent to player whose skin was cleared
+skinClearSuccess: "&e[&2SkinsRestorer&e] &2Tvoj vzh¾ad bol zresetovaný";
+
+# Message sent to player that used /sr clear PLAYER command
+skinClearIssuer: "&e[&2SkinsRestorer&e] &2Vzh¾ad bol zresetovaný pre %player.";
+
+# Message sent when requesting admin help
+help_admin:
+    - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
+    - "    &2/sr config &7- &fnadstavenia configurácie "
+    - "    &2/sr set <hráè> <meno_skinu> &7- &fmení vzh¾ad daného hráèa"
+    - "    &2/sr drop <hráè> &7- &fpridá vzh¾ad daného hráèa do databázy"
+    - "    &2/sr clear <hráè> &7- &fodstráni vzh¾ad daného hráèa z databázy"
+    - "    &2/sr reload &7- &fZnova naèíta konfiguraèný a jazykový súbor pluginu"
+    - "    &2/sr props <hráè> &7- &fZobrazí digitálny prívlastok vzh¾adu hráèa";
+
+# Message displayed when using /sr set command
+adminSetSkin: "&e[&2SkinsRestorer&e] &2Ty meníš vzh¾ad druhým.";
+
+# Message displayed when using /sr set command and providing an invalid username
+invalidPlayer: "&e[&2SkinsRestorer&e] &4Chyba&8: &c%Zadaný nick nie je platný";
+
+# Message displayed when using /sr set command and providing username of a player that is currently not online
+playerNotonline: "&e[&2SkinsRestorer&e] &4chyba&8: &cHráè nie je online!";
+
+# Message displayed when using /sr drop command
+skinDataDropped: "&e[&2SkinsRestorer&e] &2Vzh¾ad hráèa %player bol uložený do databázy.";
+
+# Message sent when the /sr reload command execution was successful
+reload: "&e[&2SkinsRestorer&e] &2Konfiguraèný a jazykový súbor bol znova naèítaný!";
+
+# Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
+skinCooldownNew: "&e[&2SkinsRestorer&e] &4Chyba&8: &cMusíè èaka &e%s &csekúnd pre opätovné zmenie vzh¾adu.";
+
+# Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
+skinDisabled: "&e[&2SkinsRestorer&e] &4Chyba&8: &cTento vz¾ad je zakázaný správcom!";
+
+# Unknown
+noSkinData: "&e[&2SkinsRestorer&e] &4Chyba&8: &cVzh¾ad tohto hráèa sa nepodarilo získa!";
+
+# When proxy returned skin is empty
+genericError: "&e[&2SkinsRestorer&e] &4Chyba&8: &cNastala chyba pri získavaní daného vzh¾adu! Skús to neskôr.";
+
+# Cooldown message
+waitMinute: "&e[&2SkinsRestorer&e] &4Chyba&8: &cProsím poèkaj minútu na získanie tohto vzh¾adu.";
+
+# Message sent when server has an outdated version of SR
+outdated: "&e[&2SkinsRestorer&e] &4Máte nainštalovanú starú verziu SkinsRestorera\n&cProsím sprav update tohto pluginu tu:\n&e-> https://skinsrestorer.net/get/latest";
+
+# Message sent when using a player-only command
+playersOnly: "&4These commands are only for players!";
+
+# When none Player try's to set a skin
+notPlayer: "&e[&2SkinsRestorer&e] &4Chyba&8: &cNa toto musíš by hráè!";
+
+# === GUI ===
+# /skins message
+menuOpen: "&2Otváram knižnicu vzh¾adov";
+
+# Next page [GUI]
+nextPage: "&a&l»&7 Ïalšia strana&a&l »";
+
+# Previus page [GUI]
+previusPage: "&e&l»&7 Predchádzajúca strana&e&l «";
+
+# Clear skin [GUI]
+removeSkin: "&c&l»&7 Zresetova vzh¾ad&c&l »";
+
+# item lore for skulls [GUI]
+selectSkin: "&2Klikni na vybratie tohto vzh¾adu";
+
+# === DEBUG ===
+
+# old debug
+statusOk: "&e[&2SkinsRestorer&e] &2pripojenie k Mojang API bolo úspešné!";
+
+# old debug
+altApiFailed: "&e[&2SkinsRestorer&e] &4Chyba&8: &cMojag API je preažené alebo nedostupné!";
