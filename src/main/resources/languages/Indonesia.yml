@@ -1,0 +1,41 @@
+HELP_SKIN_CLEAR: Mengulang kembali skin mu.
+HELP_SKIN_CLEAR_OTHER: Mengulang kembali skin pemain lain.
+HELP_SKIN_UPDATE: Melakukan pembaruan pada skin.
+HELP_SKIN_UPDATE_OTHER: Memperbarui skin pemain lain.
+HELP_SKIN_SET: Mengatur skin.
+HELP_SKIN_SET_OTHER: Mengatur skin pemain lain.
+HELP_SR_RELOAD: Melakukan reload pada file konfigurasi.
+HELP_SR_STATUS: Memeriksa API yang dibutuhkan agar plugin berfungsi.
+HELP_SR_DROP: Menghilangkan informasi skin pemain.
+HELP_SR_PROPS: Memperlihatkan skin pemain sebagai properti.'
+PLAYER_HAS_NO_PERMISSION: '&e[&2SkinsRestorer§e] &4Error&8: &cTidak memiliki izin untuk melakukan ini.'
+PLAYER_HAS_NO_PERMISSION_SKIN: '&e[&2SkinsRestorer&e] &4Error&8: &cTidak memiliki izin untuk mengatur skin.'
+SKIN_DISABLED: '&e[&2SkinsRestorer&e] &4Error&8: &cSkin telah dimatikan oleh admin.'
+NOT_PREMIUM: '&e[&2SkinsRestorer&e] &4Error&8: &cPemain premium dengan nickname tersebut tidak ada.'
+NOT_ONLINE: '&e[&2SkinsRestorer&e] &4Error&8: &cPemain tidak online!'
+INVALID_PLAYER: '&e[&2SkinsRestorer&e] &4Error&8: &c%player bukan username yang valid.'
+SKIN_COOLDOWN_NEW: '&e[&2SkinsRestorer&e] &4Error&8: &cKamu bisa mengubah skin kembali dalam waktu
+  &e%s &cdetik.'
+SKIN_CHANGE_SUCCESS: '&e[&2SkinsRestorer&e] &2Skin mu berhasil dirubah.'
+SKIN_CLEAR_SUCCESS: '&e[&2SkinsRestorer&e] &2Skin mu berhasil diulang.'
+SKIN_CLEAR_ISSUER: '&e[&2SkinsRestorer&e] &2Skin %player telah diulang.'
+SUCCESS_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &2Skin mu telah diperbarui.'
+SUCCESS_UPDATING_SKIN_OTHER: '&e[&2SkinsRestorer&e] &2Skin %player telah diperbarui.'
+ERROR_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &4Error&8: &cError terjadi pada saat memperbarui skin. Coba lagi nanti!'
+GENERIC_ERROR: '&e[&2SkinsRestorer&e] &4Error&8: &cError terjadi pada saat mengambil data skin. Coba lagi nanti!'
+WAIT_A_MINUTE: '&e[&2SkinsRestorer&e] &4Error&8: &cMohon tunggu beberapa saat sebelum menggunakan skin itu lagi (Terbatas)'
+MENU_OPEN: '&2Membuka menu skin...'
+NEXT_PAGE: '&a&l»&7 Halaman Selanjutnya&a&l »'
+PREVIOUS_PAGE: '&e&l»&7 Halaman Sebelumnya&e&l «'
+REMOVE_SKIN: '&c&l»&7 Hapus Skin&c&l »'
+SELECT_SKIN: '&2Klik untuk memilih skin'
+ADMIN_SET_SKIN: '&e[&2SkinsRestorer&e] &2Kamu memilih skin milik %player.'
+SKIN_DATA_DROPPED: '&e[&2SkinsRestorer&e] &2Skin data milik %player telah dihilangkan.'
+STATUS_OK: '&e[&2SkinsRestorer&e] &2Koneksi ke Mojang API berhasil!'
+ALT_API_FAILED: '&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API sedang sibuk, coba lagi nanti!'
+NO_SKIN_DATA: '&e[&2SkinsRestorer&e] &4Error&8: &cTidak ada skin yang didapatkan! Apakah player ini punya skin?'
+RELOAD: '&e[&2SkinsRestorer&e] &2Config dan Locale telah berhasil di reload!'
+PLAYERS_ONLY: '&4Perintah ini hanya bisa dilakukan oleh pemain!'
+NOT_PLAYER: '&e[&2SkinsRestorer&e] &4Error&8: &cKamu bukan pemain!'
+OUTDATED: "&e[&2SkinsRestorer&e] &4Versi Skinsrestorer mu telah tidak update!\n\
+  &cMohon dapatkan update terbaru di link berikut: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
