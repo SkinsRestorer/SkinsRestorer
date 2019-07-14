@@ -1,31 +1,9 @@
-# Compiled class file
-*.class
+# Compiled plugin files
 target/
 
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# IDE weirdness
-dependency-reduced-pom.xml
+# IDE files
 .idea/
-skinsrestorer.iml
+*.iml
 .classpath
 .settings/
 .project
