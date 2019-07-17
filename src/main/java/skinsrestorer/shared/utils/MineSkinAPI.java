@@ -1,5 +1,6 @@
 package skinsrestorer.shared.utils;
 
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -11,17 +12,62 @@ import com.google.gson.JsonParser;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 
+import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MineSkinAPI {
-    public static Object genSkin(String url, Boolean isSlim) throws MojangAPI.SkinRequestException {
+    // https://github.com/xfl03/MCCustomSkinLoader/blob/2adbc25f6945ed61442f61b5400f4b14165a0979/Common/source/customskinloader/fake/FakeSkinBuffer.java#L85
+    /**
+     * Judge the type of skin
+     * Must be called after parseUserSkin
+     *
+     * @return true if guessed slim image type
+     * @since 14.9
+     */
+    public static String guessSkinType(String url) {
+        try {
+            BufferedImage image = ImageIO.read(new URL(url)).getSubimage(54, 20, 2, 12);
+//            System.out.println("image: "+image);
+            if (image == null)
+                return "steve";
+            for (int y = 0; y < image.getHeight(); y++) {
+                for (int x = 0; x < image.getWidth(); x++) {
+                    int  clr   = image.getRGB(x, y);
+                    int  alpha = (clr & 0xff000000) >> 24;
+                    int  red   = (clr & 0x00ff0000) >> 16;
+                    int  green = (clr & 0x0000ff00) >> 8;
+                    int  blue  =  clr & 0x000000ff;
+                    if (alpha != 0 && (!(red == 255 || red == 0) || !(green == 255 || green == 0) || !(blue == 255 || blue == 0))) {
+//                        System.out.println("[SkinsRestorer] ARGB val at ("+x+","+y+"): "+alpha+" "+red+" "+green+" "+blue);
+                        return "steve";
+                    }
+                }
+            }
+            return "alex";
+        }
+        catch (Exception e) {
+//            System.out.println("exception catcher");
+//            e.printStackTrace();
+        }
+        return "steve";
+    }
+
+    public static Object genSkin(String url, String isAlex) throws MojangAPI.SkinRequestException {
+        String err_resp = "";
+        if (isAlex.equalsIgnoreCase("null")) {
+//            System.out.println("[SkinsRestorer] guessing skin type");
+            isAlex = guessSkinType(url);
+        }
+//        System.out.println("[SkinsRestorer] Slimness: "+isAlex);
         try {
             String query = "";
-            if (isSlim) { query += "model="+URLEncoder.encode("slim","UTF-8")+"&"; }
+            if (isAlex.equalsIgnoreCase("alex") || isAlex.equalsIgnoreCase("a") || isAlex.equalsIgnoreCase("true") || isAlex.equalsIgnoreCase("yes") || isAlex.equalsIgnoreCase("y") || isAlex.equalsIgnoreCase("slim"))
+                query += "model="+URLEncoder.encode("slim","UTF-8")+"&";
             query += "url="+URLEncoder.encode(url,"UTF-8");
             String output;
             try {
-//                System.out.println("[SkinsRestorer] using MineSkin API");
+                err_resp = "";
+                System.out.println("[SkinsRestorer] using MineSkin API");
                 output = queryURL("https://api.mineskin.org/generate/url", query, 5000);
                 JsonElement elm = new JsonParser().parse(output);
                 JsonObject obj = elm.getAsJsonObject();
@@ -32,14 +78,14 @@ public class MineSkinAPI {
                         JsonObject tex = dta.get("texture").getAsJsonObject();
                         return SkinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                     }
-                }
-                if (obj.has("error")) {
-                    if (obj.get("error").getAsString().equals("Failed to generate skin data")) {
+                } else if (obj.has("error")) {
+                    err_resp = obj.get("error").getAsString();
+                    if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
 //                        System.out.println("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again. ");
-                        if (obj.has("nextRequest"))
-                            TimeUnit.SECONDS.sleep(obj.get("nextRequest").getAsInt());
-                        return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
-                    } else if (obj.get("error").getAsString().equals("No accounts available")) {
+                        if (obj.has("delay"))
+                            TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                        return genSkin(url, isAlex); // try again if given account fails (will stop if no more accounts)
+                    } else if (err_resp.equals("No accounts available")) {
                         System.out.println(Locale.ERROR_MS_FULL);
                         throw new MojangAPI.SkinRequestException(Locale.ERROR_MS_FULL);
                     }
@@ -51,34 +97,42 @@ public class MineSkinAPI {
             System.out.println("[SkinsRestorer] [ERROR] UnsupportedEncodingException");
         } catch (InterruptedException e) {}
         // throw exception after all tries have failed
-        throw new MojangAPI.SkinRequestException(Locale.MS_API_FAILED);
+        if (!(err_resp.matches("")))
+            throw new MojangAPI.SkinRequestException(Locale.ERROR_MS_GENERIC.replace("%error%", err_resp));
+        else
+            throw new MojangAPI.SkinRequestException(Locale.MS_API_FAILED);
     }
 
     private static String queryURL(String url, String query, int timeout) throws IOException {
-        MetricsCounter.incrAPI(url);
-        HttpsURLConnection con = (HttpsURLConnection)new URL(url).openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-length", String.valueOf(query.length()));
-        con.setRequestProperty("Accept", "application/json");
-        con.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
-        con.setRequestProperty("User-Agent", "SkinsRestorer");
-        con.setConnectTimeout(timeout);
-        con.setReadTimeout(timeout);
-        con.setDoOutput(true);
-        con.setDoInput(true);
-        DataOutputStream output = new DataOutputStream(con.getOutputStream());
-        output.writeBytes(query);
-        output.close();
-        String outstr = "";
-        InputStream _is;
-        try {
-            _is = con.getInputStream();
-        } catch (Exception e) {
-            _is = con.getErrorStream();
+        for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
+            try {
+                MetricsCounter.incrAPI(url);
+                HttpsURLConnection con = (HttpsURLConnection)new URL(url).openConnection();
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-length", String.valueOf(query.length()));
+                con.setRequestProperty("Accept", "application/json");
+                con.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+                con.setRequestProperty("User-Agent", "SkinsRestorer");
+                con.setConnectTimeout(timeout);
+                con.setReadTimeout(timeout);
+                con.setDoOutput(true);
+                con.setDoInput(true);
+                DataOutputStream output = new DataOutputStream(con.getOutputStream());
+                output.writeBytes(query);
+                output.close();
+                String outstr = "";
+                InputStream _is;
+                try {
+                    _is = con.getInputStream();
+                } catch (Exception e) {
+                    _is = con.getErrorStream();
+                }
+                DataInputStream input = new DataInputStream(_is);
+                for( int c = input.read(); c != -1; c = input.read() ) { outstr += (char)c; }
+                input.close();
+                return outstr;
+            } catch (Exception e) {}
         }
-        DataInputStream input = new DataInputStream(_is);
-        for( int c = input.read(); c != -1; c = input.read() ) { outstr += (char)c; }
-        input.close();
-        return outstr;
+        return "";
     }
 }

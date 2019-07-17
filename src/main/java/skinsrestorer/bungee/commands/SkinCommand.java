@@ -15,8 +15,8 @@ import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.CommandReplacements;
+import skinsrestorer.shared.utils.MineSkinAPI;
 import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 
 import java.util.concurrent.TimeUnit;
 
@@ -29,8 +29,8 @@ public class SkinCommand extends BaseCommand {
 
     @Default @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
-    public void onSkinSetShort(ProxiedPlayer p, @Single String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    public void onSkinSetShort(ProxiedPlayer p, @Single String skin, @Default("null") @Single String isAlex) {
+        this.onSkinSetOther(p, new OnlinePlayer(p), skin, isAlex);
     }
 
     @HelpCommand
@@ -103,14 +103,14 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set") @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
-    public void onSkinSet(ProxiedPlayer p, String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    public void onSkinSet(ProxiedPlayer p, String skin, @Default("null") @Single String isAlex) {
+        this.onSkinSetOther(p, new OnlinePlayer(p), skin, isAlex);
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
     @Description("%helpSkinSetOther")
-    public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
+    public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Default("null") @Single String isAlex) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
                 sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
@@ -119,7 +119,7 @@ public class SkinCommand extends BaseCommand {
         }
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            if (this.setSkin(sender, target.getPlayer(), skin)) {
+            if (this.setSkin(sender, target.getPlayer(), skin, isAlex)) {
                 if (!sender.getName().equals(target.getPlayer().getName())) {
                     sender.sendMessage(new TextComponent(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
                 }
@@ -128,14 +128,16 @@ public class SkinCommand extends BaseCommand {
     }
 
 
-    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
-        return this.setSkin(sender, p, skin, true);
-    }
-
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) { // neither isAlex or save
+        return this.setSkin(sender, p, skin, "null", true); }
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, String isAlex) { // isAlex
+        return this.setSkin(sender, p, skin, isAlex, true); }
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save) { // save
+        return this.setSkin(sender, p, skin, "null", save); }
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save) {
-        if (!C.validUsername(skin)) {
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, String isAlex, boolean save) { // isAlex + save
+        if (!C.validUsername(skin) && !C.validUrl(skin)) {
             sender.sendMessage(new TextComponent(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
@@ -158,26 +160,45 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.setCooldown(sender.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
-        try {
-            MojangAPI.getUUID(skin);
-            if (save) {
-                SkinStorage.setPlayerSkin(p.getName(), skin);
-                SkinApplier.applySkin(p);
-            } else {
-                SkinApplier.applySkin(p, skin, null);
+        if (C.validUsername(skin)) {
+            try {
+                MojangAPI.getUUID(skin);
+                if (save) {
+                    SkinStorage.setPlayerSkin(p.getName(), skin);
+                    SkinApplier.applySkin(p);
+                } else {
+                    SkinApplier.applySkin(p, skin, null);
+                }
+                p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
+            } catch (MojangAPI.SkinRequestException e) {
+                sender.sendMessage(new TextComponent(e.getReason()));
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
-            p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
-            return true;
-        } catch (SkinRequestException e) {
-            sender.sendMessage(new TextComponent(e.getReason()));
-
-            // set custom skin name back to old one if there is an exception
-            this.rollback(p, oldSkinName, save);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            // set custom skin name back to old one if there is an exception
-            this.rollback(p, oldSkinName, save);
+            return false;
+        }
+        else if (C.validUrl(skin)) {
+            try {
+                sender.sendMessage(new TextComponent(Locale.MS_UPDATING_SKIN));
+                String skinentry = " "+p.getName(); // so won't overwrite premium playernames
+                if (skinentry.length() > 16) { skinentry = skinentry.substring(0, 16); } // max len of 16 char
+                SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin, isAlex),
+                        Long.toString(System.currentTimeMillis()+(100L*365*24*60*60*1000))); // "generate" and save skin for 100 years
+                SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
+                SkinApplier.applySkin(p);
+                sender.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
+            } catch (MojangAPI.SkinRequestException e) {
+                sender.sendMessage(new TextComponent(e.getReason()));
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
+            } catch (Exception e) {
+                e.printStackTrace();
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
+            }
+            return false;
         }
         return false;
     }
