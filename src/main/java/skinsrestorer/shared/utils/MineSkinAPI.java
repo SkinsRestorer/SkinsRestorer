@@ -41,7 +41,8 @@ public class MineSkinAPI {
     }
 
     public static Object genSkin(String url) throws MojangAPI.SkinRequestException {
-        return genSkin(url, null); }
+        return genSkin(url, null);
+    }
     public static Object genSkin(String url, String isSlim) throws MojangAPI.SkinRequestException {
         String err_resp = "";
         if (isSlim == null)
