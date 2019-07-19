@@ -75,7 +75,6 @@ public class MetricsCounter {
     }
 
     public static void incrAPI(String url) {
-        System.out.println("[SkinsRestorer] API call: "+url);
 
         if (url.startsWith("https://api.mineskin.org/"))
             incrMineskin_calls();
