@@ -112,7 +112,9 @@ public class MineSkinAPI {
                     _is = con.getErrorStream();
                 }
                 DataInputStream input = new DataInputStream(_is);
-                for( int c = input.read(); c != -1; c = input.read() ) { outstr += (char)c; }
+                for (int c = input.read(); c != -1; c = input.read()) {
+                    outstr += (char)c;
+                }
                 input.close();
                 return outstr;
             } catch (Exception ignored) {
