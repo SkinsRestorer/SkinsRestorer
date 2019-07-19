@@ -11,6 +11,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.MineSkinAPI;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.velocity.SkinsRestorer;
@@ -187,20 +188,18 @@ public class SkinCommand extends BaseCommand {
                     // set custom skin name back to old one if there is an exception
                     this.rollback(p, oldSkinName, save);
                 }
-                return false;
             }
             if (C.validUrl(skin)) {
                 try {
                     p.sendMessage(plugin.deserialize(Locale.MS_UPDATING_SKIN));
-                    String skinentry = " "+p.getName(); // so won't overwrite premium playernames
+                    String skinentry = " "+p.getUsername(); // so won't overwrite premium playernames
                     if (skinentry.length() > 16) // max len of 16 char
                         skinentry = skinentry.substring(0, 16);
                     SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                    SkinApplier.applySkin(p, SkinStorage.getSkinData(skinentry));
+                    SkinStorage.setPlayerSkin(p.getUsername(), skinentry); // set player to "whitespaced" name then reload skin
+                    SkinApplier.applySkin(p, skinentry);
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
-                    return true;
                 } catch (MojangAPI.SkinRequestException e) {
                     source.sendMessage(plugin.deserialize(e.getReason()));
                     // set custom skin name back to old one if there is an exception
@@ -210,9 +209,7 @@ public class SkinCommand extends BaseCommand {
                     // set custom skin name back to old one if there is an exception
                     this.rollback(p, oldSkinName, save);
                 }
-                return false;
             }
-            return false;
         });
         return true;
     }

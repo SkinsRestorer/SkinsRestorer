@@ -13,6 +13,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.MineSkinAPI;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.sponge.SkinsRestorer;
 import skinsrestorer.sponge.utils.SkinApplier;
@@ -187,7 +188,7 @@ public class SkinCommand extends BaseCommand {
                 SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplier().applySkin(p, SkinStorage.getSkinData(skinentry));
+                plugin.getSkinApplier().applySkin(p, skinentry);
                 p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (MojangAPI.SkinRequestException e) {
