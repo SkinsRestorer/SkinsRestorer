@@ -174,7 +174,7 @@ public class SkinCommand extends BaseCommand {
         }
         if (C.validUrl(skin)) {
             try {
-                p.sendMessage(Locale.MS_UPDATING_SKIN);
+                sender.sendMessage(Locale.MS_UPDATING_SKIN);
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
                 if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
