@@ -35,7 +35,8 @@ public class MineSkinAPI {
             }
             return "alex";
         }
-        catch (Exception e) {}
+        catch (Exception ignored) {
+        }
         return "steve";
     }
 
