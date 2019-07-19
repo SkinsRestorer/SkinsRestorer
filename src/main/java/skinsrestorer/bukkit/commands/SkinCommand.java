@@ -181,7 +181,7 @@ public class SkinCommand extends BaseCommand {
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
                 SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getSkinData(skinentry));
-                sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (MojangAPI.SkinRequestException e) {
                 sender.sendMessage(e.getReason());
