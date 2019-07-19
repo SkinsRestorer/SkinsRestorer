@@ -176,7 +176,7 @@ public class SkinCommand extends BaseCommand {
             }
             return false;
         }
-        else if (C.validUrl(skin)) {
+        if (C.validUrl(skin)) {
             try {
                 sender.sendMessage(new TextComponent(Locale.MS_UPDATING_SKIN));
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
