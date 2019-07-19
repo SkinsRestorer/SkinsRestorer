@@ -161,7 +161,7 @@ public class SkinCommand extends BaseCommand {
                 if (save)
                     SkinStorage.setPlayerSkin(p.getName(), skin);
                 SkinsRestorer.getInstance().getFactory().applySkin(p, SkinStorage.getOrCreateSkinForPlayer(skin));
-                sender.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (MojangAPI.SkinRequestException e) {
                 sender.sendMessage(e.getReason());
