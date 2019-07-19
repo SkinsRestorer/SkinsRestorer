@@ -33,7 +33,7 @@ public class Locale {
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&e[&2SkinsRestorer&e] &2Skin updated for player %player.";
 
     public static String ERROR_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cAn error happened while updating your skin. Please try again later!";
-    public static String ERROR_MS_FULL = "&e[&2SkinsRestorer&e] &4MS Error&8: &cCouldn't upload skin. (Consider https://mineskin.org/account )!";
+    public static String ERROR_MS_FULL = "&e[&2SkinsRestorer&e] &4MS Error&8: &cNo uploader accounts were available to fulfill your request. Try again later or consider https://mineskin.org/account";
     public static String ERROR_MS_GENERIC = "&e[&2SkinsRestorer&e] &4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
