@@ -139,7 +139,7 @@ public class SkinCommand extends BaseCommand {
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSource source, Player p, String skin, boolean save) {
-        if (!C.validUsername(skin)) {
+        if (!C.validUsername(skin) && !C.validUrl(skin)) {
             source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
@@ -162,18 +162,40 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.setCooldown(source.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
-        try {
-            if (save)
-                SkinStorage.setPlayerSkin(p.getName(), skin);
-            plugin.getSkinApplier().applySkin(p, skin);
-            p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
-            return true;
-        } catch (MojangAPI.SkinRequestException e) {
-            source.sendMessage(plugin.parseMessage(e.getReason()));
 
-            // set custom skin name back to old one if there is an exception
-            if (save)
+        if (C.validUsername(skin)) {
+            try {
+                if (save)
+                    SkinStorage.setPlayerSkin(p.getName(), skin);
+                plugin.getSkinApplier().applySkin(p, skin);
+                p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
+            } catch (MojangAPI.SkinRequestException e) {
+                source.sendMessage(plugin.parseMessage(e.getReason()));
+                // set custom skin name back to old one if there is an exception
+                if (save)
+                    SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+            }
+            return false;
+        }
+        if (C.validUrl(skin)) {
+            try {
+                p.sendMessage(plugin.parseMessage(Locale.MS_UPDATING_SKIN));
+                String skinentry = " "+p.getName(); // so won't overwrite premium playernames
+                if (skinentry.length() > 16) // max len of 16 char
+                    skinentry = skinentry.substring(0, 16);
+                SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
+                        Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinApplier().applySkin(p, SkinStorage.getSkinData(skinentry));
+                p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
+            } catch (MojangAPI.SkinRequestException e) {
+                source.sendMessage(plugin.parseMessage(e.getReason()));
+                // set custom skin name back to old one if there is an exception
                 SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+            }
+            return false;
         }
         return false;
     }
