@@ -11,6 +11,7 @@ import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.MineSkinAPI;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
 import skinsrestorer.velocity.SkinsRestorer;
@@ -144,7 +145,7 @@ public class SkinCommand extends BaseCommand {
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSource source, Player p, String skin, boolean save) {
-        if (!C.validUsername(skin)) {
+        if (!C.validUsername(skin) && !C.validUrl(skin)) {
             source.sendMessage(plugin.deserialize(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
@@ -168,25 +169,46 @@ public class SkinCommand extends BaseCommand {
 
         String oldSkinName = SkinStorage.getPlayerSkin(p.getUsername());
         plugin.getService().execute(() -> {
-            try {
-                MojangAPI.getUUID(skin);
-                if (save) {
-                    SkinStorage.setPlayerSkin(p.getUsername(), skin);
-                    SkinApplier.applySkin(p, p.getUsername());
-                } else {
-                    SkinApplier.applySkin(p, skin);
+            if (C.validUsername(skin)) {
+                try {
+                    MojangAPI.getUUID(skin);
+                    if (save) {
+                        SkinStorage.setPlayerSkin(p.getUsername(), skin);
+                        SkinApplier.applySkin(p, p.getUsername());
+                    } else {
+                        SkinApplier.applySkin(p, skin);
+                    }
+                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                } catch (SkinRequestException e) {
+                    source.sendMessage(plugin.deserialize(e.getReason()));
+                    // set custom skin name back to old one if there is an exception
+                    this.rollback(p, oldSkinName, save);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // set custom skin name back to old one if there is an exception
+                    this.rollback(p, oldSkinName, save);
                 }
-                p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
-            } catch (SkinRequestException e) {
-                source.sendMessage(plugin.deserialize(e.getReason()));
-
-                // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+            }
+            if (C.validUrl(skin)) {
+                try {
+                    source.sendMessage(plugin.deserialize(Locale.MS_UPDATING_SKIN));
+                    String skinentry = " "+p.getUsername(); // so won't overwrite premium playernames
+                    if (skinentry.length() > 16) // max len of 16 char
+                        skinentry = skinentry.substring(0, 16);
+                    SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
+                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                    SkinStorage.setPlayerSkin(p.getUsername(), skinentry); // set player to "whitespaced" name then reload skin
+                    SkinApplier.applySkin(p, skinentry);
+                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                } catch (MojangAPI.SkinRequestException e) {
+                    source.sendMessage(plugin.deserialize(e.getReason()));
+                    // set custom skin name back to old one if there is an exception
+                    this.rollback(p, oldSkinName, save);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // set custom skin name back to old one if there is an exception
+                    this.rollback(p, oldSkinName, save);
+                }
             }
         });
         return true;

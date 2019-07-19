@@ -21,17 +21,20 @@ public class Locale {
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin.";
     public static String SKIN_DISABLED = "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
     public static String NOT_PREMIUM = "&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.";
-    public static String INVALID_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username.";
+    public static String INVALID_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username or URL.";
     public static String SKIN_COOLDOWN_NEW = "&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin again in &e%s &cseconds.";
 
     public static String SKIN_CHANGE_SUCCESS = "&e[&2SkinsRestorer&e] &2Your skin has been changed.";
     public static String SKIN_CLEAR_SUCCESS = "&e[&2SkinsRestorer&e] &2Your skin has been cleared.";
     public static String SKIN_CLEAR_ISSUER = "&e[&2SkinsRestorer&e] &2Skin cleared for player %player.";
 
+    public static String MS_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &2Uploading skin, please wait!";
     public static String SUCCESS_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &2Your skin has been updated.";
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&e[&2SkinsRestorer&e] &2Skin updated for player %player.";
-    
+
     public static String ERROR_UPDATING_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cAn error happened while updating your skin. Please try again later!";
+    public static String ERROR_MS_FULL = "&e[&2SkinsRestorer&e] &4MS Error&8: &cNo uploader accounts were available to fulfill your request. Try again later or consider https://mineskin.org/account";
+    public static String ERROR_MS_GENERIC = "&e[&2SkinsRestorer&e] &4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
 
@@ -45,6 +48,7 @@ public class Locale {
     public static String SKIN_DATA_DROPPED = "&e[&2SkinsRestorer&e] &2Skin data for player %player dropped.";
     public static String STATUS_OK = "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
     public static String ALT_API_FAILED = "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
+    public static String MS_API_FAILED = "&e[&2SkinsRestorer&e] &4Error&8: &cMineSkin API is overloaded, please try again later!";
     public static String NO_SKIN_DATA = "&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this player have a skin?";
     public static String RELOAD = "&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!";
     public static String OUTDATED = "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";

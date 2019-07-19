@@ -401,16 +401,15 @@ public class SkinStorage {
      *
      * @param name     - Skin name
      * @param textures - Property object
+     * @param timestamp - timestamp string in millis
      **/
-    public static void setSkinData(String name, Object textures) {
+    public static void setSkinData(String name, Object textures, String timestamp) {
         name = name.toLowerCase();
         String value = "";
         String signature = "";
-        String timestamp = "";
         try {
             value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
             signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
-            timestamp = String.valueOf(System.currentTimeMillis());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -443,6 +442,10 @@ public class SkinStorage {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void setSkinData(String name, Object textures) {
+        setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
     }
 
     public static Map<String, Object> getSkins(int number) {
