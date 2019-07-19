@@ -128,7 +128,8 @@ public class SkinCommand extends BaseCommand {
 
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
-        return this.setSkin(sender, p, skin, true); }
+        return this.setSkin(sender, p, skin, true);
+    }
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save) {
