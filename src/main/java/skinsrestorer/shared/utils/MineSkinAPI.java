@@ -60,6 +60,8 @@ public class MineSkinAPI {
                     output = queryURL("https://api.minetools.eu/mineskin/", query, 3000);
                     JsonElement elm = new JsonParser().parse(output);
                     obj = elm.getAsJsonObject();
+                    if (!(obj.has("cached")))
+                        MetricsCounter.incrAPI("https://api.mineskin.org/generate/url/");
                     if (!(obj.get("data").getAsJsonObject().has("texture")))
                         throw new Exception(); // throw exception if invalid response
                 } catch (Exception e) { // if minetools throws any exception, try mineskin api
