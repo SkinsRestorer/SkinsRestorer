@@ -115,7 +115,8 @@ public class MineSkinAPI {
                 for( int c = input.read(); c != -1; c = input.read() ) { outstr += (char)c; }
                 input.close();
                 return outstr;
-            } catch (Exception e) {}
+            } catch (Exception ignored) {
+            }
         }
         return "";
     }
