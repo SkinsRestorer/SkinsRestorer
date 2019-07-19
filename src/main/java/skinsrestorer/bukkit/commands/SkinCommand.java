@@ -174,9 +174,10 @@ public class SkinCommand extends BaseCommand {
         }
         if (C.validUrl(skin)) {
             try {
-                sender.sendMessage(Locale.MS_UPDATING_SKIN);
+                p.sendMessage(Locale.MS_UPDATING_SKIN);
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
-                if (skinentry.length() > 16) { skinentry = skinentry.substring(0, 16); } // max len of 16 char
+                if (skinentry.length() > 16) // max len of 16 char
+                    skinentry = skinentry.substring(0, 16);
                 SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin

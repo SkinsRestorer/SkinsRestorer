@@ -55,9 +55,18 @@ public class MineSkinAPI {
             String output;
             try {
                 err_resp = "";
-                output = queryURL("https://api.mineskin.org/generate/url", query, 5000);
-                JsonElement elm = new JsonParser().parse(output);
-                JsonObject obj = elm.getAsJsonObject();
+                JsonObject obj;
+                try {
+                    output = queryURL("https://api.minetools.eu/mineskin/", query, 3000);
+                    JsonElement elm = new JsonParser().parse(output);
+                    obj = elm.getAsJsonObject();
+                    if (!(obj.get("data").getAsJsonObject().has("texture")))
+                        throw new Exception(); // throw exception if invalid response
+                } catch (Exception e) { // if minetools throws any exception, try mineskin api
+                    output = queryURL("https://api.mineskin.org/generate/url/", query, 5000);
+                    JsonElement elm = new JsonParser().parse(output);
+                    obj = elm.getAsJsonObject();
+                }
                 if (obj.has("data")) {
                     JsonObject dta = obj.get("data").getAsJsonObject();
                     if (dta.has("texture")) {
