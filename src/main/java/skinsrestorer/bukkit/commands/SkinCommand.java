@@ -114,8 +114,10 @@ public class SkinCommand extends BaseCommand {
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
-                sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                return;
+                if (!sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
+                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+                    return;
+                }
             }
         }
 
