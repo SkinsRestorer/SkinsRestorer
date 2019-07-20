@@ -10,6 +10,7 @@
 # For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
 
 ### HELP MESSAGES ###
+# [?] The following messages appear when typing the command: /skin
 HELP_SKIN_CLEAR: Clears your skin.
 HELP_SKIN_CLEAR_OTHER: Clears the skin of another player.
 HELP_SKIN_UPDATE: Updates your skin.
@@ -23,37 +24,51 @@ HELP_SR_PROPS: Displays the players actual skin as properties.
 
 
 ### PERMISSIONS MESSAGES ###
+# [?] This message appears when the player does not have permission to perform the command or arugment.
 PLAYER_HAS_NO_PERMISSION: '&e[&2SkinsRestorer§e] &4Error&8: &cYou don''t have permission
   to do this.'
+  
+# [?] This message appears when the player try's to set a disabled skin  
+SKIN_DISABLED: '&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.'
+
+# [?] When PerSkinPermissions: true, 
 PLAYER_HAS_NO_PERMISSION_SKIN: '&e[&2SkinsRestorer&e] &4Error&8: &cYou don''t have
   permission to set this skin.'
-SKIN_DISABLED: '&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.'
 
 
 ### SUCCES MESSAGES ###
+# [?] When the player succesfully performed the command.
 SKIN_CHANGE_SUCCESS: '&e[&2SkinsRestorer&e] &2Your skin has been changed.'
 SKIN_CLEAR_SUCCESS: '&e[&2SkinsRestorer&e] &2Your skin has been cleared.'
 SKIN_CLEAR_ISSUER: '&e[&2SkinsRestorer&e] &2Skin cleared for player %player.'
 SUCCESS_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &2Your skin has been updated.'
 SUCCESS_UPDATING_SKIN_OTHER: '&e[&2SkinsRestorer&e] &2Skin updated for player %player.'
 
+# [?] admin success messages:
 ADMIN_SET_SKIN: '&e[&2SkinsRestorer&e] &2You set %player''s skin.'
 SKIN_DATA_DROPPED: '&e[&2SkinsRestorer&e] &2Skin data for player %player dropped.'
 RELOAD: '&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!'
 
 
 ### ERROR MESSAGES ###
+# [?} when the players has to recent (cooldown in config) set a skin.
 SKIN_COOLDOWN_NEW: '&e[&2SkinsRestorer&e] &4Error&8: &cYou can change your skin again
   in &e%s &cseconds.'
+# [?] When the /skin <skin>, is not a premium or there is no custom .skin file.  
 NOT_PREMIUM: '&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.'
+
+
 ERROR_UPDATING_SKIN: '&e[&2SkinsRestorer&e] &4Error&8: &cAn error happened while updating
   your skin. Please try again later!'
 GENERIC_ERROR: '&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while requesting
   skin data, please try again later!'
 WAIT_A_MINUTE: '&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting
   that skin again. (Rate Limited)'  
-  
+
+# [?] When the target player is not valid.
 INVALID_PLAYER: '&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username.'
+
+# [?] when performing: /sr props <player>, but the player has no skin.
 NO_SKIN_DATA: '&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this
   player have a skin?'
 
@@ -65,8 +80,11 @@ REMOVE_SKIN: '&c&l»&7 Remove Skin&c&l «'
 SELECT_SKIN: '&2Click to select this skin'
 
 ### other ###
+# [?] 
 OUTDATED: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n\
   &cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+
+# [?] /sr status:
 STATUS_OK: '&e[&2SkinsRestorer&e] &2Mojang API connection successful!'
 ALT_API_FAILED: '&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please
   try again later!'
