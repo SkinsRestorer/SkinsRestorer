@@ -59,13 +59,6 @@ public class SkinsRestorer extends JavaPlugin {
 
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
-        // Detect ChangeSkin
-        if (getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
-            console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
-
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
