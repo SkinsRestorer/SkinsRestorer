@@ -40,6 +40,13 @@ public class SkinsRestorer extends JavaPlugin {
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
+    private SRLogger logger;
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -47,6 +54,7 @@ public class SkinsRestorer extends JavaPlugin {
 
     public void onEnable() {
         console = getServer().getConsoleSender();
+        logger = new SRLogger();
 
         Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
@@ -104,8 +112,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subchannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player,
-                                        SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                factory.applySkin(player, this.skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
                             factory.updateSkin(player);
@@ -122,16 +129,21 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(configPath, getResource("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI();
+        this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init commands
         this.initCommands();
 
         // Init listener
-        Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
+        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
     }
 
     private void initCommands() {
@@ -153,12 +165,15 @@ public class SkinsRestorer extends JavaPlugin {
 
         new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
 
-        manager.registerCommand(new SkinCommand());
-        manager.registerCommand(new SrCommand());
-        manager.registerCommand(new GUICommand());
+        manager.registerCommand(new SkinCommand(this));
+        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
+        this.skinStorage = new SkinStorage();
+        this.skinStorage.setMojangAPI(mojangAPI);
+
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
@@ -173,20 +188,18 @@ public class SkinsRestorer extends JavaPlugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(getDataFolder());
         }
 
-        SkinStorage.init(getDataFolder());
-
         // Preload default skins
-        Bukkit.getScheduler().runTaskAsynchronously(this, SkinStorage::preloadDefaultSkins);
+        Bukkit.getScheduler().runTaskAsynchronously(this, this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

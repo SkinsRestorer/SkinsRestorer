@@ -8,16 +8,13 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.MojangAPI;
 
 public class LoginListener implements Listener {
-
     private SkinsRestorer plugin;
 
     public LoginListener(SkinsRestorer plugin) {
@@ -40,17 +37,17 @@ public class LoginListener implements Listener {
         }
 
         // Don't change skin if player has no custom skin-name set and his username is invalid
-        if (SkinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
+        if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick)) {
             System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
             e.completeIntent(plugin);
             return;
         }
 
         SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            String skin = SkinStorage.getDefaultSkinNameIfEnabled(nick);
+            String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
             try {
-                SkinApplier.applySkin(null, skin, (InitialHandler) e.getConnection());
-            } catch (MojangAPI.SkinRequestException ignored) {
+                plugin.getSkinApplier().applySkin(null, skin, (InitialHandler) e.getConnection());
+            } catch (SkinRequestException ignored) {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

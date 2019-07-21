@@ -7,20 +7,23 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.MineSkinAPI;
-import skinsrestorer.shared.utils.MojangAPI;
 
 import java.util.concurrent.TimeUnit;
 
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
+    private SkinsRestorer plugin;
+
+    public SkinCommand(SkinsRestorer plugin) {
+        this.plugin = plugin;
+    }
+
     @Default
     public void onDefault(CommandSender sender) {
         this.onHelp(sender, this.getCurrentCommandManager().generateCommandHelp());
@@ -53,10 +56,10 @@ public class SkinCommand extends BaseCommand {
     public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ProxiedPlayer p = target.getPlayer();
-            String skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
+            String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
 
             // remove users custom skin and set default skin / his skin
-            SkinStorage.removePlayerSkin(p.getName());
+            plugin.getSkinStorage().removePlayerSkin(p.getName());
             if (this.setSkin(sender, p, skin, false)) {
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(new TextComponent(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName())));
@@ -79,13 +82,13 @@ public class SkinCommand extends BaseCommand {
     public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ProxiedPlayer p = target.getPlayer();
-            String skin = SkinStorage.getPlayerSkin(p.getName());
+            String skin = plugin.getSkinStorage().getPlayerSkin(p.getName());
 
             // User has no custom skin set, get the default skin name / his skin
             if (skin == null)
-                skin = SkinStorage.getDefaultSkinNameIfEnabled(p.getName(), true);
+                skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
 
-            if (!SkinStorage.forceUpdateSkinData(skin)) {
+            if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
                 sender.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));
                 return;
             }
@@ -157,19 +160,19 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.resetCooldown(sender.getName());
         CooldownStorage.setCooldown(sender.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-        String oldSkinName = SkinStorage.getPlayerSkin(p.getName());
+        String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
         if (C.validUsername(skin)) {
             try {
-                MojangAPI.getUUID(skin);
+                plugin.getMojangAPI().getUUID(skin);
                 if (save) {
-                    SkinStorage.setPlayerSkin(p.getName(), skin);
-                    SkinApplier.applySkin(p);
+                    plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
+                    plugin.getSkinApplier().applySkin(p);
                 } else {
-                    SkinApplier.applySkin(p, skin, null);
+                    plugin.getSkinApplier().applySkin(p, skin, null);
                 }
                 p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
-            } catch (MojangAPI.SkinRequestException e) {
+            } catch (SkinRequestException e) {
                 sender.sendMessage(new TextComponent(e.getReason()));
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
@@ -183,13 +186,13 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(new TextComponent(Locale.MS_UPDATING_SKIN));
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
                 if (skinentry.length() > 16) { skinentry = skinentry.substring(0, 16); } // max len of 16 char
-                SkinStorage.setSkinData(skinentry, MineSkinAPI.genSkin(skin),
-                        Long.toString(System.currentTimeMillis()+(100L*365*24*60*60*1000))); // "generate" and save skin for 100 years
-                SkinStorage.setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                SkinApplier.applySkin(p);
+                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
+                        Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinApplier().applySkin(p);
                 p.sendMessage(new TextComponent(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
-            } catch (MojangAPI.SkinRequestException e) {
+            } catch (SkinRequestException e) {
                 sender.sendMessage(new TextComponent(e.getReason()));
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
@@ -203,7 +206,7 @@ public class SkinCommand extends BaseCommand {
 
     private void rollback(ProxiedPlayer p, String oldSkinName, boolean save) {
         if (save)
-            SkinStorage.setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+            plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
     }
 
     private void sendHelp(CommandSender sender) {

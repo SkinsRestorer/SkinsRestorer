@@ -12,11 +12,12 @@ public class C {
     }
 
     public static boolean validUsername(String username) {
-        if (username.length() > 16 )
+        if (username.length() > 16)
             return false;
 
         return namePattern.matcher(username).matches();
     }
+
     public static boolean validUrl(String url) {
         return urlPattern.matcher(url).matches();
     }

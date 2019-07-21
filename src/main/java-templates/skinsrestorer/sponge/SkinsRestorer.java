@@ -49,6 +49,13 @@ public class SkinsRestorer {
     private CommandSource console;
     private boolean bungeeEnabled = false;
 
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+
     @Listener
     public void onInitialize(GameInitializationEvent e) {
         instance = this;
@@ -70,9 +77,14 @@ public class SkinsRestorer {
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI();
+        this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init commands
         this.initCommands();
@@ -111,6 +123,9 @@ public class SkinsRestorer {
     }
 
     private boolean initStorage() {
+        this.skinStorage = new SkinStorage();
+        this.skinStorage.setMojangAPI(mojangAPI);
+
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
@@ -125,19 +140,17 @@ public class SkinsRestorer {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(new File(configPath));
         }
 
-        SkinStorage.init(new File(configPath));
-
         // Preload default skins
-        Sponge.getScheduler().createAsyncExecutor(this).execute(SkinStorage::preloadDefaultSkins);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(this.skinStorage::preloadDefaultSkins);
         return true;
     }
 
