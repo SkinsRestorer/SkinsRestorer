@@ -4,17 +4,17 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import skinsrestorer.shared.utils.SRLogger;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Logger;
 
 /**
  * Created by McLive on 11.04.2019.
  */
 public class UpdateCheckerGitHub extends UpdateChecker {
-    private Logger log;
+    private SRLogger log;
     private String userAgent;
     private String currentVersion;
     private GitHubReleaseInfo releaseInfo;
@@ -22,7 +22,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
     private static String RELEASES_URL = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
 
-    public UpdateCheckerGitHub(int resourceId, String currentVersion, Logger log, String userAgent) {
+    public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         super(resourceId, currentVersion, log, userAgent);
         this.log = log;
         this.userAgent = userAgent;

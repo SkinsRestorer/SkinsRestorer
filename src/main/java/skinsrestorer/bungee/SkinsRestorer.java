@@ -46,6 +46,8 @@ public class SkinsRestorer extends Plugin {
     private MojangAPI mojangAPI;
     @Getter
     private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SRLogger srLogger;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -54,6 +56,7 @@ public class SkinsRestorer extends Plugin {
 
     @Override
     public void onEnable() {
+        srLogger = new SRLogger();
         Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
@@ -63,7 +66,7 @@ public class SkinsRestorer extends Plugin {
         console = getProxy().getConsole();
 
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
@@ -76,7 +79,7 @@ public class SkinsRestorer extends Plugin {
         Config.load(configPath, getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
-        this.mojangAPI = new MojangAPI();
+        this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())

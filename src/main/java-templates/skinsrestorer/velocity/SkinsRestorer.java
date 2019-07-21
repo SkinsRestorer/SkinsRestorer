@@ -43,7 +43,7 @@ public class SkinsRestorer {
     @Getter
     private final ProxyServer proxy;
     @Getter
-    private final Logger logger;
+    private SRLogger logger;
     @Getter
     private final Path dataFolder;
     @Getter
@@ -67,13 +67,13 @@ public class SkinsRestorer {
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        this.logger = logger;
+        this.logger = new SRLogger();
         this.dataFolder = dataFolder;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        logger.info("Enabling SkinsRestorer v" + getVersion());
+        logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = this.proxy.getConsoleCommandSource();
 
         // Check for updates
@@ -89,7 +89,7 @@ public class SkinsRestorer {
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
-        this.mojangAPI = new MojangAPI();
+        this.mojangAPI = new MojangAPI(this.logger);
         this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
@@ -107,13 +107,13 @@ public class SkinsRestorer {
         // Init SkinApplier
         this.skinApplier = new SkinApplier(this);
 
-        logger.info("Enabled SkinsRestorer v" + getVersion());
+        logger.logAlways("Enabled SkinsRestorer v" + getVersion());
     }
 
     @Subscribe
     public void onShutDown(ProxyShutdownEvent ev) {
-        logger.info("Disabling SkinsRestorer v" + getVersion());
-        logger.info("Disabled SkinsRestorer v" + getVersion());
+        this.logger.logAlways("Disabling SkinsRestorer v" + getVersion());
+        this.logger.logAlways("Disabled SkinsRestorer v" + getVersion());
     }
 
     private void initCommands() {
@@ -159,7 +159,7 @@ public class SkinsRestorer {
 
                 this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                this.getLogger().info(("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                logger.logAlways("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {

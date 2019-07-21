@@ -36,6 +36,17 @@ public class SRLogger {
         this.log(Level.INFO, message);
     }
 
+    public void logAlways(String message) {
+        this.logAlways(Level.INFO, message);
+    }
+
+    public void log(Level level, String message, Throwable thrown) {
+        if (!Config.VERBOSE)
+            return;
+
+        this.logAlways(level, message, thrown);
+    }
+
     public void log(Level level, String message) {
         if (!Config.VERBOSE)
             return;
@@ -46,4 +57,9 @@ public class SRLogger {
     public void logAlways(Level level, String message) {
         this.logger.log(level, "[SkinsRestorer] " + message);
     }
+
+    public void logAlways(Level level, String message, Throwable thrown) {
+        this.logger.log(level, "[SkinsRestorer] " + message, thrown);
+    }
+
 }

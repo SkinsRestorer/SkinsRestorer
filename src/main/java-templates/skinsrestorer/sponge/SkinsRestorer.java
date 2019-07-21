@@ -28,7 +28,6 @@ import skinsrestorer.sponge.utils.SkinApplier;
 import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}")
 public class SkinsRestorer {
@@ -39,8 +38,8 @@ public class SkinsRestorer {
     @Getter
     private SkinApplier skinApplier;
 
-    @Inject @Getter
-    private Logger logger;
+    @Getter
+    private SRLogger srLogger;
 
     @Inject
     private Metrics2 metrics;
@@ -58,13 +57,14 @@ public class SkinsRestorer {
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
+        this.srLogger = new SRLogger();
         instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Sponge");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.srLogger, "SkinsRestorerUpdater/Sponge");
             this.checkUpdate(bungeeEnabled);
 
             if (Config.UPDATER_PERIODIC)
@@ -77,7 +77,7 @@ public class SkinsRestorer {
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
-        this.mojangAPI = new MojangAPI();
+        this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())

@@ -40,7 +40,8 @@ public class SkinsRestorer extends JavaPlugin {
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
-    private SRLogger logger;
+    @Getter
+    private SRLogger srLogger;
     @Getter
     private SkinStorage skinStorage;
     @Getter
@@ -54,7 +55,7 @@ public class SkinsRestorer extends JavaPlugin {
 
     public void onEnable() {
         console = getServer().getConsoleSender();
-        logger = new SRLogger();
+        srLogger = new SRLogger();
 
         Metrics metrics = new Metrics(this);
         metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
@@ -88,7 +89,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
             this.updateDownloader = new UpdateDownloaderGithub(this);
             this.checkUpdate(bungeeEnabled);
 
@@ -129,7 +130,7 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(configPath, getResource("config.yml"));
         Locale.load(configPath);
 
-        this.mojangAPI = new MojangAPI();
+        this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
