@@ -223,6 +223,26 @@ public class SkinsRestorer extends JavaPlugin {
         } catch (Throwable e) {
             bungeeEnabled = false;
         }
+
+        try {
+            File warning = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "Use bungee config for settings!");
+            if (!warning.exists() && bungeeEnabled)
+                warning.createNewFile();
+
+            if (warning.exists() && !bungeeEnabled)
+                warning.delete();
+        } catch (Exception ignored) {
+        }
+
+        if (bungeeEnabled) {
+            this.srLogger.logAlways("-------------------------/Warning\\-------------------------");
+            this.srLogger.logAlways("This plugin is running in Bungee mode!");
+            this.srLogger.logAlways("You have to do all configuration at config file");
+            this.srLogger.logAlways("inside your Bungeecord server.");
+            this.srLogger.logAlways("(Bungeecord-Server/plugins/SkinsRestorer/).");
+            this.srLogger.logAlways("-------------------------\\Warning/-------------------------");
+        }
+
     }
 
     private void checkUpdate(boolean bungeeMode) {
