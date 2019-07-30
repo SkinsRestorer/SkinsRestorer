@@ -18,7 +18,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Wate
 ## :link: Links
 - [Spigot Page](https://www.spigotmc.org/resources/skinsrestorer.2124/)
 - [Velocitypowered Page](https://forums.velocitypowered.com/t/skinsrestorer-ability-to-restore-change-skins-on-servers/142)
-- [Spone ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
+- [Sponge ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
 - [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
 - [Jenkins](https://ci.freecraft.eu/v2/job/SkinsRestorerX/)
 - [Discord](https://discord.me/skinsrestorer)
