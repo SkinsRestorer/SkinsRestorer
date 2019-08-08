@@ -16,6 +16,8 @@ import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.File;
@@ -35,6 +37,18 @@ public class SkinsRestorer extends Plugin {
     private CommandSender console;
     private UpdateChecker updateChecker;
 
+    @Getter
+    private SkinApplier skinApplier;
+
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SRLogger srLogger;
+
     public String getVersion() {
         return getDescription().getVersion();
     }
@@ -42,7 +56,9 @@ public class SkinsRestorer extends Plugin {
 
     @Override
     public void onEnable() {
+        srLogger = new SRLogger();
         Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
@@ -50,11 +66,11 @@ public class SkinsRestorer extends Plugin {
         console = getProxy().getConsole();
 
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 30, 30, TimeUnit.MINUTES);
+                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
 
         instance = this;
@@ -63,9 +79,14 @@ public class SkinsRestorer extends Plugin {
         Config.load(configPath, getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI(this.srLogger);
+        this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
@@ -74,7 +95,10 @@ public class SkinsRestorer extends Plugin {
         this.initCommands();
 
         getProxy().registerChannel("sr:skinchange");
-        SkinApplier.init();
+
+        // Init SkinApplier
+        this.skinApplier = new SkinApplier(this);
+        this.skinApplier.init();
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
     }
@@ -98,11 +122,14 @@ public class SkinsRestorer extends Plugin {
 
         new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
 
-        manager.registerCommand(new SkinCommand());
-        manager.registerCommand(new SrCommand());
+        manager.registerCommand(new SkinCommand(this));
+        manager.registerCommand(new SrCommand(this));
     }
 
     private boolean initStorage() {
+        this.skinStorage = new SkinStorage();
+        this.skinStorage.setMojangAPI(mojangAPI);
+
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
@@ -117,21 +144,19 @@ public class SkinsRestorer extends Plugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
                 getProxy().getPluginManager().unregisterListeners(this);
                 getProxy().getPluginManager().unregisterCommands(this);
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(getDataFolder());
         }
 
-        SkinStorage.init(getDataFolder());
-
         // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), SkinStorage::preloadDefaultSkins);
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

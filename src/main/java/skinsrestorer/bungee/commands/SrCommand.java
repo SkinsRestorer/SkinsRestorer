@@ -9,11 +9,9 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
-import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
@@ -22,6 +20,12 @@ import java.util.List;
 
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
+    private SkinsRestorer plugin;
+
+    public SrCommand(SkinsRestorer plugin) {
+        this.plugin = plugin;
+    }
+
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
@@ -43,6 +47,7 @@ public class SrCommand extends BaseCommand {
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ServiceChecker checker = new ServiceChecker();
+            checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
@@ -67,7 +72,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     public void onDrop(CommandSender sender, OnlineProxiedPlayer target) {
         String player = target.getPlayer().getName();
-        SkinStorage.removeSkinData(player);
+        plugin.getSkinStorage().removeSkinData(player);
         sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
     }
 

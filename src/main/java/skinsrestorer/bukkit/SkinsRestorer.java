@@ -19,6 +19,8 @@ import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
+import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.*;
@@ -35,8 +37,17 @@ public class SkinsRestorer extends JavaPlugin {
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private boolean bungeeEnabled;
-    private UpdateDownloader updateDownloader;
+    private boolean updateDownloaded = false;
+    private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
+    @Getter
+    private SRLogger srLogger;
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -44,8 +55,10 @@ public class SkinsRestorer extends JavaPlugin {
 
     public void onEnable() {
         console = getServer().getConsoleSender();
+        srLogger = new SRLogger();
 
         Metrics metrics = new Metrics(this);
+        metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
         metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
@@ -54,13 +67,6 @@ public class SkinsRestorer extends JavaPlugin {
         factory = new UniversalSkinFactory();
 
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
-
-        // Detect ChangeSkin
-        if (getServer().getPluginManager().getPlugin("ChangeSkin") != null) {
-            console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected ChangeSkin on your server, disabling SkinsRestorer.");
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
@@ -83,14 +89,14 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateChecker(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/Bukkit");
-            this.updateDownloader = new UpdateDownloader(this);
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
+            this.updateDownloader = new UpdateDownloaderGithub(this);
             this.checkUpdate(bungeeEnabled);
 
             if (Config.UPDATER_PERIODIC)
                 this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
                     this.checkUpdate(bungeeEnabled, false);
-                }, 20 * 60 * 30, 20 * 60 * 30);
+                }, 20 * 60 * 10, 20 * 60 * 10);
         }
 
         if (bungeeEnabled) {
@@ -107,8 +113,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subchannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player,
-                                        SkinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                factory.applySkin(player, this.skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
                             factory.updateSkin(player);
@@ -125,16 +130,21 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(configPath, getResource("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI(this.srLogger);
+        this.mineSkinAPI = new MineSkinAPI();
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init commands
         this.initCommands();
 
         // Init listener
-        Bukkit.getPluginManager().registerEvents(new SkinsGUI(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
+        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
     }
 
     private void initCommands() {
@@ -156,12 +166,15 @@ public class SkinsRestorer extends JavaPlugin {
 
         new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
 
-        manager.registerCommand(new SkinCommand());
-        manager.registerCommand(new SrCommand());
-        manager.registerCommand(new GUICommand());
+        manager.registerCommand(new SkinCommand(this));
+        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
+        this.skinStorage = new SkinStorage();
+        this.skinStorage.setMojangAPI(mojangAPI);
+
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
@@ -176,20 +189,18 @@ public class SkinsRestorer extends JavaPlugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(getDataFolder());
         }
 
-        SkinStorage.init(getDataFolder());
-
         // Preload default skins
-        Bukkit.getScheduler().runTaskAsynchronously(this, SkinStorage::preloadDefaultSkins);
+        Bukkit.getScheduler().runTaskAsynchronously(this, this.skinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -212,6 +223,26 @@ public class SkinsRestorer extends JavaPlugin {
         } catch (Throwable e) {
             bungeeEnabled = false;
         }
+
+        try {
+            File warning = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "Use bungee config for settings!");
+            if (!warning.exists() && bungeeEnabled)
+                warning.createNewFile();
+
+            if (warning.exists() && !bungeeEnabled)
+                warning.delete();
+        } catch (Exception ignored) {
+        }
+
+        if (bungeeEnabled) {
+            this.srLogger.logAlways("-------------------------/Warning\\-------------------------");
+            this.srLogger.logAlways("This plugin is running in Bungee mode!");
+            this.srLogger.logAlways("You have to do all configuration at config file");
+            this.srLogger.logAlways("inside your Bungeecord server.");
+            this.srLogger.logAlways("(Bungeecord-Server/plugins/SkinsRestorer/).");
+            this.srLogger.logAlways("-------------------------\\Warning/-------------------------");
+        }
+
     }
 
     private void checkUpdate(boolean bungeeMode) {
@@ -223,11 +254,17 @@ public class SkinsRestorer extends JavaPlugin {
             updateChecker.checkForUpdate(new UpdateCallback() {
                 @Override
                 public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    String failReason = null;
-                    if (hasDirectDownload)
-                        if (!updateDownloader.downloadUpdate())
-                            failReason = updateDownloader.getFailReason().toString();
+                    if (updateDownloaded)
+                        return;
 
+                    String failReason = null;
+                    if (hasDirectDownload) {
+                        if (updateDownloader.downloadUpdate()) {
+                            updateDownloaded = true;
+                        } else {
+                            failReason = updateDownloader.getFailReason().toString();
+                        }
+                    }
                     updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg -> {
                         console.sendMessage(msg);
                     });

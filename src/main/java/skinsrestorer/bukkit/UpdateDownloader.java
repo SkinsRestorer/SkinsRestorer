@@ -19,7 +19,7 @@ import java.util.logging.Level;
 public class UpdateDownloader {
     private SkinsRestorer plugin;
 
-    private DownloadFailReason failReason;
+    public DownloadFailReason failReason;
     private ResourceInfo latestResourceInfo;
 
     public UpdateDownloader(SkinsRestorer plugin) {
@@ -64,16 +64,16 @@ public class UpdateDownloader {
             return false;
         }
 
-        plugin.getLogger().info("[SpigetUpdate] Downloading update...");
+        plugin.getSrLogger().logAlways("[SpigetUpdate] Downloading update...");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());
+                plugin.getSrLogger().logAlways("[SpigetUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getLogger().log(Level.WARNING, "[SpigetUpdate] Could not download update", exception);
+                plugin.getSrLogger().logAlways(Level.WARNING, "[SpigetUpdate] Could not download update", exception);
             }
         }));
 
@@ -113,7 +113,7 @@ public class UpdateDownloader {
      *
      * @return the plugin file name
      */
-    private File getPluginFile() {
+    public File getPluginFile() {
         if (!(plugin instanceof JavaPlugin)) {
             return null;
         }

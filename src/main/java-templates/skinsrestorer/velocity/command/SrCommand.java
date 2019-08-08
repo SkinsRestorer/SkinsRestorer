@@ -8,7 +8,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ServiceChecker;
 import skinsrestorer.velocity.SkinsRestorer;
 
@@ -48,6 +47,7 @@ public class SrCommand extends BaseCommand {
 
         plugin.getService().execute(() -> {
             ServiceChecker checker = new ServiceChecker();
+            checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
@@ -72,7 +72,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     public void onDrop(CommandSource source, OnlinePlayer target) {
         String player = target.getPlayer().getUsername();
-        SkinStorage.removeSkinData(player);
+        plugin.getSkinStorage().removeSkinData(player);
         source.sendMessage(plugin.deserialize(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
     }
 

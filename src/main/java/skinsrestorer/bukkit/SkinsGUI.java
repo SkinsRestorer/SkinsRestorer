@@ -14,25 +14,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-// Todo: MySQL support
 public class SkinsGUI extends ItemStack implements Listener {
-
+    private SkinsRestorer plugin;
     private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
 
-    public SkinsGUI() {
+    public SkinsGUI(SkinsRestorer plugin) {
+        this.plugin = plugin;
     }
 
     public static enum GlassType {
         NONE, PREV, NEXT, DELETE
     }
 
-    public static class GuiGlass {
+    public class GuiGlass {
         public GuiGlass(GlassType glassType) {
             this.glassType = glassType;
             this.create();
@@ -84,10 +83,10 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
     }
 
-    public static Inventory getGUI(int page) {
-        Inventory inventory = Bukkit.createInventory(null, 54, "§9Skins Menu - Page " + page);
+    public Inventory getGUI(Player p, int page) {
+        Inventory inventory = Bukkit.createInventory(p, 54, "§9Skins Menu - Page " + page);
         int skinNumber = 36 * page;
-        Map<String, Object> skinsList = SkinStorage.getSkins(skinNumber);
+        Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(38, new GuiGlass(GlassType.NONE).getItemStack());
@@ -170,7 +169,11 @@ public class SkinsGUI extends ItemStack implements Listener {
 
     @EventHandler
     public void onCLick(InventoryClickEvent e) {
-        if (!e.getInventory().getName().contains("Skins Menu")) {
+        try {
+            if (!e.getView().getTitle().contains("Skins Menu")) {
+                return;
+            }
+        } catch (IllegalStateException ex) {
             return;
         }
         Player player = (Player) e.getWhoClicked();
@@ -187,25 +190,40 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         // Todo use setSkin function from SkinCommand.class
         if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
-            Object skin = SkinStorage.getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
-            SkinStorage.setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
-            SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
-            SkinsRestorer.getInstance().getFactory().updateSkin(player);
-            player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Object skin = plugin.getSkinStorage().getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
+                plugin.getSkinStorage().setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
+                SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
+                SkinsRestorer.getInstance().getFactory().updateSkin(player);
+                player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+            });
             player.closeInventory();
         } else if (e.getCurrentItem().getType() == Material.RED_STAINED_GLASS_PANE) {
             player.performCommand("skinsrestorer:skin clear");
             player.closeInventory();
         } else if (e.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Next Page")) {
             int currentPage = getMenus().get(player.getName());
-            getMenus().put(player.getName(), currentPage + 1);
-            player.openInventory(getGUI(currentPage + 1));
+            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                getMenus().put(player.getName(), currentPage + 1);
+                Inventory newInventory = getGUI(((Player) e.getWhoClicked()).getPlayer(), currentPage + 1);
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                    player.openInventory(newInventory);
+                });
+            });
         } else if (e.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE && e.getCurrentItem().getItemMeta().getDisplayName().contains("Previous Page")) {
             int currentPage = getMenus().get(player.getName());
-            getMenus().put(player.getName(), currentPage - 1);
-            player.openInventory(getGUI(currentPage - 1));
+            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                getMenus().put(player.getName(), currentPage - 1);
+                Inventory newInventory = getGUI(((Player) e.getWhoClicked()).getPlayer(), currentPage - 1);
+
+                Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                    player.openInventory(newInventory);
+                });
+            });
         }
 
         e.setCancelled(true);
+
     }
 }

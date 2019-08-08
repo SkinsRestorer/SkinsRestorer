@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -141,11 +140,21 @@ public class UniversalSkinFactory extends SkinFactory {
                     Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
                     Object dimensionManger = m.invoke(null, dimension);
 
-                    respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
-                            new Class<?>[]{
-                                    dimensionManagerClass, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
-                            },
-                            dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                    try {
+                        respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                new Class<?>[]{
+                                        dimensionManagerClass, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
+                                },
+                                dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                    } catch (Exception ignored2) {
+                        // 1.14.x removed the difficulty from PlayOutRespawn
+                        // https://wiki.vg/Pre-release_protocol#Respawn
+                        respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                new Class<?>[]{
+                                        dimensionManagerClass, worldtype.getClass(), enumGamemode.getClass()
+                                },
+                                dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                    }
                 }
 
                 Object pos;

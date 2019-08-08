@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.6.1-SNAPSHOT</version>
+    <version>13.7.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.13.1-R0.1-SNAPSHOT</version>
+            <version>1.14-pre5-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- BungeeCord API -->
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- BungeeCord config -->
@@ -166,6 +166,7 @@
             <artifactId>acf-sponge</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
+        <!-- ACF for velocity -->
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-velocity</artifactId>
@@ -181,7 +182,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

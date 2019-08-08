@@ -1,5 +1,8 @@
 package skinsrestorer.shared.utils;
 
+import lombok.Setter;
+import skinsrestorer.shared.exception.SkinRequestException;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ServiceChecker {
     private ServiceCheckResponse response;
+    @Setter
+    private MojangAPI mojangAPI;
 
     public ServiceCheckResponse getResponse() {
         return response;
@@ -60,7 +65,7 @@ public class ServiceChecker {
     public boolean checkServices() {
         // ##### UUID requests #####
         try {
-            String uuid = MojangAPI.getUUID("Notch", false);
+            String uuid = this.mojangAPI.getUUID("Notch", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
                 response.addResult("MineTools UUID §a✔ Notch UUID: §b" + uuid);
@@ -68,12 +73,12 @@ public class ServiceChecker {
             } else {
                 response.addResult("MineTools UUID §c✘ Error getting UUID: null");
             }
-        } catch (MojangAPI.SkinRequestException e) {
+        } catch (SkinRequestException e) {
             response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getReason());
         }
 
         try {
-            String uuid = MojangAPI.getUUIDMojang("Notch", false);
+            String uuid = this.mojangAPI.getUUIDMojang("Notch", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
                 response.addResult("Mojang-API UUID §a✔ Notch UUID: §b" + uuid);
@@ -81,12 +86,12 @@ public class ServiceChecker {
             } else {
                 response.addResult("Mojang-API UUID §c✘ Error getting UUID: null");
             }
-        } catch (MojangAPI.SkinRequestException e) {
+        } catch (SkinRequestException e) {
             response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getReason());
         }
 
         try {
-            String uuid = MojangAPI.getUUIDBackup("Notch");
+            String uuid = this.mojangAPI.getUUIDBackup("Notch");
             response.addResult("Mojang-API (Backup) UUID §a✔ Notch UUID: §b" + uuid);
             response.incrementWorkingUUID();
         } catch (Exception e) {
@@ -94,21 +99,21 @@ public class ServiceChecker {
         }
 
         // ##### Profile requests #####
-        Object profile = MojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
+        Object profile = this.mojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
         if (profile != null) {
             response.addResult("MineTools Profile §a✔ Notch Profile: §b" + profile.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        profile = MojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
+        profile = this.mojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
         if (profile != null) {
             response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + profile.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        profile = MojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
+        profile = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
         if (profile != null) {
             response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + profile.toString());
             response.incrementWorkingProfile();
