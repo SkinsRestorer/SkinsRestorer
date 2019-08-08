@@ -1,10 +1,10 @@
 package skinsrestorer.shared.storage;
 
-import skinsrestorer.shared.utils.YamlConfig;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+
+import skinsrestorer.shared.utils.YamlConfig;
 
 public class Config {
 
@@ -35,12 +35,12 @@ public class Config {
     public static boolean VERBOSE = true;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
-    public static String LOCALE_FILE = "english.yml";
+    public static String LOCALE = "english";
 
     // private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", false);
     private static YamlConfig config;
 
-    public static void load(String path, InputStream is) {
+    public static void load(final String path, final InputStream is) {
         config = new YamlConfig(path + File.separator, "config", false);
         config.saveDefaultConfig(is);
         config.reload();
@@ -69,6 +69,7 @@ public class Config {
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         VERBOSE = config.getBoolean("Verbose", VERBOSE);
+        LOCALE = config.getString("Locale", LOCALE);
 
         // Permissions
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
@@ -77,7 +78,7 @@ public class Config {
             System.out.println("[SkinsRestorer] Warning: PerSkinPermissions only work with Permissions.NewPermissions set to true!");
     }
 
-    public static void set(String path, Object value) {
+    public static void set(final String path, final Object value) {
         config.set(path, value);
     }
 }

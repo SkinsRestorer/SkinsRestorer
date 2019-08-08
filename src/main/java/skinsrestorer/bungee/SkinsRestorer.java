@@ -1,5 +1,11 @@
 package skinsrestorer.bungee;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
+import org.bstats.bungeecord.Metrics;
+import org.inventivetalent.update.spiget.UpdateCallback;
+
 import co.aikar.commands.BungeeCommandIssuer;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.ConditionFailedException;
@@ -8,20 +14,21 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.bstats.bungeecord.Metrics;
-import org.inventivetalent.update.spiget.UpdateCallback;
-import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.commands.SkinCommand;
+import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.shared.update.UpdateCheckerGitHub;
-import skinsrestorer.shared.utils.*;
-
-import java.io.File;
-import java.util.concurrent.TimeUnit;
+import skinsrestorer.shared.utils.CommandPropertiesManager;
+import skinsrestorer.shared.utils.CommandReplacements;
+import skinsrestorer.shared.utils.MetricsCounter;
+import skinsrestorer.shared.utils.MineSkinAPI;
+import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.SRLogger;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin {
@@ -66,39 +73,39 @@ public class SkinsRestorer extends Plugin {
         console = getProxy().getConsole();
 
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
+            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+                getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
 
         instance = this;
 
         // Init config files
         Config.load(configPath, getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Locale.load(configPath, this);
 
-        this.mojangAPI = new MojangAPI(this.srLogger);
-        this.mineSkinAPI = new MineSkinAPI();
+        mojangAPI = new MojangAPI(srLogger);
+        mineSkinAPI = new MineSkinAPI();
         // Init storage
-        if (!this.initStorage())
+        if (!initStorage())
             return;
 
-        this.mojangAPI.setSkinStorage(this.skinStorage);
-        this.mineSkinAPI.setSkinStorage(this.skinStorage);
+        mojangAPI.setSkinStorage(skinStorage);
+        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
 
         // Init commands
-        this.initCommands();
+        initCommands();
 
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
-        this.skinApplier = new SkinApplier(this);
-        this.skinApplier.init();
+        skinApplier = new SkinApplier(this);
+        skinApplier.init();
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
     }
@@ -127,8 +134,8 @@ public class SkinsRestorer extends Plugin {
     }
 
     private boolean initStorage() {
-        this.skinStorage = new SkinStorage();
-        this.skinStorage.setMojangAPI(mojangAPI);
+        skinStorage = new SkinStorage();
+        skinStorage.setMojangAPI(mojangAPI);
 
         // Initialise MySQL
         if (Config.USE_MYSQL) {
@@ -144,7 +151,7 @@ public class SkinsRestorer extends Plugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                this.skinStorage.setMysql(mysql);
+                skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
                 getProxy().getPluginManager().unregisterListeners(this);
@@ -152,11 +159,11 @@ public class SkinsRestorer extends Plugin {
                 return false;
             }
         } else {
-            this.skinStorage.loadFolders(getDataFolder());
+            skinStorage.loadFolders(getDataFolder());
         }
 
         // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), this.skinStorage::preloadDefaultSkins);
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), skinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -164,11 +171,11 @@ public class SkinsRestorer extends Plugin {
         this.checkUpdate(false);
     }
 
-    private void checkUpdate(boolean showUpToDate) {
+    private void checkUpdate(final boolean showUpToDate) {
         ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
             updateChecker.checkForUpdate(new UpdateCallback() {
                 @Override
-                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                public void updateAvailable(final String newVersion, final String downloadUrl, final boolean hasDirectDownload) {
                     outdated = true;
 
                     updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {

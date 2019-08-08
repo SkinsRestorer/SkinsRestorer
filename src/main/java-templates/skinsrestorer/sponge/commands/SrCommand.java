@@ -36,8 +36,8 @@ public class SrCommand extends BaseCommand {
     @Subcommand("reload") @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getConfigPath());
         Config.load(plugin.getConfigPath(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getConfigPath(), plugin);
         source.sendMessage(plugin.parseMessage(Locale.RELOAD));
     }
 

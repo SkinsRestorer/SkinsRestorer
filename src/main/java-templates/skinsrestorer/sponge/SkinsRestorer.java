@@ -75,7 +75,7 @@ public class SkinsRestorer {
 
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Locale.load(configPath, this);
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();

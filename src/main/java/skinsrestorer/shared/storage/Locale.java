@@ -1,10 +1,11 @@
 package skinsrestorer.shared.storage;
 
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.YamlConfig;
-
-import java.io.File;
-import java.lang.reflect.Field;
 
 public class Locale {
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
@@ -17,7 +18,7 @@ public class Locale {
     public static String HELP_SR_STATUS = "Checks needed API services for this plugin to work.";
     public static String HELP_SR_DROP = "Drops the players skin data.";
     public static String HELP_SR_PROPS = "Displays the players actual skin as properties.";
-    
+
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin.";
     public static String SKIN_DISABLED = "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
     public static String NOT_PREMIUM = "&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.";
@@ -58,25 +59,64 @@ public class Locale {
             + "\n   &2/skin <skinname> &7-&f Changes your skin."
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
-    
-    //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
+
     private static YamlConfig locale;
 
-    public static void load(String path) {
+    public static void load(final String path, final Object plugin) {
         try {
-            locale = new YamlConfig(path + File.separator, "messages", true);
-            locale.saveDefaultConfig();
+            locale = new YamlConfig(path + File.separator, Config.LOCALE, true);
+
+            if (!locale.getFile().exists()) {
+                locale.getFile().createNewFile();
+                InputStream in = plugin.getClass().getClassLoader().getResourceAsStream(
+                    "languages" + File.separator + Config.LOCALE + ".yml"
+                );
+                locale.saveResource(in, Config.LOCALE + ".yml", true);
+            }
             locale.reload();
 
             for (Field f : Locale.class.getFields()) {
-
                 if (f.getType() != String.class)
                     continue;
 
-                f.set(null, C.c(locale.getString(f.getName(), f.get(null))));
+                f.set(null, C.c(locale.getString(formatFieldName(f.getName()), f.get(null))));
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
+            System.out.printf("§e[§2SkinsRestorer§e] §cCan't read %s.yml! Try removing it and restart your server.\n", Config.LOCALE);
         }
+    }
+
+    /**
+     * Translates conventioned public static constants HELLO_WORLD into
+     * camel case helloWorld.
+     *
+     * @author  NyanGuyMF
+     */
+    private static String formatFieldName(final String fieldName) {
+        StringBuffer buff = new StringBuffer(fieldName);
+
+        for (int c = 0; c < buff.length(); c++) {
+            char ch = buff.charAt(c);
+
+            if (ch == '_') {
+                if (c+1 == buff.length()) {
+                    buff.deleteCharAt(c);
+                    continue;
+                }
+
+                char next = buff.charAt(c+1);
+
+                if (Character.isUpperCase(next))
+                    buff.setCharAt(c, next);
+                else
+                    buff.setCharAt(c, Character.toUpperCase(next));
+
+                buff.deleteCharAt(c+1);
+            } else if (Character.isUpperCase(ch)) {
+                buff.setCharAt(c, Character.toLowerCase(ch));
+            }
+        }
+
+        return buff.toString();
     }
 }
