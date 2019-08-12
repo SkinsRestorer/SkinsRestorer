@@ -62,7 +62,7 @@ MultiBungee:
   Enabled: false
 
 # Settings for MySQL skin storage (recommended for big BungeeCord networks)
-# !~ IF YOU USE BUNGEE, DO NOT mysql Spigot ~!
+# !~ IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in Spigot Config.yml ~!
 MySQL:
   Enabled: false
   Host: localhost
