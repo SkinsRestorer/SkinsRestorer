@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
+import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ServiceChecker;
@@ -19,7 +20,7 @@ import java.util.List;
  * Created by McLive on 23.02.2019.
  */
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand {
+public class SrCommand extends BaseCommand implements ISrCommand<CommandSource, OnlinePlayer> {
     private final SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
@@ -27,7 +28,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @HelpCommand
-    public static void onHelp(CommandSource source, CommandHelp help) {
+    public void onHelp(CommandSource source, CommandHelp help) {
         help.showHelp();
     }
 

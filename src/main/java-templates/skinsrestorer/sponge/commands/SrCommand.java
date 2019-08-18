@@ -7,6 +7,7 @@ import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.profile.property.ProfileProperty;
+import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ServiceChecker;
@@ -21,7 +22,7 @@ import java.util.List;
  * Created by McLive on 28.02.2019.
  */
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand {
+public class SrCommand extends BaseCommand implements ISrCommand<CommandSource, OnlinePlayer> {
     private final SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
@@ -29,7 +30,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @HelpCommand
-    public static void onHelp(CommandSource source, CommandHelp help) {
+    public void onHelp(CommandSource source, CommandHelp help) {
         help.showHelp();
     }
 

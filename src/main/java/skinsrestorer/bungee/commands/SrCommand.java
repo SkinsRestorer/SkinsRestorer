@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ServiceChecker;
@@ -19,7 +20,7 @@ import java.util.Base64;
 import java.util.List;
 
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand {
+public class SrCommand extends BaseCommand implements ISrCommand<CommandSender, OnlineProxiedPlayer> {
     private SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
@@ -27,7 +28,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @HelpCommand
-    public static void onHelp(CommandSender sender, CommandHelp help) {
+    public void onHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
     }
 

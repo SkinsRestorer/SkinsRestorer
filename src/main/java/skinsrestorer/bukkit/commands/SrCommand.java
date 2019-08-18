@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ReflectionUtil;
@@ -23,7 +24,7 @@ import java.util.List;
  */
 
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand {
+public class SrCommand extends BaseCommand implements ISrCommand<CommandSender, OnlinePlayer> {
     private SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
@@ -32,7 +33,7 @@ public class SrCommand extends BaseCommand {
 
 
     @HelpCommand
-    public static void onHelp(CommandSender sender, CommandHelp help) {
+    public void onHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
     }
 
