@@ -34,6 +34,7 @@ public class SkinCommand extends BaseCommand {
 
     @Default @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
+    @Syntax("<skin/url>")
     public void onSkinSetShort(Player p, @Single String skin) {
         this.onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
@@ -106,6 +107,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set") @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
+    @Syntax("<skin/url>")
     public void onSkinSet(Player p, String skin) {
         this.onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
@@ -113,6 +115,7 @@ public class SkinCommand extends BaseCommand {
     @Subcommand("set") @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
     @Description("%helpSkinSetOther")
+    @Syntax("<target> <skin/url>")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
         if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
             if (!source.hasPermission("skinsrestorer.skin." + skin)) {
