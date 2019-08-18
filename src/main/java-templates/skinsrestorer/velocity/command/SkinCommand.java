@@ -7,6 +7,7 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.interfaces.ISkinCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 @SuppressWarnings("deprecation")
 @CommandAlias("skin") @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand implements ISkinCommand<CommandSource, Player, OnlinePlayer> {
     private final SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {

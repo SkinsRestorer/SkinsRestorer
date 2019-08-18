@@ -9,6 +9,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.interfaces.ISkinCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -17,7 +18,7 @@ import skinsrestorer.shared.utils.C;
 import java.util.concurrent.TimeUnit;
 
 @CommandAlias("skin") @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand implements ISkinCommand<CommandSender, ProxiedPlayer, OnlinePlayer> {
     private SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {

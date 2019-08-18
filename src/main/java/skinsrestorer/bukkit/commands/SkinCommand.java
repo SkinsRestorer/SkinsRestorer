@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.interfaces.ISkinCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @CommandAlias("skin") @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand implements ISkinCommand<CommandSender, Player, OnlinePlayer> {
     private SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {

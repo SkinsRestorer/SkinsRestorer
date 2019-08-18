@@ -8,6 +8,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.interfaces.ISkinCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  * Created by McLive on 27.02.2019.
  */
 @CommandAlias("skin") @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand implements ISkinCommand<CommandSource, Player, OnlinePlayer> {
     private SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {
