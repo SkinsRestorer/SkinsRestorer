@@ -20,7 +20,7 @@ import java.util.List;
  * Created by McLive on 23.02.2019.
  */
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISrCommand<CommandSource, OnlinePlayer> {
+public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {

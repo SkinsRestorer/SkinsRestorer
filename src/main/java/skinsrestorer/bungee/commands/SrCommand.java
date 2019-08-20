@@ -20,7 +20,7 @@ import java.util.Base64;
 import java.util.List;
 
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISrCommand<CommandSender, OnlineProxiedPlayer> {
+public class SrCommand extends BaseCommand {
     private SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
