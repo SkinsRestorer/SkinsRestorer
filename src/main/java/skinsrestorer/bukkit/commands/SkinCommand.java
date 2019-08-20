@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @CommandAlias("skin") @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand implements ISkinCommand<CommandSender, Player, OnlinePlayer> {
+public class SkinCommand extends BaseCommand {
     private SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {
