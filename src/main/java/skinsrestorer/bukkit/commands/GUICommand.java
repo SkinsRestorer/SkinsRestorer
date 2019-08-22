@@ -1,34 +1,46 @@
 package skinsrestorer.bukkit.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.HelpCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import skinsrestorer.bukkit.SkinsGUI;
 import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.bukkit.menu.SkinsGUI;
 import skinsrestorer.shared.storage.Locale;
 
-public class GUICommand implements CommandExecutor {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command arg1, String arg2, String[] args) {
+@CommandAlias("skins") @CommandPermission("%skins")
+public class GUICommand extends BaseCommand {
+    private SkinsRestorer plugin;
+    private SkinsGUI skinsGUI;
 
-        if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.RED + "These commands are only for players");
-            return true;
-        }
+    public GUICommand(SkinsRestorer plugin) {
+        this.plugin = plugin;
+        this.skinsGUI = new SkinsGUI(this.plugin);
+    }
 
-        final Player p = (Player) sender;
+    @HelpCommand
+    public static void onHelp(CommandSender sender, CommandHelp help) {
+        sender.sendMessage("SkinsRestorer Help");
+        help.showHelp();
+    }
 
-        if (!p.hasPermission("skinsrestorer.playercmds")) {
-            p.sendMessage(ChatColor.RED + "[SkinsRestorer] " + SkinsRestorer.getInstance().getVersion() + "\n"
-                    + Locale.PLAYER_HAS_NO_PERMISSION);
-            return true;
-        }
-        SkinsGUI.getMenus().put(p.getName(), 0);
-        p.openInventory(SkinsGUI.getGUI(0));
-        p.sendMessage("§2Opening the Skins Menu.");
-        return false;
+    @Default @CommandPermission("%skins")
+    public void onDefault(Player p) {
+        p.sendMessage(Locale.MENU_OPEN);
+
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            SkinsGUI.getMenus().put(p.getName(), 0);
+            Inventory inventory = this.skinsGUI.getGUI(p, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                p.openInventory(inventory);
+            });
+        });
     }
 }
