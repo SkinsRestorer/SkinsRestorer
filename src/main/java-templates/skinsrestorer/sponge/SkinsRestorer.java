@@ -46,6 +46,7 @@ public class SkinsRestorer {
 
     private UpdateChecker updateChecker;
     private CommandSource console;
+    @Getter
     private boolean bungeeEnabled = false;
 
     @Getter

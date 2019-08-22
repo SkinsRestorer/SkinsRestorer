@@ -49,7 +49,8 @@ public class SrCommand extends BaseCommand {
     @Subcommand("status") @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        sender.sendMessage("Checking needed services for SR to work properly...");
+        sender.sendMessage("§3----------------------------------------------");
+        sender.sendMessage("§7Checking needed services for SR to work properly...");
 
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             ServiceChecker checker = new ServiceChecker();
@@ -62,13 +63,18 @@ public class SrCommand extends BaseCommand {
             for (String result : results) {
                 sender.sendMessage(result);
             }
-            sender.sendMessage("Working UUID API count: " + response.getWorkingUUID());
-            sender.sendMessage("Working Profile API count: " + response.getWorkingProfile());
+            sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
+            sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
             if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
-                sender.sendMessage("The plugin currently is in a working state.");
+                sender.sendMessage("§aThe plugin currently is in a working state.");
             else
-                sender.sendMessage("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect");
-            sender.sendMessage("Finished checking services.");
+                sender.sendMessage("§cPlugin currently can't fetch new skins. You might check out our discord at https://discord.me/servers/skinsrestorer");
+            sender.sendMessage("§3----------------------------------------------");
+            sender.sendMessage("§7SkinsRestorer §6v" + plugin.getVersion());
+            sender.sendMessage("§7Server: §6" + plugin.getServer().getVersion());
+            sender.sendMessage("§7BungeeMode: §6" + plugin.isBungeeEnabled());
+            sender.sendMessage("§7Finished checking services.");
+            sender.sendMessage("§3----------------------------------------------");
         });
     }
 

@@ -44,7 +44,8 @@ public class SrCommand extends BaseCommand {
     @Subcommand("status") @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
-        source.sendMessage(plugin.deserialize("Checking needed services for SR to work properly..."));
+        source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
+        source.sendMessage(plugin.deserialize("§7Checking needed services for SR to work properly..."));
 
         plugin.getService().execute(() -> {
             ServiceChecker checker = new ServiceChecker();
@@ -57,13 +58,18 @@ public class SrCommand extends BaseCommand {
             for (String result : results) {
                 source.sendMessage(plugin.deserialize(result));
             }
-            source.sendMessage(plugin.deserialize("Working UUID API count: " + response.getWorkingUUID()));
-            source.sendMessage(plugin.deserialize("Working Profile API count: " + response.getWorkingProfile()));
+            source.sendMessage(plugin.deserialize("§7Working UUID API count: §6" + response.getWorkingUUID()));
+            source.sendMessage(plugin.deserialize("§7Working Profile API count: §6" + response.getWorkingProfile()));
             if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
-                source.sendMessage(plugin.deserialize("The plugin currently is in a working state."));
+                source.sendMessage(plugin.deserialize("§aThe plugin currently is in a working state."));
             else
-                source.sendMessage(plugin.deserialize("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect"));
-            source.sendMessage(plugin.deserialize("Finished checking services."));
+                source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. You might check out our discord at https://discord.me/servers/skinsrestorer"));
+            source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
+            source.sendMessage(plugin.deserialize("§7SkinsRestorer §6v" + plugin.getVersion()));
+            source.sendMessage(plugin.deserialize("§7Server: §6" + plugin.getProxy().getVersion()));
+            source.sendMessage(plugin.deserialize("§7BungeeMode: §6Velocity-Plugin"));
+            source.sendMessage(plugin.deserialize("§7Finished checking services."));
+            source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
         });
     }
 

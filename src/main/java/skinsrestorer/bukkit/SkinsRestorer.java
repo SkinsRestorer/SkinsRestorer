@@ -36,6 +36,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
+    @Getter
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
