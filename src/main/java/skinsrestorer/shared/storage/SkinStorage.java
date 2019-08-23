@@ -468,15 +468,20 @@ public class SkinStorage {
             }
             return list;
         } else {
-            Map<String, Object> list = new TreeMap<String, Object>();
+            Map<String, Object> list = new TreeMap<>();
             String path = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
             File folder = new File(path);
             String[] fileNames = folder.list();
+
+            if (fileNames == null)
+                return list;
+
+            Arrays.sort(fileNames);
             int i = 0;
-            assert fileNames != null;
             for (String file : fileNames) {
+                String skinName = file.replace(".skin", "");
                 if (i >= number) {
-                    list.put(file.replace(".skin", ""), this.getSkinDataMenu(file.replace(".skin", "")));
+                    list.put(skinName, this.getSkinDataMenu(skinName));
                 }
                 i++;
             }
