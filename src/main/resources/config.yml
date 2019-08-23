@@ -1,6 +1,6 @@
 ##############################
 #  SkinsRestorer Config.yml  #
-#  Generated on 13.6         #
+#  Generated on 13.7.2       #
 ##############################
 #
 # We from SRTeam thank you for using our plugin!
@@ -88,6 +88,8 @@ NoSkinIfLoginCanceled: true
 # True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
 UseOldSkinHelp: false
 
+# Removes "Sending skin update request for .." on join for bungeecord
+Verbose: false
 
 # End #
 
