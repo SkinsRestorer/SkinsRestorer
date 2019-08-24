@@ -188,7 +188,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         // Todo use setSkin function from SkinCommand.class
         if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                Object skin = plugin.getSkinStorage().getSkinDataMenu(e.getCurrentItem().getItemMeta().getDisplayName());
+                Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
                 plugin.getSkinStorage().setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
                 SkinsRestorer.getInstance().getFactory().updateSkin(player);
