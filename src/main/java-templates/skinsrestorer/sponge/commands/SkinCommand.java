@@ -167,6 +167,11 @@ public class SkinCommand extends BaseCommand {
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
 
         if (C.validUsername(skin)) {
+            if (!source.hasPermission("skinsrestorer.command.set.url")) {
+                source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
+                return false;
+            }
+
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);

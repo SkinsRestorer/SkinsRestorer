@@ -19,6 +19,7 @@ public class Locale {
     public static String HELP_SR_PROPS = "Displays the players actual skin as properties.";
     
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin.";
+    public static String PLAYER_HAS_NO_PERMISSION_URL = "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&e[&2SkinsRestorer&e] &4Error&8: &cThis skin is disabled by an administrator.";
     public static String NOT_PREMIUM = "&e[&2SkinsRestorer&e] &4Error&8: &cPremium player with that name does not exist.";
     public static String INVALID_PLAYER = "&e[&2SkinsRestorer&e] &4Error&8: &c%player is not a valid username or URL.";

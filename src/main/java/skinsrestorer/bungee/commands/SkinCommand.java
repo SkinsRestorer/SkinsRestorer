@@ -186,6 +186,11 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
         if (C.validUrl(skin)) {
+            if (!sender.hasPermission("skinsrestorer.command.set.url")) {
+                sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_URL));
+                return false;
+            }
+
             try {
                 sender.sendMessage(new TextComponent(Locale.MS_UPDATING_SKIN));
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
