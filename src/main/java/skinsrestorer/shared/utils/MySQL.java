@@ -44,12 +44,18 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        Connection con = null;
-        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false", username, password);
+        try {
+            Connection con = null;
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false&serverTimezone=UTC", username, password);
 
-        System.out.println("[SkinsRestorer] Connected to MySQL!");
-        this.con = con;
-        return con;
+            System.out.println("[SkinsRestorer] Connected to MySQL!");
+            this.con = con;
+            return con;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private boolean isConnected() {
