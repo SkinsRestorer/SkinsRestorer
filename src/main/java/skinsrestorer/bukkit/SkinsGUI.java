@@ -40,25 +40,30 @@ public class SkinsGUI extends ItemStack implements Listener {
         private void create() {
             switch (glassType) {
                 case NONE: {
-                    this.itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-                    this.text = "";
+                    //this.itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+                    this.itemStack = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
+
+                    this.text = " ";
                     break;
                 }
 
                 case PREV: {
-                    this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
+                    //this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
+                    this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
                     this.text = Locale.PREVIOUS_PAGE;
                     break;
                 }
 
                 case NEXT: {
-                    this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+                    //this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+                    this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
                     this.text = Locale.NEXT_PAGE;
                     break;
                 }
 
                 case DELETE: {
-                    this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                    //this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
+                    this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
                     this.text = Locale.REMOVE_SKIN;
                     break;
                 }
@@ -132,7 +137,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     private ItemStack createSkull(String name, Object property) {
-        ItemStack is = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
+        ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<>();
         lore.add(Locale.SELECT_SKIN);
@@ -186,7 +191,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
 
         // Todo use setSkin function from SkinCommand.class
-        if (e.getCurrentItem().getType() == Material.PLAYER_HEAD) {
+        if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.PLAYER_HEAD) {
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                 Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
                 plugin.getSkinStorage().setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
@@ -195,10 +200,10 @@ public class SkinsGUI extends ItemStack implements Listener {
                 player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
             });
             player.closeInventory();
-        } else if (e.getCurrentItem().getType() == Material.RED_STAINED_GLASS_PANE) {
+        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.RED_STAINED_GLASS_PANE) {
             player.performCommand("skinsrestorer:skin clear");
             player.closeInventory();
-        } else if (e.getCurrentItem().getType() == Material.GREEN_STAINED_GLASS_PANE) {
+        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.GREEN_STAINED_GLASS_PANE) {
             int currentPage = getMenus().get(player.getName());
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                 getMenus().put(player.getName(), currentPage + 1);
@@ -208,7 +213,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                     player.openInventory(newInventory);
                 });
             });
-        } else if (e.getCurrentItem().getType() == Material.YELLOW_STAINED_GLASS_PANE) {
+        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.YELLOW_STAINED_GLASS_PANE) {
             int currentPage = getMenus().get(player.getName());
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                 getMenus().put(player.getName(), currentPage - 1);
