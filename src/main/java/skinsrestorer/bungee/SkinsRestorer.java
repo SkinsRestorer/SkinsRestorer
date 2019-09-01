@@ -75,12 +75,16 @@ public class SkinsRestorer extends Plugin {
 
         instance = this;
 
+        this.skinStorage = new SkinStorage();
+
         // Init config files
         Config.load(configPath, getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
@@ -127,9 +131,6 @@ public class SkinsRestorer extends Plugin {
     }
 
     private boolean initStorage() {
-        this.skinStorage = new SkinStorage();
-        this.skinStorage.setMojangAPI(mojangAPI);
-
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {

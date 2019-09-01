@@ -100,6 +100,8 @@ public class SkinsRestorer extends JavaPlugin {
                 }, 20 * 60 * 10, 20 * 60 * 10);
         }
 
+        this.skinStorage = new SkinStorage();
+
         if (bungeeEnabled) {
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
@@ -133,6 +135,8 @@ public class SkinsRestorer extends JavaPlugin {
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI();
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
@@ -173,9 +177,6 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private boolean initStorage() {
-        this.skinStorage = new SkinStorage();
-        this.skinStorage.setMojangAPI(mojangAPI);
-
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {

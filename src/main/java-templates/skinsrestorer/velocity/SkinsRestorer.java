@@ -85,12 +85,16 @@ public class SkinsRestorer {
                 this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         }
 
+        this.skinStorage = new SkinStorage();
+
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.logger);
         this.mineSkinAPI = new MineSkinAPI();
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
@@ -140,9 +144,6 @@ public class SkinsRestorer {
     }
 
     private boolean initStorage() {
-        this.skinStorage = new SkinStorage();
-        this.skinStorage.setMojangAPI(mojangAPI);
-
         // Initialise MySQL
         if (Config.USE_MYSQL) {
             try {
