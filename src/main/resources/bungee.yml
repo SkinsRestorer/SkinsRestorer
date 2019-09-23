@@ -1,4 +1,4 @@
-name: SkinsRestorer
+name: ${project.name}
 main: skinsrestorer.bungee.SkinsRestorer
-version: 13.2-SNAPSHOT
-author: Th3Tr0LLeR
+version: ${project.version}
+author: Th3Tr0LLeR, McLive, DoNotSpamPls, Blackfire62
