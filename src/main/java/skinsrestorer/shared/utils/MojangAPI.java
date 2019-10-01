@@ -145,9 +145,7 @@ public class MojangAPI {
             }
 
             if (obj.get("id").getAsString().equalsIgnoreCase("null"))
-                if (tryNext)
-                    return getUUIDMojang(name);
-                return null;
+                throw new SkinRequestException(Locale.NOT_PREMIUM);
 
             return obj.get("id").getAsString();
         } catch (IOException e) {
