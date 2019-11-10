@@ -30,3 +30,28 @@ SkinsRestorer is licensed under GNU General Public License v3.0. Please see [`LI
 
 ## :family: Authors
 See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors) for a list of people that have suppported this project by contributing.
+
+## :building_construction: SkinsRestorer API
+
+:rotating_light: Please note that this API is still WIP. Expect breaking changes! :rotating_light:
+
+##### Maven repository
+````
+<repository>
+    <id>codemc-snapshots</id>
+    <url>https://repo.codemc.org/repository/maven-snapshots/</url>
+</repository>
+````
+
+##### SkinsRestorer API
+````
+<!-- SkinsRestorer API -->
+<dependency>
+    <groupId>com</groupId>
+    <artifactId>skinsrestorer</artifactId>
+    <version>13.7.4-SNAPSHOT</version>
+</dependency>
+````
+
+##### Example Bukkit plugin
+https://github.com/SkinsRestorer/SkinsRestorerAPIExample
