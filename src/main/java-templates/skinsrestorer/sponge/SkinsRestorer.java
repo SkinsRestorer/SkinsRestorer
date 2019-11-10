@@ -55,6 +55,8 @@ public class SkinsRestorer {
     private MojangAPI mojangAPI;
     @Getter
     private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerSpongeAPI skinsRestorerSpongeAPI;
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
@@ -96,6 +98,9 @@ public class SkinsRestorer {
 
         // Init SkinApplier
         this.skinApplier = new SkinApplier(this);
+
+        // Init API
+        this.skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(this, this.mojangAPI, this.skinStorage);
     }
 
     @Listener

@@ -49,6 +49,8 @@ public class SkinsRestorer extends JavaPlugin {
     private MojangAPI mojangAPI;
     @Getter
     private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerBukkitAPI skinsRestorerBukkitAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -150,6 +152,9 @@ public class SkinsRestorer extends JavaPlugin {
         // Init listener
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
+
+        // Init API
+        this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(this, this.mojangAPI, this.skinStorage);
     }
 
     private void initCommands() {
@@ -194,6 +199,7 @@ public class SkinsRestorer extends JavaPlugin {
                 this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                e.printStackTrace();
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
             }

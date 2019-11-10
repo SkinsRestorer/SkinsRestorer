@@ -63,6 +63,8 @@ public class SkinsRestorer {
     private MojangAPI mojangAPI;
     @Getter
     private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerVelocityAPI skinsRestorerVelocityAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
@@ -110,6 +112,9 @@ public class SkinsRestorer {
 
         // Init SkinApplier
         this.skinApplier = new SkinApplier(this);
+
+        // Init API
+        this.skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(this, this.mojangAPI, this.skinStorage);
 
         logger.logAlways("Enabled SkinsRestorer v" + getVersion());
     }

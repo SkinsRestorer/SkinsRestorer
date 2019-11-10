@@ -48,6 +48,8 @@ public class SkinsRestorer extends Plugin {
     private MineSkinAPI mineSkinAPI;
     @Getter
     private SRLogger srLogger;
+    @Getter
+    private SkinsRestorerBungeeAPI skinsRestorerBungeeAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -105,6 +107,9 @@ public class SkinsRestorer extends Plugin {
         this.skinApplier.init();
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+
+        // Init API
+        this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(this, this.mojangAPI, this.skinStorage);
     }
 
     private void initCommands() {
