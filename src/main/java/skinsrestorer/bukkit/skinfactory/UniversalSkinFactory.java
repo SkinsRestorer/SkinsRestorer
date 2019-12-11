@@ -133,7 +133,7 @@ public class UniversalSkinFactory extends SkinFactory {
 
                 int gmid = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
-                Object respawn;
+                Object respawn = null;
                 try {
                     respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                             new Class<?>[]{
@@ -155,11 +155,23 @@ public class UniversalSkinFactory extends SkinFactory {
                     } catch (Exception ignored2) {
                         // 1.14.x removed the difficulty from PlayOutRespawn
                         // https://wiki.vg/Pre-release_protocol#Respawn
-                        respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
-                                new Class<?>[]{
-                                        dimensionManagerClass, worldtype.getClass(), enumGamemode.getClass()
-                                },
-                                dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                        try {
+                            respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                    new Class<?>[]{
+                                            dimensionManagerClass, worldtype.getClass(), enumGamemode.getClass()
+                                    },
+                                    dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                        } catch (Exception ignored3) {
+                            // Minecraft 1.15 changes
+                            // PacketPlayOutRespawn now needs the world seed
+                            Object seed = ReflectionUtil.invokeMethod(worlddata, "getSeed");
+
+                            respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                    new Class<?>[]{
+                                            dimensionManagerClass, long.class, worldtype.getClass(), enumGamemode.getClass()
+                                    },
+                                    dimensionManger, seed, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                        }
                     }
                 }
 
