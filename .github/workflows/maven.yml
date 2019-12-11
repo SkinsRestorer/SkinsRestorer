@@ -16,9 +16,12 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     
+    - name: Show folders
+      run: find .
+    
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: SkinsRestorer
-        path: target/*.jar
+        path: ./target/SkinsRestorer.jar
 
