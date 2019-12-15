@@ -5,7 +5,7 @@
 [![Contributors](https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors)
 [![Commits since last release](https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/commits/master)
 [![License](https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
-[![Discord](https://img.shields.io/discord/186794372468178944.svg?color=blue&label=discord&logo=discord)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
+[![Discord](https://img.shields.io/discord/186794372468178944.svg?color=blue&label=discord&logo=discord)](https://discord.gg/sAhVsyU)
 
 This is the development repository for SkinsRestorer, used for making and testing new features.
 
