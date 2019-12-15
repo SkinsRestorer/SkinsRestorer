@@ -12,8 +12,8 @@ This is the development repository for SkinsRestorer, used for making and testin
 Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity servers.
 
 ## :telescope: Compatibility
-- Java 8 ([openjdk](https://openjdk.java.net/install/) | Oracle Java)
-- Minecraft 1.8.0 - 1.14.x
+- Java 8 till 12 (maybe newer also) ([openjdk](https://openjdk.java.net/install/) | Oracle Java)
+- Minecraft 1.8.0 - 1.15.x
 
 ## :link: Links
 - [Spigot Page](https://www.spigotmc.org/resources/skinsrestorer.2124/)
