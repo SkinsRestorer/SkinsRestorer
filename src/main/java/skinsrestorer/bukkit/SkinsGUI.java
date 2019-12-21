@@ -50,21 +50,21 @@ public class SkinsGUI extends ItemStack implements Listener {
                 case PREV: {
                     //this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.PREVIOUS_PAGE;
+                    this.text = Locale.PREVIOUS_PAGE.replace("&", "§");
                     break;
                 }
 
                 case NEXT: {
                     //this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.NEXT_PAGE;
+                    this.text = Locale.NEXT_PAGE.replace("&", "§");
                     break;
                 }
 
                 case DELETE: {
                     //this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.REMOVE_SKIN;
+                    this.text = Locale.REMOVE_SKIN.replace("&", "§");
                     break;
                 }
             }
@@ -147,7 +147,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<>();
-        lore.add(Locale.SELECT_SKIN);
+        lore.add(Locale.SELECT_SKIN.replace("&", "§"));
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
