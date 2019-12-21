@@ -88,10 +88,9 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
     }
 
-    public Inventory getGUI(Player p, int page) {
+    public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
         Inventory inventory = Bukkit.createInventory(p, 54, "§9Skins Menu - Page " + page);
-        int skinNumber = 36 * page;
-        Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(38, new GuiGlass(GlassType.NONE).getItemStack());
@@ -123,17 +122,25 @@ public class SkinsGUI extends ItemStack implements Listener {
                 inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
                 inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
             }
+
+            inventory.addItem(createSkull(name, property));
+
             //if the page is full, adding Next Page button.
-            if (inventory.firstEmpty() == -1) {
+            if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null) {
                 inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
                 inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
                 inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
                 return;
             }
-            inventory.addItem(createSkull(name, property));
         });
 
         return inventory;
+    }
+
+    public Inventory getGUI(Player p, int page) {
+        int skinNumber = 36 * page;
+        Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+        return this.getGUI(p, page, skinsList);
     }
 
     private ItemStack createSkull(String name, Object property) {
@@ -186,6 +193,30 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
 
         if (!e.getCurrentItem().hasItemMeta()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        if (plugin.isBungeeEnabled()) {
+            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.PLAYER_HEAD) {
+                String skin = e.getCurrentItem().getItemMeta().getDisplayName();
+                plugin.requestSkinSetFromBungeeCord(player, skin);
+                player.closeInventory();
+            }
+            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.RED_STAINED_GLASS_PANE) {
+                plugin.requestSkinClearFromBungeeCord(player);
+                player.closeInventory();
+            }
+            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.GREEN_STAINED_GLASS_PANE) {
+                int currentPage = getMenus().get(player.getName());
+                getMenus().put(player.getName(), currentPage + 1);
+                plugin.requestSkinsFromBungeeCord(player, currentPage + 1);
+            }
+            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.YELLOW_STAINED_GLASS_PANE) {
+                int currentPage = getMenus().get(player.getName());
+                getMenus().put(player.getName(), currentPage - 1);
+                plugin.requestSkinsFromBungeeCord(player, currentPage - 1);
+            }
             e.setCancelled(true);
             return;
         }

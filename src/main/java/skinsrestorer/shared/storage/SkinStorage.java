@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import lombok.Getter;
 import lombok.Setter;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MySQL;
@@ -422,7 +421,7 @@ public class SkinStorage {
             return list;
         } else {
             Map<String, Object> list = new TreeMap<>();
-            String path = SkinsRestorer.getInstance().getDataFolder() + "/Skins/";
+            String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             File folder = new File(path);
             String[] fileNames = folder.list();
 
@@ -435,6 +434,85 @@ public class SkinStorage {
                 String skinName = file.replace(".skin", "");
                 if (i >= number) {
                     list.put(skinName, this.getSkinData(skinName, false));
+                }
+                i++;
+            }
+            return list;
+        }
+    }
+
+    // Todo: remove duplicated code and use existing methods....
+    // Todo: needs a lot refactoring!
+    // Todo: We should _always_ reuturn our own Property object and cast to the platform specific one just before actually setting the skin.
+    // Todo: That should save lots of duplicated code
+    public Map<String, Property> getSkinsRaw(int number) {
+        if (Config.USE_MYSQL) {
+            Map<String, Property> list = new TreeMap<>();
+            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
+            int i = 0;
+            int foundSkins = 0;
+            try {
+                do {
+                    if (i >= number && foundSkins <= 26) {
+                        Property prop = new Property();
+                        prop.setName("textures");
+                        prop.setValue(crs.getString("Value"));
+                        prop.setSignature(crs.getString("Signature"));
+                        list.put(crs.getString("Nick"), prop);
+                        foundSkins++;
+                    }
+                    i++;
+                } while (crs.next());
+            } catch (java.sql.SQLException ignored) {
+                ignored.printStackTrace();
+            }
+            return list;
+        } else {
+            Map<String, Property> list = new TreeMap<>();
+            String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
+            File folder = new File(path);
+            String[] fileNames = folder.list();
+
+            if (fileNames == null)
+                return list;
+
+            Arrays.sort(fileNames);
+            int i = 0;
+            int foundSkins = 0;
+            for (String file : fileNames) {
+                String skinName = file.replace(".skin", "");
+
+                File skinFile = new File(path + file);
+                if (i >= number && foundSkins <= 26) {
+
+                    try {
+                        if (!skinFile.exists())
+                            return null;
+
+                        BufferedReader buf = new BufferedReader(new FileReader(skinFile));
+
+                        String line, value = "", signature = "", timestamp = "";
+                        for (int i2 = 0; i2 < 3; i2++)
+                            if ((line = buf.readLine()) != null)
+                                if (value.isEmpty()) {
+                                    value = line;
+                                } else if (signature.isEmpty()) {
+                                    signature = line;
+                                } else {
+                                    timestamp = line;
+                                }
+                        buf.close();
+
+                        Property prop = new Property();
+                        prop.setName("textures");
+                        prop.setValue(value);
+                        prop.setSignature(signature);
+                        list.put(skinName, prop);
+
+                        foundSkins++;
+
+                    } catch (Exception e) {
+                    }
                 }
                 i++;
             }

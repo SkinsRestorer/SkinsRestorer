@@ -8,6 +8,8 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.bukkit.commands.GUICommand;
@@ -16,6 +18,7 @@ import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listener.PlayerJoin;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
+import skinsrestorer.bungee.listeners.PluginMessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -24,6 +27,8 @@ import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.*;
+import java.util.Map;
+import java.util.TreeMap;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
@@ -106,6 +111,9 @@ public class SkinsRestorer extends JavaPlugin {
 
         this.skinStorage = new SkinStorage();
 
+        // Init SkinsGUI click listener even when on bungee
+        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
+
         if (bungeeEnabled) {
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
@@ -124,6 +132,56 @@ public class SkinsRestorer extends JavaPlugin {
                             } catch (IOException ignored) {
                             }
                             factory.updateSkin(player);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            });
+
+            Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:messagechannel");
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:messagechannel", (channel, player, message) -> {
+                if (!channel.equals("sr:messagechannel"))
+                    return;
+
+                Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
+                    DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+
+                    try {
+                        String subchannel = in.readUTF();
+
+                        if (subchannel.equalsIgnoreCase("OPENGUI")) {
+                            Player p = Bukkit.getPlayer(in.readUTF());
+
+                            SkinsGUI.getMenus().put(p.getName(), 0);
+
+                            this.requestSkinsFromBungeeCord(p, 0);
+                        }
+
+                        if (subchannel.equalsIgnoreCase("returnSkins")) {
+
+                            Player p = Bukkit.getPlayer(in.readUTF());
+                            int page = in.readInt();
+
+                            short len = in.readShort();
+                            byte[] msgbytes = new byte[len];
+                            in.readFully(msgbytes);
+
+                            Map<String, Property> skinList = convertToObject(msgbytes);
+
+                            //convert
+                            Map<String, Object> newSkinList = new TreeMap<>();
+
+                            skinList.forEach((name, property) -> {
+                                newSkinList.put(name, this.getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature()));
+                            });
+
+                            SkinsGUI skinsGUI = new SkinsGUI(this);
+                            Inventory inventory = skinsGUI.getGUI(p, page, newSkinList);
+
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                                p.openInventory(inventory);
+                            });
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -152,11 +210,71 @@ public class SkinsRestorer extends JavaPlugin {
         this.initCommands();
 
         // Init listener
-        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
         // Init API
         this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(this, this.mojangAPI, this.skinStorage);
+    }
+
+    public void requestSkinsFromBungeeCord(Player p, int page) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bytes);
+
+            out.writeUTF("getSkins");
+            out.writeUTF(p.getName());
+            out.writeInt(page); // Page
+
+            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void requestSkinClearFromBungeeCord(Player p) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bytes);
+
+            out.writeUTF("clearSkin");
+            out.writeUTF(p.getName());
+
+            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void requestSkinSetFromBungeeCord(Player p, String skin) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bytes);
+
+            out.writeUTF("setSkin");
+            out.writeUTF(p.getName());
+            out.writeUTF(skin);
+
+            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Map<String, Property> convertToObject(byte[] byteArr){
+        Map<String, Property> map = new TreeMap<>();
+        Property obj = null;
+        ByteArrayInputStream bis = null;
+        ObjectInputStream ois = null;
+        try {
+            bis = new ByteArrayInputStream(byteArr);
+            ois = new ObjectInputStream(bis);
+            while(bis.available() > 0){
+                map = (Map<String, Property>)ois.readObject();
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return map;
     }
 
     private void initCommands() {

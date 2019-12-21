@@ -10,9 +10,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import skinsrestorer.bungee.commands.GUICommand;
 import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.commands.SkinCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
+import skinsrestorer.bungee.listeners.PluginMessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -48,6 +50,10 @@ public class SkinsRestorer extends Plugin {
     private MineSkinAPI mineSkinAPI;
     @Getter
     private SRLogger srLogger;
+    @Getter
+    private PluginMessageListener pluginMessageListener;
+    @Getter
+    private SkinCommand skinCommand;
     @Getter
     private SkinsRestorerBungeeAPI skinsRestorerBungeeAPI;
 
@@ -108,6 +114,11 @@ public class SkinsRestorer extends Plugin {
         this.skinApplier = new SkinApplier(this);
         this.skinApplier.init();
 
+        // Init message channel
+        this.getProxy().registerChannel("sr:messagechannel");
+        this.pluginMessageListener = new PluginMessageListener(this);
+        this.getProxy().getPluginManager().registerListener(this, this.pluginMessageListener);
+
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
@@ -133,8 +144,10 @@ public class SkinsRestorer extends Plugin {
 
         new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
 
-        manager.registerCommand(new SkinCommand(this));
+        this.skinCommand = new SkinCommand(this);
+        manager.registerCommand(this.skinCommand);
         manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
