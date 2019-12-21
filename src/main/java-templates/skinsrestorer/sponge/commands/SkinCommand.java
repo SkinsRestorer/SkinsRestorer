@@ -167,11 +167,6 @@ public class SkinCommand extends BaseCommand {
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
 
         if (C.validUsername(skin)) {
-            if (!source.hasPermission("skinsrestorer.command.set.url")) {
-                source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
-                return false;
-            }
-
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
@@ -187,6 +182,11 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
         if (C.validUrl(skin)) {
+            if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
+                source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
+                return false;
+            }
+
             try {
                 source.sendMessage(plugin.parseMessage(Locale.MS_UPDATING_SKIN));
                 String skinentry = " "+p.getName(); // so won't overwrite premium playernames
