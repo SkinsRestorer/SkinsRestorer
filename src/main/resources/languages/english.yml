@@ -67,7 +67,7 @@ genericError: "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while reques
 waitMinute: "&e[&2SkinsRestorer&e] &4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
 
 # Message sent when server has an outdated version of SR
-outdated: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest";
+outdated: "&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/";
 
 # Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!";
