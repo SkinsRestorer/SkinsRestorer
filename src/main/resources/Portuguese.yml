@@ -1,0 +1,51 @@
+HELP_SKIN_CLEAR: Remova sua skin.
+HELP_SKIN_CLEAR_OTHER: Remova a skin de outro jogador.
+HELP_SKIN_UPDATE: Atualize sua skin.
+HELP_SKIN_UPDATE_OTHER: Atualize a skin de outro jogador.
+HELP_SKIN_SET: Defina uma skin para você.
+HELP_SKIN_SET_OTHER: Defina uma skin de outro jogador.
+HELP_SR_RELOAD: Recarregue a configuração das skins.
+HELP_SR_STATUS: Verifica os serviços de API necessários ao plugin.
+HELP_SR_DROP: Solta os dados de skin dos jogadores.
+HELP_SR_PROPS: Exibe a skin atual do jogador como propriedades.
+PLAYER_HAS_NO_PERMISSION_SKIN: '&cVocê precisa do grupo VIP ou superior para utilizar este comando..'
+PLAYER_HAS_NO_PERMISSION_URL: '&cVocê precisa do grupo Admin ou superior para utilizar este comando..'
+SKIN_DISABLED: '&cEsta skin está desabilidade do servidor.'
+NOT_PREMIUM: '&cEste nome não existe e não é uma conta original.'
+INVALID_PLAYER: '&c%player não é um nome de um jogador ou URL válido.'
+SKIN_COOLDOWN_NEW: '&cVocê pode alterar sua skin novamente em &e%s &csegundos.'
+SKIN_CHANGE_SUCCESS: '&cVocê alterou sua skin com sucesso.'
+SKIN_CLEAR_SUCCESS: '&aVocê removeu sua skin com sucesso.'
+SKIN_CLEAR_ISSUER: '&aSkin do jogador %player foi removida.'
+MS_UPDATING_SKIN: '&aCarregando skin, aguarde um instante...'
+SUCCESS_UPDATING_SKIN: '&aVocê fez upload da sua skin com sucesso.'
+SUCCESS_UPDATING_SKIN_OTHER: '&aSkin do jogador %player foi carregada.'
+ERROR_UPDATING_SKIN: '&cOcorreu um erro ao atualizar sua skin. Por favor, tente novamente mais tarde!'
+ERROR_MS_FULL: '&cO tempo limite da API expirou durante o upload de sua skin. Por favor, tente novamente mais tarde. (MineSkin)'
+ERROR_MS_GENERIC: '&c%error%'
+GENERIC_ERROR: '&cOcorreu um erro ao solicitar dados da skin, tente novamente mais tarde!'
+WAIT_A_MINUTE: '&cAguarde um minuto antes de solicitar uma skin novamente. (Rate Limited)'
+MENU_OPEN: '&aAbrindo menu de skins...'
+NEXT_PAGE: '&a&lPróxima Página'
+PREVIOUS_PAGE: '&a&lPágina Anterior.'
+REMOVE_SKIN: '&c&l[Remover Skin]'
+SELECT_SKIN: '&eClique para escolher uma skin.'
+ADMIN_SET_SKIN: '&aVocê definiu uma skin para %player.'
+SKIN_DATA_DROPPED: '&aDados da skin para o jogador %player descartados.'
+STATUS_OK: '&aMojang API foi conectado com sucesso!'
+ALT_API_FAILED: '&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please
+  try again later!'
+MS_API_FAILED: '&e[&2SkinsRestorer&e] &4Error&8: &cMineSkin API is overloaded, please
+  try again later!'
+NO_SKIN_DATA: '&e[&2SkinsRestorer&e] &4Error&8: &cNo skin data acquired! Does this
+  player have a skin?'
+RELOAD: '&6&l[Menu de Skins] &aConfiguração e localidade foram recarregados!'
+OUTDATED: "&6&l[Menu de Skins] &cVocê está executando uma versão desatualizada do Menu de Skins!\n\
+  &cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+SR_LINE: '&7&m----------------------------------------'
+HELP_PLAYER: |2-
+     &6&l[Menu de Skins]
+     &6/skin <skin> &7-&f Altere sua skin.
+     &6/skin update &7-&f Atualize sua skin.
+     &6/skin clear &7-&f Remova sua skin.
+SR_LINE: '&7&m----------------------------------------'
