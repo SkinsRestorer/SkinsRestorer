@@ -1,37 +1,18 @@
 ---
-#String used as a divider
-line: "\"&7&m----------------------------------------\";"
-#String sent to player when they do not have permission to use a command
-playerNoPermission:
-  #String sent to player when they do not have permission to use a command
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
-#Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
-helpPlayer:
-  - "    &2&lSkinsRestorer &7- &f&lv%ver%"
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - '"    &2/skin clear &7-&f Clears your skin.";'
-#Message line sent when requesting SkinsRestorer help and having skinsrestorer.cmds permission
-help: "\"    &2/sr &7- &fDisplay admin commands.\";"
 #Message sent when the premium account with specified username does not exist
 notPremium:
   #Message sent when the premium account with specified username does not exist
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium player with that name does not exist.";'
+#String sent to player when they do not have permission to use a command
+playerNoPermission:
+  #String sent to player when they do not have permission to use a command
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
 #Message sent to player whose skin was changed
 skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been changed.\";"
 #Message sent to player whose skin was cleared
 skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been cleared.\";"
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin cleared for player %player.\";"
-#Message sent when requesting admin help
-help_admin:
-  - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-  - "    &2/sr config &7- &fhelp page for usefull in game config settings"
-  - "    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
-  - "    &2/sr drop <player> &7- &fDrops player skin data."
-  - "    &2/sr clear <player> &7- &fClears player data."
-  - "    &2/sr reload &7- &fReloads the config and locale"
-  - '"    &2/sr props [player] &7- &fDisplays the players actual skin as properties";'
 #Message displayed when using /sr set command
 adminSetSkin: "\"&e[&2SkinsRestorer&e] &2You set %player's skin.\";"
 #Message displayed when using /sr set command and providing an invalid username
@@ -94,3 +75,23 @@ statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
 altApiFailed:
   #old debug
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+#=== OLD SKIN HELP ===
+#String used as a divider
+line: "\"&7&m----------------------------------------\";"
+#Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
+helpPlayer:
+  - "    &2&lSkinsRestorer &7- &f&lv%ver%"
+  - "    &2/skin set <skinname> &7-&f Changes your skin."
+  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
+  - '"    &2/skin clear &7-&f Clears your skin.";'
+#Message line sent when requesting SkinsRestorer help and having skinsrestorer.cmds permission
+help: "\"    &2/sr &7- &fDisplay admin commands.\";"
+#Message sent when requesting admin help
+help_admin:
+  - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
+  - "    &2/sr config &7- &fhelp page for usefull in game config settings"
+  - "    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
+  - "    &2/sr drop <player> &7- &fDrops player skin data."
+  - "    &2/sr clear <player> &7- &fClears player data."
+  - "    &2/sr reload &7- &fReloads the config and locale"
+  - '"    &2/sr props [player] &7- &fDisplays the players actual skin as properties";'
