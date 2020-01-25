@@ -2,11 +2,11 @@
 #Message sent when the premium account with specified username does not exist
 notPremium:
   #Message sent when the premium account with specified username does not exist
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium player with that name does not exist.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": Aucun joueur premium avec ce pseudo n'existe.";
 #String sent to player when they do not have permission to use a command
 playerNoPermission:
   #String sent to player when they do not have permission to use a command
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cVous n''avez pas la permission de faire ça.";'
 #Message sent to player whose skin was changed
 skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been changed.\";"
 #Message sent to player whose skin was cleared
