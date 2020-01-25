@@ -46,7 +46,7 @@ genericError:
 #Cooldown message
 waitMinute:
   #Cooldown message
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '"&e[&2SkinsRestorer&e] &4Erreur&8 : &cVeuillez attendre une minute avant de requêter à nouveau ce skin. (Rate Limited)";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cVeuillez attendre une minute avant de requêter à nouveau ce skin. (Rate Limited)";'
 #Message sent when server has an outdated version of SR
 outdated:
   #Message sent when server has an outdated version of SR
