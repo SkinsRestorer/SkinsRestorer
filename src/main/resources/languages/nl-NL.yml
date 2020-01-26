@@ -42,39 +42,39 @@ noSkinData:
 #When proxy returned skin is empty
 genericError:
   #When proxy returned skin is empty
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cAn error occurred while requesting skin data, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cEr is een fout opgetreden bij het ophalen van de skin gegevens, probeer het later opnieuw!";'
 #Cooldown message
 waitMinute:
   #Cooldown message
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPlease wait a minute before requesting that skin again. (Rate Limited)";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cWacht alsjeblieft een minuut voordat je die skin opnieuw aanvraagt. (Rate Limited)";'
 #Message sent when server has an outdated version of SR
 outdated:
   #Message sent when server has an outdated version of SR
   "\"&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version": \n&e-> https://skinsrestorer.net/get/latest";
 #Message sent when using a player-only command
-playersOnly: "\"&4These commands are only for players!\";"
+playersOnly: "\"&4Deze commando's zijn alleen voor spelers!\";"
 #When none Player try's to set a skin
 notPlayer:
   #When none Player try's to set a skin
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou need to be a player!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cJe moet een speler zijn!";'
 #=== GUI ===
 #/skins message
-menuOpen: "\"&2Opening the skins menu...\";"
+menuOpen: "\"&2Open skins menu...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 Vorige pagina&e&l «\";"
 #Next page [GUI]
-nextPage: "\"&a&l»&7 Next Page&a&l »\";"
+nextPage: "\"&a&l»&7 Volgende pagina&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
+removeSkin: "\"&c&l»&7 Verwijder skin&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "\"&2Click to select this skin\";"
+selectSkin: "\"&2klik om deze skin te selecteren\";"
 #=== DEBUG ===
 #old debug
-statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
+statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API verbinding succesvol!\";"
 #old debug
 altApiFailed:
   #old debug
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin gegevens API is overbelast, probeer het later opnieuw!";'
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "\"&7&m----------------------------------------\";"
