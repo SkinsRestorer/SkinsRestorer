@@ -2,15 +2,15 @@
 #Message sent when the premium account with specified username does not exist
 notPremium:
   #Message sent when the premium account with specified username does not exist
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium player with that name does not exist.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cNo existe un jugador premium con";'
 #String sent to player when they do not have permission to use a command
 playerNoPermission:
   #String sent to player when they do not have permission to use a command
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
 #Message sent to player whose skin was changed
-skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been changed.\";"
+skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Tu Skin ha sido cambiada.\";"
 #Message sent to player whose skin was cleared
-skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been cleared.\";"
+skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Tu Skin ha sido borrada.\";"
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin cleared for player %player.\";"
 #Message displayed when using /sr set command
@@ -60,10 +60,10 @@ notPlayer:
 #=== GUI ===
 #/skins message
 menuOpen: "\"&2Opening the skins menu...\";"
+#Previus page [GUI]
+previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
 #Next page [GUI]
 nextPage: "\"&a&l»&7 Next Page&a&l »\";"
-#Previus page [GUI]
-previusPage: "\"&e&l»&7 Previous Page&e&l «\";"
 #Clear skin [GUI]
 removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
 #item lore for skulls [GUI]
