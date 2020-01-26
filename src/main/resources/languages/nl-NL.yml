@@ -2,17 +2,17 @@
 #Message sent when the premium account with specified username does not exist
 notPremium:
   #Message sent when the premium account with specified username does not exist
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium player with that name does not exist.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium speler met die naam bestaat niet";'
 #String sent to player when they do not have permission to use a command
 playerNoPermission:
   #String sent to player when they do not have permission to use a command
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cJe hebt geen toegang om dit te doen";'
 #Message sent to player whose skin was changed
-skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been changed.\";"
+skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Je skin is aangepast.\";"
 #Message sent to player whose skin was cleared
-skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been cleared.\";"
+skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Je skin is gewist.\";"
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin cleared for player %player.\";"
+skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin gewist voor speler %player.\";"
 #Message displayed when using /sr set command
 adminSetSkin: "\"&e[&2SkinsRestorer&e] &2You set %player's skin.\";"
 #Message displayed when using /sr set command and providing an invalid username
