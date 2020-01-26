@@ -56,11 +56,11 @@ notPlayer: "&e[&2SkinsRestorer&e] &4Error&8: &cYou need to be a player!";
 # /skins message
 menuOpen: "&2Opening the skins menu...";
 
+# Previus page [GUI]
+previusPage: "&e&l«&7 Previous Page&e&l «";
+
 # Next page [GUI]
 nextPage: "&a&l»&7 Next Page&a&l »";
-
-# Previus page [GUI]
-previusPage: "&e&l»&7 Previous Page&e&l «";
 
 # Clear skin [GUI]
 removeSkin: "&c&l»&7 Remove Skin&c&l »";
@@ -69,7 +69,6 @@ removeSkin: "&c&l»&7 Remove Skin&c&l »";
 selectSkin: "&2Click to select this skin";
 
 # === DEBUG ===
-
 # old debug
 statusOk: "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
 
@@ -77,7 +76,6 @@ statusOk: "&e[&2SkinsRestorer&e] &2Mojang API connection successful!";
 altApiFailed: "&e[&2SkinsRestorer&e] &4Error&8: &cSkin Data API is overloaded, please try again later!";
 
 # === OLD SKIN HELP ===
-
 # String used as a divider
 line: "&7&m----------------------------------------";
 
