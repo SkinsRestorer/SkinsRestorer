@@ -60,10 +60,10 @@ notPlayer:
 #=== GUI ===
 #/skins message
 menuOpen: "\"&2Se deschide meniul skin-urilor...\";"
+#Previus page [GUI]
+previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
 #Next page [GUI]
 nextPage: "\"&a&l»&7 Pagina Următoare&a&l »\";"
-#Previus page [GUI]
-previusPage: "\"&e&l»&7 Previous Page&e&l «\";"
 #Clear skin [GUI]
 removeSkin: "\"&c&l»&7 Șterge skin-ul&c&l »\";"
 #item lore for skulls [GUI]
