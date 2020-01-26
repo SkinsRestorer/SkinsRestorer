@@ -14,31 +14,31 @@ skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Je skin is gewist.\";"
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin gewist voor speler %player.\";"
 #Message displayed when using /sr set command
-adminSetSkin: "\"&e[&2SkinsRestorer&e] &2You set %player's skin.\";"
+adminSetSkin: "\"&e[&2SkinsRestorer&e] &2Je hebt %player's skin ingesteld.\";"
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer:
   #Message displayed when using /sr set command and providing an invalid username
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&c%player is not a valid username.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&c%player is geen geldige gebruikersnaam.";'
 #Message displayed when using /sr set command and providing username of a player that is currently not online
 playerNotonline:
   #Message displayed when using /sr set command and providing username of a player that is currently not online
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPlayer is not online!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSpeler is niet online!";'
 #Message displayed when using /sr drop command
-skinDataDropped: "\"&e[&2SkinsRestorer&e] &2Skin data for player %player dropped.\";"
+skinDataDropped: "\"&e[&2SkinsRestorer&e] &2Skin gegevens voor speler %player gewist.\";"
 #Message sent when the /sr reload command execution was successful
-reload: "\"&e[&2SkinsRestorer&e] &2Config and Locale has been reloaded!\";"
+reload: "\"&e[&2SkinsRestorer&e] &2Configuratie en taal bestanden zijn opnieuw geladen\";"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldownNew:
   #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou can change your skin again in &e%s &cseconds.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cJe kan je skin opnieuw aanpassen over &e%s &cseconden.";'
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled:
   #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cThis skin is disabled by an administrator.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cDeze skin is uitgeschakeld door een beheerder";'
 #Unknown
 noSkinData:
   #Unknown
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cNo skin data acquired! Does this player have a skin?";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cGeen skin gegevens gevonden! Heeft deze speler een skin?";'
 #When proxy returned skin is empty
 genericError:
   #When proxy returned skin is empty
