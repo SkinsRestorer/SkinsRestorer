@@ -61,7 +61,7 @@ notPlayer:
 #/skins message
 menuOpen: "\"&2Ouverture du menu des skins...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 Page précédente&e&l «\";"
 #Next page [GUI]
 nextPage: "\"&a&l»&7 Page suivante&a&l »\";"
 #Clear skin [GUI]
