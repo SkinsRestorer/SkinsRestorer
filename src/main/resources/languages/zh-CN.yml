@@ -59,22 +59,22 @@ notPlayer:
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou need to be a player!";'
 #=== GUI ===
 #/skins message
-menuOpen: "\"&2Opening the skins menu...\";"
+menuOpen: "\"&2打开皮肤选择菜单...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 上一页&e&l «\";"
 #Next page [GUI]
-nextPage: "\"&a&l»&7 Next Page&a&l »\";"
+nextPage: "\"&a&l»&7 下一页&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
+removeSkin: "\"&c&l»&7 删除你的皮肤&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "\"&2Click to select this skin\";"
+selectSkin: "\"&2点击选择该皮肤\";"
 #=== DEBUG ===
 #old debug
-statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
+statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API 连接成功!\";"
 #old debug
 altApiFailed:
   #old debug
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&c皮肤数据 API 过载，请稍后重试。";'
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "\"&7&m----------------------------------------\";"
