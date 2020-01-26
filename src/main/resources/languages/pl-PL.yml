@@ -8,7 +8,7 @@ playerNoPermission:
   #String sent to player when they do not have permission to use a command
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cNie posiadasz do tego uprawnień.";'
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Twój skin został zmieniony.\";"
+skinChangeSuccess: "\"&e[&2SkinsRestorer&e] &2Twój skin został zmieniony.\";"
 #Message sent to player whose skin was cleared
 skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Twój skin został zresetowany.\";"
 #Message sent to player that used /sr clear PLAYER command
@@ -30,7 +30,7 @@ reload: "\"&e[&2SkinsRestorer&e] &2Pliki konfiguracyjne i językowe zostały prz
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldownNew:
   #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '"&e[&2SkinsRestorer&e] &4Błąd&8: &cMusisz odczekać &e%s &csekund(ę).";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cMusisz odczekać &e%s &csekund(ę).";'
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled:
   #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
