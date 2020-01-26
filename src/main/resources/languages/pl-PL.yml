@@ -6,7 +6,7 @@ notPremium:
 #String sent to player when they do not have permission to use a command
 playerNoPermission:
   #String sent to player when they do not have permission to use a command
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou don''t have permission to do this.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cNie posiadasz do tego uprawnień.";'
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Twój skin został zmieniony.\";"
 #Message sent to player whose skin was cleared
@@ -22,7 +22,7 @@ invalidPlayer:
 #Message displayed when using /sr set command and providing username of a player that is currently not online
 playerNotonline:
   #Message displayed when using /sr set command and providing username of a player that is currently not online
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPlayer is not online!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cTen gracz nie jest dostępny!";'
 #Message displayed when using /sr drop command
 skinDataDropped: "\"&e[&2SkinsRestorer&e] &2Dane skina %player usunięte.\";"
 #Message sent when the /sr reload command execution was successful
@@ -52,29 +52,29 @@ outdated:
   #Message sent when server has an outdated version of SR
   "\"&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version": \n&e-> https://skinsrestorer.net/get/latest";
 #Message sent when using a player-only command
-playersOnly: "\"&4These commands are only for players!\";"
+playersOnly: "\"&4Te komendy można wykonać tylko jako gracz!\";"
 #When none Player try's to set a skin
 notPlayer:
   #When none Player try's to set a skin
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou need to be a player!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cMusisz być graczem, aby to zrobić!";'
 #=== GUI ===
 #/skins message
-menuOpen: "\"&2Opening the skins menu...\";"
+menuOpen: "\"&2Otwieranie Gui...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 Poprzednia strona&e&l «\";"
 #Next page [GUI]
-nextPage: "\"&a&l»&7 Next Page&a&l »\";"
+nextPage: "\"&a&l»&7 Następna strona&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
+removeSkin: "\"&c&l»&7 Usuń skin&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "\"&2Click to select this skin\";"
+selectSkin: "\"&2Wybierz ten skin\";"
 #=== DEBUG ===
 #old debug
-statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
+statusOk: "\"&e[&2SkinsRestorer&e] &2Uzyskano połączenie z API Mojang!\";"
 #old debug
 altApiFailed:
   #old debug
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cAPI danych skinów jest przeciążone, spróbuj ponowanie później!";'
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "\"&7&m----------------------------------------\";"
