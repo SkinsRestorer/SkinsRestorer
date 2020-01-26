@@ -59,22 +59,22 @@ notPlayer:
   "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou need to be a player!";'
 #=== GUI ===
 #/skins message
-menuOpen: "\"&2Opening the skins menu...\";"
-#Next page [GUI]
-nextPage: "\"&a&l»&7 Next Page&a&l »\";"
+menuOpen: "\"&2Открытие меню скинов...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l»&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+#Next page [GUI]
+nextPage: "\"&a&l»&7 Следующая Страница&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
+removeSkin: "\"&c&l»&7 Удалить скин&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "\"&2Click to select this skin\";"
+selectSkin: "\"&2Нажмите, чтобы выбрать этот скин\";"
 #=== DEBUG ===
 #old debug
-statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
+statusOk: "\"&e[&2SkinsRestorer&e] &2Соединение с API Mojang установлено!\";"
 #old debug
 altApiFailed:
   #old debug
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cAPI скинов недоступно. Пожалуйста, попробуйте позже!";'
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "\"&7&m----------------------------------------\";"
