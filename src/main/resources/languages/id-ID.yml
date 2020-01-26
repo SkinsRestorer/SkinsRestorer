@@ -52,29 +52,29 @@ outdated:
   #Message sent when server has an outdated version of SR
   "\"&e[&2SkinsRestorer&e] &4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version": \n&e-> https://skinsrestorer.net/get/latest";
 #Message sent when using a player-only command
-playersOnly: "\"&4These commands are only for players!\";"
+playersOnly: "\"&4Perintah ini hanya bisa dilakukan oleh pemain!\";"
 #When none Player try's to set a skin
 notPlayer:
   #When none Player try's to set a skin
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cYou need to be a player!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cKamu bukan pemain!";'
 #=== GUI ===
 #/skins message
-menuOpen: "\"&2Opening the skins menu...\";"
+menuOpen: "&2Membuka menu skin...\";"
 #Previus page [GUI]
-previusPage: "\"&e&l«&7 Previous Page&e&l «\";"
+previusPage: "\"&e&l«&7 Halaman Sebelumnya&e&l «\";"
 #Next page [GUI]
-nextPage: "\"&a&l»&7 Next Page&a&l »\";"
+nextPage: "\"&a&l»&7 Halaman Selanjutnya&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "\"&c&l»&7 Remove Skin&c&l »\";"
+removeSkin: "\"&c&l»&7 Hapus Skin&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "\"&2Click to select this skin\";"
+selectSkin: "\"&2Klik untuk memilih skin\";"
 #=== DEBUG ===
 #old debug
-statusOk: "\"&e[&2SkinsRestorer&e] &2Mojang API connection successful!\";"
+statusOk: "\"&e[&2SkinsRestorer&e] &2Koneksi ke Mojang API berhasil!\";"
 #old debug
 altApiFailed:
   #old debug
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API is overloaded, please try again later!";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cSkin Data API sedang sibuk, coba lagi nanti!";'
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "\"&7&m----------------------------------------\";"
