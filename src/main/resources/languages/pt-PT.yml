@@ -2,7 +2,7 @@
 #Message sent when the premium account with specified username does not exist
 notPremium:
   #Message sent when the premium account with specified username does not exist
-  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cPremium player with that name does not exist.";'
+  "\"&e[&2SkinsRestorer&e] &4Error&8": '&cEste nome não existe e não é uma conta original.";'
 #String sent to player when they do not have permission to use a command
 playerNoPermission:
   #String sent to player when they do not have permission to use a command
@@ -14,7 +14,7 @@ skinClearSuccess: "\"&e[&2SkinsRestorer&e] &2Your skin has been cleared.\";"
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "\"&e[&2SkinsRestorer&e] &2Skin cleared for player %player.\";"
 #Message displayed when using /sr set command
-adminSetSkin: "\"&e[&2SkinsRestorer&e] &2You set %player's skin.\";"
+adminSetSkin: "\"&e[&2SkinsRestorer&e] &2Você definiu uma skin para %player.\";"
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer:
   #Message displayed when using /sr set command and providing an invalid username
