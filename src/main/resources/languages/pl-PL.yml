@@ -26,12 +26,12 @@ reload: "&2Config and Locale has been reloaded!"
 skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
-#Unknown
+#Can not set skin due to player name not being premium or having no skin
 noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
-#When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 #Cooldown message
 waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+#When proxy returned skin is empty
+genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 #Message sent when server has an outdated version of SR
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
