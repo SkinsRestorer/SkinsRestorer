@@ -3,23 +3,23 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Erreur&8 : &cAucun joueur premium avec ce nom n'existe."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Erreur&8 : &cVous n'avez pas la permssion de faire ça."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Votre skin a bien été changé."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Votre skin par défaut a bien été remis."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin par défaut remis pour le joueur %player."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Vous avez défini le skin de %player."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Erreur&8 : &cLe pseudo %player n'est pas valide."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Erreur&8 : &cCe joueur n'est pas en ligne !"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Les données du skin de %player ont été jetées."
 #Message sent when the /sr reload command execution was successful
 reload: "&2Config and Locale has been reloaded!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
