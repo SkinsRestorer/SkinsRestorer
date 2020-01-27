@@ -3,57 +3,57 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Грешка&8: &cПремиум акаунт с това име не съществува."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Грешка&8: &cНямащ право да направиш това ."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Твоят скин беше променен."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Твоят скин беше премахнат."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Скина на %player е премахнат."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Ти промени скина на %player."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Грешка&8: &c%player не е валиден никнейм."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Грешка&8: &cPlayer Не е онлайн!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Данните за скина %player са изчистени ."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Конфигурацията и езиците са актуализирани!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Грешка&8: &cМожеш да промениш скина си след &e%s &cсекунди."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Грешка&8: &cТози скин е забранен от администратор."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Грешка&8: &cНе са намерени данни за скин! Този играч има ли скин?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Грешка&8: &cМоля изчакай минута преди да сменяш скин. (Rate Limited)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Грешка&8: &cВъзникна грешка при получаването на скин!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Използваш стара версия на SkinsRestorer!\n&cМоля актуализирай до последната версия: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Тази команда е само за играчи!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Грешка&8: &cТрябва да си играч !"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&eОтваряне на менюто със скинове..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Предишна страница&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Следваща страница&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Изтрий скин&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Натисни за да избереш скин"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Mojang API Успешна връзка!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Error&8: &cSkin Data API - претоварена, опитай по късно!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
