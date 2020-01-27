@@ -5,7 +5,7 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
 notPremium: "&4Erreur&8 : &cAucun joueur premium avec ce nom n'existe."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Erreur&8 : &cVous n'avez pas la permssion de faire ça."
+playerNoPermission: "&4Erreur&8 : &cVous n'avez pas la permission de faire ça."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Votre skin a bien été changé."
 #Message sent to player whose skin was cleared
