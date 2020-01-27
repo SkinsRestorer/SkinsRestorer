@@ -33,7 +33,7 @@ waitMinute: "&4Błąd&8: &cOdczekaj chwilę zanim znów żądasz tego skina. (Ra
 #When proxy returned skin is empty
 genericError: "&4Błąd&8: &cPodczas żądania danych skina wystąpił błąd, spróbuj ponowanie później!"
 #Message sent when server has an outdated version of SR
-outdated: "&4Posiadasz starą wersję SkinSrestorera!\n&cZaktualizuj do najnowszej wersji:\n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Używasz starej wersji SkinRestorera!\n&cZaktualizuj do najnowszej wersji:\n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
 playersOnly: "&4Te komendy można wykonać tylko jako gracz!"
 #When none Player try's to set a skin
