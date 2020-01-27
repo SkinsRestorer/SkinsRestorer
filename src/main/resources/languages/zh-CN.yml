@@ -7,9 +7,9 @@ notPremium: "4错误&8: &c具有该名称的高级玩家不存在。"
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4错误&8: &c你没有权限这么做！"
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2你的皮肤已改变。"
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2你的皮肤已改变。"
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "&2Skin cleared for player %player."
 #Message displayed when using /sr set command
