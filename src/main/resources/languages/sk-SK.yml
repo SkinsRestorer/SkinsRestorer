@@ -3,9 +3,9 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Chyba&8: &cGracz premium z takim pseudonimem nie istnieje."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Chyba&8: &cNie posiadasz do tego uprawnień."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Twój skin został zmieniony."
 #Message sent to player whose skin was cleared
@@ -33,7 +33,7 @@ waitMinute: "&4Chyba&8: &cOdczekaj chwilę zanim znów żądasz tego skina. (Rat
 #When proxy returned skin is empty
 genericError: "&4Chyba&8: &cPodczas żądania danych skina wystąpił błąd, spróbuj ponowanie później!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "\"&4You are running an outdated version of SkinsRestorer! &cPlease update to the latest version\":"
 #Message sent when using a player-only command
 playersOnly: "&4Te komendy można wykonać tylko jako gracz!"
 #When none Player try's to set a skin
