@@ -7,53 +7,53 @@ notPremium: "&4Error&8: &cPremium player with that name does not exist."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Twój skin został zmieniony."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Twój skin został zresetowany."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin gracza %player zresetowany."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Ustawiłeś skin %player"
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Chyba&8: &c%player nie jest poprawną nazwą lub linkiem."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Chyba&8: &cTen gracz nie jest dostępny!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Dane skina %player usunięte."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Pliki konfiguracyjne i językowe zostały przeładowane!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Chyba&8: &cMusisz odczekać &e%s &csekund(ę)."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Chyba&8: &cTen skin został wyłączony przez administratora."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Chyba&8: &cNie uzyskano żanych danych! Czy ten gracz posiada skina?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Chyba&8: &cOdczekaj chwilę zanim znów żądasz tego skina. (Rate Limit)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Chyba&8: &cPodczas żądania danych skina wystąpił błąd, spróbuj ponowanie później!"
 #Message sent when server has an outdated version of SR
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Te komendy można wykonać tylko jako gracz!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Chyba&8: &cMusisz być graczem, aby to zrobić!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Otwieranie Gui..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Poprzednia strona&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Następna strona&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Usuń skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Wybierz ten skin"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Uzyskano połączenie z API Mojang!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Chyba&8: &cAPI danych skinów jest przeciążone, spróbuj ponowanie później!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
