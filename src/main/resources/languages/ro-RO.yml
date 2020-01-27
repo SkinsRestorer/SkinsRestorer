@@ -3,9 +3,9 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Error&8\": '&cNu există un jucător premium cu acest nume."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Error&8\": '&cNu ai permisiunea să faci asta."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
 #Message sent to player whose skin was cleared
