@@ -3,57 +3,57 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Chyba&8: &cNeexistuje platený účet zo zadaným nickom."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Chyba&8: &cNemáš povolenie na toto."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Tvoj vzhľad bol zmenený."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Tvoj vzhľad bol zresetovaný."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Vzhľad bol zresetovaný pre %player."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Ty meníš vzhľad druhým."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Chyba&8: &c%p Zadaný nick nie je platný."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4chyba&8: &cHráč nie je online!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Vzhľad hráča %player bol uložený do databázy."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Konfiguračný a jazykový súbor bol znova načítaný!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Chyba&8: &cMusíč čakať &e%s &csekúnd pre opätovné zmenie vzhľadu."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Chyba&8: &cTento vzľad je zakázaný správcom!"
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Chyba&8: &cVzhľad tohto hráča sa nepodarilo získať!"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Chyba&8: &cProsím počkaj minútu na získanie tohto vzhľadu."
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Chyba&8: &cNastala chyba pri získavaní daného vzhľadu! Skús to neskôr."
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Máte nainštalovanú starú verziu SkinsRestorera &cProsím sprav update tohto pluginu tu: &e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Chyba&8: &cNa toto musíš byť hráč!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Otváram knižnicu vzhľadov..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l»&7 Predchádzajúca strana&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Ďalšia strana&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Zresetovať vzhľad&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Klikni na vybratie tohto vzhľadu"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2pripojenie k Mojang API bolo úspešné!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Chyba&8: &cMojag API je preťažené alebo nedostupné!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
