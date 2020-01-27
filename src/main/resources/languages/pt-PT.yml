@@ -9,11 +9,11 @@ playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Você removeu sua skin com sucesso."
+skinClearSuccess: "&2Removeste a tua skin com sucesso."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin do jogador %player foi removida."
+skinClearIssuer: "&2A skin do jogador %player foi removida."
 #Message displayed when using /sr set command
-adminSetSkin: "&2Você definiu uma skin para %player."
+adminSetSkin: "&2Definiste a skin do jogador %player."
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer: "&4Error&8: &c%player is not a valid username."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
