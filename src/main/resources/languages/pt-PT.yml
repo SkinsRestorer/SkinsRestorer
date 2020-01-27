@@ -31,7 +31,7 @@ noSkinData: "&4Error&8: &cNão foi possível encontrar uma skin! Este jogador te
 #Cooldown message
 waitMinute: "&4Error&8: &Por favor espera um minuto antes de pedir uma skin outra vez. (Limite excedido)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cOcorreu um erro ao solicitar dados da skin, tente novamente mais tarde!"
+genericError: "&4Error&8: &cOcorreu um erro ao pedir os dados da skin, tenta novamente mais tarde!"
 #Message sent when server has an outdated version of SR
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
@@ -40,7 +40,7 @@ playersOnly: "&4These commands are only for players!"
 notPlayer: "&4Error&8: &cYou need to be a player!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Abrindo menu de skins..."
+menuOpen: "&2A abrir o menu das skins..."
 #Previus page [GUI]
 previusPage: "&e&l«&7 Página Anterior&e&l «"
 #Next page [GUI]
