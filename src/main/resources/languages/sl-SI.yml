@@ -1,4 +1,6 @@
 ---
+#Generated on 13.7.6 #
+#Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
 notPremium: "&4Error&8: &cPremium player with that name does not exist."
