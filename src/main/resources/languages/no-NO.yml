@@ -35,25 +35,25 @@ genericError: "&4Error&8: &cDet oppstod en feil under forespørselen av skin dat
 #Message sent when server has an outdated version of SR
 outdated: "&4Du kjører en utdatert versjon av SkinsRestorer!\n&cVennligst oppdatert til nyeste versjon:\n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Disse kommandoene er bare for spillere!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Error&8: &cDu må være en spiller!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Åpner nå skin menyen..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Forrige Side&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Neste Side&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Fjern Skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Klikk for å velge denne skinen"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Mojang API tilkobling vellykket!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Error&8: &cSkin Data API er overbelastet, vennligst prøv på nytt senere!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
