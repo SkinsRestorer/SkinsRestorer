@@ -3,57 +3,57 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Chyba&8: &cGracz premium z takim pseudonimem nie istnieje."
+notPremium: "&4Error&8: &cPremium player with that name does not exist."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Chyba&8: &cNie posiadasz do tego uprawnień."
+playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Twój skin został zmieniony."
+skinChangeSuccess: "\"&2Tvoj vzh¾ad bol zmenený.\";"
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Twój skin został zresetowany."
+skinClearSuccess: "\"&2Tvoj vzh¾ad bol zresetovaný\";"
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin gracza %player zresetowany."
+skinClearIssuer: "\"&2Vzh¾ad bol zresetovaný pre %player.\";"
 #Message displayed when using /sr set command
-adminSetSkin: "&2Ustawiłeś skin %player"
+adminSetSkin: "\"&2Ty meníš vzh¾ad druhým.\";"
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Chyba&8: &c%player nie jest poprawną nazwą lub linkiem."
+invalidPlayer: "&4Error&8: &c%player is not a valid username."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Chyba&8: &cTen gracz nie jest dostępny!"
+playerNotonline: "&4Error&8: &cPlayer is not online!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Dane skina %player usunięte."
+skinDataDropped: "\"&2Vzh¾ad hráèa %player bol uložený do databázy.\";"
 #Message sent when the /sr reload command execution was successful
-reload: "&2Pliki konfiguracyjne i językowe zostały przeładowane!"
+reload: "\"&2Konfiguraèný a jazykový súbor bol znova naèítaný!\";"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Chyba&8: &cMusisz odczekać &e%s &csekund(ę)."
+skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Chyba&8: &cTen skin został wyłączony przez administratora."
+skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Chyba&8: &cNie uzyskano żanych danych! Czy ten gracz posiada skina?"
+noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
 #Cooldown message
-waitMinute: "&4Chyba&8: &cOdczekaj chwilę zanim znów żądasz tego skina. (Rate Limit)"
+waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
 #When proxy returned skin is empty
-genericError: "&4Chyba&8: &cPodczas żądania danych skina wystąpił błąd, spróbuj ponowanie później!"
+genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 #Message sent when server has an outdated version of SR
-outdated: "\"&4You are running an outdated version of SkinsRestorer! &cPlease update to the latest version\":"
+outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4Te komendy można wykonać tylko jako gracz!"
+playersOnly: "\"&4These commands are only for players!\";"
 #When none Player try's to set a skin
-notPlayer: "&4Chyba&8: &cMusisz być graczem, aby to zrobić!"
+notPlayer: "&4Error&8: &cYou need to be a player!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Otwieranie Gui..."
+menuOpen: "\"&2Otváram knižnicu vzh¾adov\";"
 #Previus page [GUI]
-previusPage: "&e&l«&7 Poprzednia strona&e&l «"
+previusPage: "\"&e&l»&7 Predchádzajúca strana&e&l «\";"
 #Next page [GUI]
-nextPage: "&a&l»&7 Następna strona&a&l »"
+nextPage: "\"&a&l»&7 Ïalšia strana&a&l »\";"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Usuń skin&c&l »"
+removeSkin: "\"&c&l»&7 Zresetova vzh¾ad&c&l »\";"
 #item lore for skulls [GUI]
-selectSkin: "&2Wybierz ten skin"
+selectSkin: "\"&2Klikni na vybratie tohto vzh¾adu\";"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Uzyskano połączenie z API Mojang!"
+statusOk: "\"&2pripojenie k Mojang API bolo úspešné!\";"
 #old debug
-altApiFailed: "&4Chyba&8: &cAPI danych skinów jest przeciążone, spróbuj ponowanie później!"
+altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
