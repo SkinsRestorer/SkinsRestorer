@@ -88,8 +88,8 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
 
-                if(!f.toString().startsWith("HELP_") && !Arrays.asList(IGNORE_PREFIX).contains(f.toString()))
-                    parsed = C.c(locale.getString("prefix", null)) + parsed;
+                if(!f.toString().contains("HELP_") && !Arrays.asList(IGNORE_PREFIX).contains(f.toString()))
+                    parsed = C.c(locale.getString("PREFIX", null)) + " " +  parsed;
 
                 f.set(null, parsed);
             }
