@@ -23,13 +23,13 @@ skinDataDropped: "&2Dados da skin para o jogador %player descartados."
 #Message sent when the /sr reload command execution was successful
 reload: "&2Configuração e localidade foram recarregados!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cVocê pode alterar sua skin novamente em &e%s &csegundos."
+skinCooldownNew: "&4Error&8: &cPoderás alterar a tua skin novamente em &e%s &csegundos."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cEsta skin está desabilidade do servidor."
+skinDisabled: "&4Error&8: &cEsta skin foi desativada por um administrador."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Error&8: &cNão foi possível encontrar uma skin! Este jogador tem skin?"
 #Cooldown message
-waitMinute: "&4Error&8: &cAguarde um minuto antes de solicitar uma skin novamente. (Rate Limited)"
+waitMinute: "&4Error&8: &Por favor espera um minuto antes de pedir uma skin outra vez. (Limite excedido)"
 #When proxy returned skin is empty
 genericError: "&4Error&8: &cOcorreu um erro ao solicitar dados da skin, tente novamente mais tarde!"
 #Message sent when server has an outdated version of SR
