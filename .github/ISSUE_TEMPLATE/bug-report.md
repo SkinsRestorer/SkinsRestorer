@@ -31,6 +31,7 @@ If applicable, add screenshots to help explain your problem.
 * SkinsRestorer: 13.
 * Spigot version:
 * Bungeecord version: 
+* IF bungee, did you put the plugin on all servers: Yes / No
 * Java: 8
 
 ## Logs
