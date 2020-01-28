@@ -53,7 +53,7 @@ selectSkin: "&2Clicca per selezionare questa skin"
 #old debug
 statusOk: "&2Connesso alla API Mojang!"
 #old debug
-altApiFailed: "cAPI delle skin Mojang in sovraccarico, si prega, di riprovare più tardi!"
+altApiFailed: "&4Errore&8: &cAPI delle skin Mojang in sovraccarico, si prega, di riprovare più tardi!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
