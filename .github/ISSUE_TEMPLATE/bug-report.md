@@ -28,8 +28,9 @@ If applicable, add screenshots to help explain your problem.
 **On what platform does your server run? (Bungeecord/Spigot/Bukkit)**
 
 **What version? Do NOT answer LATEST**
-* SkinsRestorer: 13.6.2
-* Spigot/Bukkit/Bungeecord:
+* SkinsRestorer: 13.
+* Spigot version:
+* Bungeecord version: 
 * Java: 8
 
 ## Logs
