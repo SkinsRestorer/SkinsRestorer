@@ -22,6 +22,10 @@ notPremium: "&4Error&8: &cPremium player with that name does not exist."
 # String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Error&8: &cYou don't have permission to perform this command."
 
+playerNoPermissionskin: "&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set this skin."
+
+playerNoPermissionurl: '&e[&2SkinsRestorer&e] &4Error&8: &cYou don't have permission to set skins by URL.'
+
 # Message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
 
@@ -33,6 +37,15 @@ skinClearIssuer: "&2Skin cleared for player %player."
 
 # Message displayed when using /skin set <skin> <player> command
 adminSetSkin: "&2You set %player's skin."
+
+#uploading & processing custom skin to our services, waiting for returning the skin we can set
+MSUpdatingSkin: "&e[&2SkinsRestorer&e] &Processing skin, please wait..."
+
+# /skin update succes
+SUCCESS_UPDATING_SKIN: "&2Your skin has been updated."
+
+# /skin update <player>, issuer / sender success message
+SUCCESS_UPDATING_SKIN_OTHER: "&2Skin updated for player %player."
 
 # Message displayed when using /skin set <skin> <player> command and providing an invalid username
 invalidPlayer: "&4Error&8: &c%player is not a valid username."
@@ -58,17 +71,14 @@ noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
 # Cooldown message
 waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
 
-# When proxy returned skin is empty
+# OLD: When proxy returned skin is empty
 genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+
+ERROR_UPDATING_SKIN: "&e[&2SkinsRestorer&e] &4Error&8: &cAn error occurred while updating
+  your skin. Please try again later!"
 
 # Message sent when server has an outdated version of SR
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
-
-# Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
-
-# When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
 
 # === GUI ===
 # /skins message
