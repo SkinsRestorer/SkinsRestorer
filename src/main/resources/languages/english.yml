@@ -3,11 +3,24 @@
 # Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 
+# === Help messages ===
+#HELP_SKIN_CLEAR
+HELP_SKIN_CLEAR: "Clears your skin."
+HELP_SKIN_CLEAR_OTHER: "Clears the skin of another player."
+HELP_SKIN_UPDATE: "Updates your skin."
+HELP_SKIN_UPDATE_OTHER: "Updates the skin of another player."
+HELP_SKIN_SET: "Changes your skin."
+HELP_SKIN_SET_OTHER: "Changes the skin of another player."
+HELP_SR_RELOAD: "Reloads the configuration file."
+HELP_SR_STATUS: "Checks plugin needed API services"
+HELP_SR_DROP: "Drops the players skin data."
+HELP_SR_PROPS: "Displays the players current skin as properties."
+
 # Message sent when the premium account with specified username does not exist
 notPremium: "&4Error&8: &cPremium player with that name does not exist."
 
 # String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Error&8: &cYou don't have permission to perform this command."
 
 # Message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
@@ -15,13 +28,13 @@ skinChangeSuccess: "&2Your skin has been changed."
 # Message sent to player whose skin was cleared
 skinClearSuccess: "&2Your skin has been cleared."
 
-# Message sent to player that used /sr clear PLAYER command
+# Message sent to player that used /skin clear <player> command
 skinClearIssuer: "&2Skin cleared for player %player."
 
-# Message displayed when using /sr set command
+# Message displayed when using /skin set <skin> <player> command
 adminSetSkin: "&2You set %player's skin."
 
-# Message displayed when using /sr set command and providing an invalid username
+# Message displayed when using /skin set <skin> <player> command and providing an invalid username
 invalidPlayer: "&4Error&8: &c%player is not a valid username."
 
 # Message displayed when using /sr set command and providing username of a player that is currently not online
@@ -68,7 +81,7 @@ previusPage: "&e&l«&7 Previous Page&e&l «"
 nextPage: "&a&l»&7 Next Page&a&l »"
 
 # Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&lX &7Clear Skin&c&l X"
 
 # item lore for skulls [GUI]
 selectSkin: "&2Click to select this skin"
