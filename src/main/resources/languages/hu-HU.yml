@@ -3,13 +3,13 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Hiba&8: &cNem létezik ezzel a névvel prémium felhasználó."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Hiba&8: &cNincs jogod ehhez a parancshoz."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2A kinézetet megváltoztatva."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2A kinézeted törölve."
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "&2Skin cleared for player %player."
 #Message displayed when using /sr set command
