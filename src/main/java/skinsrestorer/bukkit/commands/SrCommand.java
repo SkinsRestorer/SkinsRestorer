@@ -14,7 +14,6 @@ import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.ServiceChecker;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
