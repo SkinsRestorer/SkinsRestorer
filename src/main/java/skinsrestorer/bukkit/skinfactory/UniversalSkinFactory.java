@@ -116,20 +116,22 @@ public class UniversalSkinFactory extends SkinFactory {
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             Object worlddata = ReflectionUtil.getObject(world, "worldData");
             Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-            int dimension = 0;
-            if (player.getWorld().getEnvironment().equals(World.Environment.NETHER))
+            int dimension;
+            if(player.getWorld().getEnvironment().equals(World.Environment.NORMAL))
+                dimension = 0;
+            else if (player.getWorld().getEnvironment().equals(World.Environment.NETHER))
                 dimension = -1;
-            if (player.getWorld().getEnvironment().equals(World.Environment.THE_END))
+            else if (player.getWorld().getEnvironment().equals(World.Environment.THE_END))
                 dimension = 1;
-
+			else {
             // Workaround for forge servers
-            String world_number = player.getWorld().getName().replace("DIM", "");
-            try {
-                dimension = Integer.parseInt(world_number);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-
+	            String world_number = player.getWorld().getName().replace("DIM", "");
+	            try {
+	                dimension = Integer.parseInt(world_number);
+	            } catch (NumberFormatException e) {
+	                e.printStackTrace();
+	            }
+			}
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
