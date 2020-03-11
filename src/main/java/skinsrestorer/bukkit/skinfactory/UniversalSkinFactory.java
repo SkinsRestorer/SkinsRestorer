@@ -121,12 +121,15 @@ public class UniversalSkinFactory extends SkinFactory {
                 dimension = -1;
             if (player.getWorld().getEnvironment().equals(World.Environment.THE_END))
                 dimension = 1;
-            String[] to_check = player.getWorld().toString().split("DIM");
-            if(to_check.length == 2) {
-                try {
-                    dimension = Integer.parseInt(to_check[1].split("}")[0]);
-                } catch (NumberFormatException e) { System.out.print(e); }
+
+            // Workaround for forge servers
+            String world_number = player.getWorld().getName().replace("DIM", "");
+            try {
+                dimension = Integer.parseInt(world_number);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
+
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
