@@ -127,7 +127,7 @@ public class UniversalSkinFactory extends SkinFactory {
 
             Object respawn = null;
             try {
-                dimension = p_e.getId();
+                dimension = environment.getId();
                 respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                         new Class<?>[]{
                                 int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
