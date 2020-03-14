@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -116,22 +117,9 @@ public class UniversalSkinFactory extends SkinFactory {
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             Object worlddata = ReflectionUtil.getObject(world, "worldData");
             Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-            int dimension;
-            if(player.getWorld().getEnvironment().equals(World.Environment.NORMAL))
-                dimension = 0;
-            else if (player.getWorld().getEnvironment().equals(World.Environment.NETHER))
-                dimension = -1;
-            else if (player.getWorld().getEnvironment().equals(World.Environment.THE_END))
-                dimension = 1;
-			else {
-            // Workaround for forge servers
-	            String world_number = player.getWorld().getName().replace("DIM", "");
-	            try {
-	                dimension = Integer.parseInt(world_number);
-	            } catch (NumberFormatException e) {
-	                e.printStackTrace();
-	            }
-			}
+            World.Environment p_e = player.getWorld().getEnvironment();
+            // ONLY WORKS FOR 1.12.2 AND BELOW
+            int dimension = 0;
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
@@ -140,12 +128,26 @@ public class UniversalSkinFactory extends SkinFactory {
 
             Object respawn = null;
             try {
+                dimension = p_e.getId();
                 respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                         new Class<?>[]{
                                 int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
                         },
                         dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
             } catch (Exception ignored) {
+                if (p_e.equals(World.Environment.NETHER))
+                    dimension = -1;
+                else if (p_e.equals(World.Environment.THE_END))
+                    dimension = 1;
+                else if (dimension != 0){
+                    // Workaround for forge based server with Spigot/Bukkit API implemented
+                    String world_number = player.getWorld().getName().replace("DIM", "");
+                    try {
+                        dimension = Integer.parseInt(world_number);
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
@@ -287,7 +289,12 @@ public class UniversalSkinFactory extends SkinFactory {
                     sendPacket(playerCon, addInfo);
                     sendPacket(playerCon, respawn);
 
-                    ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+                    try {
+                        ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+
+                    } catch (InvocationTargetException e) {
+                        e.getCause().printStackTrace();
+                    }
 
                     sendPacket(playerCon, pos);
                     sendPacket(playerCon, slot);
