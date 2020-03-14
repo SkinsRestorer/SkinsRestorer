@@ -134,9 +134,9 @@ public class UniversalSkinFactory extends SkinFactory {
                         },
                         dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
             } catch (Exception ignored) {
-                if (p_e.equals(World.Environment.NETHER))
+                if (environment.equals(World.Environment.NETHER))
                     dimension = -1;
-                else if (p_e.equals(World.Environment.THE_END))
+                else if (environment.equals(World.Environment.THE_END))
                     dimension = 1;
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
