@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -279,7 +278,13 @@ public class UniversalSkinFactory extends SkinFactory {
                     sendPacket(playerCon, addInfo);
                     sendPacket(playerCon, respawn);
 
-                    ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                        try {
+                            ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
 
                     sendPacket(playerCon, pos);
                     sendPacket(playerCon, slot);
