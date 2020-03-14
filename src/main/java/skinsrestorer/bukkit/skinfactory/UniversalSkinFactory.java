@@ -279,12 +279,7 @@ public class UniversalSkinFactory extends SkinFactory {
                     sendPacket(playerCon, addInfo);
                     sendPacket(playerCon, respawn);
 
-                    try {
-                        ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
-
-                    } catch (InvocationTargetException e) {
-                        e.getCause().printStackTrace();
-                    }
+                    ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
 
                     sendPacket(playerCon, pos);
                     sendPacket(playerCon, slot);
