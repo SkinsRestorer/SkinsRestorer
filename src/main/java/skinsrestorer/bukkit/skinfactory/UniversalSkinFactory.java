@@ -138,15 +138,6 @@ public class UniversalSkinFactory extends SkinFactory {
                     dimension = -1;
                 else if (p_e.equals(World.Environment.THE_END))
                     dimension = 1;
-                else if (dimension != 0){
-                    // Workaround for forge based server with Spigot/Bukkit API implemented
-                    String world_number = player.getWorld().getName().replace("DIM", "");
-                    try {
-                        dimension = Integer.parseInt(world_number);
-                    } catch (NumberFormatException e) {
-                        e.printStackTrace();
-                    }
-                }
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
