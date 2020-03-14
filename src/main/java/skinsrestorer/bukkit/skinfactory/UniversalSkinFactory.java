@@ -117,7 +117,7 @@ public class UniversalSkinFactory extends SkinFactory {
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             Object worlddata = ReflectionUtil.getObject(world, "worldData");
             Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
-            World.Environment p_e = player.getWorld().getEnvironment();
+            World.Environment environment = player.getWorld().getEnvironment();
             int dimension = 0;
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
