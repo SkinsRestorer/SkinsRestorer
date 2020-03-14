@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -116,11 +117,8 @@ public class UniversalSkinFactory extends SkinFactory {
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             Object worlddata = ReflectionUtil.getObject(world, "worldData");
             Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
+            World.Environment environment = player.getWorld().getEnvironment();
             int dimension = 0;
-            if (player.getWorld().getEnvironment().equals(World.Environment.NETHER))
-                dimension = -1;
-            if (player.getWorld().getEnvironment().equals(World.Environment.THE_END))
-                dimension = 1;
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
@@ -129,12 +127,17 @@ public class UniversalSkinFactory extends SkinFactory {
 
             Object respawn = null;
             try {
+                dimension = environment.getId();
                 respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                         new Class<?>[]{
                                 int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
                         },
                         dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
             } catch (Exception ignored) {
+                if (environment.equals(World.Environment.NETHER))
+                    dimension = -1;
+                else if (environment.equals(World.Environment.THE_END))
+                    dimension = 1;
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
