@@ -303,25 +303,29 @@ public class UniversalSkinFactory extends SkinFactory {
                  * I did that to try to prevent player duplications.
                  */
                 if (pOnline.getWorld().equals(player.getWorld()) && pOnline.canSee(player) && player.isOnline()) {
-                    sendPacket(playerCon, removeEntity);
-                    sendPacket(playerCon, removeInfo);
-                    sendPacket(playerCon, addInfo);
-                    sendPacket(playerCon, addNamed);
+                    if (pOnline.isOnline() && player.isOnline()) {
+                        sendPacket(playerCon, removeEntity);
+                        sendPacket(playerCon, removeInfo);
+                        sendPacket(playerCon, addInfo);
+                        sendPacket(playerCon, addNamed);
 
-                    if (MAINHAND != null) {
-                        sendPacket(playerCon, mainhand);
-                        sendPacket(playerCon, offhand);
-                    } else
-                        sendPacket(playerCon, hand);
+                        if (MAINHAND != null) {
+                            sendPacket(playerCon, mainhand);
+                            sendPacket(playerCon, offhand);
+                        } else
+                            sendPacket(playerCon, hand);
 
-                    sendPacket(playerCon, helmet);
-                    sendPacket(playerCon, chestplate);
-                    sendPacket(playerCon, leggings);
-                    sendPacket(playerCon, boots);
+                        sendPacket(playerCon, helmet);
+                        sendPacket(playerCon, chestplate);
+                        sendPacket(playerCon, leggings);
+                        sendPacket(playerCon, boots);
+                    }
                 } else {
                     //Only sends player update packet
-                    sendPacket(playerCon, removeInfo);
-                    sendPacket(playerCon, addInfo);
+                    if (pOnline.isOnline() && player.isOnline()) {
+                        sendPacket(playerCon, removeInfo);
+                        sendPacket(playerCon, addInfo);
+                    }
                 }
             }
         } catch (Exception e) {
