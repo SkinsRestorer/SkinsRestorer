@@ -1,0 +1,5 @@
+files:
+  - source: /src/main/resources/languages/english.yml
+    translation: /src/main/resources/languages/%locale%.yml
+  - source: /src/main/resources/command-messages.properties
+    translation: /src/main/resources/command-messages-%locale%.properties
