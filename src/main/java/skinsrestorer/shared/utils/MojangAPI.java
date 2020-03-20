@@ -46,6 +46,8 @@ public class MojangAPI {
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
     public Object getSkinProperty(String uuid, boolean tryNext) {
+        this.logger.log("[SkinsRestorer] Requesting skin Minetools for " + uuid + ".");
+        
         String output;
         try {
             output = readURL(skinurl.replace("%uuid%", uuid));
@@ -54,6 +56,14 @@ public class MojangAPI {
 
             Property property = new Property();
 
+            if (obj.has("status")) {
+                if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    if (tryNext)
+                        return getSkinPropertyMojang(uuid);
+                    return null;
+                }
+            }
+            
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
@@ -84,9 +94,16 @@ public class MojangAPI {
 
             Property property = new Property();
 
+            if (obj.has("status")) {
+                if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    return getSkinPropertyBackup(uuid);
+                }
+            }
+            
             if (property.valuesFromJson(obj)) {
                 return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
+
 
             return null;
         } catch (Exception e) {
