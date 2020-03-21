@@ -6,6 +6,11 @@ import skinsrestorer.shared.storage.SkinStorage;
 /**
  * Created by McLive on 27.08.2019.
  */
+
+// APIexample: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
+// For more info please refere first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
+// Advanced help or getting problems? join our discord before submitting issues!
+
 public class SkinsRestorerAPI {
     private MojangAPI mojangAPI;
     private SkinStorage skinStorage;
