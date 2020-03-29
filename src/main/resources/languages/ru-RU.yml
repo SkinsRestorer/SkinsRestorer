@@ -33,16 +33,16 @@ waitMinute: "&4Ошибка&8: &cПожалуйста, подождите нем
 #When proxy returned skin is empty
 genericError: "&4Ошибка&8: &cПроизошла ошибка при загрузке скина. Пожалуйста, попробуйте снова чуть позже!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Вы используете устаревшую версию SkinsRestorer!\n&cПожалуйста, обновитесь до последней версии: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Данную команду может использовать только игрок!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Ошибка&8: &cУстановить скин может только игрок!"
 #=== GUI ===
 #/skins message
 menuOpen: "&2Открытие меню скинов..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Предыдущая страница&e&l «"
 #Next page [GUI]
 nextPage: "&a&l»&7 Следующая Страница&a&l »"
 #Clear skin [GUI]
