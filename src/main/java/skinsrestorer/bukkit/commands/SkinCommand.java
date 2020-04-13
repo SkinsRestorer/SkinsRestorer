@@ -144,7 +144,7 @@ public class SkinCommand extends BaseCommand {
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, Player p, String skin, boolean save) {
-        if (!C.validUsername(skin) && !C.validUrl(skin)) {
+        if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
             return false;
         }
