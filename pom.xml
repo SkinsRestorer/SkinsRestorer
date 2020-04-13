@@ -246,6 +246,10 @@
                             <pattern>net.md_5.bungee.config</pattern>
                             <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.slf4j</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
