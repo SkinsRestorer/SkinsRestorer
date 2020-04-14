@@ -37,6 +37,7 @@ public class Locale {
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&2Skin updated for player %player.";
 
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
+    public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
     public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your skin. Please try again later. (MineSkin)";
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
