@@ -6,6 +6,8 @@ prefix: "&e[&2SkinsRestorer&e]"
 notPremium: "&4Errore&8: &cNon esiste un player Premium con questo nome."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Errore&8: &cNon hai il permesso per questa azione."
+#Skinsrestorer cant update custom skins! Players should request skin again using /skin url
+ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Skin cambiata correttamente."
 #Message sent to player whose skin was cleared
