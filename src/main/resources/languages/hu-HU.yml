@@ -7,7 +7,7 @@ notPremium: "&4Hiba&8: &cNem létezik ezzel a névvel prémium felhasználó."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Hiba&8: &cNincs jogod ehhez a parancshoz."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: Nem sikerült frissíteni az egyéni kinézetet. \nccIsmételd meg kérésedet a /skin url paranccsal!
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2A kinézetet megváltoztatva."
 #Message sent to player whose skin was cleared
