@@ -6,6 +6,8 @@ prefix: "&e[&2SkinsRestorer&e]"
 notPremium: "&4Chyba&8: &cPlatený účet zo zadaným nickom neexistuje."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Chyba&8: &cNa toto nemáš povolenie."
+#Skinsrestorer cant update custom skins! Players should request skin again using /skin url
+ERRORUpdatingURL = "&4Error&8: nemožno aktualizovať vlastné URL vzhľady! \n&cSkús znova pomocou /skin url."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2Tvoj vzhľad sa zmenil."
 #Message sent to player whose skin was cleared
