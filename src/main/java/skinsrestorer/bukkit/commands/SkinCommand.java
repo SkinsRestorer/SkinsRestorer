@@ -207,7 +207,13 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
-
+                // set custom skin name back to old one if there is an exception
+                if (save)
+                    plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+            } catch (Exception  e) {
+                System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:");
+                e.printStackTrace();
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 // set custom skin name back to old one if there is an exception
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
