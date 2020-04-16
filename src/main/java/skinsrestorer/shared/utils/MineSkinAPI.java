@@ -92,6 +92,9 @@ public class MineSkinAPI {
                     } else if (err_resp.equals("No accounts available")) {
                         System.out.println(Locale.ERROR_MS_FULL);
                         throw new SkinRequestException(Locale.ERROR_MS_FULL);
+                    } else if (err_resp.equals("Failed to determine file size")) {
+                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 }
             } catch (IOException e) {
