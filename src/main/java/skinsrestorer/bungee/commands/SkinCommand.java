@@ -210,7 +210,9 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(new TextComponent(e.getReason()));
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
+                System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:");
                 e.printStackTrace();
+                p.sendMessage(new TextComponent(Locale.ERROR_INVALID_URLSKIN));
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
