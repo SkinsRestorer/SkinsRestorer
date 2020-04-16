@@ -38,14 +38,15 @@ public class Locale {
 
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
     public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
+    public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL";
     public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your skin. Please try again later. (MineSkin)";
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
 
     public static String MENU_OPEN = "&2Opening the skins menu...";
-    public static String NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
-    public static String PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
+    public static String NEXT_PAGE = "&a&lÂ»&7 Next Page&a&l Â»";
+    public static String PREVIOUS_PAGE = "&e&lÂ«&7 Previous Page&e&l Â«";
     public static String REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SELECT_SKIN = "&2Click to select this skin";
 
@@ -95,7 +96,7 @@ public class Locale {
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
+            System.out.println("Â§e[Â§2SkinsRestorerÂ§e] Â§cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }
