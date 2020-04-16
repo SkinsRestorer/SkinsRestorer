@@ -8,6 +8,10 @@ notPremium: "&4Erro&8: &cNão existe um jogador com este nome cuja conta seja or
 playerNoPermission: "&4Error&8: &cNão tens permissão para fazer isto."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
 ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+#Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
+ERRORInvalidURLSKIN = "&4Error&8:
+  #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
+  skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
 skinChangeSuccess: "&2A tua skin foi alterada."
 #Message sent to player whose skin was cleared
