@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class Locale {
-    public static String PREFIX = "&e[&2SkinsRestorer&e]";
+    public static String PREFIX = "&e[&2SkinsRestorer&e] ";
 
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
@@ -38,17 +38,19 @@ public class Locale {
 
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
     public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
-    public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL";
+    public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&o skinsrestorer.net/skinurl";
     public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your skin. Please try again later. (MineSkin)";
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
-
-    public static String MENU_OPEN = "&2Opening the skins menu...";
-    public static String NEXT_PAGE = "&a&lÂ»&7 Next Page&a&l Â»";
-    public static String PREVIOUS_PAGE = "&e&lÂ«&7 Previous Page&e&l Â«";
-    public static String REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
-    public static String SELECT_SKIN = "&2Click to select this skin";
+    public static String ERROR_MOJANG_outage = "&4Error&8: &4&nMojang skin service is down. \n&cWe can only provide already recently requested skins. \n&cNew ones will fail to request...";
+    
+    public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
+    public static String SKINSMENU_TITLE = "&9Skins Menu - Page ";    
+    public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
+    public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
+    public static String SKINSMENU_REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
+    public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
 
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String SKIN_DATA_DROPPED = "&2Skin data for player %player dropped.";
@@ -69,12 +71,14 @@ public class Locale {
     private static YamlConfig locale;
 
     public static final String[] IGNORE_PREFIX = {
-            MENU_OPEN,
-            NEXT_PAGE,
-            PREVIOUS_PAGE,
-            REMOVE_SKIN,
-            SELECT_SKIN,
-            SR_LINE
+            "HELP_",
+            "SKINSMENU_OPEN",
+            "SKINSMENU_TITLE",
+            "SKINSMENU_NEXT_PAGE",
+            "SKINSMENU_PREVIOUS_PAGE",
+            "SKINSMENU_REMOVE_SKIN",
+            "SKINSMENU_SELECT_SKIN",
+            "SR_LINE"
     };
 
     public static void load(String path) {
@@ -89,14 +93,14 @@ public class Locale {
                     continue;
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
-
-                if(!f.toString().contains("HELP_") && !Arrays.asList(IGNORE_PREFIX).contains(f.toString()))
-                    parsed = C.c(locale.getString("PREFIX", null)) + " " +  parsed;
-
+                if (!Config.DISABLE_PREFIX) {
+                    if(!f.toString().contains("HELP_") && !f.toString().contains("SKINSMENU_") && !f.toString().contains("SR_LINE"))
+                        parsed = C.c(locale.getString("PREFIX", null)) + parsed;
+                }
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            System.out.println("Â§e[Â§2SkinsRestorerÂ§e] Â§cCan't read messages.yml! Try removing it and restart your server.");
+            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }

@@ -33,7 +33,7 @@ public class GUICommand extends BaseCommand {
 
     @Default @CommandPermission("%skins")
     public void onDefault(Player p) {
-        p.sendMessage(Locale.MENU_OPEN);
+        p.sendMessage(Locale.SKINSMENU_OPEN);
 
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             SkinsGUI.getMenus().put(p.getName(), 0);

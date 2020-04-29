@@ -32,6 +32,7 @@ public class Config {
     public static boolean USE_NEW_PERMISSIONS = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static boolean USE_OLD_SKIN_HELP = false;
+    public static boolean DISABLE_PREFIX = false;
     public static boolean VERBOSE = true;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -68,6 +69,7 @@ public class Config {
         USE_NEW_PERMISSIONS = config.getBoolean("Permissions.NewPermissions", USE_NEW_PERMISSIONS);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
+        DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
         VERBOSE = config.getBoolean("Verbose", VERBOSE);
 
         // Permissions

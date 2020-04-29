@@ -95,6 +95,9 @@ public class MineSkinAPI {
                     } else if (err_resp.equals("Failed to determine file size")) {
                         // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
+                    } else if (err_resp.equals("Failed to get image dimensions")) {
+                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 }
             } catch (IOException e) {

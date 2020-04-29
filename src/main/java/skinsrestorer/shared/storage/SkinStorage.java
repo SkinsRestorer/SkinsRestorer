@@ -131,6 +131,9 @@ public class SkinStorage {
         // No cached skin found, get from MojangAPI, save and return
         try {
             textures = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(skin));
+            if (textures == null) {
+                throw new SkinRequestException(Locale.ERROR_MOJANG_outage);
+            }
             setSkinData(skin, textures);
         } catch (SkinRequestException e) {
             if (!silent)

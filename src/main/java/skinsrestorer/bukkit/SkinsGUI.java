@@ -50,21 +50,21 @@ public class SkinsGUI extends ItemStack implements Listener {
                 case PREV: {
                     //this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.PREVIOUS_PAGE.replace("&", "§");
+                    this.text = Locale.SKINSMENU_PREVIOUS_PAGE.replace("&", "§");
                     break;
                 }
 
                 case NEXT: {
                     //this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.NEXT_PAGE.replace("&", "§");
+                    this.text = Locale.SKINSMENU_NEXT_PAGE.replace("&", "§");
                     break;
                 }
 
                 case DELETE: {
                     //this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
                     this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.REMOVE_SKIN.replace("&", "§");
+                    this.text = Locale.SKINSMENU_REMOVE_SKIN.replace("&", "§");
                     break;
                 }
             }
@@ -89,7 +89,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, "§9Skins Menu - Page " + page);
+        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§") + page);
 
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
@@ -147,7 +147,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) is.getItemMeta();
         List<String> lore = new ArrayList<>();
-        lore.add(Locale.SELECT_SKIN.replace("&", "§"));
+        lore.add(Locale.SKINSMENU_SELECT_SKIN.replace("&", "§"));
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);

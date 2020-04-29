@@ -53,7 +53,7 @@ public class MojangAPI {
             JsonObject obj = element.getAsJsonObject();
 
             Property property = new Property();
-
+                        
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
@@ -61,7 +61,7 @@ public class MojangAPI {
                     return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
-            return null;
+            return getSkinPropertyMojang(uuid); // go to mojang if fail (wip -> premium but no skin)
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -81,13 +81,26 @@ public class MojangAPI {
             output = readURL(skinurl_mojang.replace("%uuid%", uuid));
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
-
+            
+          /*System.out.println("obj ="); //testing
+            System.out.println(obj); */
+            
             Property property = new Property();
-
+            
+            System.out.println(property.getValue());
+            
+            if (obj.has("properties")) {
+                if (property.getValue() == null) { //wip mojang session outage
+                    //System.out.println("session outage");
+                    return null;
+                }
+                
             if (property.valuesFromJson(obj)) {
                 return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
-
+            
+            return getSkinPropertyBackup(uuid);
+            }
             return null;
         } catch (Exception e) {
             if (tryNext)
@@ -138,14 +151,12 @@ public class MojangAPI {
 
             if (obj.has("status")) {
                 if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    if (tryNext)
-                        return getUUIDMojang(name);
-                    return null;
+                    return getUUIDMojang(name);
                 }
             }
 
             if (obj.get("id").getAsString().equalsIgnoreCase("null"))
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
+                return getUUIDBackup(name);
 
             return obj.get("id").getAsString();
         } catch (IOException e) {
@@ -201,8 +212,9 @@ public class MojangAPI {
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
+            System.out.println(output.toString());
             if (obj.has("code")) {
-                if (obj.get("code").getAsInt() == 404) {
+                if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
                     throw new SkinRequestException(Locale.NOT_PREMIUM);
                 }
                 throw new SkinRequestException(Locale.ALT_API_FAILED);
@@ -236,6 +248,8 @@ public class MojangAPI {
             output.append(line);
 
         in.close();
+        /*System.out.println("USED STRING URL = " + url);
+        System.out.println(output.toString()); // testing */
         return output.toString();
     }
 
@@ -245,7 +259,7 @@ public class MojangAPI {
         private String signature;
 
         boolean valuesFromJson(JsonObject obj) {
-            if (obj.has("properties")) {
+            if (obj.has("properties")) { // No properties when minetools is down
                 JsonArray properties = obj.getAsJsonArray("properties");
                 JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
@@ -256,6 +270,7 @@ public class MojangAPI {
                 this.setValue(value);
 
                 return true;
+
             }
 
             return false;

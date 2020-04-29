@@ -44,7 +44,8 @@ public class PlayerJoin implements Listener {
                 }
 
                 String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName());
-
+                
+                                
                 SkinsRestorer.getInstance().getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin));
             } catch (SkinRequestException ignored) {
             }

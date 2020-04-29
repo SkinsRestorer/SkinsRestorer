@@ -30,7 +30,7 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer p) {
-        p.sendMessage(Locale.MENU_OPEN);
+        p.sendMessage(Locale.SKINSMENU_OPEN);
 
         plugin.getPluginMessageListener().sendGuiOpenRequest(p);
     }
