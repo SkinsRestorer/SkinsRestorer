@@ -93,7 +93,7 @@ UseOldSkinHelp: false
 #Ignore messages.yml PREFIX =
 DisablePrefix: false
 
-# Enable to start receving debug messages about api request & more.
+# Enable to start receiving debug messages about api request & more.
 Debug: false
 
 # End #
