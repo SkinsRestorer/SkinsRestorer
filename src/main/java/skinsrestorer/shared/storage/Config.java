@@ -32,7 +32,7 @@ public class Config {
     public static boolean USE_NEW_PERMISSIONS = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static boolean USE_OLD_SKIN_HELP = false;
-    public static boolean DISABLE_PREFIX = false;
+    public static boolean DISABLE_PREFIX = true;
     public static boolean VERBOSE = true;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT

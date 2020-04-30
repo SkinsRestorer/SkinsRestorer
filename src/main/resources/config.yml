@@ -88,7 +88,7 @@ NoSkinIfLoginCanceled: true
 # True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
 UseOldSkinHelp: false
 
-#disable local prefix
+#Ignore messages.yml PREFIX =
 DisablePrefix: false
 
 # Removes "Sending skin update request for .." on join for bungeecord
