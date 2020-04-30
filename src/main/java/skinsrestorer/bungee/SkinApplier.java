@@ -5,6 +5,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -100,7 +101,8 @@ public class SkinApplier {
         if (p.getServer() == null)
             return;
 
-        System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
+        if (Config.VERBOSE)
+            System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
