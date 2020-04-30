@@ -39,7 +39,7 @@ public class Locale {
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
     public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
     public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&o skinsrestorer.net/skinurl";
-    public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your skin. Please try again later. (MineSkin)";
+    public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)";
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
