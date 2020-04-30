@@ -41,14 +41,14 @@ public class SRLogger {
     }
 
     public void log(Level level, String message, Throwable thrown) {
-        if (!Config.VERBOSE)
+        if (!Config.DEBUG)
             return;
 
         this.logAlways(level, message, thrown);
     }
 
     public void log(Level level, String message) {
-        if (!Config.VERBOSE)
+        if (!Config.DEBUG)
             return;
 
         this.logAlways(level, message);

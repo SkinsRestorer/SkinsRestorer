@@ -1,16 +1,18 @@
 ##############################
 #  SkinsRestorer Config.yml  #
-#  Generated on 13.7.2       #
+#  Generated on 13.7.6       #
 ##############################
 #
 # We from SRTeam thank you for using our plugin!
 # For more information        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
 # For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 # Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+# For locale & messages       -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations
 # Not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
 # For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
 
 # (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true
+# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord)
 
 # If true, players can change skins without permission.
 SkinWithoutPerm: true
@@ -91,8 +93,8 @@ UseOldSkinHelp: false
 #Ignore messages.yml PREFIX =
 DisablePrefix: false
 
-# Removes "Sending skin update request for .." on join for bungeecord
-Verbose: false
+# Enable to start receving debug messages about api request & more.
+Debug: false
 
 # End #
 

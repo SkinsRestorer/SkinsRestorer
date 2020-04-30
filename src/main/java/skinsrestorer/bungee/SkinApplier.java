@@ -101,7 +101,7 @@ public class SkinApplier {
         if (p.getServer() == null)
             return;
 
-        if (Config.VERBOSE)
+        if (Config.DEBUG)
             System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
