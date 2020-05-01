@@ -59,7 +59,7 @@ selectSkin: "&2Klõpsa selle välimuse valimiseks"
 #old debug
 statusOk: "&2Mojang API ühendus edukas!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Viga&8: &cVälimuse andmete API on ülekoormatud, palun proovi hiljem uuesti!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
