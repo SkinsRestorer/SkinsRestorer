@@ -212,7 +212,7 @@ public class MojangAPI {
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            System.out.println(output.toString());
+            //System.out.println(output.toString()); //testing
             if (obj.has("code")) {
                 if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
                     throw new SkinRequestException(Locale.NOT_PREMIUM);
@@ -222,7 +222,7 @@ public class MojangAPI {
 
             return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException e) {
-            throw new SkinRequestException(e.getMessage());
+            throw new SkinRequestException(Locale.NOT_PREMIUM); //TODO: check flow of code
         }
     }
 
