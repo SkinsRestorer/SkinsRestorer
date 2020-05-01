@@ -18,7 +18,6 @@ import skinsrestorer.bukkit.commands.SrCommand;
 import skinsrestorer.bukkit.listener.PlayerJoin;
 import skinsrestorer.bukkit.skinfactory.SkinFactory;
 import skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
-import skinsrestorer.bungee.listeners.PluginMessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -74,7 +73,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         instance = this;
-        factory = new UniversalSkinFactory();
+        factory = new UniversalSkinFactory(this);
 
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
