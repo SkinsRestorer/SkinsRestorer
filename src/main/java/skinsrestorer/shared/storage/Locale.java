@@ -47,8 +47,8 @@ public class Locale {
     
     public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
     public static String SKINSMENU_TITLE = "&9Skins Menu - Page ";    
-    public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
-    public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
+    public static String SKINSMENU_NEXT_PAGE = "&a&lÂ»&7 Next Page&a&l Â»";
+    public static String SKINSMENU_PREVIOUS_PAGE = "&e&lÂ«&7 Previous Page&e&l Â«";
     public static String SKINSMENU_REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
 
@@ -100,7 +100,7 @@ public class Locale {
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
+            System.out.println("Â§e[Â§2SkinsRestorerÂ§e] Â§cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }
