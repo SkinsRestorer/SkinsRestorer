@@ -61,7 +61,8 @@ public class MojangAPI {
                     return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
-            return getSkinPropertyMojang(uuid); // go to mojang if fail (wip -> premium but no skin)
+
+            return getSkinPropertyMojang(uuid);
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -249,18 +250,19 @@ public class MojangAPI {
         private String signature;
 
         boolean valuesFromJson(JsonObject obj) {
-            if (obj.has("properties")) { // No properties when minetools is down
+            if (obj.has("properties")) {
                 JsonArray properties = obj.getAsJsonArray("properties");
-                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
+                if (properties.size() > 0) {
+                    JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-                String signature = propertiesObject.get("signature").getAsString();
-                String value = propertiesObject.get("value").getAsString();
+                    String signature = propertiesObject.get("signature").getAsString();
+                    String value = propertiesObject.get("value").getAsString();
 
-                this.setSignature(signature);
-                this.setValue(value);
+                    this.setSignature(signature);
+                    this.setValue(value);
 
-                return true;
-
+                    return true;
+                }
             }
 
             return false;

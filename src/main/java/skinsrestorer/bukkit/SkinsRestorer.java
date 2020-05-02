@@ -74,7 +74,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         instance = this;
-        factory = new UniversalSkinFactory();
+        factory = new UniversalSkinFactory(this);
 
         console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
