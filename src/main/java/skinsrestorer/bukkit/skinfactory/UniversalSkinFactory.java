@@ -18,20 +18,23 @@ public class UniversalSkinFactory extends SkinFactory {
             return;
 
         // Some older spigot versions only support hidePlayer(player)
-        for (Player ps : Bukkit.getOnlinePlayers()) {
-            try {
-                ps.hidePlayer(this.plugin, player);
-            } catch (Error ignored) {
-                ps.hidePlayer(player);
-            }
-            try {
-                ps.showPlayer(this.plugin, player);
-            } catch (Error ignored) {
-                ps.showPlayer(player);
-            }
-        }
 
-        refresh.accept(player);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            for (Player ps : Bukkit.getOnlinePlayers()) {
+                try {
+                    ps.hidePlayer(this.plugin, player);
+                } catch (Error ignored) {
+                    ps.hidePlayer(player);
+                }
+                try {
+                    ps.showPlayer(this.plugin, player);
+                } catch (Error ignored) {
+                    ps.showPlayer(player);
+                }
+            }
+
+            refresh.accept(player);
+        });
     }
 
     private static Consumer<Player> detectRefresh() {
