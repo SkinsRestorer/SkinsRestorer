@@ -43,7 +43,7 @@ public class Locale {
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
-    public static String ERROR_MOJANG_outage = "&4Error&8: &4&nMojang skin service is down. \n&cWe can only provide already recently requested skins. \n&cNew ones will fail to request...";
+    public static String ERROR_NO_SKIN = "&4Error&8: &cThis player has no skin set.";
     
     public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
     public static String SKINSMENU_TITLE = "&9Skins Menu - Page ";    

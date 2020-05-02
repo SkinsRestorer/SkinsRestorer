@@ -57,12 +57,17 @@ public class MojangAPI {
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
+                if (raw.has("status")) {
+                    if (raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                        return getSkinPropertyMojang(uuid);
+                    }
+                }
+
                 if (property.valuesFromJson(raw)) {
                     return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
 
-            return getSkinPropertyMojang(uuid);
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -89,10 +94,8 @@ public class MojangAPI {
                 if (property.valuesFromJson(obj)) {
                     return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
-
-                return getSkinPropertyBackup(uuid);
             }
-            return null;
+
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyBackup(uuid);
@@ -123,8 +126,8 @@ public class MojangAPI {
 
         } catch (Exception e) {
             this.logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
-            return null;
         }
+        return null;
     }
 
     /**
