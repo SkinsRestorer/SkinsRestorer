@@ -38,10 +38,11 @@ public class UniversalSkinFactory extends SkinFactory {
     }
 
     private static Consumer<Player> detectRefresh() {
-        System.out.println("Bukkit.getName()" + Bukkit.getName());
-        System.out.println("Bukkit.getVersion()" + Bukkit.getVersion());
-        if (Bukkit.getName().toLowerCase().contains("paper") && !Bukkit.getVersion().toLowerCase().contains("1.11.2")) {
-            return new PaperSkinRefresher();
+        if (Bukkit.getName().toLowerCase().contains("paper")) {
+            try {
+                return new PaperSkinRefresher();
+            } catch (ExceptionInInitializerError ignored) {
+            }
         }
 
         // return new LegacySkinRefresher();

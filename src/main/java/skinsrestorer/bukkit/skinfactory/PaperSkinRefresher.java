@@ -28,6 +28,7 @@ final class PaperSkinRefresher implements Consumer<Player> {
             field.setAccessible(true);
             MethodHandles.publicLookup();
             MH_REFRESH = ((MethodHandles.Lookup) field.get(null)).findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
+            System.out.println("[SkinsRestorer] Using PaperSkinRefresher");
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
         }

@@ -52,6 +52,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                     ADD_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "Action", "ADD_PLAYER");
                 }
             }
+            System.out.println("[SkinsRestorer] Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }
