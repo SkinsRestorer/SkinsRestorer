@@ -3,63 +3,63 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Greska&8: &cPremium igrac sa tim imenom ne postoji."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Error&8: &cNemate dozvolu na ovo."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: nemoguce azurirati URL skinove! \n&cZatrazite opet sa /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
   skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Vas skin je promjenjen."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Vas skin je izbrisan iz baze podataka."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin je izbrisan iz baze podataka za %player."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Stavili ste skin za %player."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Greska&8: &c%player nije ispravno ime."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Greska:&8: &cIgrac nije onlajn!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Baza podataka skina za %player je izbrisana."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Konfiguracija i jezik je ponovo ulogiran!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Greska&8: &cNe mozete jos promjeniti vas skin! Sacekajte &e%s &csekundi."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Greska&8: &cOvaj skin nije dozvoljen od strane administratora."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Greska&8: &cNismo mogli preuzeti podatke skina! Da li ovaj igrac ima skin?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Greska&8: &cMolim vas sacekajte minut prije nego sto zatrazite taj skin opet. (Rate Limited)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Greska&8: &cGreska se desila tokom zatraznje podataka skina, molim vas pokusajte opet!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Imate staru verziju SkinsRestorera!\n&cMolim vas azurirajte na poslednju verziju:\n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Ove komande su samo za igrace!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Greska&8: &cMorate biti igrac!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Otvaranje menija skina..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Prosla Strana&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Sljedeca Strana&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Izbrisi Skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Kliknite da izaberete ovaj skin"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Konekcija sa Mojang API-om uspjesna!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Greska&8: &cAPI podataka skina je prebukiran, pokusajte opet kasnije!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
