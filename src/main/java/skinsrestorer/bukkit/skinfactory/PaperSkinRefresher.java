@@ -15,11 +15,13 @@ import java.util.function.Consumer;
  */
 final class PaperSkinRefresher implements Consumer<Player> {
     private static final MethodHandle MH_REFRESH;
+    private static final MethodHandle MH_HEALTH_UPDATE;
 
     @Override
     @SneakyThrows
     public void accept(Player player) {
         MH_REFRESH.invoke(player);
+        MH_HEALTH_UPDATE.invoke(player);
     }
 
     static {
@@ -27,7 +29,9 @@ final class PaperSkinRefresher implements Consumer<Player> {
             val field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             field.setAccessible(true);
             MethodHandles.publicLookup();
-            MH_REFRESH = ((MethodHandles.Lookup) field.get(null)).findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
+            val lookup = (MethodHandles.Lookup) field.get(null);
+            MH_REFRESH = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
+            MH_HEALTH_UPDATE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "triggerHealthUpdate", MethodType.methodType(Void.TYPE));
             System.out.println("[SkinsRestorer] Using PaperSkinRefresher");
         } catch (Exception e) {
             throw new ExceptionInInitializerError(e);
