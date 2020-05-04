@@ -354,6 +354,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         try {
             File warning = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "Use bungee config for settings!");
+            warning.getParentFile().mkdirs();
             if (!warning.exists() && bungeeEnabled)
                 warning.createNewFile();
 

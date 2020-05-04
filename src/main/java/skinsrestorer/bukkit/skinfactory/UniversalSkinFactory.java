@@ -17,10 +17,9 @@ public class UniversalSkinFactory extends SkinFactory {
         if (!player.isOnline())
             return;
 
-        // Some older spigot versions only support hidePlayer(player)
-
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             for (Player ps : Bukkit.getOnlinePlayers()) {
+                // Some older spigot versions only support hidePlayer(player)
                 try {
                     ps.hidePlayer(this.plugin, player);
                 } catch (Error ignored) {
@@ -38,6 +37,7 @@ public class UniversalSkinFactory extends SkinFactory {
     }
 
     private static Consumer<Player> detectRefresh() {
+        System.out.println(Bukkit.getName().toLowerCase());
         if (Bukkit.getName().toLowerCase().contains("paper")) {
             try {
                 return new PaperSkinRefresher();
