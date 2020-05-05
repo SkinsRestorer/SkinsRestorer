@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.Setter;
 import skinsrestorer.shared.exception.SkinRequestException;
@@ -101,7 +102,9 @@ public class MineSkinAPI {
                     }
                 }
             } catch (IOException e) {
-                System.out.println("[SkinsRestorer] MS API Failure (" + url + ") " + e.getLocalizedMessage());
+                System.out.println("[SkinsRestorer] MS API Failure IOException: (" + url + ") " + e.getLocalizedMessage());
+            } catch (JsonSyntaxException e) {
+                System.out.println("[SkinsRestorer] MS API Failure JsonSyntaxException: (" + url + ") " + e.getLocalizedMessage());
             }
         } catch (UnsupportedEncodingException e) {
             System.out.println("[SkinsRestorer] [ERROR] UnsupportedEncodingException");
