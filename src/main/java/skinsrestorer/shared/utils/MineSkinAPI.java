@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,6 +24,12 @@ public class MineSkinAPI {
     @Getter
     @Setter
     private SkinStorage skinStorage;
+    @Setter
+    private SRLogger logger;
+
+    public MineSkinAPI(SRLogger logger) {
+        this.logger = logger;
+    }
 
     public String guessSkinType(String url) {
         try {
@@ -86,7 +93,7 @@ public class MineSkinAPI {
                 } else if (obj.has("error")) {
                     err_resp = obj.get("error").getAsString();
                     if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
-//                        System.out.println("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again. ");
+                        this.logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again. ");
                         if (obj.has("delay"))
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                         return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
@@ -94,20 +101,20 @@ public class MineSkinAPI {
                         System.out.println(Locale.ERROR_MS_FULL);
                         throw new SkinRequestException(Locale.ERROR_MS_FULL);
                     } else if (err_resp.equals("Failed to determine file size")) {
-                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        this.logger.log(Locale.ERROR_INVALID_URLSKIN);
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     } else if (err_resp.equals("Failed to get image dimensions")) {
-                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        this.logger.log(Locale.ERROR_INVALID_URLSKIN);
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 }
             } catch (IOException e) {
-                System.out.println("[SkinsRestorer] MS API Failure IOException: (" + url + ") " + e.getLocalizedMessage());
+                this.logger.log(Level.WARNING, "[SkinsRestorer] MS API Failure IOException: (" + url + ") " + e.getLocalizedMessage());
             } catch (JsonSyntaxException e) {
-                System.out.println("[SkinsRestorer] MS API Failure JsonSyntaxException: (" + url + ") " + e.getLocalizedMessage());
+                this.logger.log(Level.WARNING, "[SkinsRestorer] MS API Failure JsonSyntaxException: (" + url + ") " + e.getLocalizedMessage());
             }
         } catch (UnsupportedEncodingException e) {
-            System.out.println("[SkinsRestorer] [ERROR] UnsupportedEncodingException");
+            this.logger.log(Level.WARNING, "[SkinsRestorer] [ERROR] UnsupportedEncodingException");
         } catch (InterruptedException e) {
         }
         // throw exception after all tries have failed

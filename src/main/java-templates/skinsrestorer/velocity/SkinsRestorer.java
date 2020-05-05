@@ -94,7 +94,7 @@ public class SkinsRestorer {
         Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.logger);
-        this.mineSkinAPI = new MineSkinAPI();
+        this.mineSkinAPI = new MineSkinAPI(this.logger);
 
         this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
