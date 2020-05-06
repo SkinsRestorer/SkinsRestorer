@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.lang.reflect.Method;
@@ -154,35 +155,31 @@ public class OldSkinRefresher implements Consumer<Player> {
 
             Object slot = ReflectionUtil.invokeConstructor(PlayOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
 
-            for (Player pOnline : Bukkit.getOnlinePlayers()) {
-                final Object craftHandle = ReflectionUtil.invokeMethod(pOnline, "getHandle");
-                Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+            final Object craftHandle = ReflectionUtil.invokeMethod(player, "getHandle");
+            Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 
-                if (pOnline.equals(player)) {
-                    sendPacket(playerCon, removePlayer);
-                    sendPacket(playerCon, addPlayer);
+            sendPacket(playerCon, removePlayer);
+            sendPacket(playerCon, addPlayer);
 
-                    sendPacket(playerCon, respawn);
+            sendPacket(playerCon, respawn);
 
-                    ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+            ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
 
-                    sendPacket(playerCon, pos);
-                    sendPacket(playerCon, slot);
+            sendPacket(playerCon, pos);
+            sendPacket(playerCon, slot);
 
-                    ReflectionUtil.invokeMethod(pOnline, "updateScaledHealth");
-                    ReflectionUtil.invokeMethod(pOnline, "updateInventory");
-                    ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
+            ReflectionUtil.invokeMethod(player, "updateScaledHealth");
+            ReflectionUtil.invokeMethod(player, "updateInventory");
+            ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 
-                    // Workaround..
-                    if (pOnline.isOp()) {
-                        pOnline.setOp(false);
-                        pOnline.setOp(true);
-                    }
-                } else {
-                    sendPacket(playerCon, removePlayer);
-                    sendPacket(playerCon, addPlayer);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                // Workaround..
+                if (player.isOp()) {
+                    player.setOp(false);
+                    player.setOp(true);
                 }
-            }
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
