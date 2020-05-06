@@ -92,7 +92,7 @@ public class SkinsRestorer extends Plugin {
         Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.srLogger);
-        this.mineSkinAPI = new MineSkinAPI();
+        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
 
         this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage

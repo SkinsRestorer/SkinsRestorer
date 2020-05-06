@@ -5,10 +5,12 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.Setter;
 import skinsrestorer.shared.exception.SkinRequestException;
@@ -22,6 +24,12 @@ public class MineSkinAPI {
     @Getter
     @Setter
     private SkinStorage skinStorage;
+    @Setter
+    private SRLogger logger;
+
+    public MineSkinAPI(SRLogger logger) {
+        this.logger = logger;
+    }
 
     public String guessSkinType(String url) {
         try {
@@ -85,26 +93,28 @@ public class MineSkinAPI {
                 } else if (obj.has("error")) {
                     err_resp = obj.get("error").getAsString();
                     if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
-//                        System.out.println("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again. ");
+                        this.logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again... ");
                         if (obj.has("delay"))
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                         return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
                     } else if (err_resp.equals("No accounts available")) {
-                        System.out.println(Locale.ERROR_MS_FULL);
+                        this.logger.log("[ERROR] MS No accounts available " + url);
                         throw new SkinRequestException(Locale.ERROR_MS_FULL);
                     } else if (err_resp.equals("Failed to determine file size")) {
-                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        this.logger.log("[ERROR] MS Failed to determine file size for " + url);
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     } else if (err_resp.equals("Failed to get image dimensions")) {
-                        // System.out.println(Locale.ERROR_INVALID_URLSKIN); TODO: not print if verbose
+                        this.logger.log("[ERROR] MS Failed to get image dimensions for " + url);
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 }
             } catch (IOException e) {
-                System.out.println("[SkinsRestorer] MS API Failure (" + url + ") " + e.getLocalizedMessage());
+                this.logger.log(Level.WARNING, "[ERROR] MS API Failure IOException: (" + url + ") " + e.getLocalizedMessage());
+            } catch (JsonSyntaxException e) {
+                this.logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException: (" + url + ") " + e.getLocalizedMessage());
             }
         } catch (UnsupportedEncodingException e) {
-            System.out.println("[SkinsRestorer] [ERROR] UnsupportedEncodingException");
+            this.logger.log(Level.WARNING, "[ERROR] MS UnsupportedEncodingException");
         } catch (InterruptedException e) {
         }
         // throw exception after all tries have failed
