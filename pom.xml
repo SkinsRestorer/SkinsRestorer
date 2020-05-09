@@ -4,7 +4,7 @@
 
     <groupId>com</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.7.2-SNAPSHOT</version>
+    <version>13.7.9</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -13,6 +13,18 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.org/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.org/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>spigot-repo</id>
@@ -182,8 +194,14 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.20</version>
+            <version>1.18.0</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- MySQL Connector/J -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.17</version>
         </dependency>
     </dependencies>
     <build>
@@ -227,6 +245,10 @@
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>
                             <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.slf4j</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.slf4j</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

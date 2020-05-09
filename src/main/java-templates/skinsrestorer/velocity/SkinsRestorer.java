@@ -20,13 +20,12 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.update.UpdateCheckerGitHub;
-import skinsrestorer.shared.utils.CommandPropertiesManager;
-import skinsrestorer.shared.utils.CommandReplacements;
-import skinsrestorer.shared.utils.MySQL;
+import skinsrestorer.shared.utils.*;
 import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.velocity.command.SkinCommand;
 import skinsrestorer.velocity.command.SrCommand;
 import skinsrestorer.velocity.listener.GameProfileRequest;
+import skinsrestorer.velocity.utils.SkinApplier;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -44,9 +43,11 @@ public class SkinsRestorer {
     @Getter
     private final ProxyServer proxy;
     @Getter
-    private final Logger logger;
+    private SRLogger logger;
     @Getter
     private final Path dataFolder;
+    @Getter
+    private SkinApplier skinApplier;
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     @Getter
@@ -56,16 +57,25 @@ public class SkinsRestorer {
     private CommandSource console;
     private UpdateChecker updateChecker;
 
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerVelocityAPI skinsRestorerVelocityAPI;
+
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        this.logger = logger;
+        this.logger = new SRLogger();
         this.dataFolder = dataFolder;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        logger.info("Enabling SkinsRestorer v" + getVersion());
+        logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = this.proxy.getConsoleCommandSource();
 
         // Check for updates
@@ -77,13 +87,22 @@ public class SkinsRestorer {
                 this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         }
 
+        this.skinStorage = new SkinStorage();
+
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI(this.logger);
+        this.mineSkinAPI = new MineSkinAPI(this.logger);
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init listener
         proxy.getEventManager().register(this, new GameProfileRequest(this));
@@ -92,14 +111,18 @@ public class SkinsRestorer {
         this.initCommands();
 
         // Init SkinApplier
+        this.skinApplier = new SkinApplier(this);
 
-        logger.info("Enabled SkinsRestorer v" + getVersion());
+        // Init API
+        this.skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(this, this.mojangAPI, this.skinStorage);
+
+        logger.logAlways("Enabled SkinsRestorer v" + getVersion());
     }
 
     @Subscribe
     public void onShutDown(ProxyShutdownEvent ev) {
-        logger.info("Disabling SkinsRestorer v" + getVersion());
-        logger.info("Disabled SkinsRestorer v" + getVersion());
+        this.logger.logAlways("Disabling SkinsRestorer v" + getVersion());
+        this.logger.logAlways("Disabled SkinsRestorer v" + getVersion());
     }
 
     private void initCommands() {
@@ -140,19 +163,17 @@ public class SkinsRestorer {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                this.getLogger().info(("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                logger.logAlways("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(this.getDataFolder().toFile());
         }
 
-        SkinStorage.init(this.getDataFolder().toFile());
-
         // Preload default skins
-        this.getService().execute(SkinStorage::preloadDefaultSkins);
+        this.getService().execute(this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

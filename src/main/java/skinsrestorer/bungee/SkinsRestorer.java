@@ -10,9 +10,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import skinsrestorer.bungee.commands.GUICommand;
 import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.commands.SkinCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
+import skinsrestorer.bungee.listeners.PluginMessageListener;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -37,6 +39,24 @@ public class SkinsRestorer extends Plugin {
     private CommandSender console;
     private UpdateChecker updateChecker;
 
+    @Getter
+    private SkinApplier skinApplier;
+
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SRLogger srLogger;
+    @Getter
+    private PluginMessageListener pluginMessageListener;
+    @Getter
+    private SkinCommand skinCommand;
+    @Getter
+    private SkinsRestorerBungeeAPI skinsRestorerBungeeAPI;
+
     public String getVersion() {
         return getDescription().getVersion();
     }
@@ -44,15 +64,19 @@ public class SkinsRestorer extends Plugin {
 
     @Override
     public void onEnable() {
+        srLogger = new SRLogger();
         Metrics metrics = new Metrics(this);
-        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
-        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
-        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+        if (metrics.isEnabled()) {
+            metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+        }
 
         console = getProxy().getConsole();
 
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.getLogger(), "SkinsRestorerUpdater/BungeeCord");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
             if (Config.UPDATER_PERIODIC)
@@ -61,13 +85,22 @@ public class SkinsRestorer extends Plugin {
 
         instance = this;
 
+        this.skinStorage = new SkinStorage();
+
         // Init config files
         Config.load(configPath, getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI(this.srLogger);
+        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
@@ -76,9 +109,20 @@ public class SkinsRestorer extends Plugin {
         this.initCommands();
 
         getProxy().registerChannel("sr:skinchange");
-        SkinApplier.init();
+
+        // Init SkinApplier
+        this.skinApplier = new SkinApplier(this);
+        this.skinApplier.init();
+
+        // Init message channel
+        this.getProxy().registerChannel("sr:messagechannel");
+        this.pluginMessageListener = new PluginMessageListener(this);
+        this.getProxy().getPluginManager().registerListener(this, this.pluginMessageListener);
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+
+        // Init API
+        this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(this, this.mojangAPI, this.skinStorage);
     }
 
     private void initCommands() {
@@ -100,8 +144,10 @@ public class SkinsRestorer extends Plugin {
 
         new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
 
-        manager.registerCommand(new SkinCommand());
-        manager.registerCommand(new SrCommand());
+        this.skinCommand = new SkinCommand(this);
+        manager.registerCommand(this.skinCommand);
+        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
@@ -119,21 +165,19 @@ public class SkinsRestorer extends Plugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
                 getProxy().getPluginManager().unregisterListeners(this);
                 getProxy().getPluginManager().unregisterCommands(this);
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(getDataFolder());
         }
 
-        SkinStorage.init(getDataFolder());
-
         // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), SkinStorage::preloadDefaultSkins);
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

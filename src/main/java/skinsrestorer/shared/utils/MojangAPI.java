@@ -4,6 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.Getter;
+import lombok.Setter;
+import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
 
@@ -12,11 +15,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Random;
+import java.util.logging.Level;
 
 
 public class MojangAPI {
-
     private static final String uuidurl = "https://api.minetools.eu/uuid/%name%";
     private static final String uuidurl_mojang = "https://api.mojang.com/users/profiles/minecraft/%name%";
     private static final String uuidurl_backup = "https://api.ashcon.app/mojang/v2/user/%name%";
@@ -25,7 +27,15 @@ public class MojangAPI {
     private static final String skinurl_mojang = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String skinurl_backup = "https://api.ashcon.app/mojang/v2/user/%uuid%";
 
-    private static MojangAPI mojangapi = new MojangAPI();
+    @Getter
+    @Setter
+    private SkinStorage skinStorage;
+    @Setter
+    private SRLogger logger;
+
+    public MojangAPI(SRLogger logger) {
+        this.logger = logger;
+    }
 
     // TODO Deal with duplicated code
 
@@ -35,7 +45,7 @@ public class MojangAPI {
      *
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public static Object getSkinProperty(String uuid, boolean tryNext) {
+    public Object getSkinProperty(String uuid, boolean tryNext) {
         String output;
         try {
             output = readURL(skinurl.replace("%uuid%", uuid));
@@ -47,11 +57,17 @@ public class MojangAPI {
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
+                if (raw.has("status")) {
+                    if (raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                        return getSkinPropertyMojang(uuid);
+                    }
+                }
+
                 if (property.valuesFromJson(raw)) {
-                    return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+                    return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
-            return null;
+
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -59,12 +75,12 @@ public class MojangAPI {
         return null;
     }
 
-    public static Object getSkinProperty(String uuid) {
+    public Object getSkinProperty(String uuid) {
         return getSkinProperty(uuid, true);
     }
 
-    public static Object getSkinPropertyMojang(String uuid, boolean tryNext) {
-        System.out.println("[SkinsRestorer] Trying Mojang API to get skin property for " + uuid + ".");
+    public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
+        this.logger.log("Trying Mojang API to get skin property for " + uuid + ".");
 
         String output;
         try {
@@ -74,11 +90,12 @@ public class MojangAPI {
 
             Property property = new Property();
 
-            if (property.valuesFromJson(obj)) {
-                return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+            if (obj.has("properties")) {
+                if (property.valuesFromJson(obj)) {
+                    return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+                }
             }
 
-            return null;
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyBackup(uuid);
@@ -86,12 +103,12 @@ public class MojangAPI {
         return null;
     }
 
-    public static Object getSkinPropertyMojang(String uuid) {
+    public Object getSkinPropertyMojang(String uuid) {
         return getSkinPropertyMojang(uuid, true);
     }
 
-    public static Object getSkinPropertyBackup(String uuid) {
-        System.out.println("[SkinsRestorer] Trying backup API to get skin property for " + uuid + ".");
+    public Object getSkinPropertyBackup(String uuid) {
+        this.logger.log("Trying backup API to get skin property for " + uuid + ".");
 
         String output;
         try {
@@ -105,12 +122,12 @@ public class MojangAPI {
             property.setValue(rawTextures.get("value").getAsString());
             property.setSignature(rawTextures.get("signature").getAsString());
 
-            return SkinStorage.createProperty("textures", property.getValue(), property.getSignature());
+            return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
 
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed to get skin property from backup API. (" + uuid + ")");
-            return null;
+            this.logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
+        return null;
     }
 
     /**
@@ -118,7 +135,7 @@ public class MojangAPI {
      * @return Dash-less UUID (String)
      * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
      */
-    public static String getUUID(String name, boolean tryNext) throws SkinRequestException {
+    public String getUUID(String name, boolean tryNext) throws SkinRequestException {
         String output;
         try {
             output = readURL(uuidurl.replace("%name%", name));
@@ -128,13 +145,11 @@ public class MojangAPI {
 
             if (obj.has("status")) {
                 if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    if (tryNext)
-                        return getUUIDMojang(name);
-                    return null;
+                    return getUUIDMojang(name);
                 }
             }
 
-            if (obj.get("id").getAsString().equalsIgnoreCase("null"))
+            if (obj.get("id") == null)
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
 
             return obj.get("id").getAsString();
@@ -145,12 +160,12 @@ public class MojangAPI {
         return null;
     }
 
-    public static String getUUID(String name) throws SkinRequestException {
+    public String getUUID(String name) throws SkinRequestException {
         return getUUID(name, true);
     }
 
-    public static String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
-        System.out.println("[SkinsRestorer] Trying Mojang API to get UUID for player " + name + ".");
+    public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
+        this.logger.log("Trying Mojang API to get UUID for player " + name + ".");
 
         String output;
         try {
@@ -177,12 +192,12 @@ public class MojangAPI {
         return null;
     }
 
-    public static String getUUIDMojang(String name) throws SkinRequestException {
+    public String getUUIDMojang(String name) throws SkinRequestException {
         return getUUIDMojang(name, true);
     }
 
-    public static String getUUIDBackup(String name) throws SkinRequestException {
-        System.out.println("[SkinsRestorer] Trying backup API to get UUID for player " + name + ".");
+    public String getUUIDBackup(String name) throws SkinRequestException {
+        this.logger.log("Trying backup API to get UUID for player " + name + ".");
 
         String output;
         try {
@@ -191,8 +206,9 @@ public class MojangAPI {
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
+            //System.out.println(output.toString()); //testing
             if (obj.has("code")) {
-                if (obj.get("code").getAsInt() == 404) {
+                if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
                     throw new SkinRequestException(Locale.NOT_PREMIUM);
                 }
                 throw new SkinRequestException(Locale.ALT_API_FAILED);
@@ -200,28 +216,15 @@ public class MojangAPI {
 
             return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException e) {
-            throw new SkinRequestException(e.getMessage());
+            throw new SkinRequestException(Locale.NOT_PREMIUM); //TODO: check flow of code
         }
     }
 
-    public static MojangAPI get() {
-        return mojangapi;
-    }
-
-    private static int rand(int High) {
-        try {
-            Random r = new Random();
-            return r.nextInt(High - 1) + 1;
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    private static String readURL(String url) throws IOException {
+    private String readURL(String url) throws IOException {
         return readURL(url, 5000);
     }
 
-    private static String readURL(String url, int timeout) throws IOException {
+    private String readURL(String url, int timeout) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
         MetricsCounter.incrAPI(url);
 
@@ -239,28 +242,12 @@ public class MojangAPI {
             output.append(line);
 
         in.close();
+        /*System.out.println("USED STRING URL = " + url);
+        System.out.println(output.toString()); // testing */
         return output.toString();
     }
 
-    public static class SkinRequestException extends Exception {
-
-        private String reason;
-
-        public SkinRequestException(String reason) {
-            this.reason = reason;
-        }
-
-        public String getReason() {
-            return reason;
-        }
-
-        public String getMessage() {
-            return reason;
-        }
-
-    }
-
-    private static class Property {
+    private class Property {
         private String name;
         private String value;
         private String signature;
@@ -268,15 +255,17 @@ public class MojangAPI {
         boolean valuesFromJson(JsonObject obj) {
             if (obj.has("properties")) {
                 JsonArray properties = obj.getAsJsonArray("properties");
-                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
+                if (properties.size() > 0) {
+                    JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-                String signature = propertiesObject.get("signature").getAsString();
-                String value = propertiesObject.get("value").getAsString();
+                    String signature = propertiesObject.get("signature").getAsString();
+                    String value = propertiesObject.get("value").getAsString();
 
-                this.setSignature(signature);
-                this.setValue(value);
+                    this.setSignature(signature);
+                    this.setValue(value);
 
-                return true;
+                    return true;
+                }
             }
 
             return false;
@@ -307,7 +296,7 @@ public class MojangAPI {
         }
     }
 
-    private static class HTTPResponse {
+    private class HTTPResponse {
         private String output;
         private int status;
 

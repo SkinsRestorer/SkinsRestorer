@@ -5,18 +5,21 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Objects;
+
+import li.cock.ie.reflect.*;
 
 public class ReflectionUtil {
 
-    public static final String serverVersion = null;
+    public static String serverVersion = null;
+    private static DuckBypass reflect;
 
     static {
+        reflect = new DuckBypass();
         try {
             Class.forName("org.bukkit.Bukkit");
-            setObject(ReflectionUtil.class, null, "serverVersion", Bukkit.getServer().getClass().getPackage().getName()
-                    .substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1));
+            String version = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
+            setObject(ReflectionUtil.class, null, "serverVersion", version);
         } catch (Exception ignored) {
         }
     }
@@ -165,14 +168,18 @@ public class ReflectionUtil {
     }
 
     private static void setFieldAccessible(Field f) throws Exception {
+        /*
         f.setAccessible(true);
         Field modifiers = Field.class.getDeclaredField("modifiers");
         modifiers.setAccessible(true);
         modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+        */
+        reflect.setEditable(f);
     }
 
     public static void setObject(Class<?> clazz, Object obj, String fname, Object value) throws Exception {
-        getField(clazz, fname).set(obj, value);
+        // getField(clazz, fname).set(obj, value);
+        reflect.setValue(clazz, fname, obj, value);
     }
 
     public static void setObject(Object obj, String fname, Object value) throws Exception {

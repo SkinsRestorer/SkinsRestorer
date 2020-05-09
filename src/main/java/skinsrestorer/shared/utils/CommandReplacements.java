@@ -15,7 +15,7 @@ public class CommandReplacements {
             {"skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command"},
             {"sr", "skinsrestorer.admincommand"},
 
-            {"skins", "skinsrestorer.command.gui"},
+            {"skins", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.gui"},
 
             {"skinSet", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.set"},
             {"skinSetOther", "skinsrestorer.command.set.other"},

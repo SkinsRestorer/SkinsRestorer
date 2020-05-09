@@ -9,11 +9,10 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
-import skinsrestorer.bungee.SkinApplier;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
@@ -22,8 +21,14 @@ import java.util.List;
 
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
+    private SkinsRestorer plugin;
+
+    public SrCommand(SkinsRestorer plugin) {
+        this.plugin = plugin;
+    }
+
     @HelpCommand
-    public static void onHelp(CommandSender sender, CommandHelp help) {
+    public void onHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
     }
 
@@ -39,10 +44,12 @@ public class SrCommand extends BaseCommand {
     @Subcommand("status") @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        sender.sendMessage(new TextComponent("Checking needed services for SR to work properly..."));
+        sender.sendMessage(new TextComponent("§3----------------------------------------------"));
+        sender.sendMessage(new TextComponent("§7Checking needed services for SR to work properly..."));
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ServiceChecker checker = new ServiceChecker();
+            checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
@@ -51,13 +58,18 @@ public class SrCommand extends BaseCommand {
             for (String result : results) {
                 sender.sendMessage(new TextComponent(result));
             }
-            sender.sendMessage(new TextComponent("Working UUID API count: " + response.getWorkingUUID()));
-            sender.sendMessage(new TextComponent("Working Profile API count: " + response.getWorkingProfile()));
+            sender.sendMessage(new TextComponent("§7Working UUID API count: §6 " + response.getWorkingUUID()));
+            sender.sendMessage(new TextComponent("§7Working Profile API count: §6" + response.getWorkingProfile()));
             if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
-                sender.sendMessage(new TextComponent("The plugin currently is in a working state."));
+                sender.sendMessage(new TextComponent("§aThe plugin currently is in a working state."));
             else
-                sender.sendMessage(new TextComponent("Plugin currently can't fetch new skins. You might check out our discord at https://discordapp.com/invite/012gnzKK9EortH0v2?utm_source=Discord%20Widget&utm_medium=Connect"));
-            sender.sendMessage(new TextComponent("Finished checking services."));
+                sender.sendMessage(new TextComponent("§cPlugin currently can't fetch new skins. You might check out our discord at https://discord.me/servers/skinsrestorer"));
+            sender.sendMessage(new TextComponent("§3----------------------------------------------"));
+            sender.sendMessage(new TextComponent("§7SkinsRestorer §6v" + plugin.getVersion()));
+            sender.sendMessage(new TextComponent("§7Server: §6" + plugin.getProxy().getVersion()));
+            sender.sendMessage(new TextComponent("§7BungeeMode: §6Bungee-Plugin"));
+            sender.sendMessage(new TextComponent("§7Finished checking services."));
+            sender.sendMessage(new TextComponent("§3----------------------------------------------"));
         });
     }
 
@@ -67,7 +79,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     public void onDrop(CommandSender sender, OnlineProxiedPlayer target) {
         String player = target.getPlayer().getName();
-        SkinStorage.removeSkinData(player);
+        plugin.getSkinStorage().removeSkinData(player);
         sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
     }
 

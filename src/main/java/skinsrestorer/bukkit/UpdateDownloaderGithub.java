@@ -1,17 +1,11 @@
 package skinsrestorer.bukkit;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 import skinsrestorer.shared.update.DownloadCallback;
 import skinsrestorer.shared.update.GitHubReleaseInfo;
 import skinsrestorer.shared.update.GitHubUpdateDownloader;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Properties;
 import java.util.logging.Level;
 
 /**

@@ -28,7 +28,6 @@ import skinsrestorer.sponge.utils.SkinApplier;
 import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 @Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}")
 public class SkinsRestorer {
@@ -39,25 +38,36 @@ public class SkinsRestorer {
     @Getter
     private SkinApplier skinApplier;
 
-    @Inject @Getter
-    private Logger logger;
+    @Getter
+    private SRLogger srLogger;
 
     @Inject
     private Metrics2 metrics;
 
     private UpdateChecker updateChecker;
     private CommandSource console;
+    @Getter
     private boolean bungeeEnabled = false;
+
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerSpongeAPI skinsRestorerSpongeAPI;
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
+        this.srLogger = new SRLogger();
         instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Sponge");
+            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.srLogger, "SkinsRestorerUpdater/Sponge");
             this.checkUpdate(bungeeEnabled);
 
             if (Config.UPDATER_PERIODIC)
@@ -66,19 +76,31 @@ public class SkinsRestorer {
                 }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         }
 
+        this.skinStorage = new SkinStorage();
+
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
+        this.mojangAPI = new MojangAPI(this.srLogger);
+        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
+
+        this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!this.initStorage())
             return;
+
+        this.mojangAPI.setSkinStorage(this.skinStorage);
+        this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init commands
         this.initCommands();
 
         // Init SkinApplier
         this.skinApplier = new SkinApplier(this);
+
+        // Init API
+        this.skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(this, this.mojangAPI, this.skinStorage);
     }
 
     @Listener
@@ -87,6 +109,7 @@ public class SkinsRestorer {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
         }
 
+        metrics.addCustomChart(new Metrics2.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
         metrics.addCustomChart(new Metrics2.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
         metrics.addCustomChart(new Metrics2.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
         metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
@@ -124,19 +147,17 @@ public class SkinsRestorer {
                 mysql.openConnection();
                 mysql.createTable();
 
-                SkinStorage.init(mysql);
-                return true;
-
+                this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
+        } else {
+            this.skinStorage.loadFolders(new File(configPath));
         }
 
-        SkinStorage.init(new File(configPath));
-
         // Preload default skins
-        Sponge.getScheduler().createAsyncExecutor(this).execute(SkinStorage::preloadDefaultSkins);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

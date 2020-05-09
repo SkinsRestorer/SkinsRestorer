@@ -12,9 +12,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import com.flowpowered.math.vector.Vector3d;
 
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MojangAPI.SkinRequestException;
+import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.utils.Property;
 import skinsrestorer.sponge.SkinsRestorer;
 
@@ -34,23 +32,23 @@ public class SkinApplier {
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
         try {
             // Todo: new function for this duplicated code
-            Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(skin);
+            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
             Collection<ProfileProperty> oldProperties = profile.getPropertyMap().get("textures");
             ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
             oldProperties.clear();
             oldProperties.add(newTextures);
-        } catch (MojangAPI.SkinRequestException e) {
+        } catch (SkinRequestException e) {
             e.printStackTrace();
         }
     }
 
-    public void applySkin(final Player p, final String skin) throws MojangAPI.SkinRequestException {
+    public void applySkin(final Player p, final String skin) throws SkinRequestException {
         this.applySkin(p, skin, true);
     }
 
     public void applySkin(final Player p, final String skin, boolean updatePlayer) throws SkinRequestException {
         Collection<ProfileProperty> oldProps = p.getProfile().getPropertyMap().get("textures");
-        Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(skin);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProps.clear();
         oldProps.add(newTextures);

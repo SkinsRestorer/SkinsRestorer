@@ -5,8 +5,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import skinsrestorer.shared.storage.SkinStorage;
-import skinsrestorer.shared.utils.MojangAPI;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -16,10 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class SkinApplier {
-
+    private SkinsRestorer plugin;
     private static Class<?> LoginResult;
 
-    public static void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
+    public SkinApplier(SkinsRestorer plugin) {
+        this.plugin = plugin;
+    }
+
+    public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
         String uuid = null;
         if (p == null && handler == null)
             return;
@@ -28,7 +31,7 @@ public class SkinApplier {
             uuid = p.getUniqueId().toString();
             handler = (InitialHandler) p.getPendingConnection();
         }
-        Property textures = (Property) SkinStorage.getOrCreateSkinForPlayer(nick);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick);
 
         if (handler.isOnlineMode()) {
             if (p != null) {
@@ -36,7 +39,7 @@ public class SkinApplier {
                 return;
             }
             // Online mode => get real IP from API
-            uuid = MojangAPI.getUUID(nick);
+            uuid = plugin.getMojangAPI().getUUID(nick);
 
             // Offline mode use offline uuid
         } else {
@@ -74,16 +77,16 @@ public class SkinApplier {
 
     }
 
-    public static void applySkin(final String pname) throws Exception {
+    public void applySkin(final String pname) throws Exception {
         ProxiedPlayer p = ProxyServer.getInstance().getPlayer(pname);
         applySkin(p, pname, null);
     }
 
-    public static void applySkin(final ProxiedPlayer p) throws Exception {
+    public void applySkin(final ProxiedPlayer p) throws Exception {
         applySkin(p, p.getName(), null);
     }
 
-    public static void init() {
+    public void init() {
         try {
             LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
         } catch (Exception e) {
@@ -91,14 +94,15 @@ public class SkinApplier {
         }
     }
 
-    private static void sendUpdateRequest(ProxiedPlayer p, Property textures) {
+    private void sendUpdateRequest(ProxiedPlayer p, Property textures) {
         if (p == null)
             return;
 
         if (p.getServer() == null)
             return;
 
-        System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
+        if (Config.DEBUG)
+            System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);

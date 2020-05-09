@@ -25,7 +25,10 @@ public abstract class SkinFactory {
                 Object propmap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
                 ReflectionUtil.invokeMethod(propmap, "clear");
                 ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "put", new Class[]{Object.class, Object.class}, "textures", props);
-                updateSkin(p);
+
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    updateSkin(p);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
