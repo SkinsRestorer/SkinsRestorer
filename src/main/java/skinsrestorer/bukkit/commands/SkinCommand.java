@@ -182,16 +182,16 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
 
-                // set custom skin name back to old one if there is an exception
-                if (save)
-                    plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
         }
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
+                CooldownStorage.resetCooldown(sender.getName());
                 return false;
+
             }
 
             try {
@@ -207,21 +207,22 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
-                // set custom skin name back to old one if there is an exception
-                if (save)
-                    plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception  e) {
                 System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:" + skin);
-                //e.printStackTrace(); //
+                //e.printStackTrace(); //todo: not throw error without context
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-                // set custom skin name back to old one if there is an exception
-                if (save)
-                    plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
         }
         return false;
     }
+        private void rollback(Player p, String oldSkinName, boolean save) {
+            if (save)
+                CooldownStorage.setCooldown(p.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+            plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+        }
 
     private void sendHelp(CommandSender sender) {
         if (!Locale.SR_LINE.isEmpty())

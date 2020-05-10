@@ -185,7 +185,7 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(new TextComponent(e.getReason()));
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace(); //todo: not throw error without context
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
@@ -193,6 +193,7 @@ public class SkinCommand extends BaseCommand {
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
                 sender.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_URL));
+                CooldownStorage.resetCooldown(sender.getName());
                 return false;
             }
 
@@ -222,6 +223,7 @@ public class SkinCommand extends BaseCommand {
 
     private void rollback(ProxiedPlayer p, String oldSkinName, boolean save) {
         if (save)
+            CooldownStorage.setCooldown(p.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
             plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
     }
 

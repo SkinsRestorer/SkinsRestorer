@@ -12,6 +12,7 @@ public class Config {
     public static boolean SKINWITHOUTPERM = false;
     public static int SKIN_EXPIRES_AFTER = 1584;
     public static int SKIN_CHANGE_COOLDOWN = 30;
+    public static int SKIN_ERROR_COOLDOWN = 5;
     public static boolean DEFAULT_SKINS_ENABLED = false;
     public static boolean DEFAULT_SKINS_PREMIUM = false;
     public static List<String> DEFAULT_SKINS = null;
@@ -32,7 +33,7 @@ public class Config {
     public static boolean USE_NEW_PERMISSIONS = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static boolean USE_OLD_SKIN_HELP = false;
-    public static boolean DISABLE_PREFIX = true;
+    public static boolean DISABLE_PREFIX = true; //TODO: turn false after a few updates
     public static boolean DEBUG = false;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -48,6 +49,7 @@ public class Config {
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS); //hidden
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
+        SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
         DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
         DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);

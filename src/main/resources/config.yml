@@ -23,6 +23,7 @@ SkinExpiresAfter: 20
 # Players cooldown when changing skins (set to 0 to disable)
 # Can be bypassed with 'skinsrestorer.bypasscooldown'
 SkinChangeCooldown: 30
+SkinErrorCooldown: 5
 
 # Set the language you will use - Files are located in /SkinsRestorer/languages directory
 # You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
