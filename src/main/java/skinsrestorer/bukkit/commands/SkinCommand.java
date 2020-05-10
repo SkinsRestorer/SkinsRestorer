@@ -171,6 +171,7 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.resetCooldown(sender.getName());
         CooldownStorage.setCooldown(sender.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
+
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
         if (C.validUsername(skin)) {
             try {
@@ -181,7 +182,7 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
-
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
@@ -191,7 +192,6 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
                 CooldownStorage.resetCooldown(sender.getName());
                 return false;
-
             }
 
             try {
@@ -207,11 +207,13 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception  e) {
                 System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:" + skin);
                 //e.printStackTrace(); //todo: not throw error without context
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
@@ -220,7 +222,6 @@ public class SkinCommand extends BaseCommand {
     }
         private void rollback(Player p, String oldSkinName, boolean save) {
             if (save)
-                CooldownStorage.setCooldown(p.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
             plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
         }
 

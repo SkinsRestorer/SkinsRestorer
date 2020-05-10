@@ -183,9 +183,11 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(new TextComponent(e.getReason()));
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
                 //e.printStackTrace(); //todo: not throw error without context
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
@@ -209,11 +211,13 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(new TextComponent(e.getReason()));
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
                 System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:" + skin);
                 //e.printStackTrace();
                 sender.sendMessage(new TextComponent(Locale.ERROR_INVALID_URLSKIN));
+                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
             return false;
@@ -223,7 +227,6 @@ public class SkinCommand extends BaseCommand {
 
     private void rollback(ProxiedPlayer p, String oldSkinName, boolean save) {
         if (save)
-            CooldownStorage.setCooldown(p.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
             plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
     }
 
