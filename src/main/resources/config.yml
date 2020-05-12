@@ -1,6 +1,6 @@
 ##############################
 #  SkinsRestorer Config.yml  #
-#  Generated on 13.7.9       #
+#  Generated on 13.7.10      #
 ##############################
 #
 # We from SRTeam thank you for using our plugin!
@@ -14,32 +14,25 @@
 # (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true
 # (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord)
 
+  ##########
+  # Basics #
+  ##########
 # If true, players can change skins without permission.
 SkinWithoutPerm: true
-
-# Time skins are stored in database before we request again (in minutes)
-SkinExpiresAfter: 20
 
 # Players cooldown when changing skins (set to 0 to disable)
 # Can be bypassed with 'skinsrestorer.bypasscooldown'
 SkinChangeCooldown: 30
 SkinErrorCooldown: 5
 
-# Set the language you will use - Files are located in /SkinsRestorer/languages directory
-# You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
-# Default: english - english.yml
-Locale: english
-
-# The new Permissions System information can be foud on our wiki here:
-# https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
-Permissions:
-  NewPermissions: true
-  
-# Allows the usage of per skin perm. 
+# Allows the usage of per skin perm.
 # Example: skinsrestorer.skin.notch OR skinsrestorer.skin.xknat
 # !~ requires  'NewPermissions: true' 
 PerSkinPermissions: false
 
+  #################
+  # Customization #
+  #################
 # Enable or disable default skins
 # If there is more than one, the plugin will choose a random one.
 DefaultSkins:
@@ -56,6 +49,19 @@ DisabledSkins:
   Names:
     - Steve
     - Owner
+
+# Custom list for the /skins GUI.
+CustomGUI:
+  Enabled: false
+  Names:
+    - xknat
+    - McLive
+
+  ############
+  # Advanced #
+  ############
+# Time skins are stored in database before we request again (in minutes)
+SkinExpiresAfter: 20
 
 # Multi-Bungee support
 # Enable this if you have issues with skins in multi-proxy environments
@@ -88,14 +94,33 @@ Updater:
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
 NoSkinIfLoginCanceled: true
 
+  #################
+  # Compatibility #
+  #################
 # True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
 UseOldSkinHelp: false
 
-#Ignore messages.yml PREFIX =
+#Ignore messages.yml 'PREFIX ='
 DisablePrefix: false
 
+# The new Permissions System information can be found on our wiki here:
+# https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
+Permissions:
+  NewPermissions: true
+
+  ################
+  # DEV's corner #
+  ################
 # Enable to start receiving debug messages about api request & more.
 Debug: false
+
+# WIP WONT WORK
+# Set the language you will use - Files are located in /SkinsRestorer/languages directory
+# You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
+# Default: english - english.yml
+Locale: english
+# ^ WONT WORK YET!
+
 
 # End #
 
@@ -112,6 +137,7 @@ Debug: false
 #
 # Useful Links #
 # Website: https://skinsrestorer.net/
+# Download: https://github.com/SkinsRestorer/SkinsRestorerX/releases
 # Wiki https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
 # spigot: https://www.spigotmc.org/resources/skinsrestorer.2124/
 # github: https://github.com/SkinsRestorer/SkinsRestorerX/
