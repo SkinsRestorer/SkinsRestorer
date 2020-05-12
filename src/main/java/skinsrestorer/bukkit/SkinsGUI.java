@@ -179,7 +179,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     @EventHandler
     public void onCLick(InventoryClickEvent e) {
         try {
-            if (!e.getView().getTitle().contains("Skins Menu")) {
+            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE)) {
                 return;
             }
         } catch (IllegalStateException ex) {
