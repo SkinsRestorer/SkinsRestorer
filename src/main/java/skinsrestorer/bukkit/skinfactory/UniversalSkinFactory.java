@@ -45,7 +45,6 @@ public class UniversalSkinFactory extends SkinFactory {
         }
 
         // return new LegacySkinRefresher();
-
         return new OldSkinRefresher();
     }
 }

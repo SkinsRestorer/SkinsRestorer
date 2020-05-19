@@ -34,6 +34,9 @@ final class PaperSkinRefresher implements Consumer<Player> {
             MH_HEALTH_UPDATE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "triggerHealthUpdate", MethodType.methodType(Void.TYPE));
             System.out.println("[SkinsRestorer] Using PaperSkinRefresher");
         } catch (Exception e) {
+            System.out.println("[SkinsRestorer] PaperRefresher exception= "); // for testing
+            e.printStackTrace();                                              // for testing
+            System.out.println("[SkinsRestorer] Failed PaperSkinRefresher");
             throw new ExceptionInInitializerError(e);
         }
     }
