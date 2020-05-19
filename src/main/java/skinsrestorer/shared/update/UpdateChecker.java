@@ -64,6 +64,9 @@ public class UpdateChecker {
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+        } else {
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9Bukkit only§a  |");
         }
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
