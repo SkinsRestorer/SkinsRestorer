@@ -76,23 +76,8 @@ public class PluginMessageListener implements Listener {
             String skin = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-            //PerSkinPerms //todo cooldown
-            if(!PerSkinPerms(player, skin, p))
-                return;
-
             plugin.getSkinCommand().onSkinSet(p, skin);
         }
-    }
-    public boolean PerSkinPerms(String player, String skin,ProxiedPlayer ProxiedPlayer){
-        if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
-            if (!ProxiedPlayer.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!player.equals(skin) || (!ProxiedPlayer.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(player))) {
-                    ProxiedPlayer.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     public void sendGuiOpenRequest(ProxiedPlayer p) {
