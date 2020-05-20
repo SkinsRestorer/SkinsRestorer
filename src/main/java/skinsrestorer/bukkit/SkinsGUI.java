@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
@@ -225,6 +226,18 @@ public class SkinsGUI extends ItemStack implements Listener {
         if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.PLAYER_HEAD) {
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                 Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
+
+                // PerSkinPermissions //todo: cooldown
+                if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
+                    String skinname = e.getCurrentItem().getItemMeta().getDisplayName();
+                    if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
+                        if (!player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {
+                            player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+                            return;
+                        }
+                    }
+                }
+
                 plugin.getSkinStorage().setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
                 SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
                 SkinsRestorer.getInstance().getFactory().updateSkin(player);

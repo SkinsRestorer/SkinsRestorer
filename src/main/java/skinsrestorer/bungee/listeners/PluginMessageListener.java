@@ -1,10 +1,13 @@
 package skinsrestorer.bungee.listeners;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import skinsrestorer.bungee.SkinsRestorer;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.Property;
 
 import java.io.*;
@@ -73,8 +76,23 @@ public class PluginMessageListener implements Listener {
             String skin = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
+            //PerSkinPerms //todo cooldown
+            if(!PerSkinPerms(player, skin, p))
+                return;
+
             plugin.getSkinCommand().onSkinSet(p, skin);
         }
+    }
+    public boolean PerSkinPerms(String player, String skin,ProxiedPlayer ProxiedPlayer){
+        if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
+            if (!ProxiedPlayer.hasPermission("skinsrestorer.skin." + skin)) {
+                if (!player.equals(skin) || (!ProxiedPlayer.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(player))) {
+                    ProxiedPlayer.sendMessage(new TextComponent(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void sendGuiOpenRequest(ProxiedPlayer p) {
