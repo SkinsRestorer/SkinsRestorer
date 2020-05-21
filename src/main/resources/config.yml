@@ -51,8 +51,10 @@ DisabledSkins:
     - Owner
 
 # Custom list for the /skins GUI.
+# ShowOnlyCustomGUI will only show CustomGUI.Names in the gui
 CustomGUI:
   Enabled: false
+  ShowOnlyCustomGUI: true
   Names:
     - xknat
     - McLive

@@ -408,6 +408,7 @@ public class SkinStorage {
         setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
     }
 
+    //todo: CUSTOM_GUI
     public Map<String, Object> getSkins(int number) {
         if (Config.USE_MYSQL) {
             Map<String, Object> list = new TreeMap<>();

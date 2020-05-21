@@ -227,7 +227,7 @@ public class SkinsGUI extends ItemStack implements Listener {
             Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
                 Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
 
-                // PerSkinPermissions //todo: cooldown
+                // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
                 if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
                     String skinname = e.getCurrentItem().getItemMeta().getDisplayName();
                     if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
