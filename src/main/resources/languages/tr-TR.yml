@@ -39,7 +39,7 @@ waitMinute: "&4Hata&8: &cLütfen bu Skin'i istemeden önce azcık bekle. (Hız S
 #When proxy returned skin is empty
 genericError: "&4Hata&8: &cSkin bilgisi istenirken bilinmedik bir hata oldu, bence az sonra tekrar dene!"
 #Message sent when server has an outdated version of SR
-outdated: "&4SkinsRestorer'ın eski bir sürümünü kullanıyorsun!\n&cAşağıdaki linkten güncel versiyonu indirebilirsin:\n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4SkinsRestorer'ın eski bir sürümünü kullanıyorsun!\n&cAşağıdaki linkten güncel versiyonu indirebilirsin: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
 playersOnly: "&4Bu komutu ancak oyuncular kullanabilir!"
 #When none Player try's to set a skin
