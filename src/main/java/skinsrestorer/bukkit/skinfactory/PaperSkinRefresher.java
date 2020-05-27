@@ -15,7 +15,7 @@ import java.util.function.Consumer;
  */
 final class PaperSkinRefresher implements Consumer<Player> {
     private static final MethodHandle MH_REFRESH;
-    private static final MethodHandle MH_HEALTH_UPDATE;
+    //private static final MethodHandle MH_HEALTH_UPDATE;
 
     @Override
     @SneakyThrows
