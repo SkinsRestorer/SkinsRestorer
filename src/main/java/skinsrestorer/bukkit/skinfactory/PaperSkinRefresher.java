@@ -21,7 +21,7 @@ final class PaperSkinRefresher implements Consumer<Player> {
     @SneakyThrows
     public void accept(Player player) {
         MH_REFRESH.invoke(player);
-        MH_HEALTH_UPDATE.invoke(player);
+        //MH_HEALTH_UPDATE.invoke(player);
     }
 
     static {
@@ -31,11 +31,11 @@ final class PaperSkinRefresher implements Consumer<Player> {
             MethodHandles.publicLookup();
             val lookup = (MethodHandles.Lookup) field.get(null);
             MH_REFRESH = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
-            MH_HEALTH_UPDATE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "triggerHealthUpdate", MethodType.methodType(Void.TYPE));
+            //MH_HEALTH_UPDATE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "triggerHealthUpdate", MethodType.methodType(Void.TYPE));
             System.out.println("[SkinsRestorer] Using PaperSkinRefresher");
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] PaperRefresher exception= "); // for testing
-            e.printStackTrace();                                              // for testing
+            /*System.out.println("[SkinsRestorer] PaperRefresher exception= "); // for testing
+            e.printStackTrace();                                              */ //for testing
             System.out.println("[SkinsRestorer] Failed PaperSkinRefresher");
             throw new ExceptionInInitializerError(e);
         }
