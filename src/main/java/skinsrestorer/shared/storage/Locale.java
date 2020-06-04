@@ -32,7 +32,7 @@ public class Locale {
     public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
     public static String SKIN_CLEAR_ISSUER = "&2Skin cleared for player %player.";
 
-    public static String MS_UPDATING_SKIN = "&2Uploading skin, please wait...";
+    public static String MS_UPDATING_SKIN = "&2Uploading skin, please wait...(This may take up some time)";
     public static String SUCCESS_UPDATING_SKIN = "&2Your skin has been updated.";
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&2Skin updated for player %player.";
 

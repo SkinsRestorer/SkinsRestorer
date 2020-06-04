@@ -71,23 +71,14 @@ public class MineSkinAPI {
             try {
                 err_resp = "";
                 JsonObject obj;
-                try {
-                    output = queryURL("https://api.minetools.eu/mineskin/", query, 3000);
-                    JsonElement elm = new JsonParser().parse(output);
-                    obj = elm.getAsJsonObject();
-                    if (!(obj.has("cache") && obj.get("cache").getAsJsonObject().has("HIT") && obj.get("cache").getAsJsonObject().get("HIT").getAsBoolean()))
-                        MetricsCounter.incrAPI("https://api.mineskin.org/generate/url/");
-                    if (!(obj.get("data").getAsJsonObject().has("texture")))
-                        throw new Exception(); // throw exception if invalid response
-                } catch (Exception e) { // if minetools throws any exception, try mineskin api
-                    output = queryURL("https://api.mineskin.org/generate/url/", query, 75000);
-                    if (output == "") { //when both api time out
-                        throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
-                    }
-                    JsonElement elm = new JsonParser().parse(output);
-                    obj = elm.getAsJsonObject();
 
+                output = queryURL("https://api.mineskin.org/generate/url/", query, 90000);
+                if (output == "") { //when both api time out
+                    throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
                 }
+                JsonElement elm = new JsonParser().parse(output);
+                obj = elm.getAsJsonObject();
+
                 if (obj.has("data")) {
                     JsonObject dta = obj.get("data").getAsJsonObject();
                     if (dta.has("texture")) {
