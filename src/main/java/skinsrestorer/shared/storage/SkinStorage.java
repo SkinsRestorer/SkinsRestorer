@@ -437,7 +437,14 @@ public class SkinStorage {
             for (String file : fileNames) {
                 String skinName = file.replace(".skin", "");
                 if (i >= number) {
-                    list.put(skinName, this.getSkinData(skinName, false));
+                    if (Config.CUSTOM_GUI_ONLY){ //Show only Config.CUSTOM_GUI_SKINS in the gui
+                        for (String Guiskins : Config.CUSTOM_GUI_SKINS){
+                            if (skinName.toLowerCase().contains(Guiskins.toLowerCase()))
+                                list.put(skinName, this.getSkinData(skinName, false));
+                        }
+                    } else {
+                        list.put(skinName, this.getSkinData(skinName, false));
+                    }
                 }
                 i++;
             }
