@@ -60,7 +60,7 @@ public class Config {
         DISABLED_SKINS = config.getStringList("CustomGUI.Names");
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
         CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
-        CUSTOM_GUI_SKINS = config.getStringList("DisabledSkins.Names");
+        CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
         DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
@@ -80,6 +80,9 @@ public class Config {
         UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
         USE_NEW_PERMISSIONS = config.getBoolean("Permissions.NewPermissions", USE_NEW_PERMISSIONS);
         DEBUG = config.getBoolean("Debug", DEBUG);
+
+        if (!CUSTOM_GUI_ENABLED)
+            CUSTOM_GUI_ONLY = false;
 
         // Permissions
         if (PER_SKIN_PERMISSIONS && !USE_NEW_PERMISSIONS)
