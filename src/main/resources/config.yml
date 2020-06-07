@@ -105,11 +105,6 @@ UseOldSkinHelp: false
 #Ignore messages.yml 'PREFIX ='
 DisablePrefix: false
 
-# The new Permissions System information can be found on our wiki here:
-# https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
-Permissions:
-  NewPermissions: true
-
   ################
   # DEV's corner #
   ################
