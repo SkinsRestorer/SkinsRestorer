@@ -37,11 +37,9 @@ public class UniversalSkinFactory extends SkinFactory {
     }
 
     private static Consumer<Player> detectRefresh() {
-        if (Bukkit.getName().toLowerCase().contains("paper")) {
-            try {
-                return new PaperSkinRefresher();
-            } catch (ExceptionInInitializerError ignored) {
-            }
+        try {
+            return new PaperSkinRefresher();
+        } catch (ExceptionInInitializerError ignored) {
         }
 
         // return new LegacySkinRefresher();
