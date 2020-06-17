@@ -36,7 +36,7 @@ public class Config {
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean UPDATER_ENABLED = true;
     public static boolean UPDATER_PERIODIC = true;
-    public static boolean USE_NEW_PERMISSIONS = false;
+    public static boolean USE_NEW_PERMISSIONS = true;
     public static boolean DEBUG = false;
 
 
