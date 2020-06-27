@@ -23,25 +23,23 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerChange(final LoginEvent e) {
-        e.registerIntent(plugin);
         String nick = e.getConnection().getName();
 
         if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED) {
-            e.completeIntent(plugin);
             return;
         }
 
         if (Config.DISABLE_ONJOIN_SKINS) {
-            e.completeIntent(plugin);
             return;
         }
 
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick)) {
             System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
-            e.completeIntent(plugin);
             return;
         }
+
+        e.registerIntent(plugin);
 
         SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
@@ -58,6 +56,10 @@ public class LoginListener implements Listener {
 
     @EventHandler
     public void onServerChange(final ServerConnectEvent e) {
+        if (e.isCancelled()) {
+            return;
+        }
+        
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()) {
                 if (e.getPlayer().hasPermission("skinsrestorer.admincommand") || e.getPlayer().hasPermission("skinsrestorer.cmds"))
