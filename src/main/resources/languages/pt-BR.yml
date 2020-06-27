@@ -3,63 +3,63 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Erro&8: &cEste nome de usuário não existe."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Erro&8: &cVocê não tem permissão para fazer isso."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: '&4Erro&8: &cVocê não pode atualizar skins customizadas! \n&cTente novamente usando /skin url'
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
   skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Sua skin foi atualizada."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Sua skin foi restaurada."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2A skin de %player foi restaurada."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Você atualizou a skin de %player."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Erro&8: &c%player não é um nome de usuário válido."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Erro&8: &cEste jogador não está online!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Os dados de skin de %player foram descartados."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Configurações e localização atualizadas!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Erro&8: &cVocê pode atualizar sua skin novamente em &e%s &csegundos."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Erro&8: &cEsta skin foi desativada por um administrador."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Erro&8: &cNenhuma skin encontrada! Este jogador possui skin?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Erro&8: &cPor favor espere um minuto antes de requisitar essa skin novamente. (Taxa limitada)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Erro&8: &cUm erro aconteceu ao procurar por essa skin, tente novamente mais tarde!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Você está usando uma versão desatualizada de SkinRestorer!\n&cAtualize para a versão mais recente em: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Esses comandos são apenas para jogadores!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Erro&8: &cVocê precisa ser um jogador!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Abrindo o menu de skins..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Página anterior&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Próxima página&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Remover skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Clique para usar essa skin"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Conexão com a API da Mojang foi bem sucedida!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Erro&8: &cA API está sobrecarregada, tente novamente mais tarde!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
