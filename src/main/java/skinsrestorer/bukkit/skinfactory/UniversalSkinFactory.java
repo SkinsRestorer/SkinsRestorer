@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 public class UniversalSkinFactory extends SkinFactory {
     private final Plugin plugin;
     private final Consumer<Player> refresh = detectRefresh();
+    public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(23);
 
     @Override
     public void updateSkin(Player player) {
@@ -41,6 +42,9 @@ public class UniversalSkinFactory extends SkinFactory {
             return new PaperSkinRefresher();
         } catch (ExceptionInInitializerError ignored) {
         }
+
+        // if (NMS_VERSION.equals("v1_16_R1"))
+        //     return new LegacySkinRefresher_v1_16_R1();
 
         // return new LegacySkinRefresher();
         return new OldSkinRefresher();

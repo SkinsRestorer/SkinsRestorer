@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -70,8 +71,8 @@ public class OldSkinRefresher implements Consumer<Player> {
             List<Object> set = new ArrayList<>();
             set.add(ep);
 
-            Object removePlayer = null;
-            Object addPlayer = null;
+            Object removePlayer;
+            Object addPlayer;
 
             removePlayer = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo, new Class<?>[]{REMOVE_PLAYER.getClass(), Iterable.class}, REMOVE_PLAYER, set);
             addPlayer = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo, new Class<?>[]{ADD_PLAYER.getClass(), Iterable.class}, ADD_PLAYER, set);
@@ -81,39 +82,55 @@ public class OldSkinRefresher implements Consumer<Player> {
             Object world = ReflectionUtil.invokeMethod(ep, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             Object worlddata = ReflectionUtil.getObject(world, "worldData");
-            Object worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
+
+            Object worldtype;
+
+            try {
+                worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
+            } catch (Exception ignored) {
+                worldtype = ReflectionUtil.invokeMethod(worlddata, "getGameType");
+            }
+
             World.Environment environment = player.getWorld().getEnvironment();
+
             int dimension = 0;
 
             Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
-            int gmid = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
+            int gamemodeId = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
-            Object respawn = null;
+            Object respawn;
             try {
                 dimension = environment.getId();
                 respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                         new Class<?>[]{
                                 int.class, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
                         },
-                        dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                        dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
             } catch (Exception ignored) {
                 if (environment.equals(World.Environment.NETHER))
                     dimension = -1;
                 else if (environment.equals(World.Environment.THE_END))
                     dimension = 1;
+
                 // 1.13.x needs the dimensionManager instead of dimension id
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
-                Object dimensionManger = m.invoke(null, dimension);
+
+                // Todo: Broken on 1.16.1
+                Object dimensionManger = null;
+                try {
+                    dimensionManger = m.invoke(null, dimension);
+                } catch (Exception ignored2) {
+                }
 
                 try {
                     respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                             new Class<?>[]{
                                     dimensionManagerClass, PEACEFUL.getClass(), worldtype.getClass(), enumGamemode.getClass()
                             },
-                            dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                            dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                 } catch (Exception ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
@@ -122,17 +139,62 @@ public class OldSkinRefresher implements Consumer<Player> {
                                 new Class<?>[]{
                                         dimensionManagerClass, worldtype.getClass(), enumGamemode.getClass()
                                 },
-                                dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                                dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                     } catch (Exception ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
-                        Object seed = ReflectionUtil.invokeMethod(worlddata, "getSeed");
 
-                        respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
-                                new Class<?>[]{
-                                        dimensionManagerClass, long.class, worldtype.getClass(), enumGamemode.getClass()
-                                },
-                                dimensionManger, seed, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gmid));
+                        Object seed;
+                        try {
+                            seed = ReflectionUtil.invokeMethod(worlddata, "getSeed");
+                        } catch (Exception ignored4) {
+                            // 1.16.1
+                            seed = ReflectionUtil.invokeMethod(world, "getSeed");
+                        }
+
+                        try {
+                            respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                    new Class<?>[]{
+                                            dimensionManagerClass, long.class, worldtype.getClass(), enumGamemode.getClass()
+                                    },
+                                    dimensionManger, seed, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                        } catch (Exception ignored5) {
+                            // Minecraft 1.16.1 changes
+
+                            Class<?> resourceKeyClass = ReflectionUtil.getNMSClass("ResourceKey");
+                            Class<?> minecraftKeyClass = ReflectionUtil.getNMSClass("MinecraftKey");
+
+                            Method rkM = resourceKeyClass.getDeclaredMethod("a", minecraftKeyClass, minecraftKeyClass);
+                            Method mkM = minecraftKeyClass.getDeclaredMethod("a", String.class);
+                            rkM.setAccessible(true);
+                            mkM.setAccessible(true);
+
+                            Object worldNameKey = mkM.invoke(null, "name");
+
+                            Object worldNameValue;
+                            if (dimension == 0)
+                                worldNameValue = mkM.invoke(null, "minecraft:overworld");
+                            else if (dimension == -1)
+                                worldNameValue = mkM.invoke(null, "minecraft:the_nether");
+                            else
+                                worldNameValue = mkM.invoke(null, "minecraft:the_end");
+
+                            Object worldIdentifier = rkM.invoke(null, worldNameKey, worldNameValue);
+
+                            respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                    new Class<?>[]{
+                                            resourceKeyClass, resourceKeyClass, long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
+                                    },
+                                    worldIdentifier,  // Todo: Proper Dimension stuff
+                                    worldIdentifier,
+                                    seed,
+                                    ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                    ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                    false,
+                                    false,
+                                    false
+                            );
+                        }
                     }
                 }
             }
