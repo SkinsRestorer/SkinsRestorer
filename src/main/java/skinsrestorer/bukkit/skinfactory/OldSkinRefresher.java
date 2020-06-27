@@ -234,13 +234,13 @@ public class OldSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(player, "updateInventory");
             ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                // Workaround..
-                if (player.isOp()) {
+            if (player.isOp()) {
+                Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+                    // Workaround..
                     player.setOp(false);
                     player.setOp(true);
-                }
-            });
+                });
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
