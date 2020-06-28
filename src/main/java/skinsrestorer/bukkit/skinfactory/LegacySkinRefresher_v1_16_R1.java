@@ -56,70 +56,39 @@ public class LegacySkinRefresher_v1_16_R1 implements Consumer<Player> {
     public void accept(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             try {
-                Object ep = ReflectionUtil.invokeMethod(player, "getHandle");
+                final Object craftHandle = ReflectionUtil.invokeMethod(player, "getHandle");
                 Location l = player.getLocation();
 
                 List<Object> set = new ArrayList<>();
-                set.add(ep);
+                set.add(craftHandle);
 
                 Object removePlayer = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo, new Class<?>[]{REMOVE_PLAYER.getClass(), Iterable.class}, REMOVE_PLAYER, set);
                 Object addPlayer = ReflectionUtil.invokeConstructor(PlayOutPlayerInfo, new Class<?>[]{ADD_PLAYER.getClass(), Iterable.class}, ADD_PLAYER, set);
 
-                Object world = ReflectionUtil.invokeMethod(ep, "getWorld");
-                World.Environment environment = player.getWorld().getEnvironment();
+                Object world = ReflectionUtil.invokeMethod(craftHandle, "getWorld");
 
-                Object playerIntManager = ReflectionUtil.getObject(ep, "playerInteractManager");
+                Object playerIntManager = ReflectionUtil.getObject(craftHandle, "playerInteractManager");
                 Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
-
                 int gameModeId = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
 
-                Class<?> resourceKeyClass = ReflectionUtil.getNMSClass("ResourceKey");
-                Class<?> minecraftKeyClass = ReflectionUtil.getNMSClass("MinecraftKey");
+                Object seed = ReflectionUtil.invokeMethod(world, "getSeed");
 
-                Method rkM = resourceKeyClass.getDeclaredMethod("a", minecraftKeyClass, minecraftKeyClass);
-                Method mkM = minecraftKeyClass.getDeclaredMethod("a", String.class);
-                rkM.setAccessible(true);
-                mkM.setAccessible(true);
-
-
-                int dimensionId = 0;
-                Object worldNameKey = mkM.invoke(null, "name");
-                Object worldNameValue = mkM.invoke(null, "minecraft:overworld");
-
-                if (environment.equals(World.Environment.NETHER)) {
-                    dimensionId = -1;
-                    worldNameValue = mkM.invoke(null, "minecraft:the_nether");
-                } else if (environment.equals(World.Environment.THE_END)) {
-                    dimensionId = 1;
-                    worldNameValue = mkM.invoke(null, "minecraft:the_end");
-                }
-
-                Object worldIdentifier = rkM.invoke(null, worldNameKey, worldNameValue);
-
-                // 1.13.x needs the dimensionManager instead of dimension id
-                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
-                Method m = dimensionManagerClass.getDeclaredMethod("a", int.class);
-
-                // Todo: Broken on 1.16.1
-                Object dimensionManger = null;
-                try {
-                    dimensionManger = m.invoke(null, dimensionId);
-                } catch (Exception ignored2) {
-                }
+                Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+                Object typeKey = ReflectionUtil.invokeMethod(worldServer, "getTypeKey");
+                Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
 
                 Object respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                         new Class<?>[]{
-                                resourceKeyClass, resourceKeyClass, long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
+                                typeKey.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
                         },
-                        worldIdentifier,  // Todo: Proper Dimension stuff
-                        worldIdentifier,
-                        ReflectionUtil.invokeMethod(world, "getSeed"),
+                        typeKey,
+                        dimensionKey,
+                        seed,
                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gameModeId),
                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gameModeId),
-                        false,
-                        false,
-                        false
-
+                        ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
+                        ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
+                        true
                 );
 
                 Object pos = ReflectionUtil.invokeConstructor(PlayOutPosition,
@@ -129,7 +98,6 @@ public class LegacySkinRefresher_v1_16_R1 implements Consumer<Player> {
 
                 Object slot = ReflectionUtil.invokeConstructor(PlayOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
 
-                final Object craftHandle = ReflectionUtil.invokeMethod(player, "getHandle");
                 Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
 
                 sendPacket(playerCon, removePlayer);
