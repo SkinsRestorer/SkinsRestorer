@@ -58,22 +58,12 @@ public class UpdateChecker {
 
     public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
         List<String> upToDateMessages = new LinkedList<String>();
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
         if (bungeeMode) {
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §aRunning in §eBungee Mode§a");
         } else {
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9Bukkit only§a  |");
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §aRunning in §9Bukkit Mode§a");
         }
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    This is the latest version!");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-
+        upToDateMessages.add("§e[§2SkinsRestorer§e] §bYou are using the latest version: §a" + currentVersion);
         return upToDateMessages;
     }
 
