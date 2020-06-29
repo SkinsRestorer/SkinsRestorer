@@ -1,10 +1,11 @@
 ##############################
 #  SkinsRestorer Config.yml  #
-#  Generated on 13.8.0       #
+#  Generated on 13.8.1       #
 ##############################
 #
 # We from SRTeam thank you for using our plugin!
 # For more information        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
+# For installation            -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer
 # For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 # Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
 # For locale & messages       -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations
@@ -13,8 +14,8 @@
 
 # (?) Step by step config guide -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 
-# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true
-# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord)
+# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true  (!)
+# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord)              (!)
 
   ##########
   # Basics #
@@ -72,7 +73,7 @@ CustomGUI:
 PerSkinPermissions: false
 
 # Time skins are stored in database before we request again (in minutes)
-SkinExpiresAfter: 20
+SkinExpiresAfter: 15
 
 # Multi-Bungee support
 # Enable this if you have issues with skins in multi-proxy environments
