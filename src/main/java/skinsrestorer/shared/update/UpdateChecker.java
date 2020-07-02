@@ -64,10 +64,10 @@ public class UpdateChecker {
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } else {
+        } /*else { //Todo: filter bungee out
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9Bukkit only§a  |");
-        }
+        }*/
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
