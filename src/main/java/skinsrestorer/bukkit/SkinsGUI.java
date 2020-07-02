@@ -90,7 +90,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§") + page);
+        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§") + page+1);
 
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
