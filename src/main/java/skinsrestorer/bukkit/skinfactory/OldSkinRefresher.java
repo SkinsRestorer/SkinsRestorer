@@ -175,7 +175,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                                     ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
                                     ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
                                     ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
-                                    true
+                                    false
                             );
                         }
                     }
