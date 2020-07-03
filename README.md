@@ -1,3 +1,4 @@
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[DOWNLOAD LATEST](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar) plugin.jar]  &nbsp;&nbsp;[\[DOWNLOAD DEV-BUILD](https://ci.freecraft.eu/v2/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar) plugin.jar]
 # SkinsRestorerX
 [![Build Status](https://travis-ci.org/SkinsRestorer/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/SkinsRestorer/SkinsRestorerX)
 [![Current Release](https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest)
