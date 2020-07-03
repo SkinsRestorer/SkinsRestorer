@@ -16,7 +16,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Wate
 
 ## :telescope: Compatibility
 - Java 8 till 12 (maybe newer also) ([openjdk](https://openjdk.java.net/install/) | Oracle Java)
-- Minecraft 1.8.0 - 1.15.x
+- Minecraft 1.8.0 - 1.16.x
 
 ## :link: Links
 - [Spigot Page](https://www.spigotmc.org/resources/skinsrestorer.2124/)
