@@ -2,7 +2,7 @@
 # SkinsRestorerX
 [![Build Status](https://travis-ci.org/SkinsRestorer/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/SkinsRestorer/SkinsRestorerX)
 [![Current Release](https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
 [![Contributors](https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors)
 [![Commits since last release](https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/commits/master)
 [![License](https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
