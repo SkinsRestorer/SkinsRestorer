@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -38,6 +39,13 @@ public class UniversalSkinFactory extends SkinFactory {
     }
 
     private static Consumer<Player> detectRefresh() {
+        // force OldSkinRefresher for unsupported plugins (ViaVersion).
+        File UnsupportedPlugins = new File("plugins" + File.separator + "ViaVersion");
+        if (UnsupportedPlugins.exists()) {
+            System.out.println("[SkinsRestorer] INFO: Unsupported plugin (ViaVersion) detected, forcing OldSkinRefresher");
+            return new OldSkinRefresher();
+        }
+
         try {
             return new PaperSkinRefresher();
         } catch (ExceptionInInitializerError ignored) {
