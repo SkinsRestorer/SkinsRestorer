@@ -88,7 +88,7 @@ public class LegacySkinRefresher_v1_16_R1 implements Consumer<Player> {
                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gameModeId),
                         ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
                         ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
-                        false
+                        true
                 );
 
                 Object pos = ReflectionUtil.invokeConstructor(PlayOutPosition,
