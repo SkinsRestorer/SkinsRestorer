@@ -2,6 +2,8 @@ package skinsrestorer.bungee.listeners;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.PendingConnection;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -22,9 +24,7 @@ public class LoginListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerChange(final LoginEvent e) {
-        String nick = e.getConnection().getName();
-
+    public void onLogin(final LoginEvent e) {
         if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED) {
             return;
         }
@@ -33,6 +33,9 @@ public class LoginListener implements Listener {
             return;
         }
 
+        final PendingConnection connection = e.getConnection();
+        final String nick = connection.getName();
+        
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick)) {
             System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
@@ -41,10 +44,11 @@ public class LoginListener implements Listener {
 
         e.registerIntent(plugin);
 
-        SkinsRestorer.getInstance().getProxy().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
+            
             try {
-                plugin.getSkinApplier().applySkin(null, skin, (InitialHandler) e.getConnection());
+                plugin.getSkinApplier().applySkin(null, skin, (InitialHandler) connection);
             } catch (SkinRequestException ignored) {
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -54,16 +58,22 @@ public class LoginListener implements Listener {
         });
     }
 
-    @EventHandler
-    public void onServerChange(final ServerConnectEvent e) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onServerConnect(final ServerConnectEvent e) {
         if (e.isCancelled()) {
             return;
         }
         
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            if (Config.UPDATER_ENABLED && SkinsRestorer.getInstance().isOutdated()) {
-                if (e.getPlayer().hasPermission("skinsrestorer.admincommand") || e.getPlayer().hasPermission("skinsrestorer.cmds"))
-                    e.getPlayer().sendMessage(new TextComponent(Locale.OUTDATED));
+        if (!Config.UPDATER_ENABLED) {
+            return;
+        }
+        
+        plugin.getScheduler().runAsync(plugin, () -> {
+            if (plugin.isOutdated()) {
+                final ProxiedPlayer player = e.getPlayer();
+                
+                if (player.hasPermission("skinsrestorer.admincommand") || player.hasPermission("skinsrestorer.cmds"))
+                    player.sendMessage(new TextComponent(Locale.OUTDATED));
             }
         });
     }
