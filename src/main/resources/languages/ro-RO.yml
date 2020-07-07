@@ -7,7 +7,7 @@ notPremium: "&4Error&8: &cNu există un jucător premium cu acest nume."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Error&8: &cNu ai permisiunea să faci asta."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: nu poate actualiza skin-uri URL personalizate! \n&cSolicită din nou folosind /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
@@ -29,26 +29,26 @@ skinDataDropped: "&2Informațiile skin-ului lui %player au fost șterse."
 #Message sent when the /sr reload command execution was successful
 reload: "&2Configurația și Mesajele au fost reîncărcate!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&cÎți poți schimba skin-ul din nou în &e%s &csecunde."
+skinCooldownNew: "&4Error&8: &cÎți poți schimba skin-ul din nou în &e%s &csecunde."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8\": '&cAcest skin este dezactivat de către un administrator."
+skinDisabled: "&4Error&8: &cAcest skin este dezactivat de către un administrator."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&cDatele skin-ului nu au fost obținute! Acest jucător are skin?"
+noSkinData: "&4Error&8: &cDatele skin-ului nu au fost obținute! Acest jucător are skin?"
 #Cooldown message
-waitMinute: "&cTe rog asteaptă un minut înainte de a face o cerere pentru acel skin. (Rată Limitată)"
+waitMinute: "&4Error&8: &cTe rog asteaptă un minut înainte de a face o cerere pentru acel skin. (Rată Limitată)"
 #When proxy returned skin is empty
-genericError: "&4Error&8\": '&cA apărut o eroare atunci când s-a făcut cererea datelor skin-ului. Încearcă mai târziu!"
+genericError: "&4Error&8: &cA apărut o eroare atunci când s-a făcut cererea datelor skin-ului, încearcă mai târziu!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Rulezi o versiune veche de SkinsRestorer!\n&cTe rugăm să actualizezi la ultima versiune: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4Aceste comenzi pot fi folosite doar de către jucători!"
+playersOnly: "&4Aceste comenzi sunt doar pentru jucători!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8\": '&cTrebuie să fi un jucător!"
+notPlayer: "&4Error&8: &cTrebuie să fi un jucător!"
 #=== GUI ===
 #/skins message
 menuOpen: "&2Se deschide meniul skin-urilor..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Pagina Anterioară&e&l «"
 #Next page [GUI]
 nextPage: "&a&l»&7 Pagina Următoare&a&l »"
 #Clear skin [GUI]
@@ -57,9 +57,9 @@ removeSkin: "&c&l»&7 Șterge skin-ul&c&l »"
 selectSkin: "&2Apasă pentru a selecta acest skin"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Conectat cu succes la API-ul Mojang!"
+statusOk: "&2Conexiunea cu API-ul Mojang a avut succes!"
 #old debug
-altApiFailed: "&4Error&8: &cAPI-ul skin-urilor este supraîncărcat. Încearcă mai târziu!"
+altApiFailed: "&4Error&8: &cAPI-ul skin-urilor este supraîncărcat, încearcă mai târziu!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
