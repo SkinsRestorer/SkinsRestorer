@@ -59,7 +59,7 @@ selectSkin: "&2Kattints a kinézet kiválasztásához"
 #old debug
 statusOk: "&2Sikeres kapcsolódás a Mojang API-hoz."
 #old debug
-altApiFailed: "&4Hiba&8: &cKinézeti Adat API túltöltve, kérlek, próbáld meg később!"
+altApiFailed: "&4Hiba&8: &cKinézeti Adat API túlterhelve, kérlek, próbáld meg később!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
