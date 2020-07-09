@@ -7,7 +7,7 @@ notPremium: "&4Erreur&8 : &cAucun joueur premium avec ce nom n'existe."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Erreur&8 : &cVous n'avez pas la permission de faire ça."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: ne peut pas mettre à jour les skins d'url personnalisés ! \n&cRéessayez à nouveau en utilisant /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
