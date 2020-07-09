@@ -7,7 +7,7 @@ notPremium: "&4Napaka&8: &cPremium račun s takim imenom ne obstaja."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Napaka&8: &cNimaš dovoljenja za izvedbo tega ukaza."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
+ERRORUpdatingURL = "&4Error&8: URL skin-ov ni mogoče posodobiti! \n&cUporabi ukaz /skin URL."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
@@ -23,43 +23,43 @@ adminSetSkin: "&2Skin igralca %player je posodobljen."
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer: "&4Napaka&8: &c%player ni veljavno uporabniško ime."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Napaka&8: &c%player ni online!"
 #Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
+skinDataDropped: "&2Skin igralca %player je odstranjen."
 #Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Konfiguracija ter prevodi so bili ponovno naloženi!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldownNew: "&4Napaka&8: &cSkin-a ne mores posodobiti še &e%s &csekund."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Napaka&8: &cTa skin je bil onemogočen s strani administratorjev."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+noSkinData: "&4Napaka&8: &cInformacij o skin-u ni bilo mogoče pridobiti! Ali igralec sploh ima skin?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Napaka&8: &cProsimo počakajte minuto pred ponovno zahtevo tega skin-a. (Stopenjska omejitev)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Napaka&8: &cPrišlo je do napake med pridobivanjem informacij o skin-u, prosimo poskusite kasneje!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4V uporabi je zastarela verzija SkinsRestorer-ja!\n&cProsimo posodobite na zadnjo verzijo: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Ti ukazi so izključno za igralce!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Napaka&8: &cMoraš biti igralec!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Menu za izbiro skin-ov se odpira..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Prejšnja Stran&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Naslednja Stran&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Odstrani Skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Klikni za izbiro skin-a"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Povezava do Mojang API-ja je uspešna!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Napaka&8: &cSkin Data API je preobremenjen, prosimo poskusite kasneje!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
