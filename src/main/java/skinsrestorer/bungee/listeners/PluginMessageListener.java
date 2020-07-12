@@ -1,18 +1,15 @@
 package skinsrestorer.bungee.listeners;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import skinsrestorer.bungee.SkinsRestorer;
-import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.Property;
 
 import java.io.*;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
 
 /**
@@ -31,8 +28,9 @@ public class PluginMessageListener implements Listener {
         if (!e.getTag().equals("sr:messagechannel"))
             return;
 
-        /*if (!(e.getSender() instanceof ProxiedPlayer))
-            return;*/
+        if (!(e.getSender() instanceof ServerConnection)) {
+            return;
+        }
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
 
