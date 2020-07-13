@@ -117,8 +117,14 @@ public class SkinCommand extends BaseCommand {
     @Subcommand("set") @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("<skin/url>")
-    public void onSkinSet(Player p, String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    public void onSkinSet(Player p, String[] skin) {
+        if (skin.length > 0) {
+            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
+        } else {
+            // todo: connect with acf
+            p.sendMessage("Usage: /skin set <skin/url>");
+            return;
+            }
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
