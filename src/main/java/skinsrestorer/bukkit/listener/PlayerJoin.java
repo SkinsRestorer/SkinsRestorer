@@ -1,6 +1,5 @@
 package skinsrestorer.bukkit.listener;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,13 +27,13 @@ public class PlayerJoin implements Listener {
             // shouldn't it just skip it if it's true?
             return;
         }
-        
+
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = e.getPlayer();
                 final String playerName = player.getName();
-                
+
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (skinStorage.getPlayerSkin(playerName) == null && !C.validUsername(playerName)) {
                     System.out.println("[SkinsRestorer] Not applying skin to " + playerName + " (invalid username).");
