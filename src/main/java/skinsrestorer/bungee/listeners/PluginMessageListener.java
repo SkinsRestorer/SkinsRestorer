@@ -29,6 +29,7 @@ public class PluginMessageListener implements Listener {
             return;
 
         if (!(e.getSender() instanceof ServerConnection)) {
+            e.setCancelled(true);
             return;
         }
 
