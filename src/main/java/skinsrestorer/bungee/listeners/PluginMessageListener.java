@@ -25,7 +25,7 @@ public class PluginMessageListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
-        if (!e.getTag().equals("sr:messagechannel"))
+        if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
             return;
 
         if (!(e.getSender() instanceof ServerConnection)) {
