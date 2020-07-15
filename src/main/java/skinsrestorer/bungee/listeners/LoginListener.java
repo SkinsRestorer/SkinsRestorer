@@ -35,7 +35,7 @@ public class LoginListener implements Listener {
 
         final PendingConnection connection = e.getConnection();
         final String nick = connection.getName();
-        
+
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick)) {
             System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
@@ -46,7 +46,7 @@ public class LoginListener implements Listener {
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
-            
+
             try {
                 plugin.getSkinApplier().applySkin(null, skin, (InitialHandler) connection);
             } catch (SkinRequestException ignored) {
@@ -63,15 +63,15 @@ public class LoginListener implements Listener {
         if (e.isCancelled()) {
             return;
         }
-        
+
         if (!Config.UPDATER_ENABLED) {
             return;
         }
-        
-        plugin.getScheduler().runAsync(plugin, () -> {
+
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             if (plugin.isOutdated()) {
                 final ProxiedPlayer player = e.getPlayer();
-                
+
                 if (player.hasPermission("skinsrestorer.admincommand") || player.hasPermission("skinsrestorer.cmds"))
                     player.sendMessage(new TextComponent(Locale.OUTDATED));
             }
