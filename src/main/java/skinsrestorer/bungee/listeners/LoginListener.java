@@ -63,9 +63,11 @@ public class LoginListener implements Listener {
             return;
         }
 
+        // Mission and vision yet to be decided.
+        /* //Better update notifications are in the pipeline.
         if (!Config.UPDATER_ENABLED) {
             return;
-        }
+        }*/
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             if (plugin.isOutdated()) {
