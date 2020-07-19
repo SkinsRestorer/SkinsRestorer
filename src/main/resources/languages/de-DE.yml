@@ -23,7 +23,7 @@ adminSetSkin: "&2Du setzte %players Skin."
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer: "&4Fehlee&8: &c%player ist kein gültiger Benutzername."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
+playerNotonline: "&4Fehler&8: &cSpieler ist nicht online!"
 #Message displayed when using /sr drop command
 skinDataDropped: "&2Skin data for player %player dropped."
 #Message sent when the /sr reload command execution was successful
@@ -41,18 +41,18 @@ genericError: "&4Error&8: &cAn error occurred while requesting skin data, please
 #Message sent when server has an outdated version of SR
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Diese Befehle sind nur für Spieler!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Fehler&8: &cDu musst ein Spieler sein!"
 #=== GUI ===
 #/skins message
 menuOpen: "&2Opening the skins menu..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Vorherige Seite&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Nächste Seite&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Skin entfernen&c&l »"
 #item lore for skulls [GUI]
 selectSkin: "&2Klicke, um diesen Skin auszuwählen"
 #=== DEBUG ===
