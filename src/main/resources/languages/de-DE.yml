@@ -3,9 +3,9 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Fehler&8: &cPremium-Spieler mit diesem Namen existiert nicht."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Fehler&8: &cDu bist nicht berechtigt, dies zu tun."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
 ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
@@ -13,15 +13,15 @@ ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
   skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Dein Skin wurde geändert."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Dein Skin wurde geändert."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin für Spieler %player geleert."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Du setzte %players Skin."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
+invalidPlayer: "&4Fehlee&8: &c%player ist kein gültiger Benutzername."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
 playerNotonline: "&4Error&8: &cPlayer is not online!"
 #Message displayed when using /sr drop command
@@ -54,7 +54,7 @@ nextPage: "&a&l»&7 Next Page&a&l »"
 #Clear skin [GUI]
 removeSkin: "&c&l»&7 Remove Skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Klicke, um diesen Skin auszuwählen"
 #=== DEBUG ===
 #old debug
 statusOk: "&2Mojang API connection successful!"
