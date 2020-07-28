@@ -88,33 +88,29 @@ public class MineSkinAPI {
                 } else if (obj.has("error")) {
                     err_resp = obj.get("error").getAsString();
                     if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
-                        this.logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again... ");
+                        logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again... ");
                         if (obj.has("delay"))
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                         return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
                     } else if (err_resp.equals("No accounts available")) {
-                        this.logger.log("[ERROR] MS No accounts available " + url);
+                        logger.log("[ERROR] MS No accounts available " + url);
                         throw new SkinRequestException(Locale.ERROR_MS_FULL);
-                    } else if (err_resp.equals("Failed to determine file size")) {
-                        this.logger.log("[ERROR] MS Failed to determine file size for " + url);
-                        throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
-                    } else if (err_resp.equals("Failed to get image dimensions")) {
-                        this.logger.log("[ERROR] MS Failed to get image dimensions for " + url);
-                        throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 }
             } catch (IOException e) {
-                this.logger.log(Level.WARNING, "[ERROR] MS API Failure IOException: (" + url + ") " + e.getLocalizedMessage());
+                logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
             } catch (JsonSyntaxException e) {
-                this.logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException: (" + url + ") " + e.getLocalizedMessage());
+                logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (endocding): (" + url + ") " + e.getLocalizedMessage());
             }
         } catch (UnsupportedEncodingException e) {
-            this.logger.log(Level.WARNING, "[ERROR] MS UnsupportedEncodingException");
+            logger.log(Level.WARNING, "[ERROR] MS UnsupportedEncodingException");
         } catch (InterruptedException e) {
         }
         // throw exception after all tries have failed
+        logger.log("[ERROR] MS:could not generate skin url: " + url);
+        logger.log("[ERROR] MS:reason: " + err_resp);
         if (!(err_resp.matches("")))
-            throw new SkinRequestException(Locale.ERROR_MS_GENERIC.replace("%error%", err_resp));
+            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
         else
             throw new SkinRequestException(Locale.MS_API_FAILED);
     }
