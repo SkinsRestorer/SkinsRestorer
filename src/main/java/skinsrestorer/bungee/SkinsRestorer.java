@@ -132,7 +132,7 @@ public class SkinsRestorer extends Plugin {
 
         manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
             BungeeCommandIssuer issuer = context.getIssuer();
-            if (issuer.hasPermission("skinsrestorer.playercmds") || Config.SKINWITHOUTPERM)
+            if (issuer.hasPermission("skinsrestorer.command") || Config.SKINWITHOUTPERM)
                 return;
 
             throw new ConditionFailedException("You don't have access to change your skin.");
