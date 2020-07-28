@@ -36,7 +36,6 @@ public class Config {
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean UPDATER_ENABLED = true;
     public static boolean UPDATER_PERIODIC = true;
-    public static boolean USE_NEW_PERMISSIONS = true;
     public static boolean DEBUG = false;
 
 
@@ -78,15 +77,10 @@ public class Config {
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
         UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
-        USE_NEW_PERMISSIONS = config.getBoolean("Permissions.NewPermissions", USE_NEW_PERMISSIONS);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
-
-        // Permissions
-        if (PER_SKIN_PERMISSIONS && !USE_NEW_PERMISSIONS)
-            System.out.println("[SkinsRestorer] Warning: PerSkinPermissions only work with Permissions.NewPermissions set to true!");
     }
 
     public static void set(String path, Object value) {

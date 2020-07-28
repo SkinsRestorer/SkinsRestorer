@@ -32,29 +32,9 @@ public class CommandReplacements {
             {"srProps", "skinsrestorer.admincommand.props"},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
-    private static Map<String, String> oldPermissions = Stream.of(new String[][]{
-            {"skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
-            {"sr", "skinsrestorer.cmds"},
-
-            {"skins", "skinsrestorer.playercmds.menu"},
-
-            {"skinSet", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
-            {"skinSetOther", "skinsrestorer.cmds"},
-
-            {"skinClear", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
-            {"skinClearOther", "skinsrestorer.cmds"},
-
-            {"skinUpdate", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.playercmds"},
-            {"skinUpdateOther", "skinsrestorer.cmds"},
-
-            {"srReload", "skinsrestorer.cmds"},
-            {"srStatus", "skinsrestorer.cmds"},
-            {"srDrop", "skinsrestorer.cmds"},
-            {"srProps", "skinsrestorer.cmds"},
-    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
-
+    //todo: optinfine this.
     public static Map<String, String> getPermissionReplacements() {
-        return Config.USE_NEW_PERMISSIONS ? newPermissions : oldPermissions;
+        return newPermissions;
     }
 
     public static Map<String, String> descriptions = Stream.of(new String[][]{

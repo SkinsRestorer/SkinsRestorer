@@ -228,7 +228,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                 Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
 
                 // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
-                if (Config.PER_SKIN_PERMISSIONS && Config.USE_NEW_PERMISSIONS) {
+                if (Config.PER_SKIN_PERMISSIONS) {
                     String skinname = e.getCurrentItem().getItemMeta().getDisplayName();
                     if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
                         if (!player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {

@@ -69,7 +69,6 @@ CustomGUI:
 # Allows the usage of per skin perm.
 # Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.McLive
 # with "skinsrestorer.ownskin" you can set your own playername skin.
-# [!] requires  'NewPermissions: true' [!]
 PerSkinPermissions: false
 
 # Time skins are stored in database before we request again (in minutes)
