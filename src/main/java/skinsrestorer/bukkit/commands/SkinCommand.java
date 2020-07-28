@@ -13,6 +13,7 @@ import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.SRLogger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin") @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private SkinsRestorer plugin;
+    private SRLogger log;
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -188,10 +190,7 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
-                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
-            return false;
         }
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
@@ -213,17 +212,15 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
-                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             } catch (Exception  e) {
-                System.out.println("[SkinsRestorer] [ERROR] could not generate skin url:" + skin);
-                //e.printStackTrace(); //todo: not throw error without context
+                log.log("[ERROR] Exception: could not generate skin url:" + skin);
+                Locale.ERROR_MS_GENERIC.replace("%error%", e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-                CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-                this.rollback(p, oldSkinName, save); // set custom skin name back to old one if there is an exception
             }
-            return false;
         }
+        // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
+        CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        this.rollback(p, oldSkinName, save);
         return false;
     }
         private void rollback(Player p, String oldSkinName, boolean save) {
