@@ -100,7 +100,7 @@ public class MineSkinAPI {
             } catch (IOException e) {
                 logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
             } catch (JsonSyntaxException e) {
-                logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (endocding): (" + url + ") " + e.getLocalizedMessage());
+                logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
             }
         } catch (UnsupportedEncodingException e) {
             logger.log(Level.WARNING, "[ERROR] MS UnsupportedEncodingException");
