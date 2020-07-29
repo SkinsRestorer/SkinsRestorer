@@ -80,7 +80,7 @@ public class MojangAPI {
     }
 
     public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
-        this.logger.log("Trying Mojang API to get skin property for " + uuid + ".");
+        logger.log("Trying Mojang API to get skin property for " + uuid + ".");
 
         String output;
         try {
@@ -108,7 +108,7 @@ public class MojangAPI {
     }
 
     public Object getSkinPropertyBackup(String uuid) {
-        this.logger.log("Trying backup API to get skin property for " + uuid + ".");
+        logger.log("Trying backup API to get skin property for " + uuid + ".");
 
         String output;
         try {
@@ -125,7 +125,7 @@ public class MojangAPI {
             return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
 
         } catch (Exception e) {
-            this.logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
+            logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
         return null;
     }
@@ -165,7 +165,7 @@ public class MojangAPI {
     }
 
     public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
-        this.logger.log("Trying Mojang API to get UUID for player " + name + ".");
+        logger.log("Trying Mojang API to get UUID for player " + name + ".");
 
         String output;
         try {
@@ -197,7 +197,7 @@ public class MojangAPI {
     }
 
     public String getUUIDBackup(String name) throws SkinRequestException {
-        this.logger.log("Trying backup API to get UUID for player " + name + ".");
+        logger.log("Trying backup API to get UUID for player " + name + ".");
 
         String output;
         try {
