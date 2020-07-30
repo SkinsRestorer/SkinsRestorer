@@ -46,7 +46,7 @@ public class Locale {
     public static String ERROR_NO_SKIN = "&4Error&8: &cThis player has no skin set.";
     
     public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
-    public static String SKINSMENU_TITLE = "&9Skins Menu - Page ";    
+    public static String SKINSMENU_TITLE = "&9Skins Menu - Page %page";
     public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
     public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
     public static String SKINSMENU_REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
