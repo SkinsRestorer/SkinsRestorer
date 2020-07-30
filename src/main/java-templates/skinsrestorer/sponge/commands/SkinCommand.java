@@ -157,7 +157,7 @@ public class SkinCommand extends BaseCommand {
             }
 
         if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
-            source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN_NEW.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
+            source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
             return false;
         }
 

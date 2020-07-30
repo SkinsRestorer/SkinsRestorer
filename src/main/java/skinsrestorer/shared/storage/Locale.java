@@ -26,7 +26,7 @@ public class Locale {
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
     public static String NOT_PREMIUM = "&4Error&8: &cPremium player with that name does not exist.";
     public static String INVALID_PLAYER = "&4Error&8: &c%player is not a valid username or URL.";
-    public static String SKIN_COOLDOWN_NEW = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
+    public static String SKIN_COOLDOWN = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
 
     public static String SKIN_CHANGE_SUCCESS = "&2Your skin has been changed.";
     public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
