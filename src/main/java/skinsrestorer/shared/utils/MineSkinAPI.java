@@ -141,7 +141,7 @@ public class MineSkinAPI {
                 }
                 DataInputStream input = new DataInputStream(_is);
                 for (int c = input.read(); c != -1; c = input.read()) {
-                    outstr += (char) c;
+                    outstr += (char) c; //todo String concatenation in loop
                 }
                 input.close();
                 return outstr;

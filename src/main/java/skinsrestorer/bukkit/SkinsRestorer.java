@@ -177,6 +177,7 @@ public class SkinsRestorer extends JavaPlugin {
                             });
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
+                            ++page; // start counting from 1
                             Inventory inventory = skinsGUI.getGUI(p, page, newSkinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {

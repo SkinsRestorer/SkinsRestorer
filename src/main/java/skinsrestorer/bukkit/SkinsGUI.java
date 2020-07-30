@@ -32,7 +32,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         NONE, PREV, NEXT, DELETE
     }
 
-    public class GuiGlass {
+    public static class GuiGlass {
         public GuiGlass(GlassType glassType) {
             this.glassType = glassType;
             this.create();
@@ -90,7 +90,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§") + page+1);
+        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§") + page);
 
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
@@ -117,8 +117,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         inventory.setItem(51, new GuiGlass(GlassType.NONE).getItemStack());
 
         skinsList.forEach((name, property) -> {
-            //if page is not 0, adding Previous Page button.
-            if (page != 0) {
+            //if page is above 1, adding Previous Page button.
+            if (page > 1) {
                 inventory.setItem(45, new GuiGlass(GlassType.PREV).getItemStack());
                 inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
                 inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
@@ -141,6 +141,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     public Inventory getGUI(Player p, int page) {
         int skinNumber = 36 * page;
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+        ++page; // start counting from 1
         return this.getGUI(p, page, skinsList);
     }
 
