@@ -7,6 +7,7 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Locale;
@@ -23,14 +24,14 @@ public class GUICommand extends BaseCommand {
 
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage("SkinsRestorer Help");
+        sender.sendMessage(new TextComponent("SkinsRestorer Help"));
         help.showHelp();
     }
 
     @Default
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer p) {
-        p.sendMessage(Locale.SKINSMENU_OPEN);
+        p.sendMessage(new TextComponent(Locale.SKINSMENU_OPEN));
 
         plugin.getPluginMessageListener().sendGuiOpenRequest(p);
     }

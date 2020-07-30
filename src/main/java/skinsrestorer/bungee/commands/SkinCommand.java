@@ -93,7 +93,7 @@ public class SkinCommand extends BaseCommand {
                 skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
 
             if (skin.contains(" ")) {
-                sender.sendMessage(Locale.ERROR_UPDATING_URL);
+                sender.sendMessage(new TextComponent(Locale.ERROR_UPDATING_URL));
                 return;
             }   
 

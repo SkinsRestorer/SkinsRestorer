@@ -20,7 +20,7 @@ public class Locale {
     public static String HELP_SR_STATUS = "Checks plugin needed API services";
     public static String HELP_SR_DROP = "Drops the players skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin as properties.";
-    
+
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
