@@ -90,7 +90,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE.replace("&", "§").replace("%page", ""+page));
+        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE_NEW.replace("&", "§").replace("%page", ""+page));
 
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
@@ -181,7 +181,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     @EventHandler
     public void onCLick(InventoryClickEvent e) {
         try {
-            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE)) {
+            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW)) {
                 return;
             }
         } catch (IllegalStateException ex) {

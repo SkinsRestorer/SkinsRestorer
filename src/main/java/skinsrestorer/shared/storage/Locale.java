@@ -44,9 +44,9 @@ public class Locale {
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
     public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
     public static String ERROR_NO_SKIN = "&4Error&8: &cThis player has no skin set.";
-    
+
     public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
-    public static String SKINSMENU_TITLE = "&9Skins Menu - Page %page";
+    public static String SKINSMENU_TITLE_NEW = "&9Skins Menu - Page %page";
     public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
     public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
     public static String SKINSMENU_REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
@@ -72,8 +72,7 @@ public class Locale {
 
     public static final String[] IGNORE_PREFIX = {
             "HELP_",
-            "SKINSMENU_OPEN",
-            "SKINSMENU_TITLE",
+            "SKINSMENU_TITLE_NEW",
             "SKINSMENU_NEXT_PAGE",
             "SKINSMENU_PREVIOUS_PAGE",
             "SKINSMENU_REMOVE_SKIN",
