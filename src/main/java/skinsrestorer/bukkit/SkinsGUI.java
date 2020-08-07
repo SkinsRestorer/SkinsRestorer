@@ -116,25 +116,24 @@ public class SkinsGUI extends ItemStack implements Listener {
         inventory.setItem(52, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(51, new GuiGlass(GlassType.NONE).getItemStack());
 
+        //if page is above 1, adding Previous Page button.
+        if (page > 1) {
+            inventory.setItem(45, new GuiGlass(GlassType.PREV).getItemStack());
+            inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
+            inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
+        }
+
         skinsList.forEach((name, property) -> {
-            //if page is above 1, adding Previous Page button.
-            if (page > 1) {
-                inventory.setItem(45, new GuiGlass(GlassType.PREV).getItemStack());
-                inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
-                inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
-            }
+                inventory.addItem(createSkull(name, property));
 
-            inventory.addItem(createSkull(name, property));
-
-            //if the page is full, adding Next Page button.
-            if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null) {
-                inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
-                inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
-                inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
-                return;
-            }
         });
 
+        //if the page is not empty, adding Next Page button.
+        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null) {
+            inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
+            inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
+            inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
+        }
         return inventory;
     }
 
