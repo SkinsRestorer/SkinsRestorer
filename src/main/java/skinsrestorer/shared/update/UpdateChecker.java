@@ -3,6 +3,7 @@ package skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.bukkit.Bukkit;
 import org.inventivetalent.update.spiget.ResourceInfo;
 import org.inventivetalent.update.spiget.ResourceVersion;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -64,10 +65,10 @@ public class UpdateChecker {
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } /*else { //Todo: filter bungee out
+        } else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper")) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9Bukkit only§a  |");
-        }*/
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+        }
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
@@ -90,6 +91,9 @@ public class UpdateChecker {
         if (bungeeMode) {
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+        } else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper") ){
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
         }
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
