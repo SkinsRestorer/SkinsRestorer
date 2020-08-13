@@ -159,24 +159,47 @@ public class OldSkinRefresher implements Consumer<Player> {
                                     dimensionManger, seed, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                         } catch (Exception ignored5) {
                             // Minecraft 1.16.1 changes
-                            Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+                            try {
+                                Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
-                            Object typeKey = ReflectionUtil.invokeMethod(worldServer, "getTypeKey");
-                            Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
+                                Object typeKey = ReflectionUtil.invokeMethod(worldServer, "getTypeKey");
+                                Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
 
-                            respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
-                                    new Class<?>[]{
-                                            typeKey.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
-                                    },
-                                    typeKey,
-                                    dimensionKey,
-                                    seed,
-                                    ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
-                                    ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
-                                    ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
-                                    ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
-                                    true
-                            );
+                                respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                        new Class<?>[]{
+                                                typeKey.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
+                                        },
+                                        typeKey,
+                                        dimensionKey,
+                                        seed,
+                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
+                                        ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
+                                        true
+                                );
+                            } catch (Exception ignored6) {
+                                // Minecraft 1.16.2 changes
+
+                                Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+
+                                Object DimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
+                                Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
+
+                                respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
+                                        new Class<?>[]{
+                                                DimensionManager.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
+                                        },
+                                        DimensionManager,
+                                        dimensionKey,
+                                        seed,
+                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
+                                        ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
+                                        true
+                                );
+                            }
                         }
                     }
                 }
