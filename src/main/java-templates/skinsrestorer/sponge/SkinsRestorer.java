@@ -101,6 +101,20 @@ public class SkinsRestorer {
 
         // Init API
         this.skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(this, this.mojangAPI, this.skinStorage);
+
+        // Run connection check
+        ServiceChecker checker = new ServiceChecker();
+        checker.setMojangAPI(this.mojangAPI);
+        checker.checkServices();
+        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+
+        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+            System.out.println("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+            System.out.println("§c[§4Critical§c] §cPlugin currently can't fetch new skins.");
+            System.out.println("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki ");
+            System.out.println("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer ");
+            System.out.println("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
+        }
     }
 
     @Listener

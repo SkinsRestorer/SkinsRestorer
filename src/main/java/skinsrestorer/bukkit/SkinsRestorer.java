@@ -27,6 +27,7 @@ import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -38,6 +39,8 @@ public class SkinsRestorer extends JavaPlugin {
     private SkinFactory factory;
     @Getter
     private UpdateChecker updateChecker;
+    @Getter
+    private SkinsRestorer plugin;
     @Getter
     private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
@@ -215,6 +218,22 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Init API
         this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(this, this.mojangAPI, this.skinStorage);
+
+        // Run connection check
+        if (!bungeeEnabled) {
+            ServiceChecker checker = new ServiceChecker();
+            checker.setMojangAPI(this.mojangAPI);
+            checker.checkServices();
+            ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+
+            if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+                console.sendMessage("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+                console.sendMessage("§c[§4Critical§c] §cPlugin currently can't fetch new skins.");
+                console.sendMessage("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki ");
+                console.sendMessage("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer ");
+                console.sendMessage("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
+            }
+        }
     }
 
     public void requestSkinsFromBungeeCord(Player p, int page) {

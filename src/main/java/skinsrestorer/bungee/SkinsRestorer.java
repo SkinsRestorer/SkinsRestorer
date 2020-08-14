@@ -123,6 +123,20 @@ public class SkinsRestorer extends Plugin {
 
         // Init API
         this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(this, this.mojangAPI, this.skinStorage);
+
+        // Run connection check
+        ServiceChecker checker = new ServiceChecker();
+        checker.setMojangAPI(this.mojangAPI);
+        checker.checkServices();
+        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+
+        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+            console.sendMessage(new TextComponent("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
+            console.sendMessage(new TextComponent("§c[§4Critical§c] §cPlugin currently can't fetch new skins."));
+            console.sendMessage(new TextComponent("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki "));
+            console.sendMessage(new TextComponent("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer "));
+            console.sendMessage(new TextComponent("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
+        }
     }
 
     private void initCommands() {
