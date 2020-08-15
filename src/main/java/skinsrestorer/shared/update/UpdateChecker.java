@@ -65,10 +65,10 @@ public class UpdateChecker {
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper")) {
+        } /*else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper")) { //todo filter bungee out (remember 2X kevin 2x!!V)
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
-        }
+        } */
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
@@ -91,10 +91,10 @@ public class UpdateChecker {
         if (bungeeMode) {
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper") ){
+        } /*else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper") ){
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
-        }
+        } */
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
