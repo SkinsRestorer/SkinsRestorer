@@ -65,10 +65,14 @@ public class UpdateChecker {
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } /*else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper")) { //todo filter bungee out (remember 2X kevin 2x!!V)
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
-        } */
+        } else {
+            try {
+                Bukkit.getName(); //try if it is running bukkit
+                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+            } catch (NoClassDefFoundError ignored) {
+            }
+        }
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
@@ -91,10 +95,14 @@ public class UpdateChecker {
         if (bungeeMode) {
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
-        } /*else if (Bukkit.getName().toLowerCase().contains("spigot") || Bukkit.getName().toLowerCase().contains("paper") ){
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
-        } */
+        } else {
+            try {
+                Bukkit.getName(); //try if it is running bukkit
+                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+            } catch (NoClassDefFoundError ignored) {
+            }
+        }
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
