@@ -3,7 +3,7 @@ main: skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}
 website: https://skinsrestorer.net/
-authors: [Th3Tr0LLeR, McLive, DoNotSpamPls, Blackfire62]
+authors: [Th3Tr0LLeR, McLive, DoNotSpamPls, knat]
 api-version: 1.13
 commands:
   skin:
