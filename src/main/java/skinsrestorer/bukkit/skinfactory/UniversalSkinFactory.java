@@ -42,7 +42,8 @@ public class UniversalSkinFactory extends SkinFactory {
         // force OldSkinRefresher for unsupported plugins (ViaVersion & ).
         File ViaVersion = new File("plugins" + File.separator + "ViaVersion");
         File ViaBackwards = new File("plugins" + File.separator + "ViaBackwards");
-        if (ViaBackwards.exists() || ViaBackwards.exists()) {
+        File ViaRewind = new File("plugins" + File.separator + "ViaRewind");
+        if (ViaVersion.exists() || ViaBackwards.exists() || ViaRewind.exists()) {
             System.out.println("[SkinsRestorer] INFO: Unsupported plugin (ViaVersion) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
         }
