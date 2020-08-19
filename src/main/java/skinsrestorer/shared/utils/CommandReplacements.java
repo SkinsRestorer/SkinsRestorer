@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Created by McLive on 25.01.2019.
  */
 public class CommandReplacements {
-    private static Map<String, String> newPermissions = Stream.of(new String[][]{
+    public static Map<String, String> permissions = Stream.of(new String[][]{
             {"skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command"},
             {"sr", "skinsrestorer.admincommand"},
 
@@ -31,11 +31,6 @@ public class CommandReplacements {
             {"srDrop", "skinsrestorer.admincommand.drop"},
             {"srProps", "skinsrestorer.admincommand.props"},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
-
-    //todo: optinfine this.
-    public static Map<String, String> getPermissionReplacements() {
-        return newPermissions;
-    }
 
     public static Map<String, String> descriptions = Stream.of(new String[][]{
             {"%helpSkinClear", Locale.HELP_SKIN_CLEAR},
