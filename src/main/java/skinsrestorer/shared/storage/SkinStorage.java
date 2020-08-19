@@ -179,6 +179,7 @@ public class SkinStorage {
             return null;
 
         } else {
+            name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
@@ -296,6 +297,7 @@ public class SkinStorage {
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
+            name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             if (playerFile.exists())
@@ -329,6 +331,7 @@ public class SkinStorage {
     public void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
+            //todo optimization
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
 
             if (crs == null)
@@ -336,6 +339,7 @@ public class SkinStorage {
             else
                 mysql.execute("UPDATE " + Config.MYSQL_PLAYERTABLE + " SET Skin=? WHERE Nick=?", skin, name);
         } else {
+            name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
