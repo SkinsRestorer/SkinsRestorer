@@ -50,4 +50,12 @@ public class CommandReplacements {
             {"%helpSrProps", Locale.HELP_SR_PROPS},
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
+    public static Map<String, String> syntax = Stream.of(new String[][]{
+            {"%SyntaxDefaultCommand", Locale.SYNTAX_DEFAULTCOMMAND},
+            {"%SyntaxSkinSet", Locale.SYNTAX_SKINSET},
+            {"%SyntaxSkinSetOther", Locale.SYNTAX_SKINSET_OTHER},
+            {"%SyntaxSkinUrl", Locale.SYNTAX_SKINURL},
+            {"%SyntaxSkinUpdateOther", Locale.SYNTAX_SKINUPDATE_OTHER},
+            {"%SyntaxSkinClearOther", Locale.SYNTAX_SKINCLEAR_OTHER},
+    }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 }

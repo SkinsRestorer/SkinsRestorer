@@ -1,5 +1,6 @@
 package skinsrestorer.shared.storage;
 
+import co.aikar.commands.annotation.Default;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.YamlConfig;
 
@@ -20,6 +21,13 @@ public class Locale {
     public static String HELP_SR_STATUS = "Checks plugin needed API services";
     public static String HELP_SR_DROP = "Drops the players skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin as properties.";
+
+    public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
+    public static String SYNTAX_SKINSET = " <skin/url>";
+    public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
+    public static String SYNTAX_SKINURL = " <url>";
+    public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
+    public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
 
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
@@ -72,6 +80,7 @@ public class Locale {
 
     public static final String[] IGNORE_PREFIX = {
             "HELP_",
+            "SYNTAX_",
             "SKINSMENU_TITLE_NEW",
             "SKINSMENU_NEXT_PAGE",
             "SKINSMENU_PREVIOUS_PAGE",
@@ -93,7 +102,7 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
-                    if(!f.toString().contains("HELP_") && !f.toString().contains("SKINSMENU_") && !f.toString().contains("SR_LINE"))
+                    if(!f.toString().contains("HELP_") && !f.toString().contains("SKINSMENU_") && !f.toString().contains("SR_LINE") && !f.toString().contains("SYNTAX_"))
                         parsed = C.c(locale.getString("PREFIX", null)) + parsed;
                 }
                 f.set(null, parsed);
