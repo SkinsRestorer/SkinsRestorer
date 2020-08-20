@@ -1,5 +1,6 @@
 package skinsrestorer.bungee.listeners;
 
+import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -75,7 +76,7 @@ public class PluginMessageListener implements Listener {
             String skin = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-            plugin.getSkinCommand().onSkinSet(p, skin);
+            plugin.getSkinCommand().onSkinSetOther(p, new OnlinePlayer(p), skin);
         }
     }
 

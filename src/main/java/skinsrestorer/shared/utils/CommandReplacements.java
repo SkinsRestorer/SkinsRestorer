@@ -20,6 +20,8 @@ public class CommandReplacements {
             {"skinSet", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.set"},
             {"skinSetOther", "skinsrestorer.command.set.other"},
 
+            {"skinSetUrl", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.set.url"},
+
             {"skinClear", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.clear"},
             {"skinClearOther", "skinsrestorer.command.clear.other"},
 
@@ -39,6 +41,7 @@ public class CommandReplacements {
             {"%helpSkinUpdateOther", Locale.HELP_SKIN_UPDATE_OTHER},
             {"%helpSkinSet", Locale.HELP_SKIN_SET},
             {"%helpSkinSetOther", Locale.HELP_SKIN_SET_OTHER},
+            {"%helpSkinSetUrl", Locale.HELP_SKIN_SET_OTHER_URL},
             {"%helpSrReload", Locale.HELP_SR_RELOAD},
             {"%helpSrStatus", Locale.HELP_SR_STATUS},
             {"%helpSrDrop", Locale.HELP_SR_DROP},

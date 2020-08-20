@@ -116,8 +116,14 @@ public class SkinCommand extends BaseCommand {
     @Subcommand("set") @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
-    public void onSkinSet(ProxiedPlayer p, String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    public void onSkinSet(ProxiedPlayer p, String[] skin) {
+        if (skin.length > 0) {
+            this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(skin));
+        } else {
+            // todo: connect with acf
+            p.sendMessage(new TextComponent("Usage: /skin set <skin>"));
+            return;
+        }
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
@@ -143,6 +149,22 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("url") @CommandPermission("%skinSetUrl")
+    @Description("%helpSkinSetUrl")
+    @Syntax("%SyntaxSkinUrl")
+    public void onSkinSetUrl(ProxiedPlayer p, String[] url) {
+        if (url.length > 0) {
+            if(C.validUrl(String.valueOf(url))) {
+                this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
+            } else {
+                p.sendMessage(new TextComponent(Locale.ERROR_INVALID_URLSKIN));
+            }
+        } else {
+            // todo: connect with acf
+            p.sendMessage(new TextComponent("Usage: /skin url <url>"));
+            return;
+        }
+    }
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
         return this.setSkin(sender, p, skin, true);

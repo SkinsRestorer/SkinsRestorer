@@ -126,7 +126,7 @@ public class SkinCommand extends BaseCommand {
             this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             // todo: connect with acf
-            p.sendMessage("Usage: /skin set <skin/url>");
+            p.sendMessage("Usage: /skin set <skin>");
             return;
             }
     }
@@ -151,6 +151,23 @@ public class SkinCommand extends BaseCommand {
                     sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
             }
         });
+    }
+
+    @Subcommand("url") @CommandPermission("%skinSetUrl")
+    @Description("%helpSkinSetUrl")
+    @Syntax("%SyntaxSkinUrl")
+    public void onSkinSetUrl(Player p, String[] url) {
+        if (url.length > 0) {
+            if(C.validUrl(String.valueOf(url))) {
+                this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
+            } else {
+                p.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+            }
+        } else {
+            // todo: connect with acf
+            p.sendMessage("Usage: /skin url <url>");
+            return;
+        }
     }
 
     private boolean setSkin(CommandSender sender, Player p, String skin) {
@@ -215,8 +232,7 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
             } catch (Exception  e) {
-                log.log("[ERROR] Exception: could not generate skin url:" + skin);
-                Locale.ERROR_MS_GENERIC.replace("%error%", e.getMessage());
+                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= "+ e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             }
         }

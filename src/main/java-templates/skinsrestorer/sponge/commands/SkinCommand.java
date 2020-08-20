@@ -136,6 +136,17 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("url") @CommandPermission("%skinSetUrl")
+    @Description("%helpSkinSetUrl")
+    @Syntax("%SyntaxSkinUrl")
+    public void onSkinSetUrl(Player p, String url) {
+        if(C.validUrl(url)) {
+            this.onSkinSetOther(p, new OnlinePlayer(p), url);
+        } else {
+            p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+        }
+    }
+
     private boolean setSkin(CommandSource source, Player p, String skin) {
         return this.setSkin(source, p, skin, true);
     }
