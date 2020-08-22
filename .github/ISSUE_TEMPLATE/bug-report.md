@@ -6,13 +6,13 @@ labels: ''
 assignees: 'xknat'
 
 ---
-
+```
 ===========================================
 = WARNING! Github is only for code issue. =
 = For user support, go to our discord!    =
 = http://skinsrestorer.net/discord        =
 ===========================================
-
+```
 ## Describe the bug
 A clear and concise description of what the bug is.
 
