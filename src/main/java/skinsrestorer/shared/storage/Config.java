@@ -56,7 +56,7 @@ public class Config {
         DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
         DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
-        DISABLED_SKINS = config.getStringList("CustomGUI.Names");
+        DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
         CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
         CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
