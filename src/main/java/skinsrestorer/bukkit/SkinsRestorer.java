@@ -195,6 +195,10 @@ public class SkinsRestorer extends JavaPlugin {
             return;
         }
 
+        /* ***************************************** *
+         * [!] below is skipped if bungeeEnabled [!] *
+         * ***************************************** */
+
         // Init config files
         Config.load(configPath, getResource("config.yml"));
         Locale.load(configPath);
@@ -310,6 +314,7 @@ public class SkinsRestorer extends JavaPlugin {
             throw new ConditionFailedException("You don't have access to change your skin.");
         }));
         // Use with @Conditions("permOrSkinWithoutPerm")
+
 
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
