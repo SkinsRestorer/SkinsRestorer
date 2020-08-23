@@ -46,7 +46,7 @@ playersOnly: "&4Te komendy można wykonać tylko jako gracz!"
 notPlayer: "&4Błąd&8: &cMusisz być graczem, aby to zrobić!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Otwieranie Gui..."
+menuOpen: "&2Otwieranie zbioru skinów..."
 #Previus page [GUI]
 previusPage: "&e&l«&7 Poprzednia strona&e&l «"
 #Next page [GUI]
