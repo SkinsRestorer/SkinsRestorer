@@ -1477,7 +1477,6 @@ public enum XMaterial {
      *
      * @return data of this material.
      */
-    @SuppressWarnings("deprecation")
     public byte getData() {
         return this.data;
     }

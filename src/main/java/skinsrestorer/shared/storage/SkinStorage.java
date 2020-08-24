@@ -1,11 +1,7 @@
 package skinsrestorer.shared.storage;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.Getter;
 import lombok.Setter;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.utils.MojangAPI;
 import skinsrestorer.shared.utils.MySQL;

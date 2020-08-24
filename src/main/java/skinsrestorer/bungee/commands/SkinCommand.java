@@ -9,7 +9,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.exception.SkinRequestException;
-import skinsrestorer.shared.interfaces.ISkinCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.CooldownStorage;
 import skinsrestorer.shared.storage.Locale;
@@ -96,7 +95,7 @@ public class SkinCommand extends BaseCommand {
             if (skin.contains(" ")) {
                 sender.sendMessage(new TextComponent(Locale.ERROR_UPDATING_URL));
                 return;
-            }   
+            }
 
             if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
                 sender.sendMessage(new TextComponent(Locale.ERROR_UPDATING_SKIN));

@@ -1,7 +1,5 @@
 package skinsrestorer.shared.storage.backend;
 
-import skinsrestorer.shared.interfaces.ISkinStorage;
-
 import java.util.Map;
 
 /**
