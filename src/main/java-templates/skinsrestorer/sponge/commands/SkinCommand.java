@@ -114,11 +114,10 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
         if(skin.length > 0){
-            this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(skin));
+            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
-
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")

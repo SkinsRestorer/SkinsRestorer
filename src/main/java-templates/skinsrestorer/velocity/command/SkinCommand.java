@@ -113,7 +113,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
         if (skin.length > 0) {
-            this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(skin));
+            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
@@ -147,8 +147,8 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player p, String[] url) {
         if (url.length > 0) {
-            if (C.validUrl(String.valueOf(url))) {
-                this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
+            if (C.validUrl(url[0])) {
+                this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
                 p.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ERROR_INVALID_URLSKIN));
             }
