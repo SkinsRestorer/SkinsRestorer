@@ -103,7 +103,7 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
-                    if(Arrays.stream(IGNORE_PREFIX).anyMatch(f.getName()::contains))
+                    if(!Arrays.stream(IGNORE_PREFIX).anyMatch(f.getName()::contains))
                         parsed = C.c(locale.getString("PREFIX", null)) + parsed;
                 }
                 f.set(null, parsed);
