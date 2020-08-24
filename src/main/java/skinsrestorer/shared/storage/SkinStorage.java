@@ -431,7 +431,11 @@ public class SkinStorage {
             Map<String, Object> list = new TreeMap<>();
             String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             File folder = new File(path);
-            String[] fileNames = folder.list();
+
+            //filter out non "*.skin" files.
+            FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
+
+            String[] fileNames = folder.list(skinFileFilter);
 
             if (fileNames == null)
                 return list;
@@ -486,7 +490,11 @@ public class SkinStorage {
             Map<String, Property> list = new TreeMap<>();
             String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             File folder = new File(path);
-            String[] fileNames = folder.list();
+
+            //filter out non "*.skin" files.
+            FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
+
+            String[] fileNames = folder.list(skinFileFilter);
 
             if (fileNames == null)
                 return list;

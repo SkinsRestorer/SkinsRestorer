@@ -5,6 +5,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
     private SkinsRestorer plugin;
+    private CommandSender console;
     private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
 
     public SkinsGUI(SkinsRestorer plugin) {
@@ -152,7 +154,11 @@ public class SkinsGUI extends ItemStack implements Listener {
         sm.setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
-        setSkin(is, ((Property) property).getValue());
+        try {
+            setSkin(is, ((Property) property).getValue());
+        } catch (Exception e){
+            console.sendMessage("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+        }
         return is;
     }
 
