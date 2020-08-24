@@ -120,9 +120,7 @@ public class SkinCommand extends BaseCommand {
         if (skin.length > 0) {
             this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(skin));
         } else {
-            // todo: connect with acf
-            p.sendMessage(new TextComponent("Usage: /skin set <skin>"));
-            return;
+            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
     }
 
@@ -160,9 +158,7 @@ public class SkinCommand extends BaseCommand {
                 p.sendMessage(new TextComponent(Locale.ERROR_INVALID_URLSKIN));
             }
         } else {
-            // todo: connect with acf
-            p.sendMessage(new TextComponent("Usage: /skin url <url>"));
-            return;
+            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
     }
 

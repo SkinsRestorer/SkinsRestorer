@@ -2,6 +2,8 @@ package skinsrestorer.sponge.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import org.spongepowered.api.Sponge;
@@ -110,8 +112,13 @@ public class SkinCommand extends BaseCommand {
     @Subcommand("set") @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
-    public void onSkinSet(Player p, String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+    public void onSkinSet(Player p, String[] skin) {
+        if(skin.length > 0){
+            this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(skin));
+        } else {
+            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
+        }
+
     }
 
     @Subcommand("set") @CommandPermission("%skinSetOther")
@@ -139,11 +146,15 @@ public class SkinCommand extends BaseCommand {
     @Subcommand("url") @CommandPermission("%skinSetUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
-    public void onSkinSetUrl(Player p, String url) {
-        if(C.validUrl(url)) {
-            this.onSkinSetOther(p, new OnlinePlayer(p), url);
+    public void onSkinSetUrl(Player p, String[] url) {
+        if (url.length > 0) {
+            if (C.validUrl(String.valueOf(url))) {
+                this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
+            } else {
+                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+            }
         } else {
-            p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
     }
 
