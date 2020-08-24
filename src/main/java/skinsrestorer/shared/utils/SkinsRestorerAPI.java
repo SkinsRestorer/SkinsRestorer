@@ -8,7 +8,7 @@ import skinsrestorer.shared.storage.SkinStorage;
  */
 
 /* APIexample: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
-   For more info please refere first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
+   For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
    Advanced help or getting problems? join our discord before submitting issues!
 
    [Warning!] Make sure to use SkinsRestorerBukkitAPI.java to apply skin. */
