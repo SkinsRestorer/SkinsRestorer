@@ -37,18 +37,10 @@ public class SkinsRestorer {
     private String configPath;
     @Getter
     private SkinApplier skinApplier;
-
     @Getter
     private SRLogger srLogger;
-
-    @Inject
-    private Metrics2 metrics;
-
-    private UpdateChecker updateChecker;
-    private CommandSource console;
     @Getter
     private boolean bungeeEnabled = false;
-
     @Getter
     private SkinStorage skinStorage;
     @Getter
@@ -57,6 +49,18 @@ public class SkinsRestorer {
     private MineSkinAPI mineSkinAPI;
     @Getter
     private SkinsRestorerSpongeAPI skinsRestorerSpongeAPI;
+
+    private UpdateChecker updateChecker;
+    private CommandSource console;
+
+    private final Metrics2 metrics;
+
+    // The metricsFactory parameter gets injected using @Inject
+    @Inject
+    public SkinsRestorer(Metrics2.Factory metricsFactory) {
+        int pluginId = 1669; // SkinsRestorer's ID on bStats
+        metrics = metricsFactory.make(pluginId);
+    }
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {

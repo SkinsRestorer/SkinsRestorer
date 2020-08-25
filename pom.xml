@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-sponge</artifactId>
-            <version>1.4</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
         <!-- Spiget Updater for Bukkit -->
@@ -154,7 +154,7 @@
             <artifactId>HikariCP</artifactId>
             <version>2.7.6</version>
         </dependency>
-        <!-- slf4j (required by Hikari) -->
+        <!-- SLF4J - "java.util.logging" Binding (required by Hikari) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
