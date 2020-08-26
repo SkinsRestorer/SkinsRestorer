@@ -58,7 +58,7 @@ public class SkinsRestorer {
     // The metricsFactory parameter gets injected using @Inject
     @Inject
     public SkinsRestorer(Metrics2.Factory metricsFactory) {
-        int pluginId = 1669; // SkinsRestorer's ID on bStats
+        int pluginId = 2337; // SkinsRestorer's ID on bStats
         metrics = metricsFactory.make(pluginId);
     }
 
