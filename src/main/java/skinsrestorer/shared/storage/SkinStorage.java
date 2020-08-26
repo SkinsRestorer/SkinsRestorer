@@ -72,7 +72,7 @@ public class SkinStorage {
 
         Config.DEFAULT_SKINS.forEach(skin -> {
             try {
-                this.setSkinData(skin, this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(skin)));
+                this.setSkinData(skin, getOrCreateSkinForPlayer(skin));
             } catch (SkinRequestException e) {
                 if (this.getSkinData(skin) == null)
                     System.out.println("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error: " + e.getReason());
@@ -147,11 +147,11 @@ public class SkinStorage {
         return getOrCreateSkinForPlayer(name, false);
     }
 
-    /*
+    /**
      * Returns the custom skin name that player has set.
      *
      * Returns null if player has no custom skin set. (even if its his own name)
-     */
+     **/
     public String getPlayerSkin(String name) {
         name = name.toLowerCase();
         if (Config.USE_MYSQL) {
@@ -175,6 +175,7 @@ public class SkinStorage {
             return null;
 
         } else {
+            //geyser compatibility
             name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -208,6 +209,7 @@ public class SkinStorage {
     /**
      * Returns property object containing skin data of the wanted skin
      **/
+    //getSkinData also create while we have getOrCreateSkinForPlayer
     public Object getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
@@ -293,6 +295,7 @@ public class SkinStorage {
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
+            //geyser compatibility
             name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -335,6 +338,7 @@ public class SkinStorage {
             else
                 mysql.execute("UPDATE " + Config.MYSQL_PLAYERTABLE + " SET Skin=? WHERE Nick=?", skin, name);
         } else {
+            //geyser compatibility
             name = name.replaceAll("\\*", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -539,6 +543,7 @@ public class SkinStorage {
         }
     }
 
+    // skin update [include custom skin flag]
     public boolean forceUpdateSkinData(String skin) {
         try {
             Object textures = this.getMojangAPI().getSkinPropertyBackup(this.getMojangAPI().getUUIDBackup(skin));
@@ -592,4 +597,15 @@ public class SkinStorage {
     public String getDefaultSkinNameIfEnabled(String player) {
         return getDefaultSkinNameIfEnabled(player, false);
     }
+
+    //wip
+    /*public boolean iscustom(String skin) {
+        try {
+            //code
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    } */
 }

@@ -192,7 +192,7 @@ public class SkinCommand extends BaseCommand {
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
         if (C.validUsername(skin)) {
             try {
-                plugin.getMojangAPI().getUUID(skin);
+                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
                     plugin.getSkinApplier().applySkin(p);
