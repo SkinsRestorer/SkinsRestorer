@@ -65,7 +65,9 @@ public class SkinsRestorer extends Plugin {
     @Override
     public void onEnable() {
         srLogger = new SRLogger();
-        Metrics metrics = new Metrics(this);
+
+        int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
+        Metrics metrics = new Metrics(this, pluginId);
         if (metrics.isEnabled()) {
             metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
             metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
