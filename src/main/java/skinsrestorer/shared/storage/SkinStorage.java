@@ -75,7 +75,7 @@ public class SkinStorage {
                 this.setSkinData(skin, getOrCreateSkinForPlayer(skin));
             } catch (SkinRequestException e) {
                 if (this.getSkinData(skin) == null)
-                    System.out.println("§e[§2SkinsRestorer§e] §cDefault Skin '" + skin + "' request error: " + e.getReason());
+                    System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
             }
         });
     }
