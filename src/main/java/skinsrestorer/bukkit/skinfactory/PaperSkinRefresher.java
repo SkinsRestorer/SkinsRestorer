@@ -8,7 +8,6 @@ import skinsrestorer.shared.utils.ReflectionUtil;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.Field;
 import java.util.function.Consumer;
 
 /**
@@ -27,17 +26,17 @@ final class PaperSkinRefresher implements Consumer<Player> {
         if (MH_HEALTH_UPDATE != null) {
             MH_HEALTH_UPDATE.invoke(player);
         } else {
-            val handle = (val) MH_GET_HANDLE.invoke(player);
+            val handle = MH_GET_HANDLE.invoke(player);
             ReflectionUtil.invokeMethod(handle, "triggerHealthUpdate");
         }
     }
 
     static {
         try {
-            Field field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+            val field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             field.setAccessible(true);
             MethodHandles.publicLookup();
-            MethodHandles.Lookup lookup = (MethodHandles.Lookup) field.get(null);
+            val lookup = (MethodHandles.Lookup) field.get(null);
             MH_REFRESH = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
             MH_GET_HANDLE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "getHandle", MethodType.methodType(ReflectionUtil.getNMSClass("EntityPlayer")));
 
