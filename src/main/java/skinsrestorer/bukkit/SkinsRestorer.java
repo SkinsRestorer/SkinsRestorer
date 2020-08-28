@@ -64,7 +64,7 @@ public class SkinsRestorer extends JavaPlugin {
 
     public void onEnable() {
         console = getServer().getConsoleSender();
-        srLogger = new SRLogger();
+        srLogger = new SRLogger(getDataFolder());
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);

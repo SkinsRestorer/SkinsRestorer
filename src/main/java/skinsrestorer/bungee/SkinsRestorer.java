@@ -64,7 +64,7 @@ public class SkinsRestorer extends Plugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger();
+        srLogger = new SRLogger(getDataFolder());
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);

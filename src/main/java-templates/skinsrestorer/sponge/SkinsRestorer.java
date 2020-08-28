@@ -64,7 +64,7 @@ public class SkinsRestorer {
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        this.srLogger = new SRLogger();
+        this.srLogger = new SRLogger(new File(configPath));
         instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();

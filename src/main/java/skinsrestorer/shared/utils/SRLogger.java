@@ -1,7 +1,9 @@
 package skinsrestorer.shared.utils;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import skinsrestorer.shared.storage.Config;
 
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,24 +11,37 @@ import java.util.logging.Logger;
  * Created by McLive on 21.07.2019.
  */
 public class SRLogger {
+    private File folder;
     private java.util.logging.Logger logger;
 
-    public SRLogger() {
+    public SRLogger(File pluginFolder) {
+        folder = pluginFolder;
         this.load();
     }
 
     public boolean load() {
-        logger = Logger.getLogger(SRLogger.class.getName());
-        return true;
-
-        /*
         try {
-            logger = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.Bukkit"), null, "getLogger");
+            //Manual check config value
+            File pluginConfigFile = new File(folder.getAbsolutePath() + File.separator +"config.yml");
+            YamlConfig pluginConfig = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator, "config", false);
+
+            if (pluginConfigFile.exists()) {
+                pluginConfig.reload();
+                if (pluginConfig.getBoolean("Debug")) {
+                    Config.DEBUG = true;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+
+        if (Config.DEBUG) {
+            logger = Logger.getLogger(SRLogger.class.getName());
             return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
+        }
+        logger = Logger.getLogger("");
+        return true;
     }
+
 
     public Object getLogger() {
         return this.logger;

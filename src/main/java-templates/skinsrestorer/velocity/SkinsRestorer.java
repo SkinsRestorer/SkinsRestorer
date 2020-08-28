@@ -69,7 +69,7 @@ public class SkinsRestorer {
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        this.logger = new SRLogger();
+        this.logger = new SRLogger(this.getDataFolder().toFile());
         this.dataFolder = dataFolder;
     }
 
