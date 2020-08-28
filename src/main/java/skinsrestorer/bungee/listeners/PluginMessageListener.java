@@ -74,7 +74,7 @@ public class PluginMessageListener implements Listener {
         if (subchannel.equals("updateSkin")) {
             String player = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
-            plugin.getskincommand().onSkinUpdateOther(p, new OnlinePlayer(p));
+            plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
         }
 
         if (subchannel.equals("setSkin")) {
