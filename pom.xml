@@ -227,8 +227,8 @@
                             <shadedPattern>skinsrestorer.shared.libs.spiget-updater</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>co.aikar</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.aikar</shadedPattern>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>

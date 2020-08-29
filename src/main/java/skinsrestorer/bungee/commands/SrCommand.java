@@ -3,7 +3,7 @@ package skinsrestorer.bungee.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
-import co.aikar.commands.contexts.OnlineProxiedPlayer;
+import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -76,7 +76,7 @@ public class SrCommand extends BaseCommand {
     @Subcommand("drop") @CommandPermission("%srDrop")
     @CommandCompletion("@players")
     @Description("%helpSrDrop")
-    public void onDrop(CommandSender sender, OnlineProxiedPlayer target) {
+    public void onDrop(CommandSender sender, OnlinePlayer target) {
         String player = target.getPlayer().getName();
         plugin.getSkinStorage().removeSkinData(player);
         sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
@@ -86,7 +86,7 @@ public class SrCommand extends BaseCommand {
     @Subcommand("props") @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
-    public void onProps(CommandSender sender, OnlineProxiedPlayer target) {
+    public void onProps(CommandSender sender, OnlinePlayer target) {
         InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
         LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
 
