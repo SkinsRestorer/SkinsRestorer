@@ -4,6 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
 import skinsrestorer.shared.storage.Config;
@@ -93,16 +95,24 @@ public class SrCommand extends BaseCommand {
             source.sendMessage(plugin.deserialize(Locale.NO_SKIN_DATA));
             return;
         }
-
-        source.sendMessage(plugin.deserialize("\n§aName: §8" + prop.getName()));
-        source.sendMessage(plugin.deserialize("\n§aValue : §8" + prop.getValue()));
-        source.sendMessage(plugin.deserialize("\n§aSignature : §8" + prop.getSignature()));
-
         byte[] decoded = Base64.getDecoder().decode(prop.getValue());
-        source.sendMessage(plugin.deserialize("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
 
-        source.sendMessage(plugin.deserialize("\n§e" + Arrays.toString(decoded)));
+        String decodedString = new String(decoded);
+        JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
+        String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+        long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+        String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (timestamp));
 
+        source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
+        source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
+        source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
+        source.sendMessage(plugin.deserialize("§aSkinUrl: §e" + decodedSkin.substring(1, decodedSkin.length()-1)));
         source.sendMessage(plugin.deserialize("§cMore info in console!"));
+
+        //console
+        System.out.println("\n§aName: §8" + prop.getName());
+        System.out.println("\n§aValue : §8" + prop.getValue());
+        System.out.println("\n§aSignature : §8" + prop.getSignature());
+        System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
     }
 }

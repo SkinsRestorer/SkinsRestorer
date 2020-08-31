@@ -25,7 +25,6 @@ import java.util.List;
 @CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private SkinsRestorer plugin;
-    private CommandSender console = BungeeCord.getInstance().getConsole();
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -110,6 +109,8 @@ public class SrCommand extends BaseCommand {
         long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
         String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (timestamp));
 
+        CommandSender console = BungeeCord.getInstance().getConsole();
+
         sender.sendMessage(TextComponent.fromLegacyText("§aRequest time: §e" + requestDate));
         sender.sendMessage(TextComponent.fromLegacyText("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
         sender.sendMessage(TextComponent.fromLegacyText("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
@@ -120,10 +121,6 @@ public class SrCommand extends BaseCommand {
         console.sendMessage(TextComponent.fromLegacyText("\n§aName: §8" + prop.getName()));
         console.sendMessage(TextComponent.fromLegacyText("\n§aValue : §8" + prop.getValue()));
         console.sendMessage(TextComponent.fromLegacyText("\n§aSignature : §8" + prop.getSignature()));
-
-
         console.sendMessage(TextComponent.fromLegacyText("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
-
-        console.sendMessage(TextComponent.fromLegacyText("\n§e" + Arrays.toString(decoded)));
     }
 }
