@@ -36,15 +36,15 @@ public class SrCommand extends BaseCommand {
     public void onReload(CommandSender sender) {
         Locale.load(SkinsRestorer.getInstance().getConfigPath());
         Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
-        sender.sendMessage(new TextComponent(Locale.RELOAD));
+        sender.sendMessage(TextComponent.fromLegacyText(Locale.RELOAD));
     }
 
 
     @Subcommand("status") @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        sender.sendMessage(new TextComponent("§3----------------------------------------------"));
-        sender.sendMessage(new TextComponent("§7Checking needed services for SR to work properly..."));
+        sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
+        sender.sendMessage(TextComponent.fromLegacyText("§7Checking needed services for SR to work properly..."));
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             ServiceChecker checker = new ServiceChecker();
@@ -55,20 +55,20 @@ public class SrCommand extends BaseCommand {
             List<String> results = response.getResults();
 
             for (String result : results) {
-                sender.sendMessage(new TextComponent(result));
+                sender.sendMessage(TextComponent.fromLegacyText(result));
             }
-            sender.sendMessage(new TextComponent("§7Working UUID API count: §6 " + response.getWorkingUUID()));
-            sender.sendMessage(new TextComponent("§7Working Profile API count: §6" + response.getWorkingProfile()));
+            sender.sendMessage(TextComponent.fromLegacyText("§7Working UUID API count: §6 " + response.getWorkingUUID()));
+            sender.sendMessage(TextComponent.fromLegacyText("§7Working Profile API count: §6" + response.getWorkingProfile()));
             if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
-                sender.sendMessage(new TextComponent("§aThe plugin currently is in a working state."));
+                sender.sendMessage(TextComponent.fromLegacyText("§aThe plugin currently is in a working state."));
             else
-                sender.sendMessage(new TextComponent("§cPlugin currently can't fetch new skins. You might check out our discord at https://discord.me/servers/skinsrestorer"));
-            sender.sendMessage(new TextComponent("§3----------------------------------------------"));
-            sender.sendMessage(new TextComponent("§7SkinsRestorer §6v" + plugin.getVersion()));
-            sender.sendMessage(new TextComponent("§7Server: §6" + plugin.getProxy().getVersion()));
-            sender.sendMessage(new TextComponent("§7BungeeMode: §6Bungee-Plugin"));
-            sender.sendMessage(new TextComponent("§7Finished checking services."));
-            sender.sendMessage(new TextComponent("§3----------------------------------------------"));
+                sender.sendMessage(TextComponent.fromLegacyText("§cPlugin currently can't fetch new skins. You might check out our discord at https://discord.me/servers/skinsrestorer"));
+            sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
+            sender.sendMessage(TextComponent.fromLegacyText("§7SkinsRestorer §6v" + plugin.getVersion()));
+            sender.sendMessage(TextComponent.fromLegacyText("§7Server: §6" + plugin.getProxy().getVersion()));
+            sender.sendMessage(TextComponent.fromLegacyText("§7BungeeMode: §6Bungee-Plugin"));
+            sender.sendMessage(TextComponent.fromLegacyText("§7Finished checking services."));
+            sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
         });
     }
 
@@ -79,7 +79,7 @@ public class SrCommand extends BaseCommand {
     public void onDrop(CommandSender sender, OnlinePlayer target) {
         String player = target.getPlayer().getName();
         plugin.getSkinStorage().removeSkinData(player);
-        sender.sendMessage(new TextComponent(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
+        sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DATA_DROPPED.replace("%player", player)));
     }
 
 
@@ -91,7 +91,7 @@ public class SrCommand extends BaseCommand {
         LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
 
         if (prop == null) {
-            sender.sendMessage(new TextComponent(Locale.NO_SKIN_DATA));
+            sender.sendMessage(TextComponent.fromLegacyText(Locale.NO_SKIN_DATA));
             return;
         }
 

@@ -15,6 +15,7 @@ public abstract class SkinFactory {
      * @param props - Property Object
      */
     public void applySkin(final Player p, Object props) {
+        // delay 1 servertick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
             try {
                 if (props == null)

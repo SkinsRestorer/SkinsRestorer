@@ -75,7 +75,7 @@ public class LoginListener implements Listener {
                 final ProxiedPlayer player = e.getPlayer();
 
                 if (player.hasPermission("skinsrestorer.admincommand"))
-                    player.sendMessage(new TextComponent(Locale.OUTDATED));
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
             }
         });
     }

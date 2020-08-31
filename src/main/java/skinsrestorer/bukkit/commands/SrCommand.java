@@ -125,8 +125,6 @@ public class SrCommand extends BaseCommand {
         } catch (Exception e) {
             e.printStackTrace();
             sender.sendMessage(Locale.NO_SKIN_DATA);
-            return;
         }
-        sender.sendMessage("§cMore info in console!");
     }
 }

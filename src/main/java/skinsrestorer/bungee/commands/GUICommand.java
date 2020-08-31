@@ -24,14 +24,14 @@ public class GUICommand extends BaseCommand {
 
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage(new TextComponent("SkinsRestorer Help"));
+        sender.sendMessage(TextComponent.fromLegacyText("SkinsRestorer Help"));
         help.showHelp();
     }
 
     @Default
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer p) {
-        p.sendMessage(new TextComponent(Locale.SKINSMENU_OPEN));
+        p.sendMessage(TextComponent.fromLegacyText(Locale.SKINSMENU_OPEN));
 
         plugin.getPluginMessageListener().sendGuiOpenRequest(p);
     }

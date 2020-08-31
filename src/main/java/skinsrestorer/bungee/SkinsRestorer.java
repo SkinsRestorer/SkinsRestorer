@@ -133,11 +133,11 @@ public class SkinsRestorer extends Plugin {
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            console.sendMessage(new TextComponent("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
-            console.sendMessage(new TextComponent("§c[§4Critical§c] §cPlugin currently can't fetch new skins."));
-            console.sendMessage(new TextComponent("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki "));
-            console.sendMessage(new TextComponent("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer "));
-            console.sendMessage(new TextComponent("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cPlugin currently can't fetch new skins."));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki "));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer "));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
         }
     }
 
@@ -184,7 +184,7 @@ public class SkinsRestorer extends Plugin {
 
                 this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                console.sendMessage(new TextComponent("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                console.sendMessage(TextComponent.fromLegacyText("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
                 getProxy().getPluginManager().unregisterListeners(this);
                 getProxy().getPluginManager().unregisterCommands(this);
                 return false;
@@ -210,7 +210,7 @@ public class SkinsRestorer extends Plugin {
                     outdated = true;
 
                     updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
-                        console.sendMessage(new TextComponent(msg));
+                        console.sendMessage(TextComponent.fromLegacyText(msg));
                     });
                 }
 
@@ -220,7 +220,7 @@ public class SkinsRestorer extends Plugin {
                         return;
 
                     updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
-                        console.sendMessage(new TextComponent(msg));
+                        console.sendMessage(TextComponent.fromLegacyText(msg));
                     });
                 }
             });
