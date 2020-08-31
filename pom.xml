@@ -216,15 +216,15 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats.bukkit</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.metrics.bukkit</shadedPattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.bstats.bungeecord</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.metrics.bungeecord</shadedPattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org.inventivetalent.update.spiget</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.spiget-updater</shadedPattern>
+                            <pattern>org.inventivetalent</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
@@ -232,23 +232,7 @@
                         </relocation>
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.bungee-config</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.yaml.snakeyaml</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.snakeyaml</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.google</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.google</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>google.protobuf</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.protobuf</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.mysql</pattern>
-                            <shadedPattern>skinsrestorer.shared.libs.mysql</shadedPattern>
+                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
