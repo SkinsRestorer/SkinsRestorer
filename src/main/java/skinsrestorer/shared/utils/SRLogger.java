@@ -23,7 +23,7 @@ public class SRLogger {
         try {
             //Manual check config value
             File pluginConfigFile = new File(folder.getAbsolutePath() + File.separator +"config.yml");
-            YamlConfig pluginConfig = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator, "config", false);
+            YamlConfig pluginConfig = new YamlConfig(folder.getAbsolutePath() + File.separator, "config", false);
 
             if (pluginConfigFile.exists()) {
                 pluginConfig.reload();
