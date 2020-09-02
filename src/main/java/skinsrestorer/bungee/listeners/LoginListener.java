@@ -47,6 +47,7 @@ public class LoginListener implements Listener {
             final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
 
             try {
+                // todo: add default skinurl support
                 plugin.getSkinApplier().applySkin(null, skin, (InitialHandler) connection);
             } catch (SkinRequestException ignored) {
             } catch (Exception e1) {

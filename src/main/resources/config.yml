@@ -38,6 +38,7 @@ SkinErrorCooldown: 5
 # Enable or disable default skins
 # ApplyForPremium: false will only put skin on skinless/steve players.
 # If there is more than one, the plugin will choose a random one.
+# [?] Does support Custom & url.png skin, read SkinFile Generator below [?]
 DefaultSkins:
   Enabled: false
   ApplyForPremium: false

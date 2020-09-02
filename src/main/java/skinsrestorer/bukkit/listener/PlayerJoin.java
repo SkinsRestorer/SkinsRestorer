@@ -32,17 +32,20 @@ public class PlayerJoin implements Listener {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = e.getPlayer();
-                final String playerName = player.getName();
+                final String nick = player.getName();
 
                 // Don't change skin if player has no custom skin-name set and his username is invalid
-                if (skinStorage.getPlayerSkin(playerName) == null && !C.validUsername(playerName)) {
-                    System.out.println("[SkinsRestorer] Not applying skin to " + playerName + " (invalid username).");
+                if (skinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
+                    System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
                     return;
                 }
+                final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);
 
-                final String skin = skinStorage.getDefaultSkinNameIfEnabled(playerName);
-
-                plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin));
+                if (C.validUrl(skin)) {
+                    plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                } else {
+                    plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin));
+                }
             } catch (SkinRequestException ignored) {
             }
         });

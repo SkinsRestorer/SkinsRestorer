@@ -37,6 +37,8 @@ public class GameProfileRequest {
         }
 
         String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
+
+        //todo: default skinurl support
         e.setGameProfile(plugin.getSkinApplier().updateProfileSkin(e.getGameProfile(), skin));
     }
 }
