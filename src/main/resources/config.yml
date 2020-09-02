@@ -92,6 +92,7 @@ MySQL:
   Password: pass
   SkinTable: 'Skins'
   PlayerTable: 'Players'
+  ConnectionOptions: verifyServerCertificate=false&useSSL=false&serverTimezone=UTC
 
 # <!! Warning !!>
 # Enabling this will stop SkinsRestorer to change skins on join.

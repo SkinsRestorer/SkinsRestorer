@@ -176,7 +176,8 @@ public class SkinsRestorer extends Plugin {
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
                         Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD
+                        Config.MYSQL_PASSWORD,
+                        Config.MYSQL_CONNECTIONOPTIONS
                 );
 
                 mysql.openConnection();

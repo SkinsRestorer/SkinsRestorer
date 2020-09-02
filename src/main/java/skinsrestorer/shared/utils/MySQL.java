@@ -12,15 +12,16 @@ import java.util.concurrent.Future;
 public class MySQL {
 
     private Connection con;
-    private String host, port, database, username, password;
+    private String host, port, database, username, password, options;
     private ExecutorService exe;
 
-    public MySQL(String host, String port, String database, String username, String password) {
+    public MySQL(String host, String port, String database, String username, String password, String options) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.username = username;
         this.password = password;
+        this.options = options;
         exe = Executors.newCachedThreadPool();
 
         //con = openConnection();
@@ -47,7 +48,7 @@ public class MySQL {
         try {
             Connection con = null;
             Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=false&serverTimezone=UTC", username, password);
+            con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
             System.out.println("[SkinsRestorer] Connected to MySQL!");
             this.con = con;
