@@ -3,10 +3,7 @@ package skinsrestorer.shared.storage;
 import lombok.Getter;
 import lombok.Setter;
 import skinsrestorer.shared.exception.SkinRequestException;
-import skinsrestorer.shared.utils.MojangAPI;
-import skinsrestorer.shared.utils.MySQL;
-import skinsrestorer.shared.utils.Property;
-import skinsrestorer.shared.utils.ReflectionUtil;
+import skinsrestorer.shared.utils.*;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -72,9 +69,10 @@ public class SkinStorage {
 
         Config.DEFAULT_SKINS.forEach(skin -> {
             try {
+                //todo: add try for this.setSkinData(skinentry, this.getMineSkinAPI().genSkin(skin),
                 this.setSkinData(skin, getOrCreateSkinForPlayer(skin));
             } catch (SkinRequestException e) {
-                if (this.getSkinData(skin) == null)
+                if (this.getSkinData(skin) == null && !C.validUrl(skin))
                     System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
             }
         });
