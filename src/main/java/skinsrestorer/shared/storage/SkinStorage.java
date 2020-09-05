@@ -411,10 +411,30 @@ public class SkinStorage {
     }
 
     //todo: CUSTOM_GUI
+    // seems to be that crs order is ignored...
     public Map<String, Object> getSkins(int number) {
         if (Config.USE_MYSQL) {
             Map<String, Object> list = new TreeMap<>();
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
+            String filterBy = "";
+            String orderBy = "Nick";
+            if (Config.CUSTOM_GUI_ENABLED) {
+                if (Config.CUSTOM_GUI_ONLY) {
+                    StringBuilder sb = new StringBuilder();
+                    Config.CUSTOM_GUI_SKINS.forEach(skin -> {
+                        sb.append("|").append(skin);
+                    });
+                    filterBy = " WHERE Nick RLIKE '" + sb.substring(1) + "'";
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    Config.CUSTOM_GUI_SKINS.forEach(skin -> {
+                        sb.append(", '").append(skin).append("'");
+                    });
+                    orderBy = "FIELD(Nick" + sb + ") DESC, Nick";
+                }
+            }
+            System.out.println("sql:" + "SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + filterBy + " ORDER BY " + orderBy);
+
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + filterBy + " ORDER BY " + orderBy);
             int i = 0;
             try {
                 do {
@@ -465,7 +485,7 @@ public class SkinStorage {
     public Map<String, Property> getSkinsRaw(int number) {
         if (Config.USE_MYSQL) {
             Map<String, Property> list = new TreeMap<>();
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
             int i = 0;
             int foundSkins = 0;
             try {
