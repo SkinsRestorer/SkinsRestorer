@@ -86,6 +86,12 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, OnlinePlayer target) {
         plugin.getService().execute(() -> {
+            //Check cooldown first
+            if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
+                source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
+                return;
+            }
+
             Player p = target.getPlayer();
             String skin = plugin.getSkinStorage().getPlayerSkin(p.getUsername());
 
@@ -99,8 +105,8 @@ public class SkinCommand extends BaseCommand {
             }
 
             if (this.setSkin(source, p, skin, false)) {
-                if (!getSenderName(source).equals(target.getPlayer().getUsername()))
-                    source.sendMessage(plugin.deserialize(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getUsername())));
+                if (!getSenderName(source).equals(p.getUsername()))
+                    source.sendMessage(plugin.deserialize(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getUsername())));
                 else
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_UPDATING_SKIN));
             }

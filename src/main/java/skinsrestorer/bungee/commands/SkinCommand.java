@@ -85,6 +85,12 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            //Check cooldown first
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
+                return;
+            }
+
             ProxiedPlayer p = target.getPlayer();
             String skin = plugin.getSkinStorage().getPlayerSkin(p.getName());
 
@@ -103,8 +109,8 @@ public class SkinCommand extends BaseCommand {
             }
 
             if (this.setSkin(sender, p, skin, false)) {
-                if (!sender.getName().equals(target.getPlayer().getName()))
-                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName())));
+                if (!sender.getName().equals(p.getName()))
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN));
             }

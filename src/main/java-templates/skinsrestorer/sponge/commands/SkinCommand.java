@@ -87,6 +87,12 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+            //Check cooldown first
+            if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
+                source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
+                return;
+            }
+
             Player p = target.getPlayer();
             String skin = plugin.getSkinStorage().getPlayerSkin(p.getName());
 
@@ -100,8 +106,8 @@ public class SkinCommand extends BaseCommand {
             }
 
             if (this.setSkin(source, p, skin, false)) {
-                if (!source.getName().equals(target.getPlayer().getName()))
-                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", target.getPlayer().getName())));
+                if (!source.getName().equals(p.getName()))
+                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN));
             }
