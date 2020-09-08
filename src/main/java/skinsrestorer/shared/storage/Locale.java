@@ -79,6 +79,7 @@ public class Locale {
     private static YamlConfig locale;
 
     public static final String[] IGNORE_PREFIX = {
+            "PREFIX",
             "HELP_",
             "SYNTAX_",
             "SKINSMENU_TITLE_NEW",
