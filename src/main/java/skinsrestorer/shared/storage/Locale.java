@@ -19,8 +19,8 @@ public class Locale {
     public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by Image_url.png";
     public static String HELP_SR_RELOAD = "Reloads the configuration file.";
     public static String HELP_SR_STATUS = "Checks plugin needed API services";
-    public static String HELP_SR_DROP = "Drops the players skin data.";
-    public static String HELP_SR_PROPS = "Displays the players current skin as properties.";
+    public static String HELP_SR_DROP = "Removes players or skin data.";
+    public static String HELP_SR_PROPS = "Displays the players current skin properties.";
 
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
@@ -61,7 +61,7 @@ public class Locale {
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
 
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
-    public static String SKIN_DATA_DROPPED = "&2Skin data for player %player dropped.";
+    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin %targets.";
     public static String STATUS_OK = "&2Mojang API connection successful!";
     public static String ALT_API_FAILED = "&4Error&8: &cSkin Data API is overloaded, please try again later!";
     public static String MS_API_FAILED = "&4Error&8: &cMineSkin API is overloaded, please try again later!";

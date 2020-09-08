@@ -81,19 +81,26 @@ public class SrCommand extends BaseCommand {
     }
 
 
-    @Subcommand("drop") @CommandPermission("%srDrop")
-    @CommandCompletion("@players")
+    @Subcommand("drop|remove") @CommandPermission("%srDrop")
+    @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
-    public void onDrop(CommandSender sender, OnlinePlayer target) {
-        String player = target.getPlayer().getName();
-        plugin.getSkinStorage().removeSkinData(player);
-        sender.sendMessage(Locale.SKIN_DATA_DROPPED.replace("%player", player));
+    @Syntax(" <player|skin> <target> [target2]")
+    public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
+        if (e.name().equalsIgnoreCase("player"))
+            for (String targetPlayer : targets)
+            plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+         else
+            for (String targetSkin : targets)
+                plugin.getSkinStorage().removeSkinData(targetSkin);
+        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length()-1);
+        sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
     }
 
 
     @Subcommand("props") @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
+    @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
         try {
             Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
@@ -139,5 +146,10 @@ public class SrCommand extends BaseCommand {
             e.printStackTrace();
             sender.sendMessage(Locale.NO_SKIN_DATA);
         }
+    }
+
+    public enum PlayerOrSkin {
+        player,
+        skin,
     }
 }
