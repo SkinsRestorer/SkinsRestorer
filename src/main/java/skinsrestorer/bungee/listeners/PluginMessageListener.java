@@ -26,10 +26,6 @@ public class PluginMessageListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
-        if (e.isCancelled()) {
-            return;
-        }
-
         if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
             return;
 
@@ -42,45 +38,55 @@ public class PluginMessageListener implements Listener {
 
         String subchannel = in.readUTF();
 
-        if (subchannel.equals("getSkins")) {
-            String player = in.readUTF();
-            int page = in.readInt();
-            int skinNumber = 26 * page;
-            ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+        switch (subchannel) {
+            //sr:messagechannel
+            case "getSkins": {
+                String player = in.readUTF();
+                int page = in.readInt();
+                int skinNumber = 26 * page;
+                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-            Map<String, Property> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
+                Map<String, Property> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
 
-            byte[] ba = convertToByteArray(skinsList);
+                byte[] ba = convertToByteArray(skinsList);
 
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            try {
-                out.writeUTF("returnSkins");
-                out.writeUTF(player);
-                out.writeInt(page);
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                DataOutputStream out = new DataOutputStream(b);
+                try {
+                    out.writeUTF("returnSkins");
+                    out.writeUTF(player);
+                    out.writeInt(page);
 
-                out.writeShort(ba.length);
-                out.write(ba);
+                    out.writeShort(ba.length);
+                    out.write(ba);
 
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                p.getServer().sendData("sr:messagechannel", b.toByteArray());
+                break;
             }
-            p.getServer().sendData("sr:messagechannel", b.toByteArray());
-        } else if (subchannel.equals("clearSkin")) {
-            String player = in.readUTF();
-            ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+            case "clearSkin": {
+                String player = in.readUTF();
+                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-            plugin.getSkinCommand().onSkinClearOther(p, new OnlinePlayer(p));
-        } else if (subchannel.equals("updateSkin")) {
-            String player = in.readUTF();
-            ProxiedPlayer p = plugin.getProxy().getPlayer(player);
-            plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
-        } else if (subchannel.equals("setSkin")) {
-            String player = in.readUTF();
-            String skin = in.readUTF();
-            ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+                plugin.getSkinCommand().onSkinClearOther(p, new OnlinePlayer(p));
+                break;
+            }
+            case "updateSkin": {
+                String player = in.readUTF();
+                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+                plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
+                break;
+            }
+            case "setSkin": {
+                String player = in.readUTF();
+                String skin = in.readUTF();
+                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-            plugin.getSkinCommand().onSkinSetOther(p, new OnlinePlayer(p), skin);
+                plugin.getSkinCommand().onSkinSetOther(p, new OnlinePlayer(p), skin);
+                break;
+            }
         }
     }
 
