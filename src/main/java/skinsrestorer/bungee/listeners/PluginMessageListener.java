@@ -26,6 +26,10 @@ public class PluginMessageListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
+        if (e.isCancelled()) {
+            return;
+        }
+
         if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
             return;
 
@@ -62,22 +66,16 @@ public class PluginMessageListener implements Listener {
                 e1.printStackTrace();
             }
             p.getServer().sendData("sr:messagechannel", b.toByteArray());
-        }
-
-        if (subchannel.equals("clearSkin")) {
+        } else if (subchannel.equals("clearSkin")) {
             String player = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
             plugin.getSkinCommand().onSkinClearOther(p, new OnlinePlayer(p));
-        }
-
-        if (subchannel.equals("updateSkin")) {
+        } else if (subchannel.equals("updateSkin")) {
             String player = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
             plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
-        }
-
-        if (subchannel.equals("setSkin")) {
+        } else if (subchannel.equals("setSkin")) {
             String player = in.readUTF();
             String skin = in.readUTF();
             ProxiedPlayer p = plugin.getProxy().getPlayer(player);
