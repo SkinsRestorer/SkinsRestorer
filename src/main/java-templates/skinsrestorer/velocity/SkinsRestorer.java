@@ -69,12 +69,14 @@ public class SkinsRestorer {
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        this.logger = new SRLogger(this.getDataFolder().toFile());
+        this.logger = new SRLogger(dataFolder.toFile());
         this.dataFolder = dataFolder;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
+        System.out.println("dataFolder= "+dataFolder);
+        System.out.println("dataFolder.toFile()= "+dataFolder.toFile());
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = this.proxy.getConsoleCommandSource();
 
