@@ -39,6 +39,7 @@ SkinErrorCooldown: 5
 # ApplyForPremium: false will only put skin on skinless/steve players.
 # If there is more than one, the plugin will choose a random one.
 # [?] Does support Custom & url.png skin, read SkinFile Generator below [?]
+# [!] url.png wont work on join for bungee, see https://github.com/SkinsRestorer/SkinsRestorerX/issues/315 [!]
 DefaultSkins:
   Enabled: false
   ApplyForPremium: false
