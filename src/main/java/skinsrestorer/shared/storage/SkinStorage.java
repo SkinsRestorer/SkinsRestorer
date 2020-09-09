@@ -159,7 +159,8 @@ public class SkinStorage {
                 try {
                     String skin = crs.getString("Skin");
 
-                    if (skin.isEmpty() || skin.equalsIgnoreCase(name)) {
+                    //maybe useless
+                    if (skin.isEmpty()) {
                         removePlayerSkin(name);
                         return null;
                     }
@@ -189,7 +190,8 @@ public class SkinStorage {
 
                 buf.close();
 
-                if (skin == null || skin.equalsIgnoreCase(name)) {
+                //maybe useless
+                if (skin == null) {
                     removePlayerSkin(name);
                     return null;
                 }
@@ -341,11 +343,6 @@ public class SkinStorage {
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
-                if (skin.equalsIgnoreCase(name) && playerFile.exists()) {
-                    playerFile.delete();
-                    return;
-                }
-
                 if (!playerFile.exists())
                     playerFile.createNewFile();
 
