@@ -114,7 +114,7 @@ public class SrCommand extends BaseCommand {
         source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
         source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
         source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
-        source.sendMessage(plugin.deserialize("§aSkinUrl: §e" + decodedSkin.substring(1, decodedSkin.length()-1)));
+        source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length()-1)));
         source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
         //console

@@ -134,7 +134,7 @@ public class SrCommand extends BaseCommand {
                 sender.sendMessage("§aRequest time: §e" + requestDate);
                 sender.sendMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
                 sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
-                sender.sendMessage("§aSkinUrl: §e" + decodedSkin.substring(1, decodedSkin.length()-1));
+                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length()-1));
                 sender.sendMessage("§cMore info in console!");
 
                 //console
