@@ -26,6 +26,7 @@ public class GUICommand extends BaseCommand {
     }
 
     @HelpCommand
+    @Syntax(" [help]")
     public static void onHelp(CommandSender sender, CommandHelp help) {
         sender.sendMessage("SkinsRestorer Help");
         help.showHelp();

@@ -29,6 +29,7 @@ public class SrCommand extends BaseCommand {
     }
 
     @HelpCommand
+    @Syntax(" [help]")
     public void onHelp(CommandSource source, CommandHelp help) {
         help.showHelp();
     }

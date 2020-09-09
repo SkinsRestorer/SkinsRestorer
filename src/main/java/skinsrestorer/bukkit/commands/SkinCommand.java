@@ -43,6 +43,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     @HelpCommand
+    @Syntax(" [help]")
     public void onHelp(CommandSender sender, CommandHelp help) {
         if (Config.USE_OLD_SKIN_HELP)
             sendHelp(sender);

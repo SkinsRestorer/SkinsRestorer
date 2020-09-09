@@ -23,6 +23,7 @@ public class GUICommand extends BaseCommand {
     }
 
     @HelpCommand
+    @Syntax(" [help]")
     public static void onHelp(CommandSender sender, CommandHelp help) {
         sender.sendMessage(TextComponent.fromLegacyText("SkinsRestorer Help"));
         help.showHelp();
