@@ -96,12 +96,27 @@ public class SkinCommand extends BaseCommand {
             Player p = target.getPlayer();
             String skin = plugin.getSkinStorage().getPlayerSkin(p.getUsername());
 
-            // User has no custom skin set, get the default skin name / his skin
-            if (skin == null)
-                skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getUsername(), true);
+            try {
+                if (skin != null) {
+                    //filter skinUrl
+                    if (skin.contains(" ")) {
+                        source.sendMessage(plugin.deserialize(Locale.ERROR_UPDATING_URL));
+                        return;
+                    }
+                    // check if premium name
+                    plugin.getMojangAPI().getUUID(skin);
+                    if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
+                        source.sendMessage(plugin.deserialize(Locale.ERROR_UPDATING_SKIN));
+                        return;
+                    }
 
-            if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
-                source.sendMessage(plugin.deserialize(Locale.ERROR_UPDATING_SKIN));
+                } else {
+                    // get DefaultSkin
+                    skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getUsername(), true);
+                }
+            } catch (SkinRequestException e) {
+                // non premium = cancel
+                source.sendMessage(plugin.deserialize(Locale.ERROR_UPDATING_CUSTOMSKIN));
                 return;
             }
 
