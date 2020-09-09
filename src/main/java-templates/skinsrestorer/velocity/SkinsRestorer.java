@@ -75,8 +75,6 @@ public class SkinsRestorer {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        System.out.println("dataFolder= "+dataFolder);
-        System.out.println("dataFolder.toFile()= "+dataFolder.toFile());
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = this.proxy.getConsoleCommandSource();
 
