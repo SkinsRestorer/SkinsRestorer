@@ -574,7 +574,7 @@ public class SkinStorage {
 
     // If clear is true, it doesn't return the custom skin a user has set
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
-        player = player.replaceAll("[^A-Za-z0-9_]", "");
+        player = player.replaceAll("\\W", "");
         if (Config.DEFAULT_SKINS_ENABLED) {
             // dont return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
