@@ -13,13 +13,13 @@ ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
   skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "تم تغيير السكن الخاص بك."
 #Message sent to player whose skin was cleared
 skinClearSuccess: "&2Your skin has been cleared."
 #Message sent to player that used /sr clear PLAYER command
 skinClearIssuer: "&2Skin cleared for player %player."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "تم تغيير %p السكن."
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer: "&4Error&8: &c%player is not a valid username."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
