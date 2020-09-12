@@ -17,7 +17,7 @@ skinChangeSuccess: "&2تم تغيير السكن الخاص بك."
 #Message sent to player whose skin was cleared
 skinClearSuccess: "&2لقد تم مسح السكن الخاص بك."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2لقد تم مسح السكن الخاص بالاعب %p."
+skinClearIssuer: "&2لقد تم مسح السكن الخاص باللاعب %p."
 #Message displayed when using /sr set command
 adminSetSkin: "&2لقد غيرت السكن الخاص ب%p."
 #Message displayed when using /sr set command and providing an invalid username
@@ -33,7 +33,7 @@ skinCooldownNew: "&4إنذار&8: &cيمكنك تغيير السكن مجددا 
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4إنذار&8: &cهذا السكن قد تم حظره من طرف المسؤول."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4إنذار&8: &cلم يتم الحصول على أية بياناة بخصوص السكن! هل يتوفر الاعب على سكن؟"
+noSkinData: "&4إنذار&8: &cلم يتم الحصول على أية بياناة بخصوص السكن! هل يتوفر اللاعب على سكن؟"
 #Cooldown message
 waitMinute: "&4إنذار&8: &cرجاءا إنتظر قليلا قبل طلب ذلك السكن مجددا. (تقييم محدود)"
 #When proxy returned skin is empty
@@ -54,7 +54,7 @@ nextPage: "&a&l»&7الصفحة الموالية &a&l»"
 #Clear skin [GUI]
 removeSkin: "&c&l»&7 إزالة السكن &c&l»"
 #item lore for skulls [GUI]
-selectSkin: "&2إضغط لإختيارهذا سكن"
+selectSkin: "&2إضغط لإختيار هذا سكن"
 #=== DEBUG ===
 #old debug
 statusOk: "&2الاتصال ناجح بMojang API!"
