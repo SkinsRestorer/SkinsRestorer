@@ -3,6 +3,7 @@ package skinsrestorer.bukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,14 +17,20 @@ import org.bukkit.inventory.meta.SkullMeta;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ReflectionUtil;
+import skinsrestorer.shared.utils.SRLogger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
+    private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
+    @Getter
+    private SRLogger srLogger;
     private SkinsRestorer plugin;
     private CommandSender console;
-    private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
 
     public SkinsGUI(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -156,8 +163,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         try {
             setSkin(is, ((Property) property).getValue());
         } catch (Exception e){
-            console.sendMessage("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
-        }
+            this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+            this.srLogger.log("[SkinsRestorer] DEBUG= " + e);        }
         return is;
     }
 
