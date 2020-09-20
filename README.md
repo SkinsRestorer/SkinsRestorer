@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/186794372468178944.svg?color=blue&label=discord&logo=discord)](https://discord.gg/sAhVsyU)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[DOWNLOAD LATEST](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar) plugin.jar]  &nbsp;&nbsp;[\[DOWNLOAD DEV-BUILD](https://ci.freecraft.eu/v2/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar) plugin.jar]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[DOWNLOAD LATEST](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar) plugin.jar]  &nbsp;&nbsp;[\[DOWNLOAD DEV-BUILD](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar) plugin.jar]
 
 This is the development repository for SkinsRestorer, used for making and testing new features.
 
@@ -24,7 +24,7 @@ Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Wate
 - [Sponge ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
 - [PaperMC](https://papermc.io/forums/t/1-8-1-14-4-skinsrestorer/1996)
 - [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
-- [Jenkins](https://ci.freecraft.eu/v2/job/SkinsRestorerX/)
+- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/)
 - [Discord](https://discord.me/skinsrestorer)
 - [Website](https://skinsrestorer.net/)
 
