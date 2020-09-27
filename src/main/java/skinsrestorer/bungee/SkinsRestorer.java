@@ -34,7 +34,7 @@ public class SkinsRestorer extends Plugin {
     @Getter
     private boolean outdated;
     @Getter
-    private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private String configPath = getDataFolder().getPath();
 
     private CommandSender console;
     private UpdateChecker updateChecker;
