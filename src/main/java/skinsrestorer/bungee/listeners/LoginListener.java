@@ -39,8 +39,8 @@ public class LoginListener implements Listener {
             final String nick = connection.getName();
 
             // Don't change skin if player has no custom skin-name set and his username is invalid
-            if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick)) {
-                System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+            if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick.replaceAll("\\W", ""))) {
+                System.out.println("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
                 return;
             }
 
@@ -58,6 +58,7 @@ public class LoginListener implements Listener {
         });
     }
 
+    //think we should no have EventPriority.HIGH just to check for updates...
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerConnect(final ServerConnectEvent e) {
         if (e.isCancelled()) {
