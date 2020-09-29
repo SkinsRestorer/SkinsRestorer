@@ -410,10 +410,13 @@ public class SkinStorage {
     //todo: CUSTOM_GUI
     // seems to be that crs order is ignored...
     public Map<String, Object> getSkins(int number) {
+        //Using mysql
         if (Config.USE_MYSQL) {
             Map<String, Object> list = new TreeMap<>();
             String filterBy = "";
             String orderBy = "Nick";
+
+            // custom gui
             if (Config.CUSTOM_GUI_ENABLED) {
                 if (Config.CUSTOM_GUI_ONLY) {
                     StringBuilder sb = new StringBuilder();
@@ -429,19 +432,20 @@ public class SkinStorage {
                     orderBy = "FIELD(Nick" + sb + ") DESC, Nick";
                 }
             }
-            System.out.println("sql:" + "SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + filterBy + " ORDER BY " + orderBy);
 
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + filterBy + " ORDER BY " + orderBy);
             int i = 0;
             try {
                 do {
                     if (i >= number)
-                        list.put(crs.getString("Nick"), createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                        list.put(crs.getString("Nick").toLowerCase(), createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
             } catch (java.sql.SQLException ignored) {
             }
             return list;
+
+            // When not using mysql
         } else {
             Map<String, Object> list = new TreeMap<>();
             String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
@@ -463,10 +467,10 @@ public class SkinStorage {
                     if (Config.CUSTOM_GUI_ONLY){ //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String Guiskins : Config.CUSTOM_GUI_SKINS){
                             if (skinName.toLowerCase().contains(Guiskins.toLowerCase()))
-                                list.put(skinName, this.getSkinData(skinName, false));
+                                list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
                         }
                     } else {
-                        list.put(skinName, this.getSkinData(skinName, false));
+                        list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
                     }
                 }
                 i++;
