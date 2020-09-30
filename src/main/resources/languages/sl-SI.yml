@@ -3,7 +3,7 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Napaka&8: &cPremium račun s takim imenom ne obstaja."
+notPremium: "&4Napaka&8: &cPremijski račun s takim imenom ne obstaja."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Napaka&8: &cNimaš dovoljenja za izvedbo tega ukaza."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
