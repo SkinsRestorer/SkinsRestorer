@@ -7,7 +7,10 @@ import skinsrestorer.shared.utils.*;
 
 import javax.sql.RowSet;
 import java.io.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
@@ -148,7 +151,7 @@ public class SkinStorage {
     /**
      * Returns the custom skin name that player has set.
      *
-     * Returns null if player has no custom skin set. (even if its his own name)
+     * Returns null if player has no custom skin set.
      **/
     public String getPlayerSkin(String name) {
         name = name.toLowerCase();
@@ -553,7 +556,7 @@ public class SkinStorage {
 
                         foundSkins++;
 
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
                 i++;
@@ -577,10 +580,22 @@ public class SkinStorage {
     }
 
     // If clear is true, it doesn't return the custom skin a user has set
+
+    /**
+     * Filters player name to exclude non [a-z_]
+     * Checks and process default skin.
+     * IF no default skin:
+     * 1: Return player if clear
+     * 2: Return skin if found
+     * Else: return player
+     * @param player      - Player name
+     * @param clear       - Should we ignore player set skin?
+     * @return            - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
+     */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         player = player.replaceAll("\\W", "");
-        if (Config.DEFAULT_SKINS_ENABLED) {
-            // dont return default skin name for premium players if enabled
+        if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
+            // don't return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
@@ -595,9 +610,11 @@ public class SkinStorage {
 
             // return default skin name if user has no custom skin set or we want to clear to default
             if (this.getPlayerSkin(player) == null || clear) {
-                List<String> skins = Config.DEFAULT_SKINS;
-                int randomNum = (int) (Math.random() * skins.size());
-                String randomSkin = skins.get(randomNum);
+                final List<String> skins = Config.DEFAULT_SKINS;
+                int r = 0;
+                if (skins.size() > 1)
+                    r = (int) (Math.random() * skins.size());
+                String randomSkin = skins.get(r);
                 // return player name if there are no default skins set
                 return randomSkin != null ? randomSkin : player;
             }
