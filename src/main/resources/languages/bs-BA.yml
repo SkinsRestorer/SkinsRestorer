@@ -37,7 +37,7 @@ noSkinData: "&4Greska&8: &cNismo mogli preuzeti podatke skina! Da li ovaj igrac 
 #Cooldown message
 waitMinute: "&4Greska&8: &cMolim vas sacekajte minut prije nego sto zatrazite taj skin opet. (Rate Limited)"
 #When proxy returned skin is empty
-genericError: "&4Greska&8: &cGreska se desila tokom zatraznje podataka skina, molim vas pokusajte opet!"
+genericError: "&4Greska&8: &cDoslo je do greske prilikom trazenja podataka o skinu, molimo pokusajte opet kasnije!"
 #Message sent when server has an outdated version of SR
 outdated: "&4Imate staru verziju SkinsRestorera!\n&cMolim vas azurirajte na poslednju verziju:\n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
@@ -46,18 +46,18 @@ playersOnly: "&4Ove komande su samo za igrace!"
 notPlayer: "&4Greska&8: &cMorate biti igrac!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Otvaranje menija skina..."
+menuOpen: "&2Otvaranje menija skinova..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Prosla Strana&e&l «"
+previusPage: "&e&l«&7 Prethodna stranica&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Sljedeca Strana&a&l »"
+nextPage: "&a&l»&7 Sljedeca stranica&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Izbrisi Skin&c&l »"
+removeSkin: "&c&l»&7 Izbrisi skin&c&l »"
 #item lore for skulls [GUI]
 selectSkin: "&2Kliknite da izaberete ovaj skin"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Konekcija sa Mojang API-om uspjesna!"
+statusOk: "&2Konekcija sa Mojang API-jem uspjesna!"
 #old debug
 altApiFailed: "&4Greska&8: &cAPI podataka skina je prebukiran, pokusajte opet kasnije!"
 #=== OLD SKIN HELP ===
