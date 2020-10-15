@@ -41,7 +41,7 @@ public class Locale {
     public static String SKIN_CLEAR_ISSUER = "&2Skin cleared for player %player.";
 
     public static String MS_UPDATING_SKIN = "&2Uploading skin, please wait...(This may take up some time)";
-    public static String SUCCESS_UPDATING_SKIN = "&2Your skin has been updated.";
+    public static String SUCCESS_UPDATING_SKIN = "&2Your skin has been updated. \n&2&oIf you did recently change your skin, wait 30m for it to take effect.";
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&2Skin updated for player %player.";
 
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
