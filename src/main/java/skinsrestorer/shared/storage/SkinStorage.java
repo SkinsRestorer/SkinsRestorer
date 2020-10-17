@@ -75,8 +75,12 @@ public class SkinStorage {
                 //todo: add try for this.setSkinData(skinentry, this.getMineSkinAPI().genSkin(skin),
                 this.setSkinData(skin, getOrCreateSkinForPlayer(skin));
             } catch (SkinRequestException e) {
-                if (this.getSkinData(skin) == null && !C.validUrl(skin))
+                try {
+                    if (this.getOrCreateSkinForPlayer(skin) == null && !C.validUrl(skin))
+                        System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
+                } catch (SkinRequestException skinRequestException) {
                     System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
+                }
             }
         });
     }
@@ -177,7 +181,7 @@ public class SkinStorage {
             return null;
 
         } else {
-            //geyser compatibility
+            //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -211,6 +215,9 @@ public class SkinStorage {
 
     /**
      * Returns property object containing skin data of the wanted skin
+     *
+     * @param name              - Skin name
+     * @param updateOutdated    - On true we update the skin if expired
      **/
     //getSkinData also create while we have getOrCreateSkinForPlayer
     public Object getSkinData(String name, boolean updateOutdated) {
@@ -298,7 +305,7 @@ public class SkinStorage {
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
-            //geyser compatibility
+            //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -341,7 +348,7 @@ public class SkinStorage {
             else
                 mysql.execute("UPDATE " + Config.MYSQL_PLAYERTABLE + " SET Skin=? WHERE Nick=?", skin, name);
         } else {
-            //geyser compatibility
+            //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
@@ -484,7 +491,7 @@ public class SkinStorage {
 
     // Todo: remove duplicated code and use existing methods....
     // Todo: needs a lot refactoring!
-    // Todo: We should _always_ reuturn our own Property object and cast to the platform specific one just before actually setting the skin.
+    // Todo: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
     // Todo: That should save lots of duplicated code
     public Map<String, Property> getSkinsRaw(int number) {
         if (Config.USE_MYSQL) {
