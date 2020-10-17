@@ -1,5 +1,6 @@
 package skinsrestorer.shared.storage;
 
+import com.sun.org.apache.xerces.internal.xs.StringList;
 import lombok.Getter;
 import lombok.Setter;
 import skinsrestorer.shared.exception.SkinRequestException;
@@ -7,10 +8,7 @@ import skinsrestorer.shared.utils.*;
 
 import javax.sql.RowSet;
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
@@ -70,20 +68,24 @@ public class SkinStorage {
         if (!Config.DEFAULT_SKINS_ENABLED)
             return;
 
+        List<String> toRemove = new ArrayList<>();
         Config.DEFAULT_SKINS.forEach(skin -> {
+            //todo: add try for skinUrl
             try {
-                //todo: add try for this.setSkinData(skinentry, this.getMineSkinAPI().genSkin(skin),
-                this.setSkinData(skin, getOrCreateSkinForPlayer(skin));
-            } catch (SkinRequestException e) {
-                try {
-                    if (this.getOrCreateSkinForPlayer(skin) == null && !C.validUrl(skin))
-                        System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
-                } catch (SkinRequestException skinRequestException) {
-                    System.out.println("[SkinsRestorer] [WARNING] Default Skin '" + skin + "' could not be found or requested.");
+                if (!C.validUrl(skin)) {
+                    this.getOrCreateSkinForPlayer(skin);
                 }
+            } catch (SkinRequestException e) {
+                //removing skin from list
+                toRemove.add(skin);
+                System.out.println("[SkinsRestorer] [WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
+                if (Config.DEBUG)
+                    System.out.println("[SkinsRestorer] [DEBUG] DefaultSkin '" + skin + "' error: " + e.getReason());
             }
         });
+        Config.DEFAULT_SKINS.removeAll(toRemove);
     }
+
 
     public Object createProperty(String name, String value, String signature) {
         // use our own propery class if we are on skinsrestorer.sponge
