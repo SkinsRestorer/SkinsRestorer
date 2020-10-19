@@ -1,6 +1,5 @@
 package skinsrestorer.shared.storage;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
 import lombok.Getter;
 import lombok.Setter;
 import skinsrestorer.shared.exception.SkinRequestException;
@@ -180,8 +179,6 @@ public class SkinStorage {
                     e.printStackTrace();
                 }
 
-            return null;
-
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
@@ -210,16 +207,16 @@ public class SkinStorage {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            return null;
         }
+
+        return null;
     }
 
     /**
      * Returns property object containing skin data of the wanted skin
      *
-     * @param name              - Skin name
-     * @param updateOutdated    - On true we update the skin if expired
+     * @param name           - Skin name
+     * @param updateOutdated - On true we update the skin if expired
      **/
     //getSkinData also create while we have getOrCreateSkinForPlayer
     public Object getSkinData(String name, boolean updateOutdated) {
@@ -248,7 +245,6 @@ public class SkinStorage {
                     System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
                 }
 
-            return null;
         } else {
             File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
@@ -285,8 +281,9 @@ public class SkinStorage {
                 System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
             }
 
-            return null;
+
         }
+        return null;
     }
 
     public Object getSkinData(String name) {
@@ -496,8 +493,8 @@ public class SkinStorage {
     // Todo: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
     // Todo: That should save lots of duplicated code
     public Map<String, Property> getSkinsRaw(int number) {
+        Map<String, Property> list = new TreeMap<>();
         if (Config.USE_MYSQL) {
-            Map<String, Property> list = new TreeMap<>();
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
             int i = 0;
             int foundSkins = 0;
@@ -516,9 +513,7 @@ public class SkinStorage {
             } catch (java.sql.SQLException ignored) {
                 ignored.printStackTrace();
             }
-            return list;
         } else {
-            Map<String, Property> list = new TreeMap<>();
             String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             File folder = new File(path);
 
@@ -570,8 +565,8 @@ public class SkinStorage {
                 }
                 i++;
             }
-            return list;
         }
+        return list;
     }
 
     // skin update [include custom skin flag]
@@ -602,6 +597,7 @@ public class SkinStorage {
      * @return            - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
+        // Remove all non [a-z_] chars to allow pre/sub fixes
         player = player.replaceAll("\\W", "");
         if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
             // don't return default skin name for premium players if enabled
