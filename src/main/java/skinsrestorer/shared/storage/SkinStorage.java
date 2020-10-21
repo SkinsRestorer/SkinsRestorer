@@ -572,7 +572,7 @@ public class SkinStorage {
     // skin update [include custom skin flag]
     public boolean forceUpdateSkinData(String skin) {
         try {
-            Object textures = this.getMojangAPI().getSkinPropertyBackup(this.getMojangAPI().getUUIDBackup(skin));
+            Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
             if (textures != null) {
                 this.setSkinData(skin, textures);
                 return true;
