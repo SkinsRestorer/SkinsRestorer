@@ -106,7 +106,7 @@ public class SkinCommand extends BaseCommand {
                         return;
                     }
                     // check if premium name
-                    plugin.getMojangAPI().getUUID(skin);
+                    plugin.getMojangAPI().getUUIDMojang(skin);
                     if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
                         source.sendMessage(plugin.parseMessage(Locale.ERROR_UPDATING_SKIN));
                         return;
