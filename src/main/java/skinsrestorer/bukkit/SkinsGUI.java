@@ -100,6 +100,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
         Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE_NEW.replace("&", "§").replace("%page", ""+page));
 
+        //White Glass line
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(38, new GuiGlass(GlassType.NONE).getItemStack());
@@ -110,16 +111,18 @@ public class SkinsGUI extends ItemStack implements Listener {
         inventory.setItem(43, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(44, new GuiGlass(GlassType.NONE).getItemStack());
 
-        //Middle button //remove skin
-        inventory.setItem(48, new GuiGlass(GlassType.DELETE).getItemStack());
-        inventory.setItem(49, new GuiGlass(GlassType.DELETE).getItemStack());
-        inventory.setItem(50, new GuiGlass(GlassType.DELETE).getItemStack());
-        //button place next
+        //empty place previous
         inventory.setItem(45, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(46, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(47, new GuiGlass(GlassType.NONE).getItemStack());
 
-        //button place next
+        //Middle button //remove skin
+        inventory.setItem(48, new GuiGlass(GlassType.DELETE).getItemStack());
+        inventory.setItem(49, new GuiGlass(GlassType.DELETE).getItemStack());
+        inventory.setItem(50, new GuiGlass(GlassType.DELETE).getItemStack());
+
+
+        //empty place next
         inventory.setItem(53, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(52, new GuiGlass(GlassType.NONE).getItemStack());
         inventory.setItem(51, new GuiGlass(GlassType.NONE).getItemStack());
@@ -137,7 +140,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         });
 
         //if the page is not empty, adding Next Page button.
-        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null) {
+        //
+        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 999) {
             inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
             inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
             inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
@@ -146,6 +150,8 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page) {
+        if (page > 999)
+            page = 999;
         int skinNumber = 36 * page;
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1

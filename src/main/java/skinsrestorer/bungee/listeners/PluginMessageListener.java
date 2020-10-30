@@ -47,6 +47,8 @@ public class PluginMessageListener implements Listener {
             case "getSkins": {
                 String player = in.readUTF();
                 int page = in.readInt();
+                if (page > 999)
+                    page = 999;
                 int skinNumber = 26 * page;
                 ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
