@@ -20,6 +20,14 @@ public class UniversalSkinFactory extends SkinFactory {
             return;
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+        	//dismounts a player before refreshing, which prevents desync 
+        	if (player.getVehicle() != null) {
+        		
+        		player.getVehicle().removePassenger(player);
+
+        	}
+        	
             for (Player ps : Bukkit.getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
