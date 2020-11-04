@@ -1,7 +1,10 @@
 package skinsrestorer.bukkit.skinfactory;
 
 import lombok.RequiredArgsConstructor;
+import skinsrestorer.shared.storage.Config;
+
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -21,10 +24,21 @@ public class UniversalSkinFactory extends SkinFactory {
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 
-        	//dismounts a player before refreshing, which prevents desync 
-        	if (player.getVehicle() != null) {
+        	//dismounts a player before refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
+        	if (Config.DISMOUNT_PLAYER_ON_UPDATE && player.getVehicle() != null) {
         		
         		player.getVehicle().removePassenger(player);
+
+        	}
+        	
+        	//dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
+        	if (Config.DISMOUNT_PASSENGERS_ON_UPDATE && !player.getPassengers().isEmpty()) {
+        		
+        		for (Entity passenger : player.getPassengers()) {
+        		
+        			player.removePassenger(passenger);
+        			
+        		}
 
         	}
         	
