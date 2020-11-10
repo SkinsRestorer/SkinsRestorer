@@ -40,6 +40,7 @@ public class Config {
     public static boolean DEBUG = false;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
+    public static boolean REMOUNT_PLAYER_ON_UPDATE = false;
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -83,6 +84,7 @@ public class Config {
         UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
         DEBUG = config.getBoolean("Debug", DEBUG);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
+        REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
 
         if (!CUSTOM_GUI_ENABLED)

@@ -12,41 +12,56 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class UniversalSkinFactory extends SkinFactory {
-    private final Plugin plugin;
+
+	private final Plugin plugin;
     private final Consumer<Player> refresh = detectRefresh();
     public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(23);
-    private Entity Vehicle;
-    boolean checkoptfilechecked;
-    boolean DisableDismoundPlayer;
-    boolean EnableDismountentities;
-
+    private boolean checkOptFileChecked = false;
+    private boolean disableDismountPlayer;
+    private boolean enableDismountEntities;
+    private boolean enableRemountPlayer;
 
     @Override
     public void updateSkin(Player player) {
+
         if (!player.isOnline())
             return;
 
-        if (checkoptfilechecked)
+        if (checkOptFileChecked)
+
             this.checkoptfile();
-
+        
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            //dismounts & remounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-            Vehicle = player.getVehicle();
-            if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !DisableDismoundPlayer) && Vehicle != null) {
 
+            Entity vehicle = player.getVehicle();
 
-                Vehicle.removePassenger(player);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-                    public void run() {
-                        Vehicle.addPassenger(player);
-                    }
-                }, 1);
+            //dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
+            if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
+
+            	vehicle.removePassenger(player);
+
+            	if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
+
+	            	//this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
+	                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+
+	                	//this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
+	                	if (vehicle.isValid()) {
+	                	
+	                		vehicle.addPassenger(player);
+	                		
+	                	}
+
+	                }, 1);
+	                
+            	}
 
             }
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || EnableDismountentities) && !player.getPassengers().isEmpty()) {
-                for (Entity passenger : player.getPassengers()) {
+            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.getPassengers().isEmpty()) {
+            
+            	for (Entity passenger : player.getPassengers()) {
 
                     player.removePassenger(passenger);
 
@@ -69,6 +84,7 @@ public class UniversalSkinFactory extends SkinFactory {
             }
 
             refresh.accept(player);
+
         });
     }
 
@@ -95,16 +111,24 @@ public class UniversalSkinFactory extends SkinFactory {
         // return new LegacySkinRefresher();
         return new OldSkinRefresher();
     }
+
     private void checkoptfile() {
-        File FileDisableDismoundPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesdismoundplayer");
-        File FileEnableDismountentities = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesdismoundentities");
-        if (FileDisableDismoundPlayer.exists())
-            DisableDismoundPlayer = true;
 
-        if (FileEnableDismountentities.exists())
-            EnableDismountentities = true;
+        File fileDisableDismountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesdismountplayer");
+        File fileEnableDismountEntities = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesdismountentities");
+        File fileEnableRemountEntiteis = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesremountentities");
 
-        checkoptfilechecked = true;
+        if (fileDisableDismountPlayer.exists())
+            disableDismountPlayer = true;
+
+        if (fileEnableDismountEntities.exists())
+            enableDismountEntities = true;
+        
+        if (fileEnableRemountEntiteis.exists())
+            enableRemountPlayer = true;
+
+        checkOptFileChecked = true;
+
     }
 
 }
