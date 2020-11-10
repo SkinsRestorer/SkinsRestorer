@@ -43,10 +43,12 @@ public class UpdateChecker {
             connection.setRequestProperty("User-Agent", this.getUserAgent());
             JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             this.latestResourceInfo = (ResourceInfo) (new Gson()).fromJson(jsonObject, ResourceInfo.class);
+
             connection = (HttpURLConnection) (new URL(String.format("http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s", this.resourceId, System.currentTimeMillis()))).openConnection();
             connection.setRequestProperty("User-Agent", this.getUserAgent());
             jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             this.latestResourceInfo.latestVersion = (ResourceVersion) (new Gson()).fromJson(jsonObject, ResourceVersion.class);
+
             if (this.isVersionNewer(this.currentVersion, this.latestResourceInfo.latestVersion.name)) {
                 callback.updateAvailable(this.latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + this.latestResourceInfo.file.url, !this.latestResourceInfo.external);
             } else {
@@ -123,6 +125,33 @@ public class UpdateChecker {
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
 
         return updateAvailableMessages;
+    }
+
+    public List<String> getUpdateDelayedMessages(String newVersion, String downloadUrl, String currentVersion, boolean bungeeMode, int VersionAge) {
+        List<String> updateDelayedMessages = new LinkedList<String>();
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        if (bungeeMode) {
+            updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+            updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+        } else {
+            try {
+                Bukkit.getName(); //try if it is running bukkit
+                updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
+                updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+            } catch (NoClassDefFoundError ignored) {
+            }
+        }
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §2    version §a" +newVersion+ " §2is available!");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §2    Your version is §e" +VersionAge+ " §2 versions behind.");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §2    Consider updating from &n" + downloadUrl);
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+
+        return updateDelayedMessages;
     }
 
     public boolean isVersionNewer(String oldVersion, String newVersion) {

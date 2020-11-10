@@ -97,14 +97,16 @@ MySQL:
   PlayerTable: 'Players'
   ConnectionOptions: verifyServerCertificate=false&useSSL=false&serverTimezone=UTC
 
+# Option to delay updates, with DelayedVersions you can give the max age while 0 is latest.
+# Example: 13.8.1 vs 13.8.4 = UpdateAge 3
+# max DelayedVersions = 3.
+Updater:
+  DelayUpdate: false
+  DelayedVersions: 1
+
 # <!! Warning !!>
 # Enabling this will stop SkinsRestorer to change skins on join.
 DisableOnJoinSkins: false
-
-# Enable or disable the updater.
-Updater:
-  Enabled: true
-  PeriodicChecks: true
 
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
 NoSkinIfLoginCanceled: true

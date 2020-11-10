@@ -33,10 +33,10 @@ public class Config {
     public static String MYSQL_SKINTABLE = "Skins";
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
+    public static boolean DELAYUPDATE = false;
+    public static int DELAYEDVERSIONS = 1;
     public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
-    public static boolean UPDATER_ENABLED = true;
-    public static boolean UPDATER_PERIODIC = true;
     public static boolean DEBUG = false;
 
 
@@ -75,11 +75,15 @@ public class Config {
         MYSQL_SKINTABLE = config.getString("MySQL.SkinTable", MYSQL_SKINTABLE);
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
+        DELAYUPDATE = config.getBoolean("Updater.DelayUpdate", DELAYUPDATE);
+        DELAYEDVERSIONS = config.getInt("Updater.DelayedVersions", DELAYEDVERSIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
-        UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
-        UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
+
         DEBUG = config.getBoolean("Debug", DEBUG);
+
+        if (Config.DELAYEDVERSIONS > 3)
+            Config.DELAYEDVERSIONS = 3;
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;

@@ -100,16 +100,15 @@ public class SkinsRestorer extends JavaPlugin {
         this.checkBungeeMode();
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
-            this.updateDownloader = new UpdateDownloaderGithub(this);
-            this.checkUpdate(bungeeEnabled);
+        this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
+        this.updateDownloader = new UpdateDownloaderGithub(this);
+        this.checkUpdate(bungeeEnabled);
 
-            if (Config.UPDATER_PERIODIC)
-                this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                    this.checkUpdate(bungeeEnabled, false);
-                }, 20 * 60 * 10, 20 * 60 * 10);
-        }
+
+        this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            this.checkUpdate(bungeeEnabled, false);
+        }, 20 * 60 * 15, 20 * 60 * 15);
+
 
         this.skinStorage = new SkinStorage();
 
@@ -407,6 +406,15 @@ public class SkinsRestorer extends JavaPlugin {
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             updateChecker.checkForUpdate(new UpdateCallback() {
+                public void UpdateDelayed(String newVersion, String downloadUrl, String currentVersion, boolean bungeeMode, int VersionAge) {
+                    if (!showUpToDate)
+                        return;
+
+                    updateChecker.getUpdateDelayedMessages(newVersion, downloadUrl, currentVersion, bungeeMode, VersionAge).forEach(msg -> {
+                        console.sendMessage(msg);
+                    });
+                }
+
                 @Override
                 public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                     if (updateDownloaded)
@@ -434,7 +442,15 @@ public class SkinsRestorer extends JavaPlugin {
                         console.sendMessage(msg);
                     });
                 }
+
+
             });
+        });
+    }
+    //not needed, can be called in 1 of the 2 above above and make f statement that points to getupdatedelayed messages.
+    public void updateDelayed(String newVersion, String downloadUrl, int VersionAge) {
+        updateChecker.getUpdateDelayedMessages(newVersion, downloadUrl, getVersion(), bungeeMode, VersionAge).forEach(msg -> {
+            console.sendMessage(msg);
         });
     }
 }
