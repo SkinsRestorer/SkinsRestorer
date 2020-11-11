@@ -42,6 +42,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
     public void checkForUpdate(final UpdateCallback callback) {
         String currentVersion = this.currentVersion;
         int currentVersionAge = 0; //
+        boolean isDevBuild;
         boolean DelayUpdate = Config.DELAYUPDATE;
         int DelayedVersions = Config.DELAYEDVERSIONS;
 
@@ -66,6 +67,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             if (responsecode !=200) {
                 // todo: connect to spiget updater
                 log.logAlways(Level.WARNING, "Could not update!");
+                return;
             }
 
             JsonArray output = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonArray();
@@ -89,6 +91,8 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
             if (currentVersion.toLowerCase().contains("snapshot")) {
                 currentVersionAge++; //snapshot is not final version
+                isDevBuild = true;
+
             }
 
 
@@ -98,6 +102,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
              *  3. else = update -> callback.updateAvailable(currentVersion, LatestDownload_url, true);
              */
             if (currentVersionAge <= 0) {
+                //todo include isDevBuild
                 callback.upToDate();
             } else if (DelayUpdate && (currentVersionAge > DelayedVersions)) {
                 //code here for delayed update
@@ -126,7 +131,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
         List<String> updateDelayedMessages = new LinkedList<String>();
         updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    | §2SkinsRestorer§a |");
         if (bungeeMode) {
             updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
             updateDelayedMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");

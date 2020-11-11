@@ -70,15 +70,15 @@ public class SkinsRestorer {
         this.srLogger = new SRLogger(new File(configPath));
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
+        //if (Config.UPDATER_ENABLED) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.srLogger, "SkinsRestorerUpdater/Sponge");
             this.checkUpdate(bungeeEnabled);
 
-            if (Config.UPDATER_PERIODIC)
+            //if (Config.UPDATER_PERIODIC)
                 Sponge.getScheduler().createTaskBuilder().execute(() -> {
                     this.checkUpdate(bungeeEnabled, false);
                 }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
-        }
+        //}
 
         this.skinStorage = new SkinStorage();
 

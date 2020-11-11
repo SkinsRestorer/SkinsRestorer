@@ -449,7 +449,7 @@ public class SkinsRestorer extends JavaPlugin {
     }
     //not needed, can be called in 1 of the 2 above above and make f statement that points to getupdatedelayed messages.
     public void updateDelayed(String newVersion, String downloadUrl, int VersionAge) {
-        updateChecker.getUpdateDelayedMessages(newVersion, downloadUrl, getVersion(), bungeeMode, VersionAge).forEach(msg -> {
+        updateChecker.getUpdateDelayedMessages(newVersion, downloadUrl, getVersion(), bungeeEnabled, VersionAge).forEach(msg -> {
             console.sendMessage(msg);
         });
     }

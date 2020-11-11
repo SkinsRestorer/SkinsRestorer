@@ -77,13 +77,13 @@ public class SkinsRestorer extends Plugin {
 
         console = getProxy().getConsole();
 
-        if (Config.UPDATER_ENABLED) {
+        //if (Config.UPDATER_ENABLED) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
-            if (Config.UPDATER_PERIODIC)
+            //if (Config.UPDATER_PERIODIC)
                 this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
-        }
+        //}
 
         instance = this;
 

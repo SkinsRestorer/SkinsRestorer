@@ -79,13 +79,13 @@ public class SkinsRestorer {
         console = this.proxy.getConsoleCommandSource();
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
+        //if (Config.UPDATER_ENABLED) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Velocity");
             this.checkUpdate(true);
 
-            if (Config.UPDATER_PERIODIC)
+            //if (Config.UPDATER_PERIODIC)
                 this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
-        }
+        //}
 
         this.skinStorage = new SkinStorage();
 
