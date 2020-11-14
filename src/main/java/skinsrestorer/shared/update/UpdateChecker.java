@@ -69,7 +69,7 @@ public class UpdateChecker {
             try {
                 Bukkit.getName(); //try if it is running bukkit
                 upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |   §9§n§lBukkit only§a   |");
+                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |   §9§n§lBukkit only§a  |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
@@ -99,7 +99,7 @@ public class UpdateChecker {
             try {
                 Bukkit.getName(); //try if it is running bukkit
                 updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |   §9§n§lBukkit only§a   |");
+                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |   §9§n§lBukkit only§a  |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
