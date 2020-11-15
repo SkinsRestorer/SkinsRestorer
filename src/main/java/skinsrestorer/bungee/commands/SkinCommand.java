@@ -62,9 +62,15 @@ public class SkinCommand extends BaseCommand {
             ProxiedPlayer p = target.getPlayer();
             String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
 
+            //command cooldown = cancel
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
+                return;
+            }
+
             // remove users custom skin and set default skin / his skin
             plugin.getSkinStorage().removePlayerSkin(p.getName());
-            if (this.setSkin(sender, p, skin, false)) {
+            if (this.setSkin(sender, p, skin, false, true)) {
                 if (!sender.getName().equals(target.getPlayer().getName()))
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CLEAR_ISSUER.replace("%player", target.getPlayer().getName())));
                 else
@@ -119,7 +125,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (this.setSkin(sender, p, skin, false)) {
+            if (this.setSkin(sender, p, skin, false, false)) {
                 if (!sender.getName().equals(p.getName()))
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
@@ -179,18 +185,18 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
-        return this.setSkin(sender, p, skin, true);
+        return this.setSkin(sender, p, skin, true, false);
     }
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save) {
+    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
 
         if (Config.DISABLED_SKINS_ENABLED)
-            if (!sender.hasPermission("skinsrestorer.bypassdisabled")) {
+            if (!sender.hasPermission("skinsrestorer.bypassdisabled") && !clear) {
                 for (String dskin : Config.DISABLED_SKINS)
                     if (skin.equalsIgnoreCase(dskin)) {
                         sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
@@ -219,13 +225,25 @@ public class SkinCommand extends BaseCommand {
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
+                if (clear) {
+                    //plugin.getSkinStorage()
+
+                    Object props = plugin.getSkinStorage().createProperty("textures", "", "");
+                    try {
+                        plugin.getSkinStorage().setSkinData("00", props);
+                        plugin.getSkinApplier().applySkin(p, "00", null);
+                    } catch (Exception ignored) {
+                    }
+                    return true;
+                }
+
                 sender.sendMessage(TextComponent.fromLegacyText(e.getReason()));
             } catch (Exception e) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
             }
         }
         if (C.validUrl(skin)) {
-            if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
+            if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(sender.getName());
                 return false;
