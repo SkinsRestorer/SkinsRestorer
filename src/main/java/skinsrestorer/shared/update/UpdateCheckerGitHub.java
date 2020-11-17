@@ -41,8 +41,9 @@ public class UpdateCheckerGitHub extends UpdateChecker {
     @Override
     public void checkForUpdate(final UpdateCallback callback) {
         String currentVersion = this.currentVersion;
+        String currentVersionName = this.currentVersion;
         int currentVersionAge = 0; //
-        boolean isDevBuild;
+        boolean isDevBuild = false;
         boolean DelayUpdate = Config.DELAYUPDATE;
         int DelayedVersions = Config.DELAYEDVERSIONS;
 
@@ -70,31 +71,30 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                 return;
             }
 
-            JsonArray output = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonArray();
-            JsonArray LatestAssetsArray = output.get(0).getAsJsonObject().get("assets").getAsJsonArray();
+            JsonArray versionArray = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonArray();
+            JsonArray LatestAssetsArray = versionArray.get(0).getAsJsonObject().get("assets").getAsJsonArray();
 
-            int VersionsCount = output.size();
-            String LatestVersion = output.get(0).getAsJsonObject().get("tag_name").toString();
+            int VersionsCount = versionArray.size();
+            String LatestVersion = versionArray.get(0).getAsJsonObject().get("tag_name").toString();
             String LatestDownload_url = LatestAssetsArray.get(0).getAsJsonObject().get("browser_download_url").toString();
             String LatestDownload_size = LatestAssetsArray.get(0).getAsJsonObject().get("size").toString();
 
             for (int i = 0; i < VersionsCount; i++) {
-                JsonObject jobject = output.get(i).getAsJsonObject();
-                String version = jobject.get("tag_name").toString();
+                JsonObject jObject = versionArray.get(i).getAsJsonObject();
+                String version = jObject.get("tag_name").toString();
 
                 if (i < 6) // testing
-                    System.out.println("ver = " + version + "       if = " + version.contains(currentVersion));
+                    this.log.log("[" + i + "]" + "ver = " + version + "       if = " + version.contains(currentVersion));
 
-                if (version.contains(currentVersion))
-                    currentVersionAge = i++;
+                if (version.contains(currentVersion)) {
+                    if (currentVersionName.toLowerCase().contains("snapshot")) {
+                        isDevBuild = true;
+                        currentVersionAge = i+=1; //snapshot is not final version
+                    } else {
+                        currentVersionAge = i;
+                    }
+                }
             }
-
-            if (currentVersion.toLowerCase().contains("snapshot")) {
-                currentVersionAge++; //snapshot is not final version
-                isDevBuild = true;
-
-            }
-
 
             /*
              *  1. if currentVersionAge = 0 -> callback.upToDate();
@@ -112,6 +112,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
 
             this.log.log("----------------------------");
+            this.log.log("Devbuild? = " + isDevBuild);
             this.log.log("LatestVersion= " + LatestVersion);
             this.log.log("Current= " + currentVersion);
             this.log.log("age= " + currentVersionAge);
