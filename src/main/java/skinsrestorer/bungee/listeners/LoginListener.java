@@ -41,7 +41,7 @@ public class LoginListener implements Listener {
             final String nick = connection.getName();
 
             // Don't change skin if player has no custom skin-name set and his username is invalid
-            if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick.replaceAll("\\W", ""))) {
+            if (!C.validUsername(nick.replaceAll("\\W", "")) && plugin.getSkinStorage().getPlayerSkin(nick) == null) {
                 System.out.println("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
                 return;
             }
