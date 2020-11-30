@@ -370,7 +370,6 @@ public class SkinsRestorer extends JavaPlugin {
 
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
-            // https://github.com/DoNotSpamPls/SkinsRestorerX/blob/cbddd95ac36acb5b1afff2b9f48d0fc5b5541cb0/src/main/java/skinsrestorer/bukkit/SkinsRestorer.java#L109
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
@@ -378,16 +377,34 @@ public class SkinsRestorer extends JavaPlugin {
             bungeeEnabled = false;
         }
 
-        try {
-            File warning = new File(getDataFolder() + File.separator + "Use bungee config for settings!");
-            warning.getParentFile().mkdirs();
-            if (!warning.exists() && bungeeEnabled)
-                warning.createNewFile();
+        StringBuilder sb1 = new
+                StringBuilder("Server is in bungee mode!");
+                sb1.append("\nif you are NOT using bungee in your network, set spigot.yml -> bungeecord: false");
+                sb1.append("\n\nInstalling Bungee:");
+                sb1.append("\nDownload the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/");
+                sb1.append("\nPlace the SkinsRestorer.jar in ./plugins/ folders of every spigot server.");
+                sb1.append("\nPlace the plugin in ./plugins/ folder of every BungeeCord server.");
+                sb1.append("\nCheck & set on every Spigot server spigot.yml -> bungeecord: true");
+                sb1.append("\nRestart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]");
+                sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the integration of Spigot!");
+                sb1.append("\nYou may now Configure SkinsRestorer on Bungee (BungeeCord plugins folder /plugins/SkinsRestorer)");
 
-            if (warning.exists() && !bungeeEnabled)
-                warning.delete();
-        } catch (Exception ignored) {
-        }
+        File warning = new File(getDataFolder() + File.separator + "(README) Use bungee config for settings! (README)");
+            try {
+                if (!warning.exists() && bungeeEnabled) {
+                    warning.getParentFile().mkdirs();
+                    warning.createNewFile();
+
+                    FileWriter writer = new FileWriter(warning);
+
+                    writer.write(String.valueOf(sb1));
+                    writer.close();
+
+                }
+                if (warning.exists() && !bungeeEnabled)
+                    warning.delete();
+            } catch (Exception ignored) {
+            }
 
         if (bungeeEnabled) {
             this.srLogger.logAlways("-------------------------/Warning\\-------------------------");
