@@ -4,7 +4,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
@@ -25,7 +24,6 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent e) {
-        //todo maybe put this in async?
         if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED) {
             return;
         }
@@ -60,21 +58,27 @@ public class LoginListener implements Listener {
         });
     }
 
-    //Send updateNotification to admin
-    @EventHandler(priority = EventPriority.LOW)
-    public void onPostLoginEvent(final PostLoginEvent e) {
-        if (!plugin.isOutdated()) {
+    //think we should no have EventPriority.HIGH just to check for updates...
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onServerConnect(final ServerConnectEvent e) {
+        if (e.isCancelled()) {
             return;
         }
 
+        // Mission and vision yet to be decided.
+        /* //Better update notifications are in the pipeline.
+        if (!Config.UPDATER_ENABLED) {
+            return;
+        }*/
+
         // todo: is this even something we should keep after updaterRework?
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+            if (plugin.isOutdated()) {
+                final ProxiedPlayer player = e.getPlayer();
 
-            final ProxiedPlayer player = e.getPlayer();
-
-            if (player.hasPermission("skinsrestorer.admincommand"))
-                player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
-
+                if (player.hasPermission("skinsrestorer.admincommand"))
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
+            }
         });
     }
 }
