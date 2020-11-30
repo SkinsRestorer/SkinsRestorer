@@ -38,9 +38,9 @@ public class Config {
     public static boolean UPDATER_ENABLED = true;
     public static boolean UPDATER_PERIODIC = true;
     public static boolean DEBUG = false;
-    public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
-    public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
+    public static boolean DISMOUNT_PLAYER_ON_UPDATE = false;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = false;
+    public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -82,13 +82,17 @@ public class Config {
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
         UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
-        DEBUG = config.getBoolean("Debug", DEBUG);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
+        DEBUG = config.getBoolean("Debug", DEBUG);
+
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
+
+        if (!DISMOUNT_PLAYER_ON_UPDATE)
+            REMOUNT_PLAYER_ON_UPDATE = false;
     }
 
     public static void set(String path, Object value) {
