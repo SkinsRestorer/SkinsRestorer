@@ -4,6 +4,7 @@ version: ${project.version}
 description: ${project.description}
 website: https://skinsrestorer.net/
 authors: [Th3Tr0LLeR, McLive, DoNotSpamPls, knat]
+softdepend: ["ViaBackwards"]
 api-version: 1.13
 commands:
   skin:

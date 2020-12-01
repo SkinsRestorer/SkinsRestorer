@@ -5,10 +5,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 
 import java.io.File;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class UniversalSkinFactory extends SkinFactory {
@@ -91,12 +93,11 @@ public class UniversalSkinFactory extends SkinFactory {
     private static Consumer<Player> detectRefresh() {
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
-        File ViaVersion = new File("plugins" + File.separator + "ViaVersion");
-        File ViaBackwards = new File("plugins" + File.separator + "ViaBackwards");
-        File ViaRewind = new File("plugins" + File.separator + "ViaRewind");
-        File ProtocolSupport = new File("plugins" + File.separator + "ProtocolSupport.jar");
-        if (ViaVersion.exists() || ViaBackwards.exists() || ViaRewind.exists() || ProtocolSupport.exists()) {
-            System.out.println("[SkinsRestorer] INFO: Unsupported plugin (ViaVersion) detected, forcing OldSkinRefresher");
+        // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
+        boolean ViaVersionExists = SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ViaVersion");
+        boolean ProtocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ProtocolSupport");
+        if (ViaVersionExists || ProtocolSupportExists) {
+            SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
         }
 

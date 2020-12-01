@@ -62,6 +62,10 @@
             <id>velocity-repo</id>
             <url>https://repo.velocitypowered.com/snapshots/</url>
         </repository>
+        <repository>
+            <id>viaversion-repo</id>
+            <url>https://repo.viaversion.com</url>
+        </repository>
     </repositories>
     <dependencies>
         <!-- Spigot API -->
@@ -190,6 +194,20 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.21</version>
+        </dependency>
+        <!-- ViaBackwards (needed as a dependency to to fix 1.16.1 -> 1.15.2) -->
+        <dependency>
+            <groupId>nl.matsv</groupId>
+            <artifactId>viabackwards-core</artifactId>
+            <version>3.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ViaVersion -->
+        <dependency>
+            <groupId>us.myles</groupId>
+            <artifactId>viaversion</artifactId>
+            <version>3.2.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
