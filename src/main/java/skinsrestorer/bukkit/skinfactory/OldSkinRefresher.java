@@ -1,11 +1,19 @@
 package skinsrestorer.bukkit.skinfactory;
 
+import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.utils.ReflectionUtil;
+import us.myles.ViaVersion.api.PacketWrapper;
+import us.myles.ViaVersion.api.Via;
+import us.myles.ViaVersion.api.data.UserConnection;
+import us.myles.ViaVersion.api.protocol.ProtocolRegistry;
+import us.myles.ViaVersion.api.protocol.ProtocolVersion;
+import us.myles.ViaVersion.api.type.Type;
+import us.myles.ViaVersion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -13,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class OldSkinRefresher implements Consumer<Player> {
 
@@ -26,6 +35,8 @@ public class OldSkinRefresher implements Consumer<Player> {
     private static Enum<?> PEACEFUL;
     private static Enum<?> REMOVE_PLAYER;
     private static Enum<?> ADD_PLAYER;
+
+    private static boolean USE_VIABACKWARDS = false;
 
     static {
         try {
@@ -53,6 +64,17 @@ public class OldSkinRefresher implements Consumer<Player> {
                     ADD_PLAYER = ReflectionUtil.getEnum(PlayOutPlayerInfo, "Action", "ADD_PLAYER");
                 }
             }
+
+            SkinsRestorer.getInstance().getServer().getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+                // Wait to run task in order for ViaVersion to determine server protocol
+                if (SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ViaBackwards")) {
+                    if (ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
+                        USE_VIABACKWARDS = true;
+                        SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Activating ViaBackwards workaround.");
+                    }
+                }
+            });
+
             System.out.println("[SkinsRestorer] Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
@@ -227,7 +249,31 @@ public class OldSkinRefresher implements Consumer<Player> {
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
 
-            sendPacket(playerCon, respawn);
+            boolean sendRespawnPacketDirectly = true;
+            if (USE_VIABACKWARDS) {
+                UserConnection connection = Via.getManager().getConnection(player.getUniqueId());
+                if (connection != null) {
+                    if (connection.getProtocolInfo() != null && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
+                        // ViaBackwards double-sends a respawn packet when its dimension ID matches the current world's.
+                        // In order to get around this, we send a packet directly into Via's connection, bypassing the 1.16 conversion step
+                        // and therefore bypassing their workaround.
+                        // TODO: This assumes 1.16 methods; probably stop hardcoding this when 1.17 comes around
+                        Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+
+                        PacketWrapper packet = new PacketWrapper(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
+                        packet.write(Type.INT, dimension);
+                        packet.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
+                        packet.write(Type.UNSIGNED_BYTE, (short) gamemodeId);
+                        packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
+                        packet.send(Protocol1_15_2To1_16.class, true, true);
+                        sendRespawnPacketDirectly = false;
+                    }
+                }
+            }
+
+            if (sendRespawnPacketDirectly) {
+                sendPacket(playerCon, respawn);
+            }
 
             ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
 
