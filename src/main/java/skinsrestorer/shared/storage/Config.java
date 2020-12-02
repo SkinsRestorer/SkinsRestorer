@@ -38,8 +38,8 @@ public class Config {
     public static boolean UPDATER_ENABLED = true;
     public static boolean UPDATER_PERIODIC = true;
     public static boolean DEBUG = false;
-    public static boolean DISMOUNT_PLAYER_ON_UPDATE = false;
-    public static boolean REMOUNT_PLAYER_ON_UPDATE = false;
+    public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
+    public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
 
 
