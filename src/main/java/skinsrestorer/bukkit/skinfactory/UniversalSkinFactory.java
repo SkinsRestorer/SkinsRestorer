@@ -94,8 +94,9 @@ public class UniversalSkinFactory extends SkinFactory {
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
-        boolean ViaVersionExists = SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ViaVersion");
-        boolean ProtocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ProtocolSupport");
+        // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+        boolean ViaVersionExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ViaVersion") != null;
+        boolean ProtocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
         if (ViaVersionExists || ProtocolSupportExists) {
             SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
