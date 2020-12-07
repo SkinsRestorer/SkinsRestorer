@@ -34,7 +34,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (plugin.getSkinStorage().getPlayerSkin(name) == null && !C.validUsername(name)) {
                     if (Config.DEBUG)
-                        System.out.println"[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
+                        System.out.println("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
                     return;
                 }
 
