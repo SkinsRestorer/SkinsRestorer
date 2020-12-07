@@ -105,7 +105,7 @@ public class SkinsRestorer extends Plugin {
         this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init listener
-        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this, this.srLogger));
 
         // Init commands
         this.initCommands();

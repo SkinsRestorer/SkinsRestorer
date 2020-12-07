@@ -1,5 +1,6 @@
 package skinsrestorer.bungee.listeners;
 
+import lombok.Setter;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -18,11 +19,14 @@ import skinsrestorer.shared.utils.SRLogger;
 
 public class LoginListener implements Listener {
     private SkinsRestorer plugin;
+    @Setter
     private SRLogger log;
 
-    public LoginListener(SkinsRestorer plugin) {
+    public LoginListener(SkinsRestorer plugin, SRLogger log) {
         this.plugin = plugin;
+        this.log = log;
     }
+
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent e) {
@@ -42,7 +46,8 @@ public class LoginListener implements Listener {
 
             // Don't change skin if player has no custom skin-name set and his username is invalid
             if (!C.validUsername(nick.replaceAll("\\W", "")) && plugin.getSkinStorage().getPlayerSkin(nick) == null) {
-                log.log("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
+                if (Config.DEBUG)
+                    System.out.println("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
                 return;
             }
 

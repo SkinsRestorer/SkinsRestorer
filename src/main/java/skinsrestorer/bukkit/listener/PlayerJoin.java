@@ -38,7 +38,8 @@ public class PlayerJoin implements Listener {
 
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (skinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
-                    log.log("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+                    if (Config.DEBUG) //todo connect with SRlogger (color issue)
+                        System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
                     return;
                 }
                 final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);
