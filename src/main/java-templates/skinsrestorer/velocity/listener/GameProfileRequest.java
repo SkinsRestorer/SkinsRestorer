@@ -5,6 +5,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.SRLogger;
 import skinsrestorer.velocity.SkinsRestorer;
 
 /**
@@ -12,6 +13,7 @@ import skinsrestorer.velocity.SkinsRestorer;
  */
 public class GameProfileRequest {
     private final SkinsRestorer plugin;
+    private SRLogger log;
 
     @Inject
     public GameProfileRequest(SkinsRestorer plugin) {
@@ -32,7 +34,7 @@ public class GameProfileRequest {
 
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick.replaceAll("\\W", ""))) {
-            System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+            log.log("[SkinsRestorer] Not requesting skin for " + nick + " (invalid username).");
             return;
         }
 

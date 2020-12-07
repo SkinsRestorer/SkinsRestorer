@@ -9,12 +9,14 @@ import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.SkinStorage;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.SRLogger;
 
 /**
  * Created by McLive on 21.01.2019.
  */
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
+    private SRLogger log;
 
     public PlayerJoin(final SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -36,7 +38,7 @@ public class PlayerJoin implements Listener {
 
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (skinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
-                    System.out.println("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+                    log.log("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
                     return;
                 }
                 final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);

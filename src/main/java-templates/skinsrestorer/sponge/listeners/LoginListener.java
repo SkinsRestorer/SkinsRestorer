@@ -7,11 +7,13 @@ import org.spongepowered.api.profile.GameProfile;
 import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.SRLogger;
 import skinsrestorer.sponge.SkinsRestorer;
 
 
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     private SkinsRestorer plugin;
+    private SRLogger log;
 
     public LoginListener(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -31,7 +33,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
             try {
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (plugin.getSkinStorage().getPlayerSkin(name) == null && !C.validUsername(name)) {
-                    System.out.println("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
+                    log.log("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
                     return;
                 }
 
