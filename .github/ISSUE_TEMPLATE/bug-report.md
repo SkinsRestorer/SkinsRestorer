@@ -6,6 +6,8 @@ labels: ''
 assignees: 'xknat'
 
 ---
+
+<!--
 ```
 ===========================================
 = WARNING! Github is only for code issue. =
@@ -13,6 +15,8 @@ assignees: 'xknat'
 = http://skinsrestorer.net/discord        =
 ===========================================
 ```
+-->
+
 ## Describe the bug
 A clear and concise description of what the bug is.
 
