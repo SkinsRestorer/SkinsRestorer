@@ -49,6 +49,7 @@ public class PlayerJoin implements Listener {
                 } else {
                     plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin));
                 }
+                plugin.getFactory().updateSkin(player);
             } catch (SkinRequestException ignored) {
             }
         });
