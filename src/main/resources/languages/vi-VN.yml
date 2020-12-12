@@ -3,9 +3,9 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cTài khoản Premium với tên đó không tồn tại."
+notPremium: "&4Lỗi&8: &cTài khoản Premium với tên đó không tồn tại."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cBạn không có quyền để làm điều này."
+playerNoPermission: "&4Lỗi&8: &cBạn không có quyền để làm điều này."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
 ERRORUpdatingURL = "&4Error&8: không thể update skin từ url! \n&cThử lại dùng /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
@@ -21,29 +21,29 @@ skinClearIssuer: "&2Đã xóa skin của %player."
 #Message displayed when using /sr set command
 adminSetSkin: "&2Đã đặt skin của %player."
 #Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player không phải là tên hợp lệ."
+invalidPlayer: "&4Lỗi&8: &c%player không phải là tên hợp lệ."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cNgười chơi hiện không online!"
+playerNotonline: "&4Lỗi&8: &cNgười chơi hiện không online!"
 #Message displayed when using /sr drop command
 skinDataDropped: "&2Đã xóa skin data cho %player."
 #Message sent when the /sr reload command execution was successful
 reload: "&2Đã reload lại Config và tệp Locale!"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cBạn chỉ được thay đổi skin sau &e%s &cgiây."
+skinCooldownNew: "&4Lỗi&8: &cBạn chỉ được thay đổi skin sau &e%s &cgiây."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cSkin này đã đã bị cấm bởi admin."
+skinDisabled: "&4Lỗi&8: &cSkin này đã đã bị cấm bởi admin."
 #Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cKhông nhận được skin data! Người chơi này đã có skin chưa?"
+noSkinData: "&4Lỗi&8: &cKhông nhận được skin data! Người chơi này đã có skin chưa?"
 #Cooldown message
-waitMinute: "&4Error&8: &cVui lòng chờ trước khi yêu cầu lại skin. (Giới hạn yêu cầu)"
+waitMinute: "&4Lỗi&8: &cVui lòng chờ trước khi yêu cầu lại skin. (Giới hạn yêu cầu)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cĐã có lỗi trong khi đang lấy skin data, vui lòng thử lại sau!"
+genericError: "&4Lỗi&8: &cĐã có lỗi trong khi đang lấy skin data, vui lòng thử lại sau!"
 #Message sent when server has an outdated version of SR
 outdated: "&4Bạn đang dùng phiên bản cũ của SkinsRestorer!\n&cVui lòng cập nhật lên phiên bản mới nhất: \n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
 playersOnly: "&4Lệnh này chỉ được dùng cho người chơi!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cBạn cần phải là người chơi!"
+notPlayer: "&4Lỗi&8: &cBạn cần phải là người chơi!"
 #=== GUI ===
 #/skins message
 menuOpen: "&2Đang mở menu skin..."
@@ -59,7 +59,7 @@ selectSkin: "&2Click để chọn skin này"
 #old debug
 statusOk: "&2Kết nối tới Mojang API thành công!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Lỗi&8: &cAPI dữ liệu skin đang bị quá tải, vui lòng thử lại sau!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
