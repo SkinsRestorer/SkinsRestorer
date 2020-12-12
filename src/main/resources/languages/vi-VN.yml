@@ -3,9 +3,9 @@
 #Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"
 #Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
+notPremium: "&4Error&8: &cTài khoản Premium với tên đó không tồn tại."
 #String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
+playerNoPermission: "&4Error&8: &cBạn không có quyền để làm điều này."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
 ERRORUpdatingURL = "&4Error&8: can't update custom url skins! \n&cRequest again using /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
