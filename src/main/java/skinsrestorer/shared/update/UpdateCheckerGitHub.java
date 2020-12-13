@@ -67,7 +67,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
             if (responsecode !=200) {
                 // todo: connect to spiget updater
-                log.logAlways(Level.WARNING, "Could not update!");
+                System.out.println("[SkinsRestorer] Could not update!");
                 return;
             }
 
@@ -77,6 +77,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             int VersionsCount = versionArray.size();
             String LatestVersion = versionArray.get(0).getAsJsonObject().get("tag_name").toString();
             String LatestDownload_url = LatestAssetsArray.get(0).getAsJsonObject().get("browser_download_url").toString();
+            //LatestDownload_url = LatestDownload_url.substring(1, LatestDownload_url.length() - 1);
             String LatestDownload_size = LatestAssetsArray.get(0).getAsJsonObject().get("size").toString();
 
             for (int i = 0; i < VersionsCount; i++) {
@@ -107,7 +108,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             } else if (DelayUpdate && (currentVersionAge > DelayedVersions)) {
                 //code here for delayed update
             } else {
-                callback.updateAvailable(currentVersion, LatestDownload_url, true);
+                callback.updateAvailable(LatestVersion, LatestDownload_url, true);
             }
 
 
