@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,10 +20,7 @@ import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ReflectionUtil;
 import skinsrestorer.shared.utils.SRLogger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
@@ -195,8 +193,18 @@ public class SkinsGUI extends ItemStack implements Listener {
         return openedMenus;
     }
 
-    @EventHandler
+    //Todo increase performance by looking for instance of player and exclude non item clicks from this event before e.getView (use  if performance will be increased.)
+    @EventHandler (ignoreCancelled = true)
     public void onCLick(InventoryClickEvent e) {
+        //Cancel if clicked outside inventory
+        if (e.getClickedInventory() == null) {
+            return;
+        }
+
+        if (e.getView().getTopInventory().getType() != InventoryType.CHEST) {
+            return;
+        }
+
         try {
             if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", ""))) {
                 return;
@@ -204,87 +212,103 @@ public class SkinsGUI extends ItemStack implements Listener {
         } catch (IllegalStateException ex) {
             return;
         }
+
         Player player = (Player) e.getWhoClicked();
 
+        //Cancel picking up items
         if (e.getCurrentItem() == null) {
             e.setCancelled(true);
             return;
         }
 
-        if (!e.getCurrentItem().hasItemMeta()) {
+        ItemStack currentItem = e.getCurrentItem();
+
+        //Cancel white panels.
+        if (!currentItem.hasItemMeta()) {
             e.setCancelled(true);
             return;
         }
 
         if (plugin.isBungeeEnabled()) {
-            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.PLAYER_HEAD) {
-                String skin = e.getCurrentItem().getItemMeta().getDisplayName();
-                plugin.requestSkinSetFromBungeeCord(player, skin);
-                player.closeInventory();
-            }
-            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.RED_STAINED_GLASS_PANE) {
-                plugin.requestSkinClearFromBungeeCord(player);
-                player.closeInventory();
-            }
-            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.GREEN_STAINED_GLASS_PANE) {
-                int currentPage = getMenus().get(player.getName());
-                getMenus().put(player.getName(), currentPage + 1);
-                plugin.requestSkinsFromBungeeCord(player, currentPage + 1);
-            }
-            if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.YELLOW_STAINED_GLASS_PANE) {
-                int currentPage = getMenus().get(player.getName());
-                getMenus().put(player.getName(), currentPage - 1);
-                plugin.requestSkinsFromBungeeCord(player, currentPage - 1);
+            switch (XMaterial.matchXMaterial(currentItem)) {
+                case PLAYER_HEAD:
+                    String skin = currentItem.getItemMeta().getDisplayName();
+                    plugin.requestSkinSetFromBungeeCord(player, skin);
+                    player.closeInventory();
+                    break;
+                case RED_STAINED_GLASS_PANE:
+                    plugin.requestSkinClearFromBungeeCord(player);
+                    player.closeInventory();
+                    break;
+                case GREEN_STAINED_GLASS_PANE: {
+                    int currentPage = getMenus().get(player.getName());
+                    getMenus().put(player.getName(), currentPage + 1);
+                    plugin.requestSkinsFromBungeeCord(player, currentPage + 1);
+                    break;
+                }
+                case YELLOW_STAINED_GLASS_PANE: {
+                    int currentPage = getMenus().get(player.getName());
+                    getMenus().put(player.getName(), currentPage - 1);
+                    plugin.requestSkinsFromBungeeCord(player, currentPage - 1);
+                    break;
+                }
             }
             e.setCancelled(true);
             return;
         }
 
         // Todo use setSkin function from SkinCommand.class
-        if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.PLAYER_HEAD) {
-            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                Object skin = plugin.getSkinStorage().getSkinData(e.getCurrentItem().getItemMeta().getDisplayName(), false);
+        switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
+            case PLAYER_HEAD:
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Object skin = plugin.getSkinStorage().getSkinData(currentItem.getItemMeta().getDisplayName(), false);
 
-                // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
-                if (Config.PER_SKIN_PERMISSIONS) {
-                    String skinname = e.getCurrentItem().getItemMeta().getDisplayName();
-                    if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
-                        if (!player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {
-                            player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                            return;
+                    // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
+                    if (Config.PER_SKIN_PERMISSIONS) {
+                        String skinname = currentItem.getItemMeta().getDisplayName();
+                        if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
+                            if (!player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {
+                                player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+                                return;
+                            }
                         }
                     }
-                }
 
-                plugin.getSkinStorage().setPlayerSkin(player.getName(), e.getCurrentItem().getItemMeta().getDisplayName());
-                SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
-                SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-            });
-            player.closeInventory();
-        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.RED_STAINED_GLASS_PANE) {
-            player.performCommand("skinsrestorer:skin clear");
-            player.closeInventory();
-        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.GREEN_STAINED_GLASS_PANE) {
-            int currentPage = getMenus().get(player.getName());
-            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                getMenus().put(player.getName(), currentPage + 1);
-                Inventory newInventory = getGUI(((Player) e.getWhoClicked()).getPlayer(), currentPage + 1);
-
-                Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                    player.openInventory(newInventory);
+                    plugin.getSkinStorage().setPlayerSkin(player.getName(), currentItem.getItemMeta().getDisplayName());
+                    SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
+                    SkinsRestorer.getInstance().getFactory().updateSkin(player);
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 });
-            });
-        } else if (XMaterial.matchXMaterial(e.getCurrentItem()) == XMaterial.YELLOW_STAINED_GLASS_PANE) {
-            int currentPage = getMenus().get(player.getName());
-            Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                getMenus().put(player.getName(), currentPage - 1);
-                Inventory newInventory = getGUI(((Player) e.getWhoClicked()).getPlayer(), currentPage - 1);
+                player.closeInventory();
+                break;
+            case RED_STAINED_GLASS_PANE:
+                player.performCommand("skinsrestorer:skin clear");
+                player.closeInventory();
+                break;
+            case GREEN_STAINED_GLASS_PANE: {
+                int currentPage = getMenus().get(player.getName());
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    getMenus().put(player.getName(), currentPage + 1);
+                    Inventory newInventory = getGUI((player).getPlayer(), currentPage + 1);
 
-                Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                    player.openInventory(newInventory);
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                        player.openInventory(newInventory);
+                    });
                 });
-            });
+                break;
+            }
+            case YELLOW_STAINED_GLASS_PANE: {
+                int currentPage = getMenus().get(player.getName());
+                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    getMenus().put(player.getName(), currentPage - 1);
+                    Inventory newInventory = getGUI((player).getPlayer(), currentPage - 1);
+
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+                        player.openInventory(newInventory);
+                    });
+                });
+                break;
+            }
         }
 
         e.setCancelled(true);
