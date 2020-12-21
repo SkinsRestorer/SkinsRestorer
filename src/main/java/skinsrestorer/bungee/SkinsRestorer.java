@@ -22,7 +22,6 @@ import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("Duplicates")

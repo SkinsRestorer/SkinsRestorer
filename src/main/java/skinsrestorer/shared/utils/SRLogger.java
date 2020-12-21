@@ -1,6 +1,5 @@
 package skinsrestorer.shared.utils;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import skinsrestorer.shared.storage.Config;
 
 import java.io.File;
