@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
-import skinsrestorer.shared.interfaces.ISrCommand;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.utils.ServiceChecker;
