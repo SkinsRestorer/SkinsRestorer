@@ -232,7 +232,7 @@ public class SkinsRestorer extends JavaPlugin {
             if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
                 console.sendMessage("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
                 console.sendMessage("§c[§4Critical§c] §cPlugin currently can't fetch new skins.");
-                console.sendMessage("§c[§4Critical§c] §cSee https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshooting#connection for wiki ");
+                console.sendMessage("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for wiki ");
                 console.sendMessage("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer ");
                 console.sendMessage("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
             }
