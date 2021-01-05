@@ -133,7 +133,12 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
 
         skinsList.forEach((name, property) -> {
-                inventory.addItem(createSkull(name, property));
+            if (!name.equals(name.toLowerCase())) {
+                this.srLogger.logAlways("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
+                return;
+            }
+
+            inventory.addItem(createSkull(name, property));
 
         });
 
