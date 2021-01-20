@@ -15,7 +15,7 @@ import java.util.logging.Level;
 @RequiredArgsConstructor
 public class UniversalSkinFactory extends SkinFactory {
 
-	private final Plugin plugin;
+    private final Plugin plugin;
     private final Consumer<Player> refresh = detectRefresh();
     public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(23);
     private boolean checkOptFileChecked = false;
@@ -32,7 +32,7 @@ public class UniversalSkinFactory extends SkinFactory {
         if (checkOptFileChecked)
 
             this.checkoptfile();
-        
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 
             Entity vehicle = player.getVehicle();
@@ -40,30 +40,30 @@ public class UniversalSkinFactory extends SkinFactory {
             //dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
             if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
 
-            	vehicle.removePassenger(player);
+                vehicle.removePassenger(player);
 
-            	if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
+                if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
 
-	            	//this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
-	                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                    //this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 
-	                	//this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
-	                	if (vehicle.isValid()) {
-	                	
-	                		vehicle.addPassenger(player);
-	                		
-	                	}
+                        //this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
+                        if (vehicle.isValid()) {
 
-	                }, 1);
-	                
-            	}
+                            vehicle.addPassenger(player);
+
+                        }
+
+                    }, 1);
+
+                }
 
             }
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.getPassengers().isEmpty()) {
-            
-            	for (Entity passenger : player.getPassengers()) {
+
+                for (Entity passenger : player.getPassengers()) {
 
                     player.removePassenger(passenger);
 
@@ -125,7 +125,7 @@ public class UniversalSkinFactory extends SkinFactory {
 
         if (fileEnableDismountEntities.exists())
             enableDismountEntities = true;
-        
+
         if (fileEnableRemountEntiteis.exists())
             enableRemountPlayer = true;
 

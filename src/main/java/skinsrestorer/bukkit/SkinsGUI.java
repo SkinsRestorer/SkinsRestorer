@@ -96,7 +96,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE_NEW.replace("&", "§").replace("%page", ""+page));
+        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE_NEW.replace("&", "§").replace("%page", "" + page));
 
         //White Glass line
         inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
@@ -171,9 +171,10 @@ public class SkinsGUI extends ItemStack implements Listener {
         is.setItemMeta(sm);
         try {
             setSkin(is, ((Property) property).getValue());
-        } catch (Exception e){
+        } catch (Exception e) {
             this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
-            this.srLogger.log("[SkinsRestorer] DEBUG= " + e);        }
+            this.srLogger.log("[SkinsRestorer] DEBUG= " + e);
+        }
         return is;
     }
 
@@ -199,7 +200,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     //Todo increase performance by looking for instance of player and exclude non item clicks from this event before e.getView (use  if performance will be increased.)
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onCLick(InventoryClickEvent e) {
         //Cancel if clicked outside inventory
         if (e.getClickedInventory() == null) {

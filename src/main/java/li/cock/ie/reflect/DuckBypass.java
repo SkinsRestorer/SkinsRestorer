@@ -17,6 +17,7 @@
 package li.cock.ie.reflect;
 
 import li.cock.ie.access.*;
+
 import java.lang.reflect.*;
 
 public class DuckBypass {
@@ -29,7 +30,7 @@ public class DuckBypass {
         this._reflect = reflect;
         this._access = access;
 
-        if(replaceSetAccessible) {
+        if (replaceSetAccessible) {
             replaceMethod();
         }
     }
@@ -67,7 +68,7 @@ public class DuckBypass {
     }
 
     public void replaceMethod() {
-        if(!_replaced) {
+        if (!_replaced) {
             Method setAccessible = _reflect.getMethod(AccessibleObject.class, "setAccessible0", false, boolean.class);
             if (setAccessible != null) {
                 if (_access.setModifiers(setAccessible, Modifier.PUBLIC)) {
@@ -116,9 +117,9 @@ public class DuckBypass {
     public Class<?>[] getTypes(Object... values) {
         Class<?>[] argTypes = null;
 
-        if(values != null) {
+        if (values != null) {
             argTypes = new Class<?>[values.length];
-            for(int i = 0; i < values.length; ++i) {
+            for (int i = 0; i < values.length; ++i) {
                 argTypes[i] = getClass(values[i]);
             }
         }
@@ -127,7 +128,7 @@ public class DuckBypass {
     }
 
     public Object newInstance(boolean replace, Constructor<?> target, Object... args) {
-        if(replace) replaceMethod();
+        if (replace) replaceMethod();
         return _access.getNewInstance(target, args);
     }
 
@@ -138,7 +139,7 @@ public class DuckBypass {
     public <T> T newInstance(boolean replace, Class<T> type, Constructor<T> target, Object... args) {
         try {
             return type.cast(newInstance(replace, target, args));
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -200,7 +201,7 @@ public class DuckBypass {
     public <T> T getValue(Field target, Object obj, Class<T> valType) {
         try {
             return valType.cast(getValue(target, obj));
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -252,9 +253,9 @@ public class DuckBypass {
     }
 
     public boolean setModifiers(Member target, int mod) {
-        if(target instanceof Field) {
+        if (target instanceof Field) {
             return setModifiers((Field) target, mod);
-        } else if(target instanceof Method) {
+        } else if (target instanceof Method) {
             return setModifiers((Method) target, mod);
         }
 
@@ -271,7 +272,7 @@ public class DuckBypass {
 
     public boolean setEditable(Member target) {
         int mod = target.getModifiers();
-        if(Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
+        if (Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
             return delModifier(target, Modifier.FINAL);
         }
 

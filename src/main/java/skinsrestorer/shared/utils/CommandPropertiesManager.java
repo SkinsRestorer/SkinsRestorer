@@ -11,9 +11,9 @@ import java.util.Properties;
  */
 public class CommandPropertiesManager {
     // private String path = "plugins" + File.separator + "SkinsRestorer" + File.separator;
-    private String configPath;
-    private InputStream inputStream;
-    private String file = "command-messages.properties";
+    private final String configPath;
+    private final InputStream inputStream;
+    private final String file = "command-messages.properties";
 
     private void copyFile() {
         File outFile = new File(this.configPath, this.file);

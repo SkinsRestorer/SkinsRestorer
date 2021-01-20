@@ -1372,9 +1372,11 @@ public enum XMaterial {
     @Nonnull
     public static String getExactMajorVersion(@Nonnull String version) {
         // getBukkitVersion()
-        if (version.contains("SNAPSHOT") || version.contains("-R")) version = version.substring(0, version.indexOf("-"));
+        if (version.contains("SNAPSHOT") || version.contains("-R"))
+            version = version.substring(0, version.indexOf("-"));
         // getVersion()
-        if (version.contains("git")) version = StringUtils.replace(version.substring(version.indexOf("MC:") + 4), ")", "");
+        if (version.contains("git"))
+            version = StringUtils.replace(version.substring(version.indexOf("MC:") + 4), ")", "");
         if (version.split(Pattern.quote(".")).length > 2) version = version.substring(0, version.lastIndexOf("."));
         return version;
     }
@@ -1389,7 +1391,8 @@ public enum XMaterial {
     @Nonnull
     private static MinecraftVersion valueOfVersion(@Nonnull String version) {
         version = getExactMajorVersion(version);
-        if (version.equals("1.10") || version.equals("1.11") || version.equals("1.12")) return MinecraftVersion.VERSION_1_9;
+        if (version.equals("1.10") || version.equals("1.11") || version.equals("1.12"))
+            return MinecraftVersion.VERSION_1_9;
         version = StringUtils.replace(version, ".", "_");
         if (!version.startsWith("VERSION_")) version = "VERSION_" + version;
         String check = version;

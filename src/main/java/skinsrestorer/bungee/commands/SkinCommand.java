@@ -17,7 +17,8 @@ import skinsrestorer.shared.utils.SRLogger;
 
 import java.util.concurrent.TimeUnit;
 
-@CommandAlias("skin") @CommandPermission("%skin")
+@CommandAlias("skin")
+@CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private SkinsRestorer plugin;
     private SRLogger log;
@@ -31,7 +32,8 @@ public class SkinCommand extends BaseCommand {
         this.onHelp(sender, this.getCurrentCommandManager().generateCommandHelp());
     }
 
-    @Default @CommandPermission("%skinSet")
+    @Default
+    @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     public void onSkinSetShort(ProxiedPlayer p, @Single String skin) {
@@ -47,14 +49,15 @@ public class SkinCommand extends BaseCommand {
             help.showHelp();
     }
 
-
-    @Subcommand("clear") @CommandPermission("%skinClear")
+    @Subcommand("clear")
+    @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     public void onSkinClear(ProxiedPlayer p) {
         this.onSkinClearOther(p, new OnlinePlayer(p));
     }
 
-    @Subcommand("clear") @CommandPermission("%skinClearOther")
+    @Subcommand("clear")
+    @CommandPermission("%skinClearOther")
     @CommandCompletion("@players")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
@@ -79,14 +82,15 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-
-    @Subcommand("update") @CommandPermission("%skinUpdate")
+    @Subcommand("update")
+    @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     public void onSkinUpdate(ProxiedPlayer p) {
         this.onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
-    @Subcommand("update") @CommandPermission("%skinUpdateOther")
+    @Subcommand("update")
+    @CommandPermission("%skinUpdateOther")
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
@@ -134,8 +138,8 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-
-    @Subcommand("set") @CommandPermission("%skinSet")
+    @Subcommand("set")
+    @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(ProxiedPlayer p, String[] skin) {
@@ -146,7 +150,8 @@ public class SkinCommand extends BaseCommand {
         }
     }
 
-    @Subcommand("set") @CommandPermission("%skinSetOther")
+    @Subcommand("set")
+    @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
@@ -169,12 +174,13 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("url") @CommandPermission("%skinSetUrl")
+    @Subcommand("url")
+    @CommandPermission("%skinSetUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(ProxiedPlayer p, String[] url) {
         if (url.length > 0) {
-            if(C.validUrl(url[0])) {
+            if (C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
                 p.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
@@ -187,6 +193,7 @@ public class SkinCommand extends BaseCommand {
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
         return this.setSkin(sender, p, skin, true, false);
     }
+
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save, boolean clear) {
@@ -250,8 +257,10 @@ public class SkinCommand extends BaseCommand {
             }
             try {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.MS_UPDATING_SKIN));
-                String skinentry = " "+p.getName(); // so won't overwrite premium playernames
-                if (skinentry.length() > 16) { skinentry = skinentry.substring(0, 16); } // max len of 16 char
+                String skinentry = " " + p.getName(); // so won't overwrite premium playernames
+                if (skinentry.length() > 16) {
+                    skinentry = skinentry.substring(0, 16);
+                } // max len of 16 char
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
@@ -263,7 +272,7 @@ public class SkinCommand extends BaseCommand {
             } catch (Exception e) {
                 log.log("[ERROR] could not generate skin url:" + skin + " stacktrace:");
                 if (Config.DEBUG)
-                e.printStackTrace();
+                    e.printStackTrace();
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
             }
         }

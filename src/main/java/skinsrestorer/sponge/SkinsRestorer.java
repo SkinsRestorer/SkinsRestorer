@@ -14,6 +14,7 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
+import skinsrestorer.data.PluginData;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -29,7 +30,7 @@ import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-@Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}")
+@Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = "McLive")
 public class SkinsRestorer {
     @Getter
     private static SkinsRestorer instance;

@@ -18,8 +18,8 @@ public class CooldownStorage implements Runnable {
     }
 
     public static int getCooldown(String name) {
-        int int1 = Integer.valueOf(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(cooldown.get(name))));
-        int int2 = Integer.valueOf(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
+        int int1 = Integer.parseInt(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(cooldown.get(name))));
+        int int2 = Integer.parseInt(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         return int1 - int2;
     }
 
@@ -30,10 +30,6 @@ public class CooldownStorage implements Runnable {
     @Override
     public void run() {
         long current = System.currentTimeMillis();
-        Iterator<Long> iterator = CooldownStorage.cooldown.values().iterator();
-        while (iterator.hasNext())
-            if (iterator.next() <= current) {
-                iterator.remove();
-            }
+        CooldownStorage.cooldown.values().removeIf(aLong -> aLong <= current);
     }
 }

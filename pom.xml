@@ -9,6 +9,7 @@
 
     <name>SkinsRestorer</name>
     <description>Ability to restore/change skins on servers! (Offline and Online Mode)</description>
+    <url>https://skinsrestorer.net/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,6 +25,81 @@
             <url>https://repo.codemc.org/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <build>
+        <finalName>${project.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <minimizeJar>true</minimizeJar>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.bstats.bukkit</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats.bungeecord</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.inventivetalent</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>net.md_5.bungee.config</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>filter-sources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 
     <repositories>
         <repository>
@@ -43,7 +119,7 @@
             <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
-            <id>bstats-repo</id>
+            <id>codemc-repo</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
@@ -67,6 +143,7 @@
             <url>https://repo.viaversion.com</url>
         </repository>
     </repositories>
+
     <dependencies>
         <!-- Spigot API -->
         <dependency>
@@ -87,8 +164,7 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-proxy</artifactId>
             <version>1.12-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/libs/bungeecord-proxy-1.12-SNAPSHOT.jar</systemPath>
+            <scope>provided</scope>
         </dependency>
         <!-- Sponge API -->
         <dependency>
@@ -210,79 +286,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <build>
-        <finalName>${project.name}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.bstats.bukkit</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats.bungeecord</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.inventivetalent</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>net.md_5.bungee.config</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>templating-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>filter-sources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-    </build>
 </project>

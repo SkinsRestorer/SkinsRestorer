@@ -24,7 +24,8 @@ import java.util.List;
  * Created by McLive on 24.01.2019.
  */
 
-@CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
+@CommandAlias("sr|skinsrestorer")
+@CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private SkinsRestorer plugin;
 
@@ -32,14 +33,14 @@ public class SrCommand extends BaseCommand {
         this.plugin = plugin;
     }
 
-
     @HelpCommand
     @Syntax(" [help]")
     public void onHelp(CommandSender sender, CommandHelp help) {
         help.showHelp();
     }
 
-    @Subcommand("reload") @CommandPermission("%srReload")
+    @Subcommand("reload")
+    @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
         Locale.load(SkinsRestorer.getInstance().getConfigPath());
@@ -47,8 +48,8 @@ public class SrCommand extends BaseCommand {
         sender.sendMessage(Locale.RELOAD);
     }
 
-
-    @Subcommand("status") @CommandPermission("%srStatus")
+    @Subcommand("status")
+    @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         sender.sendMessage("§3----------------------------------------------");
@@ -80,24 +81,25 @@ public class SrCommand extends BaseCommand {
         });
     }
 
-
-    @Subcommand("drop|remove") @CommandPermission("%srDrop")
+    @Subcommand("drop|remove")
+    @CommandPermission("%srDrop")
     @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
         if (e.name().equalsIgnoreCase("player"))
             for (String targetPlayer : targets)
-            plugin.getSkinStorage().removePlayerSkin(targetPlayer);
-         else
+                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+        else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length()-1);
+        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
         sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
     }
 
 
-    @Subcommand("props") @CommandPermission("%srProps")
+    @Subcommand("props")
+    @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
@@ -126,14 +128,14 @@ public class SrCommand extends BaseCommand {
                 JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
                 String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                 long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (timestamp));
+                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
                 ConsoleCommandSender console = Bukkit.getConsoleSender();
 
                 sender.sendMessage("§aRequest time: §e" + requestDate);
                 sender.sendMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
                 sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
-                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length()-1));
+                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
                 sender.sendMessage("§cMore info in console!");
 
                 //console
@@ -149,7 +151,7 @@ public class SrCommand extends BaseCommand {
     }
 
     public enum PlayerOrSkin {
-        player,
-        skin,
+        PLAYER,
+        SKIN,
     }
 }

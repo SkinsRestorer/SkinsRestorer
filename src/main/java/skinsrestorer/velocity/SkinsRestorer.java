@@ -16,6 +16,7 @@ import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import skinsrestorer.data.PluginData;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -38,12 +39,12 @@ import java.util.logging.Logger;
 /**
  * Created by McLive on 16.02.2019.
  */
-@Plugin(id = "skinsrestorer", name = "${project.name}", version = "${project.version}", description = "${project.description}", authors = "McLive")
+@Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = "McLive")
 public class SkinsRestorer {
     @Getter
     private final ProxyServer proxy;
     @Getter
-    private SRLogger logger;
+    private final SRLogger logger;
     @Getter
     private final Path dataFolder;
     @Getter
@@ -51,7 +52,7 @@ public class SkinsRestorer {
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     @Getter
-    private String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private final String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private boolean outdated;
     private CommandSource console;

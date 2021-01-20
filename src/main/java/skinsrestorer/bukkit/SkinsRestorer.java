@@ -26,6 +26,7 @@ import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -62,6 +63,7 @@ public class SkinsRestorer extends JavaPlugin {
         return getDescription().getVersion();
     }
 
+    @Override
     public void onEnable() {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
@@ -283,7 +285,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
     }
 
-    private static Map<String, Property> convertToObject(byte[] byteArr){
+    private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();
         Property obj = null;
         ByteArrayInputStream bis = null;
@@ -291,8 +293,8 @@ public class SkinsRestorer extends JavaPlugin {
         try {
             bis = new ByteArrayInputStream(byteArr);
             ois = new ObjectInputStream(bis);
-            while(bis.available() > 0){
-                map = (Map<String, Property>)ois.readObject();
+            while (bis.available() > 0) {
+                map = (Map<String, Property>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -373,38 +375,37 @@ public class SkinsRestorer extends JavaPlugin {
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             bungeeEnabled = false;
         }
 
         StringBuilder sb1 = new
                 StringBuilder("Server is in bungee mode!");
-                sb1.append("\nif you are NOT using bungee in your network, set spigot.yml -> bungeecord: false");
-                sb1.append("\n\nInstalling Bungee:");
-                sb1.append("\nDownload the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/");
-                sb1.append("\nPlace the SkinsRestorer.jar in ./plugins/ folders of every spigot server.");
-                sb1.append("\nPlace the plugin in ./plugins/ folder of every BungeeCord server.");
-                sb1.append("\nCheck & set on every Spigot server spigot.yml -> bungeecord: true");
-                sb1.append("\nRestart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]");
-                sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the integration of Spigot!");
-                sb1.append("\nYou may now Configure SkinsRestorer on Bungee (BungeeCord plugins folder /plugins/SkinsRestorer)");
+        sb1.append("\nif you are NOT using bungee in your network, set spigot.yml -> bungeecord: false");
+        sb1.append("\n\nInstalling Bungee:");
+        sb1.append("\nDownload the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/");
+        sb1.append("\nPlace the SkinsRestorer.jar in ./plugins/ folders of every spigot server.");
+        sb1.append("\nPlace the plugin in ./plugins/ folder of every BungeeCord server.");
+        sb1.append("\nCheck & set on every Spigot server spigot.yml -> bungeecord: true");
+        sb1.append("\nRestart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]");
+        sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the integration of Spigot!");
+        sb1.append("\nYou may now Configure SkinsRestorer on Bungee (BungeeCord plugins folder /plugins/SkinsRestorer)");
 
         File warning = new File(getDataFolder() + File.separator + "(README) Use bungee config for settings! (README)");
-            try {
-                if (!warning.exists() && bungeeEnabled) {
-                    warning.getParentFile().mkdirs();
-                    warning.createNewFile();
+        try {
+            if (!warning.exists() && bungeeEnabled) {
+                warning.getParentFile().mkdirs();
+                warning.createNewFile();
 
-                    FileWriter writer = new FileWriter(warning);
+                try (FileWriter writer = new FileWriter(warning)) {
 
                     writer.write(String.valueOf(sb1));
-                    writer.close();
-
                 }
-                if (warning.exists() && !bungeeEnabled)
-                    warning.delete();
-            } catch (Exception ignored) {
             }
+            if (warning.exists() && !bungeeEnabled)
+                Files.delete(warning.toPath());
+        } catch (Exception ignored) {
+        }
 
         if (bungeeEnabled) {
             this.srLogger.logAlways("-------------------------/Warning\\-------------------------");

@@ -28,7 +28,7 @@ public class DuckReflect {
         try {
             this._setAccessible = AccessibleObject.class.getMethod("setAccessible", boolean.class);
             _setAccessible.setAccessible(true);
-        } catch(Throwable ex) {
+        } catch (Exception ex) {
             process(ex);
         }
     }
@@ -54,12 +54,12 @@ public class DuckReflect {
     }
 
     public boolean setAccessible(AccessibleObject target) {
-        if(_setAccessible == null || target == null) return false;
+        if (_setAccessible == null || target == null) return false;
 
         try {
             _setAccessible.invoke(target, true);
             return true;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -67,18 +67,18 @@ public class DuckReflect {
     }
 
     public boolean replaceMethod(Method setAccessible) {
-        if(setAccessible == null) return false;
+        if (setAccessible == null) return false;
 
         this._setAccessible = setAccessible;
         return true;
     }
 
     public Class<?> getClass(Object obj) {
-        if(obj == null) return null;
+        if (obj == null) return null;
 
         try {
             return obj.getClass();
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -88,7 +88,7 @@ public class DuckReflect {
     public Class<?> getClass(String name) {
         try {
             return Class.forName(name);
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -96,16 +96,16 @@ public class DuckReflect {
     }
 
     public <T> Constructor<T> getConstructor(Class<T> type, boolean accessible, Class<?>... argTypes) {
-        if(type == null) return null;
+        if (type == null) return null;
 
         try {
             Constructor<T> constructor = type.getDeclaredConstructor(argTypes);
-            if(accessible) {
+            if (accessible) {
                 setAccessible(constructor);
             }
 
             return constructor;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -117,11 +117,11 @@ public class DuckReflect {
     }
 
     public <T> T newInstance(Constructor<T> target, Object... args) {
-        if(target == null) return null;
+        if (target == null) return null;
 
         try {
             return target.newInstance(args);
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -137,16 +137,16 @@ public class DuckReflect {
     }
 
     public Field getField(Class<?> type, boolean accessible, String name) {
-        if(type == null) return null;
+        if (type == null) return null;
 
         try {
             Field field = type.getDeclaredField(name);
-            if(accessible) {
+            if (accessible) {
                 setAccessible(field);
             }
 
             return field;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -158,16 +158,16 @@ public class DuckReflect {
     }
 
     public Method getMethod(Class<?> type, String name, boolean accessible, Class<?>... argTypes) {
-        if(type == null) return null;
+        if (type == null) return null;
 
         try {
             Method method = type.getDeclaredMethod(name, argTypes);
-            if(accessible) {
+            if (accessible) {
                 setAccessible(method);
             }
 
             return method;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -179,11 +179,11 @@ public class DuckReflect {
     }
 
     public Object getValue(Field target, Object obj) {
-        if(target == null) return null;
+        if (target == null) return null;
 
         try {
             return target.get(obj);
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -203,12 +203,12 @@ public class DuckReflect {
     }
 
     public boolean setValue(Field target, Object obj, Object value) {
-        if(target == null) return false;
+        if (target == null) return false;
 
         try {
             target.set(obj, value);
             return true;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -228,11 +228,11 @@ public class DuckReflect {
     }
 
     public Object call(Method target, Object obj, Object... argValues) {
-        if(target == null) return null;
+        if (target == null) return null;
 
         try {
             return target.invoke(obj, argValues);
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -264,12 +264,12 @@ public class DuckReflect {
     }
 
     public boolean exec(Method target, Object obj, Object... argValues) {
-        if(target == null) return false;
+        if (target == null) return false;
 
         try {
             target.invoke(obj, argValues);
             return true;
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 

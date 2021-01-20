@@ -29,7 +29,7 @@ public class PluginMessageListener implements Listener {
         if (e.isCancelled()) {
             return;
         }
-        
+
         if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
             return;
 
@@ -121,7 +121,7 @@ public class PluginMessageListener implements Listener {
         return byteOut.toByteArray();
     }
 
-    private static Map<String, Property> convertToObject(byte[] byteArr){
+    private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();
         Property obj = null;
         ByteArrayInputStream bis = null;
@@ -129,8 +129,8 @@ public class PluginMessageListener implements Listener {
         try {
             bis = new ByteArrayInputStream(byteArr);
             ois = new ObjectInputStream(bis);
-            while(bis.available() > 0){
-                map = (Map<String, Property>)ois.readObject();
+            while (bis.available() > 0) {
+                map = (Map<String, Property>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

@@ -15,6 +15,7 @@ public class SkinRequestException extends Exception {
         return reason;
     }
 
+    @Override
     public String getMessage() {
         return reason;
     }

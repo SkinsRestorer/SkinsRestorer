@@ -15,9 +15,11 @@ import skinsrestorer.shared.storage.Locale;
 /**
  * Created by McLive on 21.12.2019.
  */
-@CommandAlias("skins") @CommandPermission("%skins")
+@CommandAlias("skins")
+@CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
     private SkinsRestorer plugin;
+
     public GUICommand(SkinsRestorer plugin) {
         this.plugin = plugin;
     }

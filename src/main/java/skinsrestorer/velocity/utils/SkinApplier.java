@@ -17,7 +17,7 @@ import java.util.List;
  * Created by McLive on 16.02.2019.
  */
 public class SkinApplier {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinApplier(SkinsRestorer plugin) {
         this.plugin = plugin;

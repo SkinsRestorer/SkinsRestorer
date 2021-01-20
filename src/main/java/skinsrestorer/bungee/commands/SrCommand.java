@@ -21,9 +21,10 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-@CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
+@CommandAlias("sr|skinsrestorer")
+@CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -35,7 +36,8 @@ public class SrCommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("reload") @CommandPermission("%srReload")
+    @Subcommand("reload")
+    @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
         Locale.load(SkinsRestorer.getInstance().getConfigPath());
@@ -43,8 +45,8 @@ public class SrCommand extends BaseCommand {
         sender.sendMessage(TextComponent.fromLegacyText(Locale.RELOAD));
     }
 
-
-    @Subcommand("status") @CommandPermission("%srStatus")
+    @Subcommand("status")
+    @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
@@ -76,8 +78,8 @@ public class SrCommand extends BaseCommand {
         });
     }
 
-
-    @Subcommand("drop|remove") @CommandPermission("%srDrop")
+    @Subcommand("drop|remove")
+    @CommandPermission("%srDrop")
     @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
@@ -88,19 +90,18 @@ public class SrCommand extends BaseCommand {
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length()-1);
+        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
         sender.sendMessage(TextComponent.fromLegacyText(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
     }
 
-
-    @Subcommand("props") @CommandPermission("%srProps")
+    @Subcommand("props")
+    @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
         InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
         LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
-
 
 
         if (prop == null) {
@@ -114,14 +115,14 @@ public class SrCommand extends BaseCommand {
         JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
         String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
         long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-        String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (timestamp));
+        String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
         CommandSender console = BungeeCord.getInstance().getConsole();
 
         sender.sendMessage(TextComponent.fromLegacyText("§aRequest time: §e" + requestDate));
         sender.sendMessage(TextComponent.fromLegacyText("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
         sender.sendMessage(TextComponent.fromLegacyText("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
-        sender.sendMessage(TextComponent.fromLegacyText("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length()-1)));
+        sender.sendMessage(TextComponent.fromLegacyText("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
         sender.sendMessage(TextComponent.fromLegacyText("§cMore info in console!"));
 
         //console message
@@ -132,7 +133,7 @@ public class SrCommand extends BaseCommand {
     }
 
     public enum PlayerOrSkin {
-        player,
-        skin,
+        PLAYER,
+        SKIN,
     }
 }

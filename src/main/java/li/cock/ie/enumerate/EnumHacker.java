@@ -17,6 +17,7 @@
 package li.cock.ie.enumerate;
 
 import li.cock.ie.reflect.*;
+
 import java.lang.reflect.*;
 
 public class EnumHacker {
@@ -47,7 +48,7 @@ public class EnumHacker {
             values[0] = name;
             values[1] = ordinal;
             System.arraycopy(extraValues, 0, values, 2, extraValues.length);
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             _bypass.process(ex);
             return null;
         }
@@ -65,7 +66,7 @@ public class EnumHacker {
     }
 
     protected boolean setValues(Class<? extends Enum<?>> enumType, Field valuesField, Object[] values) {
-        if(_bypass.setValue(valuesField, values)) {
+        if (_bypass.setValue(valuesField, values)) {
             cleanEnumCache(enumType);
             return true;
         }
@@ -75,7 +76,7 @@ public class EnumHacker {
 
     public Field getValuesField(Class<? extends Enum<?>> enumType) {
         Field valuesField = _bypass.getField(enumType, "$VALUES");
-        if(valuesField == null) {
+        if (valuesField == null) {
             valuesField = _bypass.getField(enumType, "ENUM$VALUES");
         }
 
@@ -96,17 +97,17 @@ public class EnumHacker {
     }
 
     public boolean setOrdinal(Enum<? extends Enum<?>> enumObj, int x) {
-        if(enumObj == null) return false;
+        if (enumObj == null) return false;
 
-        if(_lazy) {
+        if (_lazy) {
             _bypass.replaceMethod();
             this._ordinal = _bypass.getField(Enum.class, "ordinal");
             this._lazy = false;
 
-            if(_ordinal == null) {
+            if (_ordinal == null) {
                 return false;
             }
-        } else if(_ordinal == null) {
+        } else if (_ordinal == null) {
             return false;
         }
 

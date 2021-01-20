@@ -14,8 +14,8 @@ import skinsrestorer.bukkit.SkinsGUI;
 import skinsrestorer.bukkit.SkinsRestorer;
 import skinsrestorer.shared.storage.Locale;
 
-
-@CommandAlias("skins") @CommandPermission("%skins")
+@CommandAlias("skins")
+@CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
     private SkinsRestorer plugin;
     private SkinsGUI skinsGUI;
@@ -32,7 +32,8 @@ public class GUICommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Default @CommandPermission("%skins")
+    @Default
+    @CommandPermission("%skins")
     public void onDefault(Player p) {
         p.sendMessage(Locale.SKINSMENU_OPEN);
 
