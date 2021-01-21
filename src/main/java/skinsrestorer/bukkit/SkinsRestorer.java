@@ -71,10 +71,10 @@ public class SkinsRestorer extends JavaPlugin {
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
         if (metrics.isEnabled()) {
-            metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
+            metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
         }
 
         instance = this;
@@ -163,7 +163,6 @@ public class SkinsRestorer extends JavaPlugin {
                         }
 
                         if (subchannel.equalsIgnoreCase("returnSkins")) {
-
                             Player p = Bukkit.getPlayer(in.readUTF());
                             int page = in.readInt();
 
@@ -287,12 +286,10 @@ public class SkinsRestorer extends JavaPlugin {
 
     private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();
-        Property obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
         try {
-            bis = new ByteArrayInputStream(byteArr);
-            ois = new ObjectInputStream(bis);
+            ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
             while (bis.available() > 0) {
                 map = (Map<String, Property>) ois.readObject();
             }
@@ -379,8 +376,8 @@ public class SkinsRestorer extends JavaPlugin {
             bungeeEnabled = false;
         }
 
-        StringBuilder sb1 = new
-                StringBuilder("Server is in bungee mode!");
+        StringBuilder sb1 = new StringBuilder("Server is in bungee mode!");
+
         sb1.append("\nif you are NOT using bungee in your network, set spigot.yml -> bungeecord: false");
         sb1.append("\n\nInstalling Bungee:");
         sb1.append("\nDownload the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/");
@@ -423,36 +420,31 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
-            updateChecker.checkForUpdate(new UpdateCallback() {
-                @Override
-                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    if (updateDownloaded)
-                        return;
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                if (updateDownloaded)
+                    return;
 
-                    String failReason = null;
-                    if (hasDirectDownload) {
-                        if (updateDownloader.downloadUpdate()) {
-                            updateDownloaded = true;
-                        } else {
-                            failReason = updateDownloader.getFailReason().toString();
-                        }
+                String failReason = null;
+                if (hasDirectDownload) {
+                    if (updateDownloader.downloadUpdate()) {
+                        updateDownloaded = true;
+                    } else {
+                        failReason = updateDownloader.getFailReason().toString();
                     }
-                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg -> {
-                        console.sendMessage(msg);
-                    });
                 }
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg ->
+                        console.sendMessage(msg));
+            }
 
-                @Override
-                public void upToDate() {
-                    if (!showUpToDate)
-                        return;
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
 
-                    updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> {
-                        console.sendMessage(msg);
-                    });
-                }
-            });
-        });
+                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> console.sendMessage(msg));
+            }
+        }));
     }
 }

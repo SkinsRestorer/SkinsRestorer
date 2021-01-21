@@ -247,7 +247,7 @@ public class MojangAPI {
         return output.toString();
     }
 
-    private class Property {
+    private static class Property {
         private String name;
         private String value;
         private String signature;

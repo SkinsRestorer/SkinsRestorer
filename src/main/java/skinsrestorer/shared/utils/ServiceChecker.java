@@ -23,7 +23,7 @@ public class ServiceChecker {
         this.response = response;
     }
 
-    public class ServiceCheckResponse {
+    public static class ServiceCheckResponse {
         private List<String> results = new LinkedList<>();
         AtomicInteger workingUUID = new AtomicInteger();
         AtomicInteger workingProfile = new AtomicInteger();

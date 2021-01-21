@@ -11,7 +11,7 @@ import skinsrestorer.shared.utils.SkinsRestorerAPI;
  * Created by McLive on 10.11.2019.
  */
 public class SkinsRestorerVelocityAPI extends SkinsRestorerAPI implements ISkinsRestorerAPI<Player> {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinsRestorerVelocityAPI(SkinsRestorer plugin, MojangAPI mojangAPI, SkinStorage skinStorage) {
         super(mojangAPI, skinStorage);

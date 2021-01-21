@@ -10,14 +10,15 @@ public class SkinsRestorerError {
     }
 
     public static class MojangRequestException extends Exception {
-
-        private String message;
-        private ExceptionType type;
+        private final String message;
+        private final ExceptionType type;
 
         public MojangRequestException(String message, ExceptionType type) {
             this.message = message;
+            this.type = type;
         }
 
+        @Override
         public String getMessage() {
             return message;
         }
@@ -28,14 +29,15 @@ public class SkinsRestorerError {
     }
 
     public static class SkinSetException extends Exception {
-
-        private String message;
-        private ExceptionType type;
+        private final String message;
+        private final ExceptionType type;
 
         public SkinSetException(String message, ExceptionType type) {
             this.message = message;
+            this.type = type;
         }
 
+        @Override
         public String getMessage() {
             return message;
         }

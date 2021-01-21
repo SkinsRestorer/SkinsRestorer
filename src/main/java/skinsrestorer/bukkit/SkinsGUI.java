@@ -34,7 +34,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         this.plugin = plugin;
     }
 
-    public static enum GlassType {
+    public enum GlassType {
         NONE, PREV, NEXT, DELETE
     }
 
@@ -76,14 +76,13 @@ public class SkinsGUI extends ItemStack implements Listener {
                 }
             }
 
-            this.itemMeta = this.itemStack.getItemMeta();
-            this.itemMeta.setDisplayName(text);
-            this.itemStack.setItemMeta(this.itemMeta);
+            ItemMeta itemMeta = this.itemStack.getItemMeta();
+            itemMeta.setDisplayName(text);
+            this.itemStack.setItemMeta(itemMeta);
         }
 
-        private GlassType glassType;
+        private final GlassType glassType;
         private ItemStack itemStack;
-        private ItemMeta itemMeta;
         private String text;
 
         public ItemStack getItemStack() {
@@ -195,7 +194,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         head.setItemMeta(headMeta);
     }
 
-    public static ConcurrentHashMap<String, Integer> getMenus() {
+    public static Map<String, Integer> getMenus() {
         return openedMenus;
     }
 
@@ -297,9 +296,8 @@ public class SkinsGUI extends ItemStack implements Listener {
                     getMenus().put(player.getName(), currentPage + 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPage + 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                        player.openInventory(newInventory);
-                    });
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                            player.openInventory(newInventory));
                 });
                 break;
             }
@@ -309,9 +307,8 @@ public class SkinsGUI extends ItemStack implements Listener {
                     getMenus().put(player.getName(), currentPage - 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPage - 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                        player.openInventory(newInventory);
-                    });
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                            player.openInventory(newInventory));
                 });
                 break;
             }

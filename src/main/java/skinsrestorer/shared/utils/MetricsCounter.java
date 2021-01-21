@@ -5,95 +5,96 @@ package skinsrestorer.shared.utils;
  * Created by McLive on 09.02.2019.
  */
 public class MetricsCounter {
-    private static int mineskin_calls = 0;
-    private static int minetools_calls = 0;
-    private static int mojang_calls = 0;
-    private static int backup_calls = 0;
+    private static int mineskinCalls = 0;
+    private static int minetoolsCalls = 0;
+    private static int mojangCalls = 0;
+    private static int backupCalls = 0;
 
-    public static int getMineskin_calls() {
-        return MetricsCounter.mineskin_calls;
+    private MetricsCounter() {}
+
+    public static int getMineskinCalls() {
+        return MetricsCounter.mineskinCalls;
     }
 
-    public static int collectMineskin_calls() {
-        int value = MetricsCounter.mineskin_calls;
-        MetricsCounter.mineskin_calls = 0;
+    public static int collectMineskinCalls() {
+        int value = MetricsCounter.mineskinCalls;
+        MetricsCounter.mineskinCalls = 0;
         return value;
     }
 
-    public static void setMineskin_calls(int mineskin_calls) {
-        MetricsCounter.mineskin_calls = mineskin_calls;
+    public static void setMineskinCalls(int mineskinCalls) {
+        MetricsCounter.mineskinCalls = mineskinCalls;
     }
 
-    public static void incrMineskin_calls() {
-        MetricsCounter.mineskin_calls = MetricsCounter.mineskin_calls + 1;
+    public static void incrMineskinCalls() {
+        MetricsCounter.mineskinCalls = MetricsCounter.mineskinCalls + 1;
     }
 
-
-    public static int getMinetools_calls() {
-        return MetricsCounter.minetools_calls;
+    public static int getMinetoolsCalls() {
+        return MetricsCounter.minetoolsCalls;
     }
 
-    public static int collectMinetools_calls() {
-        int value = MetricsCounter.minetools_calls;
-        MetricsCounter.minetools_calls = 0;
+    public static int collectMinetoolsCalls() {
+        int value = MetricsCounter.minetoolsCalls;
+        MetricsCounter.minetoolsCalls = 0;
         return value;
     }
 
-    public static void setMinetools_calls(int minetools_calls) {
-        MetricsCounter.minetools_calls = minetools_calls;
+    public static void setMinetoolsCalls(int minetoolsCalls) {
+        MetricsCounter.minetoolsCalls = minetoolsCalls;
     }
 
-    public static void incrMinetools_calls() {
-        MetricsCounter.minetools_calls = MetricsCounter.minetools_calls + 1;
+    public static void incrMinetoolsCalls() {
+        MetricsCounter.minetoolsCalls = MetricsCounter.minetoolsCalls + 1;
     }
 
-    public static int getMojang_calls() {
-        return MetricsCounter.mojang_calls;
+    public static int getMojangCalls() {
+        return MetricsCounter.mojangCalls;
     }
 
-    public static int collectMojang_calls() {
-        int value = MetricsCounter.mojang_calls;
-        MetricsCounter.mojang_calls = 0;
+    public static int collectMojangCalls() {
+        int value = MetricsCounter.mojangCalls;
+        MetricsCounter.mojangCalls = 0;
         return value;
     }
 
-    public static void setMojang_calls(int mojang_calls) {
-        MetricsCounter.mojang_calls = mojang_calls;
+    public static void setMojangCalls(int mojangCalls) {
+        MetricsCounter.mojangCalls = mojangCalls;
     }
 
-    public static void incrMojang_calls() {
-        MetricsCounter.mojang_calls = MetricsCounter.mojang_calls + 1;
+    public static void incrMojangCalls() {
+        MetricsCounter.mojangCalls = MetricsCounter.mojangCalls + 1;
     }
 
-    public static int getBackup_calls() {
-        return MetricsCounter.backup_calls;
+    public static int getBackupCalls() {
+        return MetricsCounter.backupCalls;
     }
 
-    public static int collectBackup_calls() {
-        int value = MetricsCounter.backup_calls;
-        MetricsCounter.backup_calls = 0;
+    public static int collectBackupCalls() {
+        int value = MetricsCounter.backupCalls;
+        MetricsCounter.backupCalls = 0;
         return value;
     }
 
-    public static void setBackup_calls(int backup_calls) {
-        MetricsCounter.backup_calls = backup_calls;
+    public static void setBackupCalls(int backupCalls) {
+        MetricsCounter.backupCalls = backupCalls;
     }
 
-    public static void incrBackup_calls() {
-        MetricsCounter.backup_calls = MetricsCounter.backup_calls + 1;
+    public static void incrBackupCalls() {
+        MetricsCounter.backupCalls = MetricsCounter.backupCalls + 1;
     }
 
     public static void incrAPI(String url) {
         if (url.startsWith("https://api.mineskin.org/"))
-            incrMineskin_calls();
+            incrMineskinCalls();
 
         if (url.startsWith("https://api.minetools.eu/"))
-            incrMinetools_calls();
+            incrMinetoolsCalls();
 
         if (url.startsWith("https://api.mojang.com/") || url.startsWith("https://sessionserver.mojang.com/"))
-            incrMojang_calls();
+            incrMojangCalls();
 
         if (url.startsWith("https://api.ashcon.app/"))
-            incrBackup_calls();
+            incrBackupCalls();
     }
 }

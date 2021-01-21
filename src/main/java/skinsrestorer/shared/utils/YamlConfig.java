@@ -10,7 +10,7 @@ public class YamlConfig {
     private File file;
 
     private Object config;
-    private boolean setMissing = false;
+    private boolean setMissing;
 
     public YamlConfig(String path, String name, boolean setMissing) {
         File direc = new File(path);
@@ -152,12 +152,12 @@ public class YamlConfig {
 
     private boolean isEmpty() {
         try {
-            Scanner input = new Scanner(file);
-            if (input.hasNextLine()) {
-                input.close();
-                return false;
+            try (Scanner input = new Scanner(file)) {
+                if (input.hasNextLine()) {
+                    input.close();
+                    return false;
+                }
             }
-            input.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

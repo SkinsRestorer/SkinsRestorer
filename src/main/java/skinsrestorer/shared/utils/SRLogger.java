@@ -21,7 +21,7 @@ public class SRLogger {
     public boolean load() {
         try {
             //Manual check config value
-            File pluginConfigFile = new File(folder.getAbsolutePath() + File.separator +"config.yml");
+            File pluginConfigFile = new File(folder.getAbsolutePath() + File.separator + "config.yml");
             YamlConfig pluginConfig = new YamlConfig(folder.getAbsolutePath() + File.separator, "config", false);
 
             if (pluginConfigFile.exists()) {
@@ -75,5 +75,4 @@ public class SRLogger {
     public void logAlways(Level level, String message, Throwable thrown) {
         this.logger.log(level, "§e[§2SkinsRestorer§e] §r" + message, thrown);
     }
-
 }

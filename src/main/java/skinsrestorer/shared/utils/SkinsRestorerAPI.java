@@ -7,15 +7,15 @@ import skinsrestorer.shared.storage.SkinStorage;
  * Created by McLive on 27.08.2019.
  */
 
-/* APIexample: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
+/* API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
    For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
    Advanced help or getting problems? join our discord before submitting issues!
 
    [Warning!] Make sure to use SkinsRestorerBukkitAPI.java to apply skin. */
 
 public class SkinsRestorerAPI {
-    private MojangAPI mojangAPI;
-    private SkinStorage skinStorage;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
 
     public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
         this.mojangAPI = mojangAPI;
@@ -51,7 +51,7 @@ public class SkinsRestorerAPI {
         skinStorage.getOrCreateSkinForPlayer(skinName);
     }
 
-    public void removeSkin(String playername) {
-        skinStorage.removePlayerSkin(playername);
+    public void removeSkin(String playerName) {
+        skinStorage.removePlayerSkin(playerName);
     }
 }

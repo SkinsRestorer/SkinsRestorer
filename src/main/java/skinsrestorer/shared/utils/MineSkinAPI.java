@@ -59,7 +59,7 @@ public class MineSkinAPI {
     }
 
     public Object genSkin(String url, String isSlim) throws SkinRequestException {
-        String err_resp = "";
+        String errResp = "";
         if (isSlim == null)
             isSlim = guessSkinType(url);
         try {
@@ -69,7 +69,7 @@ public class MineSkinAPI {
             query += "url=" + URLEncoder.encode(url, "UTF-8");
             String output;
             try {
-                err_resp = "";
+                errResp = "";
                 JsonObject obj;
 
                 output = queryURL("https://api.mineskin.org/generate/url/", query, 90000);
@@ -86,13 +86,13 @@ public class MineSkinAPI {
                         return this.skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                     }
                 } else if (obj.has("error")) {
-                    err_resp = obj.get("error").getAsString();
-                    if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
-                        logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again... ");
+                    errResp = obj.get("error").getAsString();
+                    if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
+                        logger.log("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
                         if (obj.has("delay"))
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                         return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
-                    } else if (err_resp.equals("No accounts available")) {
+                    } else if (errResp.equals("No accounts available")) {
                         logger.log("[ERROR] MS No accounts available " + url);
                         throw new SkinRequestException(Locale.ERROR_MS_FULL);
                     }
@@ -108,8 +108,8 @@ public class MineSkinAPI {
         }
         // throw exception after all tries have failed
         logger.log("[ERROR] MS:could not generate skin url: " + url);
-        logger.log("[ERROR] MS:reason: " + err_resp);
-        if (!(err_resp.matches("")))
+        logger.log("[ERROR] MS:reason: " + errResp);
+        if (!(errResp.matches("")))
             throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
         else
             throw new SkinRequestException(Locale.MS_API_FAILED);
@@ -133,13 +133,13 @@ public class MineSkinAPI {
                 output.writeBytes(query);
                 output.close();
                 String outstr = "";
-                InputStream _is;
+                InputStream is;
                 try {
-                    _is = con.getInputStream();
+                    is = con.getInputStream();
                 } catch (Exception e) {
-                    _is = con.getErrorStream();
+                    is = con.getErrorStream();
                 }
-                DataInputStream input = new DataInputStream(_is);
+                DataInputStream input = new DataInputStream(is);
                 for (int c = input.read(); c != -1; c = input.read()) {
                     outstr += (char) c; //todo String concatenation in loop
                 }

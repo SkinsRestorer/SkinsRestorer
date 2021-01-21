@@ -10,7 +10,8 @@ import java.util.Map;
  * Created by McLive on 25.01.2019.
  */
 public class CommandReplacements {
-    private CommandReplacements() {}
+    private CommandReplacements() {
+    }
 
     public static final Map<String, String> permissions = ImmutableMap.<String, String>builder()
             .put("skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command")

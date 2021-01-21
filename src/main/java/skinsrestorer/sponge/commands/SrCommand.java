@@ -23,7 +23,8 @@ import java.util.List;
 /**
  * Created by McLive on 28.02.2019.
  */
-@CommandAlias("sr|skinsrestorer") @CommandPermission("%sr")
+@CommandAlias("sr|skinsrestorer")
+@CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
 
@@ -37,7 +38,8 @@ public class SrCommand extends BaseCommand {
         help.showHelp();
     }
 
-    @Subcommand("reload") @CommandPermission("%srReload")
+    @Subcommand("reload")
+    @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
         Locale.load(plugin.getConfigPath());
@@ -45,8 +47,8 @@ public class SrCommand extends BaseCommand {
         source.sendMessage(plugin.parseMessage(Locale.RELOAD));
     }
 
-
-    @Subcommand("status") @CommandPermission("%srStatus")
+    @Subcommand("status")
+    @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
         source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
@@ -78,8 +80,8 @@ public class SrCommand extends BaseCommand {
         });
     }
 
-
-    @Subcommand("drop|remove") @CommandPermission("%srDrop")
+    @Subcommand("drop|remove")
+    @CommandPermission("%srDrop")
     @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
@@ -90,12 +92,12 @@ public class SrCommand extends BaseCommand {
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length()-1);
+        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
         source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
     }
 
-
-    @Subcommand("props") @CommandPermission("%srProps")
+    @Subcommand("props")
+    @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
@@ -114,14 +116,14 @@ public class SrCommand extends BaseCommand {
             JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
             String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
             long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-            String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (timestamp));
+            String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
             ConsoleSource console = Sponge.getServer().getConsole();
 
             source.sendMessage(plugin.parseMessage("§aRequest time: §e" + requestDate));
             source.sendMessage(plugin.parseMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
             source.sendMessage(plugin.parseMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
-            source.sendMessage(plugin.parseMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length()-1)));
+            source.sendMessage(plugin.parseMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
             source.sendMessage(plugin.parseMessage("§cMore info in console!"));
 
             //Console
@@ -133,7 +135,7 @@ public class SrCommand extends BaseCommand {
     }
 
     public enum PlayerOrSkin {
-        player,
-        skin,
+        PLAYER,
+        SKIN,
     }
 }

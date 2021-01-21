@@ -52,7 +52,7 @@ public class SkinsRestorer {
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     @Getter
-    private final String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private static final String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private boolean outdated;
     private CommandSource console;

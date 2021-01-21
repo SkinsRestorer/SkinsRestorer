@@ -23,7 +23,7 @@ import java.util.Collection;
  */
 public class SkinApplier {
     private Player receiver;
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinApplier(SkinsRestorer plugin) {
         this.plugin = plugin;

@@ -21,7 +21,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by McLive on 27.02.2019.
  */
-@CommandAlias("skin") @CommandPermission("%skin")
+@CommandAlias("skin")
+@CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private SkinsRestorer plugin;
 
@@ -34,7 +35,8 @@ public class SkinCommand extends BaseCommand {
         this.onHelp(source, this.getCurrentCommandManager().generateCommandHelp());
     }
 
-    @Default @CommandPermission("%skinSet")
+    @Default
+    @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     public void onSkinSetShort(Player p, @Single String skin) {
@@ -50,13 +52,15 @@ public class SkinCommand extends BaseCommand {
             help.showHelp();
     }
 
-    @Subcommand("clear") @CommandPermission("%skinClear")
+    @Subcommand("clear")
+    @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     public void onSkinClear(Player p) {
         this.onSkinClearOther(p, new OnlinePlayer(p));
     }
 
-    @Subcommand("clear") @CommandPermission("%skinClearOther")
+    @Subcommand("clear")
+    @CommandPermission("%skinClearOther")
     @CommandCompletion("@players")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSource source, OnlinePlayer target) {
@@ -76,13 +80,15 @@ public class SkinCommand extends BaseCommand {
     }
 
 
-    @Subcommand("update") @CommandPermission("%skinUpdate")
+    @Subcommand("update")
+    @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     public void onSkinUpdate(Player p) {
         this.onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
-    @Subcommand("update") @CommandPermission("%skinUpdateOther")
+    @Subcommand("update")
+    @CommandPermission("%skinUpdateOther")
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
@@ -130,18 +136,20 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("set") @CommandPermission("%skinSet")
+    @Subcommand("set")
+    @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
-        if(skin.length > 0){
+        if (skin.length > 0) {
             this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
     }
 
-    @Subcommand("set") @CommandPermission("%skinSetOther")
+    @Subcommand("set")
+    @CommandPermission("%skinSetOther")
     @CommandCompletion("@players")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
@@ -163,7 +171,8 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("url") @CommandPermission("%skinSetUrl")
+    @Subcommand("url")
+    @CommandPermission("%skinSetUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player p, String[] url) {
@@ -232,7 +241,7 @@ public class SkinCommand extends BaseCommand {
 
             try {
                 source.sendMessage(plugin.parseMessage(Locale.MS_UPDATING_SKIN));
-                String skinentry = " "+p.getName(); // so won't overwrite premium playernames
+                String skinentry = " " + p.getName(); // so won't overwrite premium playernames
                 if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
