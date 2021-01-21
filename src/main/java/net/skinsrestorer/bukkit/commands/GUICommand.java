@@ -17,12 +17,10 @@ import net.skinsrestorer.shared.storage.Locale;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
-    private SkinsRestorer plugin;
-    private SkinsGUI skinsGUI;
+    private final SkinsGUI skinsGUI;
 
     public GUICommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        this.skinsGUI = new SkinsGUI(this.plugin);
+        this.skinsGUI = new SkinsGUI(plugin);
     }
 
     //todo is help even needed for /skins?

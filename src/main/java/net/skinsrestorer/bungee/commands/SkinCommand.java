@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
     private SRLogger log;
 
     public SkinCommand(SkinsRestorer plugin) {
