@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.utils.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
@@ -18,9 +19,11 @@ import java.util.List;
  */
 public class SkinApplierVelocity {
     private final SkinsRestorer plugin;
+    private final SRLogger log;
 
     public SkinApplierVelocity(SkinsRestorer plugin) {
         this.plugin = plugin;
+        this.log = plugin.getLogger();
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) {
@@ -70,7 +73,7 @@ public class SkinApplierVelocity {
 
     private void sendUpdateRequest(Player p, Property textures) {
         p.getCurrentServer().ifPresent(serverConnection -> {
-            System.out.println("[SkinsRestorer] Sending skin update request for " + p.getUsername());
+            log.logAlways("[SkinsRestorer] Sending skin update request for " + p.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

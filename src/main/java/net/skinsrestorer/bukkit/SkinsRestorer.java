@@ -41,7 +41,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private SkinsRestorer plugin;
     @Getter
-    private String configPath = getDataFolder().getPath();
+    private final String configPath = getDataFolder().getPath();
 
     @Getter
     private boolean bungeeEnabled;

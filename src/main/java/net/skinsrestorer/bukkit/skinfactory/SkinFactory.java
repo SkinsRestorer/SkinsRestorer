@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 
-public abstract class SkinFactory {
+public interface SkinFactory {
 
     /**
      * Applies the skin In other words, sets the skin data, but no changes will
@@ -14,7 +14,7 @@ public abstract class SkinFactory {
      * @param p     - Player
      * @param props - Property Object
      */
-    public void applySkin(final Player p, Object props) {
+    default void applySkin(final Player p, Object props) {
         // delay 1 servertick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
             try {
@@ -41,6 +41,5 @@ public abstract class SkinFactory {
      *
      * @param p - Player
      */
-    public abstract void updateSkin(Player p);
-
+    void updateSkin(Player p);
 }

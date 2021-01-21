@@ -15,6 +15,7 @@ import net.skinsrestorer.shared.utils.Property;
 import net.skinsrestorer.sponge.SkinsRestorer;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Created by McLive on 02.04.2018.
@@ -50,9 +51,7 @@ public class SkinApplierSponge {
         if (!updatePlayer)
             return;
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> {
-            this.updatePlayerSkin(p);
-        });
+        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> updatePlayerSkin(p));
     }
 
     public void updatePlayerSkin(Player p) {
@@ -95,9 +94,8 @@ public class SkinApplierSponge {
         }
 
         if (other != null) {
-            receiver.setLocation(Sponge.getServer().getWorld(other.getUniqueId()).get().getSpawnLocation());
+            Sponge.getServer().getWorld(other.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
             receiver.setLocationAndRotation(loc, rotation);
         }
     }
-
 }

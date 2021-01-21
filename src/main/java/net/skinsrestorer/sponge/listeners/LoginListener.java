@@ -12,7 +12,7 @@ import net.skinsrestorer.sponge.SkinsRestorer;
 
 
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
     private SRLogger log;
 
     public LoginListener(SkinsRestorer plugin) {
@@ -33,8 +33,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
             try {
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (plugin.getSkinStorage().getPlayerSkin(name) == null && !C.validUsername(name)) {
-                    if (Config.DEBUG)
-                        System.out.println("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
+                    log.log("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
                     return;
                 }
 

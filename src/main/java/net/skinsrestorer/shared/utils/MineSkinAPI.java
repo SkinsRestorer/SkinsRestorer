@@ -72,7 +72,7 @@ public class MineSkinAPI {
                 JsonObject obj;
 
                 output = queryURL("https://api.mineskin.org/generate/url/", query, 90000);
-                if (output == "") { //when both api time out
+                if (output.equals("")) { //when both api time out
                     throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
                 }
                 JsonElement elm = new JsonParser().parse(output);

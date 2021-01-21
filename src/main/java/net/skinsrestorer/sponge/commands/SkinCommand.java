@@ -16,6 +16,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.sponge.SkinsRestorer;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -154,20 +155,16 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS) {
-            if (!source.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!source.getName().equals(target.getPlayer().getName()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(source.getName()))) {
-                    source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-                    return;
-                }
-            }
+        if (Config.PER_SKIN_PERMISSIONS
+                && !source.hasPermission("skinsrestorer.skin." + skin)
+                && !source.getName().equals(target.getPlayer().getName()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(source.getName()))) {
+            source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+            return;
         }
 
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
-            if (this.setSkin(source, target.getPlayer(), skin)) {
-                if (!source.getName().equals(target.getPlayer().getName()))
-                    source.sendMessage(plugin.parseMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
-            }
+            if (this.setSkin(source, target.getPlayer(), skin) && !source.getName().equals(target.getPlayer().getName()))
+                source.sendMessage(plugin.parseMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
         });
     }
 
@@ -177,8 +174,8 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player p, String[] url) {
         if (url.length > 0) {
-            if (C.validUrl(String.valueOf(url))) {
-                this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
+            if (C.validUrl(Arrays.toString(url))) {
+                this.onSkinSetOther(p, new OnlinePlayer(p), Arrays.toString(url));
             } else {
                 p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
             }
@@ -199,14 +196,14 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (Config.DISABLED_SKINS_ENABLED)
-            if (!source.hasPermission("skinsrestorer.bypassdisabled")) {
-                for (String dskin : Config.DISABLED_SKINS)
-                    if (skin.equalsIgnoreCase(dskin)) {
-                        source.sendMessage(plugin.parseMessage(Locale.SKIN_DISABLED));
-                        return false;
-                    }
-            }
+        if (Config.DISABLED_SKINS_ENABLED
+                && !source.hasPermission("skinsrestorer.bypassdisabled")) {
+            for (String dskin : Config.DISABLED_SKINS)
+                if (skin.equalsIgnoreCase(dskin)) {
+                    source.sendMessage(plugin.parseMessage(Locale.SKIN_DISABLED));
+                    return false;
+                }
+        }
 
         if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
             source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));

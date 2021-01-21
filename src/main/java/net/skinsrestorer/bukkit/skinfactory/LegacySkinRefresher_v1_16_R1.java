@@ -16,7 +16,6 @@ import java.util.function.Consumer;
  * Created by McLive on 26.06.2020.
  */
 public class LegacySkinRefresher_v1_16_R1 implements Consumer<Player> {
-
     private static Class<?> PlayOutRespawn;
     private static Class<?> PlayOutPlayerInfo;
     private static Class<?> PlayOutPosition;

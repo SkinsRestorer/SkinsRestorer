@@ -13,8 +13,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class UniversalSkinFactory extends SkinFactory {
-
+public class UniversalSkinFactory implements SkinFactory {
     private final Plugin plugin;
     private final Consumer<Player> refresh = detectRefresh();
     public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(23);
@@ -25,7 +24,6 @@ public class UniversalSkinFactory extends SkinFactory {
 
     @Override
     public void updateSkin(Player player) {
-
         if (!player.isOnline())
             return;
 
@@ -55,32 +53,27 @@ public class UniversalSkinFactory extends SkinFactory {
                         }
 
                     }, 1);
-
                 }
-
             }
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.getPassengers().isEmpty()) {
 
                 for (Entity passenger : player.getPassengers()) {
-
                     player.removePassenger(passenger);
-
                 }
-
             }
 
             for (Player ps : Bukkit.getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
                     ps.hidePlayer(this.plugin, player);
-                } catch (Error ignored) {
+                } catch (Exception ignored) {
                     ps.hidePlayer(player);
                 }
                 try {
                     ps.showPlayer(this.plugin, player);
-                } catch (Error ignored) {
+                } catch (Exception ignored) {
                     ps.showPlayer(player);
                 }
             }

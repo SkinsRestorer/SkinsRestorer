@@ -34,8 +34,7 @@ public class GameProfileRequest {
 
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick.replaceAll("\\W", ""))) {
-            if (Config.DEBUG)
-                System.out.println("[SkinsRestorer] Not requesting skin for " + nick + " (invalid username).");
+            log.log("[SkinsRestorer] Not requesting skin for " + nick + " (invalid username).");
             return;
         }
 

@@ -13,13 +13,12 @@ import java.util.Properties;
  * Created by McLive on 12.02.2019.
  */
 public class CommandPropertiesManager {
-    // private String path = "plugins" + File.separator + "SkinsRestorer" + File.separator;
     private final String configPath;
     private final InputStream inputStream;
-    private final String file = "command-messages.properties";
+    private static final String FILE = "command-messages.properties";
 
     private void copyFile() {
-        File outFile = new File(this.configPath, this.file);
+        File outFile = new File(this.configPath, FILE);
         try {
             if (!outFile.exists()) {
                 try (OutputStream out = new FileOutputStream(outFile)) {
@@ -43,7 +42,7 @@ public class CommandPropertiesManager {
         this.copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, this.file))) {
+        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
@@ -57,7 +56,7 @@ public class CommandPropertiesManager {
         this.copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, this.file))) {
+        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
@@ -71,7 +70,7 @@ public class CommandPropertiesManager {
         this.copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, this.file))) {
+        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
         } catch (IOException e) {
@@ -85,7 +84,7 @@ public class CommandPropertiesManager {
         this.copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, this.file))) {
+        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
         } catch (IOException e) {

@@ -17,7 +17,7 @@ import java.util.logging.Level;
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
  */
 public class UpdateDownloader {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public DownloadFailReason failReason;
     private ResourceInfo latestResourceInfo;
@@ -48,16 +48,14 @@ public class UpdateDownloader {
             return false;
         }
         File updateFolder = Bukkit.getUpdateFolderFile();
-        if (!updateFolder.exists()) {
-            if (!updateFolder.mkdirs()) {
-                failReason = DownloadFailReason.NO_UPDATE_FOLDER;
-                return false;
-            }
+        if (!updateFolder.exists() && !updateFolder.mkdirs()) {
+            failReason = DownloadFailReason.NO_UPDATE_FOLDER;
+            return false;
         }
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
         Properties properties = getUpdaterProperties();
-        boolean allowExternalDownload = properties != null && properties.containsKey("externalDownloads") && Boolean.valueOf(properties.getProperty("externalDownloads"));
+        boolean allowExternalDownload = properties != null && properties.containsKey("externalDownloads") && Boolean.parseBoolean(properties.getProperty("externalDownloads"));
 
         if (!allowExternalDownload && latestResourceInfo.external) {
             failReason = DownloadFailReason.EXTERNAL_DISALLOWED;
@@ -88,20 +86,24 @@ public class UpdateDownloader {
         File file = new File(Bukkit.getUpdateFolderFile(), "spiget.properties");
         Properties properties = new Properties();
         if (!file.exists()) {
+
             try {
                 if (!file.createNewFile()) {
                     return null;
                 }
                 properties.setProperty("externalDownloads", "false");
-                properties.store(new FileWriter(file), "Configuration for the Spiget auto-updater. https://spiget.org | https://github.com/InventivetalentDev/SpigetUpdater\n"
-                        + "Use 'externalDownloads' if you want to auto-download resources hosted on external sites\n"
-                        + "");
+
+                try (FileWriter write = new FileWriter(file)) {
+                    properties.store(write, "Configuration for the Spiget auto-updater. https://spiget.org | https://github.com/InventivetalentDev/SpigetUpdater\n"
+                            + "Use 'externalDownloads' if you want to auto-download resources hosted on external sites\n"
+                            + "");
+                }
             } catch (Exception ignored) {
                 return null;
             }
         }
-        try {
-            properties.load(new FileReader(file));
+        try (FileReader reader = new FileReader(file)) {
+            properties.load(reader);
         } catch (IOException e) {
             return null;
         }
@@ -114,7 +116,7 @@ public class UpdateDownloader {
      * @return the plugin file name
      */
     public File getPluginFile() {
-        if (!(plugin instanceof JavaPlugin)) {
+        if (plugin == null) {
             return null;
         }
         try {
@@ -132,8 +134,6 @@ public class UpdateDownloader {
         NO_DOWNLOAD,
         NO_PLUGIN_FILE,
         NO_UPDATE_FOLDER,
-        EXTERNAL_DISALLOWED,
-        UNKNOWN;
+        EXTERNAL_DISALLOWED;
     }
-
 }

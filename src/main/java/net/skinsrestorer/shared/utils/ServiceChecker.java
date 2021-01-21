@@ -32,10 +32,6 @@ public class ServiceChecker {
             return results;
         }
 
-        public void setResults(List<String> results) {
-            this.results = results;
-        }
-
         public void addResult(String result) {
             this.results.add(result);
         }

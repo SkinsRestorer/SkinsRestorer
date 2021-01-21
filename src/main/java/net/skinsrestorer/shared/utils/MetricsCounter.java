@@ -12,26 +12,14 @@ public class MetricsCounter {
 
     private MetricsCounter() {}
 
-    public static int getMineskinCalls() {
-        return MetricsCounter.mineskinCalls;
-    }
-
     public static int collectMineskinCalls() {
         int value = MetricsCounter.mineskinCalls;
         MetricsCounter.mineskinCalls = 0;
         return value;
     }
 
-    public static void setMineskinCalls(int mineskinCalls) {
-        MetricsCounter.mineskinCalls = mineskinCalls;
-    }
-
     public static void incrMineskinCalls() {
         MetricsCounter.mineskinCalls = MetricsCounter.mineskinCalls + 1;
-    }
-
-    public static int getMinetoolsCalls() {
-        return MetricsCounter.minetoolsCalls;
     }
 
     public static int collectMinetoolsCalls() {
@@ -40,16 +28,8 @@ public class MetricsCounter {
         return value;
     }
 
-    public static void setMinetoolsCalls(int minetoolsCalls) {
-        MetricsCounter.minetoolsCalls = minetoolsCalls;
-    }
-
     public static void incrMinetoolsCalls() {
         MetricsCounter.minetoolsCalls = MetricsCounter.minetoolsCalls + 1;
-    }
-
-    public static int getMojangCalls() {
-        return MetricsCounter.mojangCalls;
     }
 
     public static int collectMojangCalls() {
@@ -58,26 +38,14 @@ public class MetricsCounter {
         return value;
     }
 
-    public static void setMojangCalls(int mojangCalls) {
-        MetricsCounter.mojangCalls = mojangCalls;
-    }
-
     public static void incrMojangCalls() {
         MetricsCounter.mojangCalls = MetricsCounter.mojangCalls + 1;
-    }
-
-    public static int getBackupCalls() {
-        return MetricsCounter.backupCalls;
     }
 
     public static int collectBackupCalls() {
         int value = MetricsCounter.backupCalls;
         MetricsCounter.backupCalls = 0;
         return value;
-    }
-
-    public static void setBackupCalls(int backupCalls) {
-        MetricsCounter.backupCalls = backupCalls;
     }
 
     public static void incrBackupCalls() {

@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class YamlConfig {
-    private String path;
-    private String name;
-    private File file;
+    private final String path;
+    private final String name;
+    private final File file;
 
     private Object config;
-    private boolean setMissing;
+    private final boolean setMissing;
 
     public YamlConfig(String path, String name, boolean setMissing) {
         File direc = new File(path);
@@ -61,7 +61,7 @@ public class YamlConfig {
 
         File outFile = new File(path, resourcePath);
         int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(path, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+        File outDir = new File(path, resourcePath.substring(0, Math.max(lastIndex, 0)));
 
         if (!outDir.exists()) {
             outDir.mkdirs();
@@ -69,13 +69,13 @@ public class YamlConfig {
 
         try {
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+                try (OutputStream out = new FileOutputStream(outFile)) {
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = in.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
                 }
-                out.close();
                 in.close();
             } else {
                 System.out.println("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");

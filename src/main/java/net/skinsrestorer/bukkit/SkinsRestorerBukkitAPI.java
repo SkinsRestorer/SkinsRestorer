@@ -11,7 +11,7 @@ import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
  * Created by McLive on 27.08.2019.
  */
 public class SkinsRestorerBukkitAPI extends SkinsRestorerAPI implements ISkinsRestorerAPI<Player> {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinsRestorerBukkitAPI(SkinsRestorer plugin, MojangAPI mojangAPI, SkinStorage skinStorage) {
         super(mojangAPI, skinStorage);

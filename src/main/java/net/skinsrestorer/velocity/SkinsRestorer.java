@@ -54,7 +54,6 @@ public class SkinsRestorer {
     @Getter
     private static final String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
-    private boolean outdated;
     private CommandSource console;
     private UpdateChecker updateChecker;
 
@@ -203,8 +202,6 @@ public class SkinsRestorer {
         getService().execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                outdated = true;
-
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
                         console.sendMessage(deserialize(msg)));
             }

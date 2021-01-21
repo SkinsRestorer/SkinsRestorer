@@ -18,11 +18,8 @@ public class Property implements Serializable {
             JsonArray properties = obj.getAsJsonArray("properties");
             JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-            String signature = propertiesObject.get("signature").getAsString();
-            String value = propertiesObject.get("value").getAsString();
-
-            this.setSignature(signature);
-            this.setValue(value);
+            signature = propertiesObject.get("signature").getAsString();
+            value = propertiesObject.get("value").getAsString();
 
             return true;
         }

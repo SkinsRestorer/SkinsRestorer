@@ -27,7 +27,7 @@ import java.util.List;
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
