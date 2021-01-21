@@ -15,7 +15,6 @@ import net.skinsrestorer.shared.utils.Property;
 import net.skinsrestorer.sponge.SkinsRestorer;
 
 import java.util.Collection;
-import java.util.Optional;
 
 /**
  * Created by McLive on 02.04.2018.

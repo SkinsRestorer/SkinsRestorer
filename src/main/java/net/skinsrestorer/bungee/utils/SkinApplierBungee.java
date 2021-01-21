@@ -24,12 +24,10 @@ public class SkinApplierBungee {
     }
 
     public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
-        String uuid = null;
         if (p == null && handler == null)
             return;
 
         if (p != null) {
-            uuid = p.getUniqueId().toString();
             handler = (InitialHandler) p.getPendingConnection();
         }
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick);
@@ -39,12 +37,6 @@ public class SkinApplierBungee {
                 sendUpdateRequest(p, textures);
                 return;
             }
-            // Online mode => get real IP from API
-            uuid = plugin.getMojangAPI().getUUID(nick);
-
-            // Offline mode use offline uuid
-        } else {
-            uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + nick).getBytes(StandardCharsets.UTF_8)).toString();
         }
 
         LoginResult profile = handler.getLoginProfile();
@@ -53,14 +45,12 @@ public class SkinApplierBungee {
             try {
                 // NEW BUNGEECORD (id, name, property)
                 profile = new LoginResult(null, null, new Property[]{textures});
-            } catch (Error error) {
+            } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
                 profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
                         new Class<?>[]{String.class, Property[].class},
                         null, new Property[]{textures});
             }
-            // System.out.println("Created new LoginResult:");
-            // System.out.println(profile.getProperties()[0]);
         }
 
         Property[] newprops = new Property[]{textures};
@@ -75,7 +65,6 @@ public class SkinApplierBungee {
             if (p != null)
                 sendUpdateRequest(p, null);
         }
-
     }
 
     public void applySkin(final String pname) throws Exception {

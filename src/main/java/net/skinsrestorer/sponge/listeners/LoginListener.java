@@ -10,7 +10,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorer;
 
-
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
     private SRLogger log;

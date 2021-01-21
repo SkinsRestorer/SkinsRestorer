@@ -30,7 +30,7 @@ public class SkinsRestorerBungeeAPI extends SkinsRestorerAPI implements ISkinsRe
     public void applySkin(ProxiedPlayer player) {
         try {
             plugin.getSkinApplierBungee().applySkin(player);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }
