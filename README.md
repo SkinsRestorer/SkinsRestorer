@@ -1,5 +1,4 @@
-
-# SkinsRestorerX
+# SkinsRestorer
 [![Build Status](https://travis-ci.org/SkinsRestorer/SkinsRestorerX.svg?branch=master)](https://travis-ci.org/SkinsRestorer/SkinsRestorerX)
 [![Current Release](https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
@@ -54,9 +53,9 @@ See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contri
 ````
 <!-- SkinsRestorer API -->
 <dependency>
-    <groupId>com</groupId>
+    <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>13.8.4-SNAPSHOT</version>
+    <version>13.8.7-SNAPSHOT</version>
 </dependency>
 ````
 
