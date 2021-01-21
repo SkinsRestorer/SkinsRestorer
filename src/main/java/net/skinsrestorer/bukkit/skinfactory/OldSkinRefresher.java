@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public class OldSkinRefresher implements Consumer<Player> {
-
     private static Class<?> PlayOutRespawn;
     private static Class<?> PlayOutPlayerInfo;
     private static Class<?> PlayOutPosition;
@@ -204,14 +203,14 @@ public class OldSkinRefresher implements Consumer<Player> {
 
                                 Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
-                                Object DimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
+                                Object dimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
                                 Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
 
                                 respawn = ReflectionUtil.invokeConstructor(PlayOutRespawn,
                                         new Class<?>[]{
-                                                DimensionManager.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
+                                                dimensionManager.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
                                         },
-                                        DimensionManager,
+                                        dimensionManager,
                                         dimensionKey,
                                         seed,
                                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
@@ -252,22 +251,22 @@ public class OldSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (USE_VIABACKWARDS) {
                 UserConnection connection = Via.getManager().getConnection(player.getUniqueId());
-                if (connection != null) {
-                    if (connection.getProtocolInfo() != null && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
-                        // ViaBackwards double-sends a respawn packet when its dimension ID matches the current world's.
-                        // In order to get around this, we send a packet directly into Via's connection, bypassing the 1.16 conversion step
-                        // and therefore bypassing their workaround.
-                        // TODO: This assumes 1.16 methods; probably stop hardcoding this when 1.17 comes around
-                        Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+                if (connection != null
+                        && connection.getProtocolInfo() != null
+                        && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
+                    // ViaBackwards double-sends a respawn packet when its dimension ID matches the current world's.
+                    // In order to get around this, we send a packet directly into Via's connection, bypassing the 1.16 conversion step
+                    // and therefore bypassing their workaround.
+                    // TODO: This assumes 1.16 methods; probably stop hardcoding this when 1.17 comes around
+                    Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
-                        PacketWrapper packet = new PacketWrapper(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
-                        packet.write(Type.INT, dimension);
-                        packet.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
-                        packet.write(Type.UNSIGNED_BYTE, (short) gamemodeId);
-                        packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
-                        packet.send(Protocol1_15_2To1_16.class, true, true);
-                        sendRespawnPacketDirectly = false;
-                    }
+                    PacketWrapper packet = new PacketWrapper(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
+                    packet.write(Type.INT, dimension);
+                    packet.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
+                    packet.write(Type.UNSIGNED_BYTE, (short) gamemodeId);
+                    packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
+                    packet.send(Protocol1_15_2To1_16.class, true, true);
+                    sendRespawnPacketDirectly = false;
                 }
             }
 

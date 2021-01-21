@@ -4,8 +4,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
+import net.skinsrestorer.bukkit.utils.XMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,10 +28,10 @@ public class SkinsGUI extends ItemStack implements Listener {
     @Getter
     private SRLogger srLogger;
     private SkinsRestorer plugin;
-    private CommandSender console;
 
     public SkinsGUI(SkinsRestorer plugin) {
         this.plugin = plugin;
+        srLogger = plugin.getSrLogger();
     }
 
     public enum GlassType {
@@ -41,7 +41,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     public static class GuiGlass {
         public GuiGlass(GlassType glassType) {
             this.glassType = glassType;
-            this.create();
+            create();
         }
 
         private void create() {
@@ -132,7 +132,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         }
 
         skinsList.forEach((name, property) -> {
-            if (!name.equals(name.toLowerCase())) {
+            if (name.chars().noneMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
                 this.srLogger.logAlways("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
                 return;
             }
@@ -271,11 +271,10 @@ public class SkinsGUI extends ItemStack implements Listener {
                     // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
                     if (Config.PER_SKIN_PERMISSIONS) {
                         String skinname = currentItem.getItemMeta().getDisplayName();
-                        if (!player.hasPermission("skinsrestorer.skin." + skinname)) {
-                            if (!player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {
-                                player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                                return;
-                            }
+                        if (!player.hasPermission("skinsrestorer.skin." + skinname)
+                                && !player.getName().equals(skinname) || (!player.hasPermission("skinsrestorer.ownskin") && !skinname.equalsIgnoreCase(player.getName()))) {
+                            player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+                            return;
                         }
                     }
 

@@ -1,5 +1,6 @@
-package net.skinsrestorer.bukkit;
+package net.skinsrestorer.bukkit.utils;
 
+import net.skinsrestorer.bukkit.SkinsRestorer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -20,14 +21,13 @@ public class UpdateDownloader {
     private final SkinsRestorer plugin;
 
     public DownloadFailReason failReason;
-    private ResourceInfo latestResourceInfo;
 
     public UpdateDownloader(SkinsRestorer plugin) {
         this.plugin = plugin;
     }
 
     public boolean downloadUpdate() {
-        this.latestResourceInfo = plugin.getUpdateChecker().getLatestResourceInfo();
+        ResourceInfo latestResourceInfo = plugin.getUpdateChecker().getLatestResourceInfo();
 
         if (latestResourceInfo == null) {
             failReason = DownloadFailReason.NOT_CHECKED;

@@ -16,7 +16,6 @@ import java.util.logging.Level;
 public class UniversalSkinFactory implements SkinFactory {
     private final Plugin plugin;
     private final Consumer<Player> refresh = detectRefresh();
-    public static final String NMS_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(23);
     private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
     private boolean enableDismountEntities;
@@ -29,7 +28,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
         if (checkOptFileChecked)
 
-            this.checkoptfile();
+            this.checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 
@@ -88,9 +87,9 @@ public class UniversalSkinFactory implements SkinFactory {
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
         // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean ViaVersionExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean ProtocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-        if (ViaVersionExists || ProtocolSupportExists) {
+        boolean viaVersion = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ViaVersion") != null;
+        boolean protocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+        if (viaVersion || protocolSupportExists) {
             SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
         }
@@ -100,15 +99,10 @@ public class UniversalSkinFactory implements SkinFactory {
         } catch (ExceptionInInitializerError ignored) {
         }
 
-        // if (NMS_VERSION.equals("v1_16_R1"))
-        //     return new LegacySkinRefresher_v1_16_R1();
-
-        // return new LegacySkinRefresher();
         return new OldSkinRefresher();
     }
 
-    private void checkoptfile() {
-
+    private void checkOptFile() {
         File fileDisableDismountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesdismountplayer");
         File fileEnableDismountEntities = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesdismountentities");
         File fileEnableRemountEntiteis = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesremountentities");
@@ -125,5 +119,4 @@ public class UniversalSkinFactory implements SkinFactory {
         checkOptFileChecked = true;
 
     }
-
 }

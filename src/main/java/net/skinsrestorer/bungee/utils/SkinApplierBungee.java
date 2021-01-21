@@ -6,21 +6,21 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SRLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 public class SkinApplierBungee {
-    private SkinsRestorer plugin;
-    private static Class<?> LoginResult;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
+    private static Class<?> loginResult;
 
     public SkinApplierBungee(SkinsRestorer plugin) {
         this.plugin = plugin;
+        this.log = plugin.getSrLogger();
     }
 
     public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
@@ -47,7 +47,7 @@ public class SkinApplierBungee {
                 profile = new LoginResult(null, null, new Property[]{textures});
             } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
-                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(LoginResult,
+                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(loginResult,
                         new Class<?>[]{String.class, Property[].class},
                         null, new Property[]{textures});
             }
@@ -76,9 +76,9 @@ public class SkinApplierBungee {
         applySkin(p, p.getName(), null);
     }
 
-    public void init() {
+    public static void init() {
         try {
-            LoginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
+            loginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,8 +91,7 @@ public class SkinApplierBungee {
         if (p.getServer() == null)
             return;
 
-        if (Config.DEBUG)
-            System.out.println("[SkinsRestorer] Sending skin update request for " + p.getName());
+        log.log("[SkinsRestorer] Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);

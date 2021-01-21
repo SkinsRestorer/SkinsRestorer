@@ -1,5 +1,6 @@
-package net.skinsrestorer.bukkit;
+package net.skinsrestorer.bukkit.utils;
 
+import net.skinsrestorer.bukkit.SkinsRestorer;
 import org.bukkit.Bukkit;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;

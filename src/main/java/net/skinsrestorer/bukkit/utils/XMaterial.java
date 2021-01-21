@@ -1,4 +1,4 @@
-package net.skinsrestorer.bukkit;
+package net.skinsrestorer.bukkit.utils;
 
 /*
  * The MIT License (MIT)

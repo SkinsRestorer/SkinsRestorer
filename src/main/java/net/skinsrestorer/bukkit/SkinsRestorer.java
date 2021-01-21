@@ -4,6 +4,7 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
+import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

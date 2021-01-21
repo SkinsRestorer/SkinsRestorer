@@ -34,7 +34,7 @@ public class SkinsRestorer extends Plugin {
     @Getter
     private boolean outdated;
     @Getter
-    private String configPath = getDataFolder().getPath();
+    private final String configPath = getDataFolder().getPath();
 
     private CommandSender console;
     private UpdateChecker updateChecker;
@@ -60,7 +60,6 @@ public class SkinsRestorer extends Plugin {
     public String getVersion() {
         return getDescription().getVersion();
     }
-
 
     @Override
     public void onEnable() {
@@ -108,13 +107,13 @@ public class SkinsRestorer extends Plugin {
         getProxy().getPluginManager().registerListener(this, new LoginListener(this, this.srLogger));
 
         // Init commands
-        this.initCommands();
+        initCommands();
 
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
         this.skinApplierBungee = new SkinApplierBungee(this);
-        this.skinApplierBungee.init();
+        SkinApplierBungee.init();
 
         // Init message channel
         this.getProxy().registerChannel("sr:messagechannel");

@@ -11,7 +11,7 @@ import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
  * Created by McLive on 10.11.2019.
  */
 public class SkinsRestorerBungeeAPI extends SkinsRestorerAPI implements ISkinsRestorerAPI<ProxiedPlayer> {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public SkinsRestorerBungeeAPI(SkinsRestorer plugin, MojangAPI mojangAPI, SkinStorage skinStorage) {
         super(mojangAPI, skinStorage);

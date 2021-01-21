@@ -11,18 +11,16 @@ import net.skinsrestorer.shared.utils.Property;
 
 import java.io.*;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by McLive on 21.12.2019.
  */
 public class PluginMessageListener implements Listener {
-    private SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
     public PluginMessageListener(SkinsRestorer plugin) {
         this.plugin = plugin;
     }
-
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
@@ -119,22 +117,5 @@ public class PluginMessageListener implements Listener {
             e.printStackTrace();
         }
         return byteOut.toByteArray();
-    }
-
-    private static Map<String, Property> convertToObject(byte[] byteArr) {
-        Map<String, Property> map = new TreeMap<>();
-        Property obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
-        try {
-            bis = new ByteArrayInputStream(byteArr);
-            ois = new ObjectInputStream(bis);
-            while (bis.available() > 0) {
-                map = (Map<String, Property>) ois.readObject();
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return map;
     }
 }
