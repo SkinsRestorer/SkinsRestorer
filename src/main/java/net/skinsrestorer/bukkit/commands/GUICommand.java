@@ -6,13 +6,13 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import net.skinsrestorer.bukkit.SkinsGUI;
+import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.storage.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import net.skinsrestorer.bukkit.SkinsGUI;
-import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Locale;
 
 @CommandAlias("skins")
 @CommandPermission("%skins")

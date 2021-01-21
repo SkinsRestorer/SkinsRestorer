@@ -1,12 +1,12 @@
 package net.skinsrestorer.bukkit.skinfactory;
 
+import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import us.myles.ViaVersion.api.PacketWrapper;
 import us.myles.ViaVersion.api.Via;
 import us.myles.ViaVersion.api.data.UserConnection;

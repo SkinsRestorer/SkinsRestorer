@@ -1,15 +1,15 @@
 package net.skinsrestorer.bukkit.listener;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
  * Created by McLive on 21.01.2019.

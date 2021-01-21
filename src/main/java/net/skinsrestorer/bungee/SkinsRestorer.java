@@ -8,8 +8,6 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
-import org.bstats.bungeecord.Metrics;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
@@ -22,6 +20,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import org.bstats.bungeecord.Metrics;
+import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.util.concurrent.TimeUnit;
 

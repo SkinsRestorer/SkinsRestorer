@@ -6,14 +6,14 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.profile.property.ProfileProperty;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.ServiceChecker;
 import net.skinsrestorer.sponge.SkinsRestorer;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.profile.property.ProfileProperty;
 
 import java.util.Arrays;
 import java.util.Base64;

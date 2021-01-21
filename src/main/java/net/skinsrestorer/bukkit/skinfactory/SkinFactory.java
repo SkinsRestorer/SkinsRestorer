@@ -1,9 +1,9 @@
 package net.skinsrestorer.bukkit.skinfactory;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public interface SkinFactory {
     /**

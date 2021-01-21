@@ -1,10 +1,10 @@
 package net.skinsrestorer.bukkit.utils;
 
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import org.bukkit.Bukkit;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
 import net.skinsrestorer.shared.update.GitHubUpdateDownloader;
+import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.util.logging.Level;

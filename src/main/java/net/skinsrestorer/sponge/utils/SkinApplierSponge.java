@@ -1,6 +1,9 @@
 package net.skinsrestorer.sponge.utils;
 
 import com.flowpowered.math.vector.Vector3d;
+import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.utils.Property;
+import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -10,9 +13,6 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
-import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.utils.Property;
-import net.skinsrestorer.sponge.SkinsRestorer;
 
 import java.util.Collection;
 

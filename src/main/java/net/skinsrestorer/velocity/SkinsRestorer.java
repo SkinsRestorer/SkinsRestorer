@@ -15,7 +15,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -27,6 +26,7 @@ import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.utils.SkinApplierVelocity;
+import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
 import java.nio.file.Path;

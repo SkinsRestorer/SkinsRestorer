@@ -6,15 +6,15 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.sponge.SkinsRestorer;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

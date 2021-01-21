@@ -1,11 +1,11 @@
 package net.skinsrestorer.bukkit;
 
 import com.google.common.annotations.Beta;
-import org.bukkit.entity.Player;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
+import org.bukkit.entity.Player;
 
 /**
  * Created by McLive on 27.08.2019.

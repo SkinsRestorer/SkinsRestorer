@@ -3,8 +3,8 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import net.skinsrestorer.shared.utils.SRLogger;
+import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;

@@ -1,14 +1,14 @@
 package net.skinsrestorer.sponge.listeners;
 
-import org.spongepowered.api.event.EventListener;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
-import org.spongepowered.api.profile.GameProfile;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorer;
+import org.spongepowered.api.event.EventListener;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
+import org.spongepowered.api.profile.GameProfile;
 
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;

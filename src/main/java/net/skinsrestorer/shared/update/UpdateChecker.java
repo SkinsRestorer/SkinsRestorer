@@ -3,12 +3,12 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.Bukkit;
 import org.inventivetalent.update.spiget.ResourceInfo;
 import org.inventivetalent.update.spiget.ResourceVersion;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
-import net.skinsrestorer.shared.utils.SRLogger;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;

@@ -1,12 +1,12 @@
 package net.skinsrestorer.sponge;
 
 import com.google.common.annotations.Beta;
-import org.spongepowered.api.entity.living.player.Player;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
+import org.spongepowered.api.entity.living.player.Player;
 
 /**
  * Created by McLive on 10.11.2019.

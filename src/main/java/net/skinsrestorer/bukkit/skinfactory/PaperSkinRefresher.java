@@ -2,8 +2,8 @@ package net.skinsrestorer.bukkit.skinfactory;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.bukkit.entity.Player;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import org.bukkit.entity.Player;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
