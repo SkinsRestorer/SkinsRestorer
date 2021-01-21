@@ -220,6 +220,13 @@
             <groupId>org.inventivetalent.spiget-update</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bukkit</groupId>
+                    <artifactId>bukkit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>compile</scope>
         </dependency>
         <!-- ACF for paper/spigot -->
         <dependency>
