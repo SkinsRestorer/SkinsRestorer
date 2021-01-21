@@ -212,7 +212,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-sponge</artifactId>
-            <version>1.7</version>
+            <version>1.8</version>
             <scope>compile</scope>
         </dependency>
         <!-- Spiget Updater for Bukkit -->

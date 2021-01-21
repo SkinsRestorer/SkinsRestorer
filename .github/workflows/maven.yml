@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -18,10 +17,9 @@ jobs:
     
     - name: Show folders
       run: find .
-    
+
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: SkinsRestorer
         path: ./target/SkinsRestorer.jar
-

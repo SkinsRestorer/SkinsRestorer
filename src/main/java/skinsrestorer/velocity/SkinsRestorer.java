@@ -140,6 +140,7 @@ public class SkinsRestorer {
         this.logger.logAlways("Disabled SkinsRestorer v" + getVersion());
     }
 
+    @SuppressWarnings({"unused"})
     private void initCommands() {
         VelocityCommandManager manager = new VelocityCommandManager(this.getProxy(), this);
         // optional: enable unstable api to use help
@@ -199,28 +200,24 @@ public class SkinsRestorer {
     }
 
     private void checkUpdate(boolean showUpToDate) {
-        getService().execute(() -> {
-            updateChecker.checkForUpdate(new UpdateCallback() {
-                @Override
-                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    outdated = true;
+        getService().execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                outdated = true;
 
-                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
-                        console.sendMessage(deserialize(msg));
-                    });
-                }
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
+                        console.sendMessage(deserialize(msg)));
+            }
 
-                @Override
-                public void upToDate() {
-                    if (!showUpToDate)
-                        return;
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
 
-                    updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
-                        console.sendMessage(deserialize(msg));
-                    });
-                }
-            });
-        });
+                updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg ->
+                        console.sendMessage(deserialize(msg)));
+            }
+        }));
     }
 
     public TextComponent deserialize(String string) {

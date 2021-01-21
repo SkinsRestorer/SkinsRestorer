@@ -140,6 +140,7 @@ public class SkinsRestorer extends Plugin {
         }
     }
 
+    @SuppressWarnings({"deprecation"})
     private void initCommands() {
         BungeeCommandManager manager = new BungeeCommandManager(this);
         // optional: enable unstable api to use help
@@ -203,27 +204,22 @@ public class SkinsRestorer extends Plugin {
     }
 
     private void checkUpdate(boolean showUpToDate) {
-        ProxyServer.getInstance().getScheduler().runAsync(this, () -> {
-            updateChecker.checkForUpdate(new UpdateCallback() {
-                @Override
-                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    outdated = true;
+        ProxyServer.getInstance().getScheduler().runAsync(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                outdated = true;
 
-                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg -> {
-                        console.sendMessage(TextComponent.fromLegacyText(msg));
-                    });
-                }
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
+                    console.sendMessage(TextComponent.fromLegacyText(msg)));
+            }
 
-                @Override
-                public void upToDate() {
-                    if (!showUpToDate)
-                        return;
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
 
-                    updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> {
-                        console.sendMessage(TextComponent.fromLegacyText(msg));
-                    });
-                }
-            });
-        });
+                updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> console.sendMessage(TextComponent.fromLegacyText(msg)));
+            }
+        }));
     }
 }

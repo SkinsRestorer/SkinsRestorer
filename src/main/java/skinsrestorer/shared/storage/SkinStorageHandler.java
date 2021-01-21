@@ -13,10 +13,6 @@ public class SkinStorageHandler implements ISkinStorage {
     private SkinStorageFlatFile skinStorageFlatFile;
     private SkinStorageMySQL skinStorageMySQL;
 
-    public SkinStorageHandler() {
-
-    }
-
     @Override
     public String getPlayerSkin(String player) {
         if (Config.USE_MYSQL)

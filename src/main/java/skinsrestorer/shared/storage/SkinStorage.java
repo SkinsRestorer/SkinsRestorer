@@ -252,19 +252,25 @@ public class SkinStorage {
                 if (!skinFile.exists())
                     return null;
 
-                BufferedReader buf = new BufferedReader(new FileReader(skinFile));
+                String value;
+                String signature;
+                String timestamp;
+                try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
 
-                String line, value = "", signature = "", timestamp = "";
-                for (int i = 0; i < 3; i++)
-                    if ((line = buf.readLine()) != null)
-                        if (value.isEmpty()) {
-                            value = line;
-                        } else if (signature.isEmpty()) {
-                            signature = line;
-                        } else {
-                            timestamp = line;
-                        }
-                buf.close();
+                    String line;
+                    value = "";
+                    signature = "";
+                    timestamp = "";
+                    for (int i = 0; i < 3; i++)
+                        if ((line = buf.readLine()) != null)
+                            if (value.isEmpty()) {
+                                value = line;
+                            } else if (signature.isEmpty()) {
+                                signature = line;
+                            } else {
+                                timestamp = line;
+                            }
+                }
 
                 if (updateOutdated && isOld(Long.parseLong(timestamp))) {
                     Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name));
@@ -280,8 +286,6 @@ public class SkinStorage {
                 removeSkinData(name);
                 System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
             }
-
-
         }
         return null;
     }
@@ -355,10 +359,9 @@ public class SkinStorage {
                 if (!playerFile.exists())
                     playerFile.createNewFile();
 
-                FileWriter writer = new FileWriter(playerFile);
-
-                writer.write(skin);
-                writer.close();
+                try (FileWriter writer = new FileWriter(playerFile)) {
+                    writer.write(skin);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -402,10 +405,9 @@ public class SkinStorage {
                 if (!skinFile.exists())
                     skinFile.createNewFile();
 
-                FileWriter writer = new FileWriter(skinFile);
-
-                writer.write(value + "\n" + signature + "\n" + timestamp);
-                writer.close();
+                try (FileWriter writer = new FileWriter(skinFile)) {
+                    writer.write(value + "\n" + signature + "\n" + timestamp);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -538,19 +540,23 @@ public class SkinStorage {
                         if (!skinFile.exists())
                             return null;
 
-                        BufferedReader buf = new BufferedReader(new FileReader(skinFile));
+                        String value;
+                        String signature;
+                        try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
 
-                        String line, value = "", signature = "", timestamp = "";
-                        for (int i2 = 0; i2 < 3; i2++)
-                            if ((line = buf.readLine()) != null)
-                                if (value.isEmpty()) {
-                                    value = line;
-                                } else if (signature.isEmpty()) {
-                                    signature = line;
-                                } else {
-                                    timestamp = line;
-                                }
-                        buf.close();
+                            String line, timestamp = "";
+                            value = "";
+                            signature = "";
+                            for (int i2 = 0; i2 < 3; i2++)
+                                if ((line = buf.readLine()) != null)
+                                    if (value.isEmpty()) {
+                                        value = line;
+                                    } else if (signature.isEmpty()) {
+                                        signature = line;
+                                    } else {
+                                        timestamp = line;
+                                    }
+                        }
 
                         Property prop = new Property();
                         prop.setName("textures");

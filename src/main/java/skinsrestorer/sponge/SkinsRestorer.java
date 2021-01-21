@@ -134,6 +134,7 @@ public class SkinsRestorer {
         metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
     }
 
+    @SuppressWarnings({"unused"})
     private void initCommands() {
         Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
             SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);
@@ -187,26 +188,21 @@ public class SkinsRestorer {
     }
 
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
-        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> {
-            updateChecker.checkForUpdate(new UpdateCallback() {
-                @Override
-                public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                    updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(msg -> {
-                        console.sendMessage(parseMessage(msg));
-                    });
-                }
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(msg ->
+                        console.sendMessage(parseMessage(msg)));
+            }
 
-                @Override
-                public void upToDate() {
-                    if (!showUpToDate)
-                        return;
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
 
-                    updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> {
-                        console.sendMessage(parseMessage(msg));
-                    });
-                }
-            });
-        });
+                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> console.sendMessage(parseMessage(msg)));
+            }
+        }));
     }
 
     public Text parseMessage(String msg) {
