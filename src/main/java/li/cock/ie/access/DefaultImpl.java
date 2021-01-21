@@ -16,9 +16,11 @@
 
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
+import li.cock.ie.reflect.DuckReflect;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class DefaultImpl implements IAccess {
     protected DuckReflect _reflect;

@@ -1,6 +1,9 @@
 package skinsrestorer.shared.utils;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BungeeCommandManager;
+import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.SpongeCommandManager;
+import co.aikar.commands.VelocityCommandManager;
 import co.aikar.locales.MessageKey;
 
 import java.io.*;

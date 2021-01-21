@@ -1,12 +1,5 @@
 package skinsrestorer.shared.utils;
 
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -19,6 +12,12 @@ import skinsrestorer.shared.storage.SkinStorage;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class MineSkinAPI {
     @Getter

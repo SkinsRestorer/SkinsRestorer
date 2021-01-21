@@ -30,7 +30,7 @@ public class SkinsRestorerSpongeAPI extends SkinsRestorerAPI implements ISkinsRe
     @Override
     public void applySkin(Player player) {
         try {
-            plugin.getSkinApplier().applySkin(player, this.getSkinName(player.getName()));
+            plugin.getSkinApplierSponge().applySkin(player, this.getSkinName(player.getName()));
         } catch (SkinRequestException e) {
             e.printStackTrace();
         }

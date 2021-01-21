@@ -16,10 +16,10 @@ import java.util.List;
 /**
  * Created by McLive on 16.02.2019.
  */
-public class SkinApplier {
+public class SkinApplierVelocity {
     private final SkinsRestorer plugin;
 
-    public SkinApplier(SkinsRestorer plugin) {
+    public SkinApplierVelocity(SkinsRestorer plugin) {
         this.plugin = plugin;
     }
 

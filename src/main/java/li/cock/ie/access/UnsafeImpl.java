@@ -16,7 +16,7 @@
 
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
+import li.cock.ie.reflect.DuckReflect;
 
 import java.lang.reflect.*;
 

@@ -10,15 +10,15 @@ import java.util.logging.Logger;
  * Created by McLive on 21.07.2019.
  */
 public class SRLogger {
-    private File folder;
+    private final File folder;
     private java.util.logging.Logger logger;
 
     public SRLogger(File pluginFolder) {
         folder = pluginFolder;
-        this.load();
+        load();
     }
 
-    public boolean load() {
+    private void load() {
         try {
             //Manual check config value
             File pluginConfigFile = new File(folder.getAbsolutePath() + File.separator + "config.yml");
@@ -35,15 +35,9 @@ public class SRLogger {
 
         if (Config.DEBUG) {
             logger = Logger.getLogger(SRLogger.class.getName());
-            return true;
+        } else {
+            logger = Logger.getLogger("");
         }
-        logger = Logger.getLogger("");
-        return true;
-    }
-
-
-    public Object getLogger() {
-        return this.logger;
     }
 
     public void log(String message) {
@@ -69,10 +63,10 @@ public class SRLogger {
     }
 
     public void logAlways(Level level, String message) {
-        this.logger.log(level, "§e[§2SkinsRestorer§e] §r" + message);
+        logger.log(level, "§e[§2SkinsRestorer§e] §r" + message);
     }
 
     public void logAlways(Level level, String message, Throwable thrown) {
-        this.logger.log(level, "§e[§2SkinsRestorer§e] §r" + message, thrown);
+        logger.log(level, "§e[§2SkinsRestorer§e] §r" + message, thrown);
     }
 }

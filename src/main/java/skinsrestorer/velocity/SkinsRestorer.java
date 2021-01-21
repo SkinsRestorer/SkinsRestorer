@@ -20,13 +20,13 @@ import skinsrestorer.data.PluginData;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.shared.update.UpdateCheckerGitHub;
 import skinsrestorer.shared.utils.*;
-import skinsrestorer.shared.update.UpdateChecker;
 import skinsrestorer.velocity.command.SkinCommand;
 import skinsrestorer.velocity.command.SrCommand;
 import skinsrestorer.velocity.listener.GameProfileRequest;
-import skinsrestorer.velocity.utils.SkinApplier;
+import skinsrestorer.velocity.utils.SkinApplierVelocity;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -48,7 +48,7 @@ public class SkinsRestorer {
     @Getter
     private final Path dataFolder;
     @Getter
-    private SkinApplier skinApplier;
+    private SkinApplierVelocity skinApplierVelocity;
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     @Getter
@@ -77,7 +77,7 @@ public class SkinsRestorer {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
-        console = this.proxy.getConsoleCommandSource();
+        console = proxy.getConsoleCommandSource();
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {
@@ -112,7 +112,7 @@ public class SkinsRestorer {
         this.initCommands();
 
         // Init SkinApplier
-        this.skinApplier = new SkinApplier(this);
+        this.skinApplierVelocity = new SkinApplierVelocity(this);
 
         // Init API
         this.skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(this, this.mojangAPI, this.skinStorage);
@@ -140,7 +140,7 @@ public class SkinsRestorer {
         this.logger.logAlways("Disabled SkinsRestorer v" + getVersion());
     }
 
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings({"deprecation"})
     private void initCommands() {
         VelocityCommandManager manager = new VelocityCommandManager(this.getProxy(), this);
         // optional: enable unstable api to use help

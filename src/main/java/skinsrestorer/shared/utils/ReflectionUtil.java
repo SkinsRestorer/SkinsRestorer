@@ -1,13 +1,12 @@
 package skinsrestorer.shared.utils;
 
+import li.cock.ie.reflect.DuckBypass;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Objects;
-
-import li.cock.ie.reflect.*;
 
 public class ReflectionUtil {
 

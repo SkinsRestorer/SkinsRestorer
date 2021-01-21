@@ -152,18 +152,23 @@ public class SkinsRestorer extends JavaPlugin {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
-                        String subchannel = in.readUTF();
+                        String subChannel = in.readUTF();
 
-                        if (subchannel.equalsIgnoreCase("OPENGUI")) {
+                        if (subChannel.equalsIgnoreCase("OPENGUI")) {
                             Player p = Bukkit.getPlayer(in.readUTF());
+                            if (p == null)
+                                return;
 
                             SkinsGUI.getMenus().put(p.getName(), 0);
 
                             this.requestSkinsFromBungeeCord(p, 0);
                         }
 
-                        if (subchannel.equalsIgnoreCase("returnSkins")) {
+                        if (subChannel.equalsIgnoreCase("returnSkins")) {
                             Player p = Bukkit.getPlayer(in.readUTF());
+                            if (p == null)
+                                return;
+
                             int page = in.readInt();
 
                             short len = in.readShort();

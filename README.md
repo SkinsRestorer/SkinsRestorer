@@ -7,8 +7,12 @@
 [![Commits since last release](https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/commits/master)
 [![License](https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/186794372468178944.svg?color=blue&label=discord&logo=discord)](https://discord.gg/sAhVsyU)
+[![Spigot downloads](https://img.shields.io/spiget/downloads/2124?label=Spigot%20downloads)](https://www.spigotmc.org/resources/2124/)
+[![Spigot stars](https://img.shields.io/spiget/stars/2124?label=Spigot%20stars)](https://www.spigotmc.org/resources/2124/)
+[![Spigot rating](https://img.shields.io/spiget/rating/2124?label=Spigot%20rating)](https://www.spigotmc.org/resources/2124/)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[[DOWNLOAD LATEST](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar) plugin.jar]  &nbsp;&nbsp;[\[DOWNLOAD DEV-BUILD](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar) plugin.jar]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![download badge](https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
+&nbsp;&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar)
 
 This is the development repository for SkinsRestorer, used for making and testing new features.
 

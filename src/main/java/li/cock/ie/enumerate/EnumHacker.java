@@ -16,9 +16,9 @@
 
 package li.cock.ie.enumerate;
 
-import li.cock.ie.reflect.*;
+import li.cock.ie.reflect.DuckBypass;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
 
 public class EnumHacker {
     private DuckBypass _bypass;

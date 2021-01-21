@@ -1,6 +1,9 @@
 package skinsrestorer.bungee.commands;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import net.md_5.bungee.api.CommandSender;
@@ -225,9 +228,9 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
-                    plugin.getSkinApplier().applySkin(p);
+                    plugin.getSkinApplierBungee().applySkin(p);
                 } else {
-                    plugin.getSkinApplier().applySkin(p, skin, null);
+                    plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
@@ -238,7 +241,7 @@ public class SkinCommand extends BaseCommand {
                     Object props = plugin.getSkinStorage().createProperty("textures", "", "");
                     try {
                         plugin.getSkinStorage().setSkinData("00", props);
-                        plugin.getSkinApplier().applySkin(p, "00", null);
+                        plugin.getSkinApplierBungee().applySkin(p, "00", null);
                     } catch (Exception ignored) {
                     }
                     return true;
@@ -264,7 +267,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplier().applySkin(p);
+                plugin.getSkinApplierBungee().applySkin(p);
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {

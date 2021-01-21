@@ -29,7 +29,7 @@ public class SkinsRestorerBungeeAPI extends SkinsRestorerAPI implements ISkinsRe
     @Override
     public void applySkin(ProxiedPlayer player) {
         try {
-            plugin.getSkinApplier().applySkin(player);
+            plugin.getSkinApplierBungee().applySkin(player);
         } catch (Exception e) {
         }
     }

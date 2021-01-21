@@ -16,7 +16,8 @@
 
 package li.cock.ie.reflect;
 
-import li.cock.ie.access.*;
+import li.cock.ie.access.IAccess;
+import li.cock.ie.access.MultiImpl;
 
 import java.lang.reflect.*;
 

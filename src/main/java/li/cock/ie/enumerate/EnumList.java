@@ -16,7 +16,8 @@
 
 package li.cock.ie.enumerate;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class EnumList<E extends Enum<E>> implements List<E> {

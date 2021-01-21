@@ -19,13 +19,13 @@ import java.util.logging.Level;
 
 
 public class MojangAPI {
-    private static final String uuidurl = "https://api.minetools.eu/uuid/%name%";
-    private static final String uuidurl_mojang = "https://api.mojang.com/users/profiles/minecraft/%name%";
-    private static final String uuidurl_backup = "https://api.ashcon.app/mojang/v2/user/%name%";
+    private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";
+    private static final String UUID_URL_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";
+    private static final String UUID_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%name%";
 
-    private static final String skinurl = "https://api.minetools.eu/profile/%uuid%";
-    private static final String skinurl_mojang = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String skinurl_backup = "https://api.ashcon.app/mojang/v2/user/%uuid%";
+    private static final String SKIN_URL = "https://api.minetools.eu/profile/%uuid%";
+    private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
+    private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
 
     @Getter
     @Setter
@@ -48,7 +48,7 @@ public class MojangAPI {
     public Object getSkinProperty(String uuid, boolean tryNext) {
         String output;
         try {
-            output = readURL(skinurl.replace("%uuid%", uuid));
+            output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
@@ -57,10 +57,8 @@ public class MojangAPI {
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
-                if (raw.has("status")) {
-                    if (raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                        return getSkinPropertyMojang(uuid);
-                    }
+                if (raw.has("status") && raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    return getSkinPropertyMojang(uuid);
                 }
 
                 if (property.valuesFromJson(raw)) {
@@ -84,22 +82,21 @@ public class MojangAPI {
 
         String output;
         try {
-            output = readURL(skinurl_mojang.replace("%uuid%", uuid));
+            output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
             Property property = new Property();
 
-            if (obj.has("properties")) {
-                if (property.valuesFromJson(obj)) {
-                    return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
-                }
+            if (obj.has("properties") && property.valuesFromJson(obj)) {
+                return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
 
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyBackup(uuid);
         }
+
         return null;
     }
 
@@ -110,9 +107,8 @@ public class MojangAPI {
     public Object getSkinPropertyBackup(String uuid) {
         logger.log("Trying backup API to get skin property for " + uuid + ".");
 
-        String output;
         try {
-            output = readURL(skinurl_backup.replace("%uuid%", uuid), 10000);
+            String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
             JsonObject textures = obj.get("textures").getAsJsonObject();
@@ -127,6 +123,7 @@ public class MojangAPI {
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
+
         return null;
     }
 
@@ -138,15 +135,13 @@ public class MojangAPI {
     public String getUUID(String name, boolean tryNext) throws SkinRequestException {
         String output;
         try {
-            output = readURL(uuidurl.replace("%name%", name));
+            output = readURL(UUID_URL.replace("%name%", name));
 
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
 
-            if (obj.has("status")) {
-                if (obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    return getUUIDMojang(name);
-                }
+            if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                return getUUIDMojang(name);
             }
 
             if (obj.get("id") == null)
@@ -169,7 +164,7 @@ public class MojangAPI {
 
         String output;
         try {
-            output = readURL(uuidurl_mojang.replace("%name%", name));
+            output = readURL(UUID_URL_MOJANG.replace("%name%", name));
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
@@ -201,7 +196,7 @@ public class MojangAPI {
 
         String output;
         try {
-            output = readURL(uuidurl_backup.replace("%name%", name), 10000);
+            output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
 
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
@@ -258,11 +253,8 @@ public class MojangAPI {
                 if (properties.size() > 0) {
                     JsonObject propertiesObject = properties.get(0).getAsJsonObject();
 
-                    String signature = propertiesObject.get("signature").getAsString();
-                    String value = propertiesObject.get("value").getAsString();
-
-                    this.setSignature(signature);
-                    this.setValue(value);
+                    signature = propertiesObject.get("signature").getAsString();
+                    value = propertiesObject.get("value").getAsString();
 
                     return true;
                 }
@@ -293,27 +285,6 @@ public class MojangAPI {
 
         void setSignature(String signature) {
             this.signature = signature;
-        }
-    }
-
-    private class HTTPResponse {
-        private String output;
-        private int status;
-
-        public String getOutput() {
-            return output;
-        }
-
-        public void setOutput(String output) {
-            this.output = output;
-        }
-
-        public int getStatus() {
-            return status;
-        }
-
-        public void setStatus(int status) {
-            this.status = status;
         }
     }
 }

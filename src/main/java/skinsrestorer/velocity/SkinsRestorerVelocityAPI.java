@@ -28,6 +28,6 @@ public class SkinsRestorerVelocityAPI extends SkinsRestorerAPI implements ISkins
     @Beta
     @Override
     public void applySkin(Player player) {
-        plugin.getSkinApplier().applySkin(player, this.getSkinName(player.getUsername()));
+        plugin.getSkinApplierVelocity().applySkin(player, this.getSkinName(player.getUsername()));
     }
 }

@@ -5,8 +5,11 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import org.bstats.sponge.Metrics2;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.slf4j.Logger;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -24,9 +27,10 @@ import skinsrestorer.shared.utils.*;
 import skinsrestorer.sponge.commands.SkinCommand;
 import skinsrestorer.sponge.commands.SrCommand;
 import skinsrestorer.sponge.listeners.LoginListener;
-import skinsrestorer.sponge.utils.SkinApplier;
+import skinsrestorer.sponge.utils.SkinApplierSponge;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -37,7 +41,7 @@ public class SkinsRestorer {
     @Getter
     private String configPath;
     @Getter
-    private SkinApplier skinApplier;
+    private SkinApplierSponge skinApplierSponge;
     @Getter
     private SRLogger srLogger;
     @Getter
@@ -55,6 +59,19 @@ public class SkinsRestorer {
     private CommandSource console;
 
     private final Metrics2 metrics;
+
+    @Inject
+    private Logger log;
+
+    @Inject
+    protected Game game;
+
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path publicConfigDir;
+
+    @Inject
+    private PluginContainer container;
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
@@ -102,7 +119,7 @@ public class SkinsRestorer {
         this.initCommands();
 
         // Init SkinApplier
-        this.skinApplier = new SkinApplier(this);
+        this.skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
         this.skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(this, this.mojangAPI, this.skinStorage);
@@ -134,7 +151,7 @@ public class SkinsRestorer {
         metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
     }
 
-    @SuppressWarnings({"unused"})
+    @SuppressWarnings({"deprecation"})
     private void initCommands() {
         Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
             SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);

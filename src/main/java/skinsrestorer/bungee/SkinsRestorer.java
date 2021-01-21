@@ -11,10 +11,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.bungee.commands.GUICommand;
-import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.commands.SkinCommand;
+import skinsrestorer.bungee.commands.SrCommand;
 import skinsrestorer.bungee.listeners.LoginListener;
 import skinsrestorer.bungee.listeners.PluginMessageListener;
+import skinsrestorer.bungee.utils.SkinApplierBungee;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.storage.Locale;
 import skinsrestorer.shared.storage.SkinStorage;
@@ -39,7 +40,7 @@ public class SkinsRestorer extends Plugin {
     private UpdateChecker updateChecker;
 
     @Getter
-    private SkinApplier skinApplier;
+    private SkinApplierBungee skinApplierBungee;
 
     @Getter
     private SkinStorage skinStorage;
@@ -112,8 +113,8 @@ public class SkinsRestorer extends Plugin {
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
-        this.skinApplier = new SkinApplier(this);
-        this.skinApplier.init();
+        this.skinApplierBungee = new SkinApplierBungee(this);
+        this.skinApplierBungee.init();
 
         // Init message channel
         this.getProxy().registerChannel("sr:messagechannel");

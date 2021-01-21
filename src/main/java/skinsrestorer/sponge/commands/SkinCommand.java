@@ -222,7 +222,7 @@ public class SkinCommand extends BaseCommand {
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
-                plugin.getSkinApplier().applySkin(p, skin);
+                plugin.getSkinApplierSponge().applySkin(p, skin);
                 p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
@@ -247,7 +247,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplier().applySkin(p, skinentry);
+                plugin.getSkinApplierSponge().applySkin(p, skinentry);
                 p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {

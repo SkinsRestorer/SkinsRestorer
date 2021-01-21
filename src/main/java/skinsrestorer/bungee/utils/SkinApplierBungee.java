@@ -1,10 +1,11 @@
-package skinsrestorer.bungee;
+package skinsrestorer.bungee.utils;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
+import skinsrestorer.bungee.SkinsRestorer;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.ReflectionUtil;
 
@@ -14,11 +15,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-public class SkinApplier {
+public class SkinApplierBungee {
     private SkinsRestorer plugin;
     private static Class<?> LoginResult;
 
-    public SkinApplier(SkinsRestorer plugin) {
+    public SkinApplierBungee(SkinsRestorer plugin) {
         this.plugin = plugin;
     }
 

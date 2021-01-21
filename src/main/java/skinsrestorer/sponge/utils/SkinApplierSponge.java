@@ -1,5 +1,6 @@
 package skinsrestorer.sponge.utils;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -9,9 +10,6 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
-
-import com.flowpowered.math.vector.Vector3d;
-
 import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.utils.Property;
 import skinsrestorer.sponge.SkinsRestorer;
@@ -21,11 +19,11 @@ import java.util.Collection;
 /**
  * Created by McLive on 02.04.2018.
  */
-public class SkinApplier {
+public class SkinApplierSponge {
     private Player receiver;
     private final SkinsRestorer plugin;
 
-    public SkinApplier(SkinsRestorer plugin) {
+    public SkinApplierSponge(SkinsRestorer plugin) {
         this.plugin = plugin;
     }
 

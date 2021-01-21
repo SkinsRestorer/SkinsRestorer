@@ -1,6 +1,9 @@
 package skinsrestorer.velocity.command;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandHelp;
+import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
@@ -223,9 +226,9 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
                     if (save) {
                         plugin.getSkinStorage().setPlayerSkin(p.getUsername(), skin);
-                        plugin.getSkinApplier().applySkin(p, p.getUsername());
+                        plugin.getSkinApplierVelocity().applySkin(p, p.getUsername());
                     } else {
-                        plugin.getSkinApplier().applySkin(p, skin);
+                        plugin.getSkinApplierVelocity().applySkin(p, skin);
                     }
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
@@ -252,7 +255,7 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     plugin.getSkinStorage().setPlayerSkin(p.getUsername(), skinentry); // set player to "whitespaced" name then reload skin
-                    plugin.getSkinApplier().applySkin(p, skinentry);
+                    plugin.getSkinApplierVelocity().applySkin(p, skinentry);
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
                     source.sendMessage(plugin.deserialize(e.getReason()));
