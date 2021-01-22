@@ -2,6 +2,7 @@ package net.skinsrestorer.bukkit.skinfactory;
 
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SRLogger;
 import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,6 +40,9 @@ public class OldSkinRefresher implements Consumer<Player> {
 
     static {
         try {
+            SkinsRestorer plugin = SkinsRestorer.getInstance();
+            SRLogger log = plugin.getSrLogger();
+
             Packet = ReflectionUtil.getNMSClass("Packet");
             PlayOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot");
             PlayOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition");
@@ -64,17 +68,16 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             }
 
-            SkinsRestorer.getInstance().getServer().getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+            plugin.getServer().getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
-                if (SkinsRestorer.getInstance().getServer().getPluginManager().isPluginEnabled("ViaBackwards")) {
-                    if (ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
-                        USE_VIABACKWARDS = true;
-                        SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Activating ViaBackwards workaround.");
-                    }
+                if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
+                        && ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
+                    USE_VIABACKWARDS = true;
+                    plugin.getLogger().log(Level.INFO, "Activating ViaBackwards workaround.");
                 }
             });
 
-            System.out.println("[SkinsRestorer] Using SpigotSkinRefresher");
+            log.logAlways("[SkinsRestorer] Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }

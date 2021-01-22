@@ -20,6 +20,7 @@ public class PlayerJoin implements Listener {
 
     public PlayerJoin(final SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getSrLogger();
     }
 
     @EventHandler
