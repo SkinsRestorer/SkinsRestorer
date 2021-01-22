@@ -15,6 +15,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
+            <url>LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/SkinsRestorer/SkinsRestorerX/issues</url>
+    </issueManagement>
+
     <distributionManagement>
         <repository>
             <id>codemc-releases</id>
@@ -26,13 +39,9 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <licenses>
-        <license>
-            <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
-            <url>LICENSE</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/SkinsRestorer/SkinsRestorerX</connection>
+    </scm>
 
     <build>
         <finalName>${project.name}</finalName>
@@ -110,6 +119,7 @@
                         <myProprietaryExtension>java</myProprietaryExtension>
                     </extraExtensions>
                     <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                    <useJavaNoReformatCommentStartTag>false</useJavaNoReformatCommentStartTag>
                 </configuration>
                 <executions>
                     <execution>

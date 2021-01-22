@@ -1,4 +1,4 @@
-/*-
+/*
  * #%L
  * SkinsRestorer
  * %%
