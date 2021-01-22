@@ -12,8 +12,7 @@ import java.nio.channels.ReadableByteChannel;
  * Created by McLive on 13.04.2019.
  */
 public class GitHubUpdateDownloader {
-    public GitHubUpdateDownloader() {
-    }
+    private GitHubUpdateDownloader() {}
 
     public static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {
         return () -> {
@@ -48,6 +47,5 @@ public class GitHubUpdateDownloader {
         } catch (IOException e) {
             throw new RuntimeException("Could not save file", e);
         }
-
     }
 }

@@ -33,7 +33,7 @@ public class UpdateDownloader {
             failReason = DownloadFailReason.NOT_CHECKED;
             return false;// Update not yet checked
         }
-        if (!plugin.getUpdateChecker().isVersionNewer(plugin.getUpdateChecker().currentVersion, latestResourceInfo.latestVersion.name)) {
+        if (!plugin.getUpdateChecker().isVersionNewer(plugin.getUpdateChecker().getCurrentVersion(), latestResourceInfo.latestVersion.name)) {
             failReason = DownloadFailReason.NO_UPDATE;
             return false;// Version is no update
         }

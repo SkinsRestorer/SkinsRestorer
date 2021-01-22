@@ -1,4 +1,6 @@
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.storage;
+
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.*;
 import java.util.List;

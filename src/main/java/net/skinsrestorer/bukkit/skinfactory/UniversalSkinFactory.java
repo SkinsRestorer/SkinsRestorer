@@ -6,7 +6,6 @@ import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.function.Consumer;

@@ -57,8 +57,7 @@ public class ServiceChecker {
         this.response = new ServiceCheckResponse();
     }
 
-
-    public boolean checkServices() {
+    public void checkServices() {
         // ##### UUID requests #####
         try {
             String uuid = this.mojangAPI.getUUID("Notch", false);
@@ -115,7 +114,5 @@ public class ServiceChecker {
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
-
-        return true;
     }
 }

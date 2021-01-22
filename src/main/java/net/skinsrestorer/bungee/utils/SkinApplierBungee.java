@@ -1,6 +1,5 @@
 package net.skinsrestorer.bungee.utils;
 
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
@@ -32,11 +31,9 @@ public class SkinApplierBungee {
         }
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick);
 
-        if (handler.isOnlineMode()) {
-            if (p != null) {
-                sendUpdateRequest(p, textures);
-                return;
-            }
+        if (handler.isOnlineMode() && p != null) {
+            sendUpdateRequest(p, textures);
+            return;
         }
 
         LoginResult profile = handler.getLoginProfile();
@@ -67,11 +64,6 @@ public class SkinApplierBungee {
         }
     }
 
-    public void applySkin(final String pname) throws Exception {
-        ProxiedPlayer p = ProxyServer.getInstance().getPlayer(pname);
-        applySkin(p, pname, null);
-    }
-
     public void applySkin(final ProxiedPlayer p) throws Exception {
         applySkin(p, p.getName(), null);
     }
@@ -91,7 +83,7 @@ public class SkinApplierBungee {
         if (p.getServer() == null)
             return;
 
-        log.log("[SkinsRestorer] Sending skin update request for " + p.getName());
+        log.log("Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
@@ -109,5 +101,4 @@ public class SkinApplierBungee {
             e.printStackTrace();
         }
     }
-
 }

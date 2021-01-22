@@ -1,6 +1,7 @@
 package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.YamlConfig;
 
 import java.io.File;
 import java.util.logging.Level;

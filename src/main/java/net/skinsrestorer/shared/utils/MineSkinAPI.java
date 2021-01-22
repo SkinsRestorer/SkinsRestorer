@@ -71,7 +71,7 @@ public class MineSkinAPI {
                 errResp = "";
                 JsonObject obj;
 
-                output = queryURL("https://api.mineskin.org/generate/url/", query, 90000);
+                output = queryURL(query);
                 if (output.equals("")) { //when both api time out
                     throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
                 }
@@ -88,6 +88,7 @@ public class MineSkinAPI {
                     errResp = obj.get("error").getAsString();
                     if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
                         logger.log("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
+
                         if (obj.has("delay"))
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                         return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
@@ -114,18 +115,18 @@ public class MineSkinAPI {
             throw new SkinRequestException(Locale.MS_API_FAILED);
     }
 
-    private String queryURL(String url, String query, int timeout) throws IOException {
+    private String queryURL(String query) throws IOException {
         for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
             try {
-                MetricsCounter.incrAPI(url);
-                HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
+                MetricsCounter.incrAPI("https://api.mineskin.org/generate/url/");
+                HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
                 con.setRequestMethod("POST");
                 con.setRequestProperty("Content-length", String.valueOf(query.length()));
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
                 con.setRequestProperty("User-Agent", "SkinsRestorer");
-                con.setConnectTimeout(timeout);
-                con.setReadTimeout(timeout);
+                con.setConnectTimeout(90000);
+                con.setReadTimeout(90000);
                 con.setDoOutput(true);
                 con.setDoInput(true);
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
@@ -133,11 +134,13 @@ public class MineSkinAPI {
                 output.close();
                 String outstr = "";
                 InputStream is;
+
                 try {
                     is = con.getInputStream();
                 } catch (Exception e) {
                     is = con.getErrorStream();
                 }
+
                 DataInputStream input = new DataInputStream(is);
                 for (int c = input.read(); c != -1; c = input.read()) {
                     outstr += (char) c; //todo String concatenation in loop

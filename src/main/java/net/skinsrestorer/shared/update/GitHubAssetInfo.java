@@ -9,6 +9,5 @@ public class GitHubAssetInfo {
     public String name;
     public String browser_download_url;
 
-    public GitHubAssetInfo() {
-    }
+    public GitHubAssetInfo() {}
 }

@@ -237,8 +237,6 @@ public class MojangAPI {
             output.append(line);
 
         in.close();
-        /*System.out.println("USED STRING URL = " + url);
-        System.out.println(output.toString()); // testing */
         return output.toString();
     }
 

@@ -5,6 +5,7 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,7 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
  */
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
-    private SRLogger log;
+    private final SRLogger log;
 
     public PlayerJoin(final SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -26,7 +27,7 @@ public class PlayerJoin implements Listener {
     @EventHandler
     public void onJoin(final PlayerJoinEvent e) {
         if (Config.DISABLE_ONJOIN_SKINS) {
-            // factory.applySkin(e.getPlayer(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.getPlayer().getName())));
+            // factory.applySkin(e.get(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.get().getName())));
             // shouldn't it just skip it if it's true?
             return;
         }
@@ -39,7 +40,7 @@ public class PlayerJoin implements Listener {
 
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (skinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
-                    log.log("[SkinsRestorer] Not applying skin to " + nick + " (invalid username).");
+                    log.log("Not applying skin to " + nick + " (invalid username).");
                     return;
                 }
                 final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);

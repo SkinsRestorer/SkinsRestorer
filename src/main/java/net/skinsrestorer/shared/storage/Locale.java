@@ -1,7 +1,6 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.YamlConfig;
 
 import java.io.File;
 import java.lang.reflect.Field;

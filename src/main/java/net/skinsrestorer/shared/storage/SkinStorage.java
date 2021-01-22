@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
-
     private Class<?> property;
     @Getter
     @Setter

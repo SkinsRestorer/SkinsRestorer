@@ -13,11 +13,12 @@ import net.skinsrestorer.velocity.SkinsRestorer;
  */
 public class GameProfileRequest {
     private final SkinsRestorer plugin;
-    private SRLogger log;
+    private final SRLogger log;
 
     @Inject
     public GameProfileRequest(SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getLogger();
     }
 
     @Subscribe
@@ -34,7 +35,7 @@ public class GameProfileRequest {
 
         // Don't change skin if player has no custom skin-name set and his username is invalid
         if (plugin.getSkinStorage().getPlayerSkin(nick) == null && !C.validUsername(nick.replaceAll("\\W", ""))) {
-            log.log("[SkinsRestorer] Not requesting skin for " + nick + " (invalid username).");
+            log.log(" Not requesting skin for " + nick + " (invalid username).");
             return;
         }
 

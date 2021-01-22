@@ -3,6 +3,7 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.Getter;
 import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.Bukkit;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -24,10 +25,11 @@ public class UpdateChecker {
     public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
-    public String currentVersion;
-    private SRLogger log;
-    private String userAgent;
-    private VersionComparator versionComparator = VersionComparator.SEM_VER_SNAPSHOT;
+    @Getter
+    private final String currentVersion;
+    private final SRLogger log;
+    private final String userAgent;
+    private static final VersionComparator versionComparator = VersionComparator.SEM_VER_SNAPSHOT;
     private ResourceInfo latestResourceInfo;
 
     public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
@@ -39,14 +41,15 @@ public class UpdateChecker {
 
     public void checkForUpdate(final UpdateCallback callback) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) (new URL(String.format("http://api.spiget.org/v2/resources/%s?ut=%s", this.resourceId, System.currentTimeMillis()))).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, this.resourceId, System.currentTimeMillis()))).openConnection();
             connection.setRequestProperty("User-Agent", this.getUserAgent());
+
             JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            this.latestResourceInfo = (ResourceInfo) (new Gson()).fromJson(jsonObject, ResourceInfo.class);
-            connection = (HttpURLConnection) (new URL(String.format("http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s", this.resourceId, System.currentTimeMillis()))).openConnection();
+            this.latestResourceInfo = (new Gson()).fromJson(jsonObject, ResourceInfo.class);
+            connection = (HttpURLConnection) (new URL(String.format(RESOURCE_VERSION, this.resourceId, System.currentTimeMillis()))).openConnection();
             connection.setRequestProperty("User-Agent", this.getUserAgent());
             jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            this.latestResourceInfo.latestVersion = (ResourceVersion) (new Gson()).fromJson(jsonObject, ResourceVersion.class);
+            this.latestResourceInfo.latestVersion = (new Gson()).fromJson(jsonObject, ResourceVersion.class);
             if (this.isVersionNewer(this.currentVersion, this.latestResourceInfo.latestVersion.name)) {
                 callback.updateAvailable(this.latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + this.latestResourceInfo.file.url, !this.latestResourceInfo.external);
             } else {
@@ -88,7 +91,8 @@ public class UpdateChecker {
     }
 
     public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
-        List<String> updateAvailableMessages = new LinkedList<String>();
+        List<String> updateAvailableMessages = new LinkedList<>();
+
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
@@ -106,6 +110,7 @@ public class UpdateChecker {
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
+        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    New version: §c" + newVersion);
 
         if (updateDownloader && hasDirectDownload) {
             updateAvailableMessages.add("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
@@ -126,15 +131,11 @@ public class UpdateChecker {
     }
 
     public boolean isVersionNewer(String oldVersion, String newVersion) {
-        return this.versionComparator.isNewer(oldVersion, newVersion);
+        return versionComparator.isNewer(oldVersion, newVersion);
     }
 
     public String getUserAgent() {
         return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
     }
 
     public ResourceInfo getLatestResourceInfo() {

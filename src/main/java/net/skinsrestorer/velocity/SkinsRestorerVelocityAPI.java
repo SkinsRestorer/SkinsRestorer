@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.Player;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 
 /**
@@ -21,13 +22,13 @@ public class SkinsRestorerVelocityAPI extends SkinsRestorerAPI implements ISkins
     // Todo: We need to refactor applySkin through all platforms to behave the same!
     @Beta
     @Override
-    public void applySkin(Player player, Object props) {
+    public void applySkin(PlayerWrapper player, Object props) {
         this.applySkin(player);
     }
 
     @Beta
     @Override
-    public void applySkin(Player player) {
-        plugin.getSkinApplierVelocity().applySkin(player, this.getSkinName(player.getUsername()));
+    public void applySkin(PlayerWrapper player) {
+        plugin.getSkinApplierVelocity().applySkin(player, this.getSkinName(player.get(Player.class).getUsername()));
     }
 }

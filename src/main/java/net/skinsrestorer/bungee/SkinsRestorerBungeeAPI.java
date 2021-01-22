@@ -5,6 +5,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 
 /**
@@ -21,15 +22,15 @@ public class SkinsRestorerBungeeAPI extends SkinsRestorerAPI implements ISkinsRe
     // Todo: We need to refactor applySkin through all platforms to behave the same!
     @Beta
     @Override
-    public void applySkin(ProxiedPlayer player, Object props) {
+    public void applySkin(PlayerWrapper player, Object props) {
         this.applySkin(player);
     }
 
     @Beta
     @Override
-    public void applySkin(ProxiedPlayer player) {
+    public void applySkin(PlayerWrapper player) {
         try {
-            plugin.getSkinApplierBungee().applySkin(player);
+            plugin.getSkinApplierBungee().applySkin(player.get(ProxiedPlayer.class));
         } catch (Exception ignored) {
         }
     }

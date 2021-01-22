@@ -9,9 +9,10 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class ReflectionUtil {
+    private ReflectionUtil() {}
 
     public static String serverVersion = null;
-    private static DuckBypass reflect;
+    private static final DuckBypass reflect;
 
     static {
         reflect = new DuckBypass();

@@ -15,12 +15,9 @@ import java.net.URL;
  */
 public class UpdateCheckerGitHub extends UpdateChecker {
     private SRLogger log;
-    private String userAgent;
-    private String currentVersion;
+    private final String userAgent;
+    private final String currentVersion;
     private GitHubReleaseInfo releaseInfo;
-    private final String resourceId = "SkinsRestorerX";
-
-    private static String RELEASES_URL = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
 
     public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         super(resourceId, currentVersion, log, userAgent);
@@ -32,7 +29,10 @@ public class UpdateCheckerGitHub extends UpdateChecker {
     @Override
     public void checkForUpdate(final UpdateCallback callback) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL, this.resourceId)).openConnection();
+            String resourceId = "SkinsRestorerX";
+            String releaseUrl = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
+
+            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(releaseUrl, resourceId)).openConnection();
             connection.setRequestProperty("User-Agent", this.userAgent);
 
             JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
@@ -53,6 +53,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
         }
     }
 
+    @Override
     public GitHubReleaseInfo getLatestResourceInfo() {
         return this.releaseInfo;
     }

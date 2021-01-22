@@ -14,6 +14,5 @@ public class GitHubReleaseInfo extends ResourceInfo {
 
     public String latestDownloadURL;
 
-    public GitHubReleaseInfo() {
-    }
+    public GitHubReleaseInfo() {}
 }

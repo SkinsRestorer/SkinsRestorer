@@ -5,12 +5,14 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 import org.spongepowered.api.entity.living.player.Player;
 
 /**
  * Created by McLive on 10.11.2019.
  */
+@SuppressWarnings({"rawtypes"})
 public class SkinsRestorerSpongeAPI extends SkinsRestorerAPI implements ISkinsRestorerAPI<Player> {
     private final SkinsRestorer plugin;
 
@@ -22,15 +24,15 @@ public class SkinsRestorerSpongeAPI extends SkinsRestorerAPI implements ISkinsRe
     // Todo: We need to refactor applySkin through all platforms to behave the same!
     @Beta
     @Override
-    public void applySkin(Player player, Object props) {
+    public void applySkin(PlayerWrapper player, Object props) {
         this.applySkin(player);
     }
 
     @Beta
     @Override
-    public void applySkin(Player player) {
+    public void applySkin(PlayerWrapper player) {
         try {
-            plugin.getSkinApplierSponge().applySkin(player, this.getSkinName(player.getName()));
+            plugin.getSkinApplierSponge().applySkin(player, this.getSkinName(player.get(Player.class).getName()));
         } catch (SkinRequestException e) {
             e.printStackTrace();
         }

@@ -234,7 +234,7 @@ public class SkinCommand extends BaseCommand {
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
-                SkinsRestorer.getInstance().getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin));
+                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin));
                 p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (SkinRequestException e) {

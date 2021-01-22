@@ -1,6 +1,4 @@
-package net.skinsrestorer.shared.utils;
-
-import net.skinsrestorer.shared.storage.Config;
+package net.skinsrestorer.shared.storage;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -10,10 +8,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class MySQL {
-
     private Connection con;
-    private String host, port, database, username, password, options;
-    private ExecutorService exe;
+    private final String host;
+    private final String port;
+    private final String database;
+    private final String username;
+    private final String password;
+    private final String options;
+    private final ExecutorService exe;
 
     public MySQL(String host, String port, String database, String username, String password, String options) {
         this.host = host;
@@ -59,15 +61,6 @@ public class MySQL {
         return null;
     }
 
-    private boolean isConnected() {
-        try {
-            return con != null && !con.isClosed() && con.isValid(1);
-        } catch (SQLException e) {
-            System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
-        }
-        return false;
-    }
-
     public Connection getConnection() {
         try {
             if (con == null || !this.con.isValid(1)) {
@@ -93,33 +86,6 @@ public class MySQL {
         }
 
         return con;
-    }
-
-    public void closeRessources(ResultSet rs, PreparedStatement st) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if (st != null) {
-            try {
-                st.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void closeConnection() {
-        try {
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            con = null;
-        }
     }
 
     private PreparedStatement prepareStatement(Connection conn, String query, Object... vars) {

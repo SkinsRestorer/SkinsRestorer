@@ -11,9 +11,7 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.skinfactory.SkinFactory;
 import net.skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
@@ -39,8 +37,6 @@ public class SkinsRestorer extends JavaPlugin {
     private SkinFactory factory;
     @Getter
     private UpdateChecker updateChecker;
-    @Getter
-    private SkinsRestorer plugin;
     @Getter
     private final String configPath = getDataFolder().getPath();
 

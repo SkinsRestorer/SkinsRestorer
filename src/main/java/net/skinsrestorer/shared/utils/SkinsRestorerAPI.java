@@ -11,8 +11,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
    For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
    Advanced help or getting problems? join our discord before submitting issues!
 
-   [Warning!] Make sure to use SkinsRestorerBukkitAPI.java to apply skin. */
-
+   [Warning!] Make sure to use SkinsRestorerBukkitAPI.java to apply skin.
+   */
 public class SkinsRestorerAPI {
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;

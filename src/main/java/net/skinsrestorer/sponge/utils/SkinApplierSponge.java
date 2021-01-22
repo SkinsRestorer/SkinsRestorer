@@ -2,6 +2,8 @@ package net.skinsrestorer.sponge.utils;
 
 import com.flowpowered.math.vector.Vector3d;
 import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.Property;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
@@ -19,7 +21,7 @@ import java.util.Collection;
 /**
  * Created by McLive on 02.04.2018.
  */
-public class SkinApplierSponge {
+public class SkinApplierSponge implements SRApplier {
     private Player receiver;
     private final SkinsRestorer plugin;
 
@@ -36,12 +38,12 @@ public class SkinApplierSponge {
         oldProperties.add(newTextures);
     }
 
-    public void applySkin(final Player p, final String skin) throws SkinRequestException {
-        this.applySkin(p, skin, true);
+    public void applySkin(final PlayerWrapper player, final String skin) throws SkinRequestException {
+        this.applySkin(player, skin, true);
     }
 
-    public void applySkin(final Player p, final String skin, boolean updatePlayer) throws SkinRequestException {
-        Collection<ProfileProperty> oldProps = p.getProfile().getPropertyMap().get("textures");
+    public void applySkin(final PlayerWrapper player, final String skin, boolean updatePlayer) throws SkinRequestException {
+        Collection<ProfileProperty> oldProps = player.get(Player.class).getProfile().getPropertyMap().get("textures");
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProps.clear();
@@ -50,7 +52,7 @@ public class SkinApplierSponge {
         if (!updatePlayer)
             return;
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> updatePlayerSkin(p));
+        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> updatePlayerSkin(player.get(Player.class)));
     }
 
     public void updatePlayerSkin(Player p) {

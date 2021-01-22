@@ -5,6 +5,8 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -17,13 +19,30 @@ import java.util.List;
 /**
  * Created by McLive on 16.02.2019.
  */
-public class SkinApplierVelocity {
+public class SkinApplierVelocity implements SRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
     public SkinApplierVelocity(SkinsRestorer plugin) {
         this.plugin = plugin;
         this.log = plugin.getLogger();
+    }
+
+    public void applySkin(PlayerWrapper player, String skin) {
+        try {
+            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+            List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
+            List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
+
+            player.get(Player.class).setGameProfileProperties(newProperties);
+            sendUpdateRequest(player.get(Player.class), textures);
+        } catch (SkinRequestException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void applySkin(PlayerWrapper player, Property property) {
+        player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), property));
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) {
@@ -52,23 +71,6 @@ public class SkinApplierVelocity {
             properties.add(property);
         }
         return properties;
-    }
-
-    public void applySkin(Player player, Property property) {
-        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), property));
-    }
-
-    public void applySkin(final Player p, final String skin) {
-        try {
-            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
-            List<Property> oldProperties = p.getGameProfileProperties();
-            List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
-
-            p.setGameProfileProperties(newProperties);
-            sendUpdateRequest(p, textures);
-        } catch (SkinRequestException e) {
-            e.printStackTrace();
-        }
     }
 
     private void sendUpdateRequest(Player p, Property textures) {

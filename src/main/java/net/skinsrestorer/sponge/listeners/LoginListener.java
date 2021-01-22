@@ -12,10 +12,11 @@ import org.spongepowered.api.profile.GameProfile;
 
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
-    private SRLogger log;
+    private final SRLogger log;
 
     public LoginListener(SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getSrLogger();
     }
 
     @Override
@@ -32,7 +33,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
             try {
                 // Don't change skin if player has no custom skin-name set and his username is invalid
                 if (plugin.getSkinStorage().getPlayerSkin(name) == null && !C.validUsername(name)) {
-                    log.log("[SkinsRestorer] Not applying skin to " + name + " (invalid username).");
+                    log.log("Not applying skin to " + name + " (invalid username).");
                     return;
                 }
 

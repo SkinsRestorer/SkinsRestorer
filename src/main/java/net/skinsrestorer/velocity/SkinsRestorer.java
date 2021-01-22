@@ -18,6 +18,7 @@ import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -182,7 +183,7 @@ public class SkinsRestorer {
 
                 this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                logger.logAlways("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                logger.logAlways("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {

@@ -4,6 +4,7 @@ import com.google.common.annotations.Beta;
 import net.skinsrestorer.shared.interfaces.ISkinsRestorerAPI;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 import org.bukkit.entity.Player;
 
@@ -21,13 +22,13 @@ public class SkinsRestorerBukkitAPI extends SkinsRestorerAPI implements ISkinsRe
     // Todo: We need to refactor applySkin through all platforms to behave the same!
     @Beta
     @Override
-    public void applySkin(Player player, Object props) {
-        plugin.getFactory().applySkin(player, props);
+    public void applySkin(PlayerWrapper player, Object props) {
+        plugin.getFactory().applySkin(player.get(Player.class), props);
     }
 
     @Beta
     @Override
-    public void applySkin(Player player) {
-        plugin.getFactory().applySkin(player, this.getSkinData(this.getSkinName(player.getName())));
+    public void applySkin(PlayerWrapper player) {
+        plugin.getFactory().applySkin(player.get(Player.class), this.getSkinData(this.getSkinName(player.get(Player.class).getName())));
     }
 }

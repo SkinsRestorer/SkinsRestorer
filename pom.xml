@@ -26,6 +26,14 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE Version 3</name>
+            <url>LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
