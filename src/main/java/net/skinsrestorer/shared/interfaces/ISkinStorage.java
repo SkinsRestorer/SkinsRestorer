@@ -13,16 +13,9 @@ public interface ISkinStorage {
 
     void removePlayerSkin(String name);
 
-    void removeSkinData(String name);
-
     void setPlayerSkin(String name, String skin);
 
-    void setSkinData(String name, Object textures, String timestamp);
-    void setSkinData(String name, Object textures);
-
     Map<String, Object> getSkins(int number);
-
-    boolean forceUpdateSkinData(String skin);
 
     String getDefaultSkinNameIfEnabled(String player, boolean clear);
     String getDefaultSkinNameIfEnabled(String player);

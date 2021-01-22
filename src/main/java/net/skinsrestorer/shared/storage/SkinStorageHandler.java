@@ -43,14 +43,6 @@ public class SkinStorageHandler implements ISkinStorage {
     }
 
     @Override
-    public void removeSkinData(String name) {
-        if (Config.USE_MYSQL)
-            skinStorageMySQL.removeSkinData(name);
-        else
-            skinStorageFlatFile.removeSkinData(name);
-    }
-
-    @Override
     public void setPlayerSkin(String name, String skin) {
         if (Config.USE_MYSQL)
             skinStorageMySQL.setPlayerSkin(name, skin);
@@ -59,32 +51,11 @@ public class SkinStorageHandler implements ISkinStorage {
     }
 
     @Override
-    public void setSkinData(String name, Object textures, String timestamp) {
-        if (Config.USE_MYSQL)
-            skinStorageMySQL.setSkinData(name, textures, timestamp);
-        else
-            skinStorageFlatFile.setSkinData(name, textures, timestamp);
-    }
-
-    @Override
-    public void setSkinData(String name, Object textures) {
-        this.setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
-    }
-
-    @Override
     public Map<String, Object> getSkins(int number) {
         if (Config.USE_MYSQL)
             return skinStorageMySQL.getSkins(number);
 
         return skinStorageFlatFile.getSkins(number);
-    }
-
-    @Override
-    public boolean forceUpdateSkinData(String skin) {
-        if (Config.USE_MYSQL)
-            return skinStorageMySQL.forceUpdateSkinData(skin);
-
-        return skinStorageFlatFile.forceUpdateSkinData(skin);
     }
 
     @Override

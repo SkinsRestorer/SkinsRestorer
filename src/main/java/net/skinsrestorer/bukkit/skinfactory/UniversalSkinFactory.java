@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class UniversalSkinFactory implements SkinFactory {
-    private final Plugin plugin;
+    private final SkinsRestorer plugin;
     private final Consumer<Player> refresh = detectRefresh();
     private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
@@ -27,11 +27,9 @@ public class UniversalSkinFactory implements SkinFactory {
             return;
 
         if (checkOptFileChecked)
-
             this.checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-
             Entity vehicle = player.getVehicle();
 
             //dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
@@ -43,7 +41,6 @@ public class UniversalSkinFactory implements SkinFactory {
 
                     //this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-
                         //this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
                         if (vehicle.isValid()) {
 

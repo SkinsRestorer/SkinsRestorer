@@ -8,16 +8,10 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
  *  @param <P> Platform specific Player
  */
 public interface ISkinsRestorerAPI<P> {
-    String getUUID(String playerName) throws SkinRequestException;
     Object getProfile(String uuid);
 
     String getSkinName(String playerName);
     Object getSkinData(String skinName);
-
-    boolean hasSkin(String playerName);
-
-    void setSkinName(String playerName, String skinName);
-    void removeSkin(String playername);
 
     void setSkin(String playerName, String skinName) throws SkinRequestException;
 

@@ -13,8 +13,7 @@ import java.util.logging.Level;
  * Created by McLive on 13.04.2019.
  */
 public class UpdateDownloaderGithub extends UpdateDownloader {
-    private SkinsRestorer plugin;
-    private GitHubReleaseInfo releaseInfo;
+    private final SkinsRestorer plugin;
 
     public UpdateDownloaderGithub(SkinsRestorer plugin) {
         super(plugin);
@@ -23,7 +22,7 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
 
     @Override
     public boolean downloadUpdate() {
-        this.releaseInfo = (GitHubReleaseInfo) plugin.getUpdateChecker().getLatestResourceInfo();
+        GitHubReleaseInfo releaseInfo = (GitHubReleaseInfo) plugin.getUpdateChecker().getLatestResourceInfo();
 
         if (releaseInfo == null) {
             failReason = DownloadFailReason.NOT_CHECKED;
@@ -40,11 +39,9 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
             return false;
         }
         File updateFolder = Bukkit.getUpdateFolderFile();
-        if (!updateFolder.exists()) {
-            if (!updateFolder.mkdirs()) {
-                failReason = DownloadFailReason.NO_UPDATE_FOLDER;
-                return false;
-            }
+        if (!updateFolder.exists() && !updateFolder.mkdirs()) {
+            failReason = DownloadFailReason.NO_UPDATE_FOLDER;
+            return false;
         }
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
