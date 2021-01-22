@@ -100,6 +100,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>2.0.0</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <extraExtensions>
+                        <myProprietaryExtension>java</myProprietaryExtension>
+                    </extraExtensions>
+                    <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <licenseName>gpl_v3</licenseName>
+                            <roots>
+                                <root>src/main/java/net/skinsrestorer</root>
+                            </roots>
+                            <organizationName>SkinsRestorer</organizationName>
+                            <inceptionYear>2021</inceptionYear>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <resources>
             <resource>
