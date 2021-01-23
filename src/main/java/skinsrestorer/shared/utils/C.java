@@ -19,6 +19,20 @@ public class C {
     }
 
     public static boolean validUrl(String url) {
+        return urlPattern.matcher(url).matches()
+                && (url.startsWith("https://i.imgur.com/")
+                || url.startsWith("http://i.imgur.com/")
+                || url.startsWith("i.imgur.com/")
+                || url.startsWith("https://storage.googleapis.com/")
+                || url.startsWith("http://storage.googleapis.com/")
+                || url.startsWith("storage.googleapis.com/")
+                || url.startsWith("https://cdn.discordapp.com/")
+                || url.startsWith("http://cdn.discordapp.com/")
+                || url.startsWith("cdn.discordapp.com/")
+        );
+    }
+
+    public static boolean matchesRegex(String url) {
         return urlPattern.matcher(url).matches();
     }
 }

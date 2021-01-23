@@ -47,7 +47,7 @@ public class Locale {
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
     public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
     public static String ERROR_UPDATING_CUSTOMSKIN = "&4Error&8: &cSkin can't be updated because its custom.";
-    public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl";
+    public static String ERROR_INVALID_URLSKIN_2 = "&4WARNING&8: &cWe are only allowing imgur images. Please make sure it's a valid skin using i.imgur.com/***.png, see &c&oskinsrestorer.net/skinurl &cfor more info";
     public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)";
     public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
     public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";

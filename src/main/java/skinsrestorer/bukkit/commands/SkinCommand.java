@@ -179,10 +179,10 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player p, String[] url) {
         if (url.length > 0) {
-            if(C.validUrl(url[0])) {
+            if (C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
-                p.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                p.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -196,7 +196,13 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, Player p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-            sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+
+            if (C.matchesRegex(skin)) {
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
+            } else {
+                sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+            }
+
             return false;
         }
 
@@ -216,7 +222,6 @@ public class SkinCommand extends BaseCommand {
 
         CooldownStorage.resetCooldown(sender.getName());
         CooldownStorage.setCooldown(sender.getName(), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-
 
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
         if (C.validUsername(skin)) {
@@ -259,7 +264,7 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(e.getReason());
             } catch (Exception  e) {
                 log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= "+ e.getMessage());
-                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         }
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception

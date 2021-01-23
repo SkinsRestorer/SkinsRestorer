@@ -171,7 +171,7 @@ public class SkinCommand extends BaseCommand {
             if (C.validUrl(String.valueOf(url))) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), String.valueOf(url));
             } else {
-                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN_2));
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -186,7 +186,12 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSource source, Player p, String skin, boolean save) {
         if (!C.validUsername(skin) && !C.validUrl(skin)) {
-            source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
+            if (C.matchesRegex(skin)) {
+                source.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN_2));
+            } else {
+                source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
+            }
+
             return false;
         }
 
