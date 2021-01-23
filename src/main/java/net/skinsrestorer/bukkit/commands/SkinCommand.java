@@ -37,6 +37,13 @@ import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import skinsrestorer.bukkit.SkinsRestorer;
+import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.storage.Config;
+import skinsrestorer.shared.storage.CooldownStorage;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.utils.C;
+import skinsrestorer.shared.utils.SRLogger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -206,7 +213,7 @@ public class SkinCommand extends BaseCommand {
             if (C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
-                p.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                p.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -221,7 +228,13 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, Player p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-            sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+
+            if (C.matchesRegex(skin)) {
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
+            } else {
+                sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+            }
+
             return false;
         }
 
@@ -286,8 +299,8 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getReason());
             } catch (Exception e) {
-                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
-                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= "+ e.getMessage());
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         }
 

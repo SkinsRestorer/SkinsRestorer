@@ -1,25 +1,11 @@
-/*
- * #%L
- * SkinsRestorer
- * %%
- * Copyright (C) 2021 SkinsRestorer
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
- */
-package net.skinsrestorer.shared.utils;
+package skinsrestorer.shared.utils;
+
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,18 +13,12 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import skinsrestorer.shared.exception.SkinRequestException;
+import skinsrestorer.shared.storage.Locale;
+import skinsrestorer.shared.storage.SkinStorage;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public class MineSkinAPI {
     @Getter
@@ -131,7 +111,7 @@ public class MineSkinAPI {
         logger.log("[ERROR] MS:could not generate skin url: " + url);
         logger.log("[ERROR] MS:reason: " + errResp);
         if (!(errResp.matches("")))
-            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
+            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN_2); //todo: consider sending err_resp to admins
         else
             throw new SkinRequestException(Locale.MS_API_FAILED);
     }

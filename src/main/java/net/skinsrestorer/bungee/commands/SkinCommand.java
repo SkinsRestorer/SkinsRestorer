@@ -205,7 +205,7 @@ public class SkinCommand extends BaseCommand {
             if (C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
-                p.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+                p.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN_2));
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -220,7 +220,12 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-            sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
+            if (C.matchesRegex(skin)) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN_2));
+            } else {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
+            }
+
             return false;
         }
 
@@ -251,7 +256,6 @@ public class SkinCommand extends BaseCommand {
                 } else {
                     plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
-
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
@@ -298,7 +302,7 @@ public class SkinCommand extends BaseCommand {
                 log.log("[ERROR] could not generate skin url:" + skin + " stacktrace:");
                 if (Config.DEBUG)
                     e.printStackTrace();
-                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN_2));
             }
         }
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
