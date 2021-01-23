@@ -257,6 +257,7 @@ public class SkinCommand extends BaseCommand {
             }
             return false;
         }
+
         if (C.validUrl(skin)) {
             if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
                 source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));

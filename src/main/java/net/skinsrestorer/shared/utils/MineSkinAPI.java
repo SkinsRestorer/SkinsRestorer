@@ -1,4 +1,4 @@
-package skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -13,9 +13,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.Setter;
-import skinsrestorer.shared.exception.SkinRequestException;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.SkinStorage;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;

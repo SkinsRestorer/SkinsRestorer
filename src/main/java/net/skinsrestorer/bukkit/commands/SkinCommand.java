@@ -37,13 +37,6 @@ import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import skinsrestorer.bukkit.SkinsRestorer;
-import skinsrestorer.shared.exception.SkinRequestException;
-import skinsrestorer.shared.storage.Config;
-import skinsrestorer.shared.storage.CooldownStorage;
-import skinsrestorer.shared.storage.Locale;
-import skinsrestorer.shared.utils.C;
-import skinsrestorer.shared.utils.SRLogger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -228,7 +221,6 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, Player p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-
             if (C.matchesRegex(skin)) {
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             } else {

@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SRLogger;
 
 import java.util.concurrent.TimeUnit;
@@ -252,7 +253,7 @@ public class SkinCommand extends BaseCommand {
 
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
-                    plugin.getSkinApplierBungee().applySkin(p);
+                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
                 } else {
                     plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
@@ -293,7 +294,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplierBungee().applySkin(p);
+                plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
