@@ -40,9 +40,6 @@ import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by McLive on 17.02.2019.
- */
 @SuppressWarnings("deprecation")
 @CommandAlias("skin")
 @CommandPermission("%skin")
@@ -243,9 +240,9 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
                     if (save) {
                         plugin.getSkinStorage().setPlayerSkin(p.getUsername(), skin);
-                        plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), p.getUsername());
+                        plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                     } else {
-                        plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), skin);
+                        plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                     }
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
@@ -272,7 +269,7 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     plugin.getSkinStorage().setPlayerSkin(p.getUsername(), skinentry); // set player to "whitespaced" name then reload skin
-                    plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), skinentry);
+                    plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
                     source.sendMessage(plugin.deserialize(e.getReason()));

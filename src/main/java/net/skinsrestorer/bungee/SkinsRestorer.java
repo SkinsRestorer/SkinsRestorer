@@ -86,6 +86,8 @@ public class SkinsRestorer extends Plugin {
     @Override
     public void onEnable() {
         srLogger = new SRLogger(getDataFolder());
+        instance = this;
+        console = getProxy().getConsole();
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);
@@ -96,8 +98,6 @@ public class SkinsRestorer extends Plugin {
             metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
         }
 
-        console = getProxy().getConsole();
-
         if (Config.UPDATER_ENABLED) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
@@ -105,8 +105,6 @@ public class SkinsRestorer extends Plugin {
             if (Config.UPDATER_PERIODIC)
                 this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
-
-        instance = this;
 
         this.skinStorage = new SkinStorage();
 

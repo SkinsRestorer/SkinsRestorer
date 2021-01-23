@@ -45,10 +45,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
-    private static ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
+
     @Getter
-    private SRLogger srLogger;
-    private SkinsRestorer plugin;
+    private final SRLogger srLogger;
+    private final SkinsRestorer plugin;
 
     public SkinsGUI(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -176,6 +177,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         if (page > 999)
             page = 999;
         int skinNumber = 36 * page;
+
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1
         return this.getGUI(p, page, skinsList);
@@ -198,20 +200,25 @@ public class SkinsGUI extends ItemStack implements Listener {
         return is;
     }
 
-    private void setSkin(ItemStack head, String b64stringtexture) {
+    private void setSkin(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         PropertyMap propertyMap = profile.getProperties();
+
         if (propertyMap == null) {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
-        propertyMap.put("textures", new Property("textures", b64stringtexture));
+
+        propertyMap.put("textures", new Property("textures", b64stringTexture));
+
         ItemMeta headMeta = head.getItemMeta();
         Class<?> headMetaClass = headMeta.getClass();
+
         try {
             ReflectionUtil.getField(headMetaClass, "profile", GameProfile.class, 0).set(headMeta, profile);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
+
         head.setItemMeta(headMeta);
     }
 

@@ -59,17 +59,17 @@ public class PluginMessageListener implements Listener {
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
 
-        String subchannel = in.readUTF();
+        String subChannel = in.readUTF();
+        String player = in.readUTF();
+        ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
-        switch (subchannel) {
+        switch (subChannel) {
             //sr:messagechannel
-            case "getSkins": {
-                String player = in.readUTF();
+            case "getSkins":
                 int page = in.readInt();
                 if (page > 999)
                     page = 999;
                 int skinNumber = 26 * page;
-                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
 
                 Map<String, Property> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
 
@@ -77,6 +77,7 @@ public class PluginMessageListener implements Listener {
 
                 ByteArrayOutputStream b = new ByteArrayOutputStream();
                 DataOutputStream out = new DataOutputStream(b);
+
                 try {
                     out.writeUTF("returnSkins");
                     out.writeUTF(player);
@@ -88,30 +89,21 @@ public class PluginMessageListener implements Listener {
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+
                 p.getServer().sendData("sr:messagechannel", b.toByteArray());
                 break;
-            }
-            case "clearSkin": {
-                String player = in.readUTF();
-                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
-
+            case "clearSkin":
                 plugin.getSkinCommand().onSkinClearOther(p, new OnlinePlayer(p));
                 break;
-            }
-            case "updateSkin": {
-                String player = in.readUTF();
-                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+            case "updateSkin":
                 plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
                 break;
-            }
-            case "setSkin": {
-                String player = in.readUTF();
+            case "setSkin":
                 String skin = in.readUTF();
-                ProxiedPlayer p = plugin.getProxy().getPlayer(player);
-
                 plugin.getSkinCommand().onSkinSetOther(p, new OnlinePlayer(p), skin);
                 break;
-            }
+            default:
+                break;
         }
     }
 

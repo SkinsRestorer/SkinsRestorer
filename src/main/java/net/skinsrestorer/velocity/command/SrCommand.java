@@ -38,9 +38,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-/**
- * Created by McLive on 23.02.2019.
- */
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
@@ -60,8 +57,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getConfigPath());
-        Config.load(plugin.getConfigPath(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getCONFIG_PATH());
+        Config.load(plugin.getCONFIG_PATH(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
         source.sendMessage(plugin.deserialize(Locale.RELOAD));
     }
 

@@ -23,7 +23,8 @@ package net.skinsrestorer.shared.interfaces;
 
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.utils.PlayerWrapper;
+import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 
 public interface SRApplier {
-    void applySkin(PlayerWrapper playerWrapper, String str) throws SkinRequestException;
+    void applySkin(PlayerWrapper playerWrapper, SkinsRestorerAPI api) throws SkinRequestException;
 }

@@ -24,9 +24,7 @@ package net.skinsrestorer.shared.utils;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.SkinStorage;
 
-/**
- * Created by McLive on 27.08.2019.
- */
+
 
 /* API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
    For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI

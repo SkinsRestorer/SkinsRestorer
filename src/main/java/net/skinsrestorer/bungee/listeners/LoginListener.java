@@ -39,9 +39,8 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 
 public class LoginListener implements Listener {
-    private SkinsRestorer plugin;
-    @Setter
-    private SRLogger log;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
 
     public LoginListener(SkinsRestorer plugin, SRLogger log) {
         this.plugin = plugin;
@@ -67,8 +66,7 @@ public class LoginListener implements Listener {
 
             // Don't change skin if player has no custom skin-name set and his username is invalid
             if (!C.validUsername(nick.replaceAll("\\W", "")) && plugin.getSkinStorage().getPlayerSkin(nick) == null) {
-                if (Config.DEBUG)
-                    System.out.println("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
+                log.log("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
                 return;
             }
 

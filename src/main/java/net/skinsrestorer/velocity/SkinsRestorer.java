@@ -37,6 +37,8 @@ import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.data.PluginData;
+import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -58,11 +60,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-/**
- * Created by McLive on 16.02.2019.
- */
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = "McLive")
-public class SkinsRestorer {
+public class SkinsRestorer implements SRPlugin {
     @Getter
     private final ProxyServer proxy;
     @Getter
@@ -74,7 +73,7 @@ public class SkinsRestorer {
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     @Getter
-    private static final String configPath = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private static final String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private CommandSource console;
     private UpdateChecker updateChecker;
@@ -112,8 +111,8 @@ public class SkinsRestorer {
         this.skinStorage = new SkinStorage();
 
         // Init config files
-        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(CONFIG_PATH);
 
         this.mojangAPI = new MojangAPI(this.logger);
         this.mineSkinAPI = new MineSkinAPI(this.logger);
@@ -180,7 +179,7 @@ public class SkinsRestorer {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
 
         manager.registerCommand(new SkinCommand(this));
         manager.registerCommand(new SrCommand(this));
@@ -252,5 +251,10 @@ public class SkinsRestorer {
         Optional<String> version = plugin.get().getDescription().getVersion();
 
         return version.orElse("");
+    }
+
+    @Override
+    public SRApplier getApplier() {
+        return skinApplierVelocity;
     }
 }

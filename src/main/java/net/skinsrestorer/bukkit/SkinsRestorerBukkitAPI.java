@@ -29,9 +29,6 @@ import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 import org.bukkit.entity.Player;
 
-/**
- * Created by McLive on 27.08.2019.
- */
 public class SkinsRestorerBukkitAPI extends SkinsRestorerAPI implements ISkinsRestorerAPI<Player> {
     private final SkinsRestorer plugin;
 

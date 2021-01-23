@@ -336,7 +336,6 @@ public class SkinsRestorer extends JavaPlugin {
         }));
         // Use with @Conditions("permOrSkinWithoutPerm")
 
-
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));

@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -40,18 +40,15 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by McLive on 24.01.2019.
- */
-
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
-    private SkinsRestorer plugin;
-    private SRLogger log;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getSrLogger();
     }
 
     @Default
@@ -187,20 +184,16 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS) {
-            if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                    return;
-                }
-            }
+        if (Config.PER_SKIN_PERMISSIONS
+                && !sender.hasPermission("skinsrestorer.skin." + skin)
+                && !sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
+            sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+            return;
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-            if (this.setSkin(sender, target.getPlayer(), skin)) {
-                if (!sender.getName().equals(target.getPlayer().getName()))
-                    sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
-            }
+            if (this.setSkin(sender, target.getPlayer(), skin) && !sender.getName().equals(target.getPlayer().getName()))
+                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName()));
         });
     }
 
@@ -232,14 +225,13 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (Config.DISABLED_SKINS_ENABLED && !clear)
-            if (!sender.hasPermission("skinsrestorer.bypassdisabled")) {
-                for (String dskin : Config.DISABLED_SKINS)
-                    if (skin.equalsIgnoreCase(dskin)) {
-                        sender.sendMessage(Locale.SKIN_DISABLED);
-                        return false;
-                    }
-            }
+        if (Config.DISABLED_SKINS_ENABLED && !clear && !sender.hasPermission("skinsrestorer.bypassdisabled")) {
+            for (String dskin : Config.DISABLED_SKINS)
+                if (skin.equalsIgnoreCase(dskin)) {
+                    sender.sendMessage(Locale.SKIN_DISABLED);
+                    return false;
+                }
+        }
 
         if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
             sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName())));
@@ -255,20 +247,24 @@ public class SkinCommand extends BaseCommand {
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
+
                 plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin));
                 p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
                     Object props = SkinsRestorer.getInstance().getSkinStorage().createProperty("textures", "", "");
                     SkinsRestorer.getInstance().getFactory().applySkin(p, props);
                     SkinsRestorer.getInstance().getFactory().updateSkin(p);
+
                     return true;
                 }
 
                 sender.sendMessage(e.getReason());
             }
         }
+
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
@@ -294,6 +290,7 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             }
         }
+
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(sender.getName(), Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
         this.rollback(p, oldSkinName, save);
@@ -308,7 +305,9 @@ public class SkinCommand extends BaseCommand {
     private void sendHelp(CommandSender sender) {
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(Locale.SR_LINE);
+
         sender.sendMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion()));
+
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(Locale.SR_LINE);
     }

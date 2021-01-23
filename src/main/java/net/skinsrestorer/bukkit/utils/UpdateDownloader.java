@@ -54,10 +54,12 @@ public class UpdateDownloader {
             failReason = DownloadFailReason.NOT_CHECKED;
             return false;// Update not yet checked
         }
+
         if (!plugin.getUpdateChecker().isVersionNewer(plugin.getUpdateChecker().getCurrentVersion(), latestResourceInfo.latestVersion.name)) {
             failReason = DownloadFailReason.NO_UPDATE;
             return false;// Version is no update
         }
+
         if (latestResourceInfo.external) {
             failReason = DownloadFailReason.NO_DOWNLOAD;
             return false;// No download available
@@ -68,6 +70,7 @@ public class UpdateDownloader {
             failReason = DownloadFailReason.NO_PLUGIN_FILE;
             return false;
         }
+
         File updateFolder = Bukkit.getUpdateFolderFile();
         if (!updateFolder.exists() && !updateFolder.mkdirs()) {
             failReason = DownloadFailReason.NO_UPDATE_FOLDER;

@@ -26,6 +26,7 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRLogger;
 
@@ -50,6 +51,7 @@ public class SkinApplierBungee {
         if (p != null) {
             handler = (InitialHandler) p.getPendingConnection();
         }
+
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick);
 
         if (handler.isOnlineMode() && p != null) {
@@ -71,9 +73,9 @@ public class SkinApplierBungee {
             }
         }
 
-        Property[] newprops = new Property[]{textures};
+        Property[] newProps = new Property[]{textures};
 
-        profile.setProperties(newprops);
+        profile.setProperties(newProps);
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
         if (SkinsRestorer.getInstance().isMultiBungee()) {
@@ -85,8 +87,8 @@ public class SkinApplierBungee {
         }
     }
 
-    public void applySkin(final ProxiedPlayer p) throws Exception {
-        applySkin(p, p.getName(), null);
+    public void applySkin(final PlayerWrapper p) throws Exception {
+        applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
     }
 
     public static void init() {

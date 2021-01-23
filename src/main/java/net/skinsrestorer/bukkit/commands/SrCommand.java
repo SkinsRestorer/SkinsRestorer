@@ -66,6 +66,7 @@ public class SrCommand extends BaseCommand {
     public void onReload(CommandSender sender) {
         Locale.load(SkinsRestorer.getInstance().getConfigPath());
         Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"));
+
         sender.sendMessage(Locale.RELOAD);
     }
 
@@ -114,6 +115,7 @@ public class SrCommand extends BaseCommand {
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
+
         String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
         sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
     }
@@ -128,9 +130,9 @@ public class SrCommand extends BaseCommand {
         try {
             Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
             Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
-            Object propmap = ReflectionUtil.invokeMethod(profile, "getProperties");
+            Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
 
-            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propmap.getClass(), propmap, "get",
+            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
                     new Class[]{Object.class}, "textures");
 
             if (props == null || props.isEmpty()) {

@@ -25,6 +25,8 @@ import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.data.PluginData;
+import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -57,7 +59,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = "McLive")
-public class SkinsRestorer {
+public class SkinsRestorer implements SRPlugin {
     @Getter
     private static SkinsRestorer instance;
     @Getter
@@ -257,5 +259,10 @@ public class SkinsRestorer {
         Optional<String> version = plugin.get().getVersion();
 
         return version.orElse("");
+    }
+
+    @Override
+    public SRApplier getApplier() {
+        return skinApplierSponge;
     }
 }

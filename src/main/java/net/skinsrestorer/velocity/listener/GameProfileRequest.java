@@ -29,9 +29,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
-/**
- * Created by McLive on 16.02.2019.
- */
 public class GameProfileRequest {
     private final SkinsRestorer plugin;
     private final SRLogger log;

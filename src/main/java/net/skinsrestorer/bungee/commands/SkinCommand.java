@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -45,10 +45,11 @@ import java.util.concurrent.TimeUnit;
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private final SkinsRestorer plugin;
-    private SRLogger log;
+    private final SRLogger log;
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getSrLogger();
     }
 
     @Default
@@ -136,6 +137,7 @@ public class SkinCommand extends BaseCommand {
                         sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_URL));
                         return;
                     }
+
                     // check if premium name
                     plugin.getMojangAPI().getUUIDMojang(skin);
                     if (!plugin.getSkinStorage().forceUpdateSkinData(skin)) {
@@ -180,20 +182,16 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS) {
-            if (!sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
-                    sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-                    return;
-                }
-            }
+        if (Config.PER_SKIN_PERMISSIONS
+                && !sender.hasPermission("skinsrestorer.skin." + skin)
+                && !sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
+            sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+            return;
         }
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
-            if (this.setSkin(sender, target.getPlayer(), skin)) {
-                if (!sender.getName().equals(target.getPlayer().getName())) {
+            if (this.setSkin(sender, target.getPlayer(), skin) && !sender.getName().equals(target.getPlayer().getName())) {
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
-                }
             }
         });
     }
@@ -226,8 +224,7 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (Config.DISABLED_SKINS_ENABLED)
-            if (!sender.hasPermission("skinsrestorer.bypassdisabled") && !clear) {
+        if (Config.DISABLED_SKINS_ENABLED && !sender.hasPermission("skinsrestorer.bypassdisabled") && !clear) {
                 for (String dskin : Config.DISABLED_SKINS)
                     if (skin.equalsIgnoreCase(dskin)) {
                         sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
@@ -247,12 +244,14 @@ public class SkinCommand extends BaseCommand {
         if (C.validUsername(skin)) {
             try {
                 plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
                     plugin.getSkinApplierBungee().applySkin(p);
                 } else {
                     plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
+
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
@@ -273,12 +272,14 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
             }
         }
+
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(sender.getName());
                 return false;
             }
+
             try {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.MS_UPDATING_SKIN));
                 String skinentry = " " + p.getName(); // so won't overwrite premium playernames

@@ -95,7 +95,6 @@ public class UniversalSkinFactory implements SkinFactory {
             }
 
             refresh.accept(player);
-
         });
     }
 
@@ -134,6 +133,5 @@ public class UniversalSkinFactory implements SkinFactory {
             enableRemountPlayer = true;
 
         checkOptFileChecked = true;
-
     }
 }

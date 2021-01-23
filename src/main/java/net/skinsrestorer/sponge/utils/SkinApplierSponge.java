@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.SRApplier;
 import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.Property;
+import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -50,6 +51,10 @@ public class SkinApplierSponge implements SRApplier {
         this.plugin = plugin;
     }
 
+    public void applySkin(final PlayerWrapper player, final SkinsRestorerAPI api) throws SkinRequestException {
+        this.applySkin(player, api.getSkinName(player.get(Player.class).getName()), true);
+    }
+
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
         // Todo: new function for this duplicated code
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
@@ -57,10 +62,6 @@ public class SkinApplierSponge implements SRApplier {
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProperties.clear();
         oldProperties.add(newTextures);
-    }
-
-    public void applySkin(final PlayerWrapper player, final String skin) throws SkinRequestException {
-        this.applySkin(player, skin, true);
     }
 
     public void applySkin(final PlayerWrapper player, final String skin, boolean updatePlayer) throws SkinRequestException {

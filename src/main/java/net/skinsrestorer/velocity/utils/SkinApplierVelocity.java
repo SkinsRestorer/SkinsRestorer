@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.SRApplier;
 import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
@@ -37,9 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by McLive on 16.02.2019.
- */
 public class SkinApplierVelocity implements SRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
@@ -49,17 +47,15 @@ public class SkinApplierVelocity implements SRApplier {
         this.log = plugin.getLogger();
     }
 
-    public void applySkin(PlayerWrapper player, String skin) {
-        try {
-            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
-            List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
-            List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
+    public void applySkin(PlayerWrapper player, SkinsRestorerAPI api) throws SkinRequestException {
+        String skin = api.getSkinName(player.get(Player.class).getUsername());
 
-            player.get(Player.class).setGameProfileProperties(newProperties);
-            sendUpdateRequest(player.get(Player.class), textures);
-        } catch (SkinRequestException e) {
-            e.printStackTrace();
-        }
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+        List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
+        List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
+
+        player.get(Player.class).setGameProfileProperties(newProperties);
+        sendUpdateRequest(player.get(Player.class), textures);
     }
 
     public void applySkin(PlayerWrapper player, Property property) {
@@ -75,6 +71,7 @@ public class SkinApplierVelocity implements SRApplier {
         } catch (SkinRequestException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -82,15 +79,16 @@ public class SkinApplierVelocity implements SRApplier {
         List<Property> properties = new ArrayList<>(original);
         boolean applied = false;
         for (int i = 0; i < properties.size(); i++) {
-            Property lproperty = properties.get(i);
-            if ("textures".equals(lproperty.getName())) {
+            Property lProperty = properties.get(i);
+            if ("textures".equals(lProperty.getName())) {
                 properties.set(i, property);
                 applied = true;
             }
         }
-        if (!applied) {
+
+        if (!applied)
             properties.add(property);
-        }
+
         return properties;
     }
 

@@ -59,9 +59,7 @@ public class GUICommand extends BaseCommand {
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
             SkinsGUI.getMenus().put(p.getName(), 0);
             Inventory inventory = this.skinsGUI.getGUI(p, 0);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                p.openInventory(inventory);
-            });
+            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> p.openInventory(inventory));
         });
     }
 }
