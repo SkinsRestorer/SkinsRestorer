@@ -191,7 +191,12 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-            sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
+            if (C.matchesRegex(skin)) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN_2));
+            } else {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
+            }
+
             return false;
         }
 

@@ -31,4 +31,8 @@ public class C {
                 || url.startsWith("cdn.discordapp.com/")
         );
     }
+
+    public static boolean matchesRegex(String url) {
+        return urlPattern.matcher(url).matches();
+    }
 }
