@@ -171,7 +171,7 @@ public class SkinCommand extends BaseCommand {
             if (C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
-                p.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ERROR_INVALID_URLSKIN));
+                p.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ERROR_INVALID_URLSKIN_2));
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
