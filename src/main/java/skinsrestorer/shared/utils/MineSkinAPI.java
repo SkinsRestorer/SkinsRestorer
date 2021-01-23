@@ -110,7 +110,7 @@ public class MineSkinAPI {
         logger.log("[ERROR] MS:could not generate skin url: " + url);
         logger.log("[ERROR] MS:reason: " + err_resp);
         if (!(err_resp.matches("")))
-            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
+            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN_2); //todo: consider sending err_resp to admins
         else
             throw new SkinRequestException(Locale.MS_API_FAILED);
     }

@@ -182,7 +182,7 @@ public class SkinCommand extends BaseCommand {
             if(C.validUrl(url[0])) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
-                p.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                p.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -259,7 +259,7 @@ public class SkinCommand extends BaseCommand {
                 sender.sendMessage(e.getReason());
             } catch (Exception  e) {
                 log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= "+ e.getMessage());
-                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
             }
         }
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
