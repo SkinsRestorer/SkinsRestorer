@@ -30,7 +30,7 @@ public class DuckHandler implements IDuckHandler {
 
     @Override
     public void process(Throwable ex) {
-        if(debug) {
+        if (debug) {
             ex.printStackTrace(System.err);
         }
 

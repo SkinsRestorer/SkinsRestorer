@@ -16,7 +16,8 @@
 
 package li.cock.ie.enumerate;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class EnumList<E extends Enum<E>> implements List<E> {
@@ -64,7 +65,7 @@ public class EnumList<E extends Enum<E>> implements List<E> {
         E[] values = (E[]) Array.newInstance(_enumType, _values.size());
         _values.toArray(values);
 
-        for(int i = 0; i < values.length; ++i) {
+        for (int i = 0; i < values.length; ++i) {
             _hack.setOrdinal(values[i], i);
         }
 
@@ -73,19 +74,19 @@ public class EnumList<E extends Enum<E>> implements List<E> {
 
     @Override
     public int size() {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.size();
     }
 
     @Override
     public boolean isEmpty() {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.isEmpty();
     }
 
     @Override
     public boolean contains(Object o) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.contains(o);
     }
 
@@ -96,13 +97,13 @@ public class EnumList<E extends Enum<E>> implements List<E> {
 
     @Override
     public Object[] toArray() {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.toArray();
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.toArray(a);
     }
 
@@ -115,89 +116,89 @@ public class EnumList<E extends Enum<E>> implements List<E> {
     }
 
     public E add(String name, Class<?>[] argTypes, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E newEnum = newInstance(_values.size(), name, argTypes, extraValues);
 
         boolean success = _values.add(newEnum);
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return newEnum;
     }
 
     public E add(String name, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E newEnum = newInstance(_values.size(), name, extraValues);
 
         _values.add(newEnum);
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return newEnum;
     }
 
     @Override
     public boolean add(E e) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.add(e);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
 
     @Override
     public boolean remove(Object o) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.remove(o);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.containsAll(c);
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.addAll(c);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.addAll(index, c);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.removeAll(c);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         boolean success = _values.retainAll(c);
-        if(success & (_lazyLevel > 0)) push();
+        if (success & (_lazyLevel > 0)) push();
 
         return success;
     }
@@ -205,85 +206,85 @@ public class EnumList<E extends Enum<E>> implements List<E> {
     @Override
     public void clear() {
         _values.clear();
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
     }
 
     @Override
     public E get(int index) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.get(index);
     }
 
     public E set(int index, String name, Class<?>[] argTypes, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E result = _values.set(index, newInstance(index, name, argTypes, extraValues));
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return result;
     }
 
     public E set(int index, String name, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E result = _values.set(index, newInstance(index, name, extraValues));
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return result;
     }
 
     @Override
     public E set(int index, E element) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E result = _values.set(index, element);
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return result;
     }
 
     public E add(int index, String name, Class<?>[] argTypes, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E newEnum = newInstance(index, name, argTypes, extraValues);
         _values.add(index, newEnum);
 
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return newEnum;
     }
 
     public E add(int index, String name, Object... extraValues) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E newEnum = newInstance(index, name, extraValues);
         _values.add(index, newEnum);
 
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return newEnum;
     }
 
     @Override
     public void add(int index, E element) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         _values.add(index, element);
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
     }
 
     @Override
     public E remove(int index) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
 
         E result = _values.remove(index);
-        if(_lazyLevel > 0) push();
+        if (_lazyLevel > 0) push();
 
         return result;
     }
 
     @Override
     public int indexOf(Object o) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.indexOf(0);
     }
 
@@ -304,7 +305,7 @@ public class EnumList<E extends Enum<E>> implements List<E> {
 
     @Override
     public List<E> subList(int fromIndex, int toIndex) {
-        if(_lazyLevel > 1) pull();
+        if (_lazyLevel > 1) pull();
         return _values.subList(fromIndex, toIndex);
     }
 }
