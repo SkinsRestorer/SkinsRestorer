@@ -7,13 +7,12 @@
 [![License](https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg)](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE)
 [![Discord](https://img.shields.io/discord/186794372468178944.svg?color=blue&label=discord&logo=discord)](https://discord.gg/sAhVsyU)
 [![Spigot downloads](https://img.shields.io/spiget/downloads/2124?label=Spigot%20downloads)](https://www.spigotmc.org/resources/2124/)
-[![Spigot stars](https://img.shields.io/spiget/stars/2124?label=Spigot%20stars)](https://www.spigotmc.org/resources/2124/)
 [![Spigot rating](https://img.shields.io/spiget/rating/2124?label=Spigot%20rating)](https://www.spigotmc.org/resources/2124/)
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![download badge](https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
-&nbsp;&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![download badge](https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
+&nbsp;&nbsp;&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar)
 
-This is the development repository for SkinsRestorer, used for making and testing new features.
+This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
 
 Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity servers.
 
@@ -61,3 +60,7 @@ See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contri
 
 ##### Example Bukkit plugin
 https://github.com/SkinsRestorer/SkinsRestorerAPIExample
+
+### How to install? / installation / setup
+Installing SkinsRestorer can be tricky when using a proxy server.
+Make sure to read on how to install [here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer#Basic-Installation)
