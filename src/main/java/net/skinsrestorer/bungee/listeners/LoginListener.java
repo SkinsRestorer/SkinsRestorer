@@ -21,7 +21,6 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
-import lombok.Setter;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

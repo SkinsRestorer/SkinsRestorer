@@ -85,7 +85,7 @@ public class SkinsRestorer implements SRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerVelocityAPI skinsRestorerVelocityAPI;
+    private SkinsRestorerAPI skinsRestorerVelocityAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
@@ -135,7 +135,7 @@ public class SkinsRestorer implements SRPlugin {
         this.skinApplierVelocity = new SkinApplierVelocity(this);
 
         // Init API
-        this.skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(this, this.mojangAPI, this.skinStorage);
+        this.skinsRestorerVelocityAPI = new SkinsRestorerAPI(this.mojangAPI, this.skinStorage, this);
 
         logger.logAlways("Enabled SkinsRestorer v" + getVersion());
 

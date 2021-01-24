@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -24,6 +24,7 @@ package net.skinsrestorer.bukkit;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
+import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
@@ -37,6 +38,7 @@ import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -75,7 +77,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerBukkitAPI skinsRestorerBukkitAPI;
+    private SkinsRestorerAPI skinsRestorerBukkitAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -88,12 +90,10 @@ public class SkinsRestorer extends JavaPlugin {
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
-        if (metrics.isEnabled()) {
-            metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
-        }
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
         instance = this;
         factory = new UniversalSkinFactory(this);
@@ -468,5 +468,27 @@ public class SkinsRestorer extends JavaPlugin {
                 updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> console.sendMessage(msg));
             }
         }));
+    }
+
+    private static class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
+        private final SkinsRestorer plugin;
+
+        public SkinsRestorerBukkitAPI(SkinsRestorer plugin, MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage, null);
+            this.plugin = plugin;
+        }
+
+        // Todo: We need to refactor applySkin through all platforms to behave the same!
+        @Beta
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            plugin.getFactory().applySkin(player.get(Player.class), props);
+        }
+
+        @Beta
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            plugin.getFactory().applySkin(player.get(Player.class), this.getSkinData(this.getSkinName(player.get(Player.class).getName())));
+        }
     }
 }

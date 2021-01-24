@@ -26,15 +26,17 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.shared.interfaces.SRApplier;
 import net.skinsrestorer.shared.utils.PlayerWrapper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class SkinApplierBungee {
+public class SkinApplierBungee implements SRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
     private static Class<?> loginResult;
@@ -87,7 +89,7 @@ public class SkinApplierBungee {
         }
     }
 
-    public void applySkin(final PlayerWrapper p) throws Exception {
+    public void applySkin(final PlayerWrapper p, SkinsRestorerAPI api) throws Exception {
         applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
     }
 

@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -35,6 +35,8 @@ import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.SkinApplierBungee;
+import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -43,12 +45,13 @@ import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("Duplicates")
-public class SkinsRestorer extends Plugin {
+public class SkinsRestorer extends Plugin implements SRPlugin {
     @Getter
     private static SkinsRestorer instance;
     @Getter
@@ -77,7 +80,7 @@ public class SkinsRestorer extends Plugin {
     @Getter
     private SkinCommand skinCommand;
     @Getter
-    private SkinsRestorerBungeeAPI skinsRestorerBungeeAPI;
+    private SkinsRestorerAPI skinsRestorerBungeeAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -91,12 +94,10 @@ public class SkinsRestorer extends Plugin {
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);
-        if (metrics.isEnabled()) {
-            metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-            metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
-        }
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
         if (Config.UPDATER_ENABLED) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
@@ -143,7 +144,7 @@ public class SkinsRestorer extends Plugin {
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
-        this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(this, this.mojangAPI, this.skinStorage);
+        this.skinsRestorerBungeeAPI = new SkinsRestorerAPI(this.mojangAPI, this.skinStorage, this);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
@@ -230,7 +231,7 @@ public class SkinsRestorer extends Plugin {
                 outdated = true;
 
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
-                    console.sendMessage(TextComponent.fromLegacyText(msg)));
+                        console.sendMessage(TextComponent.fromLegacyText(msg)));
             }
 
             @Override
@@ -241,5 +242,10 @@ public class SkinsRestorer extends Plugin {
                 updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> console.sendMessage(TextComponent.fromLegacyText(msg)));
             }
         }));
+    }
+
+    @Override
+    public SRApplier getApplier() {
+        return skinApplierBungee;
     }
 }

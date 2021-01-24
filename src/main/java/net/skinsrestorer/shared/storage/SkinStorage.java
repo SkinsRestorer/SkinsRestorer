@@ -24,7 +24,10 @@ package net.skinsrestorer.shared.storage;
 import lombok.Getter;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.Property;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 import javax.sql.RowSet;
 import java.io.*;

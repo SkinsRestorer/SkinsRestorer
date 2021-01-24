@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import lombok.Getter;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -41,7 +42,8 @@ import java.util.logging.Level;
 public class UpdateDownloader {
     private final SkinsRestorer plugin;
 
-    public DownloadFailReason failReason;
+    @Getter
+    protected DownloadFailReason failReason;
 
     public UpdateDownloader(SkinsRestorer plugin) {
         this.plugin = plugin;
@@ -100,10 +102,6 @@ public class UpdateDownloader {
         }));
 
         return true;
-    }
-
-    public DownloadFailReason getFailReason() {
-        return failReason;
     }
 
     public Properties getUpdaterProperties() {

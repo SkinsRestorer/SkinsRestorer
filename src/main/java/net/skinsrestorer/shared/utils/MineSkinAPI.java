@@ -1,11 +1,25 @@
+/*
+ * #%L
+ * SkinsRestorer
+ * %%
+ * Copyright (C) 2021 SkinsRestorer
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
 package net.skinsrestorer.shared.utils;
-
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,6 +33,12 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class MineSkinAPI {
     @Getter
@@ -48,9 +68,11 @@ public class MineSkinAPI {
                     }
                 }
             }
+
             return "alex";
         } catch (Exception ignored) {
         }
+
         return "steve";
     }
 

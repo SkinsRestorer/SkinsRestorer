@@ -38,7 +38,8 @@ import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.utils.SkinApplierSponge;
-import org.bstats.sponge.Metrics2;
+import org.bstats.charts.SingleLineChart;
+import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -77,12 +78,12 @@ public class SkinsRestorer implements SRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerSpongeAPI skinsRestorerSpongeAPI;
+    private SkinsRestorerAPI skinsRestorerSpongeAPI;
 
     private UpdateChecker updateChecker;
     private CommandSource console;
 
-    private final Metrics2 metrics;
+    private final Metrics metrics;
 
     @Inject
     private Logger log;
@@ -99,7 +100,7 @@ public class SkinsRestorer implements SRPlugin {
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics2.Factory metricsFactory) {
+    public SkinsRestorer(Metrics.Factory metricsFactory) {
         int pluginId = 2337; // SkinsRestorer's ID on bStats, for Sponge
         metrics = metricsFactory.make(pluginId);
     }
@@ -146,7 +147,7 @@ public class SkinsRestorer implements SRPlugin {
         this.skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        this.skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(this, this.mojangAPI, this.skinStorage);
+        this.skinsRestorerSpongeAPI = new SkinsRestorerAPI(this.mojangAPI, this.skinStorage, this);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
@@ -169,10 +170,10 @@ public class SkinsRestorer implements SRPlugin {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
         }
 
-        metrics.addCustomChart(new Metrics2.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new Metrics2.SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new Metrics2.SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
     }
 
     @SuppressWarnings({"deprecation"})

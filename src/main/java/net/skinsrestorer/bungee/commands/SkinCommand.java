@@ -54,6 +54,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     @Default
+    @SuppressWarnings({"deprecation"})
     public void onDefault(CommandSender sender) {
         this.onHelp(sender, this.getCurrentCommandManager().generateCommandHelp());
     }
@@ -253,7 +254,7 @@ public class SkinCommand extends BaseCommand {
 
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
-                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
+                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
                 } else {
                     plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
@@ -294,7 +295,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
+                plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
