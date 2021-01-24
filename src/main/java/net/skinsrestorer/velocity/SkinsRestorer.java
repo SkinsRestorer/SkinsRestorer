@@ -36,6 +36,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.text.TextComponent;
 import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.SRApplier;
 import net.skinsrestorer.shared.interfaces.SRPlugin;

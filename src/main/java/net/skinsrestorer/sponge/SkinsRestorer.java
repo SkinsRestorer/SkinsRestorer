@@ -24,6 +24,7 @@ package net.skinsrestorer.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import lombok.Getter;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.SRApplier;
 import net.skinsrestorer.shared.interfaces.SRPlugin;

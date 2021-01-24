@@ -26,6 +26,8 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
 import lombok.Getter;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;

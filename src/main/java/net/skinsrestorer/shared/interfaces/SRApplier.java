@@ -21,8 +21,8 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.shared.utils.PlayerWrapper;
-import net.skinsrestorer.shared.utils.SkinsRestorerAPI;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 
 public interface SRApplier {
     void applySkin(PlayerWrapper playerWrapper, SkinsRestorerAPI api) throws Exception;

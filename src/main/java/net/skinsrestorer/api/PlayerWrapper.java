@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.api;
 
 /**
  * Makes it possible to get all platforms into a single API merged.

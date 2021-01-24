@@ -19,13 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.api;
 
 import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.MojangAPI;
 
 /**
  * API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
