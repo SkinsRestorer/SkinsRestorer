@@ -1,5 +1,5 @@
 name: ${project.name}
-main: skinsrestorer.bukkit.SkinsRestorer
+main: net.skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}
 website: https://skinsrestorer.net/

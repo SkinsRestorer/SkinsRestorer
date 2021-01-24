@@ -18,6 +18,8 @@ package li.cock.ie.reflect;
 
 public interface IDuckHandler {
     void process(Throwable ex);
+
     void reset();
+
     boolean check();
 }
