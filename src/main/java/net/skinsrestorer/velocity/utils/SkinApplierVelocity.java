@@ -94,7 +94,7 @@ public class SkinApplierVelocity implements SRApplier {
 
     private void sendUpdateRequest(Player p, Property textures) {
         p.getCurrentServer().ifPresent(serverConnection -> {
-            log.logAlways("[SkinsRestorer] Sending skin update request for " + p.getUsername());
+            log.log("[SkinsRestorer] Sending skin update request for " + p.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);
