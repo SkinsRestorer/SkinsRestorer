@@ -51,6 +51,9 @@ public class C {
                 || url.startsWith("https://cdn.discordapp.com/")
                 || url.startsWith("http://cdn.discordapp.com/")
                 || url.startsWith("cdn.discordapp.com/")
+                || url.startsWith("https://textures.minecraft.net/")
+                || url.startsWith("http://textures.minecraft.net/")
+                || url.startsWith("textures.minecraft.net/")
         );
     }
 
