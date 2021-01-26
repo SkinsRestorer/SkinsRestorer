@@ -62,17 +62,12 @@ public class SkinApplierVelocity implements SRApplier {
         player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), property));
     }
 
-    public GameProfile updateProfileSkin(GameProfile profile, String skin) {
-        try {
+    public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
+
             Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
             List<Property> oldProperties = profile.getProperties();
             List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
             return new GameProfile(profile.getId(), profile.getName(), newProperties);
-        } catch (SkinRequestException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     private List<Property> updatePropertiesSkin(List<Property> original, Property property) {
