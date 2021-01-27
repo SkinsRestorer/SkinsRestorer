@@ -19,17 +19,26 @@ public class C {
     }
 
     public static boolean validUrl(String url) {
-        return urlPattern.matcher(url).matches()
-                && (url.startsWith("https://i.imgur.com/")
-                || url.startsWith("http://i.imgur.com/")
-                || url.startsWith("i.imgur.com/")
-                || url.startsWith("https://storage.googleapis.com/")
-                || url.startsWith("http://storage.googleapis.com/")
-                || url.startsWith("storage.googleapis.com/")
-                || url.startsWith("https://cdn.discordapp.com/")
-                || url.startsWith("http://cdn.discordapp.com/")
-                || url.startsWith("cdn.discordapp.com/")
-        );
+        boolean isValidAndAllowed = false; // if the URL is not valid nor allowed, this will simply be what we return
+        String[] allowedUrlsArray = {
+            "https://i.imgur.com/",
+            "http://i.imgur.com/",
+            "i.imgur.com/",
+            "https://storage.googleapis.com/",
+            "http://storage.googleapis.com/",
+            "storage.googleapis.com/",
+            "https://cdn.discordapp.com/",
+            "cdn.discordapp.com/"
+        };
+
+        for (String allowedUrl : allowedUrlsArray) {
+            if (urlPattern.matcher(url).matches() && url.startsWith(allowedUrl)) {
+                isValidAndAllowed = true;
+                break;
+            }
+        }
+
+        return isValidAndAllowed;
     }
 
     public static boolean matchesRegex(String url) {
