@@ -1,6 +1,6 @@
 #################################
-#  SkinsRestorer Config.yml     #
-#  Generated on 14.0.0          #
+#    SkinsRestorer Config.yml   #
+#      Generated on 14.0.0      #
 #################################
 #
 # We from SRTeam thank you for using our plugin!
@@ -9,13 +9,13 @@
 # For Configuration Help      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 # Commands & Permissions      -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms
 # For locale & messages       -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations
-# Not working or get error??  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
-# For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
+# Not working or get error?  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
+# For advanced help or other, go to our Discord: https://discord.me/SkinsRestorer/
 
 # (?) Step by step config guide -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 
-# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true  (!)
-# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord)              (!)
+# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true.  (!)
+# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord).              (!)
 
   ##########
   # Basics #
@@ -25,9 +25,9 @@
 # see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms.
 SkinWithoutPerm: true
 
-# Players cooldown when changing skins (set to 0 to disable)
+# Players cooldown when changing skins (set to 0 to disable).
 # SkinErrorCooldown when a error or invalid url occurs.
-# Can be bypassed with 'skinsrestorer.bypasscooldown'
+# Can be bypassed with 'skinsrestorer.bypasscooldown'.
 SkinChangeCooldown: 30
 SkinErrorCooldown: 5
 
@@ -36,10 +36,10 @@ SkinErrorCooldown: 5
   #################
 
 # Enable or disable default skins
-# ApplyForPremium: false will only put skin on skinless/steve players.
+# ApplyForPremium: false will only put a skin on skinless/steve players.
 # If there is more than one, the plugin will choose a random one.
-# [?] Does support Custom & url.png skin, read SkinFile Generator below [?]
-# [!] url.png wont work on join for bungee, see https://github.com/SkinsRestorer/SkinsRestorerX/issues/315 [!]
+# [?] Supports custom & url.png skins, read SkinFile Generator below. [?]
+# [!] url.png won't work on join for bungee, see https://github.com/SkinsRestorer/SkinsRestorerX/issues/315 [!]
 DefaultSkins:
   Enabled: false
   ApplyForPremium: false
@@ -47,8 +47,8 @@ DefaultSkins:
     - "xknat"
     - "McLive"
 
-# Skins in this list will be disabled, so users can't set it.
-# Can by bypassed with 'skinsrestorer.bypassdisabled'
+# Skins in this list will be disabled, so users can't set them.
+# Can be bypassed with 'skinsrestorer.bypassdisabled'.
 DisabledSkins:
   Enabled: false
   Names:
@@ -56,7 +56,7 @@ DisabledSkins:
     - "Owner"
 
 # Custom list for the /skins GUI.
-# ShowOnlyCustomGUI will only show CustomGUI.Names in the gui
+# ShowOnlyCustomGUI will only show CustomGUI.Names in the gui.
 CustomGUI:
   Enabled: false
   ShowOnlyCustomGUI: true
@@ -68,24 +68,24 @@ CustomGUI:
   # Advanced #
   ############
 
-# Allows the usage of per skin perm.
+# Allows the usage of per-skin permission.
 # Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.McLive
 # with "skinsrestorer.ownskin" you can set your own playername skin.
 PerSkinPermissions: false
 
-# Time skins are stored in database before we request again (in minutes)
+# Time that skins are stored in the database before we request again (in minutes).
 SkinExpiresAfter: 15
 
 # Multi-Bungee support
-# Enable this if you have issues with skins in multi-proxy environments
-# If your using bungee and you have the plugin in all spigot servers and it still does not work, turn this on.
+# Enable this if you have issues with skins in multi-proxy environments.
+# If you're using bungee and you have the plugin in all spigot servers and it still does not work, turn this on.
 # (This is automatically enabled if you have RedisBungee)
 MultiBungee:
   Enabled: false
 
 # Settings for MySQL skin storage (recommended for big BungeeCord networks)
-# [!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in Spigot Config.yml [!]
-# [!] non root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]
+# [!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in Spigot's config.yml [!]
+# [!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]
 MySQL:
   Enabled: false
   Host: localhost
@@ -106,25 +106,25 @@ Updater:
   Enabled: true
   PeriodicChecks: true
 
-# Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
+# Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 NoSkinIfLoginCanceled: true
 
   #################
   # Compatibility #
   #################
 
-# True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml
+# True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml.
 # This is more customizable, but at the cost of permission specific help.
 UseOldSkinHelp: false
 
 #Ignore messages.yml 'PREFIX ='
 DisablePrefix: false
 
-# Dismounts a mounted (on a horse, or sitting) player when they a skin is updated, preventing players from becoming desynced.
+# Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.
 DismountPlayerOnSkinUpdate: true
 
 # Remounts a player that was dismounted after a skin update (above option must be true).
-# Disable this is only recommended if you do use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.
+# Disabling this is only recommended if you use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.
 RemountPlayerOnSkinUpdate: true
 
 # Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.
@@ -134,12 +134,12 @@ DismountPassengersOnSkinUpdate: false
   # DEV's corner #
   ################
 
-# Enable to start receiving debug messages about api request & more.
+# Enable to start receiving debug messages about api requests & more.
 Debug: false
 
 # WIP WONT WORK
-# Set the language you will use - Files are located in /SkinsRestorer/languages directory
-# You can add custom locale file by copying the english.yml, renaming the new file into your language and editing it
+# Set the language you will use - Files are located in /SkinsRestorer/languages directory.
+# You can add a custom locale file by copying the english.yml, renaming the new file into your language and editing it.
 # Default: english - english.yml
 Locale: english
 # ^ WONT WORK YET!
@@ -151,11 +151,11 @@ Locale: english
 # Vectier Thailand has made some super cool "Custom Skin" tools that you can use!
 #
 # SkinFile Generator:
-# With SkinFile Generator you can upload your own custom skin to get a unique .skin file that you can put in your skins folder to use with SkinsRestorer.
+# With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.
 # Check it out here: https://riflowth.github.io/SkinFile-Generator/
 #
 # SkinSystem :
-# With SkinSystem you as a server owner can connect AuthMe (and forum) with the SkinSystem website that you can host to give your players the ability to upload custom skins.
+# With SkinSystem, you, as a server owner, can connect AuthMe (and forum) with the SkinSystem website that you can host, to give your players the ability to upload custom skins.
 # Check it out here: https://github.com/riflowth/SkinSystem
 #
 # Useful Links #
