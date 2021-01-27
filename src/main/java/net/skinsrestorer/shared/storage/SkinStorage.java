@@ -36,55 +36,55 @@ import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
     private Class<?> property;
+
     @Getter
     @Setter
     private MySQL mysql;
     private File folder;
-    @SuppressWarnings("unused")
-    private boolean isBungee = false;
 
     @SuppressWarnings("unused")
-    private boolean isVelocity = false;
-    private boolean isSponge = false;
+    private boolean isBukkit;
+    @SuppressWarnings("unused")
+    private boolean isBungee;
+    private boolean isSponge;
+    @SuppressWarnings("unused")
+    private boolean isVelocity;
+
     @Getter
     @Setter
     private MojangAPI mojangAPI;
 
-    private void load() {
-        try {
-            property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
-            isSponge = true;
-        } catch (Exception exe) {
-            try {
-                property = Class.forName("com.mojang.authlib.properties.Property");
-            } catch (Exception e) {
-                try {
-                    property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-                    isBungee = true;
-                } catch (Exception ex) {
-                    try {
-                        property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
-                    } catch (Exception exc) {
-                        try {
-                            property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
-                            isVelocity = true;
-                        } catch (Exception exce) {
-                            System.out.println("[SkinsRestorer] Could not find a valid Property class! Plugin will not work properly");
-                        }
-                    }
-                }
-            }
-        }
-    }
+    public SkinStorage(Platform platform) {
+        isBukkit = platform.isBukkit();
+        isBungee = platform.isBungee();
+        isSponge = platform.isSponge();
+        isVelocity = platform.isVelocity();
 
-    public SkinStorage() {
-        this.load();
+        try {
+            if (isBukkit) {
+                try {
+                    property = Class.forName("com.mojang.authlib.properties.Property");
+                } catch (ClassNotFoundException e) {
+                    property = Class.forName("net.minecraft.util.com.mojang.authlib.properties.Property");
+                }
+            } else if (isBungee) {
+                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+            } else if (isSponge) {
+                property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
+            } else if (isVelocity) {
+                property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void loadFolders(File pluginFolder) {
         folder = pluginFolder;
+
         File tempFolder = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator);
         tempFolder.mkdirs();
+
         tempFolder = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator);
         tempFolder.mkdirs();
     }
@@ -116,9 +116,11 @@ public class SkinStorage {
         // use our own propery class if we are on skinsrestorer.sponge
         if (isSponge) {
             Property p = new Property();
+
             p.setName(name);
             p.setValue(value);
             p.setSignature(signature);
+
             return p;
         }
 
@@ -128,6 +130,7 @@ public class SkinStorage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return null;
     }
 
@@ -200,11 +203,9 @@ public class SkinStorage {
                     }
 
                     return skin;
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
@@ -216,7 +217,6 @@ public class SkinStorage {
 
                 String skin;
                 try (BufferedReader buf = new BufferedReader(new FileReader(playerFile))) {
-
                     String line;
                     skin = null;
                     if ((line = buf.readLine()) != null)
@@ -282,6 +282,7 @@ public class SkinStorage {
                 String value;
                 String signature;
                 String timestamp;
+
                 try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
 
                     String line;
@@ -332,6 +333,7 @@ public class SkinStorage {
      **/
     public void removePlayerSkin(String name) {
         name = name.toLowerCase();
+
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
@@ -351,6 +353,7 @@ public class SkinStorage {
      **/
     public void removeSkinData(String name) {
         name = name.toLowerCase();
+
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
         } else {
@@ -369,6 +372,7 @@ public class SkinStorage {
      **/
     public void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
+
         if (Config.USE_MYSQL) {
             //todo optimization
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
@@ -406,6 +410,7 @@ public class SkinStorage {
         name = name.toLowerCase();
         String value = "";
         String signature = "";
+
         try {
             value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
             signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
@@ -458,15 +463,13 @@ public class SkinStorage {
             if (Config.CUSTOM_GUI_ENABLED) {
                 if (Config.CUSTOM_GUI_ONLY) {
                     StringBuilder sb = new StringBuilder();
-                    Config.CUSTOM_GUI_SKINS.forEach(skin -> {
-                        sb.append("|").append(skin);
-                    });
+                    Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append("|").append(skin));
+
                     filterBy = " WHERE Nick RLIKE '" + sb.substring(1) + "'";
                 } else {
                     StringBuilder sb = new StringBuilder();
-                    Config.CUSTOM_GUI_SKINS.forEach(skin -> {
-                        sb.append(", '").append(skin).append("'");
-                    });
+                    Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append(", '").append(skin).append("'"));
+
                     orderBy = "FIELD(Nick" + sb + ") DESC, Nick";
                 }
             }
@@ -605,6 +608,7 @@ public class SkinStorage {
     public boolean forceUpdateSkinData(String skin) {
         try {
             Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
+
             if (textures != null) {
                 this.setSkinData(skin, textures);
                 return true;
@@ -633,6 +637,7 @@ public class SkinStorage {
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         // Remove all non [a-z_] chars to allow pre/sub fixes
         player = player.replaceAll("\\W", "");
+
         if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
             // don't return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
@@ -672,5 +677,28 @@ public class SkinStorage {
 
     public String getDefaultSkinNameIfEnabled(String player) {
         return getDefaultSkinNameIfEnabled(player, false);
+    }
+
+    public enum Platform {
+        BUKKIT(true, false, false, false),
+        BUNGEECORD(false, true, false, false),
+        SPONGE(false, false, true, false),
+        VELOCITY(false, false, false, true);
+
+        @Getter
+        private final boolean isBukkit;
+        @Getter
+        private final boolean isBungee;
+        @Getter
+        private final boolean isSponge;
+        @Getter
+        private final boolean isVelocity;
+
+        Platform(boolean isBukkit, boolean isBungee, boolean isSponge, boolean isVelocity) {
+            this.isBukkit = isBukkit;
+            this.isBungee = isBungee;
+            this.isSponge = isSponge;
+            this.isVelocity = isVelocity;
+        }
     }
 }

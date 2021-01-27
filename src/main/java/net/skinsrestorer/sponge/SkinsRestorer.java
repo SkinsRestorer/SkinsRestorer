@@ -124,7 +124,7 @@ public class SkinsRestorer implements SRPlugin {
                 }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));

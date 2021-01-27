@@ -43,8 +43,8 @@ public class CooldownStorage implements Runnable {
         return int1 - int2;
     }
 
-    public static void setCooldown(String name, int cooldowntime, TimeUnit timeunit) {
-        cooldown.put(name, System.currentTimeMillis() + timeunit.toMillis(cooldowntime));
+    public static void setCooldown(String name, int cooldownTime, TimeUnit timeunit) {
+        cooldown.put(name, System.currentTimeMillis() + timeunit.toMillis(cooldownTime));
     }
 
     @Override

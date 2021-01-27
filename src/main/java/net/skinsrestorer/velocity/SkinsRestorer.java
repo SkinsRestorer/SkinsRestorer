@@ -109,7 +109,7 @@ public class SkinsRestorer implements SRPlugin {
                 this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
 
         // Init config files
         Config.load(CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("config.yml"));
@@ -244,7 +244,7 @@ public class SkinsRestorer implements SRPlugin {
     }
 
     public String getVersion() {
-        Optional<PluginContainer> plugin = this.getProxy().getPluginManager().getPlugin("skinsrestorer");
+        Optional<PluginContainer> plugin = getProxy().getPluginManager().getPlugin("skinsrestorer");
 
         if (!plugin.isPresent())
             return "";

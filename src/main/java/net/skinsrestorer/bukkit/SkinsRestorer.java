@@ -134,7 +134,7 @@ public class SkinsRestorer extends JavaPlugin {
                 }, 20 * 60 * 10, 20 * 60 * 10);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);

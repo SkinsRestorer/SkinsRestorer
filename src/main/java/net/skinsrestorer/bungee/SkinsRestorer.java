@@ -108,7 +108,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
                 this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
         Config.load(configPath, getResourceAsStream("config.yml"));
