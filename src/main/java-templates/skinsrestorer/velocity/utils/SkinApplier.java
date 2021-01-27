@@ -23,16 +23,11 @@ public class SkinApplier {
         this.plugin = plugin;
     }
 
-    public GameProfile updateProfileSkin(GameProfile profile, String skin) {
-        try {
-            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
-            List<Property> oldProperties = profile.getProperties();
-            List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
-            return new GameProfile(profile.getId(), profile.getName(), newProperties);
-        } catch (SkinRequestException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+        List<Property> oldProperties = profile.getProperties();
+        List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
+        return new GameProfile(profile.getId(), profile.getName(), newProperties);
     }
 
     private List<Property> updatePropertiesSkin(List<Property> original, Property property) {

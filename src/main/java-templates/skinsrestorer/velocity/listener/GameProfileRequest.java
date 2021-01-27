@@ -3,6 +3,8 @@ package skinsrestorer.velocity.listener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
+
+import skinsrestorer.shared.exception.SkinRequestException;
 import skinsrestorer.shared.storage.Config;
 import skinsrestorer.shared.utils.C;
 import skinsrestorer.shared.utils.SRLogger;
@@ -42,6 +44,10 @@ public class GameProfileRequest {
         String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
 
         //todo: default skinurl support
-        e.setGameProfile(plugin.getSkinApplier().updateProfileSkin(e.getGameProfile(), skin));
+        try {
+            e.setGameProfile(plugin.getSkinApplier().updateProfileSkin(e.getGameProfile(), skin));
+        } catch (SkinRequestException ignored) {
+            // we should do nothing
+        }
     }
 }
