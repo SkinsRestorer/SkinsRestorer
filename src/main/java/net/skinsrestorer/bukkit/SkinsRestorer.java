@@ -109,9 +109,10 @@ public class SkinsRestorer extends JavaPlugin {
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: &4&ntrue&e'§c.");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §4             [CRITICAL WARNING]");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
                     console.sendMessage("§e[§2SkinsRestorer§e] §cThat setting is located in §e/plugins/MundoSK/config.yml");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §cYou have to disable ('false') it to get SkinsRestorer to work.");
+                    console.sendMessage("§e[§2SkinsRestorer§e] §cYou have to disable ('false') it to get SkinsRestorer to work!");
                     console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
                 }
             } catch (Exception ignored) {
