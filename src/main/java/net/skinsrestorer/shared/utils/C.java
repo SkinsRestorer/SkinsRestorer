@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -41,20 +41,26 @@ public class C {
     }
 
     public static boolean validUrl(String url) {
-        return urlPattern.matcher(url).matches()
-                && (url.startsWith("https://i.imgur.com/")
-                || url.startsWith("http://i.imgur.com/")
-                || url.startsWith("i.imgur.com/")
-                || url.startsWith("https://storage.googleapis.com/")
-                || url.startsWith("http://storage.googleapis.com/")
-                || url.startsWith("storage.googleapis.com/")
-                || url.startsWith("https://cdn.discordapp.com/")
-                || url.startsWith("http://cdn.discordapp.com/")
-                || url.startsWith("cdn.discordapp.com/")
-                || url.startsWith("https://textures.minecraft.net/")
-                || url.startsWith("http://textures.minecraft.net/")
-                || url.startsWith("textures.minecraft.net/")
-        );
+        boolean isValidAndAllowed = false; // if the URL is not valid nor allowed, this will simply be what we return
+        String[] allowedUrlsArray = {
+            "https://i.imgur.com/",
+            "http://i.imgur.com/",
+            "i.imgur.com/",
+            "https://storage.googleapis.com/",
+            "http://storage.googleapis.com/",
+            "storage.googleapis.com/",
+            "https://cdn.discordapp.com/",
+            "cdn.discordapp.com/"
+        };
+
+        for (String allowedUrl : allowedUrlsArray) {
+            if (urlPattern.matcher(url).matches() && url.startsWith(allowedUrl)) {
+                isValidAndAllowed = true;
+                break;
+            }
+        }
+
+        return isValidAndAllowed;
     }
 
     public static boolean matchesRegex(String url) {
