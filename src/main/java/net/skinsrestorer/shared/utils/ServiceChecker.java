@@ -45,9 +45,9 @@ public class ServiceChecker {
     }
 
     public static class ServiceCheckResponse {
-        private List<String> results = new LinkedList<>();
-        AtomicInteger workingUUID = new AtomicInteger();
-        AtomicInteger workingProfile = new AtomicInteger();
+        private final List<String> results = new LinkedList<>();
+        private final AtomicInteger workingUUID = new AtomicInteger();
+        private final AtomicInteger workingProfile = new AtomicInteger();
 
         public List<String> getResults() {
             return results;

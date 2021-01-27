@@ -108,7 +108,6 @@ public class SkinCommand extends BaseCommand {
         });
     }
 
-
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
@@ -164,7 +163,6 @@ public class SkinCommand extends BaseCommand {
             }
         });
     }
-
 
     @Subcommand("set")
     @CommandPermission("%skinSet")

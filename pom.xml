@@ -67,24 +67,20 @@
                     <minimizeJar>true</minimizeJar>
                     <relocations>
                         <relocation>
-                            <pattern>org.bstats.bukkit</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>org.bstats.bungeecord</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
+                            <pattern>org.bstats</pattern>
+                            <shadedPattern>net.skinsrestorer.shared.utils.metrics</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.inventivetalent</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.updater</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shared.utils.updater</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.acf</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shared.utils.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.bungee-config</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shared.utils.bungee-config</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

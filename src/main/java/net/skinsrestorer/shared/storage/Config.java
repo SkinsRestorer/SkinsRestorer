@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.List;
 
 public class Config {
-
     public static boolean SKINWITHOUTPERM = false;
     public static int SKIN_CHANGE_COOLDOWN = 30;
     public static int SKIN_ERROR_COOLDOWN = 5;
@@ -105,7 +104,6 @@ public class Config {
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
-
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
