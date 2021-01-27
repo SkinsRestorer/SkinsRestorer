@@ -99,6 +99,13 @@ public class UniversalSkinFactory implements SkinFactory {
     }
 
     private static Consumer<Player> detectRefresh() {
+        // Giving warning when using java 9+ regarding illegal reflection access
+        final String version = System.getProperty("java.version");
+        if (!version.startsWith("1."))
+            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message can be IGNORED, we will fix this in a later release!");
+
+
+
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
