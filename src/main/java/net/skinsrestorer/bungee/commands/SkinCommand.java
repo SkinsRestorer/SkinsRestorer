@@ -258,6 +258,7 @@ public class SkinCommand extends BaseCommand {
                 } else {
                     plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 }
+
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
@@ -297,6 +298,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(p.getName(), skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
                 p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
+
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getReason()));

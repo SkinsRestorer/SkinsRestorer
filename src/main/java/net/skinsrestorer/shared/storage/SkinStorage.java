@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -40,7 +40,10 @@ public class SkinStorage {
     @Setter
     private MySQL mysql;
     private File folder;
+    @SuppressWarnings("unused")
     private boolean isBungee = false;
+
+    @SuppressWarnings("unused")
     private boolean isVelocity = false;
     private boolean isSponge = false;
     @Getter
@@ -178,7 +181,7 @@ public class SkinStorage {
 
     /**
      * Returns the custom skin name that player has set.
-     *
+     * <p>
      * Returns null if player has no custom skin set.
      **/
     public String getPlayerSkin(String name) {
@@ -211,13 +214,14 @@ public class SkinStorage {
                 if (!playerFile.exists())
                     return null;
 
-                BufferedReader buf = new BufferedReader(new FileReader(playerFile));
+                String skin;
+                try (BufferedReader buf = new BufferedReader(new FileReader(playerFile))) {
 
-                String line, skin = null;
-                if ((line = buf.readLine()) != null)
-                    skin = line;
-
-                buf.close();
+                    String line;
+                    skin = null;
+                    if ((line = buf.readLine()) != null)
+                        skin = line;
+                }
 
                 //maybe useless
                 if (skin == null) {
@@ -498,8 +502,8 @@ public class SkinStorage {
             for (String file : fileNames) {
                 String skinName = file.replace(".skin", "");
                 if (i >= number) {
-                    if (Config.CUSTOM_GUI_ONLY){ //Show only Config.CUSTOM_GUI_SKINS in the gui
-                        for (String Guiskins : Config.CUSTOM_GUI_SKINS){
+                    if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
+                        for (String Guiskins : Config.CUSTOM_GUI_SKINS) {
                             if (skinName.toLowerCase().contains(Guiskins.toLowerCase()))
                                 list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
                         }
@@ -566,7 +570,6 @@ public class SkinStorage {
                         String value;
                         String signature;
                         try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-
                             String line, timestamp = "";
                             value = "";
                             signature = "";
@@ -609,6 +612,7 @@ public class SkinStorage {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return false;
     }
 
@@ -621,9 +625,10 @@ public class SkinStorage {
      * 1: Return player if clear
      * 2: Return skin if found
      * Else: return player
-     * @param player      - Player name
-     * @param clear       - Should we ignore player set skin?
-     * @return            - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
+     *
+     * @param player - Player name
+     * @param clear  - Should we ignore player set skin?
+     * @return - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         // Remove all non [a-z_] chars to allow pre/sub fixes
@@ -668,15 +673,4 @@ public class SkinStorage {
     public String getDefaultSkinNameIfEnabled(String player) {
         return getDefaultSkinNameIfEnabled(player, false);
     }
-
-    //wip
-    /*public boolean iscustom(String skin) {
-        try {
-            //code
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    } */
 }

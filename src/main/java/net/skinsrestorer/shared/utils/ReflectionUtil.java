@@ -119,6 +119,7 @@ public class ReflectionUtil {
                 return null;
             }
         }
+
         m.setAccessible(true);
         return m;
     }
@@ -147,6 +148,7 @@ public class ReflectionUtil {
                 return null;
             }
         }
+
         m.setAccessible(true);
         return m;
     }
