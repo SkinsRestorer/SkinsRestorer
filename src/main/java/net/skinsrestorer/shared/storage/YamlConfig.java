@@ -176,14 +176,13 @@ public class YamlConfig {
     private boolean isEmpty() {
         try {
             try (Scanner input = new Scanner(file)) {
-                if (input.hasNextLine()) {
-                    input.close();
+                if (input.hasNextLine())
                     return false;
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return true;
     }
 

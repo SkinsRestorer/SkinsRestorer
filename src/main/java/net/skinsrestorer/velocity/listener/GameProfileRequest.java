@@ -44,19 +44,11 @@ public class GameProfileRequest {
     public void onGameProfileRequest(GameProfileRequestEvent e) {
         String name = e.getUsername();
 
-        if (Config.DISABLE_ONJOIN_SKINS) {
+        if (Config.DISABLE_ONJOIN_SKINS)
             return;
-        }
 
-        if (e.isOnlineMode()) {
+        if (e.isOnlineMode())
             return;
-        }
-
-        // Don't change skin if player has no custom skin-name set and his username is invalid
-        if (plugin.getSkinStorage().getPlayerSkin(name) == null && !C.validUsername(name.replaceAll("\\W", ""))) {
-            log.log(" Not requesting skin for " + name + " (invalid username).");
-            return;
-        }
 
         String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 

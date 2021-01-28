@@ -96,8 +96,7 @@ public class SkinsRestorer implements SRPlugin {
     // The metricsFactory parameter gets injected using @Inject
     @Inject
     public SkinsRestorer(Metrics.Factory metricsFactory) {
-        int pluginId = 2337; // SkinsRestorer's ID on bStats, for Sponge
-        metrics = metricsFactory.make(pluginId);
+        metrics = metricsFactory.make(2337);
     }
 
     @Listener

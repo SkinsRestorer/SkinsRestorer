@@ -45,6 +45,7 @@ public class SRLogger {
 
             if (pluginConfigFile.exists()) {
                 pluginConfig.reload();
+
                 if (pluginConfig.getBoolean("Debug")) {
                     Config.DEBUG = true;
                 }
