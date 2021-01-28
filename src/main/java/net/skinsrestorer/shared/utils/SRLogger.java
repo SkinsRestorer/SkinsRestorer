@@ -28,9 +28,6 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by McLive on 21.07.2019.
- */
 public class SRLogger {
     private final File folder;
     private java.util.logging.Logger logger;

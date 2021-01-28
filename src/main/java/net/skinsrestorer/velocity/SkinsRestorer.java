@@ -63,30 +63,22 @@ import java.util.logging.Logger;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
-    @Getter
-    private final ProxyServer proxy;
-    @Getter
-    private final SRLogger logger;
-    @Getter
-    private final Path dataFolder;
-    @Getter
-    private SkinApplierVelocity skinApplierVelocity;
-    @Getter
-    private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    @Getter
-    private static final String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private final @Getter ProxyServer proxy;
+    private final @Getter SRLogger logger;
+    private final @Getter Path dataFolder;
+
+    private @Getter SkinApplierVelocity skinApplierVelocity;
+    private final @Getter ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+
+    private static final @Getter String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
 
     private CommandSource console;
     private UpdateChecker updateChecker;
 
-    @Getter
-    private SkinStorage skinStorage;
-    @Getter
-    private MojangAPI mojangAPI;
-    @Getter
-    private MineSkinAPI mineSkinAPI;
-    @Getter
-    private SkinsRestorerAPI skinsRestorerVelocityAPI;
+    private @Getter SkinStorage skinStorage;
+    private @Getter MojangAPI mojangAPI;
+    private @Getter MineSkinAPI mineSkinAPI;
+    private @Getter SkinsRestorerAPI skinsRestorerVelocityAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {

@@ -41,9 +41,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by McLive on 27.02.2019.
- */
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {

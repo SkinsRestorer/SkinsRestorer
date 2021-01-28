@@ -21,10 +21,6 @@
  */
 package net.skinsrestorer.shared.utils;
 
-
-/**
- * Created by McLive on 09.02.2019.
- */
 public class MetricsCounter {
     private static int mineskinCalls = 0;
     private static int minetoolsCalls = 0;

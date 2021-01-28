@@ -31,9 +31,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by McLive on 11.04.2019.
- */
 public class UpdateCheckerGitHub extends UpdateChecker {
     private SRLogger log;
     private final String userAgent;

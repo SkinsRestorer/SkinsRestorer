@@ -32,9 +32,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-/**
- * Created by McLive on 21.01.2019.
- */
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;

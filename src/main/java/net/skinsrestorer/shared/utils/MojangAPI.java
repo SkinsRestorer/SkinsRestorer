@@ -38,7 +38,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Level;
 
-
 public class MojangAPI {
     private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";
     private static final String UUID_URL_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";

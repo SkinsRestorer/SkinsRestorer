@@ -30,9 +30,6 @@ import org.bukkit.Bukkit;
 import java.io.File;
 import java.util.logging.Level;
 
-/**
- * Created by McLive on 13.04.2019.
- */
 public class UpdateDownloaderGithub extends UpdateDownloader {
     private final SkinsRestorer plugin;
 

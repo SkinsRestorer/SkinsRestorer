@@ -37,9 +37,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinStorage {
     private Class<?> property;
 
-    @Getter
-    @Setter
-    private MySQL mysql;
+    private @Getter @Setter MySQL mysql;
     private File folder;
 
     @SuppressWarnings("unused")

@@ -40,9 +40,6 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
 
-/**
- * Created by McLive on 02.04.2018.
- */
 public class SkinApplierSponge implements SRApplier {
     private Player receiver;
     private final SkinsRestorer plugin;

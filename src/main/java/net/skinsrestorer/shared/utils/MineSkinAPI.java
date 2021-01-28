@@ -41,10 +41,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class MineSkinAPI {
-    @Getter
-    @Setter
-    private SkinStorage skinStorage;
-    @Setter
+    private @Getter @Setter SkinStorage skinStorage;
     private SRLogger logger;
 
     public MineSkinAPI(SRLogger logger) {
