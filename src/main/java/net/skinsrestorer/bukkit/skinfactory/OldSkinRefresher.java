@@ -38,6 +38,8 @@ import us.myles.ViaVersion.api.type.Type;
 import us.myles.ViaVersion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
 
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -191,16 +193,18 @@ public class OldSkinRefresher implements Consumer<Player> {
                         try {
                             seed = ReflectionUtil.invokeMethod(worlddata, "getSeed");
                         } catch (Exception ignored4) {
-                            // 1.16.1
+                            // 1.16
                             seed = ReflectionUtil.invokeMethod(world, "getSeed");
                         }
+                        byte[] hash = MessageDigest.getInstance("SHA-256").digest(seed.toString().getBytes(StandardCharsets.UTF_8));
+                        long seedEncrypted = Long.parseLong(new String(hash, 0, 7));
 
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                                     new Class<?>[]{
                                             dimensionManagerClass, long.class, worldtype.getClass(), enumGamemode.getClass()
                                     },
-                                    dimensionManger, seed, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                                    dimensionManger, seedEncrypted, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                         } catch (Exception ignored5) {
                             // Minecraft 1.16.1 changes
                             try {
@@ -215,7 +219,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                                         },
                                         typeKey,
                                         dimensionKey,
-                                        seed,
+                                        seedEncrypted,
                                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
                                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
                                         ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
@@ -224,7 +228,6 @@ public class OldSkinRefresher implements Consumer<Player> {
                                 );
                             } catch (Exception ignored6) {
                                 // Minecraft 1.16.2 changes
-
                                 Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
                                 Object dimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
@@ -236,7 +239,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                                         },
                                         dimensionManager,
                                         dimensionKey,
-                                        seed,
+                                        seedEncrypted,
                                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
                                         ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
                                         ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),

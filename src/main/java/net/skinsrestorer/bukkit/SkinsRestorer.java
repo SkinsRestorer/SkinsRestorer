@@ -110,7 +110,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         // Check if we are running in bungee mode
-        this.checkBungeeMode();
+        checkBungeeMode();
 
         // Check for updates
         if (Config.UPDATER_ENABLED) {

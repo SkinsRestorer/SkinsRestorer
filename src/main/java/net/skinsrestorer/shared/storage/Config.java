@@ -76,7 +76,7 @@ public class Config {
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
         DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
         DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);
-        DEFAULT_SKINS = config.getStringList("DefaultSkins.Names");
+        DEFAULT_SKINS = config.getStringList("DefaultSkins.Names", ".skin");
         DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
