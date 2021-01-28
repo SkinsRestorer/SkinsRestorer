@@ -29,9 +29,6 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-/**
- * Created by McLive on 13.04.2019.
- */
 public class GitHubUpdateDownloader {
     private GitHubUpdateDownloader() {}
 

@@ -26,9 +26,6 @@ import com.google.gson.JsonObject;
 
 import java.io.Serializable;
 
-/**
- * Created by McLive on 28.02.2019.
- */
 public class Property implements Serializable {
     private String name;
     private String value;

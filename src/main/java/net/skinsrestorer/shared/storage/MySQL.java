@@ -46,9 +46,6 @@ public class MySQL {
         this.password = password;
         this.options = options;
         exe = Executors.newCachedThreadPool();
-
-        //con = openConnection();
-        //createTable();
     }
 
     public void createTable() {

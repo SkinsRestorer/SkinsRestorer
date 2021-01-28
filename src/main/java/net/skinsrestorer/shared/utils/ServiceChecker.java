@@ -28,9 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * Created by McLive on 12.04.2018.
- */
 public class ServiceChecker {
     private ServiceCheckResponse response;
     @Setter

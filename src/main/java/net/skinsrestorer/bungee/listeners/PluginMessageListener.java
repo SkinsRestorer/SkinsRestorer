@@ -33,9 +33,6 @@ import net.skinsrestorer.shared.utils.Property;
 import java.io.*;
 import java.util.Map;
 
-/**
- * Created by McLive on 21.12.2019.
- */
 public class PluginMessageListener implements Listener {
     private final SkinsRestorer plugin;
 

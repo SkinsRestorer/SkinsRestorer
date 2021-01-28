@@ -34,7 +34,6 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 
 public class LoginListener implements Listener {
@@ -49,26 +48,17 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent e) {
-        if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED) {
+        if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
             return;
-        }
 
-        if (Config.DISABLE_ONJOIN_SKINS) {
+        if (Config.DISABLE_ONJOIN_SKINS)
             return;
-        }
 
         e.registerIntent(plugin);
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final PendingConnection connection = e.getConnection();
             final String nick = connection.getName();
-
-            // Don't change skin if player has no custom skin-name set and his username is invalid
-            if (!C.validUsername(nick.replaceAll("\\W", "")) && plugin.getSkinStorage().getPlayerSkin(nick) == null) {
-                log.log("[SkinsRestorer] Not applying skin to " + connection.getName() + " (invalid username).");
-                return;
-            }
-
             final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
 
             try {

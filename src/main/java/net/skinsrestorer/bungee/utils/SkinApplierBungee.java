@@ -25,12 +25,12 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRLogger;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

@@ -53,35 +53,23 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements SRPlugin {
-    @Getter
-    private static SkinsRestorer instance;
-    @Getter
-    private boolean multiBungee;
-    @Getter
-    private boolean outdated;
-    @Getter
-    private final String configPath = getDataFolder().getPath();
+    private static @Getter SkinsRestorer instance;
+    private @Getter boolean multiBungee;
+    private @Getter boolean outdated;
+    private final @Getter String configPath = getDataFolder().getPath();
 
     private CommandSender console;
     private UpdateChecker updateChecker;
 
-    @Getter
-    private SkinApplierBungee skinApplierBungee;
+    private @Getter SkinApplierBungee skinApplierBungee;
 
-    @Getter
-    private SkinStorage skinStorage;
-    @Getter
-    private MojangAPI mojangAPI;
-    @Getter
-    private MineSkinAPI mineSkinAPI;
-    @Getter
-    private SRLogger srLogger;
-    @Getter
-    private PluginMessageListener pluginMessageListener;
-    @Getter
-    private SkinCommand skinCommand;
-    @Getter
-    private SkinsRestorerAPI skinsRestorerBungeeAPI;
+    private @Getter SkinStorage skinStorage;
+    private @Getter MojangAPI mojangAPI;
+    private @Getter MineSkinAPI mineSkinAPI;
+    private @Getter SRLogger srLogger;
+    private @Getter PluginMessageListener pluginMessageListener;
+    private @Getter SkinCommand skinCommand;
+    private @Getter SkinsRestorerAPI skinsRestorerBungeeAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -108,7 +96,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
                 this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
         Config.load(configPath, getResourceAsStream("config.yml"));

@@ -46,8 +46,7 @@ public class UpdateChecker {
     public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
-    @Getter
-    private final String currentVersion;
+    private final @Getter String currentVersion;
     private final SRLogger log;
     private final String userAgent;
     private static final VersionComparator versionComparator = VersionComparator.SEM_VER_SNAPSHOT;

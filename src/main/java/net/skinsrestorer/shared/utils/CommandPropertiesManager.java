@@ -30,9 +30,6 @@ import co.aikar.locales.MessageKey;
 import java.io.*;
 import java.util.Properties;
 
-/**
- * Created by McLive on 12.02.2019.
- */
 public class CommandPropertiesManager {
     private final String configPath;
     private final InputStream inputStream;

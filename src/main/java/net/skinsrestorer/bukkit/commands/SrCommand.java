@@ -41,10 +41,6 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by McLive on 24.01.2019.
- */
-
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {

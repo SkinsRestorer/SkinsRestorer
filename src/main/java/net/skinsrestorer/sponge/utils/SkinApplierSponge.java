@@ -22,11 +22,11 @@
 package net.skinsrestorer.sponge.utils;
 
 import com.flowpowered.math.vector.Vector3d;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.utils.Property;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -40,9 +40,6 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
 
-/**
- * Created by McLive on 02.04.2018.
- */
 public class SkinApplierSponge implements SRApplier {
     private Player receiver;
     private final SkinsRestorer plugin;

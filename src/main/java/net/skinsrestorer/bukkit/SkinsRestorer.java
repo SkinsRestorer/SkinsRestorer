@@ -56,30 +56,20 @@ import java.util.TreeMap;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    @Getter
-    private static SkinsRestorer instance;
-    @Getter
-    private SkinFactory factory;
-    @Getter
-    private UpdateChecker updateChecker;
-    @Getter
-    private final String configPath = getDataFolder().getPath();
+    private static @Getter SkinsRestorer instance;
+    private @Getter SkinFactory factory;
+    private @Getter UpdateChecker updateChecker;
+    private final @Getter String configPath = getDataFolder().getPath();
 
-    @Getter
-    private boolean bungeeEnabled;
+    private @Getter boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
-    @Getter
-    private SRLogger srLogger;
-    @Getter
-    private SkinStorage skinStorage;
-    @Getter
-    private MojangAPI mojangAPI;
-    @Getter
-    private MineSkinAPI mineSkinAPI;
-    @Getter
-    private SkinsRestorerAPI skinsRestorerBukkitAPI;
+    private @Getter SRLogger srLogger;
+    private @Getter SkinStorage skinStorage;
+    private @Getter MojangAPI mojangAPI;
+    private @Getter MineSkinAPI mineSkinAPI;
+    private @Getter SkinsRestorerAPI skinsRestorerBukkitAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -134,7 +124,7 @@ public class SkinsRestorer extends JavaPlugin {
                 }, 20 * 60 * 10, 20 * 60 * 10);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
@@ -193,10 +183,10 @@ public class SkinsRestorer extends JavaPlugin {
                             int page = in.readInt();
 
                             short len = in.readShort();
-                            byte[] msgbytes = new byte[len];
-                            in.readFully(msgbytes);
+                            byte[] msgBytes = new byte[len];
+                            in.readFully(msgBytes);
 
-                            Map<String, Property> skinList = convertToObject(msgbytes);
+                            Map<String, Property> skinList = convertToObject(msgBytes);
 
                             //convert
                             Map<String, Object> newSkinList = new TreeMap<>();
@@ -218,6 +208,7 @@ public class SkinsRestorer extends JavaPlugin {
                     }
                 });
             });
+
             return;
         }
 
@@ -241,7 +232,7 @@ public class SkinsRestorer extends JavaPlugin {
         this.mineSkinAPI.setSkinStorage(this.skinStorage);
 
         // Init commands
-        this.initCommands();
+        initCommands();
 
         // Init listener
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);

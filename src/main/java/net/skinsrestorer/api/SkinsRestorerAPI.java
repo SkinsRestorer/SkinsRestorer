@@ -38,8 +38,7 @@ public class SkinsRestorerAPI {
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
     private final SRPlugin plugin;
-    @Getter
-    private static SkinsRestorerAPI api;
+    private static @Getter SkinsRestorerAPI api;
 
     public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, SRPlugin plugin) {
         setInstance(this);

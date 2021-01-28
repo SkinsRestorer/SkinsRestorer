@@ -33,9 +33,6 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Locale;
 
-/**
- * Created by McLive on 21.12.2019.
- */
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {

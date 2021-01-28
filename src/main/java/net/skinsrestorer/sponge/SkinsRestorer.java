@@ -62,24 +62,18 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
-    @Getter
-    private static SkinsRestorer instance;
-    @Getter
-    private String configPath;
-    @Getter
-    private SkinApplierSponge skinApplierSponge;
-    @Getter
-    private SRLogger srLogger;
-    @Getter
-    private boolean bungeeEnabled = false;
-    @Getter
-    private SkinStorage skinStorage;
-    @Getter
-    private MojangAPI mojangAPI;
-    @Getter
-    private MineSkinAPI mineSkinAPI;
-    @Getter
-    private SkinsRestorerAPI skinsRestorerSpongeAPI;
+    private static @Getter SkinsRestorer instance;
+    private @Getter String configPath;
+    private @Getter SkinApplierSponge skinApplierSponge;
+    private @Getter SRLogger srLogger;
+
+    private @Getter boolean bungeeEnabled = false;
+
+    private @Getter SkinStorage skinStorage;
+
+    private @Getter MojangAPI mojangAPI;
+    private @Getter MineSkinAPI mineSkinAPI;
+    private @Getter SkinsRestorerAPI skinsRestorerSpongeAPI;
 
     private UpdateChecker updateChecker;
     private CommandSource console;
@@ -124,7 +118,7 @@ public class SkinsRestorer implements SRPlugin {
                 }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         }
 
-        this.skinStorage = new SkinStorage();
+        this.skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
