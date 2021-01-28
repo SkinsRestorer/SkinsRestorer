@@ -87,7 +87,7 @@ public class ServiceChecker {
                 response.addResult("MineTools UUID §c✘ Error getting UUID: null");
             }
         } catch (SkinRequestException e) {
-            response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getReason());
+            response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         try {
@@ -100,7 +100,7 @@ public class ServiceChecker {
                 response.addResult("Mojang-API UUID §c✘ Error getting UUID: null");
             }
         } catch (SkinRequestException e) {
-            response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getReason());
+            response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         try {

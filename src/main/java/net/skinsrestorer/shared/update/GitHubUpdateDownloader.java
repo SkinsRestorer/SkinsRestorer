@@ -45,6 +45,7 @@ public class GitHubUpdateDownloader {
 
     private static void download(GitHubReleaseInfo releaseInfo, File file, String userAgent) {
         ReadableByteChannel channel;
+
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);

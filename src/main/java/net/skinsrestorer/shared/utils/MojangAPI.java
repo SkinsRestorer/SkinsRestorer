@@ -90,6 +90,7 @@ public class MojangAPI {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
         }
+
         return null;
     }
 
@@ -154,6 +155,7 @@ public class MojangAPI {
      */
     public String getUUID(String name, boolean tryNext) throws SkinRequestException {
         String output;
+
         try {
             output = readURL(UUID_URL.replace("%name%", name));
 
@@ -172,11 +174,8 @@ public class MojangAPI {
             if (tryNext)
                 return getUUIDMojang(name);
         }
-        return null;
-    }
 
-    public String getUUID(String name) throws SkinRequestException {
-        return getUUID(name, true);
+        return null;
     }
 
     public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {

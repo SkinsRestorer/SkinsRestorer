@@ -54,7 +54,7 @@ public class SkinApplierBungee implements SRApplier {
             handler = (InitialHandler) p.getPendingConnection();
         }
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false);
 
         if (handler.isOnlineMode() && p != null) {
             sendUpdateRequest(p, textures);
@@ -69,7 +69,7 @@ public class SkinApplierBungee implements SRApplier {
                 profile = new LoginResult(null, null, new Property[]{textures});
             } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
-                profile = (net.md_5.bungee.connection.LoginResult) ReflectionUtil.invokeConstructor(loginResult,
+                profile = (LoginResult) ReflectionUtil.invokeConstructor(loginResult,
                         new Class<?>[]{String.class, Property[].class},
                         null, new Property[]{textures});
             }

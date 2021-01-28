@@ -250,7 +250,7 @@ public class SkinCommand extends BaseCommand {
         String oldSkinName = plugin.getSkinStorage().getPlayerSkin(p.getName());
         if (C.validUsername(skin)) {
             try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
 
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
@@ -274,7 +274,7 @@ public class SkinCommand extends BaseCommand {
                     return true;
                 }
 
-                sender.sendMessage(TextComponent.fromLegacyText(e.getReason()));
+                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
             }
@@ -301,7 +301,7 @@ public class SkinCommand extends BaseCommand {
 
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(TextComponent.fromLegacyText(e.getReason()));
+                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {
                 log.log("[ERROR] could not generate skin url:" + skin + " stacktrace:");
                 if (Config.DEBUG)

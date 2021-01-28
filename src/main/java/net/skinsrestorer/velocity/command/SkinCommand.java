@@ -242,7 +242,7 @@ public class SkinCommand extends BaseCommand {
         plugin.getService().execute(() -> {
             if (C.validUsername(skin)) {
                 try {
-                    plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+                    plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
                     if (save) {
                         plugin.getSkinStorage().setPlayerSkin(p.getUsername(), skin);
                         plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
@@ -251,7 +251,7 @@ public class SkinCommand extends BaseCommand {
                     }
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
-                    source.sendMessage(plugin.deserialize(e.getReason()));
+                    source.sendMessage(plugin.deserialize(e.getMessage()));
                     // set custom skin name back to old one if there is an exception
                     this.rollback(p, oldSkinName, save);
                 } catch (Exception e) {
@@ -277,7 +277,7 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 } catch (SkinRequestException e) {
-                    source.sendMessage(plugin.deserialize(e.getReason()));
+                    source.sendMessage(plugin.deserialize(e.getMessage()));
                     // set custom skin name back to old one if there is an exception
                     this.rollback(p, oldSkinName, save);
                 } catch (Exception e) {

@@ -70,6 +70,7 @@ public class UpdateChecker {
             connection.setRequestProperty("User-Agent", this.getUserAgent());
             jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             this.latestResourceInfo.latestVersion = (new Gson()).fromJson(jsonObject, ResourceVersion.class);
+
             if (this.isVersionNewer(this.currentVersion, this.latestResourceInfo.latestVersion.name)) {
                 callback.updateAvailable(this.latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + this.latestResourceInfo.file.url, !this.latestResourceInfo.external);
             } else {

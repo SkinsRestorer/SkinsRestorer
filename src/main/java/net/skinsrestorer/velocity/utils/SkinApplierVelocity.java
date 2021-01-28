@@ -50,7 +50,7 @@ public class SkinApplierVelocity implements SRApplier {
     public void applySkin(PlayerWrapper player, SkinsRestorerAPI api) throws SkinRequestException {
         String skin = api.getSkinName(player.get(Player.class).getUsername());
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
         List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
 
@@ -64,7 +64,7 @@ public class SkinApplierVelocity implements SRApplier {
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
 
-            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
             List<Property> oldProperties = profile.getProperties();
             List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
             return new GameProfile(profile.getId(), profile.getName(), newProperties);
