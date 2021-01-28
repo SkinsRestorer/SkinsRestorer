@@ -56,6 +56,7 @@ public class ReflectionUtil {
     private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... args) throws Exception {
         Constructor<?> c = clazz.getConstructor(args);
         c.setAccessible(true);
+
         return c;
     }
 
@@ -79,17 +80,21 @@ public class ReflectionUtil {
 
     private static Field getField(Class<?> clazz, String fname) throws Exception {
         Field f;
+
         try {
             f = clazz.getDeclaredField(fname);
         } catch (Exception e) {
             f = clazz.getField(fname);
         }
+
         setFieldAccessible(f);
+
         return f;
     }
 
     public static Object getFirstObject(Class<?> clazz, Class<?> objclass, Object instance) throws Exception {
         Field f = null;
+
         for (Field fi : clazz.getDeclaredFields())
             if (fi.getType().equals(objclass)) {
                 f = fi;
@@ -157,10 +162,6 @@ public class ReflectionUtil {
         return Class.forName("net.minecraft.server." + serverVersion + "." + clazz);
     }
 
-    public static Object getObject(Class<?> clazz, Object obj, String fname) throws Exception {
-        return getField(clazz, fname).get(obj);
-    }
-
     public static Object getObject(Object obj, String fname) throws Exception {
         return getField(obj.getClass(), fname).get(obj);
     }
@@ -190,13 +191,7 @@ public class ReflectionUtil {
         return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initargs);
     }
 
-    private static void setFieldAccessible(Field f) throws Exception {
-        /*
-        f.setAccessible(true);
-        Field modifiers = Field.class.getDeclaredField("modifiers");
-        modifiers.setAccessible(true);
-        modifiers.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-        */
+    private static void setFieldAccessible(Field f) {
         reflect.setEditable(f);
     }
 
@@ -204,9 +199,4 @@ public class ReflectionUtil {
         // getField(clazz, fname).set(obj, value);
         reflect.setValue(clazz, fname, obj, value);
     }
-
-    public static void setObject(Object obj, String fname, Object value) throws Exception {
-        getField(obj.getClass(), fname).set(obj, value);
-    }
-
 }

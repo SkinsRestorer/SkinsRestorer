@@ -37,6 +37,7 @@ public class CommandPropertiesManager {
 
     private void copyFile() {
         File outFile = new File(this.configPath, FILE);
+
         try {
             if (!outFile.exists()) {
                 try (OutputStream out = new FileOutputStream(outFile)) {
@@ -46,6 +47,7 @@ public class CommandPropertiesManager {
                         out.write(buf, 0, len);
                     }
                 }
+
                 this.inputStream.close();
             }
         } catch (IOException ex) {

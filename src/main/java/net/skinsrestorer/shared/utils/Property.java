@@ -21,6 +21,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -29,4 +31,20 @@ public @Data class Property implements Serializable {
     private String name;
     private String value;
     private String signature;
+
+    public boolean valuesFromJson(JsonObject obj) {
+        if (obj.has("properties")) {
+            JsonArray properties = obj.getAsJsonArray("properties");
+            if (properties.size() > 0) {
+                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
+
+                signature = propertiesObject.get("signature").getAsString();
+                value = propertiesObject.get("value").getAsString();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

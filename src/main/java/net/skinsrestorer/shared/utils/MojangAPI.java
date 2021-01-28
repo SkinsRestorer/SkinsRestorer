@@ -21,7 +21,6 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -47,10 +46,7 @@ public class MojangAPI {
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
 
-    @Getter
-    @Setter
-    private SkinStorage skinStorage;
-    @Setter
+    private @Getter @Setter SkinStorage skinStorage;
     private SRLogger logger;
 
     public MojangAPI(SRLogger logger) {
@@ -58,6 +54,10 @@ public class MojangAPI {
     }
 
     // TODO Deal with duplicated code
+
+    public Object getSkinProperty(String uuid) {
+        return getSkinProperty(uuid, true);
+    }
 
     /**
      * Returned object needs to be casted to either BungeeCord's property or
@@ -94,8 +94,8 @@ public class MojangAPI {
         return null;
     }
 
-    public Object getSkinProperty(String uuid) {
-        return getSkinProperty(uuid, true);
+    public Object getSkinPropertyMojang(String uuid) {
+        return getSkinPropertyMojang(uuid, true);
     }
 
     public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
@@ -119,10 +119,6 @@ public class MojangAPI {
         }
 
         return null;
-    }
-
-    public Object getSkinPropertyMojang(String uuid) {
-        return getSkinPropertyMojang(uuid, true);
     }
 
     public Object getSkinPropertyBackup(String uuid) {
@@ -178,6 +174,10 @@ public class MojangAPI {
         return null;
     }
 
+    public String getUUIDMojang(String name) throws SkinRequestException {
+        return getUUIDMojang(name, true);
+    }
+
     public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
         logger.log("Trying Mojang API to get UUID for player " + name + ".");
 
@@ -203,19 +203,15 @@ public class MojangAPI {
             if (tryNext)
                 return getUUIDBackup(name);
         }
-        return null;
-    }
 
-    public String getUUIDMojang(String name) throws SkinRequestException {
-        return getUUIDMojang(name, true);
+        return null;
     }
 
     public String getUUIDBackup(String name) throws SkinRequestException {
         logger.log("Trying backup API to get UUID for player " + name + ".");
 
-        String output;
         try {
-            output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
+            String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
 
             JsonElement element = new JsonParser().parse(output);
             JsonObject obj = element.getAsJsonObject();
@@ -225,6 +221,7 @@ public class MojangAPI {
                 if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
                     throw new SkinRequestException(Locale.NOT_PREMIUM);
                 }
+
                 throw new SkinRequestException(Locale.ALT_API_FAILED);
             }
 
@@ -257,51 +254,5 @@ public class MojangAPI {
 
         in.close();
         return output.toString();
-    }
-
-    private static class Property {
-        private String name;
-        private String value;
-        private String signature;
-
-        boolean valuesFromJson(JsonObject obj) {
-            if (obj.has("properties")) {
-                JsonArray properties = obj.getAsJsonArray("properties");
-                if (properties.size() > 0) {
-                    JsonObject propertiesObject = properties.get(0).getAsJsonObject();
-
-                    signature = propertiesObject.get("signature").getAsString();
-                    value = propertiesObject.get("value").getAsString();
-
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        String getValue() {
-            return value;
-        }
-
-        void setValue(String value) {
-            this.value = value;
-        }
-
-        String getSignature() {
-            return signature;
-        }
-
-        void setSignature(String signature) {
-            this.signature = signature;
-        }
     }
 }
