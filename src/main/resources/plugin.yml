@@ -48,8 +48,8 @@ permissions:
      default: op
    skinsrestorer.admincommand.props:
      description: Allows access to get the skinprops of a player.
-     default: op 
-     
+     default: op
+
    skinsrestorer.bypasscooldown:
      description: Bypasses any set cooldowns in the config.
      default: op

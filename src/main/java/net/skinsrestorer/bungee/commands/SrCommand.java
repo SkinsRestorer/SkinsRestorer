@@ -132,6 +132,7 @@ public class SrCommand extends BaseCommand {
         //decode
 
         byte[] decoded = Base64.getDecoder().decode(prop.getValue());
+
         String decodedString = new String(decoded);
         JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
         String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();

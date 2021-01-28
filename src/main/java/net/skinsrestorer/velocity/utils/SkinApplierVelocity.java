@@ -63,18 +63,21 @@ public class SkinApplierVelocity implements SRApplier {
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
 
-            Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
-            List<Property> oldProperties = profile.getProperties();
-            List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
-            return new GameProfile(profile.getId(), profile.getName(), newProperties);
+        List<Property> oldProperties = profile.getProperties();
+        List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
+
+        return new GameProfile(profile.getId(), profile.getName(), newProperties);
     }
 
     private List<Property> updatePropertiesSkin(List<Property> original, Property property) {
         List<Property> properties = new ArrayList<>(original);
         boolean applied = false;
+
         for (int i = 0; i < properties.size(); i++) {
             Property lProperty = properties.get(i);
+
             if ("textures".equals(lProperty.getName())) {
                 properties.set(i, property);
                 applied = true;
@@ -89,10 +92,11 @@ public class SkinApplierVelocity implements SRApplier {
 
     private void sendUpdateRequest(Player p, Property textures) {
         p.getCurrentServer().ifPresent(serverConnection -> {
-            log.log("[SkinsRestorer] Sending skin update request for " + p.getUsername());
+            log.log("Sending skin update request for " + p.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);
+
             try {
                 out.writeUTF("SkinUpdate");
 

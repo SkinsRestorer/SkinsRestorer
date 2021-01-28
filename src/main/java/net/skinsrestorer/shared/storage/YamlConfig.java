@@ -24,6 +24,7 @@ package net.skinsrestorer.shared.storage;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -167,6 +168,22 @@ public class YamlConfig {
         try {
             return (List<String>) ReflectionUtil.invokeMethod(config.getClass(), config, "getStringList",
                     new Class<?>[]{String.class}, path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<String> getStringList(String path, String whatToDelete) {
+        try {
+            List<String> list = (List<String>) ReflectionUtil.invokeMethod(config.getClass(), config, "getStringList",
+                    new Class<?>[]{String.class}, path);
+            List<String> newList = new ArrayList<>();
+
+            for (String str : list)
+                newList.add(str.replace(whatToDelete, ""));
+
+            return newList;
         } catch (Exception e) {
             e.printStackTrace();
         }

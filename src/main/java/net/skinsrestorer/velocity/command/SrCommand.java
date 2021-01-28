@@ -101,7 +101,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
-        if (e.name().equalsIgnoreCase("player"))
+        if (e == PlayerOrSkin.PLAYER)
             for (String targetPlayer : targets)
                 plugin.getSkinStorage().removePlayerSkin(targetPlayer);
         else
