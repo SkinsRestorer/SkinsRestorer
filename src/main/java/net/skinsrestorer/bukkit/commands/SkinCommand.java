@@ -251,7 +251,7 @@ public class SkinCommand extends BaseCommand {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(p.getName(), skin);
 
-                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin));
+                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 
                 return true;
@@ -264,7 +264,7 @@ public class SkinCommand extends BaseCommand {
                     return true;
                 }
 
-                sender.sendMessage(e.getReason());
+                sender.sendMessage(e.getMessage());
             }
         }
 
@@ -287,7 +287,7 @@ public class SkinCommand extends BaseCommand {
                 p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getReason());
+                sender.sendMessage(e.getMessage());
             } catch (Exception e) {
                 log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= "+ e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);

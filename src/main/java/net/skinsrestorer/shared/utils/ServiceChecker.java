@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import lombok.Getter;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 
@@ -29,26 +30,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
-    private ServiceCheckResponse response;
-    @Setter
-    private MojangAPI mojangAPI;
-
-    public ServiceCheckResponse getResponse() {
-        return response;
-    }
-
-    public void setResponse(ServiceCheckResponse response) {
-        this.response = response;
-    }
+    private @Setter @Getter ServiceCheckResponse response;
+    private @Setter MojangAPI mojangAPI;
 
     public static class ServiceCheckResponse {
-        private final List<String> results = new LinkedList<>();
+        private final @Getter List<String> results = new LinkedList<>();
         private final AtomicInteger workingUUID = new AtomicInteger();
         private final AtomicInteger workingProfile = new AtomicInteger();
-
-        public List<String> getResults() {
-            return results;
-        }
 
         public void addResult(String result) {
             this.results.add(result);
@@ -59,7 +47,7 @@ public class ServiceChecker {
         }
 
         public void incrementWorkingUUID() {
-            this.workingUUID.getAndIncrement();
+            workingUUID.getAndIncrement();
         }
 
         public Integer getWorkingProfile() {
@@ -67,7 +55,7 @@ public class ServiceChecker {
         }
 
         public void incrementWorkingProfile() {
-            this.workingProfile.getAndIncrement();
+            workingProfile.getAndIncrement();
         }
     }
 
@@ -87,7 +75,7 @@ public class ServiceChecker {
                 response.addResult("MineTools UUID §c✘ Error getting UUID: null");
             }
         } catch (SkinRequestException e) {
-            response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getReason());
+            response.addResult("MineTools UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         try {
@@ -100,7 +88,7 @@ public class ServiceChecker {
                 response.addResult("Mojang-API UUID §c✘ Error getting UUID: null");
             }
         } catch (SkinRequestException e) {
-            response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getReason());
+            response.addResult("Mojang-API UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         try {
@@ -112,23 +100,23 @@ public class ServiceChecker {
         }
 
         // ##### Profile requests #####
-        Object profile = this.mojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
-        if (profile != null) {
-            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + profile.toString());
+        Object minetools = this.mojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
+        if (minetools != null) {
+            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        profile = this.mojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
-        if (profile != null) {
-            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + profile.toString());
+        Object mojang = this.mojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
+        if (mojang != null) {
+            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        profile = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
-        if (profile != null) {
-            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + profile.toString());
+        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
+        if (mojangBackup != null) {
+            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");

@@ -45,7 +45,6 @@ public class LoginListener implements Listener {
         this.log = log;
     }
 
-
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent e) {
         if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
@@ -58,8 +57,8 @@ public class LoginListener implements Listener {
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final PendingConnection connection = e.getConnection();
-            final String nick = connection.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(nick);
+            final String name = connection.getName();
+            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 
             try {
                 // todo: add default skinurl support
@@ -76,17 +75,9 @@ public class LoginListener implements Listener {
     //think we should no have EventPriority.HIGH just to check for updates...
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerConnect(final ServerConnectEvent e) {
-        if (e.isCancelled()) {
+        if (e.isCancelled())
             return;
-        }
 
-        // Mission and vision yet to be decided.
-        /* //Better update notifications are in the pipeline.
-        if (!Config.UPDATER_ENABLED) {
-            return;
-        }*/
-
-        // todo: is this even something we should keep after updaterRework?
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             if (plugin.isOutdated()) {
                 final ProxiedPlayer player = e.getPlayer();

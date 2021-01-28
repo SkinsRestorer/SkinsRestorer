@@ -50,13 +50,13 @@ public class PlayerJoin implements Listener {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = e.getPlayer();
-                final String nick = player.getName();
-                final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);
+                final String name = player.getName();
+                final String skin = skinStorage.getDefaultSkinNameIfEnabled(name);
 
                 if (C.validUrl(skin)) {
                     plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
                 } else {
-                    plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin));
+                    plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin, false));
                 }
             } catch (SkinRequestException ignored) {
             }

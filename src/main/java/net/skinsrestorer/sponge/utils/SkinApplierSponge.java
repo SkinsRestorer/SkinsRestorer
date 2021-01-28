@@ -54,7 +54,7 @@ public class SkinApplierSponge implements SRApplier {
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
         // Todo: new function for this duplicated code
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
         Collection<ProfileProperty> oldProperties = profile.getPropertyMap().get("textures");
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProperties.clear();
@@ -63,7 +63,7 @@ public class SkinApplierSponge implements SRApplier {
 
     public void applySkin(final PlayerWrapper player, final String skin, boolean updatePlayer) throws SkinRequestException {
         Collection<ProfileProperty> oldProps = player.get(Player.class).getProfile().getPropertyMap().get("textures");
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProps.clear();
         oldProps.add(newTextures);

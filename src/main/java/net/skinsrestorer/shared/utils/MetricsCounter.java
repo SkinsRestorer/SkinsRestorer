@@ -30,43 +30,43 @@ public class MetricsCounter {
     private MetricsCounter() {}
 
     public static int collectMineskinCalls() {
-        int value = MetricsCounter.mineskinCalls;
-        MetricsCounter.mineskinCalls = 0;
+        int value = mineskinCalls;
+        mineskinCalls = 0;
         return value;
     }
 
     public static void incrMineskinCalls() {
-        MetricsCounter.mineskinCalls = MetricsCounter.mineskinCalls + 1;
+        mineskinCalls++;
     }
 
     public static int collectMinetoolsCalls() {
-        int value = MetricsCounter.minetoolsCalls;
-        MetricsCounter.minetoolsCalls = 0;
+        int value = minetoolsCalls;
+        minetoolsCalls = 0;
         return value;
     }
 
     public static void incrMinetoolsCalls() {
-        MetricsCounter.minetoolsCalls = MetricsCounter.minetoolsCalls + 1;
+        minetoolsCalls = minetoolsCalls + 1;
     }
 
     public static int collectMojangCalls() {
-        int value = MetricsCounter.mojangCalls;
-        MetricsCounter.mojangCalls = 0;
+        int value = mojangCalls;
+        mojangCalls = 0;
         return value;
     }
 
     public static void incrMojangCalls() {
-        MetricsCounter.mojangCalls = MetricsCounter.mojangCalls + 1;
+        mojangCalls++;
     }
 
     public static int collectBackupCalls() {
-        int value = MetricsCounter.backupCalls;
-        MetricsCounter.backupCalls = 0;
+        int value = backupCalls;
+        backupCalls = 0;
         return value;
     }
 
     public static void incrBackupCalls() {
-        MetricsCounter.backupCalls = MetricsCounter.backupCalls + 1;
+        backupCalls++;
     }
 
     public static void incrAPI(String url) {

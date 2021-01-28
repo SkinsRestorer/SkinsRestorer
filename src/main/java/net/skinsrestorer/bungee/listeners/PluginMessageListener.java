@@ -42,9 +42,8 @@ public class PluginMessageListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent e) throws IOException {
-        if (e.isCancelled()) {
+        if (e.isCancelled())
             return;
-        }
 
         if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
             return;
@@ -111,21 +110,23 @@ public class PluginMessageListener implements Listener {
         try {
             out.writeUTF("OPENGUI");
             out.writeUTF(p.getName());
-
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         p.getServer().sendData("sr:messagechannel", b.toByteArray());
     }
 
     private static byte[] convertToByteArray(Map<String, Property> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+
         try {
             ObjectOutputStream out = new ObjectOutputStream(byteOut);
             out.writeObject(map);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return byteOut.toByteArray();
     }
 }

@@ -47,10 +47,6 @@ public class SkinsRestorerAPI {
         this.plugin = plugin;
     }
 
-    public String getUUID(String playerName) throws SkinRequestException {
-        return mojangAPI.getUUID(playerName);
-    }
-
     public Object getProfile(String uuid) {
         return mojangAPI.getSkinProperty(uuid);
     }
@@ -73,7 +69,7 @@ public class SkinsRestorerAPI {
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
         skinStorage.setPlayerSkin(playerName, skinName);
-        skinStorage.getOrCreateSkinForPlayer(skinName);
+        skinStorage.getOrCreateSkinForPlayer(skinName, false);
     }
 
     public void removeSkin(String playerName) {
