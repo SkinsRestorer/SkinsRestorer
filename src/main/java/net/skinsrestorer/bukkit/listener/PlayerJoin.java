@@ -43,23 +43,14 @@ public class PlayerJoin implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent e) {
-        if (Config.DISABLE_ONJOIN_SKINS) {
-            // factory.applySkin(e.get(), SkinStorage.getSkinData(SkinStorage.getPlayerSkin(e.get().getName())));
-            // shouldn't it just skip it if it's true?
+        if (Config.DISABLE_ONJOIN_SKINS)
             return;
-        }
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = e.getPlayer();
                 final String nick = player.getName();
-
-                // Don't change skin if player has no custom skin-name set and his username is invalid
-                if (skinStorage.getPlayerSkin(nick) == null && !C.validUsername(nick)) {
-                    log.log("Not applying skin to " + nick + " (invalid username).");
-                    return;
-                }
                 final String skin = skinStorage.getDefaultSkinNameIfEnabled(nick);
 
                 if (C.validUrl(skin)) {
