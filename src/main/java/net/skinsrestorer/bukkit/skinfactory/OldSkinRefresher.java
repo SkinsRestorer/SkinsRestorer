@@ -206,7 +206,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                                     },
                                     dimensionManger, seedEncrypted, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                         } catch (Exception ignored5) {
-                            // Minecraft 1.16 changes
+                            // Minecraft 1.16.1 changes
                             try {
                                 Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
@@ -227,7 +227,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                                         true
                                 );
                             } catch (Exception ignored6) {
-                                // Minecraft 1.16 changes
+                                // Minecraft 1.16.2 changes
                                 Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
 
                                 Object dimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
