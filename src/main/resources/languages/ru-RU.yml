@@ -7,7 +7,7 @@ notPremium: "&4Ошибка&8: &cСкин не найден."
 #String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Ошибка&8: &cУ Вас недостаточно прав."
 #Skinsrestorer cant update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL = "&4Error&8: Скины, установленные по ссылке, нельзя обновлять! \n&cИспользуйте /skin url, чтобы установить новый скин."
+ERRORUpdatingURL = "&4Error&8: невозможно обновить скин по ссылке! \n&cИспользуйте /skin url."
 #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN = "&4Error&8:
   #Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
