@@ -4,6 +4,7 @@ import skinsrestorer.shared.utils.YamlConfig;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 public class Config {
@@ -41,7 +42,7 @@ public class Config {
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
-
+    public static List<String> ALLOWED_URLS;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
@@ -87,6 +88,21 @@ public class Config {
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
+        List<String> allowedUrlsInConfig = config.getStringList("AllowedUrls");
+        if (allowedUrlsInConfig != null && !allowedUrlsInConfig.isEmpty()) {
+            ALLOWED_URLS = allowedUrlsInConfig;
+        } else {
+            ALLOWED_URLS = Arrays.asList(
+                "https://i.imgur.com",
+                "http://i.imgur.com",
+                "https://storage.googleapis.com",
+                "http://storage.googleapis.com",
+                "https://cdn.discordapp.com",
+                "http://cdn.discordapp.com",
+                "https://textures.minecraft.net",
+                "http://textures.minecraft.net"
+            );
+        }
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
