@@ -196,7 +196,7 @@ public class SkinCommand extends BaseCommand {
             if (C.validUrl(Arrays.toString(url))) {
                 this.onSkinSetOther(p, new OnlinePlayer(p), Arrays.toString(url));
             } else {
-                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN_2));
+                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
             }
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
@@ -210,7 +210,8 @@ public class SkinCommand extends BaseCommand {
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSource source, Player p, String skin, boolean save) {
-        if (!C.validUsername(skin) && !C.validUrl(skin)) {
+        if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
+            source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
 
@@ -252,6 +253,11 @@ public class SkinCommand extends BaseCommand {
         if (C.validUrl(skin)) {
             if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
                 source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
+                return false;
+            }
+
+            if (!C.AllowedUrlIfEnabled(skin)) {
+                source.sendMessage(plugin.parseMessage(Locale.SKINURL_DISALLOWED));
                 return false;
             }
 
