@@ -23,6 +23,8 @@ package net.skinsrestorer.shared.utils;
 
 import java.util.regex.Pattern;
 
+import net.skinsrestorer.shared.storage.Config;
+
 public class C {
     private C() {}
 

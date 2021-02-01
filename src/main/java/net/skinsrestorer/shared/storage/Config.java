@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -23,6 +23,7 @@ package net.skinsrestorer.shared.storage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 public class Config {
@@ -59,6 +60,7 @@ public class Config {
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
+    public static List<String> ALLOWED_URLS;
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -104,6 +106,22 @@ public class Config {
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
+
+        List<String> allowedUrlsInConfig = config.getStringList("AllowedUrls");
+        if (allowedUrlsInConfig != null && !allowedUrlsInConfig.isEmpty()) {
+            ALLOWED_URLS = allowedUrlsInConfig;
+        } else {
+            ALLOWED_URLS = Arrays.asList(
+                "https://i.imgur.com",
+                "http://i.imgur.com",
+                "https://storage.googleapis.com",
+                "http://storage.googleapis.com",
+                "https://cdn.discordapp.com",
+                "http://cdn.discordapp.com",
+                "https://textures.minecraft.net",
+                "http://textures.minecraft.net"
+            );
+        }
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
