@@ -219,12 +219,6 @@ public class SkinCommand extends BaseCommand {
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSender sender, Player p, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
-            if (C.matchesRegex(skin)) {
-                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN_2);
-            } else {
-                sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
-            }
-
             return false;
         }
 
