@@ -101,7 +101,7 @@ public class Config {
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
-        ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enables", ALLOWED_SKIN_URLS_ENABLED);
+        ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);
         ALLOWED_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
         UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
