@@ -52,7 +52,7 @@ public class Locale {
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
-    public static String SKINURL_DISALLOWED = "&4Error&8: &cThis domains has not been allowed by the administrator.";
+    public static String SKINURL_DISALLOWED = "&4Error&8: &cThis domain has not been allowed by the administrator.";
     public static String NOT_PREMIUM = "&4Error&8: &cPremium player with that name does not exist.";
     public static String INVALID_PLAYER = "&4Error&8: &c%player is not a valid username or URL.";
     public static String SKIN_COOLDOWN = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
