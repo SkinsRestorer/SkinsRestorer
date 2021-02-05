@@ -101,10 +101,18 @@ MySQL:
 # Enabling this will stop SkinsRestorer to change skins on join.
 DisableOnJoinSkins: false
 
-# Enable or disable the updater.
+# Updater Settings
 Updater:
-  Enabled: true
-  PeriodicChecks: true
+  # Should we update to development builds of SkinsRestorer?
+  # Use this to test new feature.
+  DevBuilds: false
+  # DelayUpdates Allow's you to delay the updates a few versions. This can be used when you test the plugin first on a test enviroment.
+  # The MAX DelayUpdateCount = 3
+  # OverrideOnCritical true does allow critical exploits / security releases to pass through DelayUpdates.
+  DelayUpdates:
+    Enabled: false
+    DelayUpdateCount: 3
+    OverrideOnCritical: true
 
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 NoSkinIfLoginCanceled: true

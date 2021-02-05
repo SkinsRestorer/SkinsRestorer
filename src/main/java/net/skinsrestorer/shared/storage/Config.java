@@ -53,9 +53,11 @@ public class Config {
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
     public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
+    public static int UPDATER_DELAY_COUNT = 1;
+    public static boolean UPDATER_DEVBUILD_ENABLED = false;
+    public static boolean UPDATER_DELAY_ENABLED = false;
+    public static boolean UPDATER_OVERRIDECRITICAL = true;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
-    public static boolean UPDATER_ENABLED = true;
-    public static boolean UPDATER_PERIODIC = true;
     public static boolean DEBUG = false;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
@@ -99,9 +101,11 @@ public class Config {
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
+        UPDATER_DEVBUILD_ENABLED = config.getBoolean("Updater.DevBuilds", UPDATER_DEVBUILD_ENABLED);
+        UPDATER_DELAY_ENABLED = config.getBoolean("Updater.DelayUpdates.Enabled", UPDATER_DELAY_ENABLED);
+        UPDATER_DELAY_COUNT = config.getInt("Updater.DelayUpdates.DelayUpdateCount", UPDATER_DELAY_COUNT);
+        UPDATER_OVERRIDECRITICAL = config.getBoolean("Updater.DelayUpdates.OverrideOnCritical", UPDATER_DEVBUILD_ENABLED);;
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
-        UPDATER_ENABLED = config.getBoolean("Updater.Enabled");
-        UPDATER_PERIODIC = config.getBoolean("Updater.PeriodicChecks", UPDATER_PERIODIC);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
@@ -125,6 +129,9 @@ public class Config {
 
         if (!CUSTOM_GUI_ENABLED)
             CUSTOM_GUI_ONLY = false;
+
+        if (UPDATER_DELAY_COUNT > 3)
+            UPDATER_DELAY_COUNT = 3;
 
         if (!DISMOUNT_PLAYER_ON_UPDATE)
             REMOUNT_PLAYER_ON_UPDATE = false;
