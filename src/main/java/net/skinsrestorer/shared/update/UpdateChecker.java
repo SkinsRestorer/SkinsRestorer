@@ -46,11 +46,11 @@ public class UpdateChecker {
     public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
-    private final @Getter String currentVersion;
     private final SRLogger log;
-    private final String userAgent;
-    private static final VersionComparator versionComparator = VersionComparator.SEM_VER_SNAPSHOT;
-    private ResourceInfo latestResourceInfo;
+
+    private final @Getter String currentVersion;
+    private final @Getter String userAgent;
+    private @Getter ResourceInfo latestResourceInfo;
 
     public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         this.resourceId = resourceId;
@@ -82,7 +82,7 @@ public class UpdateChecker {
     }
 
     public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
-        List<String> upToDateMessages = new LinkedList<String>();
+        List<String> upToDateMessages = new LinkedList<>();
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
@@ -152,14 +152,6 @@ public class UpdateChecker {
     }
 
     public boolean isVersionNewer(String oldVersion, String newVersion) {
-        return versionComparator.isNewer(oldVersion, newVersion);
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public ResourceInfo getLatestResourceInfo() {
-        return this.latestResourceInfo;
+        return VersionComparator.SEM_VER_SNAPSHOT.isNewer(oldVersion, newVersion);
     }
 }
