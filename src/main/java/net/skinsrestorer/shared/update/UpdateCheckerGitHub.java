@@ -51,27 +51,6 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
     @Override
     public void checkForUpdate(final UpdateCallback callback) {
-        if (Config.UPDATER_DELAY_ENABLED) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL, RESOURCE_ID)).openConnection();
-                connection.setRequestProperty("User-Agent", this.userAgent);
-                int responsecode = connection.getResponseCode();
-
-                if (responsecode != 200) {
-                    log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-                    return;
-                }
-
-                // Get current version number
-                String currentVersionNumber = currentVersion.substring(0, currentVersion.indexOf("-"));
-
-                // TEST
-                System.out.println("currentVersionNumber = " + currentVersionNumber);
-            } catch (Exception e) {
-                log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-                e.printStackTrace();
-            }
-        }
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", this.userAgent);
