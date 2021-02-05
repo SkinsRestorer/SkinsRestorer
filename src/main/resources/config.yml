@@ -103,9 +103,9 @@ DisableOnJoinSkins: false
 
 # Updater Settings
 Updater:
-  # Should we update to development builds of SkinsRestorer?
-  # Use this to test new feature.
-  DevBuilds: false
+  # To block all types of automatic updates (which can risk keeping a exploit)
+  # please create a file called 'noupdate.txt' in the plugins/SkinsRestorer (configpath) directory
+
 
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 NoSkinIfLoginCanceled: true

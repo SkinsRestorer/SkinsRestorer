@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -59,33 +59,35 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
-    private static @Getter SkinsRestorer instance;
-    private @Getter String configPath;
-    private @Getter SkinApplierSponge skinApplierSponge;
-    private @Getter SRLogger srLogger;
-
-    private @Getter boolean bungeeEnabled = false;
-
-    private @Getter SkinStorage skinStorage;
-
-    private @Getter MojangAPI mojangAPI;
-    private @Getter MineSkinAPI mineSkinAPI;
-    private @Getter SkinsRestorerAPI skinsRestorerSpongeAPI;
-
-    private UpdateChecker updateChecker;
-    private CommandSource console;
-
+    private static @Getter
+    SkinsRestorer instance;
     private final Metrics metrics;
-
-    @Inject
-    private Logger log;
-
     @Inject
     protected Game game;
-
+    private @Getter
+    String configPath;
+    private @Getter
+    SkinApplierSponge skinApplierSponge;
+    private @Getter
+    SRLogger srLogger;
+    private @Getter
+    boolean bungeeEnabled = false;
+    private @Getter
+    SkinStorage skinStorage;
+    private @Getter
+    MojangAPI mojangAPI;
+    private @Getter
+    MineSkinAPI mineSkinAPI;
+    private @Getter
+    SkinsRestorerAPI skinsRestorerSpongeAPI;
+    private UpdateChecker updateChecker;
+    private CommandSource console;
+    @Inject
+    private Logger log;
     @Inject
     @ConfigDir(sharedRoot = false)
     private Path publicConfigDir;
@@ -105,16 +107,18 @@ public class SkinsRestorer implements SRPlugin {
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
         this.srLogger = new SRLogger(new File(configPath));
+        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
+        if (!UPDATER_DISABLED.exists()) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.srLogger, "SkinsRestorerUpdater/Sponge");
             this.checkUpdate(bungeeEnabled);
 
-            if (Config.UPDATER_PERIODIC)
-                Sponge.getScheduler().createTaskBuilder().execute(() -> {
-                    this.checkUpdate(bungeeEnabled, false);
-                }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+            Sponge.getScheduler().createTaskBuilder().execute(() -> {
+                this.checkUpdate(bungeeEnabled, false);
+            }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+        } else {
+            srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);

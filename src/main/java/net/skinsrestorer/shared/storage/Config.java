@@ -53,7 +53,6 @@ public class Config {
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
     public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
-    public static boolean UPDATER_DEVBUILD_ENABLED = false;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean DEBUG = false;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
@@ -98,7 +97,6 @@ public class Config {
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
-        UPDATER_DEVBUILD_ENABLED = config.getBoolean("Updater.DevBuilds", UPDATER_DEVBUILD_ENABLED);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
