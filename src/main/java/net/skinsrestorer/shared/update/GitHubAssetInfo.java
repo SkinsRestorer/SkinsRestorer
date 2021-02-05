@@ -26,6 +26,4 @@ public class GitHubAssetInfo {
     public int id;
     public String name;
     public String browser_download_url;
-
-    public GitHubAssetInfo() {}
 }

@@ -34,14 +34,13 @@ import java.net.URL;
 import java.util.logging.Level;
 
 public class UpdateCheckerGitHub extends UpdateChecker {
-    private static final String resourceId = "SkinsRestorerX";
-    private static final String RELEASES_URL_Latest = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
+    private static final String RESOURCE_ID = "SkinsRestorerX";
+    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
     private static final String RELEASES_URL = "https://api.github.com/repos/SkinsRestorer/%s/releases";
     private final SRLogger log;
     private final String userAgent;
-    private String currentVersion;
+    private final String currentVersion;
     private GitHubReleaseInfo releaseInfo;
-
 
     public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         super(resourceId, currentVersion, log, userAgent);
@@ -52,31 +51,8 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
     @Override
     public void checkForUpdate(final UpdateCallback callback) {
-
-        if (Config.UPDATER_DELAY_ENABLED) {
-            try {
-                HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL, resourceId)).openConnection();
-                connection.setRequestProperty("User-Agent", this.userAgent);
-                int responsecode = connection.getResponseCode();
-
-                if (responsecode != 200) {
-                    log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-                    return;
-                }
-
-                // Get current version number
-                String currentVersionNumber = currentVersion.substring(0, currentVersion.indexOf("-"));
-
-
-                // TEST
-                System.out.println("currentVersionNumber = " + currentVersionNumber);
- n
-            } catch (Exception ignored) {
-                log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-            }
-        }
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_Latest, resourceId)).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", this.userAgent);
             int responsecode = connection.getResponseCode();
 
@@ -98,10 +74,10 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                 }
             });
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
             log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
+            e.printStackTrace();
         }
-
     }
 
     @Override
