@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.skinfactory;
 
+import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SRLogger;
@@ -196,9 +197,8 @@ public class OldSkinRefresher implements Consumer<Player> {
                             // 1.16
                             seed = ReflectionUtil.invokeMethod(world, "getSeed");
                         }
-                        byte[] hash = MessageDigest.getInstance("SHA-256").digest(seed.toString().getBytes(StandardCharsets.UTF_8));
-                        long seedEncrypted = Long.parseLong(new String(hash, 0, 7));
 
+                        long seedEncrypted = Hashing.sha256().hashString(seed.toString(), StandardCharsets.UTF_8).asLong();
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                                     new Class<?>[]{
