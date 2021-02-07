@@ -50,12 +50,12 @@ public class GitHubUpdateDownloader {
             HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
             if (connection.getResponseCode() != 200) {
-                throw new RuntimeException("Download returned status #" + connection.getResponseCode());
+                throw new UpdateException("Download returned status #" + connection.getResponseCode());
             }
 
             channel = Channels.newChannel(connection.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException("Download failed", e);
+            throw new UpdateException("Download failed", e);
         }
 
         try {
@@ -64,7 +64,7 @@ public class GitHubUpdateDownloader {
             output.flush();
             output.close();
         } catch (IOException e) {
-            throw new RuntimeException("Could not save file", e);
+            throw new UpdateException("Could not save file", e);
         }
     }
 }

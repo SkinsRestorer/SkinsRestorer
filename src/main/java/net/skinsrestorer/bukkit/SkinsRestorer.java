@@ -53,23 +53,48 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    private static @Getter SkinsRestorer instance;
-    private @Getter SkinFactory factory;
-    private @Getter UpdateChecker updateChecker;
-    private final @Getter String configPath = getDataFolder().getPath();
-
-    private @Getter boolean bungeeEnabled;
+    private static @Getter
+    SkinsRestorer instance;
+    private final @Getter
+    String configPath = getDataFolder().getPath();
+    private @Getter
+    SkinFactory factory;
+    private @Getter
+    UpdateChecker updateChecker;
+    private @Getter
+    boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
-    private @Getter SRLogger srLogger;
-    private @Getter SkinStorage skinStorage;
-    private @Getter MojangAPI mojangAPI;
-    private @Getter MineSkinAPI mineSkinAPI;
-    private @Getter SkinsRestorerAPI skinsRestorerBukkitAPI;
+    private @Getter
+    SRLogger srLogger;
+    private @Getter
+    SkinStorage skinStorage;
+    private @Getter
+    MojangAPI mojangAPI;
+    private @Getter
+    MineSkinAPI mineSkinAPI;
+    private @Getter
+    SkinsRestorerAPI skinsRestorerBukkitAPI;
+
+    private static Map<String, Property> convertToObject(byte[] byteArr) {
+        Map<String, Property> map = new TreeMap<>();
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
+            while (bis.available() > 0) {
+                map = (Map<String, Property>) ois.readObject();
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -79,6 +104,7 @@ public class SkinsRestorer extends JavaPlugin {
     public void onEnable() {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
+        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
@@ -113,15 +139,16 @@ public class SkinsRestorer extends JavaPlugin {
         checkBungeeMode();
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
+        if (!UPDATER_DISABLED.exists()) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
             this.updateDownloader = new UpdateDownloaderGithub(this);
             this.checkUpdate(bungeeEnabled);
 
-            if (Config.UPDATER_PERIODIC)
-                this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                    this.checkUpdate(bungeeEnabled, false);
-                }, 20 * 60 * 10, 20 * 60 * 10);
+            this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                this.checkUpdate(bungeeEnabled, false);
+            }, 20 * 60 * 10, 20 * 60 * 10);
+        } else {
+            srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
@@ -299,21 +326,6 @@ public class SkinsRestorer extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static Map<String, Property> convertToObject(byte[] byteArr) {
-        Map<String, Property> map = new TreeMap<>();
-        try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
-            ObjectInputStream ois = new ObjectInputStream(bis);
-
-            while (bis.available() > 0) {
-                map = (Map<String, Property>) ois.readObject();
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return map;
     }
 
     private void initCommands() {
