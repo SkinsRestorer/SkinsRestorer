@@ -21,9 +21,12 @@
  */
 package net.skinsrestorer.shared.update;
 
-public class GitHubAssetInfo {
-    public String url;
-    public int id;
-    public String name;
-    public String browser_download_url;
+public class UpdateException extends RuntimeException {
+    public UpdateException(String message) {
+        super(message);
+    }
+
+    public UpdateException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

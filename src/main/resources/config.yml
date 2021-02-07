@@ -101,10 +101,11 @@ MySQL:
 # Enabling this will stop SkinsRestorer to change skins on join.
 DisableOnJoinSkins: false
 
-# Enable or disable the updater.
+# Updater Settings
 Updater:
-  Enabled: true
-  PeriodicChecks: true
+  # To block all types of automatic updates (which can risk keeping a exploit)
+  # please create a file called 'noupdate.txt' in the plugins/SkinsRestorer (configpath) directory
+
 
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 NoSkinIfLoginCanceled: true

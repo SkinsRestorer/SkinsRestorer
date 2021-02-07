@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -59,26 +59,34 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
-    private final @Getter ProxyServer proxy;
-    private final @Getter SRLogger logger;
-    private final @Getter Path dataFolder;
-
-    private @Getter SkinApplierVelocity skinApplierVelocity;
-    private final @Getter ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-    private static final @Getter String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
-
+    private static final @Getter
+    String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private final @Getter
+    ProxyServer proxy;
+    private final @Getter
+    SRLogger logger;
+    private final @Getter
+    Path dataFolder;
+    private final @Getter
+    ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private @Getter
+    SkinApplierVelocity skinApplierVelocity;
     private CommandSource console;
     private UpdateChecker updateChecker;
 
-    private @Getter SkinStorage skinStorage;
-    private @Getter MojangAPI mojangAPI;
-    private @Getter MineSkinAPI mineSkinAPI;
-    private @Getter SkinsRestorerAPI skinsRestorerVelocityAPI;
+    private @Getter
+    SkinStorage skinStorage;
+    private @Getter
+    MojangAPI mojangAPI;
+    private @Getter
+    MineSkinAPI mineSkinAPI;
+    private @Getter
+    SkinsRestorerAPI skinsRestorerVelocityAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
@@ -91,14 +99,16 @@ public class SkinsRestorer implements SRPlugin {
     public void onProxyInitialize(ProxyInitializeEvent e) {
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
+        File UPDATER_DISABLED = new File(this.CONFIG_PATH, "noupdate.txt");
 
         // Check for updates
-        if (Config.UPDATER_ENABLED) {
+        if (!UPDATER_DISABLED.exists()) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.getLogger(), "SkinsRestorerUpdater/Velocity");
             this.checkUpdate(true);
 
-            if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
+            this.getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
+        } else {
+            logger.logAlways(Level.INFO, "Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);

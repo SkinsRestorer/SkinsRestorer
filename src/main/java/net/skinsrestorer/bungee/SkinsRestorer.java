@@ -49,27 +49,40 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements SRPlugin {
-    private static @Getter SkinsRestorer instance;
-    private @Getter boolean multiBungee;
-    private @Getter boolean outdated;
-    private final @Getter String configPath = getDataFolder().getPath();
-
+    private static @Getter
+    SkinsRestorer instance;
+    private final @Getter
+    String configPath = getDataFolder().getPath();
+    private @Getter
+    boolean multiBungee;
+    private @Getter
+    boolean outdated;
     private CommandSender console;
     private UpdateChecker updateChecker;
 
-    private @Getter SkinApplierBungee skinApplierBungee;
+    private @Getter
+    SkinApplierBungee skinApplierBungee;
 
-    private @Getter SkinStorage skinStorage;
-    private @Getter MojangAPI mojangAPI;
-    private @Getter MineSkinAPI mineSkinAPI;
-    private @Getter SRLogger srLogger;
-    private @Getter PluginMessageListener pluginMessageListener;
-    private @Getter SkinCommand skinCommand;
-    private @Getter SkinsRestorerAPI skinsRestorerBungeeAPI;
+    private @Getter
+    SkinStorage skinStorage;
+    private @Getter
+    MojangAPI mojangAPI;
+    private @Getter
+    MineSkinAPI mineSkinAPI;
+    private @Getter
+    SRLogger srLogger;
+    private @Getter
+    PluginMessageListener pluginMessageListener;
+    private @Getter
+    SkinCommand skinCommand;
+    private @Getter
+    SkinsRestorerAPI skinsRestorerBungeeAPI;
 
     public String getVersion() {
         return getDescription().getVersion();
@@ -80,6 +93,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
         srLogger = new SRLogger(getDataFolder());
         instance = this;
         console = getProxy().getConsole();
+        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);
@@ -88,12 +102,13 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        if (Config.UPDATER_ENABLED) {
+        if (!UPDATER_DISABLED.exists()) {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
-            if (Config.UPDATER_PERIODIC)
-                this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+            this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+        } else {
+            srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
