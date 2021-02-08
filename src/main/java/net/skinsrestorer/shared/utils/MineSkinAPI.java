@@ -32,17 +32,20 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class MineSkinAPI {
+    private final SRLogger logger;
     private @Getter
     @Setter
     SkinStorage skinStorage;
-    private final SRLogger logger;
 
     public MineSkinAPI(SRLogger logger) {
         this.logger = logger;
@@ -54,7 +57,7 @@ public class MineSkinAPI {
         try {
             errResp = "";
 
-            String output = queryURL(URLEncoder.encode(url, "UTF-8"));
+            String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8"));
             if (output.isEmpty()) //when both api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
