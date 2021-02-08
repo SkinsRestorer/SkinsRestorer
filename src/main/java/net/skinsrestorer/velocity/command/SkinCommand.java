@@ -175,11 +175,11 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !source.hasPermission("skinsrestorer.skin." + skin)
-                && !getSenderName(source).equals(target.getPlayer().getUsername()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(getSenderName(source)))) {
-            source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!source.hasPermission("skinsrestorer.ownskin") && !getSenderName(source).equalsIgnoreCase(target.getPlayer().getUsername()) || !skin.equalsIgnoreCase(getSenderName(source))) {
+                source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
         }
 
         plugin.getService().execute(() -> {
