@@ -23,7 +23,6 @@ package net.skinsrestorer.shared.storage;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 public class Config {
@@ -54,11 +53,13 @@ public class Config {
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
     public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
+    public static boolean ALLOWED_SKIN_URLS_ENABLED = false;
+    public static List<String> ALLOWED_SKIN_URLS_LIST = null;
     public static boolean DEBUG = false;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
-    public static List<String> ALLOWED_URLS;
+
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -98,25 +99,16 @@ public class Config {
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
+        ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);
+        ALLOWED_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
-        List<String> allowedUrlsInConfig = config.getStringList("AllowedUrls");
-        if (allowedUrlsInConfig != null && !allowedUrlsInConfig.isEmpty()) {
-            ALLOWED_URLS = allowedUrlsInConfig;
-        } else {
-            ALLOWED_URLS = Arrays.asList(
-                "https://i.imgur.com",
-                "http://i.imgur.com",
-                "https://storage.googleapis.com",
-                "http://storage.googleapis.com",
-                "https://cdn.discordapp.com",
-                "http://cdn.discordapp.com",
-                "https://textures.minecraft.net",
-                "http://textures.minecraft.net"
-            );
+        if (ALLOWED_SKIN_URLS_ENABLED && ALLOWED_SKIN_URLS_LIST.isEmpty()) {
+            // TODO: warning logger
+            ALLOWED_SKIN_URLS_ENABLED = false;
         }
 
         if (!CUSTOM_GUI_ENABLED)

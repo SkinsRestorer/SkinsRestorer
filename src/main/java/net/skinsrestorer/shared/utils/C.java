@@ -43,21 +43,18 @@ public class C {
     }
 
     public static boolean validUrl(String url) {
-        boolean isValidAndAllowed = false; // if the URL is not valid nor allowed, this will simply be what we return
-
-        if (urlPattern.matcher(url).matches()) {
-            for (String possiblyAllowedUrl : Config.ALLOWED_URLS) {
-                if (url.startsWith(possiblyAllowedUrl)) {
-                    isValidAndAllowed = true;
-                    break;
-                }
-            }
-        }
-
-        return isValidAndAllowed;
+        return urlPattern.matcher(url).matches();
     }
 
-    public static boolean matchesRegex(String url) {
-        return urlPattern.matcher(url).matches();
+    public static boolean AllowedUrlIfEnabled(String url) {
+        if (Config.ALLOWED_SKIN_URLS_ENABLED) {
+            for (String possiblyAllowedUrl : Config.ALLOWED_SKIN_URLS_LIST) {
+                if (url.startsWith(possiblyAllowedUrl)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 }
