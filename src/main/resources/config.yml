@@ -58,26 +58,29 @@ DisabledSkins:
 # GUI settings
 SKINSGUI:
   # is the /skins command even enabled? Default: true
-  Enabled: true
+  Command:
+    Enabled: true
     # If the GUI menu (/skins) is disabled, should the command still be registred
     # and instead print a message to the player's chat? Default: false
-    RegisterGUICommand: false
-    # If the Gui.DisabledGuiMessage.Enabled is true, what should be the message that is printed?
-    Message: "SkinsRestorer /skins menu is currently disabled"
-    # Exclude urlskins from the skins gui
+    RegisterGUICommand: true
+    # If the SKINSGUI.DisabledGuiMessage.Enabled is true, what should be the message that is printed?
+    DisableMessage: "SkinsRestorer /skins menu is currently disabled"
+  # Exclude urlskins from the skins gui
   ExcludeUrlSkins: false
   # Change the amount of displayed skulls in gui
   # must be between [7 - 36]
   SkullAmount: 36
+  # set the maximum amount of pages
+  MaxPages: 100
   # Custom list for the /skins GUI.
   Custom:
     Enabled: false
-    # If Gui.Custom.ShowOnlyCustom is true, the /skins GUI will only
-    # show skins from players listed in the Gui.Custom.Names
-    ShowOnlyCustomGUI: true
     Names:
       - "xknat"
       - "McLive"
+    # If Gui.Custom.ShowOnlyCustom is true, the /skins GUI will only
+    # show skins from players listed in the Gui.Custom.Names
+    ShowOnlyCustomNames: true
 
   ############
   # Advanced #
