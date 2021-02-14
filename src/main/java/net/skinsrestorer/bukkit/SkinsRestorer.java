@@ -21,9 +21,7 @@
  */
 package net.skinsrestorer.bukkit;
 
-import co.aikar.commands.BukkitCommandIssuer;
-import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -39,9 +37,11 @@ import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.CommandReplacements;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -53,6 +53,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
@@ -348,6 +349,32 @@ public class SkinsRestorer extends JavaPlugin {
 
         new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
 
+        manager.getCommandContexts().registerContext(OfflinePlayer.class, c -> {
+            String name = c.popFirstArg();
+            OfflinePlayer offlinePlayer;
+
+            if (c.hasFlag("uuid")) {
+                UUID uuid;
+
+                try {
+                    uuid = UUID.fromString(name);
+                } catch (IllegalArgumentException e) {
+                    throw new InvalidCommandArgument(MinecraftMessageKeys.NO_PLAYER_FOUND_OFFLINE,
+                            "{search}", name);
+                }
+
+                offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+            } else {
+                offlinePlayer = Bukkit.getOfflinePlayer(name);
+            }
+
+            if (!offlinePlayer.hasPlayedBefore() && !offlinePlayer.isOnline()) {
+                throw new InvalidCommandArgument(MinecraftMessageKeys.NO_PLAYER_FOUND_OFFLINE,
+                        "{search}", name);
+            }
+
+            return offlinePlayer;
+        });
         manager.registerCommand(new SkinCommand(this));
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
