@@ -324,7 +324,7 @@ public class SkinStorage {
     }
 
     public Object getSkinData(String name) {
-        return this.getSkinData(name, false);
+        return this.getSkinData(name, true);
     }
 
     private boolean isOld(long timestamp) {
