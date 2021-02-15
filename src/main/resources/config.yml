@@ -73,6 +73,9 @@ CustomGUI:
 # with "skinsrestorer.ownskin" you can set your own playername skin.
 PerSkinPermissions: false
 
+# Allows automatic skin updates to be disabled.
+SkinAutoUpdates: true
+
 # Time that skins are stored in the database before we request again (in minutes).
 SkinExpiresAfter: 15
 

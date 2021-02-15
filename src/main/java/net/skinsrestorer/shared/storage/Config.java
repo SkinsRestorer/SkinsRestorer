@@ -41,6 +41,7 @@ public class Config {
     public static boolean USE_OLD_SKIN_HELP = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
+    public static boolean SKIN_AUTO_UPDATES = true;
     public static boolean MULTIBUNGEE_ENABLED = false;
     public static boolean USE_MYSQL = false;
     public static String MYSQL_HOST = "localhost";
@@ -87,6 +88,7 @@ public class Config {
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
+        SKIN_AUTO_UPDATES = config.getBoolean("SkinAutoUpdates", SKIN_AUTO_UPDATES);
         MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
         USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
         MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);

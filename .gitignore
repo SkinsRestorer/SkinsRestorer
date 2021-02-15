@@ -11,3 +11,4 @@ target/*
 .factorypath
 
 *.plantuml
+/target/
