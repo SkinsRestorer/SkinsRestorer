@@ -28,7 +28,7 @@ jobs:
       run: find .
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+      uses: actions/upload-artifact@v2.2.2
       with:
         name: SkinsRestorer
         path: ./target/SkinsRestorer.jar
