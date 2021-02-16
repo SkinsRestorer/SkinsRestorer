@@ -71,18 +71,6 @@ public class ReflectImpl extends DefaultImpl {
         this(reflect, canSetModifiers, canGetNewInstance, useDefaultAccess, canUnsafeAccess, true);
     }
 
-    public ReflectImpl(DuckReflect reflect, boolean canSetModifiers, boolean canGetNewInstance, boolean useDefaultAccess) {
-        this(reflect, canSetModifiers, canGetNewInstance, useDefaultAccess, false);
-    }
-
-    public ReflectImpl(DuckReflect reflect, boolean canSetModifiers, boolean canGetNewInstance) {
-        this(reflect, canSetModifiers, canGetNewInstance, false);
-    }
-
-    public ReflectImpl(DuckReflect reflect) {
-        this(reflect, true, true);
-    }
-
     private void setClasses() {
         this._reflectionFactory = _reflect.getClass("sun.reflect.ReflectionFactory");
         this._fieldAccessor = _reflect.getClass("sun.reflect.FieldAccessor");
@@ -223,36 +211,4 @@ public class ReflectImpl extends DefaultImpl {
         }
     }
 
-    public boolean changeUnsafeAccess(boolean enable) {
-        this._canUnsafeAccess = enable;
-        return true;
-    }
-
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    public boolean useDefaultAccess() {
-        return _useDefaultAccess;
-    }
-
-    public boolean canUnsafeAccess() {
-        return _canUnsafeAccess;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        if (_lazy) {
-            changeGetNewInstance(true);
-            this._lazy = false;
-        }
-
-        return _canGetNewInstance;
-    }
 }

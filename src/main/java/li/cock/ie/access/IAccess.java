@@ -22,22 +22,23 @@ import java.lang.reflect.Method;
 
 public interface IAccess {
     Object getValue(Field target, Object obj);
+
     boolean setValue(Field target, Object obj, Object value);
 
     boolean setModifiers(Field target, int mod);
+
     boolean setModifiers(Method target, int mod);
 
     Object getNewInstance(Constructor<?> target, Object... args);
 
     boolean changeGetValue(boolean enable);
+
     boolean changeSetValue(boolean enable);
+
     boolean changeSetFieldModifiers(boolean enable);
+
     boolean changeSetMethodModifiers(boolean enable);
+
     boolean changeGetNewInstance(boolean enable);
 
-    boolean canGetValue();
-    boolean canSetValue();
-    boolean canSetFieldModifiers();
-    boolean canSetMethodModifiers();
-    boolean canGetNewInstance();
 }

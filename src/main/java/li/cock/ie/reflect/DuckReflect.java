@@ -40,10 +40,6 @@ public class DuckReflect {
         this(new DuckHandler(debug));
     }
 
-    public DuckReflect() {
-        this(false);
-    }
-
     public void reset() {
         _handler.reset();
     }
@@ -129,10 +125,6 @@ public class DuckReflect {
         }
 
         return null;
-    }
-
-    public <T> T newInstance(Class<T> type, Class<?>[] argTypes, Object... argValues) {
-        return newInstance(getConstructor(type, argTypes), argValues);
     }
 
     public <T> T newInstance(Class<T> type) {
@@ -242,20 +234,8 @@ public class DuckReflect {
         return null;
     }
 
-    public Object call(Method target, Object[] argValues) {
-        return call(target, null, argValues);
-    }
-
-    public Object call(Method target) {
-        return call(target, null);
-    }
-
     public Object call(Class<?> type, String name, Class<?>[] argTypes, Object obj, Object... argValues) {
         return call(getMethod(type, name, argTypes), obj, argValues);
-    }
-
-    public Object call(Class<?> type, String name, Class<?>[] argTypes, Object[] argValues) {
-        return call(type, name, argTypes, null, argValues);
     }
 
     public Object call(Class<?> type, String name, Object obj) {
@@ -277,29 +257,5 @@ public class DuckReflect {
         }
 
         return false;
-    }
-
-    public boolean exec(Method target, Object[] argValues) {
-        return exec(target, null, argValues);
-    }
-
-    public boolean exec(Method target) {
-        return exec(target, null);
-    }
-
-    public boolean exec(Class<?> type, String name, Class<?>[] argTypes, Object obj, Object... argValues) {
-        return exec(getMethod(type, name, argTypes), obj, argValues);
-    }
-
-    public boolean exec(Class<?> type, String name, Class<?>[] argTypes, Object[] argValues) {
-        return exec(type, name, argTypes, null, argValues);
-    }
-
-    public boolean exec(Class<?> type, String name, Object obj) {
-        return exec(type, name, null, obj);
-    }
-
-    public boolean exec(Class<?> type, String name) {
-        return exec(type, name, null);
     }
 }

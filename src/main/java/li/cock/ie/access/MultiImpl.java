@@ -27,7 +27,7 @@ import java.util.List;
 
 public class MultiImpl implements IAccess {
     protected DuckReflect _reflect;
-    protected List<IAccess> _access = new ArrayList<IAccess>();
+    protected List<IAccess> _access = new ArrayList<>();
 
     private boolean _canGetValue;
     private boolean _canSetValue;
@@ -35,7 +35,7 @@ public class MultiImpl implements IAccess {
     private boolean _canSetMethodModifiers;
     private boolean _canGetNewInstance;
 
-    private boolean _preferUnsafe;
+    private final boolean _preferUnsafe;
 
     public MultiImpl(DuckReflect reflect, boolean preferUnsafe, int getValDamage, int setValDamage, int setModifiersDamage, int newInstanceDamage) {
         this._reflect = reflect;
@@ -72,10 +72,6 @@ public class MultiImpl implements IAccess {
 
     public MultiImpl(DuckReflect reflect, boolean preferUnsafe, int refDamage, int newInstanceDamage) {
         this(reflect, preferUnsafe, refDamage - refDamage / 5, refDamage / 5 + refDamage / 8, newInstanceDamage);
-    }
-
-    public MultiImpl(DuckReflect reflect, boolean preferUnsafe) {
-        this(reflect, preferUnsafe, 8, 2);
     }
 
     public MultiImpl(DuckReflect reflect, int refDamage, int newInstanceDamage) {
@@ -226,28 +222,4 @@ public class MultiImpl implements IAccess {
         return true;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return _canGetNewInstance;
-    }
 }

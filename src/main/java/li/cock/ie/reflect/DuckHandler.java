@@ -24,10 +24,6 @@ public class DuckHandler implements IDuckHandler {
         this.debug = debug;
     }
 
-    public DuckHandler() {
-        this(false);
-    }
-
     @Override
     public void process(Throwable ex) {
         if (debug) {

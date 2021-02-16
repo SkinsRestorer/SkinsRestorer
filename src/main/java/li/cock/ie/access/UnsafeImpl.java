@@ -64,10 +64,6 @@ public class UnsafeImpl implements IAccess {
         }
     }
 
-    public UnsafeImpl(DuckReflect reflect) {
-        this(reflect, true, false);
-    }
-
     private void setClass() {
         this._unsafeClass = _reflect.getClass("sun.misc.Unsafe");
         this._classExists = (_unsafeClass != null);
@@ -243,28 +239,4 @@ public class UnsafeImpl implements IAccess {
         return false;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return false;
-    }
 }
