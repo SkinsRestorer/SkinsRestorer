@@ -329,7 +329,7 @@ public class SkinStorage {
 
     private boolean isOld(long timestamp) {
     	// Check so that updating can be disabled by setting expiration to zero
-    	if (Config.SKIN_AUTO_UPDATES) {
+    	if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
     		return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     	} else {
     		return false;
@@ -644,8 +644,8 @@ public class SkinStorage {
                 this.setSkinData(skin, textures);
                 return true;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SkinRequestException e) {
+            e.printStackTrace(); //todo add srlogger in SkinStorage.java
         }
 
         return false;

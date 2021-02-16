@@ -41,7 +41,6 @@ public class Config {
     public static boolean USE_OLD_SKIN_HELP = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
-    public static boolean SKIN_AUTO_UPDATES = true;
     public static boolean MULTIBUNGEE_ENABLED = false;
     public static boolean USE_MYSQL = false;
     public static String MYSQL_HOST = "localhost";
@@ -52,7 +51,8 @@ public class Config {
     public static String MYSQL_SKINTABLE = "Skins";
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
-    public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
+    public static boolean DISABLE_ONJOIN_SKINS = false;
+    public static boolean DISABLE_AUTO_UPDATE_SKIN = false;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean ALLOWED_SKIN_URLS_ENABLED = false;
     public static List<String> ALLOWED_SKIN_URLS_LIST = null;
@@ -88,7 +88,6 @@ public class Config {
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
-        SKIN_AUTO_UPDATES = config.getBoolean("SkinAutoUpdates", SKIN_AUTO_UPDATES);
         MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
         USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
         MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
@@ -100,6 +99,7 @@ public class Config {
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
+        DISABLE_AUTO_UPDATE_SKIN = config.getBoolean("DisableAutoUpdateSkin", DISABLE_AUTO_UPDATE_SKIN);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);
         ALLOWED_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
