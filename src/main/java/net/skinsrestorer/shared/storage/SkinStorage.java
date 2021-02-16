@@ -328,7 +328,7 @@ public class SkinStorage {
     }
 
     private boolean isOld(long timestamp) {
-    	// Check so that updating can be disabled by setting expiration to zero
+    	// Check if auto update is not disabled and timestamp is not 0
     	if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
     		return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     	} else {
