@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -31,30 +31,9 @@ import java.io.*;
 import java.util.Properties;
 
 public class CommandPropertiesManager {
+    private static final String FILE = "command-messages.properties";
     private final String configPath;
     private final InputStream inputStream;
-    private static final String FILE = "command-messages.properties";
-
-    private void copyFile() {
-        File outFile = new File(this.configPath, FILE);
-
-        try {
-            if (!outFile.exists()) {
-                try (OutputStream out = new FileOutputStream(outFile)) {
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = this.inputStream.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                }
-
-                this.inputStream.close();
-            }
-        } catch (IOException ex) {
-            System.out.println("Could not save " + outFile.getName() + " to " + outFile);
-            ex.printStackTrace();
-        }
-    }
 
     public CommandPropertiesManager(PaperCommandManager manager, String configPath, InputStream inputStream) {
         this.configPath = configPath;
@@ -109,6 +88,27 @@ public class CommandPropertiesManager {
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void copyFile() {
+        File outFile = new File(this.configPath, FILE);
+
+        try {
+            if (!outFile.exists()) {
+                try (OutputStream out = new FileOutputStream(outFile)) {
+                    byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = this.inputStream.read(buf)) > 0) {
+                        out.write(buf, 0, len);
+                    }
+                }
+
+                this.inputStream.close();
+            }
+        } catch (IOException ex) {
+            System.out.println("Could not save " + outFile.getName() + " to " + outFile);
+            ex.printStackTrace();
         }
     }
 }

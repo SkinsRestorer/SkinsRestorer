@@ -74,7 +74,7 @@ public class SkinsRestorer implements SRPlugin {
     SkinApplierSponge skinApplierSponge;
     private @Getter
     SRLogger srLogger;
-    private @Getter
+    private @Getter final
     boolean bungeeEnabled = false;
     private @Getter
     SkinStorage skinStorage;

@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -21,14 +21,13 @@
  */
 package net.skinsrestorer.bukkit;
 
-import com.mojang.authlib.GameProfile;
+import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
-import net.skinsrestorer.bukkit.utils.XMaterial;
+import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,14 +37,17 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinsGUI extends ItemStack implements Listener {
-    private static final ConcurrentHashMap<String, Integer> openedMenus = new ConcurrentHashMap<>();
+    @Getter
+    private static final Map<String, Integer> menus = new ConcurrentHashMap<>();
 
     @Getter
     private final SRLogger srLogger;
@@ -56,101 +58,46 @@ public class SkinsGUI extends ItemStack implements Listener {
         srLogger = plugin.getSrLogger();
     }
 
-    public enum GlassType {
-        NONE, PREV, NEXT, DELETE
-    }
-
-    public static class GuiGlass {
-        public GuiGlass(GlassType glassType) {
-            this.glassType = glassType;
-            create();
-        }
-
-        private void create() {
-            switch (glassType) {
-                case NONE: {
-                    //this.itemStack = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-                    this.itemStack = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
-
-                    this.text = " ";
-                    break;
-                }
-
-                case PREV: {
-                    //this.itemStack = new ItemStack(Material.YELLOW_STAINED_GLASS_PANE);
-                    this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.SKINSMENU_PREVIOUS_PAGE.replace("&", "§");
-                    break;
-                }
-
-                case NEXT: {
-                    //this.itemStack = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
-                    this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.SKINSMENU_NEXT_PAGE.replace("&", "§");
-                    break;
-                }
-
-                case DELETE: {
-                    //this.itemStack = new ItemStack(Material.RED_STAINED_GLASS_PANE);
-                    this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    this.text = Locale.SKINSMENU_REMOVE_SKIN.replace("&", "§");
-                    break;
-                }
-            }
-
-            ItemMeta itemMeta = this.itemStack.getItemMeta();
-            itemMeta.setDisplayName(text);
-            this.itemStack.setItemMeta(itemMeta);
-        }
-
-        private final GlassType glassType;
-        private ItemStack itemStack;
-        private String text;
-
-        public ItemStack getItemStack() {
-            return itemStack;
-        }
-
-        public String getText() {
-            return text;
-        }
-    }
-
     public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, Locale.SKINSMENU_TITLE_NEW.replace("&", "§").replace("%page", "" + page));
+        Inventory inventory = Bukkit.createInventory(p, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
 
-        //White Glass line
-        inventory.setItem(36, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(37, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(38, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(39, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(40, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(41, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(42, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(43, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(44, new GuiGlass(GlassType.NONE).getItemStack());
+        ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
+        ItemStack delete = new GuiGlass(GlassType.DELETE).getItemStack();
+        ItemStack prev = new GuiGlass(GlassType.PREV).getItemStack();
+        ItemStack next = new GuiGlass(GlassType.NEXT).getItemStack();
 
-        //empty place previous
-        inventory.setItem(45, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(46, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(47, new GuiGlass(GlassType.NONE).getItemStack());
+        // White Glass line
+        inventory.setItem(36, none);
+        inventory.setItem(37, none);
+        inventory.setItem(38, none);
+        inventory.setItem(39, none);
+        inventory.setItem(40, none);
+        inventory.setItem(41, none);
+        inventory.setItem(42, none);
+        inventory.setItem(43, none);
+        inventory.setItem(44, none);
 
-        //Middle button //remove skin
-        inventory.setItem(48, new GuiGlass(GlassType.DELETE).getItemStack());
-        inventory.setItem(49, new GuiGlass(GlassType.DELETE).getItemStack());
-        inventory.setItem(50, new GuiGlass(GlassType.DELETE).getItemStack());
+        // Empty place previous
+        inventory.setItem(45, none);
+        inventory.setItem(46, none);
+        inventory.setItem(47, none);
+
+        // Middle button //remove skin
+        inventory.setItem(48, delete);
+        inventory.setItem(49, delete);
+        inventory.setItem(50, delete);
 
 
-        //empty place next
-        inventory.setItem(53, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(52, new GuiGlass(GlassType.NONE).getItemStack());
-        inventory.setItem(51, new GuiGlass(GlassType.NONE).getItemStack());
+        // Empty place next
+        inventory.setItem(53, none);
+        inventory.setItem(52, none);
+        inventory.setItem(51, none);
 
-        //if page is above 1, adding Previous Page button.
+        // If page is above 1, adding Previous Page button.
         if (page > 1) {
-            inventory.setItem(45, new GuiGlass(GlassType.PREV).getItemStack());
-            inventory.setItem(46, new GuiGlass(GlassType.PREV).getItemStack());
-            inventory.setItem(47, new GuiGlass(GlassType.PREV).getItemStack());
+            inventory.setItem(45, prev);
+            inventory.setItem(46, prev);
+            inventory.setItem(47, prev);
         }
 
         skinsList.forEach((name, property) -> {
@@ -160,16 +107,15 @@ public class SkinsGUI extends ItemStack implements Listener {
             }
 
             inventory.addItem(createSkull(name, property));
-
         });
 
-        //if the page is not empty, adding Next Page button.
-        //
+        // If the page is not empty, adding Next Page button.
         if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 999) {
-            inventory.setItem(53, new GuiGlass(GlassType.NEXT).getItemStack());
-            inventory.setItem(52, new GuiGlass(GlassType.NEXT).getItemStack());
-            inventory.setItem(51, new GuiGlass(GlassType.NEXT).getItemStack());
+            inventory.setItem(53, next);
+            inventory.setItem(52, next);
+            inventory.setItem(51, next);
         }
+
         return inventory;
     }
 
@@ -185,70 +131,47 @@ public class SkinsGUI extends ItemStack implements Listener {
 
     private ItemStack createSkull(String name, Object property) {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
-        SkullMeta sm = (SkullMeta) is.getItemMeta();
+        SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
+
         List<String> lore = new ArrayList<>();
-        lore.add(Locale.SKINSMENU_SELECT_SKIN.replace("&", "§"));
-        sm.setDisplayName(name);
+        lore.add(C.c(Locale.SKINSMENU_SELECT_SKIN));
+        Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
+
         try {
-            setSkin(is, ((Property) property).getValue());
+            BukkitHeadAPI.setSkull(is, ((Property) property).getValue());
         } catch (Exception e) {
             this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
-            this.srLogger.log("[SkinsRestorer] DEBUG= " + e);
-        }
-        return is;
-    }
-
-    private void setSkin(ItemStack head, String b64stringTexture) {
-        GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-        PropertyMap propertyMap = profile.getProperties();
-
-        if (propertyMap == null) {
-            throw new IllegalStateException("Profile doesn't contain a property map");
-        }
-
-        propertyMap.put("textures", new Property("textures", b64stringTexture));
-
-        ItemMeta headMeta = head.getItemMeta();
-        Class<?> headMetaClass = headMeta.getClass();
-
-        try {
-            ReflectionUtil.getField(headMetaClass, "profile", GameProfile.class, 0).set(headMeta, profile);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
-        head.setItemMeta(headMeta);
+        return is;
     }
 
-    public static Map<String, Integer> getMenus() {
-        return openedMenus;
-    }
-
-    //Todo increase performance by looking for instance of player and exclude non item clicks from this event before e.getView (use  if performance will be increased.)
+    // Todo increase performance by excluding non item clicks from this event before e.getView (use if performance will be increased.)
     @EventHandler(ignoreCancelled = true)
     public void onCLick(InventoryClickEvent e) {
-        //Cancel if clicked outside inventory
-        if (e.getClickedInventory() == null) {
+        // Cancel if clicked outside inventory
+        if (e.getClickedInventory() == null)
             return;
-        }
 
-        if (e.getView().getTopInventory().getType() != InventoryType.CHEST) {
+        if (e.getView().getTopInventory().getType() != InventoryType.CHEST)
             return;
-        }
 
         try {
-            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", ""))) {
+            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
                 return;
-            }
         } catch (IllegalStateException ex) {
             return;
         }
 
+        if (!(e.getWhoClicked() instanceof Player))
+            return;
+
         Player player = (Player) e.getWhoClicked();
 
-        //Cancel picking up items
+        // Cancel picking up items
         if (e.getCurrentItem() == null) {
             e.setCancelled(true);
             return;
@@ -256,16 +179,16 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         ItemStack currentItem = e.getCurrentItem();
 
-        //Cancel white panels.
+        // Cancel white panels.
         if (!currentItem.hasItemMeta()) {
             e.setCancelled(true);
             return;
         }
 
         if (plugin.isBungeeEnabled()) {
-            switch (XMaterial.matchXMaterial(currentItem)) {
+            switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
-                    String skin = currentItem.getItemMeta().getDisplayName();
+                    String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
                     plugin.requestSkinSetFromBungeeCord(player, skin);
                     player.closeInventory();
                     break;
@@ -273,18 +196,18 @@ public class SkinsGUI extends ItemStack implements Listener {
                     plugin.requestSkinClearFromBungeeCord(player);
                     player.closeInventory();
                     break;
-                case GREEN_STAINED_GLASS_PANE: {
-                    int currentPage = getMenus().get(player.getName());
-                    getMenus().put(player.getName(), currentPage + 1);
-                    plugin.requestSkinsFromBungeeCord(player, currentPage + 1);
+                case GREEN_STAINED_GLASS_PANE:
+                    int currentPageG = getMenus().get(player.getName());
+                    getMenus().put(player.getName(), currentPageG + 1);
+                    plugin.requestSkinsFromBungeeCord(player, currentPageG + 1);
                     break;
-                }
-                case YELLOW_STAINED_GLASS_PANE: {
-                    int currentPage = getMenus().get(player.getName());
-                    getMenus().put(player.getName(), currentPage - 1);
-                    plugin.requestSkinsFromBungeeCord(player, currentPage - 1);
+                case YELLOW_STAINED_GLASS_PANE:
+                    int currentPageY = getMenus().get(player.getName());
+                    getMenus().put(player.getName(), currentPageY - 1);
+                    plugin.requestSkinsFromBungeeCord(player, currentPageY - 1);
                     break;
-                }
+                default:
+                    break;
             }
             e.setCancelled(true);
             return;

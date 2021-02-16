@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -30,10 +30,8 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class ReflectionUtil {
-    private ReflectionUtil() {}
-
-    public static String serverVersion = null;
     private static final DuckBypass reflect;
+    public static String serverVersion = null;
 
     static {
         reflect = new DuckBypass();
@@ -43,6 +41,9 @@ public class ReflectionUtil {
             setObject(ReflectionUtil.class, null, "serverVersion", version);
         } catch (Exception ignored) {
         }
+    }
+
+    private ReflectionUtil() {
     }
 
     public static Class<?> getBukkitClass(String clazz) throws Exception {
