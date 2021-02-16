@@ -41,8 +41,8 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.util.Collection;
 
 public class SkinApplierSponge implements SRApplier {
-    private Player receiver;
     private final SkinsRestorer plugin;
+    private Player receiver;
 
     public SkinApplierSponge(SkinsRestorer plugin) {
         this.plugin = plugin;

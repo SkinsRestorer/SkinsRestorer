@@ -66,7 +66,6 @@ public class Config {
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
 
 
-
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
 
@@ -106,7 +105,7 @@ public class Config {
         MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
         MYSQL_SKINTABLE = config.getString("MySQL.SkinTable", MYSQL_SKINTABLE);
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
-        MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
+        MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);

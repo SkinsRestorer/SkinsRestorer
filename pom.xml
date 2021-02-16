@@ -68,19 +68,23 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>net.skinsrestorer.shared.utils.metrics</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shade.metrics</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.inventivetalent</pattern>
-                            <shadedPattern>net.skinsrestorer.shared.utils.updater</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shade.updater</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
-                            <shadedPattern>net.skinsrestorer.shared.utils.acf</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shade.acf</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>
-                            <shadedPattern>net.skinsrestorer.shared.utils.bungee-config</shadedPattern>
+                            <shadedPattern>net.skinsrestorer.shade.bungee-config</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.cryptomorin.xseries</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.xseries</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -331,6 +335,12 @@
             <artifactId>viaversion</artifactId>
             <version>3.2.0</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- GUI backwards support -->
+        <dependency>
+            <groupId>com.github.cryptomorin</groupId>
+            <artifactId>XSeries</artifactId>
+            <version>7.8.0</version>
         </dependency>
     </dependencies>
 </project>

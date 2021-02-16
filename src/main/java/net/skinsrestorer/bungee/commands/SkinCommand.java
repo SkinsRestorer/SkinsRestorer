@@ -193,7 +193,7 @@ public class SkinCommand extends BaseCommand {
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             if (this.setSkin(sender, target.getPlayer(), skin) && !sender.getName().equals(target.getPlayer().getName())) {
-                    sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
             }
         });
     }
@@ -227,12 +227,12 @@ public class SkinCommand extends BaseCommand {
         }
 
         if (Config.DISABLED_SKINS_ENABLED && !sender.hasPermission("skinsrestorer.bypassdisabled") && !clear) {
-                for (String dskin : Config.DISABLED_SKINS)
-                    if (skin.equalsIgnoreCase(dskin)) {
-                        sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
-                        return false;
-                    }
-            }
+            for (String dskin : Config.DISABLED_SKINS)
+                if (skin.equalsIgnoreCase(dskin)) {
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
+                    return false;
+                }
+        }
 
         if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));

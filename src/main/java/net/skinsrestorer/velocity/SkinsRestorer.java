@@ -99,7 +99,7 @@ public class SkinsRestorer implements SRPlugin {
     public void onProxyInitialize(ProxyInitializeEvent e) {
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
-        File UPDATER_DISABLED = new File(this.CONFIG_PATH, "noupdate.txt");
+        File UPDATER_DISABLED = new File(CONFIG_PATH, "noupdate.txt");
 
         // Check for updates
         if (!UPDATER_DISABLED.exists()) {

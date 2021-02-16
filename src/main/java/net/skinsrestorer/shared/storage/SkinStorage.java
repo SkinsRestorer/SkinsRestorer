@@ -44,12 +44,12 @@ public class SkinStorage {
     private File folder;
 
     @SuppressWarnings("unused")
-    private boolean isBukkit;
+    private final boolean isBukkit;
     @SuppressWarnings("unused")
-    private boolean isBungee;
-    private boolean isSponge;
+    private final boolean isBungee;
+    private final boolean isSponge;
     @SuppressWarnings("unused")
-    private boolean isVelocity;
+    private final boolean isVelocity;
 
     private @Getter
     @Setter

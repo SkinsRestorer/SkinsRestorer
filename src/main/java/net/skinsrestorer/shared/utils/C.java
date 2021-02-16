@@ -21,18 +21,27 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import java.util.regex.Pattern;
-
 import net.skinsrestorer.shared.storage.Config;
 
-public class C {
-    private C() {}
+import java.util.regex.Pattern;
 
+public class C {
     private static final Pattern namePattern = Pattern.compile("^[a-zA-Z0-9_\\-]+$");
     private static final Pattern urlPattern = Pattern.compile("^https?://.*");
+    private C() {
+    }
 
     public static String c(String msg) {
-        return msg.replace("&", "§");
+        char[] b = msg.toCharArray();
+
+        for (int i = 0; i < b.length - 1; ++i) {
+            if (b[i] == '&' && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(b[i + 1]) > -1) {
+                b[i] = 167;
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
+            }
+        }
+
+        return new String(b);
     }
 
     public static boolean validUsername(String username) {
