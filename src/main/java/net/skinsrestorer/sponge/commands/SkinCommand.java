@@ -174,11 +174,11 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !source.hasPermission("skinsrestorer.skin." + skin)
-                && !source.getName().equals(target.getPlayer().getName()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(source.getName()))) {
-            source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!source.hasPermission("skinsrestorer.ownskin") && !source.getName().equalsIgnoreCase(target.getPlayer().getName()) || !skin.equalsIgnoreCase(source.getName())) {
+                source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
         }
 
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {

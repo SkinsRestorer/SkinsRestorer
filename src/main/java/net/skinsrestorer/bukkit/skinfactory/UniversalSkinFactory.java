@@ -110,12 +110,12 @@ public class UniversalSkinFactory implements SkinFactory {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
                     ps.hidePlayer(this.plugin, player);
-                } catch (Exception ignored) {
+                } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
                 try {
                     ps.showPlayer(this.plugin, player);
-                } catch (Exception ignored) {
+                } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }
             }

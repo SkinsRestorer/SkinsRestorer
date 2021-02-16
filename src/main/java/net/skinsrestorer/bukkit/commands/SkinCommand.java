@@ -182,11 +182,11 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !sender.hasPermission("skinsrestorer.skin." + skin)
-                && !sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
-            sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(target.getPlayer().getName()) || !skin.equalsIgnoreCase(sender.getName())) {
+                sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
+                return;
+            }
         }
 
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
