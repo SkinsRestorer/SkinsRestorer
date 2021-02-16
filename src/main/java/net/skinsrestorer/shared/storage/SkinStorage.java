@@ -273,6 +273,10 @@ public class SkinStorage {
                 }
 
         } else {
+            // Remove all whitespace
+            name = name.replaceAll("\\s", "");
+            //Escape all Windows / Linux forbidden printable ASCII characters
+            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
@@ -324,7 +328,12 @@ public class SkinStorage {
     }
 
     private boolean isOld(long timestamp) {
-        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
+    	// Check if auto update is not disabled and timestamp is not 0
+    	if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
+    		return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
+    	} else {
+    		return false;
+    	}
     }
 
     /**
@@ -363,6 +372,10 @@ public class SkinStorage {
         if (Config.USE_MYSQL) {
             mysql.execute("DELETE FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
         } else {
+            // Remove all whitespace
+            name = name.replaceAll("\\s", "");
+            //Escape all Windows / Linux forbidden printable ASCII characters
+            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             if (skinFile.exists()) {
@@ -402,7 +415,11 @@ public class SkinStorage {
                     throw new IOException("Could not create player file!");
 
                 try (FileWriter writer = new FileWriter(playerFile)) {
-                    writer.write(skin);
+                    // Remove all whitespace
+                    skin = skin.replaceAll("\\s", "");
+                    //Escape all Windows / Linux forbidden printable ASCII characters
+                	skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
+                	writer.write(skin);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -439,6 +456,10 @@ public class SkinStorage {
                 mysql.execute("UPDATE " + Config.MYSQL_SKINTABLE + " SET Value=?, Signature=?, timestamp=? WHERE Nick=?",
                         value, signature, timestamp, name);
         } else {
+            // Remove all whitespace
+            name = name.replaceAll("\\s", "");
+            //Escape all Windows / Linux forbidden printable ASCII characters
+            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
             File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
@@ -623,8 +644,8 @@ public class SkinStorage {
                 this.setSkinData(skin, textures);
                 return true;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SkinRequestException e) {
+            e.printStackTrace(); //todo add srlogger in SkinStorage.java
         }
 
         return false;
@@ -645,8 +666,10 @@ public class SkinStorage {
      * @return - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
-        // Remove all non [a-z_] chars to allow pre/sub fixes
-        player = player.replaceAll("\\W", "");
+    	// LTrim and RTrim player name
+        //player = player.replaceAll("\\W", "");
+    	player = player.replaceAll("^\\\\s+", "");
+    	player = player.replaceAll("\\\\s+$", "");
 
         if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
             // don't return default skin name for premium players if enabled

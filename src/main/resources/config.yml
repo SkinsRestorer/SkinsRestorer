@@ -101,6 +101,10 @@ MySQL:
 # Enabling this will stop SkinsRestorer to change skins on join.
 DisableOnJoinSkins: false
 
+# <!! Warning !!>
+# Enable this will require players to run "/skin update" to update their skin.
+DisableAutoUpdateSkin: true
+
 # Updater Settings
 Updater:
   # To block all types of automatic updates (which can risk keeping a exploit)

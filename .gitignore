@@ -10,4 +10,4 @@ target/*
 .project
 .factorypath
 
-*.plantuml
+*.plantuml 
