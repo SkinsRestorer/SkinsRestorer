@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -28,8 +28,6 @@ import net.skinsrestorer.shared.storage.Locale;
 import java.util.Map;
 
 public class CommandReplacements {
-    private CommandReplacements() {}
-
     public static final Map<String, String> permissions = ImmutableMap.<String, String>builder()
             .put("skin", Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command")
             .put("sr", "skinsrestorer.admincommand")
@@ -52,7 +50,6 @@ public class CommandReplacements {
             .put("srDrop", "skinsrestorer.admincommand.drop")
             .put("srProps", "skinsrestorer.admincommand.props")
             .build();
-
     public static final Map<String, String> descriptions = ImmutableMap.<String, String>builder()
             .put("%helpSkinClear", Locale.HELP_SKIN_CLEAR)
             .put("%helpSkinClearOther", Locale.HELP_SKIN_CLEAR_OTHER)
@@ -66,7 +63,6 @@ public class CommandReplacements {
             .put("%helpSrDrop", Locale.HELP_SR_DROP)
             .put("%helpSrProps", Locale.HELP_SR_PROPS)
             .build();
-
     public static final Map<String, String> syntax = ImmutableMap.<String, String>builder()
             .put("%SyntaxDefaultCommand", Locale.SYNTAX_DEFAULTCOMMAND)
             .put("%SyntaxSkinSet", Locale.SYNTAX_SKINSET)
@@ -75,4 +71,7 @@ public class CommandReplacements {
             .put("%SyntaxSkinUpdateOther", Locale.SYNTAX_SKINUPDATE_OTHER)
             .put("%SyntaxSkinClearOther", Locale.SYNTAX_SKINCLEAR_OTHER)
             .build();
+
+    private CommandReplacements() {
+    }
 }

@@ -56,7 +56,8 @@ public class Config {
     public static String MYSQL_SKINTABLE = "Skins";
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
-    public static boolean DISABLE_ONJOIN_SKINS = false; // hidden
+    public static boolean DISABLE_ONJOIN_SKINS = false;
+    public static boolean DISABLE_AUTO_UPDATE_SKIN = false;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean ALLOWED_SKIN_URLS_ENABLED = false;
     public static List<String> ALLOWED_SKIN_URLS_LIST = null;
@@ -64,7 +65,6 @@ public class Config {
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
-
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -106,8 +106,9 @@ public class Config {
         MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
         MYSQL_SKINTABLE = config.getString("MySQL.SkinTable", MYSQL_SKINTABLE);
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
-        MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions",MYSQL_CONNECTIONOPTIONS);
+        MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
+        DISABLE_AUTO_UPDATE_SKIN = config.getBoolean("DisableAutoUpdateSkin", DISABLE_AUTO_UPDATE_SKIN);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);
         ALLOWED_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");

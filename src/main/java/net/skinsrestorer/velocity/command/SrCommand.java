@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -57,8 +57,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getCONFIG_PATH());
-        Config.load(plugin.getCONFIG_PATH(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(SkinsRestorer.getCONFIG_PATH());
+        Config.load(SkinsRestorer.getCONFIG_PATH(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
         source.sendMessage(plugin.deserialize(Locale.RELOAD));
     }
 

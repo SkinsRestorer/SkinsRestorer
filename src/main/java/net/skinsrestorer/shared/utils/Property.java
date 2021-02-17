@@ -27,7 +27,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-public @Data class Property implements Serializable {
+public @Data
+class Property implements Serializable {
     private String name;
     private String value;
     private String signature;

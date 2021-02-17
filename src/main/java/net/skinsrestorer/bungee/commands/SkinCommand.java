@@ -184,16 +184,16 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !sender.hasPermission("skinsrestorer.skin." + skin)
-                && !sender.getName().equals(target.getPlayer().getName()) || (!sender.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(sender.getName()))) {
-            sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(target.getPlayer().getName()) || !skin.equalsIgnoreCase(sender.getName())) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
         }
 
         ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
             if (this.setSkin(sender, target.getPlayer(), skin) && !sender.getName().equals(target.getPlayer().getName())) {
-                    sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", target.getPlayer().getName())));
             }
         });
     }
@@ -227,12 +227,12 @@ public class SkinCommand extends BaseCommand {
         }
 
         if (Config.DISABLED_SKINS_ENABLED && !sender.hasPermission("skinsrestorer.bypassdisabled") && !clear) {
-                for (String dskin : Config.DISABLED_SKINS)
-                    if (skin.equalsIgnoreCase(dskin)) {
-                        sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
-                        return false;
-                    }
-            }
+            for (String dskin : Config.DISABLED_SKINS)
+                if (skin.equalsIgnoreCase(dskin)) {
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_DISABLED));
+                    return false;
+                }
+        }
 
         if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));

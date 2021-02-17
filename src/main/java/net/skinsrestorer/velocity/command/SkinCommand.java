@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -175,11 +175,11 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !source.hasPermission("skinsrestorer.skin." + skin)
-                && !getSenderName(source).equals(target.getPlayer().getUsername()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(getSenderName(source)))) {
-            source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!source.hasPermission("skinsrestorer.ownskin") && !getSenderName(source).equalsIgnoreCase(target.getPlayer().getUsername()) || !skin.equalsIgnoreCase(getSenderName(source))) {
+                source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
         }
 
         plugin.getService().execute(() -> {

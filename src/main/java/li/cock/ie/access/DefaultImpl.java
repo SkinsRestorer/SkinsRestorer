@@ -50,10 +50,6 @@ public class DefaultImpl implements IAccess {
         this(reflect, canSetModifiers, true);
     }
 
-    public DefaultImpl(DuckReflect reflect) {
-        this(reflect, false, false);
-    }
-
     @Override
     public Object getValue(Field target, Object obj) {
         if (!_canGetValue) return null;
@@ -154,40 +150,4 @@ public class DefaultImpl implements IAccess {
         return true;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        if (_lazy) {
-            changeSetFieldModifiers(true);
-            changeSetMethodModifiers(true);
-            this._lazy = false;
-        }
-
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        if (_lazy) {
-            changeSetFieldModifiers(true);
-            changeSetMethodModifiers(true);
-            this._lazy = false;
-        }
-
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return _canGetNewInstance;
-    }
 }

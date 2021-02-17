@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -174,11 +174,11 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
-        if (Config.PER_SKIN_PERMISSIONS
-                && !source.hasPermission("skinsrestorer.skin." + skin)
-                && !source.getName().equals(target.getPlayer().getName()) || (!source.hasPermission("skinsrestorer.ownskin") && !skin.equalsIgnoreCase(source.getName()))) {
-            source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
-            return;
+        if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
+            if (!source.hasPermission("skinsrestorer.ownskin") && !source.getName().equalsIgnoreCase(target.getPlayer().getName()) || !skin.equalsIgnoreCase(source.getName())) {
+                source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                return;
+            }
         }
 
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
