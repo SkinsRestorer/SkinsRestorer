@@ -78,7 +78,7 @@ public class ReflectionUtil {
         throw new Exception("Enum constant not found " + constant);
     }
 
-    private static Field getField(Class<?> clazz, String fname) throws Exception {
+    public static Field getField(Class<?> clazz, String fname) throws Exception {
         Field f;
 
         try {
