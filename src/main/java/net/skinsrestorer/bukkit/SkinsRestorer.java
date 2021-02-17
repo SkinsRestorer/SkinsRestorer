@@ -353,13 +353,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
 
-        try {
-            Class<?> patternClass = Class.forName("co.aikar.commands.ACFPatterns");
-
-            ReflectionUtil.setObject(patternClass, null, "VALID_NAME_PATTERN", Pattern.compile("(.*?)"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SharedMethods.allowIllegalACFNames();
 
         manager.registerCommand(new SkinCommand(this));
         manager.registerCommand(new SrCommand(this));

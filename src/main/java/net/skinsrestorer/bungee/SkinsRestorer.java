@@ -186,6 +186,8 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
 
         new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
 
+        SharedMethods.allowIllegalACFNames();
+
         this.skinCommand = new SkinCommand(this);
         manager.registerCommand(this.skinCommand);
         manager.registerCommand(new SrCommand(this));
