@@ -21,9 +21,7 @@
  */
 package net.skinsrestorer.bukkit;
 
-import co.aikar.commands.BukkitCommandIssuer;
-import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -39,9 +37,12 @@ import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.CommandReplacements;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -50,10 +51,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.UUID;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
@@ -347,6 +352,8 @@ public class SkinsRestorer extends JavaPlugin {
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
         new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
+
+        SharedMethods.allowIllegalACFNames();
 
         manager.registerCommand(new SkinCommand(this));
         manager.registerCommand(new SrCommand(this));
