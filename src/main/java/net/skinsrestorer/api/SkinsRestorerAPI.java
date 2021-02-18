@@ -35,16 +35,20 @@ import net.skinsrestorer.shared.utils.MojangAPI;
  */
 @SuppressWarnings({"unused"})
 public class SkinsRestorerAPI {
+    private static @Getter SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
     private final SRPlugin plugin;
-    private static @Getter SkinsRestorerAPI api;
 
     public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, SRPlugin plugin) {
         setInstance(this);
         this.mojangAPI = mojangAPI;
         this.skinStorage = skinStorage;
         this.plugin = plugin;
+    }
+
+    private static void setInstance(SkinsRestorerAPI api) {
+        SkinsRestorerAPI.api = api;
     }
 
     public Object getProfile(String uuid) {
@@ -88,9 +92,5 @@ public class SkinsRestorerAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private static void setInstance(SkinsRestorerAPI api) {
-        SkinsRestorerAPI.api = api;
     }
 }
