@@ -69,8 +69,7 @@ public class MojangAPI {
         String output;
         try {
             output = readURL(SKIN_URL.replace("%uuid%", uuid));
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
             Property property = new Property();
 
@@ -104,8 +103,7 @@ public class MojangAPI {
         String output;
         try {
             output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
             Property property = new Property();
 
@@ -126,8 +124,7 @@ public class MojangAPI {
 
         try {
             String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj =  JsonParser.parseString(output).getAsJsonObject();
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
@@ -155,8 +152,7 @@ public class MojangAPI {
         try {
             output = readURL(UUID_URL.replace("%name%", name));
 
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                 return getUUIDMojang(name);
@@ -188,8 +184,7 @@ public class MojangAPI {
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
 
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
             if (obj.has("error")) {
                 if (tryNext)
@@ -213,8 +208,7 @@ public class MojangAPI {
         try {
             String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
 
-            JsonElement element = new JsonParser().parse(output);
-            JsonObject obj = element.getAsJsonObject();
+            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
             //System.out.println(output.toString()); //testing
             if (obj.has("code")) {
