@@ -21,9 +21,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import com.google.gson.JsonElement;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.Getter;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
@@ -69,7 +68,7 @@ public class MojangAPI {
         String output;
         try {
             output = readURL(SKIN_URL.replace("%uuid%", uuid));
-            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             Property property = new Property();
 
@@ -103,7 +102,7 @@ public class MojangAPI {
         String output;
         try {
             output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
-            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             Property property = new Property();
 
@@ -124,7 +123,7 @@ public class MojangAPI {
 
         try {
             String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
-            JsonObject obj =  JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
@@ -152,7 +151,7 @@ public class MojangAPI {
         try {
             output = readURL(UUID_URL.replace("%name%", name));
 
-            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                 return getUUIDMojang(name);
@@ -184,7 +183,7 @@ public class MojangAPI {
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
 
-            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             if (obj.has("error")) {
                 if (tryNext)
@@ -208,7 +207,7 @@ public class MojangAPI {
         try {
             String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
 
-            JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             //System.out.println(output.toString()); //testing
             if (obj.has("code")) {
