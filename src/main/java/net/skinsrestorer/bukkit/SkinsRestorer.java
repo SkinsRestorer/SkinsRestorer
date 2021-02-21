@@ -407,8 +407,7 @@ public class SkinsRestorer extends JavaPlugin {
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
-            if (!bungeeEnabled) {
-                if (new File("paper.yml").exists()) {
+            if (!bungeeEnabled && new File("paper.yml").exists()) {
                     bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
                 }
             }
