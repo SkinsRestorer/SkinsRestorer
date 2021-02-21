@@ -54,6 +54,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -406,9 +407,9 @@ public class SkinsRestorer extends JavaPlugin {
             // we will try it again with the old function from SR 13.3
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
-            }
-            if (Files.exists(Paths.get("paper.yml"))) {
-                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
+                if (Files.exists(Paths.get("paper.yml"))) {
+                    bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
+                }
             }
         } catch (Exception e) {
             bungeeEnabled = false;
