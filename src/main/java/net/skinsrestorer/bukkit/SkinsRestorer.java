@@ -409,7 +409,6 @@ public class SkinsRestorer extends JavaPlugin {
             }
             if (!bungeeEnabled && new File("paper.yml").exists()) {
                     bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
-                }
             }
         } catch (Exception e) {
             bungeeEnabled = false;
