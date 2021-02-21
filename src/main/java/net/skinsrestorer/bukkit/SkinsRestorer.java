@@ -21,7 +21,9 @@
  */
 package net.skinsrestorer.bukkit;
 
-import co.aikar.commands.*;
+import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.ConditionFailedException;
+import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -37,12 +39,9 @@ import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
-import net.skinsrestorer.shared.utils.CommandReplacements;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -51,14 +50,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.UUID;
 import java.util.logging.Level;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
@@ -393,12 +388,7 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private void checkBungeeMode() {
-        File bungeeModeDisabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disableBungeeMode");
-        if (bungeeModeDisabled.exists()) {
-            bungeeEnabled = false;
-            return;
-        }
-
+        bungeeEnabled = false;
         try {
             bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
 
@@ -407,11 +397,26 @@ public class SkinsRestorer extends JavaPlugin {
             if (!bungeeEnabled) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
+
+            //load paper velocity-support.enabled to allow velocity compatability.
             if (!bungeeEnabled && new File("paper.yml").exists()) {
-                    bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
+                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
             }
-        } catch (Exception e) {
-            bungeeEnabled = false;
+
+            //override bungeeModeEnabled
+            File bungeeModeEnabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enableBungeeMode");
+            if (!bungeeEnabled && bungeeModeEnabled.exists()) {
+                bungeeEnabled = true;
+                return;
+            }
+
+            //override bungeeModeDisabled
+            File bungeeModeDisabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disableBungeeMode");
+            if (bungeeModeDisabled.exists()) {
+                bungeeEnabled = false;
+                return;
+            }
+        } catch (Exception ignored) {
         }
 
         StringBuilder sb1 = new StringBuilder("Server is in bungee mode!");
