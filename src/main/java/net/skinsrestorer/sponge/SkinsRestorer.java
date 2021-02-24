@@ -155,9 +155,8 @@ public class SkinsRestorer implements SRPlugin {
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
             System.out.println("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            System.out.println("§c[§4Critical§c] §cPlugin currently can't fetch new skins.");
-            System.out.println("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for wiki ");
-            System.out.println("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer ");
+            System.out.println("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            System.out.println("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
             System.out.println("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
     }

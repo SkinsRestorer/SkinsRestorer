@@ -158,9 +158,8 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
             console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
-            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cPlugin currently can't fetch new skins."));
-            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for wiki "));
-            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cFor support, visit our discord at https://discord.me/servers/skinsrestorer "));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!"));
+            console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!"));
             console.sendMessage(TextComponent.fromLegacyText("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
         }
     }
