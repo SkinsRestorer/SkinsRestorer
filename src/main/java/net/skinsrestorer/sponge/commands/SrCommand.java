@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.ServiceChecker;
@@ -150,6 +151,22 @@ public class SrCommand extends BaseCommand {
             console.sendMessage(plugin.parseMessage("\n§aSignature : §8" + profileProperty.getSignature()));
             console.sendMessage(plugin.parseMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
         });
+    }
+
+    @Subcommand("applyskin")
+    @CommandPermission("%srApplySkin")
+    @CommandCompletion("@players")
+    @Description("%helpSrApplySkin")
+    @Syntax(" <target>")
+    public void onApplySkin(CommandSource source, OnlinePlayer target) {
+        try {
+            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(target.getPlayer().getName());
+
+            plugin.getSkinApplierSponge().updateProfileSkin(target.getPlayer().getProfile(), skin);
+            source.sendMessage(plugin.parseMessage("success: player skin has been refreshed!"));
+        } catch (SkinRequestException ignored) {
+            source.sendMessage(plugin.parseMessage("ERROR: player skin could NOT be refreshed!"));
+        }
     }
 
     public enum PlayerOrSkin {

@@ -30,11 +30,13 @@ import com.google.gson.JsonParser;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.ServiceChecker;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 import java.util.Base64;
@@ -166,6 +168,28 @@ public class SrCommand extends BaseCommand {
         } catch (Exception e) {
             e.printStackTrace();
             sender.sendMessage(Locale.NO_SKIN_DATA);
+        }
+    }
+
+    @Subcommand("applyskin")
+    @CommandPermission("%srApplySkin")
+    @CommandCompletion("@players")
+    @Description("%helpSrApplySkin")
+    @Syntax(" <target>")
+    public void onApplySkin(CommandSender sender, OnlinePlayer target) {
+        try {
+            final Player player = target.getPlayer();
+            final String name = player.getName();
+            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+
+            if (C.validUrl(skin)) {
+                plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+            } else {
+                plugin.getFactory().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+            }
+            sender.sendMessage("success: player skin has been refreshed!");
+        } catch (Exception ignored) {
+            sender.sendMessage("ERROR: player skin could NOT be refreshed!");
         }
     }
 

@@ -31,6 +31,7 @@ import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.skinsrestorer.bungee.SkinsRestorer;
@@ -153,6 +154,25 @@ public class SrCommand extends BaseCommand {
         console.sendMessage(TextComponent.fromLegacyText("\n§aSignature : §8" + prop.getSignature()));
         console.sendMessage(TextComponent.fromLegacyText("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
     }
+
+    @Subcommand("applyskin")
+    @CommandPermission("%srApplySkin")
+    @CommandCompletion("@players")
+    @Description("%helpSrApplySkin")
+    @Syntax(" <target>")
+    public void onApplySkin(CommandSender sender, OnlinePlayer target) {
+        try {
+            final ProxiedPlayer p = target.getPlayer();
+            final String name = p.getName();
+            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+
+            plugin.getSkinApplierBungee().applySkin(p, skin, null);
+            sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
+        } catch (Exception ignored) {
+            sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));
+        }
+    }
+
 
     public enum PlayerOrSkin {
         PLAYER,

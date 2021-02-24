@@ -28,7 +28,9 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.ServiceChecker;
@@ -142,6 +144,24 @@ public class SrCommand extends BaseCommand {
         System.out.println("\n§aValue : §8" + prop.getValue());
         System.out.println("\n§aSignature : §8" + prop.getSignature());
         System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+    }
+
+    @Subcommand("applyskin")
+    @CommandPermission("%srApplySkin")
+    @CommandCompletion("@players")
+    @Description("%helpSrApplySkin")
+    @Syntax(" <target>")
+    public void onApplySkin(CommandSource source, OnlinePlayer target) {
+        try {
+        final Player p = target.getPlayer();
+        //final String name = p.getUsername();
+        //final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+
+            plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
+            source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
+        } catch (Exception ignored) {
+            source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));
+        }
     }
 
     public enum PlayerOrSkin {
