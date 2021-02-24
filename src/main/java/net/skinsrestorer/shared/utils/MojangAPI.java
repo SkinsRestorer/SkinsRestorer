@@ -97,6 +97,7 @@ public class MojangAPI {
     }
 
     public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
+        if (tryNext)
         logger.log("Trying Mojang API to get skin property for " + uuid + ".");
 
         String output;
@@ -119,6 +120,11 @@ public class MojangAPI {
     }
 
     public Object getSkinPropertyBackup(String uuid) {
+        return getSkinPropertyBackup(uuid, true);
+    }
+
+    public Object getSkinPropertyBackup(String uuid, boolean tryNext) {
+        if (tryNext)
         logger.log("Trying backup API to get skin property for " + uuid + ".");
 
         try {
@@ -174,6 +180,7 @@ public class MojangAPI {
     }
 
     public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
+        if (tryNext)
         logger.log("Trying Mojang API to get UUID for player " + name + ".");
 
         String output;
@@ -202,6 +209,11 @@ public class MojangAPI {
     }
 
     public String getUUIDBackup(String name) throws SkinRequestException {
+        return getUUIDBackup(name, true);
+    }
+
+    public String getUUIDBackup(String name, boolean tryNext) throws SkinRequestException {
+        if (tryNext)
         logger.log("Trying backup API to get UUID for player " + name + ".");
 
         try {

@@ -66,7 +66,7 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = this.mojangAPI.getUUIDBackup("Notch");
+            String uuid = this.mojangAPI.getUUIDBackup("Notch", false);
             response.addResult("Mojang-API (Backup) UUID §a✔ Notch UUID: §b" + uuid);
             response.incrementWorkingUUID();
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class ServiceChecker {
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5");
+        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5", false);
         if (mojangBackup != null) {
             response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
             response.incrementWorkingProfile();
