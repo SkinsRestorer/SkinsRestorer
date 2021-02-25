@@ -326,14 +326,14 @@
         <dependency>
             <groupId>nl.matsv</groupId>
             <artifactId>viabackwards-core</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.0-21w06a</version>
             <scope>provided</scope>
         </dependency>
         <!-- ViaVersion -->
         <dependency>
             <groupId>us.myles</groupId>
             <artifactId>viaversion</artifactId>
-            <version>3.2.1</version>
+            <version>3.3.0-21w08a-gradle</version>
             <scope>provided</scope>
         </dependency>
         <!-- GUI backwards support -->
