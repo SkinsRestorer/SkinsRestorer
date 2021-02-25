@@ -29,6 +29,7 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -54,9 +55,13 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player p) {
-        p.sendMessage(Locale.SKINSMENU_OPEN);
-
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+                p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+                return;
+            }
+            p.sendMessage(Locale.SKINSMENU_OPEN);
+
             SkinsGUI.getMenus().put(p.getName(), 0);
             Inventory inventory = this.skinsGUI.getGUI(p, 0);
             Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> p.openInventory(inventory));

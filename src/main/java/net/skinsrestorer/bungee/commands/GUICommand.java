@@ -31,6 +31,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 
 @CommandAlias("skins")
@@ -51,6 +52,10 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer p) {
+        if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
+            p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+            return;
+        }
         p.sendMessage(TextComponent.fromLegacyText(Locale.SKINSMENU_OPEN));
 
         plugin.getPluginMessageListener().sendGuiOpenRequest(p);
