@@ -28,6 +28,7 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -84,10 +85,10 @@ public class SrCommand extends BaseCommand {
             List<String> results = response.getResults();
 
             if (Config.DEBUG || !(response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1))
-            for (String result : results) {
-                if (Config.DEBUG || result.contains("✘"))
-                sender.sendMessage(result);
-            }
+                for (String result : results) {
+                    if (Config.DEBUG || result.contains("✘"))
+                        sender.sendMessage(result);
+                }
             sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
             sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
 
@@ -180,20 +181,43 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        try {
-            final Player player = target.getPlayer();
-            final String name = player.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            try {
+                final Player player = target.getPlayer();
+                final String name = player.getName();
+                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 
-            if (C.validUrl(skin)) {
-                plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
-            } else {
-                plugin.getFactory().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                if (C.validUrl(skin)) {
+                    plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                } else {
+                    plugin.getFactory().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                }
+                sender.sendMessage("success: player skin has been refreshed!");
+            } catch (Exception ignored) {
+                sender.sendMessage("ERROR: player skin could NOT be refreshed!");
             }
-            sender.sendMessage("success: player skin has been refreshed!");
-        } catch (Exception ignored) {
-            sender.sendMessage("ERROR: player skin could NOT be refreshed!");
-        }
+        });
+    }
+
+    @Subcommand("createcustom")
+    @CommandPermission("%srCreateCustom")
+    @CommandCompletion("@players")
+    @Description("%helpSrCreateCustom")
+    @Syntax(" <name> <skinurl>")
+    public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            try {
+                if (C.validUrl(skinUrl)) {
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
+                } else {
+                    sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                }
+            } catch (SkinRequestException e) {
+                sender.sendMessage(e.getMessage());
+            }
+        });
     }
 
     public enum PlayerOrSkin {

@@ -52,6 +52,7 @@ public class Locale {
     public static String HELP_SR_DROP = "Removes players or skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin properties.";
     public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
+    public static String HELP_SR_CreateCustom = "Name & create a custom skin";
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
@@ -69,6 +70,7 @@ public class Locale {
     public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
     public static String SKIN_CLEAR_ISSUER = "&2Skin cleared for player %player.";
     public static String MS_UPDATING_SKIN = "&2Uploading skin, please wait...(This may take up some time)";
+    public static String SUCCESS_CREATE_SKIN = "&2Skin %skin has been created!";
     public static String SUCCESS_UPDATING_SKIN = "&2Your skin has been updated.";
     public static String SUCCESS_UPDATING_SKIN_OTHER = "&2Skin updated for player %player.";
     public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";

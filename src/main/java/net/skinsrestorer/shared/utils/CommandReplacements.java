@@ -50,6 +50,7 @@ public class CommandReplacements {
             .put("srDrop", "skinsrestorer.admincommand.drop")
             .put("srProps", "skinsrestorer.admincommand.props")
             .put("srApplySkin", "skinsrestorer.admincommand.applyskin")
+            .put("srCreateCustom", "skinsrestorer.admincommand.createcustom")
             .build();
     public static final Map<String, String> descriptions = ImmutableMap.<String, String>builder()
             .put("%helpSkinClear", Locale.HELP_SKIN_CLEAR)
@@ -65,6 +66,7 @@ public class CommandReplacements {
             .put("%helpSrDrop", Locale.HELP_SR_DROP)
             .put("%helpSrProps", Locale.HELP_SR_PROPS)
             .put("%helpSrApplySkin", Locale.HELP_SR_APPLY_SKIN)
+            .put("%helpSrCreateCustom", Locale.HELP_SR_CreateCustom)
             .build();
     public static final Map<String, String> syntax = ImmutableMap.<String, String>builder()
             .put("%SyntaxDefaultCommand", Locale.SYNTAX_DEFAULTCOMMAND)

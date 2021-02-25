@@ -31,8 +31,10 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -80,10 +82,10 @@ public class SrCommand extends BaseCommand {
             List<String> results = response.getResults();
 
             if (Config.DEBUG || !(response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1))
-            for (String result : results) {
-                if (Config.DEBUG || result.contains("✘"))
-                source.sendMessage(plugin.deserialize(result));
-            }
+                for (String result : results) {
+                    if (Config.DEBUG || result.contains("✘"))
+                        source.sendMessage(plugin.deserialize(result));
+                }
             source.sendMessage(plugin.deserialize("§7Working UUID API count: §6" + response.getWorkingUUID()));
             source.sendMessage(plugin.deserialize("§7Working Profile API count: §6" + response.getWorkingProfile()));
             if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
@@ -154,16 +156,35 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSource source, OnlinePlayer target) {
-        try {
-        final Player p = target.getPlayer();
-        //final String name = p.getUsername();
-        //final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        plugin.getService().execute(() -> {
+            try {
+                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()), plugin.getSkinsRestorerVelocityAPI());
+                source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
+            } catch (Exception ignored) {
+                source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));
+            }
+        });
+    }
 
-            plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
-            source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
-        } catch (Exception ignored) {
-            source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));
-        }
+    @Subcommand("createcustom")
+    @CommandPermission("%srCreateCustom")
+    @CommandCompletion("@players")
+    @Description("%helpSrCreateCustom")
+    @Syntax(" <name> <skinurl>")
+    public void onCreateCustom(CommandSource source, String name, String skinUrl) {
+        plugin.getService().execute(() -> {
+            try {
+                if (C.validUrl(skinUrl)) {
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                    source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
+                } else {
+                    source.sendMessage(plugin.deserialize(Locale.ERROR_INVALID_URLSKIN));
+                }
+            } catch (SkinRequestException e) {
+                source.sendMessage(plugin.deserialize(e.getMessage()));
+            }
+        });
     }
 
     public enum PlayerOrSkin {

@@ -35,8 +35,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
 
 import java.util.Arrays;
@@ -83,10 +85,10 @@ public class SrCommand extends BaseCommand {
             List<String> results = response.getResults();
 
             if (Config.DEBUG || !(response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1))
-            for (String result : results) {
-                if (Config.DEBUG || result.contains("✘"))
-                sender.sendMessage(TextComponent.fromLegacyText(result));
-            }
+                for (String result : results) {
+                    if (Config.DEBUG || result.contains("✘"))
+                        sender.sendMessage(TextComponent.fromLegacyText(result));
+                }
             sender.sendMessage(TextComponent.fromLegacyText("§7Working UUID API count: §6 " + response.getWorkingUUID()));
             sender.sendMessage(TextComponent.fromLegacyText("§7Working Profile API count: §6" + response.getWorkingProfile()));
 
@@ -164,16 +166,39 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        try {
-            final ProxiedPlayer p = target.getPlayer();
-            final String name = p.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            try {
+                final ProxiedPlayer p = target.getPlayer();
+                final String name = p.getName();
+                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 
-            plugin.getSkinApplierBungee().applySkin(p, skin, null);
-            sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
-        } catch (Exception ignored) {
-            sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));
-        }
+                plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                sender.sendMessage(TextComponent.fromLegacyText("§success: player skin has been refreshed!"));
+            } catch (Exception ignored) {
+                sender.sendMessage(TextComponent.fromLegacyText("§ERROR: player skin could NOT be refreshed!"));
+            }
+        });
+    }
+
+    @Subcommand("createcustom")
+    @CommandPermission("%srCreateCustom")
+    @CommandCompletion("@players")
+    @Description("%helpSrCreateCustom")
+    @Syntax(" <name> <skinurl>")
+    public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
+        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+            try {
+                if (C.validUrl(skinUrl)) {
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
+                } else {
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+                }
+            } catch (SkinRequestException e) {
+                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
+            }
+        });
     }
 
 
