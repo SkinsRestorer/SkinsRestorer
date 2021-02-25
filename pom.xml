@@ -333,7 +333,7 @@
         <dependency>
             <groupId>us.myles</groupId>
             <artifactId>viaversion</artifactId>
-            <version>3.2.1</version>
+            <version>3.3.0-21w08a-gradle</version>
             <scope>provided</scope>
         </dependency>
         <!-- GUI backwards support -->
