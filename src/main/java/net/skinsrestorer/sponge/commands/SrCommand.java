@@ -27,7 +27,6 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -72,10 +71,10 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
-        source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
-        source.sendMessage(plugin.parseMessage("§7Checking needed services for SR to work properly..."));
-
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+            source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
+            source.sendMessage(plugin.parseMessage("§7Checking needed services for SR to work properly..."));
+
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
@@ -110,14 +109,16 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
-        if (e.name().equalsIgnoreCase("player"))
-            for (String targetPlayer : targets)
-                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
-        else
-            for (String targetSkin : targets)
-                plugin.getSkinStorage().removeSkinData(targetSkin);
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-        source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+            if (e.name().equalsIgnoreCase("player"))
+                for (String targetPlayer : targets)
+                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+            else
+                for (String targetSkin : targets)
+                    plugin.getSkinStorage().removeSkinData(targetSkin);
+            String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
+            source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+        });
     }
 
     @Subcommand("props")
@@ -126,35 +127,37 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSource source, OnlinePlayer target) {
-        Collection<ProfileProperty> prop = target.getPlayer().getProfile().getPropertyMap().get("textures");
+        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+            Collection<ProfileProperty> prop = target.getPlayer().getProfile().getPropertyMap().get("textures");
 
-        if (prop == null) {
-            source.sendMessage(plugin.parseMessage(Locale.NO_SKIN_DATA));
-            return;
-        }
+            if (prop == null) {
+                source.sendMessage(plugin.parseMessage(Locale.NO_SKIN_DATA));
+                return;
+            }
 
-        prop.forEach(profileProperty -> {
-            byte[] decoded = Base64.getDecoder().decode(profileProperty.getValue());
+            prop.forEach(profileProperty -> {
+                byte[] decoded = Base64.getDecoder().decode(profileProperty.getValue());
 
-            String decodedString = new String(decoded);
-            JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-            String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-            long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-            String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
+                String decodedString = new String(decoded);
+                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+                String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+                long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
-            ConsoleSource console = Sponge.getServer().getConsole();
+                ConsoleSource console = Sponge.getServer().getConsole();
 
-            source.sendMessage(plugin.parseMessage("§aRequest time: §e" + requestDate));
-            source.sendMessage(plugin.parseMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
-            source.sendMessage(plugin.parseMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
-            source.sendMessage(plugin.parseMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
-            source.sendMessage(plugin.parseMessage("§cMore info in console!"));
+                source.sendMessage(plugin.parseMessage("§aRequest time: §e" + requestDate));
+                source.sendMessage(plugin.parseMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
+                source.sendMessage(plugin.parseMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
+                source.sendMessage(plugin.parseMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
+                source.sendMessage(plugin.parseMessage("§cMore info in console!"));
 
-            //Console
-            console.sendMessage(plugin.parseMessage("\n§aName: §8" + profileProperty.getName()));
-            console.sendMessage(plugin.parseMessage("\n§aValue : §8" + profileProperty.getValue()));
-            console.sendMessage(plugin.parseMessage("\n§aSignature : §8" + profileProperty.getSignature()));
-            console.sendMessage(plugin.parseMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
+                //Console
+                console.sendMessage(plugin.parseMessage("\n§aName: §8" + profileProperty.getName()));
+                console.sendMessage(plugin.parseMessage("\n§aValue : §8" + profileProperty.getValue()));
+                console.sendMessage(plugin.parseMessage("\n§aSignature : §8" + profileProperty.getSignature()));
+                console.sendMessage(plugin.parseMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
+            });
         });
     }
 

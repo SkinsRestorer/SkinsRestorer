@@ -73,10 +73,10 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        sender.sendMessage("§3----------------------------------------------");
-        sender.sendMessage("§7Checking needed services for SR to work properly...");
-
         Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            sender.sendMessage("§3----------------------------------------------");
+            sender.sendMessage("§7Checking needed services for SR to work properly...");
+
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
@@ -111,15 +111,17 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
-        if (e.name().equalsIgnoreCase("player"))
-            for (String targetPlayer : targets)
-                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
-        else
-            for (String targetSkin : targets)
-                plugin.getSkinStorage().removeSkinData(targetSkin);
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            if (e.name().equalsIgnoreCase("player"))
+                for (String targetPlayer : targets)
+                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+            else
+                for (String targetSkin : targets)
+                    plugin.getSkinStorage().removeSkinData(targetSkin);
 
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-        sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
+            String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
+            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
+        });
     }
 
 
@@ -129,50 +131,52 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
-        try {
-            Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
-            Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
-            Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
+        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+            try {
+                Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
+                Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
+                Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
 
-            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
-                    new Class[]{Object.class}, "textures");
+                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
+                        new Class[]{Object.class}, "textures");
 
-            if (props == null || props.isEmpty()) {
+                if (props == null || props.isEmpty()) {
+                    sender.sendMessage(Locale.NO_SKIN_DATA);
+                    return;
+                }
+
+                for (Object prop : props) {
+                    String name = (String) ReflectionUtil.invokeMethod(prop, "getName");
+                    String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
+                    String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
+
+                    byte[] decoded = Base64.getDecoder().decode(value);
+
+                    String decodedString = new String(decoded);
+                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+                    String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+                    long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+                    String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
+
+                    ConsoleCommandSender console = Bukkit.getConsoleSender();
+
+                    sender.sendMessage("§aRequest time: §e" + requestDate);
+                    sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
+                    sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
+                    sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
+                    sender.sendMessage("§cMore info in console!");
+
+                    //console
+                    console.sendMessage("\n§aName: §8" + name);
+                    console.sendMessage("\n§aValue : §8" + value);
+                    console.sendMessage("\n§aSignature : §8" + signature);
+                    console.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
                 sender.sendMessage(Locale.NO_SKIN_DATA);
-                return;
             }
-
-            for (Object prop : props) {
-                String name = (String) ReflectionUtil.invokeMethod(prop, "getName");
-                String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
-                String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
-
-                byte[] decoded = Base64.getDecoder().decode(value);
-
-                String decodedString = new String(decoded);
-                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-                long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
-
-                ConsoleCommandSender console = Bukkit.getConsoleSender();
-
-                sender.sendMessage("§aRequest time: §e" + requestDate);
-                sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
-                sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
-                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
-                sender.sendMessage("§cMore info in console!");
-
-                //console
-                console.sendMessage("\n§aName: §8" + name);
-                console.sendMessage("\n§aValue : §8" + value);
-                console.sendMessage("\n§aSignature : §8" + signature);
-                console.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            sender.sendMessage(Locale.NO_SKIN_DATA);
-        }
+        });
     }
 
     @Subcommand("applyskin")

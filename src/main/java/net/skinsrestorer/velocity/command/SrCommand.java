@@ -28,7 +28,6 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.exception.SkinRequestException;
@@ -70,10 +69,10 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
-        source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
-        source.sendMessage(plugin.deserialize("§7Checking needed services for SR to work properly..."));
-
         plugin.getService().execute(() -> {
+            source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
+            source.sendMessage(plugin.deserialize("§7Checking needed services for SR to work properly..."));
+
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
@@ -107,14 +106,16 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
-        if (e == PlayerOrSkin.PLAYER)
-            for (String targetPlayer : targets)
-                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
-        else
-            for (String targetSkin : targets)
-                plugin.getSkinStorage().removeSkinData(targetSkin);
-        String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-        source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+        plugin.getService().execute(() -> {
+            if (e == PlayerOrSkin.PLAYER)
+                for (String targetPlayer : targets)
+                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+            else
+                for (String targetSkin : targets)
+                    plugin.getSkinStorage().removeSkinData(targetSkin);
+            String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
+            source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+        });
     }
 
     @Subcommand("props")
@@ -123,31 +124,33 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSource source, OnlinePlayer target) {
-        GameProfile.Property prop = target.getPlayer().getGameProfileProperties().get(0);
+        plugin.getService().execute(() -> {
+            GameProfile.Property prop = target.getPlayer().getGameProfileProperties().get(0);
 
-        if (prop == null) {
-            source.sendMessage(plugin.deserialize(Locale.NO_SKIN_DATA));
-            return;
-        }
-        byte[] decoded = Base64.getDecoder().decode(prop.getValue());
+            if (prop == null) {
+                source.sendMessage(plugin.deserialize(Locale.NO_SKIN_DATA));
+                return;
+            }
+            byte[] decoded = Base64.getDecoder().decode(prop.getValue());
 
-        String decodedString = new String(decoded);
-        JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-        String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-        long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-        String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
+            String decodedString = new String(decoded);
+            JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+            String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+            long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+            String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
-        source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
-        source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
-        source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
-        source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
-        source.sendMessage(plugin.deserialize("§cMore info in console!"));
+            source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
+            source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
+            source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
+            source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
+            source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
-        //console
-        System.out.println("\n§aName: §8" + prop.getName());
-        System.out.println("\n§aValue : §8" + prop.getValue());
-        System.out.println("\n§aSignature : §8" + prop.getSignature());
-        System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+            //console
+            System.out.println("\n§aName: §8" + prop.getName());
+            System.out.println("\n§aValue : §8" + prop.getValue());
+            System.out.println("\n§aSignature : §8" + prop.getSignature());
+            System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+        });
     }
 
     @Subcommand("applyskin")
