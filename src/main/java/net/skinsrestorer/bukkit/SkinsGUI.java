@@ -25,7 +25,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
@@ -218,34 +217,18 @@ public class SkinsGUI extends ItemStack implements Listener {
         switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
             case PLAYER_HEAD:
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                    Object skin = plugin.getSkinStorage().getSkinData(Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName(), false);
-
-                    // PerSkinPermissions //todo: should be moved to setskin() as a command so it includes both cooldown and already used code from below
-                    if (Config.PER_SKIN_PERMISSIONS) {
-                        String skinName = currentItem.getItemMeta().getDisplayName();
-
-                        if (!player.hasPermission("skinsrestorer.skin." + skinName)) {
-                            if ((!player.hasPermission("skinsrestorer.ownskin") && !player.getName().equalsIgnoreCase(skinName) || !skinName.equalsIgnoreCase(player.getName()))) {
-                                player.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                                return;
-                            }
-                        }
-                    }
-
-                    plugin.getSkinStorage().setPlayerSkin(player.getName(), currentItem.getItemMeta().getDisplayName());
-                    SkinsRestorer.getInstance().getFactory().applySkin(player, skin);
-                    SkinsRestorer.getInstance().getFactory().updateSkin(player);
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    final String skinName = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
+                    plugin.getSkinCommand().onSkinSetShort(player, skinName);
                 });
                 player.closeInventory();
                 break;
             case RED_STAINED_GLASS_PANE:
-                player.performCommand("skinsrestorer:skin clear");
+                plugin.getSkinCommand().onSkinClear(player);
                 player.closeInventory();
                 break;
             case GREEN_STAINED_GLASS_PANE:
-                int currentPageA = getMenus().get(player.getName());
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    final int currentPageA = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageA + 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageA + 1);
 
@@ -254,8 +237,8 @@ public class SkinsGUI extends ItemStack implements Listener {
                 });
                 break;
             case YELLOW_STAINED_GLASS_PANE:
-                int currentPageB = getMenus().get(player.getName());
                 Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    final int currentPageB = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageB - 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageB - 1);
 
@@ -266,7 +249,6 @@ public class SkinsGUI extends ItemStack implements Listener {
             default:
                 break;
         }
-
         e.setCancelled(true);
     }
 
@@ -275,8 +257,10 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public static class GuiGlass {
-        private @Getter ItemStack itemStack;
-        private @Getter String text;
+        private @Getter
+        ItemStack itemStack;
+        private @Getter
+        String text;
 
         public GuiGlass(GlassType glassType) {
             switch (glassType) {

@@ -80,6 +80,8 @@ public class SkinsRestorer extends JavaPlugin {
     MineSkinAPI mineSkinAPI;
     private @Getter
     SkinsRestorerAPI skinsRestorerBukkitAPI;
+    private @Getter
+    SkinCommand skinCommand;
 
     private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();
@@ -349,7 +351,8 @@ public class SkinsRestorer extends JavaPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        manager.registerCommand(new SkinCommand(this));
+        this.skinCommand = new SkinCommand(this);
+        manager.registerCommand(this.skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
     }
