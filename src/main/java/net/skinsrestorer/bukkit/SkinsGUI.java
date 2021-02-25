@@ -188,23 +188,30 @@ public class SkinsGUI extends ItemStack implements Listener {
         if (plugin.isBungeeEnabled()) {
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
-                    String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
-                    plugin.requestSkinSetFromBungeeCord(player, skin);
+                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                                String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
+                                plugin.requestSkinSetFromBungeeCord(player, skin);
+                            });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    plugin.requestSkinClearFromBungeeCord(player);
+                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () ->
+                            plugin.requestSkinClearFromBungeeCord(player));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
-                    int currentPageG = getMenus().get(player.getName());
-                    getMenus().put(player.getName(), currentPageG + 1);
-                    plugin.requestSkinsFromBungeeCord(player, currentPageG + 1);
+                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                        int currentPageG = getMenus().get(player.getName());
+                        getMenus().put(player.getName(), currentPageG + 1);
+                        plugin.requestSkinsFromBungeeCord(player, currentPageG + 1);
+                    });
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
-                    int currentPageY = getMenus().get(player.getName());
-                    getMenus().put(player.getName(), currentPageY - 1);
-                    plugin.requestSkinsFromBungeeCord(player, currentPageY - 1);
+                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                        int currentPageY = getMenus().get(player.getName());
+                        getMenus().put(player.getName(), currentPageY - 1);
+                        plugin.requestSkinsFromBungeeCord(player, currentPageY - 1);
+                    });
                     break;
                 default:
                     break;
