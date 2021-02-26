@@ -65,18 +65,11 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        try {
-            Connection con = null;
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
+        com.mysql.cj.jdbc.Driver.getOSName();
+        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
-            System.out.println("[SkinsRestorer] Connected to MySQL!");
-            this.con = con;
-            return con;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
+        System.out.println("[SkinsRestorer] Connected to MySQL!");
+        return con;
     }
 
     public Connection getConnection() {
@@ -108,16 +101,14 @@ public class MySQL {
 
     private PreparedStatement prepareStatement(Connection conn, String query, Object... vars) {
         try {
-            try (PreparedStatement ps = conn.prepareStatement(query)) {
-                int i = 0;
-                if (query.contains("?") && vars.length != 0)
-                    for (Object obj : vars) {
-                        i++;
-                        ps.setObject(i, obj);
-                    }
-                return ps;
-            }
-
+            PreparedStatement ps = conn.prepareStatement(query);
+            int i = 0;
+            if (query.contains("?") && vars.length != 0)
+                for (Object obj : vars) {
+                    i++;
+                    ps.setObject(i, obj);
+                }
+            return ps;
         } catch (SQLException e) {
             System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
         }
