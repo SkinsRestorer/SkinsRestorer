@@ -398,13 +398,8 @@ public class SkinStorage {
         name = name.toLowerCase();
 
         if (Config.USE_MYSQL) {
-            //todo optimization
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
-
-            if (crs == null)
-                mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)", name, skin);
-            else
-                mysql.execute("UPDATE " + Config.MYSQL_PLAYERTABLE + " SET Skin=? WHERE Nick=?", skin, name);
+                mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)"
+                + " ON DUPLICATE KEY UPDATE Skin=?", name, skin, skin);
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
@@ -447,14 +442,8 @@ public class SkinStorage {
         }
 
         if (Config.USE_MYSQL) {
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
-
-            if (crs == null)
-                mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)",
-                        name, value, signature, timestamp);
-            else
-                mysql.execute("UPDATE " + Config.MYSQL_SKINTABLE + " SET Value=?, Signature=?, timestamp=? WHERE Nick=?",
-                        value, signature, timestamp, name);
+            mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
+                    + " ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?", name, value, signature, timestamp, value, signature, timestamp );
         } else {
             // Remove all whitespace
             name = name.replaceAll("\\s", "");
