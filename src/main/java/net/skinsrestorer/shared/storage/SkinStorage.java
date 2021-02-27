@@ -36,13 +36,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class SkinStorage {
-    private Class<?> property;
-
-    private @Getter
-    @Setter
-    MySQL mysql;
-    private File folder;
-
     @SuppressWarnings("unused")
     private final boolean isBukkit;
     @SuppressWarnings("unused")
@@ -50,7 +43,11 @@ public class SkinStorage {
     private final boolean isSponge;
     @SuppressWarnings("unused")
     private final boolean isVelocity;
-
+    private Class<?> property;
+    private @Getter
+    @Setter
+    MySQL mysql;
+    private File folder;
     private @Getter
     @Setter
     MojangAPI mojangAPI;
@@ -328,12 +325,12 @@ public class SkinStorage {
     }
 
     private boolean isOld(long timestamp) {
-    	// Check if auto update is not disabled and timestamp is not 0
-    	if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
-    		return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
-    	} else {
-    		return false;
-    	}
+        // Check if auto update is not disabled and timestamp is not 0
+        if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
+            return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -398,8 +395,8 @@ public class SkinStorage {
         name = name.toLowerCase();
 
         if (Config.USE_MYSQL) {
-                mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)"
-                + " ON DUPLICATE KEY UPDATE Skin=?", name, skin, skin);
+            mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)"
+                    + " ON DUPLICATE KEY UPDATE Skin=?", name, skin, skin);
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
@@ -413,8 +410,8 @@ public class SkinStorage {
                     // Remove all whitespace
                     skin = skin.replaceAll("\\s", "");
                     //Escape all Windows / Linux forbidden printable ASCII characters
-                	skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
-                	writer.write(skin);
+                    skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
+                    writer.write(skin);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -443,7 +440,7 @@ public class SkinStorage {
 
         if (Config.USE_MYSQL) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
-                    + " ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?", name, value, signature, timestamp, value, signature, timestamp );
+                    + " ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?", name, value, signature, timestamp, value, signature, timestamp);
         } else {
             // Remove all whitespace
             name = name.replaceAll("\\s", "");
@@ -625,7 +622,14 @@ public class SkinStorage {
     }
 
     // skin update [include custom skin flag]
-    public boolean forceUpdateSkinData(String skin) {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean forceUpdateSkinData(String skin) throws SkinRequestException {
+        if (!C.validUsername(skin))
+            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
+
+        //todo include timestamp == 0 return false
+
+        //Update Skin
         try {
             Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
 
@@ -634,7 +638,10 @@ public class SkinStorage {
                 return true;
             }
         } catch (SkinRequestException e) {
-            e.printStackTrace(); //todo add srlogger in SkinStorage.java
+            if (e.getMessage().equals(Locale.NOT_PREMIUM))
+                throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            else
+                throw e;
         }
 
         return false;
@@ -655,10 +662,10 @@ public class SkinStorage {
      * @return - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
-    	// LTrim and RTrim player name
+        // LTrim and RTrim player name
         //player = player.replaceAll("\\W", "");
-    	player = player.replaceAll("^\\\\s+", "");
-    	player = player.replaceAll("\\\\s+$", "");
+        player = player.replaceAll("^\\\\s+", "");
+        player = player.replaceAll("\\\\s+$", "");
 
         if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
             // don't return default skin name for premium players if enabled
