@@ -1,6 +1,6 @@
 #################################
 #  SkinsRestorer Config.yml     #
-#  Generated on 13.8.6          #
+#  Generated on 13.8.9          #
 #################################
 #
 # We from SRTeam thank you for using our plugin!
@@ -109,9 +109,10 @@ Updater:
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin
 NoSkinIfLoginCanceled: true
 
-# List of allowed direct image hosting URLs to be used in /skin set <url>
-# Note that it cannot be empty (otherwise it will use the default values) nor be an '*' (asterisk).
-AllowedUrls:
+# When enabled, Only websites from the list below is allowed to be set using /skin url <url>
+RestrictSkinUrls:
+  Enabled: false
+  List:
   - https://i.imgur.com
   - http://i.imgur.com
   - https://storage.googleapis.com

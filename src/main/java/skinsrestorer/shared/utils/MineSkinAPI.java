@@ -19,98 +19,71 @@ import skinsrestorer.shared.storage.SkinStorage;
 
 import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class MineSkinAPI {
-    @Getter
+    private @Getter
     @Setter
-    private SkinStorage skinStorage;
-    @Setter
+    SkinStorage skinStorage;
     private SRLogger logger;
 
     public MineSkinAPI(SRLogger logger) {
         this.logger = logger;
     }
 
-    public String guessSkinType(String url) {
-        try {
-            BufferedImage image = ImageIO.read(new URL(url)).getSubimage(54, 20, 2, 12);
-            if (image == null)
-                return "steve";
-            for (int y = 0; y < image.getHeight(); y++) {
-                for (int x = 0; x < image.getWidth(); x++) {
-                    int clr = image.getRGB(x, y);
-                    int alpha = (clr & 0xff000000) >> 24;
-                    int red = (clr & 0x00ff0000) >> 16;
-                    int green = (clr & 0x0000ff00) >> 8;
-                    int blue = clr & 0x000000ff;
-                    if (alpha != 0 && (!(red == 255 || red == 0) || !(green == 255 || green == 0) || !(blue == 255 || blue == 0))) {
-                        return "steve";
-                    }
-                }
-            }
-            return "alex";
-        } catch (Exception ignored) {
-        }
-        return "steve";
-    }
-
     public Object genSkin(String url) throws SkinRequestException {
-        return genSkin(url, null);
-    }
+        String errResp = "";
 
-    public Object genSkin(String url, String isSlim) throws SkinRequestException {
-        String err_resp = "";
-        if (isSlim == null)
-            isSlim = guessSkinType(url);
         try {
-            String query = "";
-            if (isSlim.equalsIgnoreCase("alex") || isSlim.equalsIgnoreCase("a") || isSlim.equalsIgnoreCase("true") || isSlim.equalsIgnoreCase("yes") || isSlim.equalsIgnoreCase("y") || isSlim.equalsIgnoreCase("slim"))
-                query += "model=" + URLEncoder.encode("slim", "UTF-8") + "&";
-            query += "url=" + URLEncoder.encode(url, "UTF-8");
-            String output;
-            try {
-                err_resp = "";
-                JsonObject obj;
+            errResp = "";
 
-                output = queryURL("https://api.mineskin.org/generate/url/", query, 90000);
-                if (output == "") { //when both api time out
-                    throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
-                }
-                JsonElement elm = new JsonParser().parse(output);
-                obj = elm.getAsJsonObject();
+            String output = queryURL("https://api.mineskin.org/generate/url/", "url=" + URLEncoder.encode(url, "UTF-8"), 90000);
+            if (output.isEmpty()) //when both api time out
+                throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-                if (obj.has("data")) {
-                    JsonObject dta = obj.get("data").getAsJsonObject();
-                    if (dta.has("texture")) {
-                        JsonObject tex = dta.get("texture").getAsJsonObject();
-                        return this.skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
-                    }
-                } else if (obj.has("error")) {
-                    err_resp = obj.get("error").getAsString();
-                    if (err_resp.equals("Failed to generate skin data") || err_resp.equals("Too many requests")) {
-                        logger.log("[SkinsRestorer] MS API skin generation fail (accountId:"+obj.get("accountId").getAsInt()+"); trying again... ");
-                        if (obj.has("delay"))
-                            TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-                        return genSkin(url, isSlim); // try again if given account fails (will stop if no more accounts)
-                    } else if (err_resp.equals("No accounts available")) {
-                        logger.log("[ERROR] MS No accounts available " + url);
-                        throw new SkinRequestException(Locale.ERROR_MS_FULL);
-                    }
+            JsonElement elm = new JsonParser().parse(output);
+            JsonObject obj = elm.getAsJsonObject();
+
+            if (obj.has("data")) {
+                JsonObject dta = obj.get("data").getAsJsonObject();
+
+                if (dta.has("texture")) {
+                    JsonObject tex = dta.get("texture").getAsJsonObject();
+                    return this.skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
-            } catch (IOException e) {
-                logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
-            } catch (JsonSyntaxException e) {
-                logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+            } else if (obj.has("error")) {
+                errResp = obj.get("error").getAsString();
+
+                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
+                    logger.log("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
+
+                    if (obj.has("delay"))
+                        TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+
+                    return genSkin(url); // try again if given account fails (will stop if no more accounts)
+                } else if (errResp.equals("No accounts available")) {
+                    logger.log("[ERROR] MS No accounts available " + url);
+                    throw new SkinRequestException(Locale.ERROR_MS_FULL);
+                }
             }
-        } catch (UnsupportedEncodingException e) {
-            logger.log(Level.WARNING, "[ERROR] MS UnsupportedEncodingException");
-        } catch (InterruptedException e) {
+        } catch (IOException e) {
+            logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+        } catch (JsonSyntaxException e) {
+            logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         // throw exception after all tries have failed
         logger.log("[ERROR] MS:could not generate skin url: " + url);
-        logger.log("[ERROR] MS:reason: " + err_resp);
-        if (!(err_resp.matches("")))
-            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN_2); //todo: consider sending err_resp to admins
+        logger.log("[ERROR] MS:reason: " + errResp);
+
+        if (!errResp.isEmpty())
+            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
         else
             throw new SkinRequestException(Locale.MS_API_FAILED);
     }
