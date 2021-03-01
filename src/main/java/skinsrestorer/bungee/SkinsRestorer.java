@@ -9,7 +9,6 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.bstats.bungeecord.Metrics;
-import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import skinsrestorer.bungee.commands.GUICommand;
 import skinsrestorer.bungee.commands.SrCommand;
@@ -68,10 +67,10 @@ public class SkinsRestorer extends Plugin {
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
 
         console = getProxy().getConsole();
 

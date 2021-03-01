@@ -5,7 +5,6 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -69,10 +68,10 @@ public class SkinsRestorer extends JavaPlugin {
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
 
         instance = this;
         factory = new UniversalSkinFactory(this);
