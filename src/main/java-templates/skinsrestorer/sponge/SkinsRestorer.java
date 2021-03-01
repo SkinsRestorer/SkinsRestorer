@@ -3,9 +3,7 @@ package skinsrestorer.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import lombok.Getter;
-
-import org.bstats.charts.SingleLineChart;
-import org.bstats.sponge.Metrics;
+import org.bstats.sponge.Metrics2;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
@@ -55,11 +53,11 @@ public class SkinsRestorer {
     private UpdateChecker updateChecker;
     private CommandSource console;
 
-    private final Metrics metrics;
+    private final Metrics2 metrics;
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory) {
+    public SkinsRestorer(Metrics2.Factory metricsFactory) {
         int pluginId = 2337; // SkinsRestorer's ID on bStats, for Sponge
         metrics = metricsFactory.make(pluginId);
     }
@@ -129,10 +127,10 @@ public class SkinsRestorer {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
         }
 
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("mineskin_calls", MetricsCounter::collectMineskin_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("minetools_calls", MetricsCounter::collectMinetools_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("mojang_calls", MetricsCounter::collectMojang_calls));
+        metrics.addCustomChart(new Metrics2.SingleLineChart("backup_calls", MetricsCounter::collectBackup_calls));
     }
 
     private void initCommands() {

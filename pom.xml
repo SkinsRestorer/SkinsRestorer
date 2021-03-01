@@ -43,6 +43,10 @@
             <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
+            <id>bstats-repo</id>
+            <url>https://repo.codemc.org/repository/maven-public</url>
+        </repository>
+        <repository>
             <id>inventive-repo</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
@@ -118,21 +122,21 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>2.1.0</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
         <!-- bStats Lite for BungeeCord -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
-            <version>2.1.0</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
         <!-- bStats Lite for Sponge -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-sponge</artifactId>
-            <version>2.1.0</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
         <!-- Spiget Updater for Bukkit -->
@@ -229,8 +233,12 @@
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <relocations>
                         <relocation>
-                            <pattern>org.bstats</pattern>
-                            <shadedPattern>skinsrestorer.shared.utils.metrics</shadedPattern>
+                            <pattern>org.bstats.bukkit</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bukkit</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.bstats.bungeecord</pattern>
+                            <shadedPattern>skinsrestorer.shared.utils.metrics.bungeecord</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.inventivetalent</pattern>
