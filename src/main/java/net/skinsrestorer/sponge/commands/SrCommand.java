@@ -139,7 +139,7 @@ public class SrCommand extends BaseCommand {
                 byte[] decoded = Base64.getDecoder().decode(profileProperty.getValue());
 
                 String decodedString = new String(decoded);
-                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+                JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
                 String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                 long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                 String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
