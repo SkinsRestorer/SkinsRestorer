@@ -35,31 +35,31 @@ skinDisabled: "&4Fout&8: &cDie skin was gedeaktiveer deur 'n administrateur."
 #Can not set skin due to player name not being premium or having no skin
 noSkinData: "&4Fout&8: &cGeen skin data gevind. Het die speler 'n skin?"
 #Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+waitMinute: "&4Fout&8: &cWag asseblief n oomblik voor jy weer die skin probeer. (Beperkt)"
 #When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+genericError: "&4Fout&8: &cIets het verkeerd gegaan terwyl die skin data aangesoek is, probeer asb weer later!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4Die weergawe van SkinsRestorer is nie op datum nie!\n&cOpdateer asseblief na die nuutste weergawe:\n&e-> https://skinsrestorer.net/get/latest"
 #Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
+playersOnly: "&4Hierdie commands is net vir spelers!"
 #When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
+notPlayer: "&4Fout&8: &cJy moet n speler wees!"
 #=== GUI ===
 #/skins message
-menuOpen: "&2Opening the skins menu..."
+menuOpen: "&2Die skins menu is besig om oop te maak..."
 #Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
+previusPage: "&e&l«&7 Vorige Bladsy&e&l «"
 #Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
+nextPage: "&a&l»&7 Volgende Bladsy&a&l »"
 #Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
+removeSkin: "&c&l»&7 Verwyder Skin&c&l »"
 #item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
+selectSkin: "&2Click om die skin te kies"
 #=== DEBUG ===
 #old debug
-statusOk: "&2Mojang API connection successful!"
+statusOk: "&2Mojang API konneksie suksesvol!"
 #old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+altApiFailed: "&4Fout&8: &cSkin Data API is oorlaai, probeer asseblief weer later!"
 #=== OLD SKIN HELP ===
 #String used as a divider
 line: "&7&m----------------------------------------"
