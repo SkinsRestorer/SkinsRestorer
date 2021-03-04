@@ -173,9 +173,9 @@ public class SrCommand extends BaseCommand {
                 final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 
                 plugin.getSkinApplierBungee().applySkin(p, skin, null);
-                sender.sendMessage(TextComponent.fromLegacyText("§success: player skin has been refreshed!"));
+                sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
-                sender.sendMessage(TextComponent.fromLegacyText("§ERROR: player skin could NOT be refreshed!"));
+                sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));
             }
         });
     }
