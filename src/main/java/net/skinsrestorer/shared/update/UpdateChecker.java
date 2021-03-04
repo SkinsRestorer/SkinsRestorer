@@ -88,7 +88,7 @@ public class UpdateChecker {
         upToDateMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
         if (bungeeMode) {
             upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |   §eBungee Mode§a |");
+            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
@@ -119,7 +119,7 @@ public class UpdateChecker {
         updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
         if (bungeeMode) {
             updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |   §eBungee Mode§a |");
+            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
