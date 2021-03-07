@@ -104,7 +104,7 @@ public class UniversalSkinFactory implements SkinFactory {
                 try {
                     haspassengers = !player.getPassengers().isEmpty();
                 } catch (NoSuchMethodError e) {
-                    haspassengers = player.getPassenger().isEmpty();
+                    haspassengers = !player.getPassenger().isEmpty();
                 }
 
                 if (haspassengers) {
