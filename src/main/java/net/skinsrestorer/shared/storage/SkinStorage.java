@@ -191,7 +191,7 @@ public class SkinStorage {
 
             if (crs != null)
                 try {
-                    String skin = crs.getString("Skin");
+                    final String skin = crs.getString("Skin");
 
                     //maybe useless
                     if (skin.isEmpty()) {
@@ -206,17 +206,17 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
                 if (!playerFile.exists())
                     return null;
 
-                String skin;
+                String skin = null;
+
                 try (BufferedReader buf = new BufferedReader(new FileReader(playerFile))) {
-                    String line;
-                    skin = null;
-                    if ((line = buf.readLine()) != null)
+                    final String line = buf.readLine();
+                    if (line != null)
                         skin = line;
                 }
 
@@ -250,12 +250,12 @@ public class SkinStorage {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
             if (crs != null)
                 try {
-                    String value = crs.getString("Value");
-                    String signature = crs.getString("Signature");
-                    String timestamp = crs.getString("timestamp");
+                    final String value = crs.getString("Value");
+                    final String signature = crs.getString("Signature");
+                    final String timestamp = crs.getString("timestamp");
 
                     if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                        Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
+                        final Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
                         if (skin != null) {
                             this.setSkinData(name, skin);
                             return skin;
@@ -280,16 +280,15 @@ public class SkinStorage {
                 if (!skinFile.exists())
                     return null;
 
-                String value;
-                String signature;
-                String timestamp;
+                String value = "";
+                String signature = "";
+                String timestamp = "";
 
+                //todo this "if", "else if", "else" is just lame in a 3x for loop.
                 try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
 
                     String line;
-                    value = "";
-                    signature = "";
-                    timestamp = "";
+
                     for (int i = 0; i < 3; i++)
                         if ((line = buf.readLine()) != null)
                             if (value.isEmpty()) {
@@ -302,7 +301,7 @@ public class SkinStorage {
                 }
 
                 if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                    Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
+                    final Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
 
                     if (skin != null) {
                         this.setSkinData(name, skin);
@@ -324,13 +323,18 @@ public class SkinStorage {
         return this.getSkinData(name, true);
     }
 
+    /**
+     * Checks if updating skins is disabled and if skin expired
+     *
+     * @param timestamp in milliseconds
+     * @return true if skin is outdated
+     */
     private boolean isOld(long timestamp) {
-        // Check if auto update is not disabled and timestamp is not 0
-        if (!Config.DISABLE_AUTO_UPDATE_SKIN && !(timestamp == 0)) {
-            return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
-        } else {
+        // Don't update if timestamp is not 0 or update is disabled.
+        if (timestamp == 0 || Config.DISABLE_AUTO_UPDATE_SKIN)
             return false;
-        }
+
+        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     }
 
     /**
@@ -346,7 +350,7 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             if (playerFile.exists()) {
                 try {
@@ -373,7 +377,7 @@ public class SkinStorage {
             name = name.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+            final File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             if (skinFile.exists()) {
                 try {
@@ -400,7 +404,7 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
                 if (!playerFile.exists() && !playerFile.createNewFile())
@@ -446,7 +450,7 @@ public class SkinStorage {
             name = name.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+            final File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
                 if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
@@ -479,13 +483,12 @@ public class SkinStorage {
 
             // custom gui
             if (Config.CUSTOM_GUI_ENABLED) {
+                StringBuilder sb = new StringBuilder();
                 if (Config.CUSTOM_GUI_ONLY) {
-                    StringBuilder sb = new StringBuilder();
                     Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append("|").append(skin));
 
                     filterBy = " WHERE Nick RLIKE '" + sb.substring(1) + "'";
                 } else {
-                    StringBuilder sb = new StringBuilder();
                     Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append(", '").append(skin).append("'"));
 
                     orderBy = "FIELD(Nick" + sb + ") DESC, Nick";
@@ -507,8 +510,8 @@ public class SkinStorage {
             // When not using mysql
         } else {
             Map<String, Object> list = new TreeMap<>();
-            String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
-            File folder = new File(path);
+            final String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
+            final File folder = new File(path);
 
             //filter out non "*.skin" files.
             FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
@@ -516,6 +519,7 @@ public class SkinStorage {
             String[] fileNames = folder.list(skinFileFilter);
 
             if (fileNames == null)
+                //todo should this not also be null if no skin is valid?
                 return list;
 
             Arrays.sort(fileNames);
@@ -524,8 +528,8 @@ public class SkinStorage {
                 String skinName = file.replace(".skin", "");
                 if (i >= number) {
                     if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
-                        for (String Guiskins : Config.CUSTOM_GUI_SKINS) {
-                            if (skinName.toLowerCase().contains(Guiskins.toLowerCase()))
+                        for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
+                            if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
                                 list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
                         }
                     } else {
@@ -561,11 +565,10 @@ public class SkinStorage {
                     i++;
                 } while (crs.next());
             } catch (java.sql.SQLException ignored) {
-                ignored.printStackTrace();
             }
         } else {
-            String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
-            File folder = new File(path);
+            final String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
+            final File folder = new File(path);
 
             //filter out non "*.skin" files.
             FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
@@ -631,7 +634,7 @@ public class SkinStorage {
 
         //Update Skin
         try {
-            Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
+            final Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
 
             if (textures != null) {
                 this.setSkinData(skin, textures);
@@ -647,8 +650,6 @@ public class SkinStorage {
         return false;
     }
 
-    // If clear is true, it doesn't return the custom skin a user has set
-
     /**
      * Filters player name to exclude non [a-z_]
      * Checks and process default skin.
@@ -658,12 +659,11 @@ public class SkinStorage {
      * Else: return player
      *
      * @param player - Player name
-     * @param clear  - Should we ignore player set skin?
+     * @param clear  - return player instead of his set skin
      * @return - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
         // LTrim and RTrim player name
-        //player = player.replaceAll("\\W", "");
         player = player.replaceAll("^\\\\s+", "");
         player = player.replaceAll("\\\\s+$", "");
 
