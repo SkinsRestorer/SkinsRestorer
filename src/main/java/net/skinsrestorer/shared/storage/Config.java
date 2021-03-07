@@ -37,12 +37,10 @@ public class Config {
     public static boolean CUSTOM_GUI_ENABLED = false;
     public static boolean CUSTOM_GUI_ONLY = false;
     public static List<String> CUSTOM_GUI_SKINS = null;
-    public static boolean DISABLE_PREFIX = true; //TODO: turn false after a few updates
-    public static boolean USE_OLD_SKIN_HELP = false;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
     public static boolean MULTIBUNGEE_ENABLED = false;
-    public static boolean USE_MYSQL = false;
+    public static boolean MYSQL_ENABLED = false;
     public static String MYSQL_HOST = "localhost";
     public static String MYSQL_PORT = "3306";
     public static String MYSQL_DATABASE = "db";
@@ -51,15 +49,17 @@ public class Config {
     public static String MYSQL_SKINTABLE = "Skins";
     public static String MYSQL_PLAYERTABLE = "Players";
     public static String MYSQL_CONNECTIONOPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
-    public static boolean DISABLE_ONJOIN_SKINS = false;
-    public static boolean DISABLE_AUTO_UPDATE_SKIN = false;
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
-    public static boolean ALLOWED_SKIN_URLS_ENABLED = false;
-    public static List<String> ALLOWED_SKIN_URLS_LIST = null;
-    public static boolean DEBUG = false;
+    public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
+    public static List<String> RESTRICT_SKIN_URLS_LIST = null;
+    public static boolean USE_OLD_SKIN_HELP = false;
+    public static boolean DISABLE_PREFIX = true; //TODO: turn false after a few updates
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
+    public static boolean DISABLE_ONJOIN_SKINS = false;
+    public static boolean DISABLE_AUTO_UPDATE_SKIN = false;
+    public static boolean DEBUG = false;
 
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -88,7 +88,7 @@ public class Config {
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
         MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
-        USE_MYSQL = config.getBoolean("MySQL.Enabled", USE_MYSQL);
+        MYSQL_ENABLED = config.getBoolean("MySQL.Enabled", MYSQL_ENABLED);
         MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
         MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
         MYSQL_DATABASE = config.getString("MySQL.Database", MYSQL_DATABASE);
@@ -100,16 +100,26 @@ public class Config {
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
         DISABLE_AUTO_UPDATE_SKIN = config.getBoolean("DisableAutoUpdateSkin", DISABLE_AUTO_UPDATE_SKIN);
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
-        ALLOWED_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", ALLOWED_SKIN_URLS_ENABLED);
-        ALLOWED_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
+        RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
+        RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
-        if (ALLOWED_SKIN_URLS_ENABLED && ALLOWED_SKIN_URLS_LIST.isEmpty()) {
+        if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {
             // TODO: warning logger
-            ALLOWED_SKIN_URLS_ENABLED = false;
+            DEFAULT_SKINS_ENABLED = false;
+        }
+
+        if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty()) {
+            // TODO: warning logger
+            DEFAULT_SKINS_ENABLED = false;
+        }
+
+        if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty()) {
+            // TODO: warning logger
+            RESTRICT_SKIN_URLS_ENABLED = false;
         }
 
         if (!CUSTOM_GUI_ENABLED)

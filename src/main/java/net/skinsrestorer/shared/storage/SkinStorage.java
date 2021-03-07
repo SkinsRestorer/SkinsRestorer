@@ -186,7 +186,7 @@ public class SkinStorage {
     public String getPlayerSkin(String name) {
         name = name.toLowerCase();
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
 
             if (crs != null)
@@ -246,7 +246,7 @@ public class SkinStorage {
     public Object getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
             if (crs != null)
                 try {
@@ -345,7 +345,7 @@ public class SkinStorage {
     public void removePlayerSkin(String name) {
         name = name.toLowerCase();
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
@@ -370,7 +370,7 @@ public class SkinStorage {
     public void removeSkinData(String name) {
         name = name.toLowerCase();
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             mysql.execute("DELETE FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
         } else {
             // Remove all whitespace
@@ -398,7 +398,7 @@ public class SkinStorage {
     public void setPlayerSkin(String name, String skin) {
         name = name.toLowerCase();
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)"
                     + " ON DUPLICATE KEY UPDATE Skin=?", name, skin, skin);
         } else {
@@ -442,7 +442,7 @@ public class SkinStorage {
             e.printStackTrace();
         }
 
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
                     + " ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?", name, value, signature, timestamp, value, signature, timestamp);
         } else {
@@ -476,7 +476,7 @@ public class SkinStorage {
     // seems to be that crs order is ignored...
     public Map<String, Object> getSkins(int number) {
         //Using mysql
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             Map<String, Object> list = new TreeMap<>();
             String filterBy = "";
             String orderBy = "Nick";
@@ -548,7 +548,7 @@ public class SkinStorage {
     // Todo: That should save lots of duplicated code
     public Map<String, Property> getSkinsRaw(int number) {
         Map<String, Property> list = new TreeMap<>();
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
             int i = 0;
             int foundSkins = 0;

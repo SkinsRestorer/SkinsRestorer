@@ -195,7 +195,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.USE_MYSQL) {
+        if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
                         Config.MYSQL_HOST,

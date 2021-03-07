@@ -56,8 +56,8 @@ public class C {
     }
 
     public static boolean AllowedUrlIfEnabled(String url) {
-        if (Config.ALLOWED_SKIN_URLS_ENABLED) {
-            for (String possiblyAllowedUrl : Config.ALLOWED_SKIN_URLS_LIST) {
+        if (Config.RESTRICT_SKIN_URLS_ENABLED) {
+            for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
                 if (url.startsWith(possiblyAllowedUrl)) {
                     return true;
                 }
