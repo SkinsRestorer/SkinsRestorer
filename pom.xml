@@ -266,6 +266,13 @@
             <version>2.2.1</version>
             <scope>compile</scope>
         </dependency>
+        <!-- bStats for Sponge -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-velocity</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Spiget Updater for Bukkit -->
         <dependency>
             <groupId>org.inventivetalent.spiget-update</groupId>

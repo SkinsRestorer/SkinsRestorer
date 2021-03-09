@@ -51,6 +51,8 @@ import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.utils.SkinApplierVelocity;
+import org.bstats.charts.SingleLineChart;
+import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
@@ -66,6 +68,8 @@ import java.util.logging.Logger;
 public class SkinsRestorer implements SRPlugin {
     private static final @Getter
     String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private static @Getter
+    SkinsRestorer instance;
     private final @Getter
     ProxyServer proxy;
     private final @Getter
@@ -74,6 +78,7 @@ public class SkinsRestorer implements SRPlugin {
     Path dataFolder;
     private final @Getter
     ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final Metrics.Factory metricsFactory;
     private @Getter
     SkinApplierVelocity skinApplierVelocity;
     private CommandSource console;
@@ -89,17 +94,26 @@ public class SkinsRestorer implements SRPlugin {
     SkinsRestorerAPI skinsRestorerVelocityAPI;
 
     @Inject
-    public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
+    public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
         this.logger = new SRLogger(dataFolder.toFile());
         this.dataFolder = dataFolder;
+        this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
+        instance = this;
         logger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
         File UPDATER_DISABLED = new File(CONFIG_PATH, "noupdate.txt");
+
+        int pluginId = 10606; // SkinsRestorer's ID on bStats, for Bungeecord
+        Metrics metrics = metricsFactory.make(this, pluginId);
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
         // Check for updates
         if (!UPDATER_DISABLED.exists()) {
