@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.skinfactory;
 
+import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -59,9 +60,11 @@ public class UniversalSkinFactory implements SkinFactory {
             return new OldSkinRefresher();
         }
 
-        try {
-            return new PaperSkinRefresher();
-        } catch (ExceptionInInitializerError ignored) {
+        if (PaperLib.isPaper()) {
+            try {
+                return new PaperSkinRefresher();
+            } catch (ExceptionInInitializerError ignored) {
+            }
         }
 
         return new OldSkinRefresher();

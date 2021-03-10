@@ -25,6 +25,7 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -107,6 +108,10 @@ public class SkinsRestorer extends JavaPlugin {
     public void onEnable() {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
+
+        // Suggest paper
+        PaperLib.suggestPaper(this);
+
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
