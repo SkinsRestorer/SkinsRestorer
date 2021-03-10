@@ -94,6 +94,10 @@
                             <pattern>com.mysql</pattern>
                             <shadedPattern>net.skinsrestorer.shade.mysql</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>co.aikar.timings.lib</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -355,6 +359,12 @@
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.6</version>
+        </dependency>
+        <!-- Timings Lib -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>minecraft-timings</artifactId>
+            <version>1.0.4</version>
         </dependency>
     </dependencies>
 </project>
