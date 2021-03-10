@@ -88,7 +88,7 @@ public class SkinsRestorer implements SRPlugin {
     private SkinsRestorerAPI skinsRestorerVelocityAPI;
 
     @Inject
-    public SkinsRestorer(ProxyServer proxy, Logger srLogger, @DataDirectory Path dataFolder) {
+    public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
         this.srLogger = new SRLogger(dataFolder.toFile());
         this.dataFolder = dataFolder;

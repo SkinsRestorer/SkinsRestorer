@@ -61,12 +61,12 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             }
 
             JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            this.releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
+            releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
 
             releaseInfo.assets.forEach(gitHubAssetInfo -> {
                 releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
 
-                if (this.isVersionNewer(this.currentVersion, releaseInfo.tag_name)) {
+                if (isVersionNewer(currentVersion, releaseInfo.tag_name)) {
                     callback.updateAvailable(releaseInfo.tag_name, gitHubAssetInfo.browser_download_url, true);
                 } else {
                     callback.upToDate();
@@ -81,6 +81,6 @@ public class UpdateCheckerGitHub extends UpdateChecker {
 
     @Override
     public GitHubReleaseInfo getLatestResourceInfo() {
-        return this.releaseInfo;
+        return releaseInfo;
     }
 }
