@@ -55,7 +55,7 @@ public class SkinCommand extends BaseCommand {
     @Default
     @SuppressWarnings({"deprecation"})
     public void onDefault(CommandSource source) {
-        this.onHelp(source, this.getCurrentCommandManager().generateCommandHelp());
+        onHelp(source, getCurrentCommandManager().generateCommandHelp());
     }
 
     @Default
@@ -64,7 +64,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
     public void onSkinSetShort(Player p, @Single String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+        onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
 
     @HelpCommand
@@ -81,7 +81,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinClear")
     @SuppressWarnings({"unused"})
     public void onSkinClear(Player p) {
-        this.onSkinClearOther(p, new OnlinePlayer(p));
+        onSkinClearOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("clear")

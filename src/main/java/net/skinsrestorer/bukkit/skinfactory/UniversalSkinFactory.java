@@ -73,7 +73,7 @@ public class UniversalSkinFactory implements SkinFactory {
             return;
 
         if (checkOptFileChecked)
-            this.checkOptFile();
+            checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
@@ -117,12 +117,12 @@ public class UniversalSkinFactory implements SkinFactory {
             for (Player ps : Bukkit.getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
-                    ps.hidePlayer(this.plugin, player);
+                    ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
                 try {
-                    ps.showPlayer(this.plugin, player);
+                    ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }

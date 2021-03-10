@@ -81,7 +81,7 @@ public class MojangAPI {
                 }
 
                 if (property.valuesFromJson(raw)) {
-                    return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+                    return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
 
@@ -109,7 +109,7 @@ public class MojangAPI {
             Property property = new Property();
 
             if (obj.has("properties") && property.valuesFromJson(obj)) {
-                return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+                return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
 
         } catch (Exception e) {

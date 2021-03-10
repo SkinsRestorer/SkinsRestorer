@@ -221,7 +221,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSource source, Player p, String skin) {
-        return this.setSkin(source, p, skin, true, false);
+        return setSkin(source, p, skin, true, false);
     }
 
     // if save is false, we won't save the skin skin name
@@ -260,11 +260,11 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             }
         }
         if (C.validUrl(skin)) {
@@ -291,11 +291,11 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             }
         }
         return true;

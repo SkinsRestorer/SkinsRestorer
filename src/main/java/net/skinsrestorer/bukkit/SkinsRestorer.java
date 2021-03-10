@@ -107,7 +107,7 @@ public class SkinsRestorer extends JavaPlugin {
     public void onEnable() {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
-        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
+        File updaterDisabled = new File(configPath, "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
@@ -142,19 +142,19 @@ public class SkinsRestorer extends JavaPlugin {
         checkBungeeMode();
 
         // Check for updates
-        if (!UPDATER_DISABLED.exists()) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
-            this.updateDownloader = new UpdateDownloaderGithub(this);
-            this.checkUpdate(bungeeEnabled);
+        if (!updaterDisabled.exists()) {
+            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+            updateDownloader = new UpdateDownloaderGithub(this);
+            checkUpdate(bungeeEnabled);
 
-            this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                this.checkUpdate(bungeeEnabled, false);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                checkUpdate(bungeeEnabled, false);
             }, 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
 
-        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
+        skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
@@ -169,9 +169,9 @@ public class SkinsRestorer extends JavaPlugin {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
-                        String subchannel = in.readUTF();
+                        String subChannel = in.readUTF();
 
-                        if (subchannel.equalsIgnoreCase("SkinUpdate")) {
+                        if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
                                 factory.applySkin(player, this.skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {

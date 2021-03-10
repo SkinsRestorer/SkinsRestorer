@@ -83,7 +83,7 @@ public class SkinsRestorerAPI {
 
     @Beta
     public void applySkin(PlayerWrapper player, Object props) {
-        this.applySkin(player);
+        applySkin(player);
     }
 
     @Beta

@@ -90,7 +90,7 @@ public class SkinsRestorer implements SRPlugin {
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        this.srLogger = new SRLogger(dataFolder.toFile());
+        srLogger = new SRLogger(dataFolder.toFile());
         this.dataFolder = dataFolder;
     }
 
@@ -143,7 +143,7 @@ public class SkinsRestorer implements SRPlugin {
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(this.mojangAPI);
+        checker.setMojangAPI(mojangAPI);
         checker.checkServices();
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
@@ -157,13 +157,13 @@ public class SkinsRestorer implements SRPlugin {
 
     @Subscribe
     public void onShutDown(ProxyShutdownEvent ev) {
-        this.srLogger.logAlways("Disabling SkinsRestorer v" + getVersion());
-        this.srLogger.logAlways("Disabled SkinsRestorer v" + getVersion());
+        srLogger.logAlways("Disabling SkinsRestorer v" + getVersion());
+        srLogger.logAlways("Disabled SkinsRestorer v" + getVersion());
     }
 
     @SuppressWarnings({"deprecation"})
     private void initCommands() {
-        VelocityCommandManager manager = new VelocityCommandManager(this.getProxy(), this);
+        VelocityCommandManager manager = new VelocityCommandManager(getProxy(), this);
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
 
@@ -204,22 +204,22 @@ public class SkinsRestorer implements SRPlugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                this.skinStorage.setMysql(mysql);
+                skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 srLogger.logAlways("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {
-            this.skinStorage.loadFolders(this.getDataFolder().toFile());
+            skinStorage.loadFolders(getDataFolder().toFile());
         }
 
         // Preload default skins
-        this.getService().execute(this.skinStorage::preloadDefaultSkins);
+        getService().execute(skinStorage::preloadDefaultSkins);
         return true;
     }
 
     private void checkUpdate() {
-        this.checkUpdate(false);
+        checkUpdate(false);
     }
 
     private void checkUpdate(boolean showUpToDate) {

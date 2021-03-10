@@ -96,7 +96,7 @@ public class SkinStorage {
             //todo: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
-                    this.getOrCreateSkinForPlayer(skin, false);
+                    getOrCreateSkinForPlayer(skin, false);
                 }
             } catch (SkinRequestException e) {
                 //removing skin from list
@@ -159,7 +159,7 @@ public class SkinStorage {
 
         // No cached skin found, get from MojangAPI, save and return
         try {
-            textures = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(skin, true));
+            textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
 
             if (textures == null)
                 throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -255,9 +255,9 @@ public class SkinStorage {
                     final String timestamp = crs.getString("timestamp");
 
                     if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                        final Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
+                        final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
                         if (skin != null) {
-                            this.setSkinData(name, skin);
+                            setSkinData(name, skin);
                             return skin;
                         }
                     }
@@ -301,15 +301,15 @@ public class SkinStorage {
                 }
 
                 if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                    final Object skin = this.getMojangAPI().getSkinProperty(this.getMojangAPI().getUUID(name, true));
+                    final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
 
                     if (skin != null) {
-                        this.setSkinData(name, skin);
+                        setSkinData(name, skin);
                         return skin;
                     }
                 }
 
-                return this.createProperty("textures", value, signature);
+                return createProperty("textures", value, signature);
 
             } catch (Exception e) {
                 removeSkinData(name);
@@ -320,7 +320,7 @@ public class SkinStorage {
     }
 
     public Object getSkinData(String name) {
-        return this.getSkinData(name, true);
+        return getSkinData(name, true);
     }
 
     /**
@@ -530,10 +530,10 @@ public class SkinStorage {
                     if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
                             if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
-                                list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
+                                list.put(skinName.toLowerCase(), getSkinData(skinName, false));
                         }
                     } else {
-                        list.put(skinName.toLowerCase(), this.getSkinData(skinName, false));
+                        list.put(skinName.toLowerCase(), getSkinData(skinName, false));
                     }
                 }
                 i++;
@@ -634,10 +634,10 @@ public class SkinStorage {
 
         //Update Skin
         try {
-            final Object textures = this.getMojangAPI().getSkinPropertyMojang(this.getMojangAPI().getUUIDMojang(skin));
+            final Object textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
 
             if (textures != null) {
-                this.setSkinData(skin, textures);
+                setSkinData(skin, textures);
                 return true;
             }
         } catch (SkinRequestException e) {
@@ -672,7 +672,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (this.getMojangAPI().getUUID(player, true) != null) {
+                    if (getMojangAPI().getUUID(player, true) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }
@@ -682,7 +682,7 @@ public class SkinStorage {
             }
 
             // return default skin name if user has no custom skin set or we want to clear to default
-            if (this.getPlayerSkin(player) == null || clear) {
+            if (getPlayerSkin(player) == null || clear) {
                 final List<String> skins = Config.DEFAULT_SKINS;
                 int r = 0;
                 if (skins.size() > 1)
@@ -698,7 +698,7 @@ public class SkinStorage {
             return player;
 
         // return the custom skin user has set
-        String skin = this.getPlayerSkin(player);
+        String skin = getPlayerSkin(player);
 
         // null if player has no custom skin, we'll return his name then
         return skin == null ? player : skin;

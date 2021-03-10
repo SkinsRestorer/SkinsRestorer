@@ -107,7 +107,7 @@ public class SkinsRestorer implements SRPlugin {
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
         srLogger = new SRLogger(new File(configPath));
-        File updaterDisabled = new File(this.configPath, "noupdate.txt");
+        File updaterDisabled = new File(configPath, "noupdate.txt");
 
         // Check for updates
         if (!updaterDisabled.exists()) {
@@ -209,22 +209,22 @@ public class SkinsRestorer implements SRPlugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                this.skinStorage.setMysql(mysql);
+                skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {
-            this.skinStorage.loadFolders(new File(configPath));
+            skinStorage.loadFolders(new File(configPath));
         }
 
         // Preload default skins
-        Sponge.getScheduler().createAsyncExecutor(this).execute(this.skinStorage::preloadDefaultSkins);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
         return true;
     }
 
     private void checkUpdate(boolean bungeeMode) {
-        this.checkUpdate(bungeeMode, true);
+        checkUpdate(bungeeMode, true);
     }
 
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
