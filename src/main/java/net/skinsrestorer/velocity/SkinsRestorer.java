@@ -73,7 +73,7 @@ public class SkinsRestorer implements SRPlugin {
     @Getter
     private final ProxyServer proxy;
     @Getter
-    private final SRLogger logger;
+    private final SRLogger srLogger;
     @Getter
     private final Path dataFolder;
     @Getter

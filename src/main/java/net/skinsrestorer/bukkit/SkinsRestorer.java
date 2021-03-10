@@ -109,9 +109,6 @@ public class SkinsRestorer extends JavaPlugin {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
 
-        // Suggest paper
-        PaperLib.suggestPaper(this);
-
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
