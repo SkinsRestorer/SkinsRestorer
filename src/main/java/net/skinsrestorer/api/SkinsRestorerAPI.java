@@ -35,7 +35,8 @@ import net.skinsrestorer.shared.utils.MojangAPI;
  */
 @SuppressWarnings({"unused"})
 public class SkinsRestorerAPI {
-    private static @Getter SkinsRestorerAPI api;
+    private static @Getter
+    SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
     private final SRPlugin plugin;

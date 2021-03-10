@@ -51,7 +51,7 @@ public class SkinCommand extends BaseCommand {
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
-        log = plugin.getLogger();
+        log = plugin.getSrLogger();
     }
 
     @Default
@@ -273,7 +273,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.AllowedUrlIfEnabled(skin)) {
+            if (!C.isAllowed(skin)) {
                 source.sendMessage(plugin.deserialize(Locale.SKINURL_DISALLOWED));
                 return false;
             }

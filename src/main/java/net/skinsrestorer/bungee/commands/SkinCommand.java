@@ -286,7 +286,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.AllowedUrlIfEnabled(skin)) {
+            if (!C.isAllowed(skin)) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKINURL_DISALLOWED));
                 CooldownStorage.resetCooldown(senderName);
                 return false;

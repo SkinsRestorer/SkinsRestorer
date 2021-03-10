@@ -48,9 +48,12 @@ public class UpdateChecker {
     private final int resourceId;
     private final SRLogger log;
 
-    private final @Getter String currentVersion;
-    private final @Getter String userAgent;
-    private @Getter ResourceInfo latestResourceInfo;
+    private final @Getter
+    String currentVersion;
+    private final @Getter
+    String userAgent;
+    private @Getter
+    ResourceInfo latestResourceInfo;
 
     public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         this.resourceId = resourceId;

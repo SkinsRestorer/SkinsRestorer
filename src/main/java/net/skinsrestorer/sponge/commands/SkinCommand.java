@@ -268,7 +268,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.AllowedUrlIfEnabled(skin)) {
+            if (!C.isAllowed(skin)) {
                 source.sendMessage(plugin.parseMessage(Locale.SKINURL_DISALLOWED));
                 return false;
             }

@@ -57,31 +57,32 @@ import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    private static @Getter
-    SkinsRestorer instance;
-    private final @Getter
-    String configPath = getDataFolder().getPath();
-    private @Getter
-    SkinFactory factory;
-    private @Getter
-    UpdateChecker updateChecker;
-    private @Getter
+    @Getter
+    private static SkinsRestorer instance;
+    @Getter
+    private final String configPath = getDataFolder().getPath();
+    @Getter
+    private SkinFactory factory;
+    @Getter
+    private UpdateChecker updateChecker;
+    @Getter
+    private
     boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
-    private @Getter
-    SRLogger srLogger;
-    private @Getter
-    SkinStorage skinStorage;
-    private @Getter
-    MojangAPI mojangAPI;
-    private @Getter
-    MineSkinAPI mineSkinAPI;
-    private @Getter
-    SkinsRestorerAPI skinsRestorerBukkitAPI;
-    private @Getter
-    SkinCommand skinCommand;
+    @Getter
+    private SRLogger srLogger;
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerAPI skinsRestorerBukkitAPI;
+    @Getter
+    private SkinCommand skinCommand;
 
     private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();

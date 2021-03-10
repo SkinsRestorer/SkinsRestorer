@@ -44,7 +44,7 @@ public class SkinApplierVelocity implements SRApplier {
 
     public SkinApplierVelocity(SkinsRestorer plugin) {
         this.plugin = plugin;
-        this.log = plugin.getLogger();
+        this.log = plugin.getSrLogger();
     }
 
     public void applySkin(PlayerWrapper player, SkinsRestorerAPI api) throws SkinRequestException {

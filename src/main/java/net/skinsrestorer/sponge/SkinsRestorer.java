@@ -63,27 +63,27 @@ import java.util.logging.Level;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
-    private static @Getter
-    SkinsRestorer instance;
+    @Getter
+    private static SkinsRestorer instance;
     private final Metrics metrics;
+    @Getter
+    private final boolean bungeeEnabled = false;
     @Inject
     protected Game game;
-    private @Getter
-    String configPath;
-    private @Getter
-    SkinApplierSponge skinApplierSponge;
-    private @Getter
-    SRLogger srLogger;
-    private @Getter final
-    boolean bungeeEnabled = false;
-    private @Getter
-    SkinStorage skinStorage;
-    private @Getter
-    MojangAPI mojangAPI;
-    private @Getter
-    MineSkinAPI mineSkinAPI;
-    private @Getter
-    SkinsRestorerAPI skinsRestorerSpongeAPI;
+    @Getter
+    private String configPath;
+    @Getter
+    private SkinApplierSponge skinApplierSponge;
+    @Getter
+    private SRLogger srLogger;
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerAPI skinsRestorerSpongeAPI;
     private UpdateChecker updateChecker;
     private CommandSource console;
     @Inject
@@ -106,50 +106,50 @@ public class SkinsRestorer implements SRPlugin {
         instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
-        this.srLogger = new SRLogger(new File(configPath));
-        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
+        srLogger = new SRLogger(new File(configPath));
+        File updaterDisabled = new File(this.configPath, "noupdate.txt");
 
         // Check for updates
-        if (!UPDATER_DISABLED.exists()) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getVersion(), this.srLogger, "SkinsRestorerUpdater/Sponge");
-            this.checkUpdate(bungeeEnabled);
+        if (!updaterDisabled.exists()) {
+            updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
+            checkUpdate(bungeeEnabled);
 
             Sponge.getScheduler().createTaskBuilder().execute(() -> {
-                this.checkUpdate(bungeeEnabled, false);
+                checkUpdate(bungeeEnabled, false);
             }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
-
-        this.skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
+        
+        skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files
         Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
         Locale.load(configPath);
 
-        this.mojangAPI = new MojangAPI(this.srLogger);
-        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
+        mojangAPI = new MojangAPI(srLogger);
+        mineSkinAPI = new MineSkinAPI(srLogger);
 
-        this.skinStorage.setMojangAPI(mojangAPI);
+        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
-        if (!this.initStorage())
+        if (!initStorage())
             return;
 
-        this.mojangAPI.setSkinStorage(this.skinStorage);
-        this.mineSkinAPI.setSkinStorage(this.skinStorage);
+        mojangAPI.setSkinStorage(skinStorage);
+        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init commands
-        this.initCommands();
+        initCommands();
 
         // Init SkinApplier
-        this.skinApplierSponge = new SkinApplierSponge(this);
+        skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        this.skinsRestorerSpongeAPI = new SkinsRestorerAPI(this.mojangAPI, this.skinStorage, this);
+        skinsRestorerSpongeAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(this.mojangAPI);
+        checker.setMojangAPI(mojangAPI);
         checker.checkServices();
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
