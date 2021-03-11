@@ -86,6 +86,18 @@
                             <pattern>com.cryptomorin.xseries</pattern>
                             <shadedPattern>net.skinsrestorer.shade.xseries</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>io.papermc.lib</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.paperlib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.mysql</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.mysql</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.timings.lib</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
+                        </relocation>
                     </relocations>
                 </configuration>
                 <executions>
@@ -154,7 +166,11 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>bungeecord-repo</id>
+            <id>papermc</id>
+            <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>bungeecord</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
         <repository>
@@ -162,15 +178,15 @@
             <url>https://repo.spongepowered.org/maven</url>
         </repository>
         <repository>
-            <id>minecraft-repo</id>
+            <id>minecraft</id>
             <url>https://libraries.minecraft.net</url>
         </repository>
         <repository>
-            <id>codemc-repo</id>
+            <id>codemc</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
-            <id>inventive-repo</id>
+            <id>inventive</id>
             <url>https://repo.inventivetalent.org/content/groups/public/</url>
         </repository>
         <repository>
@@ -178,11 +194,11 @@
             <url>https://repo.aikar.co/content/groups/aikar/</url>
         </repository>
         <repository>
-            <id>velocity-repo</id>
+            <id>velocity</id>
             <url>https://repo.velocitypowered.com/snapshots/</url>
         </repository>
         <repository>
-            <id>viaversion-repo</id>
+            <id>viaversion</id>
             <url>https://repo.viaversion.com</url>
         </repository>
     </repositories>
@@ -222,7 +238,6 @@
             <groupId>net.md-5</groupId>
             <artifactId>bungeecord-config</artifactId>
             <version>1.16-R0.4</version>
-            <scope>compile</scope>
         </dependency>
         <!-- Sponge API -->
         <dependency>
@@ -250,21 +265,18 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>2.2.1</version>
-            <scope>compile</scope>
         </dependency>
         <!-- bStats for BungeeCord -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bungeecord</artifactId>
             <version>2.2.1</version>
-            <scope>compile</scope>
         </dependency>
         <!-- bStats for Sponge -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-sponge</artifactId>
             <version>2.2.1</version>
-            <scope>compile</scope>
         </dependency>
         <!-- bStats for Sponge -->
         <dependency>
@@ -348,6 +360,18 @@
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
             <version>7.8.0</version>
+        </dependency>
+        <!-- PaperLib -->
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.6</version>
+        </dependency>
+        <!-- Timings Lib -->
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>minecraft-timings</artifactId>
+            <version>1.0.4</version>
         </dependency>
     </dependencies>
 </project>

@@ -49,7 +49,7 @@ public class SkinApplierSponge implements SRApplier {
     }
 
     public void applySkin(final PlayerWrapper player, final SkinsRestorerAPI api) throws SkinRequestException {
-        this.applySkin(player, api.getSkinName(player.get(Player.class).getName()), true);
+        applySkin(player, api.getSkinName(player.get(Player.class).getName()), true);
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {

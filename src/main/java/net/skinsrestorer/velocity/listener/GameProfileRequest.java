@@ -36,7 +36,7 @@ public class GameProfileRequest {
     @Inject
     public GameProfileRequest(SkinsRestorer plugin) {
         this.plugin = plugin;
-        log = plugin.getLogger();
+        log = plugin.getSrLogger();
     }
 
     @Subscribe
