@@ -103,14 +103,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if (Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) {
-                boolean haspassengers = false;
-                try {
-                    haspassengers = !player.getPassengers().isEmpty();
-                } catch (NoSuchMethodError e) {
-                    haspassengers = !player.getPassenger().isEmpty();
-                }
-
-                if (haspassengers) {
+                if (!player.isEmpty()) {
                     for (Entity passenger : player.getPassengers()) {
                         player.removePassenger(passenger);
                     }
