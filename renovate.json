@@ -4,5 +4,8 @@
   ],
   "reviewers": [
     "xknat"
+  ],
+  "ignoreDeps": [
+    "us.myles:viaversion"
   ]
 }
