@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 public class C {
     private static final Pattern namePattern = Pattern.compile("^[a-zA-Z0-9_\\-]+$");
     private static final Pattern urlPattern = Pattern.compile("^https?://.*");
+
     private C() {
     }
 
@@ -55,7 +56,7 @@ public class C {
         return urlPattern.matcher(url).matches();
     }
 
-    public static boolean AllowedUrlIfEnabled(String url) {
+    public static boolean isAllowed(String url) {
         if (Config.RESTRICT_SKIN_URLS_ENABLED) {
             for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
                 if (url.startsWith(possiblyAllowedUrl)) {

@@ -30,8 +30,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
-    private @Setter @Getter ServiceCheckResponse response;
-    private @Setter MojangAPI mojangAPI;
+    private @Setter
+    @Getter
+    ServiceCheckResponse response;
+    private @Setter
+    MojangAPI mojangAPI;
 
     public ServiceChecker() {
         this.response = new ServiceCheckResponse();
@@ -97,7 +100,8 @@ public class ServiceChecker {
     }
 
     public static class ServiceCheckResponse {
-        private final @Getter List<String> results = new LinkedList<>();
+        private final @Getter
+        List<String> results = new LinkedList<>();
         private final AtomicInteger workingUUID = new AtomicInteger();
         private final AtomicInteger workingProfile = new AtomicInteger();
 

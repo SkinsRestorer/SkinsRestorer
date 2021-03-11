@@ -51,13 +51,13 @@ public class SkinCommand extends BaseCommand {
 
     public SkinCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
-        log = plugin.getLogger();
+        log = plugin.getSrLogger();
     }
 
     @Default
     @SuppressWarnings({"deprecation"})
     public void onDefault(CommandSource source) {
-        this.onHelp(source, this.getCurrentCommandManager().generateCommandHelp());
+        onHelp(source, getCurrentCommandManager().generateCommandHelp());
     }
 
     @Default
@@ -66,7 +66,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
     public void onSkinSetShort(Player p, @Single String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+        onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
 
     @HelpCommand
@@ -84,7 +84,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinClear")
     @SuppressWarnings({"unused"})
     public void onSkinClear(Player p) {
-        this.onSkinClearOther(p, new OnlinePlayer(p));
+        onSkinClearOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("clear")
@@ -106,7 +106,7 @@ public class SkinCommand extends BaseCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
 
-            if (this.setSkin(source, p, skin, false, true)) {
+            if (setSkin(source, p, skin, false, true)) {
                 if (source == p)
                     source.sendMessage(plugin.deserialize(Locale.SKIN_CLEAR_SUCCESS));
                 else
@@ -121,7 +121,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdate")
     @SuppressWarnings({"unused"})
     public void onSkinUpdate(Player p) {
-        this.onSkinUpdateOther(p, new OnlinePlayer(p));
+        onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("update")
@@ -161,7 +161,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (this.setSkin(source, p, skin, false, false)) {
+            if (setSkin(source, p, skin, false, false)) {
                 if (source == p)
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_UPDATING_SKIN));
                 else
@@ -176,7 +176,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
         if (skin.length > 0) {
-            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
+            onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
@@ -197,7 +197,7 @@ public class SkinCommand extends BaseCommand {
                 }
             }
 
-            if (this.setSkin(source, p, skin) && !(source == p)) {
+            if (setSkin(source, p, skin) && !(source == p)) {
                 source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ADMIN_SET_SKIN.replace("%player", p.getUsername())));
             }
         });
@@ -211,7 +211,7 @@ public class SkinCommand extends BaseCommand {
     public void onSkinSetUrl(Player p, String[] url) {
         if (url.length > 0) {
             if (C.validUrl(url[0])) {
-                this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
+                onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
                 p.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ERROR_INVALID_URLSKIN));
             }
@@ -221,7 +221,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSource source, Player p, String skin) {
-        return this.setSkin(source, p, skin, true, false);
+        return setSkin(source, p, skin, true, false);
     }
 
     // if save is false, we won't save the skin skin name
@@ -260,11 +260,11 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             }
         }
         if (C.validUrl(skin)) {
@@ -274,7 +274,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.AllowedUrlIfEnabled(skin)) {
+            if (!C.isAllowed(skin)) {
                 source.sendMessage(plugin.deserialize(Locale.SKINURL_DISALLOWED));
                 CooldownStorage.resetCooldown(getSenderName(source));
                 return false;
@@ -293,11 +293,11 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                this.rollback(p, oldSkinName, save);
+                rollback(p, oldSkinName, save);
             }
         }
         return true;

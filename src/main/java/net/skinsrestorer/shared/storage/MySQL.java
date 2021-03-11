@@ -74,21 +74,21 @@ public class MySQL {
 
     public Connection getConnection() {
         try {
-            if (con == null || !this.con.isValid(1)) {
+            if (con == null || !con.isValid(1)) {
                 System.out.println("[SkinsRestorer] MySQL connection lost! Creation a new one.");
-                con = this.openConnection();
+                con = openConnection();
             }
         } catch (SQLException e) {
             System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
         }
 
-        try (PreparedStatement stmt = this.con.prepareStatement("SELECT 1")) {
+        try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
             stmt.execute();
         } catch (SQLException e) {
             System.out.println("[SkinsRestorer] MySQL SELECT 1 failed. Reconnecting");
 
             try {
-                con = this.openConnection();
+                con = openConnection();
                 return con;
             } catch (SQLException e1) {
                 System.out.println("[SkinsRestorer] Couldn't reconnect to MySQL.");
@@ -117,7 +117,7 @@ public class MySQL {
     }
 
     public void execute(final String query, final Object... vars) {
-        Connection conn = this.getConnection();
+        Connection conn = getConnection();
 
         try (PreparedStatement ps = prepareStatement(conn, query, vars)) {
             assert ps != null;
@@ -132,7 +132,7 @@ public class MySQL {
     }
 
     public CachedRowSet query(final String query, final Object... vars) {
-        Connection conn = this.getConnection();
+        Connection conn = getConnection();
         CachedRowSet rowSet = null;
 
         try {

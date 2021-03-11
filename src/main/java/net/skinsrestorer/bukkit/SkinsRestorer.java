@@ -25,6 +25,7 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -57,31 +58,32 @@ import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    private static @Getter
-    SkinsRestorer instance;
-    private final @Getter
-    String configPath = getDataFolder().getPath();
-    private @Getter
-    SkinFactory factory;
-    private @Getter
-    UpdateChecker updateChecker;
-    private @Getter
+    @Getter
+    private static SkinsRestorer instance;
+    @Getter
+    private final String configPath = getDataFolder().getPath();
+    @Getter
+    private SkinFactory factory;
+    @Getter
+    private UpdateChecker updateChecker;
+    @Getter
+    private
     boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
     private CommandSender console;
-    private @Getter
-    SRLogger srLogger;
-    private @Getter
-    SkinStorage skinStorage;
-    private @Getter
-    MojangAPI mojangAPI;
-    private @Getter
-    MineSkinAPI mineSkinAPI;
-    private @Getter
-    SkinsRestorerAPI skinsRestorerBukkitAPI;
-    private @Getter
-    SkinCommand skinCommand;
+    @Getter
+    private SRLogger srLogger;
+    @Getter
+    private SkinStorage skinStorage;
+    @Getter
+    private MojangAPI mojangAPI;
+    @Getter
+    private MineSkinAPI mineSkinAPI;
+    @Getter
+    private SkinsRestorerAPI skinsRestorerBukkitAPI;
+    @Getter
+    private SkinCommand skinCommand;
 
     private static Map<String, Property> convertToObject(byte[] byteArr) {
         Map<String, Property> map = new TreeMap<>();
@@ -106,7 +108,8 @@ public class SkinsRestorer extends JavaPlugin {
     public void onEnable() {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder());
-        File UPDATER_DISABLED = new File(this.configPath, "noupdate.txt");
+
+        File updaterDisabled = new File(configPath, "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
@@ -141,19 +144,19 @@ public class SkinsRestorer extends JavaPlugin {
         checkBungeeMode();
 
         // Check for updates
-        if (!UPDATER_DISABLED.exists()) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/Bukkit");
-            this.updateDownloader = new UpdateDownloaderGithub(this);
-            this.checkUpdate(bungeeEnabled);
+        if (!updaterDisabled.exists()) {
+            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+            updateDownloader = new UpdateDownloaderGithub(this);
+            checkUpdate(bungeeEnabled);
 
-            this.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                this.checkUpdate(bungeeEnabled, false);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+                checkUpdate(bungeeEnabled, false);
             }, 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
 
-        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
+        skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
@@ -168,9 +171,9 @@ public class SkinsRestorer extends JavaPlugin {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
-                        String subchannel = in.readUTF();
+                        String subChannel = in.readUTF();
 
-                        if (subchannel.equalsIgnoreCase("SkinUpdate")) {
+                        if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
                                 factory.applySkin(player, this.skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {

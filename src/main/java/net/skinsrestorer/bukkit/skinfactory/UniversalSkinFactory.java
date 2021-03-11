@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.skinfactory;
 
+import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -59,9 +60,11 @@ public class UniversalSkinFactory implements SkinFactory {
             return new OldSkinRefresher();
         }
 
-        try {
-            return new PaperSkinRefresher();
-        } catch (ExceptionInInitializerError ignored) {
+        if (PaperLib.isPaper()) {
+            try {
+                return new PaperSkinRefresher();
+            } catch (ExceptionInInitializerError ignored) {
+            }
         }
 
         return new OldSkinRefresher();
@@ -73,7 +76,7 @@ public class UniversalSkinFactory implements SkinFactory {
             return;
 
         if (checkOptFileChecked)
-            this.checkOptFile();
+            checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
@@ -117,12 +120,12 @@ public class UniversalSkinFactory implements SkinFactory {
             for (Player ps : Bukkit.getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
-                    ps.hidePlayer(this.plugin, player);
+                    ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
                 try {
-                    ps.showPlayer(this.plugin, player);
+                    ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }

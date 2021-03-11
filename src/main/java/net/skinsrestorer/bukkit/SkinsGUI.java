@@ -189,9 +189,9 @@ public class SkinsGUI extends ItemStack implements Listener {
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
                     Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
-                                String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
-                                plugin.requestSkinSetFromBungeeCord(player, skin);
-                            });
+                        String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
+                        plugin.requestSkinSetFromBungeeCord(player, skin);
+                    });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
