@@ -278,7 +278,7 @@
             <artifactId>bstats-sponge</artifactId>
             <version>2.2.1</version>
         </dependency>
-        <!-- bStats for Sponge -->
+        <!-- bStats for Velocity -->
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-velocity</artifactId>

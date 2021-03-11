@@ -46,8 +46,7 @@ public class UniversalSkinFactory implements SkinFactory {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1."))
-            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message can be IGNORED, we will fix this in a later release!");
-
+             System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
@@ -103,14 +102,7 @@ public class UniversalSkinFactory implements SkinFactory {
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if (Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) {
-                boolean haspassengers = false;
-                try {
-                    haspassengers = !player.getPassengers().isEmpty();
-                } catch (NoSuchMethodError e) {
-                    haspassengers = !player.getPassenger().isEmpty();
-                }
-
-                if (haspassengers) {
+                if (!player.isEmpty()) {
                     for (Entity passenger : player.getPassengers()) {
                         player.removePassenger(passenger);
                     }
