@@ -624,13 +624,55 @@ public class SkinStorage {
         return list;
     }
 
+    /**
+     * @param skin
+     * @return True on updated
+     * @throws SkinRequestException On updating disabled OR invalid username + api error
+     */
     // skin update [include custom skin flag]
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean forceUpdateSkinData(String skin) throws SkinRequestException {
+    public boolean UpdateSkinData(String skin) throws SkinRequestException {
         if (!C.validUsername(skin))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
-        //todo include timestamp == 0 return false
+        // Check if updating is disabled for skin (by timestamp = 0)
+        String timestamp = "";
+        if (Config.MYSQL_ENABLED) {
+            RowSet crs = mysql.query("SELECT timestamp FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", skin);
+            if (crs != null)
+                try {
+                    timestamp = crs.getString("timestamp");
+                } catch (Exception ignored) {
+                }
+        } else {
+            // Remove all whitespace
+            skin = skin.replaceAll("\\s", "");
+            //Escape all Windows / Linux forbidden printable ASCII characters
+            skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
+            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + skin + ".skin");
+
+            try {
+                if (!skinFile.exists()) {
+                    timestamp = "";
+                } else {
+
+                    try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
+
+                        String line;
+
+                        for (int i = 0; i < 3; i++) {
+                            line = buf.readLine();
+                            if (i == 2)
+                                timestamp = line;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (timestamp.equals("0"))
+            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         //Update Skin
         try {
