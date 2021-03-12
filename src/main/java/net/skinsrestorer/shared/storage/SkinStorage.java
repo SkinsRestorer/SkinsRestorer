@@ -631,7 +631,7 @@ public class SkinStorage {
      */
     // skin update [include custom skin flag]
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean UpdateSkinData(String skin) throws SkinRequestException {
+    public boolean updateSkinData(String skin) throws SkinRequestException {
         if (!C.validUsername(skin))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 

@@ -144,7 +144,7 @@ public class SkinCommand extends BaseCommand {
                         return;
                     }
 
-                    if (!plugin.getSkinStorage().UpdateSkinData(skin)) {
+                    if (!plugin.getSkinStorage().updateSkinData(skin)) {
                         source.sendMessage(plugin.parseMessage(Locale.ERROR_UPDATING_SKIN));
                         return;
                     }
