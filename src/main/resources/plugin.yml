@@ -5,7 +5,7 @@ description: ${project.description}
 website: https://skinsrestorer.net/
 authors: [Th3Tr0LLeR, McLive, DoNotSpamPls, knat]
 softdepend: ["ViaBackwards"]
-api-version: 1.13
+api-version: 1.16.5
 commands:
   skin:
     description: Main command.
@@ -20,6 +20,9 @@ permissions:
      default: op   
    skinsrestorer.command.set:
      description: Allows access to change your skin.
+     default: op
+   skinsrestorer.command.set.url:
+     description: Allows access to change your skin by url.
      default: op
    skinsrestorer.command.clear:
      description: Allows access to clear your skin.
@@ -48,6 +51,12 @@ permissions:
      default: op
    skinsrestorer.admincommand.props:
      description: Allows access to get the skinprops of a player.
+     default: op
+   skinsrestorer.admincommand.applyskin:
+     description: Allows access to re-apply the skin of a player.
+     default: op
+   skinsrestorer.admincommand.createcustom:
+     description: Allows access to create a custom skin by url.
      default: op
 
    skinsrestorer.bypasscooldown:
