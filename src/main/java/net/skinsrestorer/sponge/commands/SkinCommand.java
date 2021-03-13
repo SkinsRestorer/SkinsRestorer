@@ -251,6 +251,7 @@ public class SkinCommand extends BaseCommand {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
                 plugin.getSkinApplierSponge().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerSpongeAPI());
+                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                 p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
@@ -287,6 +288,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierSponge().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerSpongeAPI());
 
+                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                 p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
 
                 return true;
