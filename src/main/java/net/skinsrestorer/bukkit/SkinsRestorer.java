@@ -25,6 +25,7 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
