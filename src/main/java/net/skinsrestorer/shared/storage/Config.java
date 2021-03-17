@@ -23,6 +23,7 @@ package net.skinsrestorer.shared.storage;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Config {
@@ -68,8 +69,8 @@ public class Config {
     // private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", false);
     private static YamlConfig config;
 
-    public static void load(String path, InputStream is) {
-        config = new YamlConfig(path + File.separator, "config", false);
+    public static void load(File path, InputStream is) {
+        config = new YamlConfig(path, "config", false);
         config.saveDefaultConfig(is);
         config.reload();
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);

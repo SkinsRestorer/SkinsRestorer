@@ -104,9 +104,9 @@ public class Locale {
     //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
     private static YamlConfig locale;
 
-    public static void load(String path) {
+    public static void load(File path) {
         try {
-            locale = new YamlConfig(path + File.separator, "messages", true);
+            locale = new YamlConfig(path, "messages", true);
             locale.saveDefaultConfig();
             locale.reload();
 
@@ -117,7 +117,7 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
-                    if (!Arrays.stream(IGNORE_PREFIX).anyMatch(f.getName()::contains))
+                    if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
                         parsed = C.c(locale.getString("PREFIX", null)) + parsed;
                 }
 

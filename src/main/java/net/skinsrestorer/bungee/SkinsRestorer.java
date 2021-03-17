@@ -112,8 +112,8 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
-        Config.load(configPath.getPath(), getResourceAsStream("config.yml"));
-        Locale.load(configPath.getPath());
+        Config.load(configPath, getResourceAsStream("config.yml"));
+        Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);

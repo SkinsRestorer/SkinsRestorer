@@ -29,16 +29,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class YamlConfig {
-    private final String path;
+    private final File path;
     private final String name;
     private final File file;
     private final boolean setMissing;
     private Object config;
 
-    public YamlConfig(String path, String name, boolean setMissing) {
-        File direc = new File(path);
-        if (!direc.exists())
-            direc.mkdirs();
+    public YamlConfig(File path, String name, boolean setMissing) {
+        if (!path.exists())
+            path.mkdirs();
 
         this.path = path;
         this.name = name + ".yml";
@@ -139,10 +138,6 @@ public class YamlConfig {
 
     public boolean getBoolean(String path, Boolean defValue) {
         return Boolean.parseBoolean(getString(path, defValue));
-    }
-
-    public File getFile() {
-        return file;
     }
 
     public int getInt(String path) {

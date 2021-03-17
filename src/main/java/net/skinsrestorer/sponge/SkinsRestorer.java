@@ -123,8 +123,8 @@ public class SkinsRestorer implements SRPlugin {
         skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files
-        Config.load(configPath.getPath(), getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath.getPath());
+        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(configPath);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);

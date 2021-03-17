@@ -25,7 +25,6 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.annotations.Beta;
-import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -126,7 +125,7 @@ public class SkinsRestorer extends JavaPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig("plugins" + File.separator + "MundoSK" + File.separator, "config", false);
+                YamlConfig mundoConfig = new YamlConfig(new File(configPath.getParentFile(), "MundoSK"), "config", false);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
@@ -249,8 +248,8 @@ public class SkinsRestorer extends JavaPlugin {
          * ***************************************** */
 
         // Init config files
-        Config.load(configPath.getPath(), getResource("config.yml"));
-        Locale.load(configPath.getPath());
+        Config.load(configPath, getResource("config.yml"));
+        Locale.load(configPath);
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);
