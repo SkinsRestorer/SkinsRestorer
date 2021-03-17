@@ -71,7 +71,7 @@ public class SkinsRestorer implements SRPlugin {
     @Inject
     protected Game game;
     @Getter
-    private String configPath;
+    private File configPath;
     @Getter
     private SkinApplierSponge skinApplierSponge;
     @Getter
@@ -105,8 +105,8 @@ public class SkinsRestorer implements SRPlugin {
     public void onInitialize(GameInitializationEvent e) {
         instance = this;
         console = Sponge.getServer().getConsole();
-        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
-        srLogger = new SRLogger(new File(configPath));
+        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toFile();
+        srLogger = new SRLogger(configPath);
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
         // Check for updates
@@ -114,9 +114,8 @@ public class SkinsRestorer implements SRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate(bungeeEnabled);
 
-            Sponge.getScheduler().createTaskBuilder().execute(() -> {
-                checkUpdate(bungeeEnabled, false);
-            }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+            Sponge.getScheduler().createTaskBuilder().execute(() ->
+                    checkUpdate(bungeeEnabled, false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
@@ -124,8 +123,8 @@ public class SkinsRestorer implements SRPlugin {
         skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files
-        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(configPath.getPath(), getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(configPath.getPath());
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -215,7 +214,7 @@ public class SkinsRestorer implements SRPlugin {
                 return false;
             }
         } else {
-            skinStorage.loadFolders(new File(configPath));
+            skinStorage.loadFolders(configPath);
         }
 
         // Preload default skins

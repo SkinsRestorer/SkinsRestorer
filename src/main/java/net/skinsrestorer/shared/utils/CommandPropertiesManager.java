@@ -32,13 +32,13 @@ import java.util.Properties;
 
 public class CommandPropertiesManager {
     private static final String FILE = "command-messages.properties";
-    private final String configPath;
+    private final File configPath;
     private final InputStream inputStream;
 
-    public CommandPropertiesManager(PaperCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(PaperCommandManager manager, File configPath, InputStream inputStream) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
@@ -49,10 +49,10 @@ public class CommandPropertiesManager {
         }
     }
 
-    public CommandPropertiesManager(BungeeCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(BungeeCommandManager manager, File configPath, InputStream inputStream) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
@@ -63,10 +63,10 @@ public class CommandPropertiesManager {
         }
     }
 
-    public CommandPropertiesManager(VelocityCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(VelocityCommandManager manager, File configPath, InputStream inputStream) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
@@ -77,13 +77,13 @@ public class CommandPropertiesManager {
         }
     }
 
-    public CommandPropertiesManager(SpongeCommandManager manager, String configPath, InputStream inputStream) {
-        this.configPath = configPath + File.separator;
+    public CommandPropertiesManager(SpongeCommandManager manager, File configPath, InputStream inputStream) {
+        this.configPath = configPath;
         this.inputStream = inputStream;
         this.copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
         } catch (IOException e) {
@@ -92,7 +92,7 @@ public class CommandPropertiesManager {
     }
 
     private void copyFile() {
-        File outFile = new File(this.configPath, FILE);
+        File outFile = new File(configPath, FILE);
 
         try {
             if (!outFile.exists()) {

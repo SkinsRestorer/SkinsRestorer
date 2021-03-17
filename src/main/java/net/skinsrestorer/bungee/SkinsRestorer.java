@@ -58,7 +58,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
     @Getter
     private static SkinsRestorer instance;
     @Getter
-    private final String configPath = getDataFolder().getPath();
+    private final File configPath = getDataFolder();
     @Getter
     private boolean multiBungee;
     @Getter
@@ -112,8 +112,8 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
-        Config.load(configPath, getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(configPath.getPath(), getResourceAsStream("config.yml"));
+        Locale.load(configPath.getPath());
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);

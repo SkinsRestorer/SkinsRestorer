@@ -67,10 +67,6 @@ import java.util.logging.Logger;
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
     @Getter
-    private static final String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
-    @Getter
-    private static SkinsRestorer instance;
-    @Getter
     private final ProxyServer proxy;
     @Getter
     private final SRLogger srLogger;
@@ -102,13 +98,11 @@ public class SkinsRestorer implements SRPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        instance = this;
         srLogger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
-        File updaterDisabled = new File(CONFIG_PATH, "noupdate.txt");
+        File updaterDisabled = new File(dataFolder.toFile(), "noupdate.txt");
 
-        int pluginId = 10606; // SkinsRestorer's ID on bStats, for Bungeecord
-        Metrics metrics = metricsFactory.make(this, pluginId);
+        Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
@@ -127,8 +121,8 @@ public class SkinsRestorer implements SRPlugin {
         skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
 
         // Init config files
-        Config.load(CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(CONFIG_PATH);
+        Config.load(dataFolder.toFile().getPath(), getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(dataFolder.toFile().getPath());
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -194,7 +188,7 @@ public class SkinsRestorer implements SRPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, dataFolder.toFile(), getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
 
         SharedMethods.allowIllegalACFNames();
 

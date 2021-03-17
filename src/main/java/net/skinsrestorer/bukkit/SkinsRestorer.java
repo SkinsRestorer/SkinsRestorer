@@ -61,7 +61,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private static SkinsRestorer instance;
     @Getter
-    private final String configPath = getDataFolder().getPath();
+    private final File configPath = getDataFolder();
     @Getter
     private SkinFactory factory;
     @Getter
@@ -249,8 +249,8 @@ public class SkinsRestorer extends JavaPlugin {
          * ***************************************** */
 
         // Init config files
-        Config.load(configPath, getResource("config.yml"));
-        Locale.load(configPath);
+        Config.load(configPath.getPath(), getResource("config.yml"));
+        Locale.load(configPath.getPath());
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);
