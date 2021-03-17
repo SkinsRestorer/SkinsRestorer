@@ -23,6 +23,7 @@ package net.skinsrestorer.bukkit.utils;
 
 import lombok.Getter;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -97,7 +98,7 @@ public class UpdateDownloader {
 
             @Override
             public void error(Exception exception) {
-                plugin.getSrLogger().logAlways(Level.WARNING, "[SpigetUpdate] Could not download update", exception);
+                plugin.getSrLogger().logAlways(SRLogLevel.WARNING, "[SpigetUpdate] Could not download update", exception);
             }
         }));
 

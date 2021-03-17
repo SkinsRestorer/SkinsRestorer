@@ -26,8 +26,8 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -35,6 +35,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
@@ -62,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
-public class SkinsRestorer implements SRPlugin {
+public class SkinsRestorer implements ISRPlugin {
     @Getter
     private static SkinsRestorer instance;
     private final Metrics metrics;
@@ -106,7 +108,7 @@ public class SkinsRestorer implements SRPlugin {
         instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toFile();
-        srLogger = new SRLogger(configPath);
+        srLogger = new SRLogger(configPath, new Slf4LoggerImpl(log));
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
         // Check for updates
@@ -117,7 +119,7 @@ public class SkinsRestorer implements SRPlugin {
             Sponge.getScheduler().createTaskBuilder().execute(() ->
                     checkUpdate(bungeeEnabled, false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.logAlways("Updater Disabled");
         }
         
         skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
@@ -260,7 +262,7 @@ public class SkinsRestorer implements SRPlugin {
     }
 
     @Override
-    public SRApplier getApplier() {
+    public ISRApplier getApplier() {
         return skinApplierSponge;
     }
 }

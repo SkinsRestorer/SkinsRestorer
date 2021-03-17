@@ -28,6 +28,8 @@ import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -141,7 +143,7 @@ public class MojangAPI {
             return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
 
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
+            logger.log(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
 
         return null;

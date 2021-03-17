@@ -34,12 +34,12 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
-import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -47,6 +47,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -61,11 +63,10 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
-public class SkinsRestorer implements SRPlugin {
+public class SkinsRestorer implements ISRPlugin {
     @Getter
     private final ProxyServer proxy;
     @Getter
@@ -91,7 +92,7 @@ public class SkinsRestorer implements SRPlugin {
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        srLogger = new SRLogger(dataFolder.toFile());
+        srLogger = new SRLogger(dataFolder.toFile(), new Slf4LoggerImpl(logger));
         this.dataFolder = dataFolder;
         this.metricsFactory = metricsFactory;
     }
@@ -115,7 +116,7 @@ public class SkinsRestorer implements SRPlugin {
 
             getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.logAlways("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
@@ -250,7 +251,7 @@ public class SkinsRestorer implements SRPlugin {
     }
 
     public TextComponent deserialize(String string) {
-        return LegacyComponentSerializer.legacy().deserialize(string);
+        return LegacyComponentSerializer.legacySection().deserialize(string);
     }
 
     public String getVersion() {
@@ -265,7 +266,7 @@ public class SkinsRestorer implements SRPlugin {
     }
 
     @Override
-    public SRApplier getApplier() {
+    public ISRApplier getApplier() {
         return skinApplierVelocity;
     }
 }

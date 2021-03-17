@@ -19,27 +19,24 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils.log;
 
+import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.YamlConfig;
 
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SRLogger {
     private final File folder;
-    private java.util.logging.Logger logger;
+    private ISRLogger logger;
 
-    public SRLogger(File pluginFolder) {
+    public SRLogger(File pluginFolder, ISRLogger logger) {
         folder = pluginFolder;
-        load();
-    }
+        this.logger = logger;
 
-    private void load() {
         try {
-            //Manual check config value
+            // Manual check config value
             File pluginConfigFile = new File(folder, "config.yml");
             YamlConfig pluginConfig = new YamlConfig(folder, "config", false);
 
@@ -52,41 +49,35 @@ public class SRLogger {
             }
         } catch (Exception ignored) {
         }
-
-        if (Config.DEBUG) {
-            logger = Logger.getLogger(SRLogger.class.getName());
-        } else {
-            logger = Logger.getLogger("");
-        }
     }
 
     public void log(String message) {
-        this.log(Level.INFO, message);
+        log(SRLogLevel.INFO, message);
+    }
+
+    public void log(SRLogLevel level, String message) {
+        if (!Config.DEBUG)
+            return;
+
+        logAlways(level, message);
+    }
+
+    public void log(SRLogLevel level, String message, Throwable thrown) {
+        if (!Config.DEBUG)
+            return;
+
+        logAlways(level, message, thrown);
     }
 
     public void logAlways(String message) {
-        this.logAlways(Level.INFO, message);
+        logAlways(SRLogLevel.INFO, message);
     }
 
-    public void log(Level level, String message, Throwable thrown) {
-        if (!Config.DEBUG)
-            return;
-
-        this.logAlways(level, message, thrown);
-    }
-
-    public void log(Level level, String message) {
-        if (!Config.DEBUG)
-            return;
-
-        this.logAlways(level, message);
-    }
-
-    public void logAlways(Level level, String message) {
+    public void logAlways(SRLogLevel level, String message) {
         logger.log(level, "§e[§2SkinsRestorer§e] §r" + message);
     }
 
-    public void logAlways(Level level, String message, Throwable thrown) {
+    public void logAlways(SRLogLevel level, String message, Throwable thrown) {
         logger.log(level, "§e[§2SkinsRestorer§e] §r" + message, thrown);
     }
 }

@@ -24,7 +24,8 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStreamReader;
@@ -56,7 +57,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             int responsecode = connection.getResponseCode();
 
             if (responsecode != 200) {
-                log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
+                log.logAlways(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
                 return;
             }
 
@@ -74,7 +75,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             });
 
         } catch (Exception e) {
-            log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
+            log.logAlways(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
             e.printStackTrace();
         }
     }

@@ -25,7 +25,7 @@ import com.flowpowered.math.vector.Vector3d;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.Property;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
@@ -40,7 +40,7 @@ import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;
 
-public class SkinApplierSponge implements SRApplier {
+public class SkinApplierSponge implements ISRApplier {
     private final SkinsRestorer plugin;
     private Player receiver;
 

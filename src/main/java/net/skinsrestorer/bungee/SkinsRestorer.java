@@ -36,8 +36,8 @@ import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.SkinApplierBungee;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -45,6 +45,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.LoggerImpl;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -54,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
-public class SkinsRestorer extends Plugin implements SRPlugin {
+public class SkinsRestorer extends Plugin implements ISRPlugin {
     @Getter
     private static SkinsRestorer instance;
     @Getter
@@ -88,7 +90,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder());
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getLogger()));
         instance = this;
         console = getProxy().getConsole();
         File updaterDisabled = new File(this.configPath, "noupdate.txt");
@@ -106,7 +108,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
 
             this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.logAlways("Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
@@ -248,7 +250,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
     }
 
     @Override
-    public SRApplier getApplier() {
+    public ISRApplier getApplier() {
         return skinApplierBungee;
     }
 }

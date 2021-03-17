@@ -21,6 +21,6 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-public interface SRPlugin {
-    SRApplier getApplier();
+public interface ISRPlugin {
+    ISRApplier getApplier();
 }

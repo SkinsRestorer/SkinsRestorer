@@ -28,8 +28,8 @@ import com.velocitypowered.api.util.GameProfile.Property;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
@@ -38,7 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkinApplierVelocity implements SRApplier {
+public class SkinApplierVelocity implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 

@@ -39,6 +39,8 @@ import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.LoggerImpl;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -53,7 +55,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
@@ -106,7 +107,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Override
     public void onEnable() {
         console = getServer().getConsoleSender();
-        srLogger = new SRLogger(getDataFolder());
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getLogger()));
 
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
@@ -152,7 +153,7 @@ public class SkinsRestorer extends JavaPlugin {
                 checkUpdate(bungeeEnabled, false);
             }, 20 * 60 * 10, 20 * 60 * 10);
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.logAlways("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);

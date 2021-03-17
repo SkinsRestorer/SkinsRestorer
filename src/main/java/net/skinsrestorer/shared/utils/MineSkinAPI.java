@@ -30,6 +30,8 @@ import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -87,9 +89,9 @@ public class MineSkinAPI {
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+            logger.log(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
         } catch (JsonSyntaxException e) {
-            logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+            logger.log(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }

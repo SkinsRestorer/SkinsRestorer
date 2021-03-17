@@ -25,7 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.inventivetalent.update.spiget.ResourceInfo;
 import org.inventivetalent.update.spiget.ResourceVersion;
@@ -80,7 +81,7 @@ public class UpdateChecker {
                 callback.upToDate();
             }
         } catch (Exception e) {
-            this.log.log(Level.WARNING, "Failed to get resource info from spiget.org", e);
+            log.log(SRLogLevel.WARNING, "Failed to get resource info from spiget.org", e);
         }
     }
 

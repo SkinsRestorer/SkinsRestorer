@@ -24,7 +24,7 @@ package net.skinsrestorer.api;
 import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 
@@ -39,9 +39,9 @@ public class SkinsRestorerAPI {
     SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
-    private final SRPlugin plugin;
+    private final ISRPlugin plugin;
 
-    public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, SRPlugin plugin) {
+    public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, ISRPlugin plugin) {
         setInstance(this);
         this.mojangAPI = mojangAPI;
         this.skinStorage = skinStorage;
