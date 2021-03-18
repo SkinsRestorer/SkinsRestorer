@@ -88,7 +88,7 @@ public class SkinApplierBungee implements ISRApplier {
         profile.setProperties(newProps);
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
-        if (SkinsRestorer.getInstance().isMultiBungee()) {
+        if (plugin.isMultiBungee()) {
             if (p != null)
                 sendUpdateRequest(p, textures);
         } else {

@@ -91,7 +91,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
                 return;
@@ -127,7 +127,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
                 return;
@@ -185,7 +185,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             final ProxiedPlayer p = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(p.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
@@ -331,7 +331,7 @@ public class SkinCommand extends BaseCommand {
     private void sendHelp(CommandSender sender) {
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SR_LINE));
-        sender.sendMessage(TextComponent.fromLegacyText(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
+        sender.sendMessage(TextComponent.fromLegacyText(Locale.HELP_PLAYER.replace("%ver%", plugin.getVersion())));
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SR_LINE));
     }

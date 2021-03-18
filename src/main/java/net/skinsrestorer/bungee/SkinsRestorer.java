@@ -53,12 +53,9 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
-    @Getter
-    private static SkinsRestorer instance;
     @Getter
     private final File configPath = getDataFolder();
     @Getter
@@ -91,7 +88,6 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     @Override
     public void onEnable() {
         srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger()), true);
-        instance = this;
         console = getProxy().getConsole();
         File updaterDisabled = new File(this.configPath, "noupdate.txt");
 
@@ -221,7 +217,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), this.skinStorage::preloadDefaultSkins);
+        ProxyServer.getInstance().getScheduler().runAsync(this, this.skinStorage::preloadDefaultSkins);
         return true;
     }
 

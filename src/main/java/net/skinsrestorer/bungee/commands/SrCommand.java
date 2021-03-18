@@ -65,7 +65,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
         Locale.load(plugin.getConfigPath());
-        Config.load(plugin.getConfigPath(), SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+        Config.load(plugin.getConfigPath(), plugin.getResourceAsStream("config.yml"));
         sender.sendMessage(TextComponent.fromLegacyText(Locale.RELOAD));
     }
 
@@ -76,7 +76,7 @@ public class SrCommand extends BaseCommand {
         sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
         sender.sendMessage(TextComponent.fromLegacyText("§7Checking needed services for SR to work properly..."));
 
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
@@ -166,7 +166,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 final ProxiedPlayer p = target.getPlayer();
                 final String name = p.getName();
@@ -186,7 +186,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <name> <skinurl>")
     public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
