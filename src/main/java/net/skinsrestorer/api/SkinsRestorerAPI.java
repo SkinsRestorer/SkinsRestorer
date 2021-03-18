@@ -23,7 +23,6 @@ package net.skinsrestorer.api;
 
 import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 
