@@ -121,7 +121,7 @@ public class SkinsRestorer extends JavaPlugin {
         instance = this;
         factory = new UniversalSkinFactory(this);
 
-        console.sendMessage("§e[§2SkinsRestorer§e] §aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
+        srLogger.log("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
@@ -129,12 +129,12 @@ public class SkinsRestorer extends JavaPlugin {
                 YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config", false);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
-                    console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §4             [CRITICAL WARNING]");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §cThat setting is located in §e/plugins/MundoSK/config.yml");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §cYou have to disable ('false') it to get SkinsRestorer to work!");
-                    console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
+                    srLogger.log("§4----------------------------------------------");
+                    srLogger.log("§4             [CRITICAL WARNING]");
+                    srLogger.log("§cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
+                    srLogger.log("§cThat setting is located in §e/plugins/MundoSK/config.yml");
+                    srLogger.log("§cYou have to disable ('false') it to get SkinsRestorer to work!");
+                    srLogger.log("§4----------------------------------------------");
                 }
             } catch (Exception ignored) {
             }
@@ -257,7 +257,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         this.skinStorage.setMojangAPI(mojangAPI);
         // Init storage
-        if (!this.initStorage())
+        if (!initStorage())
             return;
 
         this.mojangAPI.setSkinStorage(this.skinStorage);
@@ -280,10 +280,10 @@ public class SkinsRestorer extends JavaPlugin {
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
             if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-                console.sendMessage("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-                console.sendMessage("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-                console.sendMessage("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-                console.sendMessage("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
+                srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+                srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+                srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+                srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
             }
         }
     }

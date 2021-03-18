@@ -156,10 +156,10 @@ public class SkinsRestorer implements ISRPlugin {
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            console.sendMessage(deserialize("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
-            console.sendMessage(deserialize("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!"));
-            console.sendMessage(deserialize("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!"));
-            console.sendMessage(deserialize("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
+            srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+            srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+            srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
     }
 
