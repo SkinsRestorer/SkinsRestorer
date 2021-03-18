@@ -107,7 +107,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Override
     public void onEnable() {
         console = getServer().getConsoleSender();
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getLogger()));
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger()), true);
 
         File updaterDisabled = new File(configPath, "noupdate.txt");
 

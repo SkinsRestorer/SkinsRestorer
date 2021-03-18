@@ -28,17 +28,28 @@ import net.skinsrestorer.shared.storage.YamlConfig;
 import java.io.File;
 
 public class SRLogger {
-    private final File folder;
-    private ISRLogger logger;
+    private final ISRLogger logger;
+    private final boolean color;
 
     public SRLogger(File pluginFolder, ISRLogger logger) {
-        folder = pluginFolder;
         this.logger = logger;
+        this.color = false;
 
+        load(pluginFolder);
+    }
+
+    public SRLogger(File pluginFolder, ISRLogger logger, boolean color) {
+        this.logger = logger;
+        this.color = color;
+
+        load(pluginFolder);
+    }
+
+    private void load(File pluginFolder) {
         try {
             // Manual check config value
-            File pluginConfigFile = new File(folder, "config.yml");
-            YamlConfig pluginConfig = new YamlConfig(folder, "config", false);
+            File pluginConfigFile = new File(pluginFolder, "config.yml");
+            YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config", false);
 
             if (pluginConfigFile.exists()) {
                 pluginConfig.reload();
@@ -74,10 +85,10 @@ public class SRLogger {
     }
 
     public void logAlways(SRLogLevel level, String message) {
-        logger.log(level, "§e[§2SkinsRestorer§e] §r" + message);
+        logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message);
     }
 
     public void logAlways(SRLogLevel level, String message, Throwable thrown) {
-        logger.log(level, "§e[§2SkinsRestorer§e] §r" + message, thrown);
+        logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message, thrown);
     }
 }

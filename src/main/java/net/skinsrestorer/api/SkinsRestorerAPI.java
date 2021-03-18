@@ -81,12 +81,10 @@ public class SkinsRestorerAPI {
         skinStorage.removePlayerSkin(playerName);
     }
 
-    @Beta
     public void applySkin(PlayerWrapper player, Object props) {
         applySkin(player);
     }
 
-    @Beta
     public void applySkin(PlayerWrapper player) {
         try {
             plugin.getApplier().applySkin(player, this);

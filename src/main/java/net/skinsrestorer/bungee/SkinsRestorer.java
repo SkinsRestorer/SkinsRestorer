@@ -90,7 +90,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getLogger()));
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger()), true);
         instance = this;
         console = getProxy().getConsole();
         File updaterDisabled = new File(this.configPath, "noupdate.txt");
