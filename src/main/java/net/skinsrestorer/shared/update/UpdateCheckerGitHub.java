@@ -56,7 +56,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             int responsecode = connection.getResponseCode();
 
             if (responsecode != 200) {
-                log.logAlways(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
+                log.log(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
                 return;
             }
 
@@ -74,7 +74,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             });
 
         } catch (Exception e) {
-            log.logAlways(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
+            log.log(SRLogLevel.WARNING, "Failed to get release info from api.github.com.");
             e.printStackTrace();
         }
     }

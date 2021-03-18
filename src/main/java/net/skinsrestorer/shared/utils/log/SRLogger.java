@@ -62,33 +62,33 @@ public class SRLogger {
         }
     }
 
+    public void debug(String message) {
+        debug(SRLogLevel.INFO, message);
+    }
+
+    public void debug(SRLogLevel level, String message) {
+        if (!Config.DEBUG)
+            return;
+
+        log(level, message);
+    }
+
+    public void debug(SRLogLevel level, String message, Throwable thrown) {
+        if (!Config.DEBUG)
+            return;
+
+        log(level, message, thrown);
+    }
+
     public void log(String message) {
         log(SRLogLevel.INFO, message);
     }
 
     public void log(SRLogLevel level, String message) {
-        if (!Config.DEBUG)
-            return;
-
-        logAlways(level, message);
-    }
-
-    public void log(SRLogLevel level, String message, Throwable thrown) {
-        if (!Config.DEBUG)
-            return;
-
-        logAlways(level, message, thrown);
-    }
-
-    public void logAlways(String message) {
-        logAlways(SRLogLevel.INFO, message);
-    }
-
-    public void logAlways(SRLogLevel level, String message) {
         logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message);
     }
 
-    public void logAlways(SRLogLevel level, String message, Throwable thrown) {
+    public void log(SRLogLevel level, String message, Throwable thrown) {
         logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message, thrown);
     }
 }

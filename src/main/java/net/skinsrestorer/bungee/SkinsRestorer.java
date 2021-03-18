@@ -104,7 +104,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
             this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         } else {
-            srLogger.logAlways("Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
 
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);

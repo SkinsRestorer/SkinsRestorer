@@ -311,7 +311,7 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {
-                log.log("[ERROR] could not generate skin url:" + skin + " stacktrace:");
+                log.debug("[ERROR] could not generate skin url:" + skin + " stacktrace:");
                 if (Config.DEBUG)
                     e.printStackTrace();
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));

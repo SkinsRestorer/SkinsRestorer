@@ -298,7 +298,7 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
             } catch (Exception e) {
-                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
+                log.debug("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             }
         }

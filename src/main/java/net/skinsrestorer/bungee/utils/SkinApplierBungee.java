@@ -108,7 +108,7 @@ public class SkinApplierBungee implements ISRApplier {
         if (p.getServer() == null)
             return;
 
-        log.log("Sending skin update request for " + p.getName());
+        log.debug("Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);

@@ -98,7 +98,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        srLogger.logAlways("Enabling SkinsRestorer v" + getVersion());
+        srLogger.log("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
@@ -115,7 +115,7 @@ public class SkinsRestorer implements ISRPlugin {
 
             getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         } else {
-            srLogger.logAlways("Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
@@ -147,7 +147,7 @@ public class SkinsRestorer implements ISRPlugin {
         // Init API
         skinsRestorerVelocityAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
 
-        srLogger.logAlways("Enabled SkinsRestorer v" + getVersion());
+        srLogger.log("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
@@ -208,7 +208,7 @@ public class SkinsRestorer implements ISRPlugin {
 
                 skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                srLogger.logAlways("§cCan't connect to MySQL! Disabling SkinsRestorer.");
+                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {

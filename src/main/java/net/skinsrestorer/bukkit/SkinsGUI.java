@@ -102,7 +102,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         skinsList.forEach((name, property) -> {
             if (name.chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                this.srLogger.logAlways("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
+                this.srLogger.log("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
                 return;
             }
 
@@ -142,7 +142,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         try {
             BukkitHeadAPI.setSkull(is, ((Property) property).getValue());
         } catch (Exception e) {
-            this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+            this.srLogger.log("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
             e.printStackTrace();
         }
 

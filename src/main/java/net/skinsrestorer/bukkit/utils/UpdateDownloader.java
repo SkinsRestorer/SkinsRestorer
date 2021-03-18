@@ -88,16 +88,16 @@ public class UpdateDownloader {
             return false;
         }
 
-        plugin.getSrLogger().logAlways("[SpigetUpdate] Downloading update...");
+        plugin.getSrLogger().log("[SpigetUpdate] Downloading update...");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getSrLogger().logAlways("[SpigetUpdate] Update saved as " + updateFile.getPath());
+                plugin.getSrLogger().log("[SpigetUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getSrLogger().logAlways(SRLogLevel.WARNING, "[SpigetUpdate] Could not download update", exception);
+                plugin.getSrLogger().log(SRLogLevel.WARNING, "[SpigetUpdate] Could not download update", exception);
             }
         }));
 

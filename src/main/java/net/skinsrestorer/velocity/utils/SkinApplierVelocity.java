@@ -92,7 +92,7 @@ public class SkinApplierVelocity implements ISRApplier {
 
     private void sendUpdateRequest(Player p, Property textures) {
         p.getCurrentServer().ifPresent(serverConnection -> {
-            log.log("Sending skin update request for " + p.getUsername());
+            log.debug("Sending skin update request for " + p.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

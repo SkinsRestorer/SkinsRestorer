@@ -153,7 +153,7 @@ public class SkinsRestorer extends JavaPlugin {
                 checkUpdate(bungeeEnabled, false);
             }, 20 * 60 * 10, 20 * 60 * 10);
         } else {
-            srLogger.logAlways("Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(SkinStorage.Platform.BUKKIT);
@@ -453,12 +453,12 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         if (bungeeEnabled) {
-            this.srLogger.logAlways("-------------------------/Warning\\-------------------------");
-            this.srLogger.logAlways("This plugin is running in Bungee mode!");
-            this.srLogger.logAlways("You have to do all configuration at config file");
-            this.srLogger.logAlways("inside your Bungeecord server.");
-            this.srLogger.logAlways("(Bungeecord-Server/plugins/SkinsRestorer/).");
-            this.srLogger.logAlways("-------------------------\\Warning/-------------------------");
+            this.srLogger.log("-------------------------/Warning\\-------------------------");
+            this.srLogger.log("This plugin is running in Bungee mode!");
+            this.srLogger.log("You have to do all configuration at config file");
+            this.srLogger.log("inside your Bungeecord server.");
+            this.srLogger.log("(Bungeecord-Server/plugins/SkinsRestorer/).");
+            this.srLogger.log("-------------------------\\Warning/-------------------------");
         }
 
     }

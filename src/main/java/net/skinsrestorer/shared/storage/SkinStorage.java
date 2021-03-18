@@ -44,13 +44,13 @@ public class SkinStorage {
     @SuppressWarnings("unused")
     private final boolean isVelocity;
     private Class<?> property;
-    private @Getter
+    @Getter
     @Setter
-    MySQL mysql;
-    private File folder;
-    private @Getter
+    private MySQL mysql;
+    private File pluginFolder;
+    @Getter
     @Setter
-    MojangAPI mojangAPI;
+    private MojangAPI mojangAPI;
 
     public SkinStorage(Platform platform) {
         isBukkit = platform.isBukkit();
@@ -78,12 +78,12 @@ public class SkinStorage {
     }
 
     public void loadFolders(File pluginFolder) {
-        folder = pluginFolder;
+        this.pluginFolder = pluginFolder;
 
-        File tempFolder = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator);
+        File tempFolder = new File(this.pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator);
         tempFolder.mkdirs();
 
-        tempFolder = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator);
+        tempFolder = new File(this.pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator);
         tempFolder.mkdirs();
     }
 
@@ -103,8 +103,11 @@ public class SkinStorage {
                 toRemove.add(skin);
                 System.out.println("[SkinsRestorer] [WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
 
-                if (Config.DEBUG)
-                    System.out.println("[SkinsRestorer] [DEBUG] DefaultSkin '" + skin + "' error: " + e.getMessage());
+                if (Config.DEBUG) {
+                    System.out.println("[SkinsRestorer] [DEBUG] DefaultSkin '" + skin + "' error: ");
+                    e.printStackTrace();
+                }
+
             }
         });
         Config.DEFAULT_SKINS.removeAll(toRemove);
@@ -206,7 +209,7 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
                 if (!playerFile.exists())
@@ -274,7 +277,7 @@ public class SkinStorage {
             name = name.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+            File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
                 if (!skinFile.exists())
@@ -350,7 +353,7 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             if (playerFile.exists()) {
                 try {
@@ -377,7 +380,7 @@ public class SkinStorage {
             name = name.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            final File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+            final File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             if (skinFile.exists()) {
                 try {
@@ -404,7 +407,7 @@ public class SkinStorage {
         } else {
             //Escape all windows / linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            final File playerFile = new File(folder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
+            final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
                 if (!playerFile.exists() && !playerFile.createNewFile())
@@ -450,7 +453,7 @@ public class SkinStorage {
             name = name.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
-            final File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
+            final File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
                 if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
@@ -510,7 +513,7 @@ public class SkinStorage {
             // When not using mysql
         } else {
             Map<String, Object> list = new TreeMap<>();
-            final String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
+            final String path = pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             final File folder = new File(path);
 
             //filter out non "*.skin" files.
@@ -567,7 +570,7 @@ public class SkinStorage {
             } catch (java.sql.SQLException ignored) {
             }
         } else {
-            final String path = folder.getAbsolutePath() + File.separator + "Skins" + File.separator;
+            final String path = pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator;
             final File folder = new File(path);
 
             //filter out non "*.skin" files.
@@ -649,7 +652,7 @@ public class SkinStorage {
             skin = skin.replaceAll("\\s", "");
             //Escape all Windows / Linux forbidden printable ASCII characters
             skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
-            File skinFile = new File(folder.getAbsolutePath() + File.separator + "Skins" + File.separator + skin + ".skin");
+            File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + skin + ".skin");
 
             try {
                 if (!skinFile.exists()) {

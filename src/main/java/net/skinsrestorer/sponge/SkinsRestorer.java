@@ -114,7 +114,7 @@ public class SkinsRestorer implements ISRPlugin {
             Sponge.getScheduler().createTaskBuilder().execute(() ->
                     checkUpdate(bungeeEnabled, false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
-            srLogger.logAlways("Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
@@ -150,10 +150,10 @@ public class SkinsRestorer implements ISRPlugin {
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            System.out.println("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            System.out.println("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            System.out.println("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            System.out.println("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
+            srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+            srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+            srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
     }
 

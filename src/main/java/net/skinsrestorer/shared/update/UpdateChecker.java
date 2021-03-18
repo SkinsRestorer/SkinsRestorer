@@ -80,7 +80,7 @@ public class UpdateChecker {
                 callback.upToDate();
             }
         } catch (Exception e) {
-            log.log(SRLogLevel.WARNING, "Failed to get resource info from spiget.org", e);
+            log.debug(SRLogLevel.WARNING, "Failed to get resource info from spiget.org", e);
         }
     }
 
