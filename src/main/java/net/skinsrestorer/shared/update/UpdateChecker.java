@@ -64,18 +64,18 @@ public class UpdateChecker {
 
     public void checkForUpdate(final UpdateCallback callback) {
         try {
-            HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, this.resourceId, System.currentTimeMillis()))).openConnection();
-            connection.setRequestProperty("User-Agent", this.getUserAgent());
+            HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, resourceId, System.currentTimeMillis()))).openConnection();
+            connection.setRequestProperty("User-Agent", getUserAgent());
 
             JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            this.latestResourceInfo = (new Gson()).fromJson(jsonObject, ResourceInfo.class);
-            connection = (HttpURLConnection) (new URL(String.format(RESOURCE_VERSION, this.resourceId, System.currentTimeMillis()))).openConnection();
-            connection.setRequestProperty("User-Agent", this.getUserAgent());
+            latestResourceInfo = (new Gson()).fromJson(jsonObject, ResourceInfo.class);
+            connection = (HttpURLConnection) (new URL(String.format(RESOURCE_VERSION, resourceId, System.currentTimeMillis()))).openConnection();
+            connection.setRequestProperty("User-Agent", getUserAgent());
             jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            this.latestResourceInfo.latestVersion = (new Gson()).fromJson(jsonObject, ResourceVersion.class);
+            latestResourceInfo.latestVersion = (new Gson()).fromJson(jsonObject, ResourceVersion.class);
 
-            if (this.isVersionNewer(this.currentVersion, this.latestResourceInfo.latestVersion.name)) {
-                callback.updateAvailable(this.latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + this.latestResourceInfo.file.url, !this.latestResourceInfo.external);
+            if (isVersionNewer(currentVersion, latestResourceInfo.latestVersion.name)) {
+                callback.updateAvailable(latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + latestResourceInfo.file.url, !latestResourceInfo.external);
             } else {
                 callback.upToDate();
             }
@@ -110,7 +110,7 @@ public class UpdateChecker {
     }
 
     public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode) {
-        return this.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, bungeeMode, false, null);
+        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, bungeeMode, false, null);
 
     }
 

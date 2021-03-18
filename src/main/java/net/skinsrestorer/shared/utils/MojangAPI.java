@@ -139,7 +139,7 @@ public class MojangAPI {
             property.setValue(rawTextures.get("value").getAsString());
             property.setSignature(rawTextures.get("signature").getAsString());
 
-            return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+            return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
 
         } catch (Exception e) {
             logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");

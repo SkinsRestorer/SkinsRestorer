@@ -103,7 +103,7 @@ public class SkinCommand extends BaseCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
 
-            if (this.setSkin(source, p, skin, false, true)) {
+            if (setSkin(source, p, skin, false, true)) {
                 if (source == p)
                     source.sendMessage(plugin.parseMessage(Locale.SKIN_CLEAR_SUCCESS));
                 else
@@ -118,7 +118,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdate")
     @SuppressWarnings({"unused"})
     public void onSkinUpdate(Player p) {
-        this.onSkinUpdateOther(p, new OnlinePlayer(p));
+        onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("update")
@@ -158,7 +158,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (this.setSkin(source, p, skin, false, false)) {
+            if (setSkin(source, p, skin, false, false)) {
                 if (source == p)
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
@@ -173,7 +173,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
         if (skin.length > 0) {
-            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
+            onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
@@ -193,7 +193,7 @@ public class SkinCommand extends BaseCommand {
                     return;
                 }
             }
-            if (this.setSkin(source, p, skin) && !(source == p))
+            if (setSkin(source, p, skin) && !(source == p))
                 source.sendMessage(plugin.parseMessage(Locale.ADMIN_SET_SKIN.replace("%player", p.getName())));
         });
     }
@@ -206,7 +206,7 @@ public class SkinCommand extends BaseCommand {
     public void onSkinSetUrl(Player p, String[] url) {
         if (url.length > 0) {
             if (C.validUrl(url[0])) {
-                this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
+                onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
                 p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
             }
@@ -216,7 +216,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSource source, Player p, String skin) {
-        return this.setSkin(source, p, skin, true, false);
+        return setSkin(source, p, skin, true, false);
     }
 
     // if save is false, we won't save the skin skin name

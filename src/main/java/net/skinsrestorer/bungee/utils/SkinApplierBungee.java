@@ -43,7 +43,7 @@ public class SkinApplierBungee implements ISRApplier {
 
     public SkinApplierBungee(SkinsRestorer plugin) {
         this.plugin = plugin;
-        this.log = plugin.getSrLogger();
+        log = plugin.getSrLogger();
     }
 
     public static void init() {

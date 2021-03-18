@@ -106,7 +106,7 @@ public class Locale {
 
     public static void load(File path) {
         try {
-            locale = new YamlConfig(path, "messages", true);
+            locale = new YamlConfig(path, "messages.yml", true);
             locale.saveDefaultConfig();
             locale.reload();
 

@@ -40,9 +40,9 @@ public class YamlConfig {
             path.mkdirs();
 
         this.path = path;
-        this.name = name + ".yml";
+        this.name = name;
         this.setMissing = setMissing;
-        this.file = new File(this.path + this.name);
+        file = new File(path + name);
     }
 
     private void createNewFile() {
@@ -54,7 +54,7 @@ public class YamlConfig {
     }
 
     public void saveDefaultConfig() {
-        this.saveDefaultConfig(null);
+        saveDefaultConfig(null);
     }
 
     public void saveDefaultConfig(InputStream is) {
@@ -63,12 +63,12 @@ public class YamlConfig {
 
         // create empty file if we got no InputStream with default config
         if (is == null) {
-            this.createNewFile();
+            createNewFile();
             return;
         }
 
-        this.saveResource(is, this.name, false);
-        this.reload();
+        saveResource(is, name, false);
+        reload();
     }
 
     public void saveResource(InputStream in, String resourcePath, boolean replace) {
@@ -118,14 +118,14 @@ public class YamlConfig {
     }
 
     public Object get(String path, Object defValue) {
-        if (get(path) == null && !this.setMissing) {
-            System.out.println("[SkinsRestorer] " + path + " is missing in " + this.name + "! Using default value.");
+        if (get(path) == null && !setMissing) {
+            System.out.println("[SkinsRestorer] " + path + " is missing in " + name + "! Using default value.");
             return defValue;
         }
 
         // Save new values if enabled (locale file)
-        if (get(path) == null && this.setMissing) {
-            System.out.println("[SkinsRestorer] Saving new config value " + path + " to " + this.name);
+        if (get(path) == null && setMissing) {
+            System.out.println("[SkinsRestorer] Saving new config value " + path + " to " + name);
             set(path, defValue);
         }
 

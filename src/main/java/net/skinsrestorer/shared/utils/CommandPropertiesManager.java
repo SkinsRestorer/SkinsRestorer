@@ -41,7 +41,7 @@ public class CommandPropertiesManager {
         copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
@@ -55,7 +55,7 @@ public class CommandPropertiesManager {
         copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
@@ -69,7 +69,7 @@ public class CommandPropertiesManager {
         copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
             props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
         } catch (IOException e) {
@@ -80,7 +80,7 @@ public class CommandPropertiesManager {
     public CommandPropertiesManager(SpongeCommandManager manager, File configPath, InputStream inputStream) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
@@ -99,12 +99,12 @@ public class CommandPropertiesManager {
                 try (OutputStream out = new FileOutputStream(outFile)) {
                     byte[] buf = new byte[1024];
                     int len;
-                    while ((len = this.inputStream.read(buf)) > 0) {
+                    while ((len = inputStream.read(buf)) > 0) {
                         out.write(buf, 0, len);
                     }
                 }
 
-                this.inputStream.close();
+                inputStream.close();
             }
         } catch (IOException ex) {
             System.out.println("Could not save " + outFile.getName() + " to " + outFile);

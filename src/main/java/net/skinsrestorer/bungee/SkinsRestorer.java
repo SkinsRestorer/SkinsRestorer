@@ -99,33 +99,33 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
         if (!updaterDisabled.exists()) {
-            this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
-            this.checkUpdate(true);
+            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
+            checkUpdate(true);
 
-            this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+            getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         } else {
             srLogger.log("Updater Disabled");
         }
 
-        this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
+        skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
         Config.load(getDataFolder(), getResourceAsStream("config.yml"));
         Locale.load(getDataFolder());
 
-        this.mojangAPI = new MojangAPI(this.srLogger);
-        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
+        mojangAPI = new MojangAPI(srLogger);
+        mineSkinAPI = new MineSkinAPI(srLogger);
 
-        this.skinStorage.setMojangAPI(mojangAPI);
+        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
-        if (!this.initStorage())
+        if (!initStorage())
             return;
 
-        this.mojangAPI.setSkinStorage(this.skinStorage);
-        this.mineSkinAPI.setSkinStorage(this.skinStorage);
+        mojangAPI.setSkinStorage(skinStorage);
+        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init listener
-        getProxy().getPluginManager().registerListener(this, new LoginListener(this, this.srLogger));
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this, srLogger));
 
         // Init commands
         initCommands();
@@ -133,18 +133,18 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
-        this.skinApplierBungee = new SkinApplierBungee(this);
+        skinApplierBungee = new SkinApplierBungee(this);
         SkinApplierBungee.init();
 
         // Init message channel
-        this.getProxy().registerChannel("sr:messagechannel");
-        this.pluginMessageListener = new PluginMessageListener(this);
-        this.getProxy().getPluginManager().registerListener(this, this.pluginMessageListener);
+        getProxy().registerChannel("sr:messagechannel");
+        pluginMessageListener = new PluginMessageListener(this);
+        getProxy().getPluginManager().registerListener(this, pluginMessageListener);
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
-        this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+        skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();

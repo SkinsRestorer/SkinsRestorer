@@ -69,7 +69,7 @@ public class Config {
     private static YamlConfig config;
 
     public static void load(File path, InputStream is) {
-        config = new YamlConfig(path, "config", false);
+        config = new YamlConfig(path, "config.yml", false);
         config.saveDefaultConfig(is);
         config.reload();
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);

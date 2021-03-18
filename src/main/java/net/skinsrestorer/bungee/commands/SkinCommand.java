@@ -56,7 +56,7 @@ public class SkinCommand extends BaseCommand {
     @Default
     @SuppressWarnings({"deprecation"})
     public void onDefault(CommandSender sender) {
-        this.onHelp(sender, this.getCurrentCommandManager().generateCommandHelp());
+        onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
     @Default
@@ -65,7 +65,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
     public void onSkinSetShort(ProxiedPlayer p, @Single String skin) {
-        this.onSkinSetOther(p, new OnlinePlayer(p), skin);
+        onSkinSetOther(p, new OnlinePlayer(p), skin);
     }
 
     @HelpCommand
@@ -82,7 +82,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinClear")
     @SuppressWarnings({"unused"})
     public void onSkinClear(ProxiedPlayer p) {
-        this.onSkinClearOther(p, new OnlinePlayer(p));
+        onSkinClearOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("clear")
@@ -104,7 +104,7 @@ public class SkinCommand extends BaseCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
 
-            if (this.setSkin(sender, p, skin, false, true)) {
+            if (setSkin(sender, p, skin, false, true)) {
                 if (sender == p)
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CLEAR_SUCCESS));
                 else

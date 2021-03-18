@@ -80,10 +80,10 @@ public class SkinStorage {
     public void loadFolders(File pluginFolder) {
         this.pluginFolder = pluginFolder;
 
-        File tempFolder = new File(this.pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator);
+        File tempFolder = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator);
         tempFolder.mkdirs();
 
-        tempFolder = new File(this.pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator);
+        tempFolder = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator);
         tempFolder.mkdirs();
     }
 

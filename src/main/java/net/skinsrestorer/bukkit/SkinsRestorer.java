@@ -125,7 +125,7 @@ public class SkinsRestorer extends JavaPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config", false);
+                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     srLogger.log("§4----------------------------------------------");
@@ -174,7 +174,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player, this.skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                factory.applySkin(player, skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
                             factory.updateSkin(player);
@@ -203,7 +203,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                             SkinsGUI.getMenus().put(p.getName(), 0);
 
-                            this.requestSkinsFromBungeeCord(p, 0);
+                            requestSkinsFromBungeeCord(p, 0);
                         }
 
                         if (subChannel.equalsIgnoreCase("returnSkins")) {
@@ -223,7 +223,7 @@ public class SkinsRestorer extends JavaPlugin {
                             Map<String, Object> newSkinList = new TreeMap<>();
 
                             skinList.forEach((name, property) -> {
-                                newSkinList.put(name, this.getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature()));
+                                newSkinList.put(name, getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature()));
                             });
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
@@ -251,16 +251,16 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(getDataFolder(), getResource("config.yml"));
         Locale.load(getDataFolder());
 
-        this.mojangAPI = new MojangAPI(this.srLogger);
-        this.mineSkinAPI = new MineSkinAPI(this.srLogger);
+        mojangAPI = new MojangAPI(srLogger);
+        mineSkinAPI = new MineSkinAPI(srLogger);
 
-        this.skinStorage.setMojangAPI(mojangAPI);
+        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
 
-        this.mojangAPI.setSkinStorage(this.skinStorage);
-        this.mineSkinAPI.setSkinStorage(this.skinStorage);
+        mojangAPI.setSkinStorage(skinStorage);
+        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init commands
         initCommands();
@@ -269,12 +269,12 @@ public class SkinsRestorer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
         // Init API
-        this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+        skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 
         // Run connection check
         if (!bungeeEnabled) {
             ServiceChecker checker = new ServiceChecker();
-            checker.setMojangAPI(this.mojangAPI);
+            checker.setMojangAPI(mojangAPI);
             checker.checkServices();
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
@@ -353,8 +353,8 @@ public class SkinsRestorer extends JavaPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        this.skinCommand = new SkinCommand(this);
-        manager.registerCommand(this.skinCommand);
+        skinCommand = new SkinCommand(this);
+        manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
     }
@@ -375,7 +375,7 @@ public class SkinsRestorer extends JavaPlugin {
                 mysql.openConnection();
                 mysql.createTable();
 
-                this.skinStorage.setMysql(mysql);
+                skinStorage.setMysql(mysql);
             } catch (Exception e) {
                 console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
                 e.printStackTrace();
@@ -383,11 +383,11 @@ public class SkinsRestorer extends JavaPlugin {
                 return false;
             }
         } else {
-            this.skinStorage.loadFolders(getDataFolder());
+            skinStorage.loadFolders(getDataFolder());
         }
 
         // Preload default skins
-        Bukkit.getScheduler().runTaskAsynchronously(this, this.skinStorage::preloadDefaultSkins);
+        Bukkit.getScheduler().runTaskAsynchronously(this, skinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -452,9 +452,9 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         if (bungeeEnabled) {
-            this.srLogger.log("-------------------------/Warning\\-------------------------");
-            this.srLogger.log("This plugin is running in Bungee mode!");
-            this.srLogger.log("You have to do all configuration at config file");
+            srLogger.log("-------------------------/Warning\\-------------------------");
+            srLogger.log("This plugin is running in Bungee mode!");
+            srLogger.log("You have to do all configuration at config file");
             this.srLogger.log("inside your Bungeecord server.");
             this.srLogger.log("(Bungeecord-Server/plugins/SkinsRestorer/).");
             this.srLogger.log("-------------------------\\Warning/-------------------------");

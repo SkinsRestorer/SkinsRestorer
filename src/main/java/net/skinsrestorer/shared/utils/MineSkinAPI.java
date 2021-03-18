@@ -70,7 +70,7 @@ public class MineSkinAPI {
 
                 if (dta.has("texture")) {
                     JsonObject tex = dta.get("texture").getAsJsonObject();
-                    return this.skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
+                    return skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
                 errResp = obj.get("error").getAsString();
