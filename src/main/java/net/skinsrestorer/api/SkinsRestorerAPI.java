@@ -33,18 +33,16 @@ import net.skinsrestorer.shared.utils.MojangAPI;
  * Advanced help or getting problems? join our discord before submitting issues!
  */
 @SuppressWarnings({"unused"})
-public class SkinsRestorerAPI {
-    private static @Getter
-    SkinsRestorerAPI api;
+public abstract class SkinsRestorerAPI {
+    @Getter
+    private static SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
-    private final ISRPlugin plugin;
 
-    public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, ISRPlugin plugin) {
+    public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
         setInstance(this);
         this.mojangAPI = mojangAPI;
         this.skinStorage = skinStorage;
-        this.plugin = plugin;
     }
 
     private static void setInstance(SkinsRestorerAPI api) {
@@ -80,15 +78,7 @@ public class SkinsRestorerAPI {
         skinStorage.removePlayerSkin(playerName);
     }
 
-    public void applySkin(PlayerWrapper player, Object props) {
-        applySkin(player);
-    }
+    public abstract void applySkin(PlayerWrapper player, Object props);
 
-    public void applySkin(PlayerWrapper player) {
-        try {
-            plugin.getApplier().applySkin(player, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public abstract void applySkin(PlayerWrapper player);
 }

@@ -270,7 +270,7 @@ public class SkinsRestorer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
         // Init API
-        this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(this, this.mojangAPI, this.skinStorage);
+        this.skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 
         // Run connection check
         if (!bungeeEnabled) {
@@ -496,25 +496,19 @@ public class SkinsRestorer extends JavaPlugin {
         }));
     }
 
-    private static class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
-        private final SkinsRestorer plugin;
-
-        public SkinsRestorerBukkitAPI(SkinsRestorer plugin, MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, skinStorage, null);
-            this.plugin = plugin;
+    private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
+        public SkinsRestorerBukkitAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
         }
 
-        // Todo: We need to refactor applySkin through all platforms to behave the same!
-        @Beta
         @Override
         public void applySkin(PlayerWrapper player, Object props) {
-            plugin.getFactory().applySkin(player.get(Player.class), props);
+            getFactory().applySkin(player.get(Player.class), props);
         }
 
-        @Beta
         @Override
         public void applySkin(PlayerWrapper player) {
-            plugin.getFactory().applySkin(player.get(Player.class), this.getSkinData(this.getSkinName(player.get(Player.class).getName())));
+            getFactory().applySkin(player.get(Player.class), getSkinData(getSkinName(player.get(Player.class).getName())));
         }
     }
 }

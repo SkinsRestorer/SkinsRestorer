@@ -24,6 +24,7 @@ package net.skinsrestorer.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import lombok.Getter;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
@@ -141,7 +142,7 @@ public class SkinsRestorer implements ISRPlugin {
         skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        skinsRestorerSpongeAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
+        skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
@@ -256,8 +257,23 @@ public class SkinsRestorer implements ISRPlugin {
         return version.orElse("");
     }
 
-    @Override
-    public ISRApplier getApplier() {
-        return skinApplierSponge;
+    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
+        public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            try {
+                skinApplierSponge.applySkin(player, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

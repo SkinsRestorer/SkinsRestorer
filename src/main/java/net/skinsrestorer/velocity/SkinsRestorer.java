@@ -35,6 +35,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
@@ -145,7 +146,7 @@ public class SkinsRestorer implements ISRPlugin {
         skinApplierVelocity = new SkinApplierVelocity(this);
 
         // Init API
-        skinsRestorerVelocityAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
+        skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
 
         srLogger.log("Enabled SkinsRestorer v" + getVersion());
 
@@ -258,8 +259,23 @@ public class SkinsRestorer implements ISRPlugin {
         return version.orElse("");
     }
 
-    @Override
-    public ISRApplier getApplier() {
-        return skinApplierVelocity;
+    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
+        public SkinsRestorerVelocityAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            try {
+                skinApplierVelocity.applySkin(player, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

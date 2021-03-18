@@ -29,6 +29,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
@@ -49,6 +50,7 @@ import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
+import org.bukkit.entity.Player;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
@@ -144,7 +146,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
-        this.skinsRestorerBungeeAPI = new SkinsRestorerAPI(this.mojangAPI, this.skinStorage, this);
+        this.skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         ServiceChecker checker = new ServiceChecker();
@@ -245,8 +247,23 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }));
     }
 
-    @Override
-    public ISRApplier getApplier() {
-        return skinApplierBungee;
+    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
+        public SkinsRestorerBungeeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            try {
+                skinApplierBungee.applySkin(player, this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

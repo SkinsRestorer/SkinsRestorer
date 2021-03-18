@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.update;
+package net.skinsrestorer.shared.exception;
 
 public class UpdateException extends RuntimeException {
     public UpdateException(String message) {

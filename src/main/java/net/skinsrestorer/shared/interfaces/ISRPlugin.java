@@ -24,7 +24,5 @@ package net.skinsrestorer.shared.interfaces;
 import java.io.File;
 
 public interface ISRPlugin {
-    ISRApplier getApplier();
-
     File getDataFolder();
 }
