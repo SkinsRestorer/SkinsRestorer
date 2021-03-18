@@ -35,7 +35,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Level;
 
 /**
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater

@@ -60,8 +60,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getDataFolder().toFile());
-        Config.load(plugin.getDataFolder().toFile(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getDataFolder());
+        Config.load(plugin.getDataFolder(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
         source.sendMessage(plugin.deserialize(Locale.RELOAD));
     }
 

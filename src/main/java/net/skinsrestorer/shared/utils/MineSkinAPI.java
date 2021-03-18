@@ -41,7 +41,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public class MineSkinAPI {
     private final SRLogger logger;

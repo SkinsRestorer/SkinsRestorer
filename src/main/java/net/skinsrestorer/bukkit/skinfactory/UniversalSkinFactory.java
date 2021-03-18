@@ -46,7 +46,7 @@ public class UniversalSkinFactory implements SkinFactory {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1."))
-             System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code

@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
 
 public class MojangAPI {
     private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";

@@ -254,7 +254,7 @@ public class SkinCommand extends BaseCommand {
                 //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
                 plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 
                 return true;
             } catch (SkinRequestException e) {
@@ -293,7 +293,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 SkinsRestorer.getInstance().getFactory().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());

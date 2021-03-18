@@ -21,7 +21,6 @@
  */
 package net.skinsrestorer.api;
 
-import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;

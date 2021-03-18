@@ -28,7 +28,6 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -56,6 +55,7 @@ import net.skinsrestorer.velocity.utils.SkinApplierVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -63,7 +63,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
@@ -72,7 +71,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Getter
     private final SRLogger srLogger;
     @Getter
-    private final Path dataFolder;
+    private final File dataFolder;
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
@@ -93,7 +92,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
         srLogger = new SRLogger(dataFolder.toFile(), new Slf4LoggerImpl(logger));
-        this.dataFolder = dataFolder;
+        this.dataFolder = dataFolder.toFile();
         this.metricsFactory = metricsFactory;
     }
 
@@ -101,7 +100,7 @@ public class SkinsRestorer implements ISRPlugin {
     public void onProxyInitialize(ProxyInitializeEvent e) {
         srLogger.logAlways("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
-        File updaterDisabled = new File(dataFolder.toFile(), "noupdate.txt");
+        File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
@@ -122,8 +121,8 @@ public class SkinsRestorer implements ISRPlugin {
         skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
 
         // Init config files
-        Config.load(dataFolder.toFile(), getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(dataFolder.toFile());
+        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(dataFolder);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -164,12 +163,6 @@ public class SkinsRestorer implements ISRPlugin {
         }
     }
 
-    @Subscribe
-    public void onShutDown(ProxyShutdownEvent ev) {
-        srLogger.logAlways("Disabling SkinsRestorer v" + getVersion());
-        srLogger.logAlways("Disabled SkinsRestorer v" + getVersion());
-    }
-
     @SuppressWarnings({"deprecation"})
     private void initCommands() {
         VelocityCommandManager manager = new VelocityCommandManager(getProxy(), this);
@@ -189,7 +182,7 @@ public class SkinsRestorer implements ISRPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, dataFolder.toFile(), getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
 
         SharedMethods.allowIllegalACFNames();
 
@@ -219,7 +212,7 @@ public class SkinsRestorer implements ISRPlugin {
                 return false;
             }
         } else {
-            skinStorage.loadFolders(getDataFolder().toFile());
+            skinStorage.loadFolders(dataFolder);
         }
 
         // Preload default skins

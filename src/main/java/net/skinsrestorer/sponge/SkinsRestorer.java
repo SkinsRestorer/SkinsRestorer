@@ -67,6 +67,8 @@ public class SkinsRestorer implements ISRPlugin {
     private final Metrics metrics;
     @Getter
     private final boolean bungeeEnabled = false;
+    @Getter
+    private final File dataFolder;
     @Inject
     protected Game game;
     @Getter
@@ -88,16 +90,13 @@ public class SkinsRestorer implements ISRPlugin {
     @Inject
     private Logger log;
     @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path publicConfigDir;
-
-    @Inject
     private PluginContainer container;
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory) {
+    public SkinsRestorer(Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolder) {
         metrics = metricsFactory.make(2337);
+        this.dataFolder = dataFolder.toFile();
     }
 
     @Listener
@@ -117,7 +116,7 @@ public class SkinsRestorer implements ISRPlugin {
         } else {
             srLogger.logAlways("Updater Disabled");
         }
-        
+
         skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
 
         // Init config files

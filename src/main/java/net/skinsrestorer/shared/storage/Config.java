@@ -23,7 +23,6 @@ package net.skinsrestorer.shared.storage;
 
 import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.List;
 
 public class Config {

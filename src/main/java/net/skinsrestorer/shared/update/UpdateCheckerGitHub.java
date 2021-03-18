@@ -31,7 +31,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
 
 public class UpdateCheckerGitHub extends UpdateChecker {
     private static final String RESOURCE_ID = "SkinsRestorerX";
