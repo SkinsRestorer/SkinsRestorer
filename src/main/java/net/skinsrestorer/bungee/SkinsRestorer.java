@@ -89,7 +89,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     public void onEnable() {
         srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger()), true);
         console = getProxy().getConsole();
-        File updaterDisabled = new File(this.configPath, "noupdate.txt");
+        File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
         Metrics metrics = new Metrics(this, pluginId);
@@ -110,8 +110,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         this.skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
-        Config.load(configPath, getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(getDataFolder(), getResourceAsStream("config.yml"));
+        Locale.load(getDataFolder());
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);

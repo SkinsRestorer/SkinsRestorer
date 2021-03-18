@@ -61,12 +61,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
-    @Getter
-    private static SkinsRestorer instance;
     private final Metrics metrics;
     @Getter
     private final boolean bungeeEnabled = false;
@@ -105,7 +102,6 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        instance = this;
         console = Sponge.getServer().getConsole();
         configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toFile();
         srLogger = new SRLogger(configPath, new Slf4LoggerImpl(log));

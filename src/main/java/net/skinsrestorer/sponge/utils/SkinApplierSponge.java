@@ -84,7 +84,7 @@ public class SkinApplierSponge implements ISRApplier {
         sendUpdateSelf();
 
         receiver.offer(Keys.VANISH, true);
-        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(SkinsRestorer.getInstance());
+        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin);
     }
 
     private void sendUpdateSelf() {

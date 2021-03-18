@@ -305,7 +305,7 @@ public class SkinCommand extends BaseCommand {
     private void sendHelp(CommandSource source) {
         if (!Locale.SR_LINE.isEmpty())
             source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
-        source.sendMessage(plugin.parseMessage(Locale.HELP_PLAYER.replace("%ver%", SkinsRestorer.getInstance().getVersion())));
+        source.sendMessage(plugin.parseMessage(Locale.HELP_PLAYER.replace("%ver%", plugin.getVersion())));
         if (!Locale.SR_LINE.isEmpty())
             source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
     }

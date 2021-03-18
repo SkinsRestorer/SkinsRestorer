@@ -109,7 +109,7 @@ public class SkinsRestorer extends JavaPlugin {
         console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger()), true);
 
-        File updaterDisabled = new File(configPath, "noupdate.txt");
+        File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
         Metrics metrics = new Metrics(this, pluginId);
@@ -126,7 +126,7 @@ public class SkinsRestorer extends JavaPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(new File(configPath.getParentFile(), "MundoSK"), "config", false);
+                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config", false);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     console.sendMessage("§e[§2SkinsRestorer§e] §4----------------------------------------------");
@@ -249,8 +249,8 @@ public class SkinsRestorer extends JavaPlugin {
          * ***************************************** */
 
         // Init config files
-        Config.load(configPath, getResource("config.yml"));
-        Locale.load(configPath);
+        Config.load(getDataFolder(), getResource("config.yml"));
+        Locale.load(getDataFolder());
 
         this.mojangAPI = new MojangAPI(this.srLogger);
         this.mineSkinAPI = new MineSkinAPI(this.srLogger);
@@ -350,7 +350,7 @@ public class SkinsRestorer extends JavaPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, configPath, getResource("command-messages.properties"));
+        new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"));
 
         SharedMethods.allowIllegalACFNames();
 
