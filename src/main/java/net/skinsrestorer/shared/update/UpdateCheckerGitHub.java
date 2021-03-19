@@ -24,6 +24,7 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
@@ -35,7 +36,6 @@ import java.util.logging.Level;
 public class UpdateCheckerGitHub extends UpdateChecker {
     private static final String RESOURCE_ID = "SkinsRestorerX";
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
-    private static final String RELEASES_URL = "https://api.github.com/repos/SkinsRestorer/%s/releases";
     private final SRLogger log;
     private final String userAgent;
     private final String currentVersion;
@@ -53,12 +53,6 @@ public class UpdateCheckerGitHub extends UpdateChecker {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", this.userAgent);
-            int responsecode = connection.getResponseCode();
-
-            if (responsecode != 200) {
-                log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-                return;
-            }
 
             JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
@@ -74,8 +68,9 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             });
 
         } catch (Exception e) {
-            log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
-            e.printStackTrace();
+            log.logAlways(Level.WARNING, "Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
+            if (Config.DEBUG)
+                e.printStackTrace();
         }
     }
 
