@@ -395,11 +395,14 @@ public class SkinsRestorer extends JavaPlugin {
     private void checkBungeeMode() {
         bungeeEnabled = false;
         try {
-            bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
-
+            try {
+                bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
+            } catch (NoSuchMethodError ignored) {
+                this.srLogger.logAlways(Level.WARNING, "It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
+            }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
-            if (!bungeeEnabled) {
+            if (!bungeeEnabled && new File("spigot.yml").exists()) {
                 bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
             }
 
