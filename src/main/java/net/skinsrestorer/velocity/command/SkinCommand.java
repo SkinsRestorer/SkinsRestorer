@@ -275,7 +275,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.isAllowed(skin)) {
+            if (!C.allowedSkinUrl(skin)) {
                 source.sendMessage(plugin.deserialize(Locale.SKINURL_DISALLOWED));
                 CooldownStorage.resetCooldown(getSenderName(source));
                 return false;

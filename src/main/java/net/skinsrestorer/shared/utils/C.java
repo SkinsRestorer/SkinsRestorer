@@ -58,7 +58,7 @@ public class C {
         return urlPattern.matcher(url).matches();
     }
 
-    public static boolean isAllowed(String url) {
+    public static boolean allowedSkinUrl(String url) {
         if (Config.RESTRICT_SKIN_URLS_ENABLED) {
             for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
                 if (url.startsWith(possiblyAllowedUrl)) {
