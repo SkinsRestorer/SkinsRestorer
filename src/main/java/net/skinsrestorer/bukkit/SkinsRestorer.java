@@ -406,7 +406,7 @@ public class SkinsRestorer extends JavaPlugin {
             }
 
             //override bungeeModeDisabled
-            File bungeeModeDisabled = new File(getDataFolder(),  "disableBungeeMode");
+            File bungeeModeDisabled = new File(getDataFolder(), "disableBungeeMode");
             if (bungeeModeDisabled.exists()) {
                 bungeeEnabled = false;
                 return;

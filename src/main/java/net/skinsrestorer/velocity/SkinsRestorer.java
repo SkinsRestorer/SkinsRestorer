@@ -66,9 +66,6 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
-    private CommandSource console;
-    private UpdateChecker updateChecker;
-
     @Getter
     private final ProxyServer proxy;
     @Getter
@@ -78,6 +75,8 @@ public class SkinsRestorer implements ISRPlugin {
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
+    private CommandSource console;
+    private UpdateChecker updateChecker;
     @Getter
     private SkinApplierVelocity skinApplierVelocity;
     @Getter

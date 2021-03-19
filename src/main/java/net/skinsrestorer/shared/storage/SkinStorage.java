@@ -45,6 +45,7 @@ public class SkinStorage {
     private final boolean isSponge;
     @SuppressWarnings("unused")
     private final boolean isVelocity;
+    private final SRLogger logger;
     private Class<?> property;
     @Getter
     @Setter
@@ -53,7 +54,6 @@ public class SkinStorage {
     @Getter
     @Setter
     private MojangAPI mojangAPI;
-    private final SRLogger logger;
 
     public SkinStorage(SRLogger logger, Platform platform) {
         this.logger = logger;

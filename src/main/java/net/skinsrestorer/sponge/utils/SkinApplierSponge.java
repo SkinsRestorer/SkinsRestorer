@@ -23,7 +23,6 @@ package net.skinsrestorer.sponge.utils;
 
 import com.flowpowered.math.vector.Vector3d;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.Property;
