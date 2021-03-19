@@ -222,7 +222,7 @@ public class SkinCommand extends BaseCommand {
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(CommandSource source, Player p, String skin, boolean save, boolean clear) {
-        if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
+        if (skin.equalsIgnoreCase("null") || !C.validMojangUsername(skin) && !C.validUrl(skin)) {
             source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
         }
@@ -246,7 +246,7 @@ public class SkinCommand extends BaseCommand {
 
         final String pName = p.getName();
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
-        if (C.validUsername(skin)) {
+        if (C.validMojangUsername(skin)) {
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
