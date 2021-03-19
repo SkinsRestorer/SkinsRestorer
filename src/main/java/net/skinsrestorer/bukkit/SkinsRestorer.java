@@ -39,6 +39,7 @@ import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
@@ -388,7 +389,7 @@ public class SkinsRestorer extends JavaPlugin {
             try {
                 bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
             } catch (NoSuchMethodError ignored) {
-                this.srLogger.logAlways(Level.WARNING, "It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
+                srLogger.log(SRLogLevel.WARNING, "It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
             }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
