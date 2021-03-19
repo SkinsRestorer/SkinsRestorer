@@ -247,38 +247,6 @@ public class SkinCommand extends BaseCommand {
 
         final String pName = p.getName();
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
-        if (C.validMojangUsername(skin)) {
-            try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
-
-                if (save) {
-                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
-                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
-                } else {
-                    plugin.getSkinApplierBungee().applySkin(p, skin, null);
-                }
-
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
-                return true;
-            } catch (SkinRequestException e) {
-                if (clear) {
-                    //plugin.getSkinStorage()
-
-                    Object props = plugin.getSkinStorage().createProperty("textures", "", "");
-                    try {
-                        plugin.getSkinStorage().setSkinData("00", props);
-                        plugin.getSkinApplierBungee().applySkin(p, "00", null);
-                    } catch (Exception ignored) {
-                    }
-                    return true;
-                }
-
-                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
-            } catch (Exception e) {
-                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
-            }
-        }
 
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
@@ -305,7 +273,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
+                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
 
                 return true;
             } catch (SkinRequestException e) {
@@ -316,10 +284,42 @@ public class SkinCommand extends BaseCommand {
                     e.printStackTrace();
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
             }
+        } else {
+            //If skin is no url, its a username
+            try {
+                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+
+                if (save) {
+                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
+                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
+                } else {
+                    plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                }
+
+                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
+                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
+                return true;
+            } catch (SkinRequestException e) {
+                if (clear) {
+                    Object props = plugin.getSkinStorage().createProperty("textures", "", "");
+                    try {
+                        plugin.getSkinStorage().setSkinData("00", props);
+                        plugin.getSkinApplierBungee().applySkin(p, "00", null);
+                    } catch (Exception ignored) {
+                    }
+                    return true;
+                }
+                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
+                // Rollback to old skin on exception
+                rollback(p, oldSkinName, save);
+            } catch (Exception e) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
+                // Rollback to old skin on exception
+                rollback(p, oldSkinName, save);
+            }
         }
-        // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
+        // Set CoolDown to ERROR_COOLDOWN
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        this.rollback(p, oldSkinName, save);
         return false;
     }
 

@@ -246,29 +246,6 @@ public class SkinCommand extends BaseCommand {
 
         final String pName = p.getName();
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
-        if (C.validMojangUsername(skin)) {
-            try {
-                if (save)
-                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
-
-                //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
-                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-
-                return true;
-            } catch (SkinRequestException e) {
-                if (clear) {
-                    Object props = SkinsRestorer.getInstance().getSkinStorage().createProperty("textures", "", "");
-                    SkinsRestorer.getInstance().getFactory().applySkin(p, props);
-                    SkinsRestorer.getInstance().getFactory().updateSkin(p);
-
-                    return true;
-                }
-
-                sender.sendMessage(e.getMessage());
-            }
-        }
 
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
@@ -293,7 +270,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 SkinsRestorer.getInstance().getFactory().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
@@ -301,11 +278,33 @@ public class SkinCommand extends BaseCommand {
                 log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             }
-        }
+        } else {
+            //If skin is no url, its a username
+            try {
+                if (save)
+                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
 
-        // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
+                //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
+                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+
+                return true;
+            } catch (SkinRequestException e) {
+                if (clear) {
+                    Object props = SkinsRestorer.getInstance().getSkinStorage().createProperty("textures", "", "");
+                    SkinsRestorer.getInstance().getFactory().applySkin(p, props);
+                    SkinsRestorer.getInstance().getFactory().updateSkin(p);
+
+                    return true;
+                }
+                // rollback to old skin on exception
+                sender.sendMessage(e.getMessage());
+                rollback(p, oldSkinName, save);
+            }
+        }
+        // Set CoolDown to ERROR_COOLDOWN as no skin is set
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(p, oldSkinName, save);
         return false;
     }
 

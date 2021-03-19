@@ -240,44 +240,28 @@ public class SkinCommand extends BaseCommand {
                 }
         }
 
-        if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
-            source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
+        final String senderName = getSenderName(source);
+        if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(senderName)) {
+            source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(senderName))));
             return false;
         }
 
-        CooldownStorage.resetCooldown(getSenderName(source));
-        CooldownStorage.setCooldown(getSenderName(source), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+        CooldownStorage.resetCooldown(senderName);
+        CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         final String pName = p.getUsername();
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
-        if (C.validMojangUsername(skin)) {
-            try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
-                if (save)
-                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
-            } catch (SkinRequestException e) {
-                source.sendMessage(plugin.deserialize(e.getMessage()));
-                // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
-            } catch (Exception e) {
-                e.printStackTrace();
-                // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
-            }
-        }
+
         if (C.validUrl(skin)) {
             if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
                 source.sendMessage(plugin.deserialize(Locale.PLAYER_HAS_NO_PERMISSION_URL));
-                CooldownStorage.resetCooldown(getSenderName(source));
+                CooldownStorage.resetCooldown(senderName);
                 return false;
             }
 
             if (!C.allowedSkinUrl(skin)) {
                 source.sendMessage(plugin.deserialize(Locale.SKINURL_DISALLOWED));
-                CooldownStorage.resetCooldown(getSenderName(source));
+                CooldownStorage.resetCooldown(senderName);
                 return false;
             }
 
@@ -291,18 +275,36 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
-                // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
-                // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
+
             }
+            //todo: this might not be needed here? since its skinurl??
+            //set custom skin name back to old one if there is an exception
+            rollback(p, oldSkinName, save);
+        } else {
+            //If skin is no url, its a username
+            try {
+                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+                if (save)
+                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
+                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
+                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
+                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
+            } catch (SkinRequestException e) {
+                source.sendMessage(plugin.deserialize(e.getMessage()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            rollback(p, oldSkinName, save);
         }
-        return true;
+        // Set CoolDown to ERROR_COOLDOWN
+        CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        return false;
     }
 
     private void rollback(Player p, String oldSkinName, boolean save) {
