@@ -147,17 +147,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(this.mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
-        }
+        SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
     @SuppressWarnings({"deprecation"})
@@ -207,7 +197,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
                 this.skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                console.sendMessage(TextComponent.fromLegacyText("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer."));
+                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 getProxy().getPluginManager().unregisterListeners(this);
                 getProxy().getPluginManager().unregisterCommands(this);
                 return false;

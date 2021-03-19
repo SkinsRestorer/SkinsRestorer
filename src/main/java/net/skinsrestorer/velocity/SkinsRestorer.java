@@ -66,6 +66,9 @@ import java.util.concurrent.TimeUnit;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
+    private CommandSource console;
+    private UpdateChecker updateChecker;
+
     @Getter
     private final ProxyServer proxy;
     @Getter
@@ -77,8 +80,6 @@ public class SkinsRestorer implements ISRPlugin {
     private final Metrics.Factory metricsFactory;
     @Getter
     private SkinApplierVelocity skinApplierVelocity;
-    private CommandSource console;
-    private UpdateChecker updateChecker;
     @Getter
     private SkinStorage skinStorage;
     @Getter
@@ -150,17 +151,7 @@ public class SkinsRestorer implements ISRPlugin {
         srLogger.log("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
-        }
+        SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
     @SuppressWarnings({"deprecation"})

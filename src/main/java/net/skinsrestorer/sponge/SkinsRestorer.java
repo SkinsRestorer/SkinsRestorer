@@ -71,6 +71,8 @@ public class SkinsRestorer implements ISRPlugin {
     private final File dataFolder;
     @Inject
     protected Game game;
+    private UpdateChecker updateChecker;
+    private CommandSource console;
     @Getter
     private File configPath;
     @Getter
@@ -84,9 +86,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerAPI skinsRestorerSpongeAPI;
-    private UpdateChecker updateChecker;
-    private CommandSource console;
+    private SkinsRestorerAPI skinsRestorerAPI;
     @Inject
     private Logger log;
     @Inject
@@ -141,20 +141,10 @@ public class SkinsRestorer implements ISRPlugin {
         skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        skinsRestorerSpongeAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
 
         // Run connection check
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
-        }
+        SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
     @Listener

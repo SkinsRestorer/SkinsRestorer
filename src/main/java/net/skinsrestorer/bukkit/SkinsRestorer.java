@@ -273,17 +273,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Run connection check
         if (!bungeeEnabled) {
-            ServiceChecker checker = new ServiceChecker();
-            checker.setMojangAPI(mojangAPI);
-            checker.checkServices();
-            ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-            if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-                srLogger.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-                srLogger.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-                srLogger.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-                srLogger.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
-            }
+            SharedMethods.runServiceCheck(mojangAPI, srLogger);
         }
     }
 
@@ -377,7 +367,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                 skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                console.sendMessage("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 e.printStackTrace();
                 Bukkit.getPluginManager().disablePlugin(this);
                 return false;
@@ -408,14 +398,14 @@ public class SkinsRestorer extends JavaPlugin {
             }
 
             //override bungeeModeEnabled
-            File bungeeModeEnabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enableBungeeMode");
+            File bungeeModeEnabled = new File(getDataFolder(), "enableBungeeMode");
             if (!bungeeEnabled && bungeeModeEnabled.exists()) {
                 bungeeEnabled = true;
                 return;
             }
 
             //override bungeeModeDisabled
-            File bungeeModeDisabled = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disableBungeeMode");
+            File bungeeModeDisabled = new File(getDataFolder(),  "disableBungeeMode");
             if (bungeeModeDisabled.exists()) {
                 bungeeEnabled = false;
                 return;
@@ -455,11 +445,10 @@ public class SkinsRestorer extends JavaPlugin {
             srLogger.log("-------------------------/Warning\\-------------------------");
             srLogger.log("This plugin is running in Bungee mode!");
             srLogger.log("You have to do all configuration at config file");
-            this.srLogger.log("inside your Bungeecord server.");
-            this.srLogger.log("(Bungeecord-Server/plugins/SkinsRestorer/).");
-            this.srLogger.log("-------------------------\\Warning/-------------------------");
+            srLogger.log("inside your Bungeecord server.");
+            srLogger.log("(Bungeecord-Server/plugins/SkinsRestorer/).");
+            srLogger.log("-------------------------\\Warning/-------------------------");
         }
-
     }
 
     private void checkUpdate(boolean bungeeMode) {
@@ -481,6 +470,7 @@ public class SkinsRestorer extends JavaPlugin {
                         failReason = updateDownloader.getFailReason().toString();
                     }
                 }
+
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg ->
                         console.sendMessage(msg));
             }

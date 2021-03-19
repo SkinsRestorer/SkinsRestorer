@@ -21,6 +21,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.utils.log.SRLogger;
+
 import java.util.regex.Pattern;
 
 public class SharedMethods {
@@ -34,6 +36,20 @@ public class SharedMethods {
             ReflectionUtil.setObject(patternClass, null, "VALID_NAME_PATTERN", Pattern.compile("(.*?)"));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void runServiceCheck(MojangAPI mojangAPI, SRLogger log) {
+        ServiceChecker checker = new ServiceChecker();
+        checker.setMojangAPI(mojangAPI);
+        checker.checkServices();
+        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+
+        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+            log.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+            log.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            log.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+            log.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
     }
 }
