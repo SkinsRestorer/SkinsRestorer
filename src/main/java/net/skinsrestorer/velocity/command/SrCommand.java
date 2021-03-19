@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.Arrays;
@@ -45,9 +46,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger log;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        log = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -140,16 +143,16 @@ public class SrCommand extends BaseCommand {
             String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
             source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
-            source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
+            source.sendMessage(plugin.deserialize("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
             source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
             source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
             source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
             //console
-            System.out.println("\n§aName: §8" + prop.getName());
-            System.out.println("\n§aValue : §8" + prop.getValue());
-            System.out.println("\n§aSignature : §8" + prop.getSignature());
-            System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+            log.log("§aName: §8" + prop.getName());
+            log.log("§aValue : §8" + prop.getValue());
+            log.log("§aSignature : §8" + prop.getSignature());
+            log.log("§aValue Decoded: §e" + Arrays.toString(decoded));
         });
     }
 

@@ -119,7 +119,7 @@ public class SkinsRestorer implements ISRPlugin {
             srLogger.log("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
+        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.VELOCITY);
 
         // Init config files
         Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"));

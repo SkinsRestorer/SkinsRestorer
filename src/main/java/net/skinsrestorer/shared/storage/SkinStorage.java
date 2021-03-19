@@ -28,6 +28,8 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.Property;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -51,8 +53,10 @@ public class SkinStorage {
     @Getter
     @Setter
     private MojangAPI mojangAPI;
+    private final SRLogger logger;
 
-    public SkinStorage(Platform platform) {
+    public SkinStorage(SRLogger logger, Platform platform) {
+        this.logger = logger;
         isBukkit = platform.isBukkit();
         isBungee = platform.isBungee();
         isSponge = platform.isSponge();
@@ -101,13 +105,11 @@ public class SkinStorage {
             } catch (SkinRequestException e) {
                 //removing skin from list
                 toRemove.add(skin);
-                System.out.println("[SkinsRestorer] [WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
+                logger.log(SRLogLevel.WARNING, "[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
 
-                if (Config.DEBUG) {
-                    System.out.println("[SkinsRestorer] [DEBUG] DefaultSkin '" + skin + "' error: ");
+                logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ");
+                if (Config.DEBUG)
                     e.printStackTrace();
-                }
-
             }
         });
         Config.DEFAULT_SKINS.removeAll(toRemove);
@@ -269,9 +271,8 @@ public class SkinStorage {
 
                 } catch (Exception e) {
                     removeSkinData(name);
-                    System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                    logger.log("Unsupported player format.. removing (" + name + ").");
                 }
-
         } else {
             // Remove all whitespace
             name = name.replaceAll("\\s", "");
@@ -316,7 +317,7 @@ public class SkinStorage {
 
             } catch (Exception e) {
                 removeSkinData(name);
-                System.out.println("[SkinsRestorer] Unsupported player format.. removing (" + name + ").");
+                logger.log("Unsupported player format.. removing (" + name + ").");
             }
         }
         return null;
@@ -759,14 +760,14 @@ public class SkinStorage {
         SPONGE(false, false, true, false),
         VELOCITY(false, false, false, true);
 
-        private final @Getter
-        boolean isBukkit;
-        private final @Getter
-        boolean isBungee;
-        private final @Getter
-        boolean isSponge;
-        private final @Getter
-        boolean isVelocity;
+        @Getter
+        private final boolean isBukkit;
+        @Getter
+        private final boolean isBungee;
+        @Getter
+        private final boolean isSponge;
+        @Getter
+        private final boolean isVelocity;
 
         Platform(boolean isBukkit, boolean isBungee, boolean isSponge, boolean isVelocity) {
             this.isBukkit = isBukkit;

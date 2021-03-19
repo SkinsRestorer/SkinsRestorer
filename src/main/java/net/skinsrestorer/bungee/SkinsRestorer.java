@@ -107,7 +107,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             srLogger.log("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(SkinStorage.Platform.BUNGEECORD);
+        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
         Config.load(getDataFolder(), getResourceAsStream("config.yml"));
