@@ -42,7 +42,7 @@ public class YamlConfig {
         this.path = path;
         this.name = name;
         this.setMissing = setMissing;
-        this.file = new File(path + name);
+        this.file = new File(path, name);
         this.logger = logger;
 
         if (!path.exists())
