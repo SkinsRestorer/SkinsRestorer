@@ -158,21 +158,23 @@ public class SkinStorage {
             return textures;
 
         // No cached skin found, get from MojangAPI, save and return
-        try {
-            textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
+        if (C.validMojangUsername(name)) {
+            try {
+                textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
 
-            if (textures == null)
-                throw new SkinRequestException(Locale.ERROR_NO_SKIN);
+                if (textures == null)
+                    throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
-            setSkinData(skin, textures);
-        } catch (SkinRequestException e) {
-            if (!silent)
-                throw e;
-        } catch (Exception e) {
-            e.printStackTrace();
+                setSkinData(skin, textures);
+            } catch (SkinRequestException e) {
+                if (!silent)
+                    throw e;
+            } catch (Exception e) {
+                e.printStackTrace();
 
-            if (!silent)
-                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+                if (!silent)
+                    throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+            }
         }
 
         return textures;
@@ -254,7 +256,7 @@ public class SkinStorage {
                     final String signature = crs.getString("Signature");
                     final String timestamp = crs.getString("timestamp");
 
-                    if (updateOutdated && isOld(Long.parseLong(timestamp))) {
+                    if (C.validMojangUsername(name) && updateOutdated && isOld(Long.parseLong(timestamp))) {
                         final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
                         if (skin != null) {
                             setSkinData(name, skin);
@@ -300,7 +302,7 @@ public class SkinStorage {
                             }
                 }
 
-                if (updateOutdated && isOld(Long.parseLong(timestamp))) {
+                if (C.validMojangUsername(name) && updateOutdated && isOld(Long.parseLong(timestamp))) {
                     final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
 
                     if (skin != null) {
@@ -714,7 +716,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (getMojangAPI().getUUID(player, true) != null) {
+                    if (C.validMojangUsername(player) && getMojangAPI().getUUID(player, true) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }
