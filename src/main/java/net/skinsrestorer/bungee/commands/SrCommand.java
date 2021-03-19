@@ -40,6 +40,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Arrays;
 import java.util.Base64;
@@ -49,9 +50,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -64,8 +67,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load(plugin.getConfigPath());
-        Config.load(plugin.getConfigPath(), plugin.getResourceAsStream("config.yml"));
+        Locale.load(plugin.getConfigPath(), logger);
+        Config.load(plugin.getConfigPath(), plugin.getResourceAsStream("config.yml"), logger);
         sender.sendMessage(TextComponent.fromLegacyText(Locale.RELOAD));
     }
 

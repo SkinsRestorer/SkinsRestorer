@@ -37,21 +37,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class SkinApplierBungee implements ISRApplier {
-    private static Class<?> loginResult;
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
     public SkinApplierBungee(SkinsRestorer plugin) {
         this.plugin = plugin;
         log = plugin.getSrLogger();
-    }
-
-    public static void init() {
-        try {
-            loginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
@@ -77,7 +68,7 @@ public class SkinApplierBungee implements ISRApplier {
                 profile = new LoginResult(null, null, new Property[]{textures});
             } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
-                profile = (LoginResult) ReflectionUtil.invokeConstructor(loginResult,
+                profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
                         new Class<?>[]{String.class, Property[].class},
                         null, new Property[]{textures});
             }
@@ -97,7 +88,7 @@ public class SkinApplierBungee implements ISRApplier {
         }
     }
 
-    public void applySkin(final PlayerWrapper p, SkinsRestorerAPI api) throws Exception {
+    public void applySkin(final PlayerWrapper p) throws Exception {
         applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
     }
 

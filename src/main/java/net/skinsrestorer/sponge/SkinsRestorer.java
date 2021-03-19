@@ -120,8 +120,8 @@ public class SkinsRestorer implements ISRPlugin {
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.SPONGE);
 
         // Init config files
-        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Locale.load(configPath, srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -170,7 +170,7 @@ public class SkinsRestorer implements ISRPlugin {
             CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
             CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
             SharedMethods.allowIllegalACFNames();
 
@@ -184,6 +184,7 @@ public class SkinsRestorer implements ISRPlugin {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
+                        srLogger,
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -197,7 +198,7 @@ public class SkinsRestorer implements ISRPlugin {
 
                 skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
+                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
                 return false;
             }
         } else {
@@ -259,7 +260,7 @@ public class SkinsRestorer implements ISRPlugin {
         @Override
         public void applySkin(PlayerWrapper player) {
             try {
-                skinApplierSponge.applySkin(player, this);
+                skinApplierSponge.applySkin(player);
             } catch (Exception e) {
                 e.printStackTrace();
             }

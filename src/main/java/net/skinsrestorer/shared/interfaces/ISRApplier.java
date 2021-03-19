@@ -22,8 +22,7 @@
 package net.skinsrestorer.shared.interfaces;
 
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 
 public interface ISRApplier {
-    void applySkin(PlayerWrapper playerWrapper, SkinsRestorerAPI api) throws Exception;
+    void applySkin(PlayerWrapper playerWrapper) throws Exception;
 }

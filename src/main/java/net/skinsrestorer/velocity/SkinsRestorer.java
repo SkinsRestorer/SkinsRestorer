@@ -87,7 +87,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerAPI skinsRestorerVelocityAPI;
+    private SkinsRestorerAPI skinsRestorerAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
@@ -122,8 +122,8 @@ public class SkinsRestorer implements ISRPlugin {
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.VELOCITY);
 
         // Init config files
-        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(dataFolder);
+        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Locale.load(dataFolder, srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -146,7 +146,7 @@ public class SkinsRestorer implements ISRPlugin {
         skinApplierVelocity = new SkinApplierVelocity(this);
 
         // Init API
-        skinsRestorerVelocityAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
 
         srLogger.log("Enabled SkinsRestorer v" + getVersion());
 
@@ -173,7 +173,7 @@ public class SkinsRestorer implements ISRPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
 
@@ -186,6 +186,7 @@ public class SkinsRestorer implements ISRPlugin {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
+                        srLogger,
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -262,7 +263,7 @@ public class SkinsRestorer implements ISRPlugin {
         @Override
         public void applySkin(PlayerWrapper player) {
             try {
-                skinApplierVelocity.applySkin(player, this);
+                skinApplierVelocity.applySkin(player);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -128,9 +128,9 @@ public class UniversalSkinFactory implements SkinFactory {
     }
 
     private void checkOptFile() {
-        File fileDisableDismountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesdismountplayer");
-        File fileEnableDismountEntities = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesdismountentities");
-        File fileDisableRemountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesremountplayer");
+        File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
+        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
+        File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
 
         if (fileDisableDismountPlayer.exists())
             disableDismountPlayer = true;

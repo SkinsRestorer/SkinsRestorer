@@ -48,8 +48,8 @@ public class SkinApplierSponge implements ISRApplier {
         this.plugin = plugin;
     }
 
-    public void applySkin(final PlayerWrapper player, final SkinsRestorerAPI api) throws SkinRequestException {
-        applySkin(player, api.getSkinName(player.get(Player.class).getName()), true);
+    public void applySkin(final PlayerWrapper player) throws SkinRequestException {
+        applySkin(player, plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getName()), true);
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {

@@ -22,6 +22,8 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -31,18 +33,20 @@ import java.util.Scanner;
 public class YamlConfig {
     private final File path;
     private final String name;
-    private final File file;
     private final boolean setMissing;
+    private final File file;
+    private final SRLogger logger;
     private Object config;
 
-    public YamlConfig(File path, String name, boolean setMissing) {
-        if (!path.exists())
-            path.mkdirs();
-
+    public YamlConfig(File path, String name, boolean setMissing, SRLogger logger) {
         this.path = path;
         this.name = name;
         this.setMissing = setMissing;
-        file = new File(path + name);
+        this.file = new File(path + name);
+        this.logger = logger;
+
+        if (!path.exists())
+            path.mkdirs();
     }
 
     private void createNewFile() {
@@ -100,10 +104,10 @@ public class YamlConfig {
                 }
                 in.close();
             } else {
-                System.out.println("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
-            System.out.println("Could not save " + outFile.getName() + " to " + outFile);
+            logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile);
             ex.printStackTrace();
         }
     }
@@ -119,13 +123,13 @@ public class YamlConfig {
 
     public Object get(String path, Object defValue) {
         if (get(path) == null && !setMissing) {
-            System.out.println("[SkinsRestorer] " + path + " is missing in " + name + "! Using default value.");
+            logger.log(path + " is missing in " + name + "! Using default value.");
             return defValue;
         }
 
         // Save new values if enabled (locale file)
         if (get(path) == null && setMissing) {
-            System.out.println("[SkinsRestorer] Saving new config value " + path + " to " + name);
+            logger.log("Saving new config value " + path + " to " + name);
             set(path, defValue);
         }
 

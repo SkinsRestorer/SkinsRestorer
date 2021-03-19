@@ -49,7 +49,7 @@ public class SRLogger {
         try {
             // Manual check config value
             File pluginConfigFile = new File(pluginFolder, "config.yml");
-            YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml", false);
+            YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml", false, this);
 
             if (pluginConfigFile.exists()) {
                 pluginConfig.reload();

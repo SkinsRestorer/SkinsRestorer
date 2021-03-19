@@ -39,7 +39,9 @@ public abstract class SkinsRestorerAPI {
     private final SkinStorage skinStorage;
 
     protected SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-        setInstance(this);
+        if (api == null)
+          setInstance(this);
+
         this.mojangAPI = mojangAPI;
         this.skinStorage = skinStorage;
     }

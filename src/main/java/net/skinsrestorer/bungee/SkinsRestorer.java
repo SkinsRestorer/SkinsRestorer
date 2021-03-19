@@ -110,8 +110,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUNGEECORD);
 
         // Init config files
-        Config.load(getDataFolder(), getResourceAsStream("config.yml"));
-        Locale.load(getDataFolder());
+        Config.load(getDataFolder(), getResourceAsStream("config.yml"), srLogger);
+        Locale.load(getDataFolder(), srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -134,7 +134,6 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         // Init SkinApplier
         skinApplierBungee = new SkinApplierBungee(this);
-        SkinApplierBungee.init();
 
         // Init message channel
         getProxy().registerChannel("sr:messagechannel");
@@ -169,7 +168,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
 
@@ -184,6 +183,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
+                        srLogger,
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,
@@ -248,7 +248,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         @Override
         public void applySkin(PlayerWrapper player) {
             try {
-                skinApplierBungee.applySkin(player, this);
+                skinApplierBungee.applySkin(player);
             } catch (Exception e) {
                 e.printStackTrace();
             }

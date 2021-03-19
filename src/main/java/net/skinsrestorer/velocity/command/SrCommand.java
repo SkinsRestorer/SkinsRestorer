@@ -46,11 +46,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
-        log = plugin.getSrLogger();
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -63,8 +63,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getDataFolder());
-        Config.load(plugin.getDataFolder(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getDataFolder(), logger);
+        Config.load(plugin.getDataFolder(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"), logger);
         source.sendMessage(plugin.deserialize(Locale.RELOAD));
     }
 
@@ -149,10 +149,10 @@ public class SrCommand extends BaseCommand {
             source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
             //console
-            log.log("§aName: §8" + prop.getName());
-            log.log("§aValue : §8" + prop.getValue());
-            log.log("§aSignature : §8" + prop.getSignature());
-            log.log("§aValue Decoded: §e" + Arrays.toString(decoded));
+            logger.log("§aName: §8" + prop.getName());
+            logger.log("§aValue : §8" + prop.getValue());
+            logger.log("§aSignature : §8" + prop.getSignature());
+            logger.log("§aValue Decoded: §e" + Arrays.toString(decoded));
         });
     }
 
@@ -164,7 +164,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, OnlinePlayer target) {
         plugin.getService().execute(() -> {
             try {
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()), plugin.getSkinsRestorerVelocityAPI());
+                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()));
                 source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));

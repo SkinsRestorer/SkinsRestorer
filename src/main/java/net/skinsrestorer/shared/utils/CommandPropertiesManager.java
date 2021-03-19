@@ -21,11 +21,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import co.aikar.commands.BungeeCommandManager;
-import co.aikar.commands.PaperCommandManager;
-import co.aikar.commands.SpongeCommandManager;
-import co.aikar.commands.VelocityCommandManager;
+import co.aikar.commands.*;
 import co.aikar.locales.MessageKey;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.Properties;
@@ -34,58 +32,63 @@ public class CommandPropertiesManager {
     private static final String FILE = "command-messages.properties";
     private final File configPath;
     private final InputStream inputStream;
+    private final SRLogger logger;
 
-    public CommandPropertiesManager(PaperCommandManager manager, File configPath, InputStream inputStream) {
+    public CommandPropertiesManager(PaperCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
+        this.logger = logger;
         copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(BungeeCommandManager manager, File configPath, InputStream inputStream) {
+    public CommandPropertiesManager(BungeeCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
+        this.logger = logger;
         copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(VelocityCommandManager manager, File configPath, InputStream inputStream) {
+    public CommandPropertiesManager(SpongeCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
+        this.logger = logger;
         copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
+            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(SpongeCommandManager manager, File configPath, InputStream inputStream) {
+    public CommandPropertiesManager(VelocityCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
+        this.logger = logger;
         copyFile();
 
         Properties props = new Properties();
         try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }

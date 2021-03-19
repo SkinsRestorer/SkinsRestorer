@@ -80,7 +80,7 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerAPI skinsRestorerBukkitAPI;
+    private SkinsRestorerAPI skinsRestorerAPI;
     @Getter
     private SkinCommand skinCommand;
 
@@ -125,7 +125,7 @@ public class SkinsRestorer extends JavaPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false);
+                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false, srLogger);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     srLogger.log("§4----------------------------------------------");
@@ -248,8 +248,8 @@ public class SkinsRestorer extends JavaPlugin {
          * ***************************************** */
 
         // Init config files
-        Config.load(getDataFolder(), getResource("config.yml"));
-        Locale.load(getDataFolder());
+        Config.load(getDataFolder(), getResource("config.yml"), srLogger);
+        Locale.load(getDataFolder(), srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -269,7 +269,7 @@ public class SkinsRestorer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
         // Init API
-        skinsRestorerBukkitAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 
         // Run connection check
         if (!bungeeEnabled) {
@@ -339,7 +339,7 @@ public class SkinsRestorer extends JavaPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"));
+        new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
 
@@ -354,6 +354,7 @@ public class SkinsRestorer extends JavaPlugin {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
+                        srLogger,
                         Config.MYSQL_HOST,
                         Config.MYSQL_PORT,
                         Config.MYSQL_DATABASE,

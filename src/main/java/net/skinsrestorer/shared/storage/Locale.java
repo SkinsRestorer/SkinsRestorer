@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -104,9 +105,9 @@ public class Locale {
     //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
     private static YamlConfig locale;
 
-    public static void load(File path) {
+    public static void load(File path, SRLogger logger) {
         try {
-            locale = new YamlConfig(path, "messages.yml", true);
+            locale = new YamlConfig(path, "messages.yml", true, logger);
             locale.saveDefaultConfig();
             locale.reload();
 
@@ -124,7 +125,7 @@ public class Locale {
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
+            logger.log("§cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }
