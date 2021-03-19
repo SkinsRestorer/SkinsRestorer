@@ -46,6 +46,7 @@ public class C {
     }
 
     public static boolean validUsername(String username) {
+        //Note: there are exceptions of players with under 3 characters, who bought the game early in its development.
         if (username.length() > 16)
             return false;
 
