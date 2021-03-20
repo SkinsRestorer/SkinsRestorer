@@ -180,30 +180,10 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        srLogger,
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                this.skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
-                getProxy().getPluginManager().unregisterListeners(this);
-                getProxy().getPluginManager().unregisterCommands(this);
-                return false;
-            }
-        } else {
-            this.skinStorage.loadFolders(getDataFolder());
+        if (!SharedMethods.initMysql(srLogger, skinStorage, getDataFolder())) {
+            getProxy().getPluginManager().unregisterListeners(this);
+            getProxy().getPluginManager().unregisterCommands(this);
+            return false;
         }
 
         // Preload default skins

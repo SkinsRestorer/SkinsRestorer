@@ -21,8 +21,12 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class SharedMethods {
@@ -51,5 +55,34 @@ public class SharedMethods {
             log.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
             log.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean initMysql(SRLogger srLogger, SkinStorage skinStorage, File dataFolder) {
+        if (Config.MYSQL_ENABLED) {
+            try {
+                MySQL mysql = new MySQL(
+                        srLogger,
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD,
+                        Config.MYSQL_CONNECTIONOPTIONS
+                );
+
+                mysql.openConnection();
+                mysql.createTable();
+
+                skinStorage.setMysql(mysql);
+            } catch (Exception e) {
+                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+                return false;
+            }
+        } else {
+            skinStorage.loadFolders(dataFolder);
+        }
+
+        return true;
     }
 }

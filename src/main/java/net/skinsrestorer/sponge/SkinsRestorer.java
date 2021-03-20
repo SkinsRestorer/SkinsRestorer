@@ -181,29 +181,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        srLogger,
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
-                return false;
-            }
-        } else {
-            skinStorage.loadFolders(configPath);
-        }
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
         // Preload default skins
         Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);

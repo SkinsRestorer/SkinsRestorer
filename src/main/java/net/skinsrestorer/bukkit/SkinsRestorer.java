@@ -352,30 +352,9 @@ public class SkinsRestorer extends JavaPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        srLogger,
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
-                e.printStackTrace();
-                Bukkit.getPluginManager().disablePlugin(this);
-                return false;
-            }
-        } else {
-            skinStorage.loadFolders(getDataFolder());
+        if (!SharedMethods.initMysql(srLogger, skinStorage, getDataFolder())) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            return false;
         }
 
         // Preload default skins
@@ -441,6 +420,7 @@ public class SkinsRestorer extends JavaPlugin {
                     writer.write(String.valueOf(sb1));
                 }
             }
+
             if (warning.exists() && !bungeeEnabled)
                 Files.delete(warning.toPath());
         } catch (Exception ignored) {

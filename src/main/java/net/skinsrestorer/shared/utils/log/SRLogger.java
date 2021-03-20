@@ -84,6 +84,10 @@ public class SRLogger {
         log(SRLogLevel.INFO, message);
     }
 
+    public void log(String message, Throwable thrown) {
+        log(SRLogLevel.INFO, message, thrown);
+    }
+
     public void log(SRLogLevel level, String message) {
         logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message);
     }

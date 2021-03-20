@@ -41,7 +41,6 @@ import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -182,29 +181,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        srLogger,
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.");
-                return false;
-            }
-        } else {
-            skinStorage.loadFolders(dataFolder);
-        }
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
         // Preload default skins
         getService().execute(skinStorage::preloadDefaultSkins);
@@ -225,11 +202,9 @@ public class SkinsRestorer implements ISRPlugin {
 
             @Override
             public void upToDate() {
-                if (!showUpToDate)
-                    return;
-
-                updateChecker.getUpToDateMessages(getVersion(), false)
-                        .forEach(msg -> console.sendMessage(deserialize(msg)));
+                if (showUpToDate)
+                    updateChecker.getUpToDateMessages(getVersion(), false)
+                            .forEach(msg -> console.sendMessage(deserialize(msg)));
             }
         }));
     }
