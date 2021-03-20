@@ -24,6 +24,7 @@ package net.skinsrestorer.bukkit.listener;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.SRLogger;
@@ -52,12 +53,22 @@ public class PlayerJoin implements Listener {
                 final Player player = e.getPlayer();
                 final String name = player.getName();
                 final String skin = skinStorage.getDefaultSkinNameIfEnabled(name);
+                Object texture;
 
                 if (C.validUrl(skin)) {
-                    plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                    texture = plugin.getMineSkinAPI().genSkin(skin);
                 } else {
-                    plugin.getFactory().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin, false));
+                    texture = skinStorage.getOrCreateSkinForPlayer(skin, true);
                 }
+
+                if (texture == null) {
+                    //todo @xknat finish this (add perms etc)
+                    //player.sendMessage(Locale.PREFIX + "No skin for your account found. \nGet a skin by running /skin");
+                    return;
+                }
+
+                //Apply the skin
+                plugin.getFactory().applySkin(player, texture);
             } catch (SkinRequestException ignored) {
             }
         });
