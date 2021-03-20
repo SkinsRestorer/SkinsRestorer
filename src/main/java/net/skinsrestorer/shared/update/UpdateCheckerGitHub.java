@@ -24,8 +24,8 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
@@ -53,7 +53,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", this.userAgent);
-          
+
             JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
 
