@@ -35,12 +35,12 @@ public interface SkinFactory {
      * @param props - Property Object
      */
     default void applySkin(final Player p, Object props) {
+        if (props == null)
+            return;
+
         // delay 1 servertick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
             try {
-                if (props == null)
-                    return;
-
                 Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
                 Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
                 Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
