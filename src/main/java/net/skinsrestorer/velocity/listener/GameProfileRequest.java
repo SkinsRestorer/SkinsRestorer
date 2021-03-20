@@ -39,17 +39,17 @@ public class GameProfileRequest {
         log = plugin.getSrLogger();
     }
 
+    //todo make async, add getOrCreateSkinForPlayer, make join same on all implementations
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent e) {
-        String name = e.getUsername();
-
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
         if (e.isOnlineMode())
             return;
 
-        String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        final String name = e.getUsername();
+        final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
 
         //todo: default skinurl support
         try {
