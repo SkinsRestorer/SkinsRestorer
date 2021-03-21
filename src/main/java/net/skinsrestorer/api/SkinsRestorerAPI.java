@@ -39,7 +39,7 @@ public abstract class SkinsRestorerAPI {
     private final SkinStorage skinStorage;
 
     protected SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-        if (api == null)
+        if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
         this.mojangAPI = mojangAPI;
@@ -47,7 +47,8 @@ public abstract class SkinsRestorerAPI {
     }
 
     private static void setInstance(SkinsRestorerAPI api) {
-        SkinsRestorerAPI.api = api;
+        if (SkinsRestorerAPI.api == null)
+            SkinsRestorerAPI.api = api;
     }
 
     public Object getProfile(String uuid) {

@@ -103,7 +103,7 @@ public class SkinStorage {
                     getOrCreateSkinForPlayer(skin, false);
                 }
             } catch (SkinRequestException e) {
-                //removing skin from list
+                // removing skin from list
                 toRemove.add(skin);
                 logger.log(SRLogLevel.WARNING, "[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
 
@@ -117,7 +117,7 @@ public class SkinStorage {
 
 
     public Object createProperty(String name, String value, String signature) {
-        // use our own propery class if we are on skinsrestorer.sponge
+        // use our own property class if we are on sponge
         if (isSponge) {
             Property p = new Property();
 
@@ -209,8 +209,7 @@ public class SkinStorage {
                     e.printStackTrace();
                 }
         } else {
-            //Escape all windows / linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeForbiddenChars(name);
             final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
@@ -259,25 +258,15 @@ public class SkinStorage {
                     final String signature = crs.getString("Signature");
                     final String timestamp = crs.getString("timestamp");
 
-                    if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                        final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
-                        if (skin != null) {
-                            setSkinData(name, skin);
-                            return skin;
-                        }
-                    }
-
-                    return createProperty("textures", value, signature);
+                    return updateOutdated(name, updateOutdated, value, signature, timestamp);
 
                 } catch (Exception e) {
                     removeSkinData(name);
                     logger.log("Unsupported player format.. removing (" + name + ").");
                 }
         } else {
-            // Remove all whitespace
-            name = name.replaceAll("\\s", "");
-            //Escape all Windows / Linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeWhitespaces(name);
+            name = removeForbiddenChars(name);
             File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             try {
@@ -304,16 +293,7 @@ public class SkinStorage {
                             }
                 }
 
-                if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-                    final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
-
-                    if (skin != null) {
-                        setSkinData(name, skin);
-                        return skin;
-                    }
-                }
-
-                return createProperty("textures", value, signature);
+                return updateOutdated(name, updateOutdated, value, signature, timestamp);
 
             } catch (Exception e) {
                 removeSkinData(name);
@@ -321,6 +301,19 @@ public class SkinStorage {
             }
         }
         return null;
+    }
+
+    private Object updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
+        if (updateOutdated && isOld(Long.parseLong(timestamp))) {
+            final Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
+
+            if (skin != null) {
+                setSkinData(name, skin);
+                return skin;
+            }
+        }
+
+        return createProperty("textures", value, signature);
     }
 
     public Object getSkinData(String name) {
@@ -352,8 +345,7 @@ public class SkinStorage {
         if (Config.MYSQL_ENABLED) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYERTABLE + " WHERE Nick=?", name);
         } else {
-            //Escape all windows / linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeForbiddenChars(name);
             final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             if (playerFile.exists()) {
@@ -377,10 +369,8 @@ public class SkinStorage {
         if (Config.MYSQL_ENABLED) {
             mysql.execute("DELETE FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
         } else {
-            // Remove all whitespace
-            name = name.replaceAll("\\s", "");
-            //Escape all Windows / Linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeWhitespaces(name);
+            name = removeForbiddenChars(name);
             final File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + name + ".skin");
 
             if (skinFile.exists()) {
@@ -406,8 +396,7 @@ public class SkinStorage {
             mysql.execute("INSERT INTO " + Config.MYSQL_PLAYERTABLE + " (Nick, Skin) VALUES (?,?)"
                     + " ON DUPLICATE KEY UPDATE Skin=?", name, skin, skin);
         } else {
-            //Escape all windows / linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeForbiddenChars(name);
             final File playerFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Players" + File.separator + name + ".player");
 
             try {
@@ -415,10 +404,9 @@ public class SkinStorage {
                     throw new IOException("Could not create player file!");
 
                 try (FileWriter writer = new FileWriter(playerFile)) {
-                    // Remove all whitespace
-                    skin = skin.replaceAll("\\s", "");
-                    //Escape all Windows / Linux forbidden printable ASCII characters
-                    skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
+                    skin = removeWhitespaces(skin);
+                    skin = removeForbiddenChars(skin);
+
                     writer.write(skin);
                 }
             } catch (IOException e) {
@@ -649,10 +637,9 @@ public class SkinStorage {
                 } catch (Exception ignored) {
                 }
         } else {
-            // Remove all whitespace
-            skin = skin.replaceAll("\\s", "");
-            //Escape all Windows / Linux forbidden printable ASCII characters
-            skin = skin.replaceAll("[\\\\/:*?\"<>|]", "·");
+            skin = removeWhitespaces(skin);
+            skin = removeForbiddenChars(skin);
+
             File skinFile = new File(pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator + skin + ".skin");
 
             try {
@@ -678,7 +665,7 @@ public class SkinStorage {
         if (timestamp.equals("0"))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
-        //Update Skin
+        // Update Skin
         try {
             final Object textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
 
@@ -775,5 +762,15 @@ public class SkinStorage {
             this.isSponge = isSponge;
             this.isVelocity = isVelocity;
         }
+    }
+
+    private String removeForbiddenChars(String str) {
+        // Escape all Windows / Linux forbidden printable ASCII characters
+        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
+    }
+
+    private String removeWhitespaces(String str) {
+        // Remove all whitespace
+        return str.replaceAll("\\s", "");
     }
 }
