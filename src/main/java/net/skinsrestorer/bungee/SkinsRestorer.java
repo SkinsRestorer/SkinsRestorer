@@ -201,8 +201,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
-                        console.sendMessage(TextComponent.fromLegacyText(msg)));
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(srLogger::log);
             }
 
             @Override
@@ -210,7 +209,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg -> console.sendMessage(TextComponent.fromLegacyText(msg)));
+                updateChecker.getUpToDateMessages(getVersion(), false).forEach(srLogger::log);
             }
         }));
     }

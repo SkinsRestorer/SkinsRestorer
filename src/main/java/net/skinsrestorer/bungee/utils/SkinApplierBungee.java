@@ -26,6 +26,7 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
@@ -44,17 +45,19 @@ public class SkinApplierBungee implements ISRApplier {
         log = plugin.getSrLogger();
     }
 
-    public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
-        if (p == null && handler == null)
+    public void applySkin(final ProxiedPlayer p, String nick, InitialHandler handler) throws Exception {
+        if (p == null)
             return;
 
-        if (p != null) {
+        if (handler == null) {
             handler = (InitialHandler) p.getPendingConnection();
         }
 
+        nick = plugin.getProxy().getPluginManager().callEvent(new SkinApplyBungeeEvent(p, nick)).getNick();
+
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false);
 
-        if (handler.isOnlineMode() && p != null) {
+        if (handler.isOnlineMode()) {
             sendUpdateRequest(p, textures);
             return;
         }
@@ -79,11 +82,9 @@ public class SkinApplierBungee implements ISRApplier {
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
         if (plugin.isMultiBungee()) {
-            if (p != null)
-                sendUpdateRequest(p, textures);
+            sendUpdateRequest(p, textures);
         } else {
-            if (p != null)
-                sendUpdateRequest(p, null);
+            sendUpdateRequest(p, null);
         }
     }
 

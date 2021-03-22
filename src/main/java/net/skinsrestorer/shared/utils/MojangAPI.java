@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.GenericProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,9 +47,9 @@ public class MojangAPI {
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private final SRLogger logger;
-    private @Getter
+    @Getter
     @Setter
-    SkinStorage skinStorage;
+    private SkinStorage skinStorage;
 
     public MojangAPI(SRLogger logger) {
         this.logger = logger;
@@ -67,12 +68,11 @@ public class MojangAPI {
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
     public Object getSkinProperty(String uuid, boolean tryNext) {
-        String output;
         try {
-            output = readURL(SKIN_URL.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
 
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
@@ -85,7 +85,6 @@ public class MojangAPI {
                     return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
-
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -102,17 +101,15 @@ public class MojangAPI {
         if (tryNext)
             logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
 
-        String output;
         try {
-            output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
 
             if (obj.has("properties") && property.valuesFromJson(obj)) {
                 return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
-
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyBackup(uuid);
@@ -135,12 +132,11 @@ public class MojangAPI {
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
             property.setValue(rawTextures.get("value").getAsString());
             property.setSignature(rawTextures.get("signature").getAsString());
 
             return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
-
         } catch (Exception e) {
             logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
@@ -154,10 +150,8 @@ public class MojangAPI {
      * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
      */
     public String getUUID(String name, boolean tryNext) throws SkinRequestException {
-        String output;
-
         try {
-            output = readURL(UUID_URL.replace("%name%", name));
+            String output = readURL(UUID_URL.replace("%name%", name));
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
@@ -185,9 +179,8 @@ public class MojangAPI {
         if (tryNext)
             logger.debug("Trying Mojang API to get UUID for player " + name + ".");
 
-        String output;
         try {
-            output = readURL(UUID_URL_MOJANG.replace("%name%", name));
+            String output = readURL(UUID_URL_MOJANG.replace("%name%", name));
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);

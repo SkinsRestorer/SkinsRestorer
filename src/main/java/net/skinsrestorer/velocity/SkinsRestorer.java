@@ -197,14 +197,14 @@ public class SkinsRestorer implements ISRPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
-                        .forEach(msg -> console.sendMessage(deserialize(msg)));
+                        .forEach(srLogger::log);
             }
 
             @Override
             public void upToDate() {
                 if (showUpToDate)
                     updateChecker.getUpToDateMessages(getVersion(), false)
-                            .forEach(msg -> console.sendMessage(deserialize(msg)));
+                            .forEach(srLogger::log);
             }
         }));
     }

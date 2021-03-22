@@ -41,6 +41,7 @@ import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.GenericProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -85,14 +86,14 @@ public class SkinsRestorer extends JavaPlugin {
     @Getter
     private SkinCommand skinCommand;
 
-    private static Map<String, Property> convertToObject(byte[] byteArr) {
-        Map<String, Property> map = new TreeMap<>();
+    private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
+        Map<String, GenericProperty> map = new TreeMap<>();
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
             ObjectInputStream ois = new ObjectInputStream(bis);
 
             while (bis.available() > 0) {
-                map = (Map<String, Property>) ois.readObject();
+                map = (Map<String, GenericProperty>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -218,7 +219,7 @@ public class SkinsRestorer extends JavaPlugin {
                             byte[] msgBytes = new byte[len];
                             in.readFully(msgBytes);
 
-                            Map<String, Property> skinList = convertToObject(msgBytes);
+                            Map<String, GenericProperty> skinList = convertToObject(msgBytes);
 
                             //convert
                             Map<String, Object> newSkinList = new TreeMap<>();
@@ -456,8 +457,7 @@ public class SkinsRestorer extends JavaPlugin {
                     }
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(msg ->
-                        console.sendMessage(msg));
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(srLogger::log);
             }
 
             @Override
@@ -465,7 +465,7 @@ public class SkinsRestorer extends JavaPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> console.sendMessage(msg));
+                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(srLogger::log);
             }
         }));
     }

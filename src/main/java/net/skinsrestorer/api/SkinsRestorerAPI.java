@@ -51,24 +51,37 @@ public abstract class SkinsRestorerAPI {
             SkinsRestorerAPI.api = api;
     }
 
+    /**
+     * Returned object needs to be casted to either BungeeCord's property or
+     * Mojang's property (old or new)
+     *
+     * @param uuid - The players uuid
+     * @return Property object (New Mojang, Old Mojang or Bungee)
+     **/
     public Object getProfile(String uuid) {
         return mojangAPI.getSkinProperty(uuid);
     }
 
-    public String getSkinName(String playerName) {
-        return skinStorage.getPlayerSkin(playerName);
+    public String getSkinName(String name) {
+        return skinStorage.getPlayerSkin(name);
     }
 
-    public Object getSkinData(String skinName) {
-        return skinStorage.getSkinData(skinName);
+    public Object getSkinData(String skin) {
+        return skinStorage.getSkinData(skin);
     }
 
-    public boolean hasSkin(String playerName) {
-        return skinStorage.getPlayerSkin(playerName) != null;
+    public boolean hasSkin(String name) {
+        return skinStorage.getPlayerSkin(name) != null;
     }
 
-    public void setSkinName(String playerName, String skinName) {
-        skinStorage.setPlayerSkin(playerName, skinName);
+    /**
+     * Saves custom player's skin name to database
+     *
+     * @param name - Players name
+     * @param skin - Skin name
+     **/
+    public void setSkinName(String name, String skin) {
+        skinStorage.setPlayerSkin(name, skin);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {

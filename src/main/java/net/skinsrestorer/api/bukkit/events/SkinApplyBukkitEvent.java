@@ -6,12 +6,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class SkinApplyEvent extends PlayerEvent implements Cancellable {
+public class SkinApplyBukkitEvent extends PlayerEvent implements Cancellable {
     public static final HandlerList HANDLERS = new HandlerList();
     private boolean isCancelled = false;
     private final Object props;
 
-    public SkinApplyEvent(@NotNull Player who, Object props) {
+    public SkinApplyBukkitEvent(@NotNull Player who, Object props) {
         super(who);
         this.props = props;
     }

@@ -19,33 +19,20 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils.property;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import lombok.Data;
 
 import java.io.Serializable;
 
-public @Data
-class Property implements Serializable {
+@Data
+public class GenericProperty implements Serializable, IProperty {
     private String name;
     private String value;
     private String signature;
 
-    public boolean valuesFromJson(JsonObject obj) {
-        if (obj.has("properties")) {
-            JsonArray properties = obj.getAsJsonArray("properties");
-            if (properties.size() > 0) {
-                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
-
-                signature = propertiesObject.get("signature").getAsString();
-                value = propertiesObject.get("value").getAsString();
-
-                return true;
-            }
-        }
-
-        return false;
+    @Override
+    public Object getHandle() {
+        throw new UnsupportedOperationException();
     }
 }

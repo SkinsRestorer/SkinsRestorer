@@ -86,25 +86,25 @@ public class UpdateChecker {
 
     public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
         List<String> upToDateMessages = new LinkedList<>();
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        upToDateMessages.add("§a----------------------------------------------");
+        upToDateMessages.add("§a    +===============+");
+        upToDateMessages.add("§a    | SkinsRestorer |");
         if (bungeeMode) {
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+            upToDateMessages.add("§a    |---------------|");
+            upToDateMessages.add("§a    |  §eBungee Mode§a  |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
-                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-                upToDateMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+                upToDateMessages.add("§a    |---------------|");
+                upToDateMessages.add("§a    |  §9§n§lBukkit only§a  |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §a" + currentVersion);
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a    This is the latest version!");
-        upToDateMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        upToDateMessages.add("§a    +===============+");
+        upToDateMessages.add("§a----------------------------------------------");
+        upToDateMessages.add("§b    Current version: §a" + currentVersion);
+        upToDateMessages.add("§a    This is the latest version!");
+        upToDateMessages.add("§a----------------------------------------------");
 
         return upToDateMessages;
     }
@@ -117,39 +117,39 @@ public class UpdateChecker {
     public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
         List<String> updateAvailableMessages = new LinkedList<>();
 
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    | SkinsRestorer |");
+        updateAvailableMessages.add("§a----------------------------------------------");
+        updateAvailableMessages.add("§a    +===============+");
+        updateAvailableMessages.add("§a    | SkinsRestorer |");
         if (bungeeMode) {
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §eBungee Mode§a  |");
+            updateAvailableMessages.add("§a    |---------------|");
+            updateAvailableMessages.add("§a    |  §eBungee Mode§a  |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
-                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |---------------|");
-                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    |  §9§n§lBukkit only§a  |");
+                updateAvailableMessages.add("§a    |---------------|");
+                updateAvailableMessages.add("§a    |  §9§n§lBukkit only§a  |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a    +===============+");
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    Current version: §c" + currentVersion);
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §b    New version: §c" + newVersion);
+        updateAvailableMessages.add("§a    +===============+");
+        updateAvailableMessages.add("§a----------------------------------------------");
+        updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
+        updateAvailableMessages.add("§b    New version: §c" + newVersion);
 
         if (updateDownloader && hasDirectDownload) {
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e]     A new version is available! Downloading it now...");
+            updateAvailableMessages.add("    A new version is available! Downloading it now...");
             if (failReason == null) {
-                updateAvailableMessages.add("§e[§2SkinsRestorer§e]     Update downloaded successfully, it will be applied on the next restart.");
+                updateAvailableMessages.add("    Update downloaded successfully, it will be applied on the next restart.");
             } else {
                 // Update failed
-                updateAvailableMessages.add("§e[§2SkinsRestorer§e] §cCould not download the update, reason: " + failReason);
+                updateAvailableMessages.add("§cCould not download the update, reason: " + failReason);
             }
         } else {
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §e    A new version is available! Download it at:");
-            updateAvailableMessages.add("§e[§2SkinsRestorer§e] §e    " + downloadUrl);
+            updateAvailableMessages.add("§e    A new version is available! Download it at:");
+            updateAvailableMessages.add("§e    " + downloadUrl);
         }
 
-        updateAvailableMessages.add("§e[§2SkinsRestorer§e] §a----------------------------------------------");
+        updateAvailableMessages.add("§a----------------------------------------------");
 
         return updateAvailableMessages;
     }

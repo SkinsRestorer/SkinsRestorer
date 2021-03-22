@@ -26,7 +26,7 @@ import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MojangAPI;
-import net.skinsrestorer.shared.utils.Property;
+import net.skinsrestorer.shared.utils.property.GenericProperty;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -119,7 +119,7 @@ public class SkinStorage {
     public Object createProperty(String name, String value, String signature) {
         // use our own property class if we are on sponge
         if (isSponge) {
-            Property p = new Property();
+            GenericProperty p = new GenericProperty();
 
             p.setName(name);
             p.setValue(value);
@@ -538,8 +538,8 @@ public class SkinStorage {
     // Todo: needs a lot refactoring!
     // Todo: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
     // Todo: That should save lots of duplicated code
-    public Map<String, Property> getSkinsRaw(int number) {
-        Map<String, Property> list = new TreeMap<>();
+    public Map<String, GenericProperty> getSkinsRaw(int number) {
+        Map<String, GenericProperty> list = new TreeMap<>();
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
             int i = 0;
@@ -547,7 +547,7 @@ public class SkinStorage {
             try {
                 do {
                     if (i >= number && foundSkins <= 26) {
-                        Property prop = new Property();
+                        GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
                         prop.setValue(crs.getString("Value"));
                         prop.setSignature(crs.getString("Signature"));
@@ -599,7 +599,7 @@ public class SkinStorage {
                                     }
                         }
 
-                        Property prop = new Property();
+                        GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
                         prop.setValue(value);
                         prop.setSignature(signature);
