@@ -63,7 +63,7 @@ public class OldSkinRefresher implements Consumer<Player> {
 
     static {
         try {
-            SkinsRestorer plugin = SkinsRestorer.getInstance();
+            SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
             SRLogger log = plugin.getSrLogger();
 
             packet = ReflectionUtil.getNMSClass("Packet");
@@ -91,7 +91,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             }
 
-            plugin.getServer().getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
@@ -100,7 +100,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            log.log("[SkinsRestorer] Using SpigotSkinRefresher");
+            log.log("Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }
@@ -311,7 +311,7 @@ public class OldSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTask(SkinsRestorer.getPlugin(SkinsRestorer.class), () -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);

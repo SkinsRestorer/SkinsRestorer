@@ -34,7 +34,10 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.skinfactory.SkinFactory;
 import net.skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
-import net.skinsrestorer.shared.storage.*;
+import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.YamlConfig;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
@@ -45,7 +48,6 @@ import net.skinsrestorer.shared.utils.property.GenericProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -57,33 +59,19 @@ import java.nio.file.Files;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    @Getter
-    private static SkinsRestorer instance;
-    @Getter
-    private final File configPath = getDataFolder();
-    @Getter
     private SkinFactory factory;
-    @Getter
     private UpdateChecker updateChecker;
-    @Getter
-    private
-    boolean bungeeEnabled;
+    private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateDownloaderGithub updateDownloader;
-    private CommandSender console;
-    @Getter
     private SRLogger srLogger;
-    @Getter
     private SkinStorage skinStorage;
-    @Getter
     private MojangAPI mojangAPI;
-    @Getter
     private MineSkinAPI mineSkinAPI;
-    @Getter
     private SkinsRestorerAPI skinsRestorerAPI;
-    @Getter
     private SkinCommand skinCommand;
 
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
@@ -107,19 +95,15 @@ public class SkinsRestorer extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        console = getServer().getConsoleSender();
         srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger()), true);
-
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
-        int pluginId = 1669; // SkinsRestorer's ID on bStats, for Bukkit
-        Metrics metrics = new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, 1669);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        instance = this;
         factory = new UniversalSkinFactory(this);
 
         srLogger.log("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
@@ -167,7 +151,7 @@ public class SkinsRestorer extends JavaPlugin {
                 if (!channel.equals("sr:skinchange"))
                     return;
 
-                Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
@@ -192,7 +176,7 @@ public class SkinsRestorer extends JavaPlugin {
                 if (!channel.equals("sr:messagechannel"))
                     return;
 
-                Bukkit.getScheduler().runTaskAsynchronously(getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
@@ -224,17 +208,13 @@ public class SkinsRestorer extends JavaPlugin {
                             //convert
                             Map<String, Object> newSkinList = new TreeMap<>();
 
-                            skinList.forEach((name, property) -> {
-                                newSkinList.put(name, getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature()));
-                            });
+                            skinList.forEach((name, property) -> newSkinList.put(name, getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature())));
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
                             ++page; // start counting from 1
                             Inventory inventory = skinsGUI.getGUI(p, page, newSkinList);
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
-                                p.openInventory(inventory);
-                            });
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> p.openInventory(inventory));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

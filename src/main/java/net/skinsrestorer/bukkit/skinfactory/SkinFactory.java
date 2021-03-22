@@ -36,6 +36,7 @@ public interface SkinFactory {
      * @param props - Property Object
      */
     default void applySkin(final Player p, Object props) {
+        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
         SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(p, props);
 
         Bukkit.getPluginManager().callEvent(applyEvent);
@@ -44,7 +45,7 @@ public interface SkinFactory {
             return;
 
         // delay 1 servertick so we override online-mode
-        Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try {
                 if (props == null)
                     return;
@@ -55,7 +56,7 @@ public interface SkinFactory {
                 ReflectionUtil.invokeMethod(propMap, "clear");
                 ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", props);
 
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> updateSkin(p));
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(p));
             } catch (Exception e) {
                 e.printStackTrace();
             }

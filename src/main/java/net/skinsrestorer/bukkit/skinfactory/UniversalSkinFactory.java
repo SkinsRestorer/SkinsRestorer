@@ -25,6 +25,7 @@ import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -43,19 +44,23 @@ public class UniversalSkinFactory implements SkinFactory {
     private boolean enableRemountPlayer;
 
     private static Consumer<Player> detectRefresh() {
+        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
+
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
-        if (!version.startsWith("1."))
-            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+        if (!version.startsWith("1.")) {
+            plugin.getSrLogger().log(SRLogLevel.WARNING, "[!] WARNING [!]");
+            plugin.getSrLogger().log(SRLogLevel.WARNING, "Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+        }
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
         // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean viaVersion = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean protocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
         if (viaVersion || protocolSupportExists) {
-            SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
+            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
         }
 

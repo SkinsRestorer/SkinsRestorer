@@ -21,7 +21,6 @@
  */
 package net.skinsrestorer.sponge.utils;
 
-import com.flowpowered.math.vector.Vector3d;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
@@ -33,8 +32,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import java.util.Collection;

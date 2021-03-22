@@ -25,9 +25,7 @@ import co.aikar.commands.BungeeCommandIssuer;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import lombok.Getter;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -40,7 +38,6 @@ import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -54,31 +51,20 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
-    @Getter
     private final File configPath = getDataFolder();
-    @Getter
     private boolean multiBungee;
-    @Getter
     private boolean outdated;
-    private CommandSender console;
     private UpdateChecker updateChecker;
-    @Getter
     private SkinApplierBungee skinApplierBungee;
-    @Getter
     private SRLogger srLogger;
-    @Getter
     private SkinStorage skinStorage;
-    @Getter
     private MojangAPI mojangAPI;
-    @Getter
     private MineSkinAPI mineSkinAPI;
-    @Getter
     private PluginMessageListener pluginMessageListener;
-    @Getter
     private SkinCommand skinCommand;
-    @Getter
     private SkinsRestorerAPI skinsRestorerBungeeAPI;
 
     public String getVersion() {
@@ -88,11 +74,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     @Override
     public void onEnable() {
         srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger()), true);
-        console = getProxy().getConsole();
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
-        int pluginId = 1686; // SkinsRestorer's ID on bStats, for Bungeecord
-        Metrics metrics = new Metrics(this, pluginId);
+        Metrics metrics = new Metrics(this, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));

@@ -188,26 +188,26 @@ public class SkinsGUI extends ItemStack implements Listener {
         if (plugin.isBungeeEnabled()) {
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
                         plugin.requestSkinSetFromBungeeCord(player, skin);
                     });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
                             plugin.requestSkinClearFromBungeeCord(player));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         int currentPageG = getMenus().get(player.getName());
                         getMenus().put(player.getName(), currentPageG + 1);
                         plugin.requestSkinsFromBungeeCord(player, currentPageG + 1);
                     });
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         int currentPageY = getMenus().get(player.getName());
                         getMenus().put(player.getName(), currentPageY - 1);
                         plugin.requestSkinsFromBungeeCord(player, currentPageY - 1);
@@ -223,7 +223,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         // Todo use #setSkin() function from SkinCommand.class
         switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
             case PLAYER_HEAD:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final String skinName = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
                     plugin.getSkinCommand().onSkinSetShort(player, skinName);
                 });
@@ -234,22 +234,22 @@ public class SkinsGUI extends ItemStack implements Listener {
                 player.closeInventory();
                 break;
             case GREEN_STAINED_GLASS_PANE:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final int currentPageA = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageA + 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageA + 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                             player.openInventory(newInventory));
                 });
                 break;
             case YELLOW_STAINED_GLASS_PANE:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final int currentPageB = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageB - 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageB - 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                             player.openInventory(newInventory));
                 });
                 break;
