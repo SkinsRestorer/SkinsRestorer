@@ -116,7 +116,7 @@ public class SkinsRestorer implements SRPlugin {
 
             Sponge.getScheduler().createTaskBuilder().execute(() -> {
                 checkUpdate(bungeeEnabled, false);
-            }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+            }).interval(60, TimeUnit.MINUTES).delay(60, TimeUnit.MINUTES);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }

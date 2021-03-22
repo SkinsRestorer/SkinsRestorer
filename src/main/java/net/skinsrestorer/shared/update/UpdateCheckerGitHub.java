@@ -66,11 +66,11 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                     callback.upToDate();
                 }
             });
-
         } catch (Exception e) {
-            log.logAlways(Level.WARNING, "Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
-            if (Config.DEBUG)
+            if (Config.DEBUG) {
+                log.logAlways(Level.WARNING, "Failed to get release info from api.github.com.");
                 e.printStackTrace();
+            }
         }
     }
 
