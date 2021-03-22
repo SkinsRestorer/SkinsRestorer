@@ -723,6 +723,16 @@ public class SkinStorage {
         return skin == null ? player : skin;
     }
 
+    private String removeForbiddenChars(String str) {
+        // Escape all Windows / Linux forbidden printable ASCII characters
+        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
+    }
+
+    private String removeWhitespaces(String str) {
+        // Remove all whitespace
+        return str.replaceAll("\\s", "");
+    }
+
     public enum Platform {
         BUKKIT(true, false, false, false),
         BUNGEECORD(false, true, false, false),
@@ -744,15 +754,5 @@ public class SkinStorage {
             this.isSponge = isSponge;
             this.isVelocity = isVelocity;
         }
-    }
-
-    private String removeForbiddenChars(String str) {
-        // Escape all Windows / Linux forbidden printable ASCII characters
-        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
-    }
-
-    private String removeWhitespaces(String str) {
-        // Remove all whitespace
-        return str.replaceAll("\\s", "");
     }
 }

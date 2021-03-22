@@ -63,12 +63,12 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
-    private final Metrics metrics;
     private static final boolean BUNGEE_ENABLED = false;
+    private final Metrics metrics;
+    private final File dataFolder;
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
-    private final File dataFolder;
     private SkinApplierSponge skinApplierSponge;
     private SRLogger srLogger;
     private SkinStorage skinStorage;
