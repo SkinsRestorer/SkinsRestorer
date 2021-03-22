@@ -119,7 +119,7 @@ public class SkinsRestorer implements SRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), getSrLogger(), "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
-            getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
+            getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(60, TimeUnit.MINUTES).delay(60, TimeUnit.MINUTES).schedule();
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
