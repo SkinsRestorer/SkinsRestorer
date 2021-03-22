@@ -150,9 +150,8 @@ public class SkinsRestorer extends JavaPlugin {
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled);
 
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                checkUpdate(bungeeEnabled, false);
-            }, 20 * 60 * 10, 20 * 60 * 10);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () ->
+                    checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.log("Updater Disabled");
         }
@@ -179,6 +178,7 @@ public class SkinsRestorer extends JavaPlugin {
                                 factory.applySkin(player, skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
+
                             factory.updateSkin(player);
                         }
                     } catch (Exception e) {
@@ -410,7 +410,7 @@ public class SkinsRestorer extends JavaPlugin {
         sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the integration of Spigot!");
         sb1.append("\nYou may now Configure SkinsRestorer on Bungee (BungeeCord plugins folder /plugins/SkinsRestorer)");
 
-        File warning = new File(getDataFolder() + File.separator + "(README) Use bungee config for settings! (README)");
+        File warning = new File(getDataFolder(), "(README) Use bungee config for settings! (README)");
         try {
             if (!warning.exists() && bungeeEnabled) {
                 warning.getParentFile().mkdirs();

@@ -80,32 +80,25 @@ public class UniversalSkinFactory implements SkinFactory {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
 
-            //dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
+            // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
             if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
-
                 vehicle.removePassenger(player);
 
                 if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
-
-                    //this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
+                    // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                        //this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
+                        // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
                         if (vehicle.isValid()) {
-
                             vehicle.addPassenger(player);
-
                         }
-
                     }, 1);
                 }
             }
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-            if (Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) {
-                if (!player.isEmpty()) {
-                    for (Entity passenger : player.getPassengers()) {
-                        player.removePassenger(passenger);
-                    }
+            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
+                for (Entity passenger : player.getPassengers()) {
+                    player.removePassenger(passenger);
                 }
             }
 
@@ -116,6 +109,7 @@ public class UniversalSkinFactory implements SkinFactory {
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
+
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {

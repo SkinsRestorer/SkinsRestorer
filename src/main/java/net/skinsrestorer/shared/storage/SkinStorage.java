@@ -525,6 +525,7 @@ public class SkinStorage {
     // Todo: That should save lots of duplicated code
     public Map<String, GenericProperty> getSkinsRaw(int number) {
         Map<String, GenericProperty> list = new TreeMap<>();
+
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKINTABLE + " ORDER BY `Nick`");
             int i = 0;
@@ -544,13 +545,10 @@ public class SkinStorage {
             } catch (SQLException ignored) {
             }
         } else {
-            final String path = pluginFolder.getAbsolutePath() + File.separator + "Skins" + File.separator;
-            final File folder = new File(path);
-
-            //filter out non "*.skin" files.
+            // filter out non "*.skin" files.
             FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
 
-            String[] fileNames = folder.list(skinFileFilter);
+            String[] fileNames = skinsFolder.list(skinFileFilter);
 
             if (fileNames == null)
                 return list;
@@ -561,7 +559,7 @@ public class SkinStorage {
             for (String file : fileNames) {
                 String skinName = file.replace(".skin", "");
 
-                File skinFile = new File(path + file);
+                File skinFile = new File(skinsFolder, file);
                 if (i >= number && foundSkins <= 26) {
 
                     try {
@@ -599,6 +597,7 @@ public class SkinStorage {
                 i++;
             }
         }
+
         return list;
     }
 
