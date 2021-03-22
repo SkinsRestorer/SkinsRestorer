@@ -22,6 +22,8 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,21 +31,22 @@ import java.util.List;
 import java.util.Scanner;
 
 public class YamlConfig {
-    private final String path;
+    private final File path;
     private final String name;
-    private final File file;
     private final boolean setMissing;
+    private final File file;
+    private final SRLogger logger;
     private Object config;
 
-    public YamlConfig(String path, String name, boolean setMissing) {
-        File direc = new File(path);
-        if (!direc.exists())
-            direc.mkdirs();
-
+    public YamlConfig(File path, String name, boolean setMissing, SRLogger logger) {
         this.path = path;
-        this.name = name + ".yml";
+        this.name = name;
         this.setMissing = setMissing;
-        this.file = new File(this.path + this.name);
+        this.file = new File(path, name);
+        this.logger = logger;
+
+        if (!path.exists())
+            path.mkdirs();
     }
 
     private void createNewFile() {
@@ -55,7 +58,7 @@ public class YamlConfig {
     }
 
     public void saveDefaultConfig() {
-        this.saveDefaultConfig(null);
+        saveDefaultConfig(null);
     }
 
     public void saveDefaultConfig(InputStream is) {
@@ -64,12 +67,12 @@ public class YamlConfig {
 
         // create empty file if we got no InputStream with default config
         if (is == null) {
-            this.createNewFile();
+            createNewFile();
             return;
         }
 
-        this.saveResource(is, this.name, false);
-        this.reload();
+        saveResource(is, name, false);
+        reload();
     }
 
     public void saveResource(InputStream in, String resourcePath, boolean replace) {
@@ -101,10 +104,10 @@ public class YamlConfig {
                 }
                 in.close();
             } else {
-                System.out.println("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
-            System.out.println("Could not save " + outFile.getName() + " to " + outFile);
+            logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile);
             ex.printStackTrace();
         }
     }
@@ -119,14 +122,14 @@ public class YamlConfig {
     }
 
     public Object get(String path, Object defValue) {
-        if (get(path) == null && !this.setMissing) {
-            System.out.println("[SkinsRestorer] " + path + " is missing in " + this.name + "! Using default value.");
+        if (get(path) == null && !setMissing) {
+            logger.log(path + " is missing in " + name + "! Using default value.");
             return defValue;
         }
 
         // Save new values if enabled (locale file)
-        if (get(path) == null && this.setMissing) {
-            System.out.println("[SkinsRestorer] Saving new config value " + path + " to " + this.name);
+        if (get(path) == null && setMissing) {
+            logger.log("Saving new config value " + path + " to " + name);
             set(path, defValue);
         }
 
@@ -139,10 +142,6 @@ public class YamlConfig {
 
     public boolean getBoolean(String path, Boolean defValue) {
         return Boolean.parseBoolean(getString(path, defValue));
-    }
-
-    public File getFile() {
-        return file;
     }
 
     public int getInt(String path) {

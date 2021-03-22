@@ -28,25 +28,25 @@ import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
-import net.kyori.text.TextComponent;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -54,6 +54,7 @@ import net.skinsrestorer.velocity.utils.SkinApplierVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -61,28 +62,22 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
-public class SkinsRestorer implements SRPlugin {
-    @Getter
-    private static final String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
-    @Getter
-    private static SkinsRestorer instance;
+public class SkinsRestorer implements ISRPlugin {
     @Getter
     private final ProxyServer proxy;
     @Getter
     private final SRLogger srLogger;
     @Getter
-    private final Path dataFolder;
+    private final File dataFolder;
     @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
-    @Getter
-    private SkinApplierVelocity skinApplierVelocity;
     private CommandSource console;
     private UpdateChecker updateChecker;
+    @Getter
+    private SkinApplierVelocity skinApplierVelocity;
     @Getter
     private SkinStorage skinStorage;
     @Getter
@@ -90,25 +85,23 @@ public class SkinsRestorer implements SRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerAPI skinsRestorerVelocityAPI;
+    private SkinsRestorerAPI skinsRestorerAPI;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
         this.proxy = proxy;
-        srLogger = new SRLogger(dataFolder.toFile());
-        this.dataFolder = dataFolder;
+        srLogger = new SRLogger(dataFolder.toFile(), new Slf4LoggerImpl(logger));
+        this.dataFolder = dataFolder.toFile();
         this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        instance = this;
-        srLogger.logAlways("Enabling SkinsRestorer v" + getVersion());
+        srLogger.log("Enabling SkinsRestorer v" + getVersion());
         console = proxy.getConsoleCommandSource();
-        File updaterDisabled = new File(CONFIG_PATH, "noupdate.txt");
+        File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
-        int pluginId = 10606; // SkinsRestorer's ID on bStats, for Bungeecord
-        Metrics metrics = metricsFactory.make(this, pluginId);
+        Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
@@ -121,14 +114,14 @@ public class SkinsRestorer implements SRPlugin {
 
             getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(SkinStorage.Platform.VELOCITY);
+        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.VELOCITY);
 
         // Init config files
-        Config.load(CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(CONFIG_PATH);
+        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Locale.load(dataFolder, srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -151,28 +144,12 @@ public class SkinsRestorer implements SRPlugin {
         skinApplierVelocity = new SkinApplierVelocity(this);
 
         // Init API
-        skinsRestorerVelocityAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
 
-        srLogger.logAlways("Enabled SkinsRestorer v" + getVersion());
+        srLogger.log("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            console.sendMessage(deserialize("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- "));
-            console.sendMessage(deserialize("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!"));
-            console.sendMessage(deserialize("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!"));
-            console.sendMessage(deserialize("§c[§4Critical§c] ------------------------------------------------------------------------------------------- "));
-        }
-    }
-
-    @Subscribe
-    public void onShutDown(ProxyShutdownEvent ev) {
-        srLogger.logAlways("Disabling SkinsRestorer v" + getVersion());
-        srLogger.logAlways("Disabled SkinsRestorer v" + getVersion());
+        SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
     @SuppressWarnings({"deprecation"})
@@ -194,7 +171,7 @@ public class SkinsRestorer implements SRPlugin {
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-        new CommandPropertiesManager(manager, CONFIG_PATH, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+        new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
 
@@ -204,28 +181,7 @@ public class SkinsRestorer implements SRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.logAlways("§cCan't connect to MySQL! Disabling SkinsRestorer.");
-                return false;
-            }
-        } else {
-            skinStorage.loadFolders(getDataFolder().toFile());
-        }
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
         // Preload default skins
         getService().execute(skinStorage::preloadDefaultSkins);
@@ -240,23 +196,21 @@ public class SkinsRestorer implements SRPlugin {
         getService().execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(msg ->
-                        console.sendMessage(deserialize(msg)));
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
+                        .forEach(srLogger::log);
             }
 
             @Override
             public void upToDate() {
-                if (!showUpToDate)
-                    return;
-
-                updateChecker.getUpToDateMessages(getVersion(), false).forEach(msg ->
-                        console.sendMessage(deserialize(msg)));
+                if (showUpToDate)
+                    updateChecker.getUpToDateMessages(getVersion(), false)
+                            .forEach(srLogger::log);
             }
         }));
     }
 
     public TextComponent deserialize(String string) {
-        return LegacyComponentSerializer.legacy().deserialize(string);
+        return LegacyComponentSerializer.legacySection().deserialize(string);
     }
 
     public String getVersion() {
@@ -270,8 +224,23 @@ public class SkinsRestorer implements SRPlugin {
         return version.orElse("");
     }
 
-    @Override
-    public SRApplier getApplier() {
-        return skinApplierVelocity;
+    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
+        public SkinsRestorerVelocityAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            try {
+                skinApplierVelocity.applySkin(player);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

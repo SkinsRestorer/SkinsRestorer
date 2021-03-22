@@ -28,13 +28,15 @@ import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.GenericProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
 
 public class MojangAPI {
     private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";
@@ -45,9 +47,9 @@ public class MojangAPI {
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private final SRLogger logger;
-    private @Getter
+    @Getter
     @Setter
-    SkinStorage skinStorage;
+    private SkinStorage skinStorage;
 
     public MojangAPI(SRLogger logger) {
         this.logger = logger;
@@ -66,12 +68,11 @@ public class MojangAPI {
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
     public Object getSkinProperty(String uuid, boolean tryNext) {
-        String output;
         try {
-            output = readURL(SKIN_URL.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
 
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
@@ -84,7 +85,6 @@ public class MojangAPI {
                     return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
-
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyMojang(uuid);
@@ -99,19 +99,17 @@ public class MojangAPI {
 
     public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
         if (tryNext)
-            logger.log("Trying Mojang API to get skin property for " + uuid + ".");
+            logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
 
-        String output;
         try {
-            output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
 
             if (obj.has("properties") && property.valuesFromJson(obj)) {
                 return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
             }
-
         } catch (Exception e) {
             if (tryNext)
                 return getSkinPropertyBackup(uuid);
@@ -126,7 +124,7 @@ public class MojangAPI {
 
     public Object getSkinPropertyBackup(String uuid, boolean tryNext) {
         if (tryNext)
-            logger.log("Trying backup API to get skin property for " + uuid + ".");
+            logger.debug("Trying backup API to get skin property for " + uuid + ".");
 
         try {
             String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
@@ -134,14 +132,13 @@ public class MojangAPI {
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
-            Property property = new Property();
+            GenericProperty property = new GenericProperty();
             property.setValue(rawTextures.get("value").getAsString());
             property.setSignature(rawTextures.get("signature").getAsString());
 
-            return this.getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
-
+            return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
+            logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }
 
         return null;
@@ -153,10 +150,8 @@ public class MojangAPI {
      * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
      */
     public String getUUID(String name, boolean tryNext) throws SkinRequestException {
-        String output;
-
         try {
-            output = readURL(UUID_URL.replace("%name%", name));
+            String output = readURL(UUID_URL.replace("%name%", name));
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
@@ -182,11 +177,10 @@ public class MojangAPI {
 
     public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
         if (tryNext)
-            logger.log("Trying Mojang API to get UUID for player " + name + ".");
+            logger.debug("Trying Mojang API to get UUID for player " + name + ".");
 
-        String output;
         try {
-            output = readURL(UUID_URL_MOJANG.replace("%name%", name));
+            String output = readURL(UUID_URL_MOJANG.replace("%name%", name));
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
@@ -215,7 +209,7 @@ public class MojangAPI {
 
     public String getUUIDBackup(String name, boolean tryNext) throws SkinRequestException {
         if (tryNext)
-            logger.log("Trying backup API to get UUID for player " + name + ".");
+            logger.debug("Trying backup API to get UUID for player " + name + ".");
 
         try {
             String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);

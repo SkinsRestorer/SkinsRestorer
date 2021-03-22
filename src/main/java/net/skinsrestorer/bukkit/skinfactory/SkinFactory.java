@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.skinfactory;
 
+import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -35,6 +36,13 @@ public interface SkinFactory {
      * @param props - Property Object
      */
     default void applySkin(final Player p, Object props) {
+        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(p, props);
+
+        Bukkit.getPluginManager().callEvent(applyEvent);
+
+        if (applyEvent.isCancelled())
+            return;
+
         // delay 1 servertick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> {
             try {

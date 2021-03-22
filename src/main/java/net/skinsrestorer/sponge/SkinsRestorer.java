@@ -24,10 +24,10 @@ package net.skinsrestorer.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
 import lombok.Getter;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.data.PluginData;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -35,6 +35,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
@@ -59,19 +61,21 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
+import java.util.logging.LogManager;
 
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
-public class SkinsRestorer implements SRPlugin {
-    @Getter
-    private static SkinsRestorer instance;
+public class SkinsRestorer implements ISRPlugin {
     private final Metrics metrics;
     @Getter
     private final boolean bungeeEnabled = false;
+    @Getter
+    private final File dataFolder;
     @Inject
     protected Game game;
+    private UpdateChecker updateChecker;
+    private CommandSource console;
     @Getter
-    private String configPath;
+    private File configPath;
     @Getter
     private SkinApplierSponge skinApplierSponge;
     @Getter
@@ -83,30 +87,24 @@ public class SkinsRestorer implements SRPlugin {
     @Getter
     private MineSkinAPI mineSkinAPI;
     @Getter
-    private SkinsRestorerAPI skinsRestorerSpongeAPI;
-    private UpdateChecker updateChecker;
-    private CommandSource console;
+    private SkinsRestorerAPI skinsRestorerAPI;
     @Inject
     private Logger log;
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path publicConfigDir;
-
     @Inject
     private PluginContainer container;
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory) {
+    public SkinsRestorer(Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolder) {
         metrics = metricsFactory.make(2337);
+        this.dataFolder = dataFolder.toFile();
     }
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        instance = this;
         console = Sponge.getServer().getConsole();
-        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toString();
-        srLogger = new SRLogger(new File(configPath));
+        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toFile();
+        srLogger = new SRLogger(configPath, new Slf4LoggerImpl(log));
         File updaterDisabled = new File(configPath, "noupdate.txt");
 
         // Check for updates
@@ -114,18 +112,17 @@ public class SkinsRestorer implements SRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate(bungeeEnabled);
 
-            Sponge.getScheduler().createTaskBuilder().execute(() -> {
-                checkUpdate(bungeeEnabled, false);
-            }).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+            Sponge.getScheduler().createTaskBuilder().execute(() ->
+                    checkUpdate(bungeeEnabled, false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
-            srLogger.logAlways(Level.INFO, "Updater Disabled");
+            srLogger.log("Updater Disabled");
         }
-        
-        skinStorage = new SkinStorage(SkinStorage.Platform.SPONGE);
+
+        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.SPONGE);
 
         // Init config files
-        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"));
-        Locale.load(configPath);
+        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Locale.load(configPath, srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -145,20 +142,10 @@ public class SkinsRestorer implements SRPlugin {
         skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        skinsRestorerSpongeAPI = new SkinsRestorerAPI(mojangAPI, skinStorage, this);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
 
         // Run connection check
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            System.out.println("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            System.out.println("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            System.out.println("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            System.out.println("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
-        }
+        SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
     @Listener
@@ -184,7 +171,7 @@ public class SkinsRestorer implements SRPlugin {
             CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
             CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"));
+            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
             SharedMethods.allowIllegalACFNames();
 
@@ -195,28 +182,7 @@ public class SkinsRestorer implements SRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (Config.MYSQL_ENABLED) {
-            try {
-                MySQL mysql = new MySQL(
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_CONNECTIONOPTIONS
-                );
-
-                mysql.openConnection();
-                mysql.createTable();
-
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                System.out.println("§e[§2SkinsRestorer§e] §cCan't connect to MySQL! Disabling SkinsRestorer.");
-                return false;
-            }
-        } else {
-            skinStorage.loadFolders(new File(configPath));
-        }
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
         // Preload default skins
         Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
@@ -231,8 +197,7 @@ public class SkinsRestorer implements SRPlugin {
         Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(msg ->
-                        console.sendMessage(parseMessage(msg)));
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(srLogger::log);
             }
 
             @Override
@@ -240,7 +205,7 @@ public class SkinsRestorer implements SRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(msg -> console.sendMessage(parseMessage(msg)));
+                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(srLogger::log);
             }
         }));
     }
@@ -260,8 +225,23 @@ public class SkinsRestorer implements SRPlugin {
         return version.orElse("");
     }
 
-    @Override
-    public SRApplier getApplier() {
-        return skinApplierSponge;
+    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
+        public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, skinStorage);
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player, Object props) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper player) {
+            try {
+                skinApplierSponge.applySkin(player);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

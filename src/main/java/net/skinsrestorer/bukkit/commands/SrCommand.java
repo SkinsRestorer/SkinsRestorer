@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -48,9 +49,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -63,8 +66,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load(SkinsRestorer.getInstance().getConfigPath());
-        Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"));
+        Locale.load(plugin.getConfigPath(), logger);
+        Config.load(plugin.getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"), logger);
 
         sender.sendMessage(Locale.RELOAD);
     }

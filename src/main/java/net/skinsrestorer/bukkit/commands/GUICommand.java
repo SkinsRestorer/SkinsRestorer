@@ -42,7 +42,7 @@ public class GUICommand extends BaseCommand {
     private final SkinsGUI skinsGUI;
 
     public GUICommand(SkinsRestorer plugin) {
-        this.skinsGUI = new SkinsGUI(plugin);
+        skinsGUI = new SkinsGUI(plugin);
     }
 
     //todo is help even needed for /skins?
@@ -63,7 +63,7 @@ public class GUICommand extends BaseCommand {
             p.sendMessage(Locale.SKINSMENU_OPEN);
 
             SkinsGUI.getMenus().put(p.getName(), 0);
-            Inventory inventory = this.skinsGUI.getGUI(p, 0);
+            Inventory inventory = skinsGUI.getGUI(p, 0);
             Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> p.openInventory(inventory));
         });
     }

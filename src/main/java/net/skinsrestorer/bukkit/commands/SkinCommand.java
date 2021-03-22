@@ -33,7 +33,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -254,7 +254,7 @@ public class SkinCommand extends BaseCommand {
                 //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
                 plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 
                 return true;
             } catch (SkinRequestException e) {
@@ -293,12 +293,12 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 SkinsRestorer.getInstance().getFactory().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
             } catch (Exception e) {
-                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
+                log.debug("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             }
         }

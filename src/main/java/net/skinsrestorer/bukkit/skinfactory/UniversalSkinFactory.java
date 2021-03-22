@@ -46,7 +46,7 @@ public class UniversalSkinFactory implements SkinFactory {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1."))
-             System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
@@ -128,9 +128,9 @@ public class UniversalSkinFactory implements SkinFactory {
     }
 
     private void checkOptFile() {
-        File fileDisableDismountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesdismountplayer");
-        File fileEnableDismountEntities = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "enablesdismountentities");
-        File fileDisableRemountPlayer = new File("plugins" + File.separator + "SkinsRestorer" + File.separator + "disablesremountplayer");
+        File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
+        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
+        File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
 
         if (fileDisableDismountPlayer.exists())
             disableDismountPlayer = true;

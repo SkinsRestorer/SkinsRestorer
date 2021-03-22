@@ -24,7 +24,7 @@ package net.skinsrestorer.bukkit.skinfactory;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -100,7 +100,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            log.logAlways("[SkinsRestorer] Using SpigotSkinRefresher");
+            log.log("[SkinsRestorer] Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }

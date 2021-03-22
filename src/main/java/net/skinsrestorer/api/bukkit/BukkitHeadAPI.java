@@ -32,7 +32,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class BukkitHeadAPI {
-    private BukkitHeadAPI() {}
+    private BukkitHeadAPI() {
+    }
 
     public static void setSkull(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);

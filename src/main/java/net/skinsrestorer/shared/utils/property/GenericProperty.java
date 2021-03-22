@@ -19,8 +19,20 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.utils.property;
 
-public interface SRPlugin {
-    SRApplier getApplier();
+import lombok.Data;
+
+import java.io.Serializable;
+
+@Data
+public class GenericProperty implements Serializable, IProperty {
+    private String name;
+    private String value;
+    private String signature;
+
+    @Override
+    public Object getHandle() {
+        throw new UnsupportedOperationException();
+    }
 }

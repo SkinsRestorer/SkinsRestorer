@@ -27,7 +27,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -102,7 +102,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         skinsList.forEach((name, property) -> {
             if (name.chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                this.srLogger.logAlways("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
+                srLogger.log("ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
                 return;
             }
 
@@ -126,7 +126,7 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1
-        return this.getGUI(p, page, skinsList);
+        return getGUI(p, page, skinsList);
     }
 
     private ItemStack createSkull(String name, Object property) {
@@ -142,7 +142,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         try {
             BukkitHeadAPI.setSkull(is, ((Property) property).getValue());
         } catch (Exception e) {
-            this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+            srLogger.log("ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
             e.printStackTrace();
         }
 
@@ -264,10 +264,10 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public static class GuiGlass {
-        private @Getter
-        ItemStack itemStack;
-        private @Getter
-        String text;
+        @Getter
+        private ItemStack itemStack;
+        @Getter
+        private String text;
 
         public GuiGlass(GlassType glassType) {
             switch (glassType) {
@@ -276,16 +276,16 @@ public class SkinsGUI extends ItemStack implements Listener {
                     text = " ";
                     break;
                 case PREV:
-                    this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
+                    itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
                     break;
                 case NEXT:
-                    this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_NEXT_PAGE);
+                    itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_NEXT_PAGE);
                     break;
                 case DELETE:
-                    this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_REMOVE_SKIN);
+                    itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_REMOVE_SKIN);
                     break;
             }
 

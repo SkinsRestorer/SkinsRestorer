@@ -40,6 +40,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Arrays;
 import java.util.Base64;
@@ -49,9 +50,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -64,8 +67,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load(SkinsRestorer.getInstance().getConfigPath());
-        Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getConfigPath(), logger);
+        Config.load(plugin.getConfigPath(), plugin.getResourceAsStream("config.yml"), logger);
         sender.sendMessage(TextComponent.fromLegacyText(Locale.RELOAD));
     }
 
@@ -76,7 +79,7 @@ public class SrCommand extends BaseCommand {
         sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
         sender.sendMessage(TextComponent.fromLegacyText("§7Checking needed services for SR to work properly..."));
 
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
@@ -166,7 +169,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 final ProxiedPlayer p = target.getPlayer();
                 final String name = p.getName();
@@ -186,7 +189,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <name> <skinurl>")
     public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
-        ProxyServer.getInstance().getScheduler().runAsync(SkinsRestorer.getInstance(), () -> {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
