@@ -30,7 +30,6 @@ import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -47,7 +46,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -61,32 +59,21 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.LogManager;
 
+@Getter
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
+    private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
-    @Getter
-    private final boolean bungeeEnabled = false;
-    @Getter
     private final File dataFolder;
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
-    private CommandSource console;
-    @Getter
-    private File configPath;
-    @Getter
     private SkinApplierSponge skinApplierSponge;
-    @Getter
     private SRLogger srLogger;
-    @Getter
     private SkinStorage skinStorage;
-    @Getter
     private MojangAPI mojangAPI;
-    @Getter
     private MineSkinAPI mineSkinAPI;
-    @Getter
     private SkinsRestorerAPI skinsRestorerAPI;
     @Inject
     private Logger log;
@@ -102,18 +89,16 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        console = Sponge.getServer().getConsole();
-        configPath = Sponge.getGame().getConfigManager().getPluginConfig(this).getDirectory().toFile();
-        srLogger = new SRLogger(configPath, new Slf4LoggerImpl(log));
-        File updaterDisabled = new File(configPath, "noupdate.txt");
+        srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(log));
+        File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         // Check for updates
         if (!updaterDisabled.exists()) {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
-            checkUpdate(bungeeEnabled);
+            checkUpdate();
 
             Sponge.getScheduler().createTaskBuilder().execute(() ->
-                    checkUpdate(bungeeEnabled, false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+                    checkUpdate(false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
             srLogger.log("Updater Disabled");
         }
@@ -121,8 +106,8 @@ public class SkinsRestorer implements ISRPlugin {
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.SPONGE);
 
         // Init config files
-        Config.load(configPath, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
-        Locale.load(configPath, srLogger);
+        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Locale.load(dataFolder, srLogger);
 
         mojangAPI = new MojangAPI(srLogger);
         mineSkinAPI = new MineSkinAPI(srLogger);
@@ -171,7 +156,7 @@ public class SkinsRestorer implements ISRPlugin {
             CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
             CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
 
-            new CommandPropertiesManager(manager, configPath, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
+            new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
             SharedMethods.allowIllegalACFNames();
 
@@ -189,15 +174,15 @@ public class SkinsRestorer implements ISRPlugin {
         return true;
     }
 
-    private void checkUpdate(boolean bungeeMode) {
-        checkUpdate(bungeeMode, true);
+    private void checkUpdate() {
+        checkUpdate(true);
     }
 
-    private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
+    private void checkUpdate(boolean showUpToDate) {
         Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode).forEach(srLogger::log);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::log);
             }
 
             @Override
@@ -205,7 +190,7 @@ public class SkinsRestorer implements ISRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(srLogger::log);
+                updateChecker.getUpToDateMessages(getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::log);
             }
         }));
     }

@@ -25,7 +25,6 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.VelocityCommandIssuer;
 import co.aikar.commands.VelocityCommandManager;
 import com.google.inject.Inject;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -63,28 +62,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
-    @Getter
     private final ProxyServer proxy;
-    @Getter
     private final SRLogger srLogger;
-    @Getter
     private final File dataFolder;
-    @Getter
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
-    private CommandSource console;
     private UpdateChecker updateChecker;
-    @Getter
     private SkinApplierVelocity skinApplierVelocity;
-    @Getter
     private SkinStorage skinStorage;
-    @Getter
     private MojangAPI mojangAPI;
-    @Getter
     private MineSkinAPI mineSkinAPI;
-    @Getter
     private SkinsRestorerAPI skinsRestorerAPI;
 
     @Inject
@@ -98,7 +88,6 @@ public class SkinsRestorer implements ISRPlugin {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
         srLogger.log("Enabling SkinsRestorer v" + getVersion());
-        console = proxy.getConsoleCommandSource();
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);

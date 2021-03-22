@@ -66,8 +66,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load(plugin.getConfigPath(), logger);
-        Config.load(plugin.getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"), logger);
+        Locale.load(plugin.getDataFolder(), logger);
+        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
 
         sender.sendMessage(Locale.RELOAD);
     }
@@ -76,7 +76,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sender.sendMessage("§3----------------------------------------------");
             sender.sendMessage("§7Checking needed services for SR to work properly...");
 
@@ -114,7 +114,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (e.name().equalsIgnoreCase("player"))
                 for (String targetPlayer : targets)
                     plugin.getSkinStorage().removePlayerSkin(targetPlayer);
@@ -134,7 +134,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
                 Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
@@ -188,7 +188,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final Player player = target.getPlayer();
                 final String name = player.getName();
@@ -212,7 +212,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <name> <skinurl>")
     public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),

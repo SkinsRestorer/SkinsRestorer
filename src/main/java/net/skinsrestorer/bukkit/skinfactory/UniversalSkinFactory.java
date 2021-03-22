@@ -25,6 +25,7 @@ import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -43,19 +44,23 @@ public class UniversalSkinFactory implements SkinFactory {
     private boolean enableRemountPlayer;
 
     private static Consumer<Player> detectRefresh() {
+        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
+
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
-        if (!version.startsWith("1."))
-            System.out.println("[SkinsRestorer] [!] WARNING [!] \n[SkinsRestorer] Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+        if (!version.startsWith("1.")) {
+            plugin.getSrLogger().log(SRLogLevel.WARNING, "[!] WARNING [!]");
+            plugin.getSrLogger().log(SRLogLevel.WARNING, "Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+        }
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
         // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean viaVersion = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean protocolSupportExists = SkinsRestorer.getInstance().getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
         if (viaVersion || protocolSupportExists) {
-            SkinsRestorer.getInstance().getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
+            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
             return new OldSkinRefresher();
         }
 
@@ -80,32 +85,25 @@ public class UniversalSkinFactory implements SkinFactory {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
 
-            //dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
+            // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
             if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
-
                 vehicle.removePassenger(player);
 
                 if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
-
-                    //this is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
+                    // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                        //this is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
+                        // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
                         if (vehicle.isValid()) {
-
                             vehicle.addPassenger(player);
-
                         }
-
                     }, 1);
                 }
             }
 
             //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-            if (Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) {
-                if (!player.isEmpty()) {
-                    for (Entity passenger : player.getPassengers()) {
-                        player.removePassenger(passenger);
-                    }
+            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
+                for (Entity passenger : player.getPassengers()) {
+                    player.removePassenger(passenger);
                 }
             }
 
@@ -116,6 +114,7 @@ public class UniversalSkinFactory implements SkinFactory {
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
+
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
