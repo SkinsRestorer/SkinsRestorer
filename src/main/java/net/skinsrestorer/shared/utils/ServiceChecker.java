@@ -24,15 +24,16 @@ package net.skinsrestorer.shared.utils;
 import lombok.Getter;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
-    @Setter
+    private static final String NOTCH_UUID = "069a79f444e94726a5befca90e38aaf5";
     @Getter
-    private ServiceCheckResponse response;
+    private final ServiceCheckResponse response;
     @Setter
     private MojangAPI mojangAPI;
 
@@ -77,21 +78,21 @@ public class ServiceChecker {
         }
 
         // ##### Profile requests #####
-        Object minetools = mojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty minetools = mojangAPI.getSkinProperty(NOTCH_UUID, false);
         if (minetools != null) {
             response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        Object mojang = mojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty mojang = mojangAPI.getSkinPropertyMojang(NOTCH_UUID, false);
         if (mojang != null) {
             response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang.toString());
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty mojangBackup = mojangAPI.getSkinPropertyBackup(NOTCH_UUID, false);
         if (mojangBackup != null) {
             response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
             response.incrementWorkingProfile();
@@ -106,7 +107,7 @@ public class ServiceChecker {
         private final AtomicInteger workingProfile = new AtomicInteger();
 
         public void addResult(String result) {
-            this.results.add(result);
+            results.add(result);
         }
 
         public Integer getWorkingUUID() {

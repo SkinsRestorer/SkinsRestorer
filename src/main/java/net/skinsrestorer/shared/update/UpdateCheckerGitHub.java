@@ -51,7 +51,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
     public void checkForUpdate(final UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", this.userAgent);
+            connection.setRequestProperty("User-Agent", userAgent);
 
             JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
             releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);

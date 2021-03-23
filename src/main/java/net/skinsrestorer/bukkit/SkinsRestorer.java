@@ -396,7 +396,6 @@ public class SkinsRestorer extends JavaPlugin {
                 warning.createNewFile();
 
                 try (FileWriter writer = new FileWriter(warning)) {
-
                     writer.write(String.valueOf(sb1));
                 }
             }
@@ -417,7 +416,7 @@ public class SkinsRestorer extends JavaPlugin {
     }
 
     private void checkUpdate(boolean bungeeMode) {
-        this.checkUpdate(bungeeMode, true);
+        checkUpdate(bungeeMode, true);
     }
 
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {

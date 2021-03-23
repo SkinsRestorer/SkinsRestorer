@@ -22,7 +22,9 @@
 package net.skinsrestorer.shared.utils.property;
 
 import com.mojang.authlib.properties.Property;
+import lombok.ToString;
 
+@ToString
 public class BukkitProperty extends Property implements IProperty {
     public BukkitProperty(String name, String value) {
         super(name, value);

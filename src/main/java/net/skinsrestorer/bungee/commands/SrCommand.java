@@ -27,7 +27,6 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -99,6 +98,7 @@ public class SrCommand extends BaseCommand {
                 sender.sendMessage(TextComponent.fromLegacyText("§aThe plugin currently is in a working state."));
             else
                 sender.sendMessage(TextComponent.fromLegacyText("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info"));
+
             sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
             sender.sendMessage(TextComponent.fromLegacyText("§7SkinsRestorer §6v" + plugin.getVersion()));
             sender.sendMessage(TextComponent.fromLegacyText("§7Server: §6" + plugin.getProxy().getVersion()));
@@ -133,12 +133,10 @@ public class SrCommand extends BaseCommand {
         InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
         LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
 
-
         if (prop == null) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.NO_SKIN_DATA));
             return;
         }
-        //decode
 
         byte[] decoded = Base64.getDecoder().decode(prop.getValue());
 
@@ -148,19 +146,17 @@ public class SrCommand extends BaseCommand {
         long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
         String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
-        CommandSender console = BungeeCord.getInstance().getConsole();
-
         sender.sendMessage(TextComponent.fromLegacyText("§aRequest time: §e" + requestDate));
         sender.sendMessage(TextComponent.fromLegacyText("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
         sender.sendMessage(TextComponent.fromLegacyText("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
         sender.sendMessage(TextComponent.fromLegacyText("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
         sender.sendMessage(TextComponent.fromLegacyText("§cMore info in console!"));
 
-        //console message
-        console.sendMessage(TextComponent.fromLegacyText("\n§aName: §8" + prop.getName()));
-        console.sendMessage(TextComponent.fromLegacyText("\n§aValue : §8" + prop.getValue()));
-        console.sendMessage(TextComponent.fromLegacyText("\n§aSignature : §8" + prop.getSignature()));
-        console.sendMessage(TextComponent.fromLegacyText("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
+        // Console
+        logger.info("§aName: §8" + prop.getName());
+        logger.info("§aValue : §8" + prop.getValue());
+        logger.info("§aSignature : §8" + prop.getSignature());
+        logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
     }
 
     @Subcommand("applyskin")

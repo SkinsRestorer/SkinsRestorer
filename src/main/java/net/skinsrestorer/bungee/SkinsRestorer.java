@@ -157,7 +157,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         SharedMethods.allowIllegalACFNames();
 
         this.skinCommand = new SkinCommand(this);
-        manager.registerCommand(this.skinCommand);
+        manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
     }
@@ -171,12 +171,12 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(this, this.skinStorage::preloadDefaultSkins);
+        ProxyServer.getInstance().getScheduler().runAsync(this, skinStorage::preloadDefaultSkins);
         return true;
     }
 
     private void checkUpdate() {
-        this.checkUpdate(false);
+        checkUpdate(false);
     }
 
     private void checkUpdate(boolean showUpToDate) {

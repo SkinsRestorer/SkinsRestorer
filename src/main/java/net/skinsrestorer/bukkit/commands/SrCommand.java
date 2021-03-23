@@ -37,7 +37,6 @@ import net.skinsrestorer.shared.utils.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -92,6 +91,7 @@ public class SrCommand extends BaseCommand {
                     if (Config.DEBUG || result.contains("✘"))
                         sender.sendMessage(result);
                 }
+
             sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
             sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
 
@@ -154,14 +154,11 @@ public class SrCommand extends BaseCommand {
                     String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
 
                     byte[] decoded = Base64.getDecoder().decode(value);
-
                     String decodedString = new String(decoded);
                     JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
                     String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                     long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                     String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
-
-                    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
                     sender.sendMessage("§aRequest time: §e" + requestDate);
                     sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
@@ -169,11 +166,11 @@ public class SrCommand extends BaseCommand {
                     sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
                     sender.sendMessage("§cMore info in console!");
 
-                    //console
-                    console.sendMessage("\n§aName: §8" + name);
-                    console.sendMessage("\n§aValue : §8" + value);
-                    console.sendMessage("\n§aSignature : §8" + signature);
-                    console.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+                    // Console
+                    logger.info("§aName: §8" + name);
+                    logger.info("§aValue : §8" + value);
+                    logger.info("§aSignature : §8" + signature);
+                    logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
