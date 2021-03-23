@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 

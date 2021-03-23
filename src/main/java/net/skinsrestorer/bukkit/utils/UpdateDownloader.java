@@ -23,7 +23,6 @@ package net.skinsrestorer.bukkit.utils;
 
 import lombok.Getter;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;

@@ -25,7 +25,6 @@ import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

@@ -22,7 +22,6 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;

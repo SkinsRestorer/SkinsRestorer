@@ -27,7 +27,6 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.property.*;
 
@@ -57,16 +56,10 @@ public class SkinStorage {
 
         if (platform == Platform.BUKKIT) {
             property = BukkitProperty.class;
-            // property = Class.forName("com.mojang.authlib.properties.Property");
         } else if (platform == Platform.BUNGEECORD) {
             property = BungeeProperty.class;
-            // property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-        } else if (platform == Platform.SPONGE) {
-            property = Object.class; // todo
-            // property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
         } else if (platform == Platform.VELOCITY) {
             property = VelocityProperty.class;
-            // property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
         }
     }
 
@@ -195,7 +188,7 @@ public class SkinStorage {
                 }
         } else {
             name = removeForbiddenChars(name);
-            final File playerFile = new File(playersFolder, name + ".player");
+            File playerFile = new File(playersFolder, name + ".player");
 
             try {
                 if (!playerFile.exists())
@@ -209,14 +202,13 @@ public class SkinStorage {
                         skin = line;
                 }
 
-                //maybe useless
+                // Maybe useless
                 if (skin == null) {
                     removePlayerSkin(name);
                     return null;
                 }
 
                 return skin;
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -231,7 +223,7 @@ public class SkinStorage {
      * @param name           - Skin name
      * @param updateOutdated - On true we update the skin if expired
      **/
-    // #getSkinData() also create while we have getOrCreateSkinForPlayer
+    // #getSkinData() also create while we have #getOrCreateSkinForPlayer()
     public IProperty getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
@@ -257,25 +249,26 @@ public class SkinStorage {
                 if (!skinFile.exists())
                     return null;
 
-                String value = "";
-                String signature = "";
-                String timestamp = "";
+                String value = null;
+                String signature = null;
+                String timestamp = null;
 
-                //todo this "if", "else if", "else" is just lame in a 3x for loop.
                 try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-
-                    String line;
-
-                    for (int i = 0; i < 3; i++)
-                        if ((line = buf.readLine()) != null) {
-                            if (value.isEmpty()) {
-                                value = line;
-                            } else if (signature.isEmpty()) {
-                                signature = line;
-                            } else {
-                                timestamp = line;
-                            }
+                    for (int i = 0; i < 3; i++) {
+                        switch (i) {
+                            case 0:
+                                value = buf.readLine();
+                                break;
+                            case 1:
+                                signature = buf.readLine();
+                                break;
+                            case 2:
+                                timestamp = buf.readLine();
+                                break;
+                            default:
+                                break;
                         }
+                    }
                 }
 
                 return updateOutdated(name, updateOutdated, value, signature, timestamp);
@@ -407,17 +400,10 @@ public class SkinStorage {
      * @param textures  - Property object
      * @param timestamp - timestamp string in millis
      **/
-    public void setSkinData(String name, Object textures, String timestamp) {
+    public void setSkinData(String name, IProperty textures, String timestamp) {
         name = name.toLowerCase();
-        String value = "";
-        String signature = "";
-
-        try {
-            value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
-            signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String value = textures.getValue();
+        String signature = textures.getSignature();
 
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
@@ -445,7 +431,7 @@ public class SkinStorage {
         }
     }
 
-    public void setSkinData(String name, Object textures) {
+    public void setSkinData(String name, IProperty textures) {
         setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
     }
 
@@ -646,7 +632,7 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            final Object textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
+            IProperty textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
 
             if (textures != null) {
                 setSkinData(skin, textures);
