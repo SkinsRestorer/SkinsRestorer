@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.property.GenericProperty;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class MojangAPI {
 
     // TODO Deal with duplicated code
 
-    public Object getSkinProperty(String uuid) {
+    public IProperty getSkinProperty(String uuid) {
         return getSkinProperty(uuid, true);
     }
 
@@ -67,7 +68,7 @@ public class MojangAPI {
      *
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public Object getSkinProperty(String uuid, boolean tryNext) {
+    public IProperty getSkinProperty(String uuid, boolean tryNext) {
         try {
             String output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
@@ -93,11 +94,11 @@ public class MojangAPI {
         return null;
     }
 
-    public Object getSkinPropertyMojang(String uuid) {
+    public IProperty getSkinPropertyMojang(String uuid) {
         return getSkinPropertyMojang(uuid, true);
     }
 
-    public Object getSkinPropertyMojang(String uuid, boolean tryNext) {
+    public IProperty getSkinPropertyMojang(String uuid, boolean tryNext) {
         if (tryNext)
             logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
 
@@ -118,11 +119,11 @@ public class MojangAPI {
         return null;
     }
 
-    public Object getSkinPropertyBackup(String uuid) {
+    public IProperty getSkinPropertyBackup(String uuid) {
         return getSkinPropertyBackup(uuid, true);
     }
 
-    public Object getSkinPropertyBackup(String uuid, boolean tryNext) {
+    public IProperty getSkinPropertyBackup(String uuid, boolean tryNext) {
         if (tryNext)
             logger.debug("Trying backup API to get skin property for " + uuid + ".");
 

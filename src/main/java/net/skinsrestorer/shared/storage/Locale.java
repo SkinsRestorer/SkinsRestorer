@@ -125,7 +125,7 @@ public class Locale {
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            logger.log("§cCan't read messages.yml! Try removing it and restart your server.");
+            logger.info("§cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }

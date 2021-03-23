@@ -39,6 +39,7 @@ import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.util.concurrent.TimeUnit;
 
@@ -265,7 +266,7 @@ public class SkinCommand extends BaseCommand {
                 if (clear) {
                     //plugin.getSkinStorage()
 
-                    Object props = plugin.getSkinStorage().createProperty("textures", "", "");
+                    IProperty props = plugin.getSkinStorage().createProperty("textures", "", "");
                     try {
                         plugin.getSkinStorage().setSkinData("00", props);
                         plugin.getSkinApplierBungee().applySkin(p, "00", null);

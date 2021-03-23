@@ -100,7 +100,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            log.log("Using SpigotSkinRefresher");
+            log.info("Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }

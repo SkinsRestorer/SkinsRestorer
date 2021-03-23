@@ -42,7 +42,6 @@ import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.property.GenericProperty;
 import org.bstats.bukkit.Metrics;
@@ -106,7 +105,7 @@ public class SkinsRestorer extends JavaPlugin {
 
         factory = new UniversalSkinFactory(this);
 
-        srLogger.log("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
+        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
@@ -114,12 +113,12 @@ public class SkinsRestorer extends JavaPlugin {
                 YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false, srLogger);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
-                    srLogger.log("§4----------------------------------------------");
-                    srLogger.log("§4             [CRITICAL WARNING]");
-                    srLogger.log("§cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
-                    srLogger.log("§cThat setting is located in §e/plugins/MundoSK/config.yml");
-                    srLogger.log("§cYou have to disable ('false') it to get SkinsRestorer to work!");
-                    srLogger.log("§4----------------------------------------------");
+                    srLogger.info("§4----------------------------------------------");
+                    srLogger.info("§4             [CRITICAL WARNING]");
+                    srLogger.info("§cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
+                    srLogger.info("§cThat setting is located in §e/plugins/MundoSK/config.yml");
+                    srLogger.info("§cYou have to disable ('false') it to get SkinsRestorer to work!");
+                    srLogger.info("§4----------------------------------------------");
                 }
             } catch (Exception ignored) {
             }
@@ -137,7 +136,7 @@ public class SkinsRestorer extends JavaPlugin {
             getServer().getScheduler().runTaskTimerAsynchronously(this, () ->
                     checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
         } else {
-            srLogger.log("Updater Disabled");
+            srLogger.info("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUKKIT);
@@ -349,7 +348,7 @@ public class SkinsRestorer extends JavaPlugin {
             try {
                 bungeeEnabled = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
             } catch (NoSuchMethodError ignored) {
-                srLogger.log(SRLogLevel.WARNING, "It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
+                srLogger.warning("It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
             }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
@@ -408,12 +407,12 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         if (bungeeEnabled) {
-            srLogger.log("-------------------------/Warning\\-------------------------");
-            srLogger.log("This plugin is running in Bungee mode!");
-            srLogger.log("You have to do all configuration at config file");
-            srLogger.log("inside your Bungeecord server.");
-            srLogger.log("(Bungeecord-Server/plugins/SkinsRestorer/).");
-            srLogger.log("-------------------------\\Warning/-------------------------");
+            srLogger.info("-------------------------/Warning\\-------------------------");
+            srLogger.info("This plugin is running in Bungee mode!");
+            srLogger.info("You have to do all configuration at config file");
+            srLogger.info("inside your Bungeecord server.");
+            srLogger.info("(Bungeecord-Server/plugins/SkinsRestorer/).");
+            srLogger.info("-------------------------\\Warning/-------------------------");
         }
     }
 
@@ -437,7 +436,7 @@ public class SkinsRestorer extends JavaPlugin {
                     }
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(srLogger::log);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), bungeeMode, true, failReason).forEach(srLogger::info);
             }
 
             @Override
@@ -445,7 +444,7 @@ public class SkinsRestorer extends JavaPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(srLogger::log);
+                updateChecker.getUpToDateMessages(getVersion(), bungeeMode).forEach(srLogger::info);
             }
         }));
     }

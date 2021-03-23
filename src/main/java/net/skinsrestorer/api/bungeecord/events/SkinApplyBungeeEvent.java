@@ -21,41 +21,25 @@
  */
 package net.skinsrestorer.api.bungeecord.events;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
 import org.jetbrains.annotations.NotNull;
 
 public class SkinApplyBungeeEvent extends Event implements Cancellable {
+    @Getter
     private final ProxiedPlayer who;
+    @Getter
+    @Setter
     private boolean isCancelled = false;
+    @Getter
+    @Setter
     private String nick;
 
     public SkinApplyBungeeEvent(@NotNull ProxiedPlayer who, String nick) {
         this.who = who;
-        this.nick = nick;
-    }
-
-    @Override
-    public boolean isCancelled() {
-        return isCancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean isCancelled) {
-        this.isCancelled = isCancelled;
-    }
-
-    public ProxiedPlayer getPlayer() {
-        return who;
-    }
-
-    public String getNick() {
-        return nick;
-    }
-
-    @SuppressWarnings("unused")
-    public void setNick(String nick) {
         this.nick = nick;
     }
 }

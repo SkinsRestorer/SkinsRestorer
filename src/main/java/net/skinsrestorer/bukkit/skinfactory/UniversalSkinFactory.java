@@ -25,7 +25,6 @@ import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -49,8 +48,8 @@ public class UniversalSkinFactory implements SkinFactory {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1.")) {
-            plugin.getSrLogger().log(SRLogLevel.WARNING, "[!] WARNING [!]");
-            plugin.getSrLogger().log(SRLogLevel.WARNING, "Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+            plugin.getSrLogger().warning("[!] WARNING [!]");
+            plugin.getSrLogger().warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
         }
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).

@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -52,12 +53,10 @@ public class MineSkinAPI {
         this.logger = logger;
     }
 
-    public Object genSkin(String url) throws SkinRequestException {
+    public IProperty genSkin(String url) throws SkinRequestException {
         String errResp = "";
 
         try {
-            errResp = "";
-
             String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8"));
             if (output.isEmpty()) //when both api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);

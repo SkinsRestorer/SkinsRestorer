@@ -88,7 +88,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
             getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
         } else {
-            srLogger.log("Updater Disabled");
+            srLogger.info("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUNGEECORD);
@@ -185,7 +185,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(srLogger::log);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(srLogger::info);
             }
 
             @Override
@@ -193,7 +193,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), false).forEach(srLogger::log);
+                updateChecker.getUpToDateMessages(getVersion(), false).forEach(srLogger::info);
             }
         }));
     }

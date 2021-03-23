@@ -33,6 +33,6 @@ public class GenericProperty implements Serializable, IProperty {
 
     @Override
     public Object getHandle() {
-        throw new UnsupportedOperationException();
+        return this;
     }
 }

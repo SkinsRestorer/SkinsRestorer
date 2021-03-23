@@ -63,30 +63,30 @@ public class MySQL {
         com.mysql.cj.jdbc.Driver.getOSName();
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
-        logger.log("Connected to MySQL!");
+        logger.info("Connected to MySQL!");
         return con;
     }
 
     public Connection getConnection() {
         try {
             if (con == null || !con.isValid(1)) {
-                logger.log("MySQL connection lost! Creation a new one.");
+                logger.info("MySQL connection lost! Creation a new one.");
                 con = openConnection();
             }
         } catch (SQLException e) {
-            logger.log("Could NOT connect to MySQL: " + e.getMessage());
+            logger.info("Could NOT connect to MySQL: " + e.getMessage());
         }
 
         try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
             stmt.execute();
         } catch (SQLException e) {
-            logger.log("MySQL SELECT 1 failed. Reconnecting");
+            logger.info("MySQL SELECT 1 failed. Reconnecting");
 
             try {
                 con = openConnection();
                 return con;
             } catch (SQLException e1) {
-                logger.log("Couldn't reconnect to MySQL.");
+                logger.info("Couldn't reconnect to MySQL.");
                 e1.printStackTrace();
             }
         }
@@ -105,7 +105,7 @@ public class MySQL {
                 }
             return ps;
         } catch (SQLException e) {
-            logger.log("MySQL error: " + e.getMessage());
+            logger.info("MySQL error: " + e.getMessage());
         }
 
         return null;
@@ -122,7 +122,7 @@ public class MySQL {
                 return;
             }
             e.printStackTrace();
-            logger.log("MySQL error: " + e.getMessage());
+            logger.info("MySQL error: " + e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class MySQL {
                     }
 
                 } catch (SQLException e) {
-                    logger.log("MySQL error: " + e.getMessage());
+                    logger.info("MySQL error: " + e.getMessage());
                 }
 
                 return null;
@@ -156,7 +156,7 @@ public class MySQL {
                 rowSet = future.get();
 
         } catch (Exception e) {
-            logger.log("MySQL error: " + e.getMessage());
+            logger.info("MySQL error: " + e.getMessage());
         }
 
         return rowSet;

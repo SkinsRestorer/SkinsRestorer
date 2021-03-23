@@ -27,9 +27,8 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.GenericProperty;
+import net.skinsrestorer.shared.utils.property.*;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -45,7 +44,6 @@ public class SkinStorage {
     @Getter
     @Setter
     private MySQL mysql;
-    private File pluginFolder;
     private File skinsFolder;
     private File playersFolder;
     @Getter
@@ -56,24 +54,16 @@ public class SkinStorage {
         this.logger = logger;
         this.platform = platform;
 
-        try {
-            if (platform == Platform.BUKKIT) {
-                property = Class.forName("com.mojang.authlib.properties.Property");
-            } else if (platform == Platform.BUNGEECORD) {
-                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-            } else if (platform == Platform.SPONGE) {
-                property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
-            } else if (platform == Platform.VELOCITY) {
-                property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (platform == Platform.BUKKIT) {
+            property = BukkitProperty.class;
+        } else if (platform == Platform.BUNGEECORD) {
+            property = BungeeProperty.class;
+        } else if (platform == Platform.VELOCITY) {
+            property = VelocityProperty.class;
         }
     }
 
     public void loadFolders(File pluginFolder) {
-        this.pluginFolder = pluginFolder;
-
         skinsFolder = new File(pluginFolder, "Skins");
         skinsFolder.mkdirs();
 
@@ -95,7 +85,7 @@ public class SkinStorage {
             } catch (SkinRequestException e) {
                 // removing skin from list
                 toRemove.add(skin);
-                logger.log(SRLogLevel.WARNING, "[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
+                logger.warning("[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
 
                 logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ");
                 if (Config.DEBUG)
@@ -106,7 +96,7 @@ public class SkinStorage {
     }
 
 
-    public Object createProperty(String name, String value, String signature) {
+    public IProperty createProperty(String name, String value, String signature) {
         // use our own property class if we are on sponge
         if (platform == Platform.SPONGE) {
             GenericProperty p = new GenericProperty();
@@ -119,7 +109,7 @@ public class SkinStorage {
         }
 
         try {
-            return ReflectionUtil.invokeConstructor(property,
+            return (IProperty) ReflectionUtil.invokeConstructor(property,
                     new Class<?>[]{String.class, String.class, String.class}, name, value, signature);
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,14 +129,14 @@ public class SkinStorage {
      * @param silent Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      **/
-    public Object getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
+    public IProperty getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null) {
             skin = name.toLowerCase();
         }
 
-        Object textures = getSkinData(skin);
+        IProperty textures = getSkinData(skin);
 
         if (textures == null) {
             // No cached skin found, get from MojangAPI, save and return
@@ -198,7 +188,7 @@ public class SkinStorage {
                 }
         } else {
             name = removeForbiddenChars(name);
-            final File playerFile = new File(playersFolder, name + ".player");
+            File playerFile = new File(playersFolder, name + ".player");
 
             try {
                 if (!playerFile.exists())
@@ -212,14 +202,13 @@ public class SkinStorage {
                         skin = line;
                 }
 
-                //maybe useless
+                // Maybe useless
                 if (skin == null) {
                     removePlayerSkin(name);
                     return null;
                 }
 
                 return skin;
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -234,8 +223,8 @@ public class SkinStorage {
      * @param name           - Skin name
      * @param updateOutdated - On true we update the skin if expired
      **/
-    // #getSkinData() also create while we have getOrCreateSkinForPlayer
-    public Object getSkinData(String name, boolean updateOutdated) {
+    // #getSkinData() also create while we have #getOrCreateSkinForPlayer()
+    public IProperty getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
@@ -249,7 +238,7 @@ public class SkinStorage {
                     return updateOutdated(name, updateOutdated, value, signature, timestamp);
                 } catch (Exception e) {
                     removeSkinData(name);
-                    logger.log("Unsupported player format.. removing (" + name + ").");
+                    logger.info("Unsupported player format.. removing (" + name + ").");
                 }
         } else {
             name = removeWhitespaces(name);
@@ -260,40 +249,41 @@ public class SkinStorage {
                 if (!skinFile.exists())
                     return null;
 
-                String value = "";
-                String signature = "";
-                String timestamp = "";
+                String value = null;
+                String signature = null;
+                String timestamp = null;
 
-                //todo this "if", "else if", "else" is just lame in a 3x for loop.
                 try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-
-                    String line;
-
-                    for (int i = 0; i < 3; i++)
-                        if ((line = buf.readLine()) != null) {
-                            if (value.isEmpty()) {
-                                value = line;
-                            } else if (signature.isEmpty()) {
-                                signature = line;
-                            } else {
-                                timestamp = line;
-                            }
+                    for (int i = 0; i < 3; i++) {
+                        switch (i) {
+                            case 0:
+                                value = buf.readLine();
+                                break;
+                            case 1:
+                                signature = buf.readLine();
+                                break;
+                            case 2:
+                                timestamp = buf.readLine();
+                                break;
+                            default:
+                                break;
                         }
+                    }
                 }
 
                 return updateOutdated(name, updateOutdated, value, signature, timestamp);
             } catch (Exception e) {
                 removeSkinData(name);
-                logger.log("Unsupported player format.. removing (" + name + ").");
+                logger.info("Unsupported player format.. removing (" + name + ").");
             }
         }
 
         return null;
     }
 
-    private Object updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
+    private IProperty updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-            Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
+            IProperty skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
 
             if (skin != null) {
                 setSkinData(name, skin);
@@ -304,7 +294,7 @@ public class SkinStorage {
         return createProperty("textures", value, signature);
     }
 
-    public Object getSkinData(String name) {
+    public IProperty getSkinData(String name) {
         return getSkinData(name, true);
     }
 
@@ -410,17 +400,10 @@ public class SkinStorage {
      * @param textures  - Property object
      * @param timestamp - timestamp string in millis
      **/
-    public void setSkinData(String name, Object textures, String timestamp) {
+    public void setSkinData(String name, IProperty textures, String timestamp) {
         name = name.toLowerCase();
-        String value = "";
-        String signature = "";
-
-        try {
-            value = (String) ReflectionUtil.invokeMethod(textures, "getValue");
-            signature = (String) ReflectionUtil.invokeMethod(textures, "getSignature");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String value = textures.getValue();
+        String signature = textures.getSignature();
 
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
@@ -448,7 +431,7 @@ public class SkinStorage {
         }
     }
 
-    public void setSkinData(String name, Object textures) {
+    public void setSkinData(String name, IProperty textures) {
         setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
     }
 
@@ -649,7 +632,7 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            final Object textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
+            IProperty textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
 
             if (textures != null) {
                 setSkinData(skin, textures);

@@ -87,7 +87,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent e) {
-        srLogger.log("Enabling SkinsRestorer v" + getVersion());
+        srLogger.info("Enabling SkinsRestorer v" + getVersion());
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
@@ -103,7 +103,7 @@ public class SkinsRestorer implements ISRPlugin {
 
             getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES).schedule();
         } else {
-            srLogger.log("Updater Disabled");
+            srLogger.info("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.VELOCITY);
@@ -135,7 +135,7 @@ public class SkinsRestorer implements ISRPlugin {
         // Init API
         skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
 
-        srLogger.log("Enabled SkinsRestorer v" + getVersion());
+        srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
@@ -186,14 +186,14 @@ public class SkinsRestorer implements ISRPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
-                        .forEach(srLogger::log);
+                        .forEach(srLogger::info);
             }
 
             @Override
             public void upToDate() {
                 if (showUpToDate)
                     updateChecker.getUpToDateMessages(getVersion(), false)
-                            .forEach(srLogger::log);
+                            .forEach(srLogger::info);
             }
         }));
     }
