@@ -59,7 +59,7 @@ public abstract class SkinsRestorerAPI {
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
     public Object getProfile(String uuid) {
-        return mojangAPI.getSkinProperty(uuid);
+        return mojangAPI.getSkinProperty(uuid).getHandle();
     }
 
     public String getSkinName(String name) {
@@ -67,7 +67,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     public Object getSkinData(String skin) {
-        return skinStorage.getSkinData(skin);
+        return skinStorage.getSkinData(skin).getHandle();
     }
 
     public boolean hasSkin(String name) {

@@ -29,7 +29,7 @@ import net.skinsrestorer.shared.utils.MojangAPI;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.GenericProperty;
+import net.skinsrestorer.shared.utils.property.*;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -45,7 +45,6 @@ public class SkinStorage {
     @Getter
     @Setter
     private MySQL mysql;
-    private File pluginFolder;
     private File skinsFolder;
     private File playersFolder;
     @Getter
@@ -56,24 +55,22 @@ public class SkinStorage {
         this.logger = logger;
         this.platform = platform;
 
-        try {
-            if (platform == Platform.BUKKIT) {
-                property = Class.forName("com.mojang.authlib.properties.Property");
-            } else if (platform == Platform.BUNGEECORD) {
-                property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
-            } else if (platform == Platform.SPONGE) {
-                property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
-            } else if (platform == Platform.VELOCITY) {
-                property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (platform == Platform.BUKKIT) {
+            property = BukkitProperty.class;
+            // property = Class.forName("com.mojang.authlib.properties.Property");
+        } else if (platform == Platform.BUNGEECORD) {
+            property = BungeeProperty.class;
+            // property = Class.forName("net.md_5.bungee.connection.LoginResult$Property");
+        } else if (platform == Platform.SPONGE) {
+            property = Object.class; // todo
+            // property = Class.forName("org.spongepowered.api.profile.property.ProfileProperty");
+        } else if (platform == Platform.VELOCITY) {
+            property = VelocityProperty.class;
+            // property = Class.forName("com.velocitypowered.api.util.GameProfile$Property");
         }
     }
 
     public void loadFolders(File pluginFolder) {
-        this.pluginFolder = pluginFolder;
-
         skinsFolder = new File(pluginFolder, "Skins");
         skinsFolder.mkdirs();
 
@@ -106,7 +103,7 @@ public class SkinStorage {
     }
 
 
-    public Object createProperty(String name, String value, String signature) {
+    public IProperty createProperty(String name, String value, String signature) {
         // use our own property class if we are on sponge
         if (platform == Platform.SPONGE) {
             GenericProperty p = new GenericProperty();
@@ -119,7 +116,7 @@ public class SkinStorage {
         }
 
         try {
-            return ReflectionUtil.invokeConstructor(property,
+            return (IProperty) ReflectionUtil.invokeConstructor(property,
                     new Class<?>[]{String.class, String.class, String.class}, name, value, signature);
         } catch (Exception e) {
             e.printStackTrace();
@@ -139,14 +136,14 @@ public class SkinStorage {
      * @param silent Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      **/
-    public Object getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
+    public IProperty getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null) {
             skin = name.toLowerCase();
         }
 
-        Object textures = getSkinData(skin);
+        IProperty textures = getSkinData(skin);
 
         if (textures == null) {
             // No cached skin found, get from MojangAPI, save and return
@@ -235,7 +232,7 @@ public class SkinStorage {
      * @param updateOutdated - On true we update the skin if expired
      **/
     // #getSkinData() also create while we have getOrCreateSkinForPlayer
-    public Object getSkinData(String name, boolean updateOutdated) {
+    public IProperty getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
@@ -291,9 +288,9 @@ public class SkinStorage {
         return null;
     }
 
-    private Object updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
+    private IProperty updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-            Object skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
+            IProperty skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
 
             if (skin != null) {
                 setSkinData(name, skin);
@@ -304,7 +301,7 @@ public class SkinStorage {
         return createProperty("textures", value, signature);
     }
 
-    public Object getSkinData(String name) {
+    public IProperty getSkinData(String name) {
         return getSkinData(name, true);
     }
 

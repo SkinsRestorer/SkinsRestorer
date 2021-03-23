@@ -30,7 +30,6 @@ public class VelocityProperty implements IProperty {
         property = new Property(name, value, signature);
     }
 
-
     @Override
     public Object getHandle() {
         return property;
