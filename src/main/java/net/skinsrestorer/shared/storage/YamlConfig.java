@@ -104,10 +104,10 @@ public class YamlConfig {
                 }
                 in.close();
             } else {
-                logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
+                logger.warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
         } catch (IOException ex) {
-            logger.log(SRLogLevel.WARNING, "Could not save " + outFile.getName() + " to " + outFile);
+            logger.warning("Could not save " + outFile.getName() + " to " + outFile);
             ex.printStackTrace();
         }
     }
@@ -123,13 +123,13 @@ public class YamlConfig {
 
     public Object get(String path, Object defValue) {
         if (get(path) == null && !setMissing) {
-            logger.log(path + " is missing in " + name + "! Using default value.");
+            logger.info(path + " is missing in " + name + "! Using default value.");
             return defValue;
         }
 
         // Save new values if enabled (locale file)
         if (get(path) == null && setMissing) {
-            logger.log("Saving new config value " + path + " to " + name);
+            logger.info("Saving new config value " + path + " to " + name);
             set(path, defValue);
         }
 

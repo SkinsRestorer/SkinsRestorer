@@ -80,19 +80,27 @@ public class SRLogger {
         log(level, message, thrown);
     }
 
-    public void log(String message) {
+    public void info(String message) {
         log(SRLogLevel.INFO, message);
     }
 
-    public void log(String message, Throwable thrown) {
+    public void info(String message, Throwable thrown) {
         log(SRLogLevel.INFO, message, thrown);
     }
 
-    public void log(SRLogLevel level, String message) {
+    public void warning(String message) {
+        log(SRLogLevel.WARNING, message);
+    }
+
+    public void warning(String message, Throwable thrown) {
+        log(SRLogLevel.WARNING, message, thrown);
+    }
+
+    private void log(SRLogLevel level, String message) {
         logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message);
     }
 
-    public void log(SRLogLevel level, String message, Throwable thrown) {
+    private void log(SRLogLevel level, String message, Throwable thrown) {
         logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message, thrown);
     }
 }

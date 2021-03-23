@@ -149,10 +149,10 @@ public class SrCommand extends BaseCommand {
             source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
             //console
-            logger.log("§aName: §8" + prop.getName());
-            logger.log("§aValue : §8" + prop.getValue());
-            logger.log("§aSignature : §8" + prop.getSignature());
-            logger.log("§aValue Decoded: §e" + Arrays.toString(decoded));
+            logger.info("§aName: §8" + prop.getName());
+            logger.info("§aValue : §8" + prop.getValue());
+            logger.info("§aSignature : §8" + prop.getSignature());
+            logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
         });
     }
 

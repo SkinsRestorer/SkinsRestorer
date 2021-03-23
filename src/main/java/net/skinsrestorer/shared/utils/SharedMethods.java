@@ -50,10 +50,10 @@ public class SharedMethods {
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            log.log("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
-            log.log("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            log.log("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
-            log.log("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
+            log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] --------------------------------- ");
+            log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            log.info("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+            log.info("§c[§4Critical§c] ------------------------------------------------------------------------------------------- ");
         }
     }
 
@@ -76,7 +76,7 @@ public class SharedMethods {
 
                 skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                srLogger.log("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+                srLogger.info("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
                 return false;
             }
         } else {

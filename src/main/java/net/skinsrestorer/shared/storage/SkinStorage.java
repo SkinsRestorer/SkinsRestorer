@@ -95,7 +95,7 @@ public class SkinStorage {
             } catch (SkinRequestException e) {
                 // removing skin from list
                 toRemove.add(skin);
-                logger.log(SRLogLevel.WARNING, "[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
+                logger.warning("[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
 
                 logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ");
                 if (Config.DEBUG)
@@ -249,7 +249,7 @@ public class SkinStorage {
                     return updateOutdated(name, updateOutdated, value, signature, timestamp);
                 } catch (Exception e) {
                     removeSkinData(name);
-                    logger.log("Unsupported player format.. removing (" + name + ").");
+                    logger.info("Unsupported player format.. removing (" + name + ").");
                 }
         } else {
             name = removeWhitespaces(name);
@@ -284,7 +284,7 @@ public class SkinStorage {
                 return updateOutdated(name, updateOutdated, value, signature, timestamp);
             } catch (Exception e) {
                 removeSkinData(name);
-                logger.log("Unsupported player format.. removing (" + name + ").");
+                logger.info("Unsupported player format.. removing (" + name + ").");
             }
         }
 

@@ -100,7 +100,7 @@ public class SkinsRestorer implements ISRPlugin {
             Sponge.getScheduler().createTaskBuilder().execute(() ->
                     checkUpdate(false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
         } else {
-            srLogger.log("Updater Disabled");
+            srLogger.info("Updater Disabled");
         }
 
         skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.SPONGE);
@@ -182,7 +182,7 @@ public class SkinsRestorer implements ISRPlugin {
         Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::log);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
             }
 
             @Override
@@ -190,7 +190,7 @@ public class SkinsRestorer implements ISRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::log);
+                updateChecker.getUpToDateMessages(getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
             }
         }));
     }
