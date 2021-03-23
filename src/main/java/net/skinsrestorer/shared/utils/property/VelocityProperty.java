@@ -22,7 +22,9 @@
 package net.skinsrestorer.shared.utils.property;
 
 import com.velocitypowered.api.util.GameProfile.Property;
+import lombok.ToString;
 
+@ToString
 public class VelocityProperty implements IProperty {
     private final Property property;
 

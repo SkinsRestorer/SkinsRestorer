@@ -31,6 +31,16 @@ public class GenericProperty implements Serializable, IProperty {
     private String value;
     private String signature;
 
+    public GenericProperty() {
+    }
+
+    @SuppressWarnings("unused")
+    public GenericProperty(IProperty property) {
+        name = property.getName();
+        value = property.getValue();
+        signature = property.getSignature();
+    }
+
     @Override
     public Object getHandle() {
         return this;

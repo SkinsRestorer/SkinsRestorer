@@ -91,6 +91,7 @@ public class SrCommand extends BaseCommand {
                     if (Config.DEBUG || result.contains("✘"))
                         sender.sendMessage(result);
                 }
+
             sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
             sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
 
