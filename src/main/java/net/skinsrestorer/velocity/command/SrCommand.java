@@ -148,7 +148,7 @@ public class SrCommand extends BaseCommand {
             source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
             source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
-            //console
+            // Console
             logger.info("§aName: §8" + prop.getName());
             logger.info("§aValue : §8" + prop.getValue());
             logger.info("§aSignature : §8" + prop.getSignature());
