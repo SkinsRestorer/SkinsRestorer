@@ -91,7 +91,7 @@ public class ServiceChecker {
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5", false);
+        Object mojangBackup = mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5", false);
         if (mojangBackup != null) {
             response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
             response.incrementWorkingProfile();
@@ -106,7 +106,7 @@ public class ServiceChecker {
         private final AtomicInteger workingProfile = new AtomicInteger();
 
         public void addResult(String result) {
-            this.results.add(result);
+            results.add(result);
         }
 
         public Integer getWorkingUUID() {

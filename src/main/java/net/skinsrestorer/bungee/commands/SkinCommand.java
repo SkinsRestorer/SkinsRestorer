@@ -119,7 +119,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdate")
     @SuppressWarnings({"unused"})
     public void onSkinUpdate(ProxiedPlayer p) {
-        this.onSkinUpdateOther(p, new OnlinePlayer(p));
+        onSkinUpdateOther(p, new OnlinePlayer(p));
     }
 
     @Subcommand("update")
@@ -159,7 +159,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (this.setSkin(sender, p, skin, false, false)) {
+            if (setSkin(sender, p, skin, false, false)) {
                 if (sender == p)
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
@@ -174,7 +174,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(ProxiedPlayer p, String[] skin) {
         if (skin.length > 0) {
-            this.onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
+            onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
         } else {
             throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
         }
@@ -194,7 +194,7 @@ public class SkinCommand extends BaseCommand {
                     return;
                 }
             }
-            if (this.setSkin(sender, p, skin) && !(sender == p)) {
+            if (setSkin(sender, p, skin) && !(sender == p)) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", p.getName())));
             }
         });
@@ -208,7 +208,7 @@ public class SkinCommand extends BaseCommand {
     public void onSkinSetUrl(ProxiedPlayer p, String[] url) {
         if (url.length > 0) {
             if (C.validUrl(url[0])) {
-                this.onSkinSetOther(p, new OnlinePlayer(p), url[0]);
+                onSkinSetOther(p, new OnlinePlayer(p), url[0]);
             } else {
                 p.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
             }
@@ -218,7 +218,7 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
-        return this.setSkin(sender, p, skin, true, false);
+        return setSkin(sender, p, skin, true, false);
     }
 
     // if save is false, we won't save the skin skin name
@@ -320,7 +320,7 @@ public class SkinCommand extends BaseCommand {
         }
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        this.rollback(p, oldSkinName, save);
+        rollback(p, oldSkinName, save);
         return false;
     }
 
