@@ -21,8 +21,8 @@
  */
 package net.skinsrestorer.shared.exception;
 
-public class SkinRequestException extends Exception {
-    public SkinRequestException(String message) {
+public class ReflectionException extends Exception {
+    public ReflectionException(String message) {
         super(message);
     }
 }

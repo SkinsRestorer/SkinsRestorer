@@ -41,22 +41,22 @@ See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contri
 :rotating_light: Please note that this API is still WIP. Expect breaking changes! :rotating_light:
 
 ##### Maven repository
-````
+```xml
 <repository>
     <id>codemc-snapshots</id>
     <url>https://repo.codemc.org/repository/maven-snapshots/</url>
 </repository>
-````
+```
 
 ##### SkinsRestorer API
-````
+```xml
 <!-- SkinsRestorer API -->
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
     <version>14.0.0</version>
 </dependency>
-````
+```
 
 ##### Example Bukkit plugin
 https://github.com/SkinsRestorer/SkinsRestorerAPIExample

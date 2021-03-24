@@ -21,90 +21,93 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import co.aikar.commands.BungeeCommandManager;
-import co.aikar.commands.PaperCommandManager;
-import co.aikar.commands.SpongeCommandManager;
-import co.aikar.commands.VelocityCommandManager;
+import co.aikar.commands.*;
 import co.aikar.locales.MessageKey;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.Properties;
 
 public class CommandPropertiesManager {
     private static final String FILE = "command-messages.properties";
-    private final String configPath;
+    private final File configPath;
     private final InputStream inputStream;
+    private final SRLogger logger;
 
-    public CommandPropertiesManager(PaperCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(PaperCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        this.logger = logger;
+        copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(BungeeCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(BungeeCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        this.logger = logger;
+        copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(VelocityCommandManager manager, String configPath, InputStream inputStream) {
+    public CommandPropertiesManager(SpongeCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
         this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        this.logger = logger;
+        copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
+            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public CommandPropertiesManager(SpongeCommandManager manager, String configPath, InputStream inputStream) {
-        this.configPath = configPath + File.separator;
+    public CommandPropertiesManager(VelocityCommandManager manager, File configPath, InputStream inputStream, SRLogger logger) {
+        this.configPath = configPath;
         this.inputStream = inputStream;
-        this.copyFile();
+        this.logger = logger;
+        copyFile();
 
         Properties props = new Properties();
-        try (InputStream in = new FileInputStream(new File(this.configPath, FILE))) {
+        try (InputStream in = new FileInputStream(new File(configPath, FILE))) {
             props.load(in);
-            props.forEach((k, v) -> manager.getLocales().addMessage(co.aikar.commands.Locales.ENGLISH, MessageKey.of(k.toString()), v.toString().replace("&", "§")));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void copyFile() {
-        File outFile = new File(this.configPath, FILE);
+        File outFile = new File(configPath, FILE);
 
         try {
             if (!outFile.exists()) {
                 try (OutputStream out = new FileOutputStream(outFile)) {
                     byte[] buf = new byte[1024];
                     int len;
-                    while ((len = this.inputStream.read(buf)) > 0) {
+                    while ((len = inputStream.read(buf)) > 0) {
                         out.write(buf, 0, len);
                     }
                 }
 
-                this.inputStream.close();
+                inputStream.close();
             }
         } catch (IOException ex) {
             System.out.println("Could not save " + outFile.getName() + " to " + outFile);

@@ -28,7 +28,7 @@ public class ReflectImpl extends DefaultImpl {
     private boolean _canGetNewInstance = false;
 
     private boolean _useDefaultAccess = true;
-    private boolean _canUnsafeAccess;
+    private final boolean _canUnsafeAccess;
 
     private boolean _classesExist = false;
     private boolean _newInstancesExist = false;

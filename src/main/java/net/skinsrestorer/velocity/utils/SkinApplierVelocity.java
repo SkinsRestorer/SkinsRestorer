@@ -26,10 +26,9 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
@@ -38,7 +37,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkinApplierVelocity implements SRApplier {
+public class SkinApplierVelocity implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
@@ -47,10 +46,10 @@ public class SkinApplierVelocity implements SRApplier {
         log = plugin.getSrLogger();
     }
 
-    public void applySkin(PlayerWrapper player, SkinsRestorerAPI api) throws SkinRequestException {
-        String skin = api.getSkinName(player.get(Player.class).getUsername());
+    public void applySkin(PlayerWrapper player) throws SkinRequestException {
+        String skin = plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getUsername());
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false).getHandle();
         List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
 
@@ -63,7 +62,7 @@ public class SkinApplierVelocity implements SRApplier {
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false).getHandle();
 
         List<Property> oldProperties = profile.getProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
@@ -92,7 +91,7 @@ public class SkinApplierVelocity implements SRApplier {
 
     private void sendUpdateRequest(Player p, Property textures) {
         p.getCurrentServer().ifPresent(serverConnection -> {
-            log.log("Sending skin update request for " + p.getUsername());
+            log.debug("Sending skin update request for " + p.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

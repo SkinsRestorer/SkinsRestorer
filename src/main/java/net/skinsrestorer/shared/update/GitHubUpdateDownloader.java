@@ -21,6 +21,8 @@
  */
 package net.skinsrestorer.shared.update;
 
+import net.skinsrestorer.shared.exception.UpdateException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -19,10 +19,19 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.utils.property;
 
-public class SkinRequestException extends Exception {
-    public SkinRequestException(String message) {
-        super(message);
+import lombok.ToString;
+import net.md_5.bungee.connection.LoginResult.Property;
+
+@ToString
+public class BungeeProperty extends Property implements IProperty {
+    public BungeeProperty(String name, String value, String signature) {
+        super(name, value, signature);
+    }
+
+    @Override
+    public Object getHandle() {
+        return this;
     }
 }

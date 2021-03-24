@@ -19,10 +19,12 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.interfaces;
 
-public class SkinRequestException extends Exception {
-    public SkinRequestException(String message) {
-        super(message);
-    }
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+
+public interface ISRLogger {
+    void log(SRLogLevel level, String message);
+
+    void log(SRLogLevel level, String message, Throwable throwable);
 }

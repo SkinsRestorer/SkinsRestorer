@@ -19,14 +19,10 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.update;
+package net.skinsrestorer.shared.interfaces;
 
-public class UpdateException extends RuntimeException {
-    public UpdateException(String message) {
-        super(message);
-    }
+import net.skinsrestorer.api.PlayerWrapper;
 
-    public UpdateException(String message, Throwable cause) {
-        super(message, cause);
-    }
+public interface ISRApplier {
+    void applySkin(PlayerWrapper playerWrapper) throws Exception;
 }
