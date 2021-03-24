@@ -43,6 +43,41 @@
         <connection>scm:git:https://github.com/SkinsRestorer/SkinsRestorerX</connection>
     </scm>
 
+    <reporting>
+        <excludeDefaults>true</excludeDefaults>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <excludePackageNames>
+                        li.cock.ie.access,
+                        li.cock.ie.reflect
+                    </excludePackageNames>
+                    <source>8</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependencies</report>
+                            <report>team</report>
+                            <report>ci-management</report>
+                            <report>issue-management</report>
+                            <report>plugins</report>
+                            <report>plugin-management</report>
+                            <report>licenses</report>
+                            <report>help</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
@@ -150,6 +185,15 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <!--suppress MavenModelInspection -->
+                <version>3.9.1</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.1</version>
             </plugin>
         </plugins>
         <resources>
