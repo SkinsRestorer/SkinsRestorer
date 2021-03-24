@@ -104,7 +104,7 @@ public class SkinsRestorer extends Plugin implements SRPlugin {
             this.updateChecker = new UpdateCheckerGitHub(2124, this.getDescription().getVersion(), this.srLogger, "SkinsRestorerUpdater/BungeeCord");
             this.checkUpdate(true);
 
-            this.getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+            this.getProxy().getScheduler().schedule(this, this::checkUpdate, 60, 60, TimeUnit.MINUTES);
         } else {
             srLogger.logAlways(Level.INFO, "Updater Disabled");
         }
