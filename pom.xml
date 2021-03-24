@@ -52,13 +52,10 @@
                 <version>3.2.0</version>
                 <configuration>
                     <excludePackageNames>
-                        net.pistonmaster.pistonmotd.bukkit:
-                        net.pistonmaster.pistonmotd.bungee:
-                        net.pistonmaster.pistonmotd.utils:
-                        net.pistonmaster.pistonmotd.sponge:
-                        net.pistonmaster.pistonmotd.velocity:
-                        net.pistonmaster.pistonmotd.data
+                        li.cock.ie.access,
+                        li.cock.ie.reflect
                     </excludePackageNames>
+                    <source>8</source>
                 </configuration>
             </plugin>
             <plugin>
