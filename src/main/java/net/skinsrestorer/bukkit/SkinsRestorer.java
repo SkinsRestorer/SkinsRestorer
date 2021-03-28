@@ -113,12 +113,12 @@ public class SkinsRestorer extends JavaPlugin {
                 YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false, srLogger);
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
-                    srLogger.info("§4----------------------------------------------");
-                    srLogger.info("§4             [CRITICAL WARNING]");
-                    srLogger.info("§cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
-                    srLogger.info("§cThat setting is located in §e/plugins/MundoSK/config.yml");
-                    srLogger.info("§cYou have to disable ('false') it to get SkinsRestorer to work!");
-                    srLogger.info("§4----------------------------------------------");
+                    srLogger.warning("§4----------------------------------------------");
+                    srLogger.warning("§4             [CRITICAL WARNING]");
+                    srLogger.warning("§cWe have detected MundoSK on your server with §e'enable_custom_skin_and_tablist: §4§ntrue§e'§c.");
+                    srLogger.warning("§cThat setting is located in §e/plugins/MundoSK/config.yml");
+                    srLogger.warning("§cYou have to disable ('false') it to get SkinsRestorer to work!");
+                    srLogger.warning("§4----------------------------------------------");
                 }
             } catch (Exception ignored) {
             }

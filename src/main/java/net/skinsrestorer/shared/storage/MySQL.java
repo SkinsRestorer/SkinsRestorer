@@ -74,7 +74,7 @@ public class MySQL {
                 con = openConnection();
             }
         } catch (SQLException e) {
-            logger.info("Could NOT connect to MySQL: " + e.getMessage());
+            logger.warning("Could NOT connect to MySQL: " + e.getMessage());
         }
 
         try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
