@@ -74,7 +74,7 @@ public class MySQL {
                 con = openConnection();
             }
         } catch (SQLException e) {
-            logger.warning("Could NOT connect to MySQL: " + e.getMessage());
+            logger.info("Could NOT connect to MySQL: " + e.getMessage());
         }
 
         try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
@@ -86,7 +86,7 @@ public class MySQL {
                 con = openConnection();
                 return con;
             } catch (SQLException e1) {
-                logger.info("Couldn't reconnect to MySQL.");
+                logger.warning("Couldn't reconnect to MySQL!");
                 e1.printStackTrace();
             }
         }
@@ -105,7 +105,7 @@ public class MySQL {
                 }
             return ps;
         } catch (SQLException e) {
-            logger.info("MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
 
         return null;
@@ -122,7 +122,7 @@ public class MySQL {
                 return;
             }
             e.printStackTrace();
-            logger.info("MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class MySQL {
                     }
 
                 } catch (SQLException e) {
-                    logger.info("MySQL error: " + e.getMessage());
+                    logger.warning("MySQL error: " + e.getMessage());
                 }
 
                 return null;
@@ -156,7 +156,7 @@ public class MySQL {
                 rowSet = future.get();
 
         } catch (Exception e) {
-            logger.info("MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
 
         return rowSet;
