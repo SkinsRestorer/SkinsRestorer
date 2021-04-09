@@ -24,7 +24,7 @@ package net.skinsrestorer.bukkit.skinfactory;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,7 +63,7 @@ public class OldSkinRefresher implements Consumer<Player> {
 
     static {
         try {
-            SkinsRestorer plugin = SkinsRestorer.getInstance();
+            SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
             SRLogger log = plugin.getSrLogger();
 
             packet = ReflectionUtil.getNMSClass("Packet");
@@ -91,7 +91,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             }
 
-            plugin.getServer().getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
@@ -100,7 +100,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            log.logAlways("[SkinsRestorer] Using SpigotSkinRefresher");
+            log.info("Using SpigotSkinRefresher");
         } catch (Exception ignored) {
         }
     }
@@ -311,7 +311,7 @@ public class OldSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                Bukkit.getScheduler().runTask(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTask(SkinsRestorer.getPlugin(SkinsRestorer.class), () -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);

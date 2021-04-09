@@ -26,45 +26,38 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.SRApplier;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class SkinApplierBungee implements SRApplier {
-    private static Class<?> loginResult;
+public class SkinApplierBungee implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
     public SkinApplierBungee(SkinsRestorer plugin) {
         this.plugin = plugin;
-        this.log = plugin.getSrLogger();
+        log = plugin.getSrLogger();
     }
 
-    public static void init() {
-        try {
-            loginResult = ReflectionUtil.getBungeeClass("connection", "LoginResult");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void applySkin(final ProxiedPlayer p, final String nick, InitialHandler handler) throws Exception {
-        if (p == null && handler == null)
+    public void applySkin(final ProxiedPlayer p, String nick, InitialHandler handler) throws Exception {
+        if (p == null)
             return;
 
-        if (p != null) {
+        if (handler == null) {
             handler = (InitialHandler) p.getPendingConnection();
         }
 
+        nick = plugin.getProxy().getPluginManager().callEvent(new SkinApplyBungeeEvent(p, nick)).getNick();
+
         Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false);
 
-        if (handler.isOnlineMode() && p != null) {
+        if (handler.isOnlineMode()) {
             sendUpdateRequest(p, textures);
             return;
         }
@@ -77,7 +70,7 @@ public class SkinApplierBungee implements SRApplier {
                 profile = new LoginResult(null, null, new Property[]{textures});
             } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
-                profile = (LoginResult) ReflectionUtil.invokeConstructor(loginResult,
+                profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
                         new Class<?>[]{String.class, Property[].class},
                         null, new Property[]{textures});
             }
@@ -88,16 +81,14 @@ public class SkinApplierBungee implements SRApplier {
         profile.setProperties(newProps);
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
-        if (SkinsRestorer.getInstance().isMultiBungee()) {
-            if (p != null)
-                sendUpdateRequest(p, textures);
+        if (plugin.isMultiBungee()) {
+            sendUpdateRequest(p, textures);
         } else {
-            if (p != null)
-                sendUpdateRequest(p, null);
+            sendUpdateRequest(p, null);
         }
     }
 
-    public void applySkin(final PlayerWrapper p, SkinsRestorerAPI api) throws Exception {
+    public void applySkin(final PlayerWrapper p) throws Exception {
         applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
     }
 
@@ -108,7 +99,7 @@ public class SkinApplierBungee implements SRApplier {
         if (p.getServer() == null)
             return;
 
-        log.log("Sending skin update request for " + p.getName());
+        log.debug("Sending skin update request for " + p.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);

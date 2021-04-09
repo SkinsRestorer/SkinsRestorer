@@ -21,10 +21,8 @@
  */
 package net.skinsrestorer.api;
 
-import com.google.common.annotations.Beta;
 import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 
@@ -34,42 +32,56 @@ import net.skinsrestorer.shared.utils.MojangAPI;
  * Advanced help or getting problems? join our discord before submitting issues!
  */
 @SuppressWarnings({"unused"})
-public class SkinsRestorerAPI {
-    private static @Getter
-    SkinsRestorerAPI api;
+public abstract class SkinsRestorerAPI {
+    @Getter
+    private static SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
-    private final SRPlugin plugin;
 
-    public SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage, SRPlugin plugin) {
-        setInstance(this);
+    protected SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+        if (SkinsRestorerAPI.api == null)
+            setInstance(this);
+
         this.mojangAPI = mojangAPI;
         this.skinStorage = skinStorage;
-        this.plugin = plugin;
     }
 
     private static void setInstance(SkinsRestorerAPI api) {
-        SkinsRestorerAPI.api = api;
+        if (SkinsRestorerAPI.api == null)
+            SkinsRestorerAPI.api = api;
     }
 
+    /**
+     * Returned object needs to be casted to either BungeeCord's property or
+     * Mojang's property (old or new)
+     *
+     * @param uuid - The players uuid
+     * @return Property object (New Mojang, Old Mojang or Bungee)
+     **/
     public Object getProfile(String uuid) {
-        return mojangAPI.getSkinProperty(uuid);
+        return mojangAPI.getSkinProperty(uuid).getHandle();
     }
 
-    public String getSkinName(String playerName) {
-        return skinStorage.getPlayerSkin(playerName);
+    public String getSkinName(String name) {
+        return skinStorage.getPlayerSkin(name);
     }
 
-    public Object getSkinData(String skinName) {
-        return skinStorage.getSkinData(skinName);
+    public Object getSkinData(String skin) {
+        return skinStorage.getSkinData(skin).getHandle();
     }
 
-    public boolean hasSkin(String playerName) {
-        return skinStorage.getPlayerSkin(playerName) != null;
+    public boolean hasSkin(String name) {
+        return skinStorage.getPlayerSkin(name) != null;
     }
 
-    public void setSkinName(String playerName, String skinName) {
-        skinStorage.setPlayerSkin(playerName, skinName);
+    /**
+     * Saves custom player's skin name to database
+     *
+     * @param name - Players name
+     * @param skin - Skin name
+     **/
+    public void setSkinName(String name, String skin) {
+        skinStorage.setPlayerSkin(name, skin);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
@@ -81,17 +93,7 @@ public class SkinsRestorerAPI {
         skinStorage.removePlayerSkin(playerName);
     }
 
-    @Beta
-    public void applySkin(PlayerWrapper player, Object props) {
-        applySkin(player);
-    }
+    public abstract void applySkin(PlayerWrapper player, Object props);
 
-    @Beta
-    public void applySkin(PlayerWrapper player) {
-        try {
-            plugin.getApplier().applySkin(player, this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    public abstract void applySkin(PlayerWrapper player);
 }

@@ -30,6 +30,9 @@ import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -39,7 +42,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 public class MineSkinAPI {
     private final SRLogger logger;
@@ -51,12 +53,10 @@ public class MineSkinAPI {
         this.logger = logger;
     }
 
-    public Object genSkin(String url) throws SkinRequestException {
+    public IProperty genSkin(String url) throws SkinRequestException {
         String errResp = "";
 
         try {
-            errResp = "";
-
             String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8"));
             if (output.isEmpty()) //when both api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
@@ -69,34 +69,34 @@ public class MineSkinAPI {
 
                 if (dta.has("texture")) {
                     JsonObject tex = dta.get("texture").getAsJsonObject();
-                    return this.skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
+                    return skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
                 errResp = obj.get("error").getAsString();
 
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
-                    logger.log("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
+                    logger.debug("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
 
                     if (obj.has("delay"))
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
 
                     return genSkin(url); // try again if given account fails (will stop if no more accounts)
                 } else if (errResp.equals("No accounts available")) {
-                    logger.log("[ERROR] MS No accounts available " + url);
+                    logger.debug("[ERROR] MS No accounts available " + url);
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+            logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
         } catch (JsonSyntaxException e) {
-            logger.log(Level.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+            logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // throw exception after all tries have failed
-        logger.log("[ERROR] MS:could not generate skin url: " + url);
-        logger.log("[ERROR] MS:reason: " + errResp);
+        logger.debug("[ERROR] MS:could not generate skin url: " + url);
+        logger.debug("[ERROR] MS:reason: " + errResp);
 
         if (!errResp.isEmpty())
             throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins

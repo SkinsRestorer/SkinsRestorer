@@ -53,7 +53,7 @@ public class GUICommand extends BaseCommand {
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer p) {
         if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-            p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(p.getName()))));
+            p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(p.getName())))));
             return;
         }
         p.sendMessage(TextComponent.fromLegacyText(Locale.SKINSMENU_OPEN));

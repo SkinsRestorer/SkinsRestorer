@@ -34,7 +34,7 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
