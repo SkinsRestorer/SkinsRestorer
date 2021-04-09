@@ -98,7 +98,7 @@ public class SkinsRestorer implements ISRPlugin {
             checkUpdate();
 
             Sponge.getScheduler().createTaskBuilder().execute(() ->
-                    checkUpdate(false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+                    checkUpdate(false)).interval(60, TimeUnit.MINUTES).delay(60, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
