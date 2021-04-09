@@ -248,7 +248,9 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
 
         if (C.validUrl(skin)) {
-            if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
+            if (!sender.hasPermission("skinsrestorer.command.set.url")
+                    && !Config.SKINWITHOUTPERM
+                    && !clear) { //ignore /skin clear when DefaultSkin = url
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
                 CooldownStorage.resetCooldown(senderName);
                 return false;
@@ -283,28 +285,26 @@ public class SkinCommand extends BaseCommand {
             try {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
-
                 //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
                 plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
-
+                    p.sendMessage(Locale.SKIN_CHANGE_SUCCESS); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
+                //todo clear missing on sponge & bungee
                 if (clear) {
                     Object props = SkinsRestorer.getInstance().getSkinStorage().createProperty("textures", "", "");
                     SkinsRestorer.getInstance().getFactory().applySkin(p, props);
                     SkinsRestorer.getInstance().getFactory().updateSkin(p);
-
                     return true;
                 }
-                // rollback to old skin on exception
+                // Send message on SkinRequestException
                 sender.sendMessage(e.getMessage());
-                rollback(p, oldSkinName, save);
             }
         }
-        // Set CoolDown to ERROR_COOLDOWN as no skin is set
+        // Set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        rollback(p, oldSkinName, save);
         return false;
     }
 

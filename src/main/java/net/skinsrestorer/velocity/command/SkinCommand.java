@@ -253,7 +253,9 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
 
         if (C.validUrl(skin)) {
-            if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
+            if (!source.hasPermission("skinsrestorer.command.set.url")
+                    && !Config.SKINWITHOUTPERM
+                    && !clear) { //ignore /skin clear when DefaultSkin = url
                 source.sendMessage(plugin.deserialize(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(senderName);
                 return false;
@@ -276,34 +278,35 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                return true;
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
             } catch (Exception e) {
-                e.printStackTrace();
-
+                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
+                source.sendMessage(plugin.deserialize(Locale.ERROR_INVALID_URLSKIN));
             }
-            //todo: this might not be needed here? since its skinurl??
-            //set custom skin name back to old one if there is an exception
-            rollback(p, oldSkinName, save);
         } else {
             //If skin is no url, its a username
             try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
+
+                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
                 plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerVelocityAPI());
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
+                //todo add clear from bukkit skincommand.java
                 source.sendMessage(plugin.deserialize(e.getMessage()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            rollback(p, oldSkinName, save);
+
         }
-        // Set CoolDown to ERROR_COOLDOWN
+        // Set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        rollback(p, oldSkinName, save);
         return false;
     }
 

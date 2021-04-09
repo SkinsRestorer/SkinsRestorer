@@ -248,7 +248,9 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
 
         if (C.validUrl(skin)) {
-            if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
+            if (!source.hasPermission("skinsrestorer.command.set.url")
+                    && !Config.SKINWITHOUTPERM
+                    && !clear) { //ignore /skin clear when DefaultSkin = url
                 source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(senderName);
                 return false;
@@ -271,10 +273,8 @@ public class SkinCommand extends BaseCommand {
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierSponge().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerSpongeAPI());
-
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(plugin.parseMessage(Locale.SKIN_CHANGE_SUCCESS));
-
                 return true;
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.parseMessage(e.getMessage()));
@@ -293,10 +293,11 @@ public class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.parseMessage(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
             }
         }
+        // Set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        rollback(p, oldSkinName, save);
         return false;
     }
 

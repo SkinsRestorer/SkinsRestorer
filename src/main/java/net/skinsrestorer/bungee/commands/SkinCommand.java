@@ -249,7 +249,9 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
 
         if (C.validUrl(skin)) {
-            if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
+            if (!sender.hasPermission("skinsrestorer.command.set.url")
+                    && !Config.SKINWITHOUTPERM
+                    && !clear) {  //ignore /skin clear when DefaultSkin = url
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(senderName);
                 return false;
@@ -265,23 +267,19 @@ public class SkinCommand extends BaseCommand {
             try {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.MS_UPDATING_SKIN));
                 String skinentry = " " + pName; // so won't overwrite premium playernames
-                if (skinentry.length() > 16) {
+                if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
-                } // max len of 16 char
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p), plugin.getSkinsRestorerBungeeAPI());
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
-
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {
-                log.log("[ERROR] could not generate skin url:" + skin + " stacktrace:");
-                if (Config.DEBUG)
-                    e.printStackTrace();
+                log.log("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
             }
         } else {
@@ -297,7 +295,7 @@ public class SkinCommand extends BaseCommand {
                 }
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
+                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
@@ -309,17 +307,15 @@ public class SkinCommand extends BaseCommand {
                     }
                     return true;
                 }
+                // Send message on SkinRequestException
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
-                // Rollback to old skin on exception
-                rollback(p, oldSkinName, save);
             } catch (Exception e) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_UPDATING_SKIN));
-                // Rollback to old skin on exception
-                rollback(p, oldSkinName, save);
             }
         }
-        // Set CoolDown to ERROR_COOLDOWN
+        // Set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        rollback(p, oldSkinName, save);
         return false;
     }
 
