@@ -26,16 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MultiImpl implements IAccess {
+    private final boolean _preferUnsafe;
     protected DuckReflect _reflect;
     protected List<IAccess> _access = new ArrayList<>();
-
     private boolean _canGetValue;
     private boolean _canSetValue;
     private boolean _canSetFieldModifiers;
     private boolean _canSetMethodModifiers;
     private boolean _canGetNewInstance;
-
-    private final boolean _preferUnsafe;
 
     public MultiImpl(DuckReflect reflect, boolean preferUnsafe, int getValDamage, int setValDamage, int setModifiersDamage, int newInstanceDamage) {
         this._reflect = reflect;

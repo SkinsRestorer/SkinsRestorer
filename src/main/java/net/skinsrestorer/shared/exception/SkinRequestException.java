@@ -22,14 +22,7 @@
 package net.skinsrestorer.shared.exception;
 
 public class SkinRequestException extends Exception {
-    private final String reason;
-
-    public SkinRequestException(String reason) {
-        this.reason = reason;
-    }
-
-    @Override
-    public String getMessage() {
-        return reason;
+    public SkinRequestException(String message) {
+        super(message);
     }
 }

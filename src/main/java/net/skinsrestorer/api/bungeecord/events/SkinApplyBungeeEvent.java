@@ -19,11 +19,27 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.api.bungeecord.events;
 
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
+import lombok.Getter;
+import lombok.Setter;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Cancellable;
+import net.md_5.bungee.api.plugin.Event;
+import org.jetbrains.annotations.NotNull;
 
-public interface SRApplier {
-    void applySkin(PlayerWrapper playerWrapper, SkinsRestorerAPI api) throws Exception;
+public class SkinApplyBungeeEvent extends Event implements Cancellable {
+    @Getter
+    private final ProxiedPlayer who;
+    @Getter
+    @Setter
+    private boolean isCancelled = false;
+    @Getter
+    @Setter
+    private String nick;
+
+    public SkinApplyBungeeEvent(@NotNull ProxiedPlayer who, String nick) {
+        this.who = who;
+        this.nick = nick;
+    }
 }

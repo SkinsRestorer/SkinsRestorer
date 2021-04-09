@@ -22,8 +22,8 @@ import li.cock.ie.access.MultiImpl;
 import java.lang.reflect.*;
 
 public class DuckBypass {
-    private DuckReflect _reflect;
-    private IAccess _access;
+    private final DuckReflect _reflect;
+    private final IAccess _access;
 
     private boolean _replaced = false;
 

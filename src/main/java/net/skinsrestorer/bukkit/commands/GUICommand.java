@@ -40,9 +40,11 @@ import org.bukkit.inventory.Inventory;
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
     private final SkinsGUI skinsGUI;
+    private final SkinsRestorer plugin;
 
     public GUICommand(SkinsRestorer plugin) {
-        this.skinsGUI = new SkinsGUI(plugin);
+        this.plugin = plugin;
+        skinsGUI = new SkinsGUI(plugin);
     }
 
     //todo is help even needed for /skins?
@@ -55,7 +57,7 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player p) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
                 p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
                 return;
@@ -63,8 +65,8 @@ public class GUICommand extends BaseCommand {
             p.sendMessage(Locale.SKINSMENU_OPEN);
 
             SkinsGUI.getMenus().put(p.getName(), 0);
-            Inventory inventory = this.skinsGUI.getGUI(p, 0);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () -> p.openInventory(inventory));
+            Inventory inventory = skinsGUI.getGUI(p, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> p.openInventory(inventory));
         });
     }
 }

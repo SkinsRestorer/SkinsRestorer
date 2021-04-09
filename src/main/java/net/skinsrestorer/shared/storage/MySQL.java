@@ -21,6 +21,9 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
 import java.sql.*;
@@ -28,25 +31,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@RequiredArgsConstructor
 public class MySQL {
+    private final SRLogger logger;
     private final String host;
     private final String port;
     private final String database;
     private final String username;
     private final String password;
     private final String options;
-    private final ExecutorService exe;
+    private final ExecutorService exe = Executors.newCachedThreadPool();
     private Connection con;
-
-    public MySQL(String host, String port, String database, String username, String password, String options) {
-        this.host = host;
-        this.port = port;
-        this.database = database;
-        this.username = username;
-        this.password = password;
-        this.options = options;
-        exe = Executors.newCachedThreadPool();
-    }
 
     public void createTable() {
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
@@ -68,30 +63,30 @@ public class MySQL {
         com.mysql.cj.jdbc.Driver.getOSName();
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
-        System.out.println("[SkinsRestorer] Connected to MySQL!");
+        logger.info("Connected to MySQL!");
         return con;
     }
 
     public Connection getConnection() {
         try {
             if (con == null || !con.isValid(1)) {
-                System.out.println("[SkinsRestorer] MySQL connection lost! Creation a new one.");
+                logger.info("MySQL connection lost! Creation a new one.");
                 con = openConnection();
             }
         } catch (SQLException e) {
-            System.out.println("[SkinsRestorer] Could NOT connect to MySQL: " + e.getMessage());
+            logger.info("Could NOT connect to MySQL: " + e.getMessage());
         }
 
         try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
             stmt.execute();
         } catch (SQLException e) {
-            System.out.println("[SkinsRestorer] MySQL SELECT 1 failed. Reconnecting");
+            logger.info("MySQL SELECT 1 failed. Reconnecting");
 
             try {
                 con = openConnection();
                 return con;
             } catch (SQLException e1) {
-                System.out.println("[SkinsRestorer] Couldn't reconnect to MySQL.");
+                logger.warning("Couldn't reconnect to MySQL!");
                 e1.printStackTrace();
             }
         }
@@ -110,7 +105,7 @@ public class MySQL {
                 }
             return ps;
         } catch (SQLException e) {
-            System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
 
         return null;
@@ -127,7 +122,7 @@ public class MySQL {
                 return;
             }
             e.printStackTrace();
-            System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
     }
 
@@ -151,7 +146,7 @@ public class MySQL {
                     }
 
                 } catch (SQLException e) {
-                    System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+                    logger.warning("MySQL error: " + e.getMessage());
                 }
 
                 return null;
@@ -161,7 +156,7 @@ public class MySQL {
                 rowSet = future.get();
 
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] MySQL error: " + e.getMessage());
+            logger.warning("MySQL error: " + e.getMessage());
         }
 
         return rowSet;
