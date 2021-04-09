@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.console.BukkitConsoleImpl;
 import net.skinsrestorer.shared.utils.property.GenericProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
@@ -94,7 +95,7 @@ public class SkinsRestorer extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger()), true);
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1669);

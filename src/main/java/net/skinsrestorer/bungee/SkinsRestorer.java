@@ -44,6 +44,7 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.log.console.BungeeConsoleImpl;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -73,7 +74,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger()), true);
+        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
