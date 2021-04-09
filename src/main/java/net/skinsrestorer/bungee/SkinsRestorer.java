@@ -87,7 +87,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
-            getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+            getProxy().getScheduler().schedule(this, this::checkUpdate, 60, 60, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
