@@ -21,23 +21,23 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@RequiredArgsConstructor
 public class LoggerImpl implements ISRLogger {
     private final Logger logger;
-
-    public LoggerImpl(Logger logger) {
-        this.logger = logger;
-    }
+    private final ISRConsole console;
 
     @Override
     public void log(SRLogLevel level, String message) {
         switch (level) {
             case INFO:
-                logger.log(Level.INFO, message);
+                console.sendMessage(message);
                 break;
             case WARNING:
                 logger.log(Level.WARNING, message);
