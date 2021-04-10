@@ -65,6 +65,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                     callback.upToDate();
                 }
             });
+
         } catch (Exception e) {
             log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
             if (Config.DEBUG)

@@ -134,9 +134,8 @@ public class SkinsRestorer extends JavaPlugin {
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled);
 
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                checkUpdate(bungeeEnabled, false);
-            }, 20 * 60 * 60, 20 * 60 * 60);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () ->
+                    checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.info("Updater Disabled");
         }
