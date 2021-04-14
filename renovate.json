@@ -2,6 +2,9 @@
   "extends": [
     "config:base"
   ],
+  "baseBranches": [
+    "dev"
+  ],
   "reviewers": [
     "xknat"
   ],
