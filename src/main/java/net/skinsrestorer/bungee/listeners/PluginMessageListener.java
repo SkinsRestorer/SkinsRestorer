@@ -28,7 +28,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.utils.Property;
+import net.skinsrestorer.shared.utils.property.GenericProperty;
 
 import java.io.*;
 import java.util.Map;
@@ -40,7 +40,7 @@ public class PluginMessageListener implements Listener {
         this.plugin = plugin;
     }
 
-    private static byte[] convertToByteArray(Map<String, Property> map) {
+    private static byte[] convertToByteArray(Map<String, GenericProperty> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
         try {
@@ -80,7 +80,7 @@ public class PluginMessageListener implements Listener {
                     page = 999;
                 int skinNumber = 26 * page;
 
-                Map<String, Property> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
+                Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
 
                 byte[] ba = convertToByteArray(skinsList);
 

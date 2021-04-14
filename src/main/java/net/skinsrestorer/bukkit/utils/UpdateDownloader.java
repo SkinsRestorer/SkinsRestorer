@@ -34,7 +34,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.logging.Level;
 
 /**
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
@@ -88,16 +87,16 @@ public class UpdateDownloader {
             return false;
         }
 
-        plugin.getSrLogger().logAlways("[SpigetUpdate] Downloading update...");
+        plugin.getSrLogger().info("[SpigetUpdate] Downloading update...");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getSrLogger().logAlways("[SpigetUpdate] Update saved as " + updateFile.getPath());
+                plugin.getSrLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getSrLogger().logAlways(Level.WARNING, "[SpigetUpdate] Could not download update", exception);
+                plugin.getSrLogger().warning("[SpigetUpdate] Could not download update", exception);
             }
         }));
 

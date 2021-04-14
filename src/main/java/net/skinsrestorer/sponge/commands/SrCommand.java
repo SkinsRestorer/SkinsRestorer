@@ -32,10 +32,10 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
 import java.util.Arrays;
@@ -47,9 +47,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -62,8 +64,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(plugin.getConfigPath());
-        Config.load(plugin.getConfigPath(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getDataFolder(), logger);
+        Config.load(plugin.getDataFolder(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"), logger);
         source.sendMessage(plugin.parseMessage(Locale.RELOAD));
     }
 
@@ -144,19 +146,17 @@ public class SrCommand extends BaseCommand {
                 long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                 String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
-                ConsoleSource console = Sponge.getServer().getConsole();
-
                 source.sendMessage(plugin.parseMessage("§aRequest time: §e" + requestDate));
                 source.sendMessage(plugin.parseMessage("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
                 source.sendMessage(plugin.parseMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
                 source.sendMessage(plugin.parseMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
                 source.sendMessage(plugin.parseMessage("§cMore info in console!"));
 
-                //Console
-                console.sendMessage(plugin.parseMessage("\n§aName: §8" + profileProperty.getName()));
-                console.sendMessage(plugin.parseMessage("\n§aValue : §8" + profileProperty.getValue()));
-                console.sendMessage(plugin.parseMessage("\n§aSignature : §8" + profileProperty.getSignature()));
-                console.sendMessage(plugin.parseMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded)));
+                // Console
+                logger.info("§aName: §8" + profileProperty.getName());
+                logger.info("§aValue : §8" + profileProperty.getValue());
+                logger.info("§aSignature : §8" + profileProperty.getSignature());
+                logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
             });
         });
     }

@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.Arrays;
@@ -45,9 +46,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -60,8 +63,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        Locale.load(SkinsRestorer.getCONFIG_PATH());
-        Config.load(SkinsRestorer.getCONFIG_PATH(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"));
+        Locale.load(plugin.getDataFolder(), logger);
+        Config.load(plugin.getDataFolder(), plugin.getClass().getClassLoader().getResourceAsStream("config.yml"), logger);
         source.sendMessage(plugin.deserialize(Locale.RELOAD));
     }
 
@@ -140,16 +143,16 @@ public class SrCommand extends BaseCommand {
             String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
             source.sendMessage(plugin.deserialize("§aRequest time: §e" + requestDate));
-            source.sendMessage(plugin.deserialize("§aprofileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
+            source.sendMessage(plugin.deserialize("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString()));
             source.sendMessage(plugin.deserialize("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString()));
             source.sendMessage(plugin.deserialize("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1)));
             source.sendMessage(plugin.deserialize("§cMore info in console!"));
 
-            //console
-            System.out.println("\n§aName: §8" + prop.getName());
-            System.out.println("\n§aValue : §8" + prop.getValue());
-            System.out.println("\n§aSignature : §8" + prop.getSignature());
-            System.out.println("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+            // Console
+            logger.info("§aName: §8" + prop.getName());
+            logger.info("§aValue : §8" + prop.getValue());
+            logger.info("§aSignature : §8" + prop.getSignature());
+            logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
         });
     }
 
@@ -161,7 +164,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, OnlinePlayer target) {
         plugin.getService().execute(() -> {
             try {
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()), plugin.getSkinsRestorerVelocityAPI());
+                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()));
                 source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));

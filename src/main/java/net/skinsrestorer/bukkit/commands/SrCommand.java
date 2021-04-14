@@ -34,9 +34,9 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -48,9 +48,11 @@ import java.util.List;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
+    private final SRLogger logger;
 
     public SrCommand(SkinsRestorer plugin) {
         this.plugin = plugin;
+        logger = plugin.getSrLogger();
     }
 
     @HelpCommand
@@ -63,8 +65,8 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        Locale.load(SkinsRestorer.getInstance().getConfigPath());
-        Config.load(SkinsRestorer.getInstance().getConfigPath(), SkinsRestorer.getInstance().getResource("config.yml"));
+        Locale.load(plugin.getDataFolder(), logger);
+        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
 
         sender.sendMessage(Locale.RELOAD);
     }
@@ -73,7 +75,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             sender.sendMessage("§3----------------------------------------------");
             sender.sendMessage("§7Checking needed services for SR to work properly...");
 
@@ -89,6 +91,7 @@ public class SrCommand extends BaseCommand {
                     if (Config.DEBUG || result.contains("✘"))
                         sender.sendMessage(result);
                 }
+
             sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
             sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
 
@@ -111,7 +114,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (e.name().equalsIgnoreCase("player"))
                 for (String targetPlayer : targets)
                     plugin.getSkinStorage().removePlayerSkin(targetPlayer);
@@ -131,7 +134,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
                 Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
@@ -151,14 +154,11 @@ public class SrCommand extends BaseCommand {
                     String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
 
                     byte[] decoded = Base64.getDecoder().decode(value);
-
                     String decodedString = new String(decoded);
                     JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
                     String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                     long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                     String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
-
-                    ConsoleCommandSender console = Bukkit.getConsoleSender();
 
                     sender.sendMessage("§aRequest time: §e" + requestDate);
                     sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
@@ -166,11 +166,11 @@ public class SrCommand extends BaseCommand {
                     sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
                     sender.sendMessage("§cMore info in console!");
 
-                    //console
-                    console.sendMessage("\n§aName: §8" + name);
-                    console.sendMessage("\n§aValue : §8" + value);
-                    console.sendMessage("\n§aSignature : §8" + signature);
-                    console.sendMessage("\n§aValue Decoded: §e" + Arrays.toString(decoded));
+                    // Console
+                    logger.info("§aName: §8" + name);
+                    logger.info("§aValue : §8" + value);
+                    logger.info("§aSignature : §8" + signature);
+                    logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -185,7 +185,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final Player player = target.getPlayer();
                 final String name = player.getName();
@@ -209,7 +209,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <name> <skinurl>")
     public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
-        Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),

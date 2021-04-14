@@ -18,7 +18,7 @@ package li.cock.ie.reflect;
 
 public class DuckHandler implements IDuckHandler {
     private Throwable ex = null;
-    private boolean debug;
+    private final boolean debug;
 
     public DuckHandler(boolean debug) {
         this.debug = debug;
