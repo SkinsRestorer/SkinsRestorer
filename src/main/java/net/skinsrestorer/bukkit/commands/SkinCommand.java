@@ -256,8 +256,7 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    Object props = plugin.getMojangAPI().createProperty("textures", "", "");
-                    plugin.getFactory().applySkin(p, props);
+                    plugin.getFactory().applySkin(p, plugin.getMojangAPI().createProperty("textures", "", ""));
                     plugin.getFactory().updateSkin(p);
 
                     return true;
