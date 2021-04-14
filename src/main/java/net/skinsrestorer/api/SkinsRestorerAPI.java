@@ -25,6 +25,7 @@ import lombok.Getter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 /**
  * API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
@@ -66,8 +67,8 @@ public abstract class SkinsRestorerAPI {
         return skinStorage.getPlayerSkin(name);
     }
 
-    public Object getSkinData(String skin) {
-        return skinStorage.getSkinData(skin).getHandle();
+    public IProperty getSkinData(String skin) {
+        return skinStorage.getSkinData(skin);
     }
 
     public boolean hasSkin(String name) {
@@ -93,7 +94,7 @@ public abstract class SkinsRestorerAPI {
         skinStorage.removePlayerSkin(playerName);
     }
 
-    public abstract void applySkin(PlayerWrapper player, Object props);
+    public abstract void applySkin(PlayerWrapper player, IProperty props);
 
     public abstract void applySkin(PlayerWrapper player);
 }

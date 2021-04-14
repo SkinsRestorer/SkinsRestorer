@@ -22,26 +22,18 @@
 package net.skinsrestorer.shared.utils;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
+@Getter
 public enum Platform {
     BUKKIT(true, false, false, false),
     BUNGEECORD(false, true, false, false),
     SPONGE(false, false, true, false),
     VELOCITY(false, false, false, true);
 
-    @Getter
     private final boolean isBukkit;
-    @Getter
     private final boolean isBungee;
-    @Getter
     private final boolean isSponge;
-    @Getter
     private final boolean isVelocity;
-
-    Platform(boolean isBukkit, boolean isBungee, boolean isSponge, boolean isVelocity) {
-        this.isBukkit = isBukkit;
-        this.isBungee = isBungee;
-        this.isSponge = isSponge;
-        this.isVelocity = isVelocity;
-    }
 }

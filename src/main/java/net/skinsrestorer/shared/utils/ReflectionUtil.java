@@ -30,15 +30,13 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 public class ReflectionUtil {
-    private static final DuckBypass reflect;
+    private static final DuckBypass reflect = new DuckBypass();
     public static String serverVersion = null;
 
     static {
-        reflect = new DuckBypass();
         try {
             Class.forName("org.bukkit.Bukkit");
-            String version = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
-            setObject(ReflectionUtil.class, null, "serverVersion", version);
+            serverVersion =  Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
         } catch (Exception ignored) {
         }
     }

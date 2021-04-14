@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit.skinapplier;
 
 import lombok.SneakyThrows;
 import lombok.val;

@@ -23,6 +23,7 @@ package net.skinsrestorer.api.bukkit.events;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -35,12 +36,12 @@ public class SkinApplyBukkitEvent extends Event implements Cancellable {
     private final Player who;
     @Getter
     @Setter
-    private Object props;
+    private IProperty props;
     @Getter
     @Setter
     private boolean isCancelled = false;
 
-    public SkinApplyBukkitEvent(@NotNull Player who, Object props) {
+    public SkinApplyBukkitEvent(@NotNull Player who, IProperty props) {
         super(true);
         this.props = props;
         this.who = who;

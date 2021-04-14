@@ -36,6 +36,7 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
@@ -212,7 +213,12 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
+        public void applySkin(PlayerWrapper player, IProperty props) {
+            try {
+                skinApplierSponge.applySkin(player, props);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             throw new UnsupportedOperationException();
         }
 

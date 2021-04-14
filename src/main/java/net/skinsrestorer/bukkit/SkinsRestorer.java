@@ -31,8 +31,7 @@ import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
-import net.skinsrestorer.bukkit.skinfactory.SkinFactory;
-import net.skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
+import net.skinsrestorer.bukkit.skinapplier.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -45,6 +44,7 @@ import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.console.BukkitConsoleImpl;
 import net.skinsrestorer.shared.utils.property.GenericProperty;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -62,7 +62,7 @@ import java.util.TreeMap;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin {
-    private SkinFactory factory;
+    private SkinApplierBukkit factory;
     private UpdateChecker updateChecker;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
@@ -104,7 +104,7 @@ public class SkinsRestorer extends JavaPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        factory = new UniversalSkinFactory(this);
+        factory = new SkinApplierBukkit(this);
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
 
@@ -450,7 +450,7 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
+        public void applySkin(PlayerWrapper player, IProperty props) {
             getFactory().applySkin(player.get(Player.class), props);
         }
 

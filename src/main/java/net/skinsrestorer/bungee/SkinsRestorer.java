@@ -45,6 +45,7 @@ import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.console.BungeeConsoleImpl;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -113,7 +114,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
-        skinApplierBungee = new SkinApplierBungee(this);
+        skinApplierBungee = new SkinApplierBungee(this, srLogger);
 
         // Init message channel
         getProxy().registerChannel("sr:messagechannel");
@@ -200,7 +201,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
+        public void applySkin(PlayerWrapper player, IProperty props) {
             throw new UnsupportedOperationException();
         }
 

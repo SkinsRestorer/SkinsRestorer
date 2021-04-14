@@ -19,12 +19,15 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit.skinapplier;
 
 import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,7 +37,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class UniversalSkinFactory implements SkinFactory {
+public class SkinApplierBukkit {
     private final SkinsRestorer plugin;
     private final Consumer<Player> refresh = detectRefresh();
     private boolean checkOptFileChecked = false;
@@ -59,8 +62,8 @@ public class UniversalSkinFactory implements SkinFactory {
         boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
         boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
         if (viaVersion || protocolSupportExists) {
-            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
-            return new OldSkinRefresher();
+            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+            return new SpigotSkinRefresher();
         }
 
         if (PaperLib.isPaper()) {
@@ -70,10 +73,49 @@ public class UniversalSkinFactory implements SkinFactory {
             }
         }
 
-        return new OldSkinRefresher();
+        return new SpigotSkinRefresher();
     }
 
-    @Override
+    /**
+     * Applies the skin In other words, sets the skin data, but no changes will
+     * be visible until you reconnect or force update with
+     *
+     * @param p     - Player
+     * @param props - Property Object
+     */
+    public void applySkin(final Player p, IProperty props) {
+        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
+        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(p, props);
+
+        Bukkit.getPluginManager().callEvent(applyEvent);
+
+        if (applyEvent.isCancelled())
+            return;
+
+        // delay 1 servertick so we override online-mode
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            try {
+                if (props == null)
+                    return;
+
+                Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
+                Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+                Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+                ReflectionUtil.invokeMethod(propMap, "clear");
+                ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", props);
+
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(p));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Instantly updates player's skin
+     *
+     * @param player - Player
+     */
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;

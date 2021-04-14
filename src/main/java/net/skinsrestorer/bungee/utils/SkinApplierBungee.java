@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bungee.utils;
 
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
@@ -36,14 +37,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public class SkinApplierBungee implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public SkinApplierBungee(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     public void applySkin(final ProxiedPlayer p, String nick, InitialHandler handler) throws Exception {
         if (p == null)
@@ -63,7 +60,6 @@ public class SkinApplierBungee implements ISRApplier {
         }
 
         LoginResult profile = handler.getLoginProfile();
-
         if (profile == null) {
             try {
                 // NEW BUNGEECORD (id, name, property)
@@ -89,7 +85,7 @@ public class SkinApplierBungee implements ISRApplier {
     }
 
     public void applySkin(final PlayerWrapper p) throws Exception {
-        applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
+        applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), (InitialHandler) p.get(ProxiedPlayer.class).getPendingConnection());
     }
 
     private void sendUpdateRequest(ProxiedPlayer p, Property textures) {

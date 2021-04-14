@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit.skinapplier;
 
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -47,7 +47,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-public class OldSkinRefresher implements Consumer<Player> {
+public class SpigotSkinRefresher implements Consumer<Player> {
     private static Class<?> playOutRespawn;
     private static Class<?> playOutPlayerInfo;
     private static Class<?> playOutPosition;
@@ -106,7 +106,7 @@ public class OldSkinRefresher implements Consumer<Player> {
     }
 
     private void sendPacket(Object playerConnection, Object packet) throws Exception {
-        ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{OldSkinRefresher.packet}, packet);
+        ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{SpigotSkinRefresher.packet}, packet);
     }
 
     public void accept(Player player) {
@@ -120,8 +120,8 @@ public class OldSkinRefresher implements Consumer<Player> {
             Object removePlayer;
             Object addPlayer;
 
-            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{OldSkinRefresher.removePlayer.getClass(), Iterable.class}, OldSkinRefresher.removePlayer, set);
-            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{OldSkinRefresher.addPlayer.getClass(), Iterable.class}, OldSkinRefresher.addPlayer, set);
+            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{SpigotSkinRefresher.removePlayer.getClass(), Iterable.class}, SpigotSkinRefresher.removePlayer, set);
+            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{SpigotSkinRefresher.addPlayer.getClass(), Iterable.class}, SpigotSkinRefresher.addPlayer, set);
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet

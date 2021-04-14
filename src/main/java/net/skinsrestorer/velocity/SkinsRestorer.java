@@ -46,6 +46,7 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
+import net.skinsrestorer.shared.utils.property.IProperty;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -125,7 +126,7 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Init SkinApplier
-        skinApplierVelocity = new SkinApplierVelocity(this);
+        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
 
         // Init API
         skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
@@ -214,8 +215,12 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
-            throw new UnsupportedOperationException();
+        public void applySkin(PlayerWrapper player, IProperty props) {
+            try {
+                skinApplierVelocity.applySkin(player, props);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

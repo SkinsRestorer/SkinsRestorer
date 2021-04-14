@@ -28,13 +28,11 @@ import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class SkinApplyBungeeEvent extends Event implements Cancellable {
-    @Getter
     private final ProxiedPlayer who;
-    @Getter
     @Setter
     private boolean isCancelled = false;
-    @Getter
     @Setter
     private String nick;
 
