@@ -27,6 +27,7 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -43,16 +44,12 @@ import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public SkinCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -266,7 +263,7 @@ public class SkinCommand extends BaseCommand {
                 if (clear) {
                     //plugin.getSkinStorage()
 
-                    IProperty props = plugin.getSkinStorage().createProperty("textures", "", "");
+                    IProperty props = plugin.getMojangAPI().createProperty("textures", "", "");
                     try {
                         plugin.getSkinStorage().setSkinData("00", props);
                         plugin.getSkinApplierBungee().applySkin(p, "00", null);

@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -45,16 +46,12 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")

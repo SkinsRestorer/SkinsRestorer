@@ -23,15 +23,11 @@ package net.skinsrestorer.shared.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import lombok.Getter;
-import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.GenericProperty;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.shared.utils.property.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,12 +44,35 @@ public class MojangAPI {
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private final SRLogger logger;
-    @Getter
-    @Setter
-    private SkinStorage skinStorage;
+    private final Platform platform;
+    private Class<?> property;
 
-    public MojangAPI(SRLogger logger) {
+    public MojangAPI(SRLogger logger, Platform platform) {
         this.logger = logger;
+        this.platform = platform;
+
+        if (platform == Platform.BUKKIT) {
+            property = BukkitProperty.class;
+        } else if (platform == Platform.BUNGEECORD) {
+            property = BungeeProperty.class;
+        } else if (platform == Platform.VELOCITY) {
+            property = VelocityProperty.class;
+        }
+    }
+
+    public IProperty createProperty(String name, String value, String signature) {
+        // use our own property class if we are on sponge
+        if (platform == Platform.SPONGE)
+            return new GenericProperty(name, value, signature);
+
+        try {
+            return (IProperty) ReflectionUtil.invokeConstructor(property,
+                    new Class<?>[]{String.class, String.class, String.class}, name, value, signature);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     // TODO Deal with duplicated code
@@ -73,8 +92,6 @@ public class MojangAPI {
             String output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            GenericProperty property = new GenericProperty();
-
             if (obj.has("raw")) {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
@@ -82,8 +99,9 @@ public class MojangAPI {
                     return getSkinPropertyMojang(uuid);
                 }
 
+                GenericProperty property = new GenericProperty();
                 if (property.valuesFromJson(raw)) {
-                    return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+                    return createProperty("textures", property.getValue(), property.getSignature());
                 }
             }
         } catch (Exception e) {
@@ -109,7 +127,7 @@ public class MojangAPI {
             GenericProperty property = new GenericProperty();
 
             if (obj.has("properties") && property.valuesFromJson(obj)) {
-                return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+                return createProperty("textures", property.getValue(), property.getSignature());
             }
         } catch (Exception e) {
             if (tryNext)
@@ -133,11 +151,7 @@ public class MojangAPI {
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
-            GenericProperty property = new GenericProperty();
-            property.setValue(rawTextures.get("value").getAsString());
-            property.setSignature(rawTextures.get("signature").getAsString());
-
-            return getSkinStorage().createProperty("textures", property.getValue(), property.getSignature());
+            return createProperty("textures", rawTextures.get("value").getAsString(), rawTextures.get("signature").getAsString());
         } catch (Exception e) {
             logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
         }

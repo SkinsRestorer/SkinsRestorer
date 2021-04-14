@@ -21,12 +21,11 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MojangAPI;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.property.*;
 
@@ -37,31 +36,14 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 public class SkinStorage {
-    private final Platform platform;
     private final SRLogger logger;
-    private Class<?> property;
-    @Getter
+    private final MojangAPI mojangAPI;
     @Setter
     private MySQL mysql;
     private File skinsFolder;
     private File playersFolder;
-    @Getter
-    @Setter
-    private MojangAPI mojangAPI;
-
-    public SkinStorage(SRLogger logger, Platform platform) {
-        this.logger = logger;
-        this.platform = platform;
-
-        if (platform == Platform.BUKKIT) {
-            property = BukkitProperty.class;
-        } else if (platform == Platform.BUNGEECORD) {
-            property = BungeeProperty.class;
-        } else if (platform == Platform.VELOCITY) {
-            property = VelocityProperty.class;
-        }
-    }
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");
@@ -95,29 +77,6 @@ public class SkinStorage {
         Config.DEFAULT_SKINS.removeAll(toRemove);
     }
 
-
-    public IProperty createProperty(String name, String value, String signature) {
-        // use our own property class if we are on sponge
-        if (platform == Platform.SPONGE) {
-            GenericProperty p = new GenericProperty();
-
-            p.setName(name);
-            p.setValue(value);
-            p.setSignature(signature);
-
-            return p;
-        }
-
-        try {
-            return (IProperty) ReflectionUtil.invokeConstructor(property,
-                    new Class<?>[]{String.class, String.class, String.class}, name, value, signature);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
     /**
      * This methods seeks out players actual skin (chosen or not) and returns
      * either null (if no skin data found) or the property object conatining all
@@ -141,7 +100,7 @@ public class SkinStorage {
         if (textures == null) {
             // No cached skin found, get from MojangAPI, save and return
             try {
-                textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
+                textures = mojangAPI.getSkinProperty(mojangAPI.getUUID(skin, true));
 
                 if (textures == null)
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -283,7 +242,7 @@ public class SkinStorage {
 
     private IProperty updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && isOld(Long.parseLong(timestamp))) {
-            IProperty skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
+            IProperty skin = mojangAPI.getSkinProperty(mojangAPI.getUUID(name, true));
 
             if (skin != null) {
                 setSkinData(name, skin);
@@ -291,7 +250,7 @@ public class SkinStorage {
             }
         }
 
-        return createProperty("textures", value, signature);
+        return mojangAPI.createProperty("textures", value, signature);
     }
 
     public IProperty getSkinData(String name) {
@@ -463,7 +422,7 @@ public class SkinStorage {
             try {
                 do {
                     if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                        list.put(crs.getString("Nick").toLowerCase(), mojangAPI.createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
             } catch (java.sql.SQLException ignored) {
@@ -632,7 +591,7 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            IProperty textures = getMojangAPI().getSkinPropertyMojang(getMojangAPI().getUUIDMojang(skin));
+            IProperty textures = mojangAPI.getSkinPropertyMojang(mojangAPI.getUUIDMojang(skin));
 
             if (textures != null) {
                 setSkinData(skin, textures);
@@ -674,7 +633,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (getMojangAPI().getUUID(player, true) != null) {
+                    if (mojangAPI.getUUID(player, true) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }
@@ -716,26 +675,5 @@ public class SkinStorage {
         return str.replaceAll("\\s", "");
     }
 
-    public enum Platform {
-        BUKKIT(true, false, false, false),
-        BUNGEECORD(false, true, false, false),
-        SPONGE(false, false, true, false),
-        VELOCITY(false, false, false, true);
 
-        @Getter
-        private final boolean isBukkit;
-        @Getter
-        private final boolean isBungee;
-        @Getter
-        private final boolean isSponge;
-        @Getter
-        private final boolean isVelocity;
-
-        Platform(boolean isBukkit, boolean isBungee, boolean isSponge, boolean isVelocity) {
-            this.isBukkit = isBukkit;
-            this.isBungee = isBungee;
-            this.isSponge = isSponge;
-            this.isVelocity = isVelocity;
-        }
-    }
 }

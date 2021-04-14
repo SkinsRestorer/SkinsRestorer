@@ -140,8 +140,6 @@ public class SkinsRestorer extends JavaPlugin {
             srLogger.info("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUKKIT);
-
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
 
@@ -159,7 +157,7 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player, skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                factory.applySkin(player, mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 
@@ -208,7 +206,7 @@ public class SkinsRestorer extends JavaPlugin {
                             //convert
                             Map<String, Object> newSkinList = new TreeMap<>();
 
-                            skinList.forEach((name, property) -> newSkinList.put(name, getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature())));
+                            skinList.forEach((name, property) -> newSkinList.put(name, mojangAPI.createProperty(property.getName(), property.getValue(), property.getSignature())));
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
                             ++page; // start counting from 1
@@ -233,16 +231,13 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init commands
         initCommands();
@@ -325,10 +320,10 @@ public class SkinsRestorer extends JavaPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        skinCommand = new SkinCommand(this);
+        skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new GUICommand(this, new SkinsGUI(this)));
     }
 
     private boolean initStorage() {

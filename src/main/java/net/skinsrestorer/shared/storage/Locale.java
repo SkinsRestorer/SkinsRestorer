@@ -102,12 +102,10 @@ public class Locale {
             + "\n   &2/skin <skinname> &7-&f Changes your skin."
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
-    //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
-    private static YamlConfig locale;
 
     public static void load(File path, SRLogger logger) {
         try {
-            locale = new YamlConfig(path, "messages.yml", true, logger);
+            YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
             locale.saveDefaultConfig();
             locale.reload();
 

@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -36,16 +37,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+@RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
-    private final SkinsGUI skinsGUI;
     private final SkinsRestorer plugin;
-
-    public GUICommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        skinsGUI = new SkinsGUI(plugin);
-    }
+    private final SkinsGUI skinsGUI;
 
     //todo is help even needed for /skins?
     @HelpCommand

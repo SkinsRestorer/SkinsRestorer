@@ -8,47 +8,40 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils.property;
+package net.skinsrestorer.shared.utils;
 
-import lombok.Data;
+import lombok.Getter;
 
-import java.io.Serializable;
+public enum Platform {
+    BUKKIT(true, false, false, false),
+    BUNGEECORD(false, true, false, false),
+    SPONGE(false, false, true, false),
+    VELOCITY(false, false, false, true);
 
-@Data
-public class GenericProperty implements Serializable, IProperty {
-    private String name;
-    private String value;
-    private String signature;
+    @Getter
+    private final boolean isBukkit;
+    @Getter
+    private final boolean isBungee;
+    @Getter
+    private final boolean isSponge;
+    @Getter
+    private final boolean isVelocity;
 
-    public GenericProperty() {
-    }
-
-    @SuppressWarnings("unused")
-    public GenericProperty(IProperty property) {
-        name = property.getName();
-        value = property.getValue();
-        signature = property.getSignature();
-    }
-
-    public GenericProperty(String name, String value, String signature) {
-        this.name = name;
-        this.value = value;
-        this.signature = signature;
-    }
-
-    @Override
-    public Object getHandle() {
-        return this;
+    Platform(boolean isBukkit, boolean isBungee, boolean isSponge, boolean isVelocity) {
+        this.isBukkit = isBukkit;
+        this.isBungee = isBungee;
+        this.isSponge = isSponge;
+        this.isVelocity = isVelocity;
     }
 }

@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SkinsGUI extends ItemStack implements Listener {
     @Getter
     private static final Map<String, Integer> menus = new ConcurrentHashMap<>();
-
     @Getter
     private final SRLogger srLogger;
     private final SkinsRestorer plugin;

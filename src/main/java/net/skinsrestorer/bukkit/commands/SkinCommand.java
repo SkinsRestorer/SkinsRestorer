@@ -27,6 +27,7 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
@@ -40,16 +41,12 @@ import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public SkinCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -259,7 +256,7 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    Object props = plugin.getSkinStorage().createProperty("textures", "", "");
+                    Object props = plugin.getMojangAPI().createProperty("textures", "", "");
                     plugin.getFactory().applySkin(p, props);
                     plugin.getFactory().updateSkin(p);
 

@@ -92,22 +92,17 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             srLogger.info("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUNGEECORD);
-
         // Init config files
         Config.load(getDataFolder(), getResourceAsStream("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this, srLogger));
@@ -157,9 +152,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        this.skinCommand = new SkinCommand(this);
+        this.skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new SrCommand(this, srLogger));
         manager.registerCommand(new GUICommand(this));
     }
 

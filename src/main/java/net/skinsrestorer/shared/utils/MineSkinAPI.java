@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
@@ -43,15 +44,10 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 public class MineSkinAPI {
     private final SRLogger logger;
-    private @Getter
-    @Setter
-    SkinStorage skinStorage;
-
-    public MineSkinAPI(SRLogger logger) {
-        this.logger = logger;
-    }
+    private final MojangAPI mojangAPI;
 
     public IProperty genSkin(String url) throws SkinRequestException {
         String errResp = "";
@@ -69,7 +65,7 @@ public class MineSkinAPI {
 
                 if (dta.has("texture")) {
                     JsonObject tex = dta.get("texture").getAsJsonObject();
-                    return skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
+                    return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
                 errResp = obj.get("error").getAsString();

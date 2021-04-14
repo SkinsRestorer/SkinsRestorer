@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -43,16 +44,12 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")

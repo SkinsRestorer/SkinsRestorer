@@ -29,6 +29,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
@@ -42,16 +43,12 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")

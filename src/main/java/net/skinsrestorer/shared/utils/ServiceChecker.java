@@ -80,21 +80,21 @@ public class ServiceChecker {
         // ##### Profile requests #####
         IProperty minetools = mojangAPI.getSkinProperty(NOTCH_UUID, false);
         if (minetools != null) {
-            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools.toString());
+            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools);
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
         IProperty mojang = mojangAPI.getSkinPropertyMojang(NOTCH_UUID, false);
         if (mojang != null) {
-            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang.toString());
+            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
         IProperty mojangBackup = mojangAPI.getSkinPropertyBackup(NOTCH_UUID, false);
         if (mojangBackup != null) {
-            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
+            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
