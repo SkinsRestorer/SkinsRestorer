@@ -166,7 +166,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(target.getPlayer().getName());
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getPlayer().getName());
 
                 plugin.getSkinApplierSponge().updateProfileSkin(target.getPlayer().getProfile(), skin);
                 source.sendMessage(plugin.parseMessage("success: player skin has been refreshed!"));

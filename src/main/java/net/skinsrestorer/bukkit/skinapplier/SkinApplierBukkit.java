@@ -80,7 +80,7 @@ public class SkinApplierBukkit implements ISRApplier {
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper) throws Exception {
-        throw new UnsupportedOperationException(); // TODO
+
     }
 
     @Override

@@ -21,8 +21,11 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
+import net.skinsrestorer.shared.storage.SkinStorage;
+
 import java.io.File;
 
 public interface ISRPlugin {
     File getDataFolder();
+    SkinStorage getSkinStorage();
 }

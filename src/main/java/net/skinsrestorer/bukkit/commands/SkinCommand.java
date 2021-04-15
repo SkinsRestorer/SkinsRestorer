@@ -93,7 +93,7 @@ public class SkinCommand extends BaseCommand {
 
             final Player p = target.getPlayer();
             final String pName = p.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(pName, true);
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
@@ -145,7 +145,7 @@ public class SkinCommand extends BaseCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
+                    skin = plugin.getSkinStorage().getDefaultSkinName(p.getName(), true);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
@@ -249,15 +249,15 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
 
                 //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
-                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    plugin.getFactory().applySkin(p, plugin.getMojangAPI().createProperty("textures", "", ""));
-                    plugin.getFactory().updateSkin(p);
+                    plugin.getSkinApplierBukkit().applySkin(p, plugin.getMojangAPI().createProperty("textures", "", ""));
+                    plugin.getSkinApplierBukkit().updateSkin(p);
 
                     return true;
                 }
@@ -287,7 +287,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getFactory().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
+                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;

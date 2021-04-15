@@ -47,13 +47,12 @@ public class UpdateChecker {
     public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
     private final SRLogger log;
-
-    private final @Getter
-    String currentVersion;
-    private final @Getter
-    String userAgent;
-    private @Getter
-    ResourceInfo latestResourceInfo;
+    @Getter
+    private final String currentVersion;
+    @Getter
+    private final String userAgent;
+    @Getter
+    private ResourceInfo latestResourceInfo;
 
     public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         this.resourceId = resourceId;

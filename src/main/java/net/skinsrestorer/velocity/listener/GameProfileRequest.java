@@ -49,7 +49,7 @@ public class GameProfileRequest {
         if (e.isOnlineMode())
             return;
 
-        String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
         //todo: default skinurl support
         try {

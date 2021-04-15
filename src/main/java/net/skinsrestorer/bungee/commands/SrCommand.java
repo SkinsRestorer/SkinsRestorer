@@ -166,7 +166,7 @@ public class SrCommand extends BaseCommand {
             try {
                 final ProxiedPlayer p = target.getPlayer();
                 final String name = p.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
                 plugin.getSkinApplierBungee().applySkin(p, skin, null);
                 sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));

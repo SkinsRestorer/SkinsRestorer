@@ -186,12 +186,12 @@ public class SrCommand extends BaseCommand {
             try {
                 final Player player = target.getPlayer();
                 final String name = player.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                    plugin.getSkinApplierBukkit().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
                 } else {
-                    plugin.getFactory().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                    plugin.getSkinApplierBukkit().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
                 }
                 sender.sendMessage("success: player skin has been refreshed!");
             } catch (Exception ignored) {

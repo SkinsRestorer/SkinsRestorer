@@ -33,6 +33,7 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.skinapplier.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -52,6 +53,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
@@ -61,12 +63,12 @@ import java.util.TreeMap;
 
 @Getter
 @SuppressWarnings("Duplicates")
-public class SkinsRestorer extends JavaPlugin {
-    private SkinApplierBukkit factory;
-    private UpdateChecker updateChecker;
+public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
+    private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
-    private UpdateDownloaderGithub updateDownloader;
+    private SpigetUpdate updater;
+    private UpdateChecker updateChecker;
     private SRLogger srLogger;
     private SkinStorage skinStorage;
     private MojangAPI mojangAPI;
@@ -104,9 +106,9 @@ public class SkinsRestorer extends JavaPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        factory = new SkinApplierBukkit(this);
+        skinApplierBukkit = new SkinApplierBukkit(this);
 
-        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
+        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
@@ -130,12 +132,11 @@ public class SkinsRestorer extends JavaPlugin {
 
         // Check for updates
         if (!updaterDisabled.exists()) {
-            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
-            updateDownloader = new UpdateDownloaderGithub(this);
-            checkUpdate(bungeeEnabled);
+            updateChecker = new UpdateChecker(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+            updater = new SpigetUpdate(this, 2124);
+            checkUpdate(bungeeEnabled, true);
 
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () ->
-                    checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -157,11 +158,11 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player, mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                skinApplierBukkit.applySkin(player, mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 
-                            factory.updateSkin(player);
+                            skinApplierBukkit.updateSkin(player);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -411,12 +412,8 @@ public class SkinsRestorer extends JavaPlugin {
         }
     }
 
-    private void checkUpdate(boolean bungeeMode) {
-        checkUpdate(bungeeMode, true);
-    }
-
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updater.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 if (updateDownloaded)
@@ -424,10 +421,10 @@ public class SkinsRestorer extends JavaPlugin {
 
                 String failReason = null;
                 if (hasDirectDownload) {
-                    if (updateDownloader.downloadUpdate()) {
+                    if (updater.downloadUpdate()) {
                         updateDownloaded = true;
                     } else {
-                        failReason = updateDownloader.getFailReason().toString();
+                        failReason = updater.getFailReason().toString();
                     }
                 }
 
@@ -451,12 +448,12 @@ public class SkinsRestorer extends JavaPlugin {
 
         @Override
         public void applySkin(PlayerWrapper player, IProperty props) {
-            getFactory().applySkin(player.get(Player.class), props);
+            getSkinApplierBukkit().applySkin(player.get(Player.class), props);
         }
 
         @Override
         public void applySkin(PlayerWrapper player) {
-            getFactory().applySkin(player.get(Player.class), getSkinData(getSkinName(player.get(Player.class).getName())));
+            getSkinApplierBukkit().applySkin(player.get(Player.class), getSkinData(getSkinName(player.get(Player.class).getName())));
         }
     }
 }

@@ -425,7 +425,7 @@ public class SkinStorage {
                         list.put(crs.getString("Nick").toLowerCase(), mojangAPI.createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
-            } catch (java.sql.SQLException ignored) {
+            } catch (SQLException ignored) {
             }
 
             // When not using mysql
@@ -607,8 +607,8 @@ public class SkinStorage {
         return false;
     }
 
-    public String getDefaultSkinNameIfEnabled(String player) {
-        return getDefaultSkinNameIfEnabled(player, false);
+    public String getDefaultSkinName(String player) {
+        return getDefaultSkinName(player, false);
     }
 
     /**
@@ -623,7 +623,7 @@ public class SkinStorage {
      * @param clear  - return player instead of his set skin
      * @return - setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
-    public String getDefaultSkinNameIfEnabled(String player, boolean clear) {
+    public String getDefaultSkinName(String player, boolean clear) {
         // LTrim and RTrim player name
         player = player.replaceAll("^\\\\s+", "");
         player = player.replaceAll("\\\\s+$", "");
@@ -674,6 +674,4 @@ public class SkinStorage {
         // Remove all whitespace
         return str.replaceAll("\\s", "");
     }
-
-
 }

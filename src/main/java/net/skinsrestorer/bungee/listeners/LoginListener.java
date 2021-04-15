@@ -58,7 +58,7 @@ public class LoginListener implements Listener {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final PendingConnection connection = e.getConnection();
             final String name = connection.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
             try {
                 // todo: add default skinurl support

@@ -97,7 +97,7 @@ public class SkinCommand extends BaseCommand {
 
             final ProxiedPlayer p = target.getPlayer();
             final String pName = p.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(pName, true);
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
@@ -149,7 +149,7 @@ public class SkinCommand extends BaseCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
+                    skin = plugin.getSkinStorage().getDefaultSkinName(p.getName(), true);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
