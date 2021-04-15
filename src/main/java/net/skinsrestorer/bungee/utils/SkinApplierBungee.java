@@ -32,6 +32,7 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -50,10 +51,33 @@ public class SkinApplierBungee implements ISRApplier {
             handler = (InitialHandler) p.getPendingConnection();
         }
 
-        nick = plugin.getProxy().getPluginManager().callEvent(new SkinApplyBungeeEvent(p, nick)).getNick();
+        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false));
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false);
+        plugin.getProxy().getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
 
+        applyWithProperty(p, handler, (Property) event.getProperty());
+    }
+
+    public void applySkin(final ProxiedPlayer p, IProperty property, InitialHandler handler) throws Exception {
+        if (p == null)
+            return;
+
+        if (handler == null) {
+            handler = (InitialHandler) p.getPendingConnection();
+        }
+
+        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(p, property);
+
+        plugin.getProxy().getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
+
+        applyWithProperty(p, handler, (Property) property);
+    }
+
+    private void applyWithProperty(ProxiedPlayer p, InitialHandler handler, Property textures) throws Exception {
         if (handler.isOnlineMode()) {
             sendUpdateRequest(p, textures);
             return;
@@ -84,7 +108,7 @@ public class SkinApplierBungee implements ISRApplier {
         }
     }
 
-    public void applySkin(final PlayerWrapper p) throws Exception {
+    public void applySkin(PlayerWrapper p) throws Exception {
         applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), (InitialHandler) p.get(ProxiedPlayer.class).getPendingConnection());
     }
 

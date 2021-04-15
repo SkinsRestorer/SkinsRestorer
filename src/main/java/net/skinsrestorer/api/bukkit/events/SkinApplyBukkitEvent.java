@@ -30,20 +30,18 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class SkinApplyBukkitEvent extends Event implements Cancellable {
     public static final HandlerList HANDLERS = new HandlerList();
-    @Getter
     private final Player who;
-    @Getter
     @Setter
-    private IProperty props;
-    @Getter
+    private IProperty property;
     @Setter
     private boolean isCancelled = false;
 
-    public SkinApplyBukkitEvent(@NotNull Player who, IProperty props) {
+    public SkinApplyBukkitEvent(@NotNull Player who, IProperty property) {
         super(true);
-        this.props = props;
+        this.property = property;
         this.who = who;
     }
 

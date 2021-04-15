@@ -26,6 +26,7 @@ import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -202,7 +203,11 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper player, IProperty props) {
-            throw new UnsupportedOperationException();
+            try {
+                skinApplierBungee.applySkin(player.get(ProxiedPlayer.class), props, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
