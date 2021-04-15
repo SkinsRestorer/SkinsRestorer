@@ -23,8 +23,10 @@ package net.skinsrestorer.bukkit.skinapplier;
 
 import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.property.IProperty;
@@ -37,7 +39,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class SkinApplierBukkit {
+public class SkinApplierBukkit implements ISRApplier {
     private final SkinsRestorer plugin;
     private final Consumer<Player> refresh = detectRefresh();
     private boolean checkOptFileChecked = false;
@@ -76,16 +78,25 @@ public class SkinApplierBukkit {
         return new SpigotSkinRefresher();
     }
 
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper) throws Exception {
+        throw new UnsupportedOperationException(); // TODO
+    }
+
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) throws Exception {
+        applySkin(playerWrapper.get(Player.class), property);
+    }
+
     /**
      * Applies the skin In other words, sets the skin data, but no changes will
      * be visible until you reconnect or force update with
      *
      * @param p     - Player
-     * @param props - Property Object
+     * @param property - Property Object
      */
-    public void applySkin(final Player p, IProperty props) {
-        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
-        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(p, props);
+    public void applySkin(final Player p, IProperty property) {
+        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(p, property);
 
         Bukkit.getPluginManager().callEvent(applyEvent);
 
@@ -95,14 +106,14 @@ public class SkinApplierBukkit {
         // delay 1 servertick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try {
-                if (props == null)
+                if (property == null)
                     return;
 
                 Object ep = ReflectionUtil.invokeMethod(p.getClass(), p, "getHandle");
                 Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
                 Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
                 ReflectionUtil.invokeMethod(propMap, "clear");
-                ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", props);
+                ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
 
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(p));
             } catch (Exception e) {

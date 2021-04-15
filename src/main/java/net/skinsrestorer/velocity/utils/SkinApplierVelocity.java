@@ -44,6 +44,7 @@ public class SkinApplierVelocity implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
+    @Override
     public void applySkin(PlayerWrapper player) throws SkinRequestException {
         String skin = plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getUsername());
 
@@ -55,6 +56,7 @@ public class SkinApplierVelocity implements ISRApplier {
         sendUpdateRequest(player.get(Player.class), textures);
     }
 
+    @Override
     public void applySkin(PlayerWrapper player, IProperty property) {
         player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), (Property) property.getHandle()));
     }

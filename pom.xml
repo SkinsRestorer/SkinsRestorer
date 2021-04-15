@@ -426,5 +426,11 @@
             <artifactId>minecraft-timings</artifactId>
             <version>1.0.4</version>
         </dependency>
+        <!-- Remove reflection warning -->
+        <dependency>
+            <groupId>com.gilecode.yagson</groupId>
+            <artifactId>j9-reflection-utils</artifactId>
+            <version>[1.0,)</version>
+        </dependency>
     </dependencies>
 </project>

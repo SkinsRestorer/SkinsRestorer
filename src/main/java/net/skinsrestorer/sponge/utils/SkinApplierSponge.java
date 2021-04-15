@@ -44,16 +44,14 @@ import java.util.Collection;
 public class SkinApplierSponge implements ISRApplier {
     private final SkinsRestorer plugin;
 
+    @Override
     public void applySkin(final PlayerWrapper player) throws SkinRequestException {
-        applySkin(player, plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getName()));
-    }
-
-    public void applySkin(final PlayerWrapper player, String skin) throws SkinRequestException {
-        setTexture(skin, player.get(Player.class).getProfile().getPropertyMap().get("textures"));
+        setTexture(plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getName()), player.get(Player.class).getProfile().getPropertyMap().get("textures"));
 
         Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player.get(Player.class)));
     }
 
+    @Override
     public void applySkin(final PlayerWrapper player, IProperty property) throws SkinRequestException {
         setTexture(property, player.get(Player.class).getProfile().getPropertyMap().get("textures"));
 

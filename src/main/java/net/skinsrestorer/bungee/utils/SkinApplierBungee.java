@@ -43,38 +43,35 @@ public class SkinApplierBungee implements ISRApplier {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void applySkin(final ProxiedPlayer p, String nick, InitialHandler handler) throws Exception {
-        if (p == null)
-            return;
-
-        if (handler == null) {
-            handler = (InitialHandler) p.getPendingConnection();
-        }
-
-        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false));
-
-        plugin.getProxy().getPluginManager().callEvent(event);
-        if (event.isCancelled())
-            return;
-
-        applyWithProperty(p, handler, (Property) event.getProperty());
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper) throws Exception {
+        applySkin(playerWrapper.get(ProxiedPlayer.class), playerWrapper.get(ProxiedPlayer.class).getName(), (InitialHandler) playerWrapper.get(ProxiedPlayer.class).getPendingConnection());
     }
 
-    public void applySkin(final ProxiedPlayer p, IProperty property, InitialHandler handler) throws Exception {
-        if (p == null)
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) throws Exception {
+        applySkin(playerWrapper.get(ProxiedPlayer.class), property, (InitialHandler) playerWrapper.get(ProxiedPlayer.class).getPendingConnection());
+    }
+
+    public void applySkin(final ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
+        applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false), handler);
+    }
+
+    public void applySkin(ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
+        if (player == null)
             return;
 
         if (handler == null) {
-            handler = (InitialHandler) p.getPendingConnection();
+            handler = (InitialHandler) player.getPendingConnection();
         }
 
-        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(p, property);
+        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
         plugin.getProxy().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
 
-        applyWithProperty(p, handler, (Property) property);
+        applyWithProperty(player, handler, (Property) event.getProperty());
     }
 
     private void applyWithProperty(ProxiedPlayer p, InitialHandler handler, Property textures) throws Exception {
@@ -106,10 +103,6 @@ public class SkinApplierBungee implements ISRApplier {
         } else {
             sendUpdateRequest(p, null);
         }
-    }
-
-    public void applySkin(PlayerWrapper p) throws Exception {
-        applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), (InitialHandler) p.get(ProxiedPlayer.class).getPendingConnection());
     }
 
     private void sendUpdateRequest(ProxiedPlayer p, Property textures) {
