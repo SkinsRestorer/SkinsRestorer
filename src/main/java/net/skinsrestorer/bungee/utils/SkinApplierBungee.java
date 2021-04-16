@@ -32,7 +32,7 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;

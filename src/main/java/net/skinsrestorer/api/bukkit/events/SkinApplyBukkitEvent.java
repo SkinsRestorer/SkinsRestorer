@@ -23,7 +23,7 @@ package net.skinsrestorer.api.bukkit.events;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

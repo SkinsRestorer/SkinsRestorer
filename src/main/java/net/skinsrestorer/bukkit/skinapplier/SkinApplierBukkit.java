@@ -29,7 +29,7 @@ import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

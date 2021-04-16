@@ -30,7 +30,7 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;

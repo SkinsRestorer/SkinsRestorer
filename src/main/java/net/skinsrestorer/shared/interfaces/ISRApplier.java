@@ -22,7 +22,7 @@
 package net.skinsrestorer.shared.interfaces;
 
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 
 public interface ISRApplier {
     void applySkin(PlayerWrapper playerWrapper) throws Exception;

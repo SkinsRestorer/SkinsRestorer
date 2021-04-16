@@ -24,7 +24,7 @@ package net.skinsrestorer.shared.utils;
 import lombok.Getter;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.utils.property.IProperty;
+import net.skinsrestorer.api.property.IProperty;
 
 import java.util.LinkedList;
 import java.util.List;

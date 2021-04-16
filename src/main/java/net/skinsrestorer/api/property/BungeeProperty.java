@@ -19,32 +19,15 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils.property;
+package net.skinsrestorer.api.property;
 
-import lombok.Data;
+import lombok.ToString;
+import net.md_5.bungee.connection.LoginResult.Property;
 
-import java.io.Serializable;
-
-@Data
-public class GenericProperty implements Serializable, IProperty {
-    private String name;
-    private String value;
-    private String signature;
-
-    public GenericProperty() {
-    }
-
-    @SuppressWarnings("unused")
-    public GenericProperty(IProperty property) {
-        name = property.getName();
-        value = property.getValue();
-        signature = property.getSignature();
-    }
-
-    public GenericProperty(String name, String value, String signature) {
-        this.name = name;
-        this.value = value;
-        this.signature = signature;
+@ToString
+public class BungeeProperty extends Property implements IProperty {
+    public BungeeProperty(String name, String value, String signature) {
+        super(name, value, signature);
     }
 
     @Override

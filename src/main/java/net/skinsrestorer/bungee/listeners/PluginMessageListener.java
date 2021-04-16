@@ -28,7 +28,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.utils.property.GenericProperty;
+import net.skinsrestorer.api.property.GenericProperty;
 
 import java.io.*;
 import java.util.Map;

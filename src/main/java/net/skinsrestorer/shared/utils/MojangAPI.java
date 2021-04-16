@@ -27,7 +27,7 @@ import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.*;
+import net.skinsrestorer.api.property.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

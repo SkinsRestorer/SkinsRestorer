@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils.property;
+package net.skinsrestorer.api.property;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
