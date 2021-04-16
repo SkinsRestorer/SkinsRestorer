@@ -36,7 +36,7 @@ public class ReflectionUtil {
     static {
         try {
             Class.forName("org.bukkit.Bukkit");
-            serverVersion =  Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
+            serverVersion = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
         } catch (Exception ignored) {
         }
     }

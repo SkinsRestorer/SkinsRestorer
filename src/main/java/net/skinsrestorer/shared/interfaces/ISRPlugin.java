@@ -27,5 +27,6 @@ import java.io.File;
 
 public interface ISRPlugin {
     File getDataFolder();
+
     SkinStorage getSkinStorage();
 }

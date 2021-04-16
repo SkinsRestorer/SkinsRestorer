@@ -44,6 +44,42 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         this.plugin = plugin;
     }
 
+    private static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {
+        return () -> {
+            try {
+                download(releaseInfo, file, userAgent);
+                callback.finished();
+            } catch (Exception e) {
+                callback.error(e);
+            }
+        };
+    }
+
+    private static void download(GitHubReleaseInfo releaseInfo, File file, String userAgent) {
+        ReadableByteChannel channel;
+
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
+            connection.setRequestProperty("User-Agent", userAgent);
+            if (connection.getResponseCode() != 200) {
+                throw new UpdateException("Download returned status #" + connection.getResponseCode());
+            }
+
+            channel = Channels.newChannel(connection.getInputStream());
+        } catch (IOException e) {
+            throw new UpdateException("Download failed", e);
+        }
+
+        try {
+            FileOutputStream output = new FileOutputStream(file);
+            output.getChannel().transferFrom(channel, 0L, 9223372036854775807L);
+            output.flush();
+            output.close();
+        } catch (IOException e) {
+            throw new UpdateException("Could not save file", e);
+        }
+    }
+
     @Override
     public boolean downloadUpdate() {
         GitHubReleaseInfo releaseInfo = (GitHubReleaseInfo) plugin.getUpdateChecker().getLatestResourceInfo();
@@ -83,41 +119,5 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         }));
 
         return true;
-    }
-
-    private static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {
-        return () -> {
-            try {
-                download(releaseInfo, file, userAgent);
-                callback.finished();
-            } catch (Exception e) {
-                callback.error(e);
-            }
-        };
-    }
-
-    private static void download(GitHubReleaseInfo releaseInfo, File file, String userAgent) {
-        ReadableByteChannel channel;
-
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
-            connection.setRequestProperty("User-Agent", userAgent);
-            if (connection.getResponseCode() != 200) {
-                throw new UpdateException("Download returned status #" + connection.getResponseCode());
-            }
-
-            channel = Channels.newChannel(connection.getInputStream());
-        } catch (IOException e) {
-            throw new UpdateException("Download failed", e);
-        }
-
-        try {
-            FileOutputStream output = new FileOutputStream(file);
-            output.getChannel().transferFrom(channel, 0L, 9223372036854775807L);
-            output.flush();
-            output.close();
-        } catch (IOException e) {
-            throw new UpdateException("Could not save file", e);
-        }
     }
 }

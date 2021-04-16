@@ -26,5 +26,6 @@ import net.skinsrestorer.shared.utils.property.IProperty;
 
 public interface ISRApplier {
     void applySkin(PlayerWrapper playerWrapper) throws Exception;
+
     void applySkin(PlayerWrapper playerWrapper, IProperty property) throws Exception;
 }
