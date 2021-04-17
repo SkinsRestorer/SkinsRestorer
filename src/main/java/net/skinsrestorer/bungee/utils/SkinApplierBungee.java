@@ -74,9 +74,9 @@ public class SkinApplierBungee implements ISRApplier {
         applyWithProperty(player, handler, (Property) event.getProperty());
     }
 
-    private void applyWithProperty(ProxiedPlayer p, InitialHandler handler, Property textures) throws Exception {
+    private void applyWithProperty(ProxiedPlayer player, InitialHandler handler, Property textures) throws Exception {
         if (handler.isOnlineMode()) {
-            sendUpdateRequest(p, textures);
+            sendUpdateRequest(player, textures);
             return;
         }
 
@@ -99,9 +99,9 @@ public class SkinApplierBungee implements ISRApplier {
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
         if (plugin.isMultiBungee()) {
-            sendUpdateRequest(p, textures);
+            sendUpdateRequest(player, textures);
         } else {
-            sendUpdateRequest(p, null);
+            sendUpdateRequest(player, null);
         }
     }
 
