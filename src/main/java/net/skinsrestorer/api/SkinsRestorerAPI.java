@@ -94,7 +94,9 @@ public abstract class SkinsRestorerAPI {
         skinStorage.removePlayerSkin(playerName);
     }
 
-    public abstract void applySkin(PlayerWrapper player, IProperty props);
+    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty props);
 
-    public abstract void applySkin(PlayerWrapper player) throws SkinRequestException;
+    public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
+
+    public abstract void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException;
 }

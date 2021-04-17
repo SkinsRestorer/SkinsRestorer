@@ -223,7 +223,7 @@ public class SkinCommand extends BaseCommand {
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(CommandSource source, Player p, String skin, boolean save, boolean clear) {
+    private boolean setSkin(CommandSource source, Player player, String skin, boolean save, boolean clear) {
         if (skin.equalsIgnoreCase("null") || !C.validUsername(skin) && !C.validUrl(skin)) {
             source.sendMessage(plugin.deserialize(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
@@ -245,24 +245,24 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.resetCooldown(getSenderName(source));
         CooldownStorage.setCooldown(getSenderName(source), Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-        final String pName = p.getUsername();
+        final String pName = player.getUsername();
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
         if (C.validUsername(skin)) {
             try {
                 plugin.getSkinStorage().getSkinForPlayer(skin, false);
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                    player.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
+                rollback(player, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
+                rollback(player, oldSkinName, save);
             }
         }
         if (C.validUrl(skin)) {
@@ -286,17 +286,17 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(p));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
+                    player.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS));
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
+                rollback(player, oldSkinName, save);
             } catch (Exception e) {
                 e.printStackTrace();
                 // set custom skin name back to old one if there is an exception
-                rollback(p, oldSkinName, save);
+                rollback(player, oldSkinName, save);
             }
         }
         return true;

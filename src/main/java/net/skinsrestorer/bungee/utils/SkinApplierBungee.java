@@ -30,7 +30,6 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -39,21 +38,19 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class SkinApplierBungee implements ISRApplier {
+public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    @Override
-    public void applySkin(PlayerWrapper playerWrapper) throws Exception {
-        applySkin(playerWrapper.get(ProxiedPlayer.class), playerWrapper.get(ProxiedPlayer.class).getName(), (InitialHandler) playerWrapper.get(ProxiedPlayer.class).getPendingConnection());
+    public void applySkin(ProxiedPlayer player) throws Exception {
+        applySkin(player, player.getName(), (InitialHandler) player.getPendingConnection());
     }
 
-    @Override
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) throws Exception {
-        applySkin(playerWrapper.get(ProxiedPlayer.class), property, (InitialHandler) playerWrapper.get(ProxiedPlayer.class).getPendingConnection());
+    public void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
+        applySkin(player, property, (InitialHandler) player.getPendingConnection());
     }
 
-    public void applySkin(final ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
+    public void applySkin(ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
         applySkin(player, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
     }
 
@@ -105,14 +102,14 @@ public class SkinApplierBungee implements ISRApplier {
         }
     }
 
-    private void sendUpdateRequest(ProxiedPlayer p, Property textures) {
-        if (p == null)
+    private void sendUpdateRequest(ProxiedPlayer player, Property textures) {
+        if (player == null)
             return;
 
-        if (p.getServer() == null)
+        if (player.getServer() == null)
             return;
 
-        log.debug("Sending skin update request for " + p.getName());
+        log.debug("Sending skin update request for " + player.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
@@ -125,7 +122,7 @@ public class SkinApplierBungee implements ISRApplier {
                 out.writeUTF(textures.getSignature());
             }
 
-            p.getServer().sendData("sr:skinchange", b.toByteArray());
+            player.getServer().sendData("sr:skinchange", b.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

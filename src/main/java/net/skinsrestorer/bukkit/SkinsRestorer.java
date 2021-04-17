@@ -446,13 +446,18 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, IProperty props) {
-            skinApplierBukkit.applySkin(player.get(Player.class), props);
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierBukkit.applySkin(playerWrapper.get(Player.class), props);
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) throws SkinRequestException {
-            applySkin(player, skinStorage.getSkinForPlayer(player.get(Player.class).getName(), false));
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
         }
     }
 }

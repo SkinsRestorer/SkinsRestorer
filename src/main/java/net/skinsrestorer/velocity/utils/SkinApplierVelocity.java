@@ -26,10 +26,8 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -40,22 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class SkinApplierVelocity implements ISRApplier {
+public class SkinApplierVelocity {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    @Override
-    public void applySkin(PlayerWrapper player) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getSkinForPlayer(player.get(Player.class).getUsername(), false).getHandle();
-
-        player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), textures));
-        sendUpdateRequest(player.get(Player.class), textures);
-    }
-
-    @Override
-    public void applySkin(PlayerWrapper player, IProperty property) {
-        player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), (Property) property.getHandle()));
-        sendUpdateRequest(player.get(Player.class), (Property) property.getHandle());
+    public void applySkin(Player player, IProperty property) {
+        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
+        sendUpdateRequest(player, (Property) property.getHandle());
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {

@@ -23,10 +23,8 @@ package net.skinsrestorer.sponge.utils;
 
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -41,32 +39,23 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class SkinApplierSponge implements ISRApplier {
+public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
-    @Override
-    public void applySkin(final PlayerWrapper player) throws SkinRequestException {
-        setTexture(plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getName()), player.get(Player.class).getProfile().getPropertyMap().get("textures"));
+    public void applySkin(Player player) throws SkinRequestException {
+        setTexture(plugin.getSkinStorage().getSkinForPlayer(plugin.getSkinsRestorerAPI().getSkinName(player.getName()), false), player.getProfile().getPropertyMap().get("textures"));
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player.get(Player.class)));
+        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
     }
 
-    @Override
-    public void applySkin(final PlayerWrapper player, IProperty property) {
-        setTexture(property, player.get(Player.class).getProfile().getPropertyMap().get("textures"));
+    public void applySkin(Player player, IProperty property) {
+        setTexture(property, player.getProfile().getPropertyMap().get("textures"));
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player.get(Player.class)));
+        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        setTexture(skin, profile.getPropertyMap().get("textures"));
-    }
-
-    private void setTexture(String skin, Collection<ProfileProperty> oldProperties) throws SkinRequestException {
-        IProperty textures = plugin.getSkinStorage().getSkinForPlayer(skin, false);
-        ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
-        oldProperties.clear();
-        oldProperties.add(newTextures);
+        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin, false), profile.getPropertyMap().get("textures"));
     }
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {

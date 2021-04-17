@@ -23,11 +23,9 @@ package net.skinsrestorer.bukkit.skinapplier;
 
 import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -39,7 +37,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class SkinApplierBukkit implements ISRApplier {
+public class SkinApplierBukkit {
     private final SkinsRestorer plugin;
     private final Consumer<Player> refresh = detectRefresh();
     private boolean checkOptFileChecked = false;
@@ -78,16 +76,6 @@ public class SkinApplierBukkit implements ISRApplier {
         return new SpigotSkinRefresher();
     }
 
-    @Override
-    public void applySkin(PlayerWrapper playerWrapper) throws Exception {
-        applySkin(playerWrapper.get(Player.class), plugin.getSkinStorage().getSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
-    }
-
-    @Override
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) throws Exception {
-        applySkin(playerWrapper.get(Player.class), property);
-    }
-
     /**
      * Applies the skin In other words, sets the skin data, but no changes will
      * be visible until you reconnect or force update with
@@ -95,7 +83,7 @@ public class SkinApplierBukkit implements ISRApplier {
      * @param player   Player
      * @param property Property Object
      */
-    public void applySkin(final Player player, IProperty property) {
+    public void applySkin(Player player, IProperty property) {
         SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
         Bukkit.getPluginManager().callEvent(applyEvent);

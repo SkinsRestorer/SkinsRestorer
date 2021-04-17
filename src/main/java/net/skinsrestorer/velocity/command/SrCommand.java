@@ -161,7 +161,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, OnlinePlayer target) {
         plugin.getService().execute(() -> {
             try {
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(target.getPlayer()));
                 source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));
