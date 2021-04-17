@@ -24,9 +24,9 @@ package net.skinsrestorer.sponge.utils;
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -52,7 +52,7 @@ public class SkinApplierSponge implements ISRApplier {
     }
 
     @Override
-    public void applySkin(final PlayerWrapper player, IProperty property) throws SkinRequestException {
+    public void applySkin(final PlayerWrapper player, IProperty property) {
         setTexture(property, player.get(Player.class).getProfile().getPropertyMap().get("textures"));
 
         Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player.get(Player.class)));

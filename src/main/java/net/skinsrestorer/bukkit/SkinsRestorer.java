@@ -27,6 +27,9 @@ import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
@@ -42,8 +45,6 @@ import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.console.BukkitConsoleImpl;
-import net.skinsrestorer.api.property.GenericProperty;
-import net.skinsrestorer.api.property.IProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -446,12 +447,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper player, IProperty props) {
-            getSkinApplierBukkit().applySkin(player.get(Player.class), props);
+            skinApplierBukkit.applySkin(player.get(Player.class), props);
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            getSkinApplierBukkit().applySkin(player.get(Player.class), getSkinData(getSkinName(player.get(Player.class).getName())));
+        public void applySkin(PlayerWrapper player) throws SkinRequestException {
+            applySkin(player, skinStorage.getOrCreateSkinForPlayer(player.get(Player.class).getName(), false));
         }
     }
 }

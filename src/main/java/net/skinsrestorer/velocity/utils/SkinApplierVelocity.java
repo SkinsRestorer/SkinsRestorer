@@ -27,10 +27,10 @@ import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
@@ -46,19 +46,16 @@ public class SkinApplierVelocity implements ISRApplier {
 
     @Override
     public void applySkin(PlayerWrapper player) throws SkinRequestException {
-        String skin = plugin.getSkinsRestorerAPI().getSkinName(player.get(Player.class).getUsername());
+        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(player.get(Player.class).getUsername(), false).getHandle();
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false).getHandle();
-        List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
-        List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
-
-        player.get(Player.class).setGameProfileProperties(newProperties);
+        player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), textures));
         sendUpdateRequest(player.get(Player.class), textures);
     }
 
     @Override
     public void applySkin(PlayerWrapper player, IProperty property) {
         player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), (Property) property.getHandle()));
+        sendUpdateRequest(player.get(Player.class), (Property) property.getHandle());
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {

@@ -26,6 +26,8 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -36,7 +38,6 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
@@ -48,6 +49,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -213,22 +215,17 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, IProperty props) {
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
             try {
-                skinApplierSponge.applySkin(player, props);
+                skinApplierSponge.applySkin(playerWrapper, props);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            throw new UnsupportedOperationException();
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            try {
-                skinApplierSponge.applySkin(player);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getOrCreateSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
         }
     }
 }

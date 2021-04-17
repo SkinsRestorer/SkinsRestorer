@@ -22,10 +22,10 @@
 package net.skinsrestorer.api;
 
 import lombok.Getter;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
-import net.skinsrestorer.api.property.IProperty;
 
 /**
  * API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
@@ -59,8 +59,8 @@ public abstract class SkinsRestorerAPI {
      * @param uuid - The players uuid
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public Object getProfile(String uuid) {
-        return mojangAPI.getSkinProperty(uuid).getHandle();
+    public IProperty getProfile(String uuid) {
+        return mojangAPI.getSkinProperty(uuid);
     }
 
     public String getSkinName(String name) {
@@ -96,5 +96,5 @@ public abstract class SkinsRestorerAPI {
 
     public abstract void applySkin(PlayerWrapper player, IProperty props);
 
-    public abstract void applySkin(PlayerWrapper player);
+    public abstract void applySkin(PlayerWrapper player) throws SkinRequestException;
 }

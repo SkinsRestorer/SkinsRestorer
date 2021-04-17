@@ -23,11 +23,11 @@ package net.skinsrestorer.shared.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.api.property.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

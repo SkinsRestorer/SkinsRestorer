@@ -25,11 +25,11 @@ import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRApplier;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.api.property.IProperty;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -92,8 +92,8 @@ public class SkinApplierBukkit implements ISRApplier {
      * Applies the skin In other words, sets the skin data, but no changes will
      * be visible until you reconnect or force update with
      *
-     * @param player   - Player
-     * @param property - Property Object
+     * @param player   Player
+     * @param property Property Object
      */
     public void applySkin(final Player player, IProperty property) {
         SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);

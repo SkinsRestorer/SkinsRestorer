@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.api.exception;
 
 public class SkinRequestException extends Exception {
     public SkinRequestException(String message) {

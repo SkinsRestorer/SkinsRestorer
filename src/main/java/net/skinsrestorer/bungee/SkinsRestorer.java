@@ -30,6 +30,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
@@ -46,7 +48,6 @@ import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.console.BungeeConsoleImpl;
-import net.skinsrestorer.api.property.IProperty;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -202,21 +203,17 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, IProperty props) {
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
             try {
-                skinApplierBungee.applySkin(player.get(ProxiedPlayer.class), props, null);
+                skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            try {
-                skinApplierBungee.applySkin(player);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getOrCreateSkinForPlayer(playerWrapper.get(ProxiedPlayer.class).getName(), false));
         }
     }
 }
