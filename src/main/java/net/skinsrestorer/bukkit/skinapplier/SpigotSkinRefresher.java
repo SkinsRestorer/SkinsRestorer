@@ -197,6 +197,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                             seed = ReflectionUtil.invokeMethod(world, "getSeed");
                         }
 
+                        //noinspection UnstableApiUsage
                         long seedEncrypted = Hashing.sha256().hashString(seed.toString(), StandardCharsets.UTF_8).asLong();
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn,

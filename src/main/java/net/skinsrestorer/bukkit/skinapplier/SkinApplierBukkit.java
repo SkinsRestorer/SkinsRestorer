@@ -47,7 +47,7 @@ public class SkinApplierBukkit implements ISRApplier {
     private boolean enableDismountEntities;
     private boolean enableRemountPlayer;
 
-    private static Consumer<Player> detectRefresh() {
+    private Consumer<Player> detectRefresh() {
         SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
 
         // Giving warning when using java 9+ regarding illegal reflection access
@@ -70,7 +70,7 @@ public class SkinApplierBukkit implements ISRApplier {
 
         if (PaperLib.isPaper()) {
             try {
-                return new PaperSkinRefresher();
+                return new PaperSkinRefresher(plugin.getSrLogger());
             } catch (ExceptionInInitializerError ignored) {
             }
         }
@@ -80,7 +80,7 @@ public class SkinApplierBukkit implements ISRApplier {
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper) throws Exception {
-
+        applySkin(playerWrapper.get(Player.class), plugin.getSkinStorage().getOrCreateSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
     }
 
     @Override
@@ -152,7 +152,7 @@ public class SkinApplierBukkit implements ISRApplier {
                 }
             }
 
-            //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
+            // Dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
                 for (Entity passenger : player.getPassengers()) {
                     player.removePassenger(passenger);
@@ -164,12 +164,14 @@ public class SkinApplierBukkit implements ISRApplier {
                 try {
                     ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.hidePlayer(player);
                 }
 
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.showPlayer(player);
                 }
             }
