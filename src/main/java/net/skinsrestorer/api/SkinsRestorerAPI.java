@@ -87,7 +87,7 @@ public abstract class SkinsRestorerAPI {
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
         skinStorage.setPlayerSkin(playerName, skinName);
-        skinStorage.getOrCreateSkinForPlayer(skinName, false);
+        skinStorage.getSkinForPlayer(skinName, false);
     }
 
     public void removeSkin(String playerName) {

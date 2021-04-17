@@ -248,8 +248,8 @@ public class SkinCommand extends BaseCommand {
                 if (save)
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
 
-                //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
-                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                //todo getSkinForPlayer is nested and on different places around bungee/sponge/velocity
+                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getSkinForPlayer(skin, false));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 

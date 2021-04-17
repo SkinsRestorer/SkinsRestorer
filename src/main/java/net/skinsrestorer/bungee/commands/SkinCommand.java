@@ -247,7 +247,7 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
         if (C.validUsername(skin)) {
             try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+                plugin.getSkinStorage().getSkinForPlayer(skin, false);
 
                 if (save) {
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);

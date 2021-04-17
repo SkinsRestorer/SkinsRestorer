@@ -46,7 +46,7 @@ public class SkinApplierVelocity implements ISRApplier {
 
     @Override
     public void applySkin(PlayerWrapper player) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(player.get(Player.class).getUsername(), false).getHandle();
+        Property textures = (Property) plugin.getSkinStorage().getSkinForPlayer(player.get(Player.class).getUsername(), false).getHandle();
 
         player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), textures));
         sendUpdateRequest(player.get(Player.class), textures);
@@ -59,7 +59,7 @@ public class SkinApplierVelocity implements ISRApplier {
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false).getHandle();
+        Property textures = (Property) plugin.getSkinStorage().getSkinForPlayer(skin, false).getHandle();
 
         List<Property> oldProperties = profile.getProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);

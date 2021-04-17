@@ -54,7 +54,7 @@ public class SkinApplierBungee implements ISRApplier {
     }
 
     public void applySkin(final ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
-        applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false), handler);
+        applySkin(player, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
     }
 
     public void applySkin(ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {

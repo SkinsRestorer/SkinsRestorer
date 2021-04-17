@@ -80,7 +80,7 @@ public class SkinApplierBukkit implements ISRApplier {
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper) throws Exception {
-        applySkin(playerWrapper.get(Player.class), plugin.getSkinStorage().getOrCreateSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
+        applySkin(playerWrapper.get(Player.class), plugin.getSkinStorage().getSkinForPlayer(playerWrapper.get(Player.class).getName(), false));
     }
 
     @Override

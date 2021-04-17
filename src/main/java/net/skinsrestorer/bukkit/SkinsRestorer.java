@@ -452,7 +452,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper player) throws SkinRequestException {
-            applySkin(player, skinStorage.getOrCreateSkinForPlayer(player.get(Player.class).getName(), false));
+            applySkin(player, skinStorage.getSkinForPlayer(player.get(Player.class).getName(), false));
         }
     }
 }

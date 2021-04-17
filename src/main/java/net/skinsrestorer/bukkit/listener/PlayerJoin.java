@@ -56,7 +56,7 @@ public class PlayerJoin implements Listener {
                 if (C.validUrl(skin)) {
                     plugin.getSkinApplierBukkit().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
                 } else {
-                    plugin.getSkinApplierBukkit().applySkin(player, skinStorage.getOrCreateSkinForPlayer(skin, false));
+                    plugin.getSkinApplierBukkit().applySkin(player, skinStorage.getSkinForPlayer(skin, false));
                 }
             } catch (SkinRequestException ignored) {
             }

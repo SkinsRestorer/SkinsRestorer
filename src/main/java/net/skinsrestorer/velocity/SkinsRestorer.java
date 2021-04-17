@@ -218,16 +218,12 @@ public class SkinsRestorer implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper player, IProperty props) {
-            try {
-                skinApplierVelocity.applySkin(player, props);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            skinApplierVelocity.applySkin(player, props);
         }
 
         @Override
         public void applySkin(PlayerWrapper player) throws SkinRequestException {
-            applySkin(player, getSkinStorage().getOrCreateSkinForPlayer(player.get(Player.class).getUsername(), false));
+            applySkin(player, skinStorage.getSkinForPlayer(player.get(Player.class).getUsername(), false));
         }
     }
 }

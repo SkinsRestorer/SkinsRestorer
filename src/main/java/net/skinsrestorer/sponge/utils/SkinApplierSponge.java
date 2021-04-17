@@ -63,7 +63,7 @@ public class SkinApplierSponge implements ISRApplier {
     }
 
     private void setTexture(String skin, Collection<ProfileProperty> oldProperties) throws SkinRequestException {
-        IProperty textures = plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+        IProperty textures = plugin.getSkinStorage().getSkinForPlayer(skin, false);
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", textures.getValue(), textures.getSignature());
         oldProperties.clear();
         oldProperties.add(newTextures);

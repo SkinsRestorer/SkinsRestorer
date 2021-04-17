@@ -63,7 +63,7 @@ public class SkinStorage {
             //todo: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
-                    getOrCreateSkinForPlayer(skin, false);
+                    getSkinForPlayer(skin, false);
                 }
             } catch (SkinRequestException e) {
                 // removing skin from list
@@ -89,7 +89,7 @@ public class SkinStorage {
      * @param silent Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      **/
-    public IProperty getOrCreateSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
+    public IProperty getSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         String skin = getPlayerSkin(name);
 
         if (skin == null) {
@@ -183,7 +183,7 @@ public class SkinStorage {
      * @param name           - Skin name
      * @param updateOutdated - On true we update the skin if expired
      **/
-    // #getSkinData() also create while we have #getOrCreateSkinForPlayer()
+    // #getSkinData() also create while we have #getSkinForPlayer()
     public IProperty getSkinData(String name, boolean updateOutdated) {
         name = name.toLowerCase();
 
