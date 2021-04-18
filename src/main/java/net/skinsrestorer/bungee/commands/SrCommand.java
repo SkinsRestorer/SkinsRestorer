@@ -34,6 +34,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -168,7 +169,7 @@ public class SrCommand extends BaseCommand {
                 final String name = p.getName();
                 final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
-                plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                plugin.getSkinsRestorerBungeeAPI().applySkin(new PlayerWrapper(p), skin);
                 sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));

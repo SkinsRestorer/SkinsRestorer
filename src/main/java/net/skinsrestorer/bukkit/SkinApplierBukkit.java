@@ -84,7 +84,7 @@ public class SkinApplierBukkit {
      * @param player   Player
      * @param property Property Object
      */
-    public void applySkin(Player player, IProperty property) {
+    protected void applySkin(Player player, IProperty property) {
         SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
         Bukkit.getPluginManager().callEvent(applyEvent);

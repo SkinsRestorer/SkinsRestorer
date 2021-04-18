@@ -30,6 +30,8 @@ import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -44,19 +46,16 @@ public class SkinApplierBungee {
         applySkin(player, player.getName(), (InitialHandler) player.getPendingConnection());
     }
 
-    protected void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
-        applySkin(player, property, (InitialHandler) player.getPendingConnection());
-    }
-
     public void applySkin(ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
         applySkin(player, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
     }
 
-    private void applySkin(ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
-        if (player == null)
-            return;
+    protected void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
+        applySkin(player, property, (InitialHandler) player.getPendingConnection());
+    }
 
-        if (handler == null) {
+    private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
+        if (player != null && handler == null) {
             handler = (InitialHandler) player.getPendingConnection();
         }
 
@@ -69,7 +68,7 @@ public class SkinApplierBungee {
         applyWithProperty(player, handler, (Property) event.getProperty());
     }
 
-    private void applyWithProperty(ProxiedPlayer player, InitialHandler handler, Property textures) throws Exception {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws Exception {
         if (handler.isOnlineMode()) {
             sendUpdateRequest(player, textures);
             return;

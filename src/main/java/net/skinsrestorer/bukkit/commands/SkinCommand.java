@@ -28,6 +28,7 @@ import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -249,14 +250,14 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
 
                 //todo getSkinForPlayer is nested and on different places around bungee/sponge/velocity
-                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getSkinForPlayer(skin, false));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(p), skin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
 
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    plugin.getSkinApplierBukkit().applySkin(p, plugin.getMojangAPI().createProperty("textures", "", ""));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(p), plugin.getMojangAPI().createProperty("textures", "", ""));
                     plugin.getSkinApplierBukkit().updateSkin(p);
 
                     return true;
@@ -287,7 +288,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplierBukkit().applySkin(p, plugin.getSkinStorage().getSkinData(skinentry));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(p), plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     p.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
                 return true;

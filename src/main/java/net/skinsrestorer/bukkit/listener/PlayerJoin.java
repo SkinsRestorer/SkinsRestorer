@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -54,9 +55,9 @@ public class PlayerJoin implements Listener {
                 final String skin = skinStorage.getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getSkinApplierBukkit().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin));
                 } else {
-                    plugin.getSkinApplierBukkit().applySkin(player, skinStorage.getSkinForPlayer(skin, false));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
             } catch (SkinRequestException ignored) {
             }

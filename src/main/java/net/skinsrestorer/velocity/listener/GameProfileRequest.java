@@ -40,20 +40,20 @@ public class GameProfileRequest {
     }
 
     @Subscribe
-    public void onGameProfileRequest(GameProfileRequestEvent e) {
-        String name = e.getUsername();
+    public void onGameProfileRequest(GameProfileRequestEvent event) {
+        String name = event.getUsername();
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        if (e.isOnlineMode())
+        if (event.isOnlineMode())
             return;
 
         String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
         //todo: default skinurl support
         try {
-            e.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(e.getGameProfile(), skin));
+            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
         } catch (SkinRequestException ignored) {
         }
     }

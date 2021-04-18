@@ -253,7 +253,7 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setPlayerSkin(pName, skin);
                     plugin.getSkinsRestorerBungeeAPI().applySkin(new PlayerWrapper(p));
                 } else {
-                    plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                    plugin.getSkinsRestorerBungeeAPI().applySkin(new PlayerWrapper(p), skin);
                 }
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
@@ -266,7 +266,7 @@ public class SkinCommand extends BaseCommand {
                     IProperty props = plugin.getMojangAPI().createProperty("textures", "", "");
                     try {
                         plugin.getSkinStorage().setSkinData("00", props);
-                        plugin.getSkinApplierBungee().applySkin(p, "00", null);
+                        plugin.getSkinsRestorerBungeeAPI().applySkin(new PlayerWrapper(p), "00");
                     } catch (Exception ignored) {
                     }
                     return true;

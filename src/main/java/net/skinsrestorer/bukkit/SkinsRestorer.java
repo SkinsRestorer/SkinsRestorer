@@ -156,7 +156,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                skinApplierBukkit.applySkin(player, mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                skinsRestorerAPI.applySkin(new PlayerWrapper(player), mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 

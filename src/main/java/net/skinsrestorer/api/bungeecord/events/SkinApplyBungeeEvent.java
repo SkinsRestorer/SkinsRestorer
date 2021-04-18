@@ -28,16 +28,18 @@ import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 public class SkinApplyBungeeEvent extends Event implements Cancellable {
+    @Nullable
     private final ProxiedPlayer who;
     @Setter
     private boolean isCancelled = false;
     @Setter
     private IProperty property;
 
-    public SkinApplyBungeeEvent(@NotNull ProxiedPlayer who, IProperty property) {
+    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, IProperty property) {
         this.who = who;
         this.property = property;
     }

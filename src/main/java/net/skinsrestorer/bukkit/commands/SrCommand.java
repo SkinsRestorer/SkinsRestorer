@@ -28,6 +28,7 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -189,9 +190,9 @@ public class SrCommand extends BaseCommand {
                 final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getSkinApplierBukkit().applySkin(player, plugin.getMineSkinAPI().genSkin(skin));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin));
                 } else {
-                    plugin.getSkinApplierBukkit().applySkin(player, plugin.getSkinStorage().getSkinForPlayer(skin, false));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
                 sender.sendMessage("success: player skin has been refreshed!");
             } catch (Exception ignored) {

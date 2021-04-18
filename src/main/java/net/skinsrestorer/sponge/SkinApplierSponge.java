@@ -42,9 +42,7 @@ public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
     protected void applySkin(Player player) throws SkinRequestException {
-        setTexture(plugin.getSkinStorage().getSkinForPlayer(plugin.getSkinsRestorerAPI().getSkinName(player.getName()), false), player.getProfile().getPropertyMap().get("textures"));
-
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
+        applySkin(player, plugin.getSkinStorage().getSkinForPlayer(player.getName(), false));
     }
 
     protected void applySkin(Player player, IProperty property) {
