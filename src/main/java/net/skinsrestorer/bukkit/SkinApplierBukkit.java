@@ -19,13 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinapplier;
+package net.skinsrestorer.bukkit;
 
 import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.skinapplier.PaperSkinRefresher;
+import net.skinsrestorer.bukkit.skinapplier.SpigotSkinRefresher;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Bukkit;

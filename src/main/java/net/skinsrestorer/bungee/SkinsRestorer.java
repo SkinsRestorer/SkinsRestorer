@@ -38,7 +38,6 @@ import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
-import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -206,7 +205,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         @SneakyThrows
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props, null);
+            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props);
         }
 
         @Override

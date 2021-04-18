@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 /**
  * https://github.com/SkinsRestorer/SkinsRestorerX/pull/240
  */
-final class PaperSkinRefresher implements Consumer<Player> {
+public final class PaperSkinRefresher implements Consumer<Player> {
     private final MethodHandle MH_REFRESH;
     private final MethodHandle MH_GET_HANDLE;
     private MethodHandle MH_HEALTH_UPDATE = null;

@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.velocity.utils;
+package net.skinsrestorer.velocity;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -42,7 +41,7 @@ public class SkinApplierVelocity {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void applySkin(Player player, IProperty property) {
+    protected void applySkin(Player player, IProperty property) {
         player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
         sendUpdateRequest(player, (Property) property.getHandle());
     }

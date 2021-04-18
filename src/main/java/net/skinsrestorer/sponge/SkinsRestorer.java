@@ -41,7 +41,6 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
-import net.skinsrestorer.sponge.utils.SkinApplierSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;

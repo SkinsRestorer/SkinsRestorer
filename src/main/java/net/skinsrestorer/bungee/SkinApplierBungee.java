@@ -19,17 +19,15 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bungee;
 
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -42,11 +40,11 @@ public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void applySkin(ProxiedPlayer player) throws Exception {
+    protected void applySkin(ProxiedPlayer player) throws Exception {
         applySkin(player, player.getName(), (InitialHandler) player.getPendingConnection());
     }
 
-    public void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
+    protected void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
         applySkin(player, property, (InitialHandler) player.getPendingConnection());
     }
 
@@ -54,7 +52,7 @@ public class SkinApplierBungee {
         applySkin(player, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
     }
 
-    public void applySkin(ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
+    private void applySkin(ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
         if (player == null)
             return;
 

@@ -19,13 +19,12 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.sponge.utils;
+package net.skinsrestorer.sponge;
 
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -42,13 +41,13 @@ import java.util.Collection;
 public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
-    public void applySkin(Player player) throws SkinRequestException {
+    protected void applySkin(Player player) throws SkinRequestException {
         setTexture(plugin.getSkinStorage().getSkinForPlayer(plugin.getSkinsRestorerAPI().getSkinName(player.getName()), false), player.getProfile().getPropertyMap().get("textures"));
 
         Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
     }
 
-    public void applySkin(Player player, IProperty property) {
+    protected void applySkin(Player player, IProperty property) {
         setTexture(property, player.getProfile().getPropertyMap().get("textures"));
 
         Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
