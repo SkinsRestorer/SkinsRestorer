@@ -197,6 +197,7 @@ public class SkinsRestorer implements ISRPlugin {
         return Text.builder(msg).build();
     }
 
+    @Override
     public String getVersion() {
         Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("skinsrestorer");
 

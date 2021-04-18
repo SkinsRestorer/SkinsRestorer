@@ -89,6 +89,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         return map;
     }
 
+    @Override
     public String getVersion() {
         return getDescription().getVersion();
     }

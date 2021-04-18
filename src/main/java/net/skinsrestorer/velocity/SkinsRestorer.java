@@ -199,6 +199,7 @@ public class SkinsRestorer implements ISRPlugin {
         return LegacyComponentSerializer.legacySection().deserialize(string);
     }
 
+    @Override
     public String getVersion() {
         Optional<PluginContainer> plugin = getProxy().getPluginManager().getPlugin("skinsrestorer");
 

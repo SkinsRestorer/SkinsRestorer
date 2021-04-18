@@ -29,4 +29,6 @@ public interface ISRPlugin {
     File getDataFolder();
 
     SkinStorage getSkinStorage();
+
+    String getVersion();
 }

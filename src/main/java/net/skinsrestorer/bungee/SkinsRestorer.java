@@ -71,6 +71,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private SkinCommand skinCommand;
     private SkinsRestorerAPI skinsRestorerBungeeAPI;
 
+    @Override
     public String getVersion() {
         return getDescription().getVersion();
     }
