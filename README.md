@@ -54,7 +54,7 @@ See [Contributors](https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contri
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>14.0.0</version>
+    <version>14.1.0-SNAPSHOT</version>
 </dependency>
 ```
 
