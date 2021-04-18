@@ -202,20 +202,20 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             super(mojangAPI, skinStorage);
         }
 
-        @SneakyThrows
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props);
-        }
-
         @Override
         public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerWrapper.get(ProxiedPlayer.class).getName(), false));
+            applySkin(playerWrapper, playerWrapper.get(ProxiedPlayer.class).getName());
         }
 
         @Override
         public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
             applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
+        }
+
+        @SneakyThrows
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props);
         }
     }
 }
