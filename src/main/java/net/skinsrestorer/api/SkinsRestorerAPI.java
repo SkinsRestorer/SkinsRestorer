@@ -28,8 +28,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 
 /**
- * API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
- * For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
+ * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a>
+ * For more info please refer first to <a href="https://github.com/SkinsRestorer/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a>
  * Advanced help or getting problems? join our discord before submitting issues!
  */
 @SuppressWarnings({"unused"})

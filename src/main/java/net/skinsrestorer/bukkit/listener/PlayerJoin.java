@@ -43,14 +43,14 @@ public class PlayerJoin implements Listener {
     }
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent e) {
+    public void onJoin(final PlayerJoinEvent event) {
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
-                final Player player = e.getPlayer();
+                final Player player = event.getPlayer();
                 final String name = player.getName();
                 final String skin = skinStorage.getDefaultSkinName(name);
 

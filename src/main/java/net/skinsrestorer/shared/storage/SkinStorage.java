@@ -82,7 +82,7 @@ public class SkinStorage {
      * This methods seeks out players actual skin (chosen or not) and returns
      * either null (if no skin data found) or the property object conatining all
      * the skin data.
-     * <p>
+     * <player>
      * Also, it schedules a skin update to stay up to date with skin changes.
      *
      * @param name   Player name to search skin for
@@ -123,7 +123,7 @@ public class SkinStorage {
 
     /**
      * Returns the custom skin name that player has set.
-     * <p>
+     * <player>
      * Returns null if player has no custom skin set.
      **/
     public String getPlayerSkin(String name) {

@@ -111,9 +111,9 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (e.name().equalsIgnoreCase("player"))
+            if (playerOrSkin.name().equalsIgnoreCase("player"))
                 for (String targetPlayer : targets)
                     plugin.getSkinStorage().removePlayerSkin(targetPlayer);
             else
@@ -121,7 +121,7 @@ public class SrCommand extends BaseCommand {
                     plugin.getSkinStorage().removeSkinData(targetSkin);
 
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList));
+            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.name()).replace("%targets", targetList));
         });
     }
 

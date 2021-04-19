@@ -170,7 +170,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             });
 
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:messagechannel");
-            Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:messagechannel", (channel, player, message) -> {
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:messagechannel", (channel, channelPlayer, message) -> {
                 if (!channel.equals("sr:messagechannel"))
                     return;
 
@@ -181,18 +181,18 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                         String subChannel = in.readUTF();
 
                         if (subChannel.equalsIgnoreCase("OPENGUI")) {
-                            Player p = Bukkit.getPlayer(in.readUTF());
-                            if (p == null)
+                            Player player = Bukkit.getPlayer(in.readUTF());
+                            if (player == null)
                                 return;
 
-                            SkinsGUI.getMenus().put(p.getName(), 0);
+                            SkinsGUI.getMenus().put(player.getName(), 0);
 
-                            requestSkinsFromBungeeCord(p, 0);
+                            requestSkinsFromBungeeCord(player, 0);
                         }
 
                         if (subChannel.equalsIgnoreCase("returnSkins")) {
-                            Player p = Bukkit.getPlayer(in.readUTF());
-                            if (p == null)
+                            Player player = Bukkit.getPlayer(in.readUTF());
+                            if (player == null)
                                 return;
 
                             int page = in.readInt();
@@ -210,9 +210,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
                             ++page; // start counting from 1
-                            Inventory inventory = skinsGUI.getGUI(p, page, newSkinList);
+                            Inventory inventory = skinsGUI.getGUI(player, page, newSkinList);
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> p.openInventory(inventory));
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -254,45 +254,45 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
-    public void requestSkinsFromBungeeCord(Player p, int page) {
+    public void requestSkinsFromBungeeCord(Player player, int page) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("getSkins");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
             out.writeInt(page); // Page
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void requestSkinClearFromBungeeCord(Player p) {
+    public void requestSkinClearFromBungeeCord(Player player) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("clearSkin");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void requestSkinSetFromBungeeCord(Player p, String skin) {
+    public void requestSkinSetFromBungeeCord(Player player, String skin) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("setSkin");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
             out.writeUTF(skin);
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

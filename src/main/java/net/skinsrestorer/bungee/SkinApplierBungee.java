@@ -41,12 +41,8 @@ public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    protected void applySkin(ProxiedPlayer player) throws Exception {
-        applySkin(player, player.getName(), (InitialHandler) player.getPendingConnection());
-    }
-
-    public void applySkin(ProxiedPlayer player, String nick, InitialHandler handler) throws Exception {
-        applySkin(player, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
+    public void applySkin(String nick, InitialHandler handler) throws Exception {
+        applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
     }
 
     protected void applySkin(ProxiedPlayer player, IProperty property) throws Exception {

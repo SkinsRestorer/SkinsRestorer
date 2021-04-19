@@ -54,23 +54,23 @@ public class PluginMessageListener implements Listener {
     }
 
     @EventHandler
-    public void onPluginMessage(PluginMessageEvent e) throws IOException {
-        if (e.isCancelled())
+    public void onPluginMessage(PluginMessageEvent event) throws IOException {
+        if (event.isCancelled())
             return;
 
-        if (!e.getTag().equals("sr:messagechannel") && !e.getTag().equals("sr:skinchange"))
+        if (!event.getTag().equals("sr:messagechannel") && !event.getTag().equals("sr:skinchange"))
             return;
 
-        if (!(e.getSender() instanceof ServerConnection)) {
-            e.setCancelled(true);
+        if (!(event.getSender() instanceof ServerConnection)) {
+            event.setCancelled(true);
             return;
         }
 
-        DataInputStream in = new DataInputStream(new ByteArrayInputStream(e.getData()));
+        DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
         String subChannel = in.readUTF();
-        String player = in.readUTF();
-        ProxiedPlayer p = plugin.getProxy().getPlayer(player);
+        String playerName = in.readUTF();
+        ProxiedPlayer player = plugin.getProxy().getPlayer(playerName);
 
         switch (subChannel) {
             //sr:messagechannel
@@ -89,7 +89,7 @@ public class PluginMessageListener implements Listener {
 
                 try {
                     out.writeUTF("returnSkins");
-                    out.writeUTF(player);
+                    out.writeUTF(playerName);
                     out.writeInt(page);
 
                     out.writeShort(ba.length);
@@ -99,34 +99,34 @@ public class PluginMessageListener implements Listener {
                     e1.printStackTrace();
                 }
 
-                p.getServer().sendData("sr:messagechannel", b.toByteArray());
+                player.getServer().sendData("sr:messagechannel", b.toByteArray());
                 break;
             case "clearSkin":
-                plugin.getSkinCommand().onSkinClearOther(p, new OnlinePlayer(p));
+                plugin.getSkinCommand().onSkinClearOther(player, new OnlinePlayer(player));
                 break;
             case "updateSkin":
-                plugin.getSkinCommand().onSkinUpdateOther(p, new OnlinePlayer(p));
+                plugin.getSkinCommand().onSkinUpdateOther(player, new OnlinePlayer(player));
                 break;
             case "setSkin":
                 String skin = in.readUTF();
-                plugin.getSkinCommand().onSkinSetOther(p, new OnlinePlayer(p), skin);
+                plugin.getSkinCommand().onSkinSetOther(player, new OnlinePlayer(player), skin);
                 break;
             default:
                 break;
         }
     }
 
-    public void sendGuiOpenRequest(ProxiedPlayer p) {
+    public void sendGuiOpenRequest(ProxiedPlayer player) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
 
         try {
             out.writeUTF("OPENGUI");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        p.getServer().sendData("sr:messagechannel", b.toByteArray());
+        player.getServer().sendData("sr:messagechannel", b.toByteArray());
     }
 }

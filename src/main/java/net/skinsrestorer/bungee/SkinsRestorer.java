@@ -69,7 +69,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private MineSkinAPI mineSkinAPI;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
-    private SkinsRestorerAPI skinsRestorerBungeeAPI;
+    private SkinsRestorerAPI skinsRestorerAPI;
 
     @Override
     public String getVersion() {
@@ -127,7 +127,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
-        skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);

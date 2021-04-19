@@ -49,11 +49,9 @@ public class GameProfileRequest {
         if (event.isOnlineMode())
             return;
 
-        String skin = plugin.getSkinStorage().getDefaultSkinName(name);
-
         //todo: default skinurl support
         try {
-            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
+            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), plugin.getSkinStorage().getDefaultSkinName(name)));
         } catch (SkinRequestException ignored) {
         }
     }

@@ -41,10 +41,6 @@ import java.util.Collection;
 public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
-    protected void applySkin(Player player) throws SkinRequestException {
-        applySkin(player, plugin.getSkinStorage().getSkinForPlayer(player.getName(), false));
-    }
-
     protected void applySkin(Player player, IProperty property) {
         setTexture(property, player.getProfile().getPropertyMap().get("textures"));
 

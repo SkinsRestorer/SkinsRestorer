@@ -57,8 +57,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         srLogger = plugin.getSrLogger();
     }
 
-    public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
+    public Inventory getGUI(Player player, int page, Map<String, Object> skinsList) {
+        Inventory inventory = Bukkit.createInventory(player, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
 
         ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
         ItemStack delete = new GuiGlass(GlassType.DELETE).getItemStack();
@@ -119,14 +119,14 @@ public class SkinsGUI extends ItemStack implements Listener {
         return inventory;
     }
 
-    public Inventory getGUI(Player p, int page) {
+    public Inventory getGUI(Player player, int page) {
         if (page > 999)
             page = 999;
         int skinNumber = 36 * page;
 
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1
-        return getGUI(p, page, skinsList);
+        return getGUI(player, page, skinsList);
     }
 
     private ItemStack createSkull(String name, Object property) {

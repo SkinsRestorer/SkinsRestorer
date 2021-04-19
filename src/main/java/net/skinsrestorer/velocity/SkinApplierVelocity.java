@@ -74,9 +74,9 @@ public class SkinApplierVelocity {
         return properties;
     }
 
-    private void sendUpdateRequest(Player p, Property textures) {
-        p.getCurrentServer().ifPresent(serverConnection -> {
-            log.debug("Sending skin update request for " + p.getUsername());
+    private void sendUpdateRequest(Player player, Property textures) {
+        player.getCurrentServer().ifPresent(serverConnection -> {
+            log.debug("Sending skin update request for " + player.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

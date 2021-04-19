@@ -40,21 +40,19 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
     }
 
     @Override
-    public void handle(Auth e) {
-        if (e.isCancelled())
+    public void handle(Auth event) {
+        if (event.isCancelled())
             return;
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        GameProfile profile = e.getProfile();
+        GameProfile profile = event.getProfile();
 
         profile.getName().ifPresent(name -> {
             try {
-                String skin = plugin.getSkinStorage().getDefaultSkinName(name);
-
                 //todo: add default skinurl support
-                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
+                plugin.getSkinApplierSponge().updateProfileSkin(profile, plugin.getSkinStorage().getDefaultSkinName(name));
             } catch (SkinRequestException ignored) {
             }
         });

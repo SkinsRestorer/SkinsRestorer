@@ -111,15 +111,15 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("player|skin @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
-        if (e.name().equalsIgnoreCase("player"))
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
+        if (playerOrSkin.name().equalsIgnoreCase("player"))
             for (String targetPlayer : targets)
                 plugin.getSkinStorage().removePlayerSkin(targetPlayer);
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
         String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-        sender.sendMessage(TextComponent.fromLegacyText(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+        sender.sendMessage(TextComponent.fromLegacyText(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.name()).replace("%targets", targetList)));
     }
 
     @Subcommand("props")
@@ -128,8 +128,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, OnlinePlayer target) {
-        InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
-        LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
+        LoginResult.Property prop = ((InitialHandler) target.getPlayer().getPendingConnection()).getLoginProfile().getProperties()[0];
 
         if (prop == null) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.NO_SKIN_DATA));
@@ -165,11 +164,11 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSender sender, OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
-                final ProxiedPlayer p = target.getPlayer();
-                final String name = p.getName();
+                final ProxiedPlayer player = target.getPlayer();
+                final String name = player.getName();
                 final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
-                plugin.getSkinsRestorerBungeeAPI().applySkin(new PlayerWrapper(p), skin);
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));
