@@ -231,7 +231,6 @@ public class MojangAPI {
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            //System.out.println(output.toString()); //testing
             if (obj.has("code")) {
                 if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
                     throw new SkinRequestException(Locale.NOT_PREMIUM);
