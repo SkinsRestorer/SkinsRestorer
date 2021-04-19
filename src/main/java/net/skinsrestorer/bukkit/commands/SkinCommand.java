@@ -97,7 +97,7 @@ public class SkinCommand extends BaseCommand {
             final String skin = plugin.getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removePlayerSkin(pName);
+            plugin.getSkinStorage().removeSkin(pName);
 
             if (setSkin(sender, player, skin, false, true)) {
                 if (sender == player)
@@ -129,7 +129,7 @@ public class SkinCommand extends BaseCommand {
             }
 
             final Player player = target.getPlayer();
-            String skin = plugin.getSkinStorage().getPlayerSkin(player.getName());
+            String skin = plugin.getSkinStorage().getSkinName(player.getName());
 
             try {
                 if (skin != null) {
@@ -243,11 +243,11 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         final String pName = player.getName();
-        final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
+        final String oldSkinName = plugin.getSkinStorage().getSkinName(pName);
         if (C.validUsername(skin)) {
             try {
                 if (save)
-                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
+                    plugin.getSkinStorage().setSkinName(pName, skin);
 
                 //todo getSkinForPlayer is nested and on different places around bungee/sponge/velocity
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
@@ -287,7 +287,7 @@ public class SkinCommand extends BaseCommand {
                     skinentry = skinentry.substring(0, 16);
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
@@ -308,7 +308,7 @@ public class SkinCommand extends BaseCommand {
 
     private void rollback(Player player, String oldSkinName, boolean save) {
         if (save)
-            plugin.getSkinStorage().setPlayerSkin(player.getName(), oldSkinName != null ? oldSkinName : player.getName());
+            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName != null ? oldSkinName : player.getName());
     }
 
     private void sendHelp(CommandSender sender) {

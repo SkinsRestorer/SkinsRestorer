@@ -45,7 +45,7 @@ public class MojangAPI {
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private final SRLogger logger;
     private final Platform platform;
-    private Class<?> property;
+    private Class<? extends IProperty> property;
 
     public MojangAPI(SRLogger logger, Platform platform) {
         this.logger = logger;
@@ -77,8 +77,8 @@ public class MojangAPI {
 
     // TODO Deal with duplicated code
 
-    public IProperty getSkinProperty(String uuid) {
-        return getSkinProperty(uuid, true);
+    public IProperty getProfile(String uuid) {
+        return getProfile(uuid, true);
     }
 
     /**
@@ -87,7 +87,7 @@ public class MojangAPI {
      *
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public IProperty getSkinProperty(String uuid, boolean tryNext) {
+    public IProperty getProfile(String uuid, boolean tryNext) {
         try {
             String output = readURL(SKIN_URL.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
@@ -209,7 +209,6 @@ public class MojangAPI {
             }
 
             return obj.get("id").getAsString();
-
         } catch (IOException e) {
             if (tryNext)
                 return getUUIDBackup(name);

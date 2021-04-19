@@ -115,7 +115,7 @@ public class SrCommand extends BaseCommand {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             if (playerOrSkin.name().equalsIgnoreCase("player"))
                 for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                    plugin.getSkinStorage().removeSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);

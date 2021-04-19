@@ -114,7 +114,7 @@ public class SrCommand extends BaseCommand {
     public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
         if (playerOrSkin.name().equalsIgnoreCase("player"))
             for (String targetPlayer : targets)
-                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                plugin.getSkinStorage().removeSkin(targetPlayer);
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);

@@ -111,7 +111,7 @@ public class SrCommand extends BaseCommand {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             if (playerOrSkin.name().equalsIgnoreCase("player"))
                 for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                    plugin.getSkinStorage().removeSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);

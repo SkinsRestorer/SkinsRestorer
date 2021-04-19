@@ -78,7 +78,7 @@ public class ServiceChecker {
         }
 
         // ##### Profile requests #####
-        IProperty minetools = mojangAPI.getSkinProperty(NOTCH_UUID, false);
+        IProperty minetools = mojangAPI.getProfile(NOTCH_UUID, false);
         if (minetools != null) {
             response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools);
             response.incrementWorkingProfile();

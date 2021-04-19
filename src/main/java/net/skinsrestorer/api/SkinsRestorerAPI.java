@@ -60,11 +60,11 @@ public abstract class SkinsRestorerAPI {
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
     public IProperty getProfile(String uuid) {
-        return mojangAPI.getSkinProperty(uuid);
+        return mojangAPI.getProfile(uuid);
     }
 
     public String getSkinName(String name) {
-        return skinStorage.getPlayerSkin(name);
+        return skinStorage.getSkinName(name);
     }
 
     public IProperty getSkinData(String skin) {
@@ -72,7 +72,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     public boolean hasSkin(String name) {
-        return skinStorage.getPlayerSkin(name) != null;
+        return skinStorage.getSkinName(name) != null;
     }
 
     /**
@@ -82,16 +82,16 @@ public abstract class SkinsRestorerAPI {
      * @param skin - Skin name
      **/
     public void setSkinName(String name, String skin) {
-        skinStorage.setPlayerSkin(name, skin);
+        skinStorage.setSkinName(name, skin);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
-        skinStorage.setPlayerSkin(playerName, skinName);
+        skinStorage.setSkinName(playerName, skinName);
         skinStorage.getSkinForPlayer(skinName, false);
     }
 
     public void removeSkin(String playerName) {
-        skinStorage.removePlayerSkin(playerName);
+        skinStorage.removeSkin(playerName);
     }
 
     public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
