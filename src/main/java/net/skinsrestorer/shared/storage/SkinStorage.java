@@ -141,9 +141,10 @@ public class SkinStorage {
         if (textures == null) {
             // No cached skin found, get from MojangAPI, save and return
             try {
-                if (C.validMojangUsername(skin)) {
-                    textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
-                }
+                if (!C.validMojangUsername(skin))
+                    throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin));
+
+                textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
 
                 if (textures == null)
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
