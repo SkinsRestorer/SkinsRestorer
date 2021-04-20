@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.storage.Config;
 import java.util.regex.Pattern;
 
 public class C {
+    //Note: Players who bought the game early in its development can have "-" in usernames.
     private static final Pattern namePattern = Pattern.compile("^[a-zA-Z0-9_\\-]+$");
     private static final Pattern urlPattern = Pattern.compile("^https?://.*");
 
@@ -46,6 +47,7 @@ public class C {
     }
 
     public static boolean validMojangUsername(String username) {
+        //Note: there are exceptions of players with under 3 characters, who bought the game early in its development.
         if (username.length() > 16)
             return false;
 
