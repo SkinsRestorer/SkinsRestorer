@@ -141,7 +141,9 @@ public class SkinStorage {
         if (textures == null) {
             // No cached skin found, get from MojangAPI, save and return
             try {
-                textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
+                if (C.validMojangUsername(skin)) {
+                    textures = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(skin, true));
+                }
 
                 if (textures == null)
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -282,7 +284,7 @@ public class SkinStorage {
     }
 
     private IProperty updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
-        if (updateOutdated && isOld(Long.parseLong(timestamp))) {
+        if (updateOutdated && C.validMojangUsername(name) && isOld(Long.parseLong(timestamp))) {
             IProperty skin = getMojangAPI().getSkinProperty(getMojangAPI().getUUID(name, true));
 
             if (skin != null) {
@@ -627,7 +629,7 @@ public class SkinStorage {
             }
         }
 
-        if (timestamp.equals("0"))
+        if (timestamp.equals("0") || C.validMojangUsername(skin))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
@@ -674,7 +676,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (getMojangAPI().getUUID(player, true) != null) {
+                    if (C.validMojangUsername(player) || getMojangAPI().getUUID(player, true) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }
