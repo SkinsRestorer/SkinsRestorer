@@ -45,7 +45,7 @@ public class C {
         return new String(b);
     }
 
-    public static boolean validUsername(String username) {
+    public static boolean validMojangUsername(String username) {
         if (username.length() > 16)
             return false;
 
@@ -56,7 +56,7 @@ public class C {
         return urlPattern.matcher(url).matches();
     }
 
-    public static boolean isAllowed(String url) {
+    public static boolean allowedSkinUrl(String url) {
         if (Config.RESTRICT_SKIN_URLS_ENABLED) {
             for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
                 if (url.startsWith(possiblyAllowedUrl)) {
