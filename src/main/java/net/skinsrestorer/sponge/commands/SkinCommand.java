@@ -241,7 +241,6 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        CooldownStorage.resetCooldown(senderName);
         CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         final String pName = p.getName();
