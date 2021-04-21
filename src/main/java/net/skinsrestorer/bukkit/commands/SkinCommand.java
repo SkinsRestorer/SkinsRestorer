@@ -298,17 +298,11 @@ public class SkinCommand extends BaseCommand {
 
                     return true;
                 }
-                // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-                CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
                 sender.sendMessage(e.getMessage());
-                rollback(p, oldSkinName, save);
-                return false;
             }
         }
-
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
         rollback(p, oldSkinName, save);
         return false;
     }
