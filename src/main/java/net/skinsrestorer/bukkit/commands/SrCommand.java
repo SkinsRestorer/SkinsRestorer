@@ -207,7 +207,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <name> <skinurl>")
+    @Syntax(" <skinName> <skinUrl>")
     public void onCreateCustom(CommandSender sender, String skinName, String skinUrl) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {

@@ -183,7 +183,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <name> <skinurl>")
+    @Syntax(" <skinName> <skinUrl>")
     public void onCreateCustom(CommandSource source, String skinName, String skinUrl) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {

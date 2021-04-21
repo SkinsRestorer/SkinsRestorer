@@ -183,7 +183,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <name> <skinurl>")
+    @Syntax(" <skinName> <skinUrl>")
     public void onCreateCustom(CommandSender sender, String skinName, String skinUrl) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
