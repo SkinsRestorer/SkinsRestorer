@@ -53,7 +53,7 @@ public class Locale {
     public static String HELP_SR_DROP = "Removes players or skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin properties.";
     public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
-    public static String HELP_SR_CreateCustom = "Name & create a custom skin";
+    public static String HELP_SR_CreateCustom = "Create a custom server wide skin";
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
