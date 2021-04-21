@@ -208,13 +208,13 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
     @Syntax(" <name> <skinurl>")
-    public void onCreateCustom(CommandSender sender, String name, String skinUrl) {
+    public void onCreateCustom(CommandSender sender, String skinName, String skinUrl) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
+                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }
