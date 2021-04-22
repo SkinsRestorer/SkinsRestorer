@@ -30,18 +30,19 @@
             <item name="Ore" href="https://ore.spongepowered.org/SRTeam/SkinsRestorer"/>
         </links>
 
-        <!--
+       
         <menu name="Overview">
             <item name="About" href="/index.html"/>
+            <!--
             <item name="Config" href="/config.html"/>
             <item name="Formatting" href="/format.html"/>
             <item name="Placeholders" href="/placeholders.html"/>
             <item name="API" href="/api.html"/>
             <item name="FAQ" href="/faq.html"/>
+            -->
             <item name="Javadocs" href="/apidocs/index.html"/>
         </menu>
-        -->
-
+        
         <menu ref="reports"/>
 
         <footer><![CDATA[All rights reserved.]]></footer>
