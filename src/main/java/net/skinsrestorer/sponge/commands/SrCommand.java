@@ -183,14 +183,14 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <name> <skinurl>")
-    public void onCreateCustom(CommandSource source, String name, String skinUrl) {
+    @Syntax(" <skinName> <skinUrl>")
+    public void onCreateCustom(CommandSource source, String skinName, String skinUrl) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
+                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
                     source.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
                 }
