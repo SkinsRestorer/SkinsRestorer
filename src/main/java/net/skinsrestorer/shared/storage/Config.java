@@ -36,6 +36,11 @@ public class Config {
     public static List<String> DEFAULT_SKINS = null;
     public static boolean DISABLED_SKINS_ENABLED = false;
     public static List<String> DISABLED_SKINS = null;
+    public static boolean SKINSGUI_ENABLED = true;
+    public static boolean SKINSGUI_REGISTER_CMD = true;
+    public static String SKINSGUI_DISSABLED_MSG = "SkinsRestorer /skins menu is currently disabled";
+    public static boolean SKINSGUI_EXCLUDE_URL = false;
+    public static int SKINSGUI_SKULLAMOUNT = 36;
     public static boolean CUSTOM_GUI_ENABLED = false;
     public static boolean CUSTOM_GUI_ONLY = false;
     public static List<String> CUSTOM_GUI_SKINS = null;
@@ -82,9 +87,13 @@ public class Config {
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names", ".skin");
         DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
+        SKINSGUI_ENABLED = config.getBoolean("SKINSGUI.Command.Enabled", SKINSGUI_ENABLED);
+        SKINSGUI_REGISTER_CMD = config.getBoolean("SKINSGUI.Command.RegisterGUICommand", SKINSGUI_REGISTER_CMD);
+        SKINSGUI_DISSABLED_MSG = config.getString("SKINSGUI.Command.DisableMessage", SKINSGUI_DISSABLED_MSG);
+        SKINSGUI_EXCLUDE_URL = config.getBoolean("SKINSGUI.ExcludeUrlSkins", SKINSGUI_EXCLUDE_URL);
+        SKINSGUI_SKULLAMOUNT = config.getInt("SKINSGUI.SkullAmount", SKINSGUI_SKULLAMOUNT);
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
-        CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
-        CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
+        CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomNames", CUSTOM_GUI_ONLY);        CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
         DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
         USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
@@ -129,6 +138,9 @@ public class Config {
 
         if (!DISMOUNT_PLAYER_ON_UPDATE)
             REMOUNT_PLAYER_ON_UPDATE = false;
+
+        if (SKINSGUI_SKULLAMOUNT < 7 || SKINSGUI_SKULLAMOUNT > 36)
+            SKINSGUI_SKULLAMOUNT = 36;
     }
 
     public static void set(String path, Object value) {
