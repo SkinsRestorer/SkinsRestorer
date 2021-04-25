@@ -188,7 +188,7 @@ public class SrCommand extends BaseCommand {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, null),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
