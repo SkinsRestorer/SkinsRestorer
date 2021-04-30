@@ -183,7 +183,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@players")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl>")
+    @Syntax(" <skinName> <skinUrl> [steve/slim]")
     public void onCreateCustom(CommandSource source, String skinName, String skinUrl) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
@@ -200,6 +200,7 @@ public class SrCommand extends BaseCommand {
         });
     }
 
+    @SuppressWarnings("unused")
     public enum PlayerOrSkin {
         PLAYER,
         SKIN,
