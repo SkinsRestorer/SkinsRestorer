@@ -60,6 +60,9 @@ public class Locale {
     public static String SYNTAX_SKINURL = " <url> [steve/slim]";
     public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
     public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
+    public static String Completions_Skin = "<Skin>";
+    public static String Completions_SkinName = "<SkinName>";
+    public static String Completions_SkinUrl = "<SkinUrl>";
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";

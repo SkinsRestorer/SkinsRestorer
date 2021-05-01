@@ -205,7 +205,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("createcustom")
     @CommandPermission("%srCreateCustom")
-    @CommandCompletion("<SkinName> <SkinUrl>")
+    @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [steve/slim]")
     public void onCreateCustom(CommandSender sender, String skinName, String skinUrl, @Optional SkinType skinType) {

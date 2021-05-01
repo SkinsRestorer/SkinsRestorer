@@ -21,8 +21,6 @@
  */
 package net.skinsrestorer.velocity;
 
-import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.VelocityCommandIssuer;
 import co.aikar.commands.VelocityCommandManager;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -57,6 +55,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -147,18 +146,11 @@ public class SkinsRestorer implements ISRPlugin {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
 
-        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
-            VelocityCommandIssuer issuer = context.getIssuer();
-            if (issuer.hasPermission("skinsrestorer.command") || Config.SKINWITHOUTPERM)
-                return;
-
-            throw new ConditionFailedException("You don't have access to change your skin.");
-        }));
-        // Use with @Conditions("permOrSkinWithoutPerm")
-
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+                Arrays.asList(v.split(", "))));
 
         new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 
