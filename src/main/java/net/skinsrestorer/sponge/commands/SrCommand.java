@@ -107,19 +107,19 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("drop|remove")
     @CommandPermission("%srDrop")
-    @CommandCompletion("player|skin @players")
+    @CommandCompletion("player|skin @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
-            if (e.name().equalsIgnoreCase("player"))
+            if (e == PlayerOrSkin.PLAYER)
                 for (String targetPlayer : targets)
                     plugin.getSkinStorage().removePlayerSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.name()).replace("%targets", targetList)));
+            source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.toString()).replace("%targets", targetList)));
         });
     }
 
@@ -128,7 +128,7 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
-    public void onProps(CommandSource source, OnlinePlayer target) {
+    public void onProps(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             Collection<ProfileProperty> prop = target.getPlayer().getProfile().getPropertyMap().get("textures");
 
@@ -166,7 +166,7 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
-    public void onApplySkin(CommandSource source, OnlinePlayer target) {
+    public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
                 final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(target.getPlayer().getName());
@@ -181,14 +181,14 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("createcustom")
     @CommandPermission("%srCreateCustom")
-    @CommandCompletion("@players")
+    @CommandCompletion("<SkinName> <SkinUrl>")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSource source, String skinName, String skinUrl) {
+    public void onCreateCustom(CommandSource source, String skinName, String skinUrl, @Optional SkinType skinType) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, null),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, skinType.toString()),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
@@ -204,5 +204,11 @@ public class SrCommand extends BaseCommand {
     public enum PlayerOrSkin {
         PLAYER,
         SKIN,
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        steve,
+        slim,
     }
 }

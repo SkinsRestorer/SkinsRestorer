@@ -65,7 +65,7 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
-    public void onSkinSetShort(ProxiedPlayer p, @Single String skin) {
+    public void onSkinSetShort(ProxiedPlayer p, String skin) {
         onSkinSetOther(p, new OnlinePlayer(p), skin, null);
     }
 
@@ -91,7 +91,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
-    public void onSkinClearOther(CommandSender sender, OnlinePlayer target) {
+    public void onSkinClearOther(CommandSender sender, @Single OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
@@ -127,7 +127,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
-    public void onSkinUpdateOther(CommandSender sender, OnlinePlayer target) {
+    public void onSkinUpdateOther(CommandSender sender, @Single OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
@@ -170,6 +170,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set")
     @CommandPermission("%skinSet")
+    @CommandCompletion("<Skin>")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(ProxiedPlayer p, String[] skin) {
@@ -182,7 +183,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set")
     @CommandPermission("%skinSetOther")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players <Skin>")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
@@ -203,6 +204,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("url")
     @CommandPermission("%skinSetUrl")
+    @CommandCompletion("<SkinUrl>")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
@@ -328,6 +330,7 @@ public class SkinCommand extends BaseCommand {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SR_LINE));
     }
 
+    @SuppressWarnings("unused")
     public enum SkinType {
         steve,
         slim,

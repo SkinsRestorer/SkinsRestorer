@@ -89,7 +89,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
-    public void onSkinClearOther(CommandSource source, OnlinePlayer target) {
+    public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
@@ -126,7 +126,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
-    public void onSkinUpdateOther(CommandSource source, OnlinePlayer target) {
+    public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
@@ -169,6 +169,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set")
     @CommandPermission("%skinSet")
+    @CommandCompletion("<Skin>")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
@@ -181,7 +182,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set")
     @CommandPermission("%skinSetOther")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players <Skin>")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
@@ -200,6 +201,7 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("url")
     @CommandPermission("%skinSetUrl")
+    @CommandCompletion("<SkinUrl>")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
@@ -300,6 +302,7 @@ public class SkinCommand extends BaseCommand {
             source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
     }
 
+    @SuppressWarnings("unused")
     public enum SkinType {
         steve,
         slim,
