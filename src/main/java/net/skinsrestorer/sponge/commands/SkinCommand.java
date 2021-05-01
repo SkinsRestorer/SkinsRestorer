@@ -206,11 +206,11 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
     public void onSkinSetUrl(Player p, String url, @Optional SkinType skinType) {
-            if (C.validUrl(url)) {
-                onSkinSetOther(p, new OnlinePlayer(p), url, skinType);
-            } else {
-                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
-            }
+        if (C.validUrl(url)) {
+            onSkinSetOther(p, new OnlinePlayer(p), url, skinType);
+        } else {
+            p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+        }
     }
 
     private boolean setSkin(CommandSource source, Player p, String skin) {
