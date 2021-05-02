@@ -64,7 +64,7 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
     public void onSkinSetShort(Player p, @Single String skin) {
-        onSkinSetOther(p, new OnlinePlayer(p), skin);
+        onSkinSetOther(p, new OnlinePlayer(p), skin, null);
     }
 
     @HelpCommand
@@ -89,7 +89,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
-    public void onSkinClearOther(CommandSource source, OnlinePlayer target) {
+    public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
@@ -103,7 +103,7 @@ public class SkinCommand extends BaseCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removePlayerSkin(pName);
 
-            if (setSkin(source, p, skin, false, true)) {
+            if (setSkin(source, p, skin, false, true, null)) {
                 if (source == p)
                     source.sendMessage(plugin.parseMessage(Locale.SKIN_CLEAR_SUCCESS));
                 else
@@ -126,7 +126,7 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
-    public void onSkinUpdateOther(CommandSource source, OnlinePlayer target) {
+    public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
@@ -158,7 +158,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            if (setSkin(source, p, skin, false, false)) {
+            if (setSkin(source, p, skin, false, false, null)) {
                 if (source == p)
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
                 else
@@ -169,22 +169,23 @@ public class SkinCommand extends BaseCommand {
 
     @Subcommand("set")
     @CommandPermission("%skinSet")
+    @CommandCompletion("@skin")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player p, String[] skin) {
         if (skin.length > 0) {
-            onSkinSetOther(p, new OnlinePlayer(p), skin[0]);
+            onSkinSetOther(p, new OnlinePlayer(p), skin[0], null);
         } else {
-            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
+            throw new InvalidCommandArgument(true);
         }
     }
 
     @Subcommand("set")
     @CommandPermission("%skinSetOther")
-    @CommandCompletion("@players")
+    @CommandCompletion("@players @skin")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
-    public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin) {
+    public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             final Player p = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
@@ -193,35 +194,32 @@ public class SkinCommand extends BaseCommand {
                     return;
                 }
             }
-            if (setSkin(source, p, skin) && !(source == p))
+            if (setSkin(source, p, skin, true, false, skinType) && (source != p))
                 source.sendMessage(plugin.parseMessage(Locale.ADMIN_SET_SKIN.replace("%player", p.getName())));
         });
     }
 
     @Subcommand("url")
     @CommandPermission("%skinSetUrl")
+    @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
-    public void onSkinSetUrl(Player p, String[] url) {
-        if (url.length > 0) {
-            if (C.validUrl(url[0])) {
-                onSkinSetOther(p, new OnlinePlayer(p), url[0]);
-            } else {
-                p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
-            }
+    public void onSkinSetUrl(Player p, String url, @Optional SkinType skinType) {
+        if (C.validUrl(url)) {
+            onSkinSetOther(p, new OnlinePlayer(p), url, skinType);
         } else {
-            throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
+            p.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
         }
     }
 
     private boolean setSkin(CommandSource source, Player p, String skin) {
-        return setSkin(source, p, skin, true, false);
+        return setSkin(source, p, skin, true, false, null);
     }
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(CommandSource source, Player p, String skin, boolean save, boolean clear) {
+    private boolean setSkin(CommandSource source, Player p, String skin, boolean save, boolean clear, SkinType skinType) {
         if (skin.equalsIgnoreCase("null")) {
             source.sendMessage(plugin.parseMessage(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
@@ -264,7 +262,7 @@ public class SkinCommand extends BaseCommand {
                 String skinentry = " " + pName; // so won't overwrite premium playernames
                 if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
-                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin),
+                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin, skinType.toString()),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierSponge().applySkin(new PlayerWrapper(p));
@@ -302,5 +300,11 @@ public class SkinCommand extends BaseCommand {
         source.sendMessage(plugin.parseMessage(Locale.HELP_PLAYER.replace("%ver%", plugin.getVersion())));
         if (!Locale.SR_LINE.isEmpty())
             source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        STEVE,
+        SLIM,
     }
 }

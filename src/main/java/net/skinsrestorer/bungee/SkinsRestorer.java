@@ -50,6 +50,7 @@ import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -140,18 +141,11 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
 
-        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
-            BungeeCommandIssuer issuer = context.getIssuer();
-            if (issuer.hasPermission("skinsrestorer.command") || Config.SKINWITHOUTPERM)
-                return;
-
-            throw new ConditionFailedException("You don't have access to change your skin.");
-        }));
-        // Use with @Conditions("permOrSkinWithoutPerm")
-
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+                Arrays.asList(v.split(", "))));
 
         new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"), srLogger);
 

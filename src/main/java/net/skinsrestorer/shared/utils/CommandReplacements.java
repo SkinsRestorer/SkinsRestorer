@@ -77,6 +77,12 @@ public class CommandReplacements {
             .put("%SyntaxSkinClearOther", Locale.SYNTAX_SKINCLEAR_OTHER)
             .build();
 
+    public static final Map<String, String> completions = ImmutableMap.<String, String>builder()
+            .put("skin", Locale.Completions_Skin.replace(Locale.PREFIX, ""))
+            .put("skinName", Locale.Completions_SkinName.replace(Locale.PREFIX, ""))
+            .put("skinUrl", Locale.Completions_SkinUrl.replace(Locale.PREFIX, ""))
+            .build();
+
     private CommandReplacements() {
     }
 }
