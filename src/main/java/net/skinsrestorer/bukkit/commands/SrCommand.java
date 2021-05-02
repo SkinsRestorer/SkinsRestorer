@@ -232,7 +232,7 @@ public class SrCommand extends BaseCommand {
 
     @SuppressWarnings("unused")
     public enum SkinType {
-        steve,
-        slim,
+        STEVE,
+        SLIM,
     }
 }
