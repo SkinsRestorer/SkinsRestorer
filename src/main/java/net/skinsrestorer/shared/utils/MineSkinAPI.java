@@ -80,15 +80,19 @@ public class MineSkinAPI {
 
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
                     logger.debug("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
-
                     if (obj.has("delay"))
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
 
-                    return genSkin(url, null); // try again if given account fails (will stop if no more accounts)
+                    return genSkin(url, skinType); // try again if given account fails (will stop if no more accounts)
                 } else if (errResp.equals("No accounts available")) {
                     logger.debug("[ERROR] MS No accounts available " + url);
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
+            } else if (obj.has("nextRequest")) {
+                long nextRequestValue = (new Double(obj.get("nextRequest").getAsDouble())).longValue();
+                long nextRequestDiff = nextRequestValue - (System.currentTimeMillis() / 1000);
+                TimeUnit.SECONDS.sleep(nextRequestDiff);
+                return genSkin(url, skinType); // try again after nextRequest
             }
         } catch (IOException e) {
             logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
