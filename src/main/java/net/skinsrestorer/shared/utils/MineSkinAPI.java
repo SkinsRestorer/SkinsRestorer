@@ -89,7 +89,7 @@ public class MineSkinAPI {
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
             } else if (obj.has("nextRequest")) {
-                final long nextRequestMilS = ((obj.get("nextRequest").getAsLong() * 1000) - System.currentTimeMillis());
+                final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
                 if (nextRequestMilS > 0)
                     TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
                 return genSkin(url, skinType); // try again after nextRequest
