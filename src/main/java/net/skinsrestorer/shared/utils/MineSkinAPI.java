@@ -89,9 +89,9 @@ public class MineSkinAPI {
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
             } else if (obj.has("nextRequest")) {
-                long nextRequestValue = (new Double(obj.get("nextRequest").getAsDouble())).longValue();
-                long nextRequestDiff = nextRequestValue - (System.currentTimeMillis() / 1000);
-                TimeUnit.SECONDS.sleep(nextRequestDiff);
+                final long nextRequestMilS = ((obj.get("nextRequest").getAsLong() * 1000) - System.currentTimeMillis());
+                if (nextRequestMilS > 0)
+                    TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
                 return genSkin(url, skinType); // try again after nextRequest
             }
         } catch (IOException e) {
