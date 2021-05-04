@@ -78,21 +78,23 @@ public class MineSkinAPI {
             } else if (obj.has("error")) {
                 errResp = obj.get("error").getAsString();
 
-                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
-                    logger.debug("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
-                    if (obj.has("delay"))
+                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
+                    logger.debug("[SkinsRestorer] MS API skin generation fail, trying again... ");
+                    if (obj.has("delay")) {
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-
-                    return genSkin(url, skinType); // try again if given account fails (will stop if no more accounts)
+                    } else if (obj.has("nextRequest")) {
+                        final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
+                        if (nextRequestMilS > 0)
+                            TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+                        return genSkin(url, skinType); // try again after nextRequest
+                    } else {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    return genSkin(url, skinType); // try again
                 } else if (errResp.equals("No accounts available")) {
                     logger.debug("[ERROR] MS No accounts available " + url);
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
-            } else if (obj.has("nextRequest")) {
-                final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
-                if (nextRequestMilS > 0)
-                    TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
-                return genSkin(url, skinType); // try again after nextRequest
             }
         } catch (IOException e) {
             logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
