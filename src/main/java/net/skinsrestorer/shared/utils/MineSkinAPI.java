@@ -55,7 +55,7 @@ public class MineSkinAPI {
 
     public IProperty genSkin(String url, String skinType) throws SkinRequestException {
         String skinVariant = "";
-        if (skinType.equals("steve") || skinType.equals("slim"))
+        if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
             skinVariant = "&variant=" + skinType;
 
         try {
