@@ -77,7 +77,7 @@ public class MineSkinAPI {
                 final String errResp = obj.get("error").getAsString();
 
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
-                    logger.debug("[SkinsRestorer] MS " + errResp + ", trying again... ");
+                    logger.debug("[ERROR] MS " + errResp + ", trying again... ");
                     if (obj.has("delay")) {
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                     } else if (obj.has("nextRequest")) {
