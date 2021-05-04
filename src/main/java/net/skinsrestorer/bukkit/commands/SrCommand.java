@@ -212,7 +212,7 @@ public class SrCommand extends BaseCommand {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, skinType.toString()),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName));
                 } else {

@@ -266,7 +266,7 @@ public class SkinCommand extends BaseCommand {
                 if (skinentry.length() > 16) {
                     skinentry = skinentry.substring(0, 16);
                 } // max len of 16 char
-                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin, skinType.toString()),
+                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType)),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
