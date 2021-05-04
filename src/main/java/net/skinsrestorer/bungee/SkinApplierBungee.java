@@ -27,7 +27,9 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
@@ -41,15 +43,23 @@ public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void applySkin(String nick, InitialHandler handler) throws Exception {
-        applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
+    public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
+        try {
+            applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected void applySkin(ProxiedPlayer player, IProperty property) throws Exception {
-        applySkin(player, property, (InitialHandler) player.getPendingConnection());
+    protected void applySkin(ProxiedPlayer player, IProperty property) {
+        try {
+            applySkin(player, property, (InitialHandler) player.getPendingConnection());
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws Exception {
+    private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
         if (player != null && handler == null) {
             handler = (InitialHandler) player.getPendingConnection();
         }
@@ -63,7 +73,7 @@ public class SkinApplierBungee {
         applyWithProperty(player, handler, (Property) event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws Exception {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws ReflectionException {
         if (handler.isOnlineMode()) {
             sendUpdateRequest(player, textures);
             return;

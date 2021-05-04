@@ -81,12 +81,6 @@ public class MojangAPI {
         return getProfile(uuid, true);
     }
 
-    /**
-     * Returned object needs to be casted to either BungeeCord's property or
-     * Mojang's property (old or new)
-     *
-     * @return Property object (New Mojang, Old Mojang or Bungee)
-     **/
     public IProperty getProfile(String uuid, boolean tryNext) {
         try {
             String output = readURL(SKIN_URL.replace("%uuid%", uuid));
@@ -125,7 +119,6 @@ public class MojangAPI {
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             GenericProperty property = new GenericProperty();
-
             if (obj.has("properties") && property.valuesFromJson(obj)) {
                 return createProperty("textures", property.getValue(), property.getSignature());
             }
@@ -160,16 +153,15 @@ public class MojangAPI {
     }
 
     /**
-     * @param name - Name of the player
+     * @param name Name of the player
      * @return Dash-less UUID (String)
-     * @throws SkinRequestException - If player is NOT_PREMIUM or server is RATE_LIMITED
+     * @throws SkinRequestException If player is NOT_PREMIUM or server is RATE_LIMITED
      */
     public String getUUID(String name, boolean tryNext) throws SkinRequestException {
         try {
             String output = readURL(UUID_URL.replace("%name%", name));
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                 return getUUIDMojang(name);
             }

@@ -29,6 +29,7 @@ import net.skinsrestorer.bukkit.skinapplier.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinapplier.SpigotSkinRefresher;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -40,20 +41,25 @@ import java.util.logging.Level;
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
     private final SkinsRestorer plugin;
-    private final Consumer<Player> refresh = detectRefresh();
+    private final SRLogger log;
+    private final Consumer<Player> refresh;
     private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
     private boolean enableDismountEntities;
     private boolean enableRemountPlayer;
 
-    private Consumer<Player> detectRefresh() {
-        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
+    public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) {
+        this.plugin = plugin;
+        this.log = log;
+        refresh = detectRefresh(plugin);
+    }
 
+    private Consumer<Player> detectRefresh(SkinsRestorer plugin) {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1.")) {
-            plugin.getSrLogger().warning("[!] WARNING [!]");
-            plugin.getSrLogger().warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+            log.warning("[!] WARNING [!]");
+            log.warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
         }
 
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
@@ -64,17 +70,17 @@ public class SkinApplierBukkit {
         boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
         if (viaVersion || protocolSupportExists) {
             plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-            return new SpigotSkinRefresher();
+            return new SpigotSkinRefresher(plugin, log);
         }
 
         if (PaperLib.isPaper()) {
             try {
-                return new PaperSkinRefresher(plugin.getSrLogger());
+                return new PaperSkinRefresher(log);
             } catch (ExceptionInInitializerError ignored) {
             }
         }
 
-        return new SpigotSkinRefresher();
+        return new SpigotSkinRefresher(plugin, log);
     }
 
     /**

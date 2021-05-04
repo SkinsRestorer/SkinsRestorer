@@ -105,7 +105,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        skinApplierBukkit = new SkinApplierBukkit(this);
+        skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
 

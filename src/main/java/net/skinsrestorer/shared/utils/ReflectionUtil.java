@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.utils;
 
 import li.cock.ie.reflect.DuckBypass;
+import net.skinsrestorer.shared.exception.ReflectionException;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Constructor;
@@ -91,27 +92,6 @@ public class ReflectionUtil {
         return f;
     }
 
-    public static Object getFirstObject(Class<?> clazz, Class<?> objclass, Object instance) throws Exception {
-        Field f = null;
-
-        for (Field fi : clazz.getDeclaredFields())
-            if (fi.getType().equals(objclass)) {
-                f = fi;
-                break;
-            }
-
-        if (f == null)
-            for (Field fi : clazz.getFields())
-                if (fi.getType().equals(objclass)) {
-                    f = fi;
-                    break;
-                }
-
-        assert f != null;
-        setFieldAccessible(f);
-        return f.get(instance);
-    }
-
     private static Method getMethod(Class<?> clazz, String mname) {
         Method m;
         try {
@@ -157,44 +137,75 @@ public class ReflectionUtil {
         return m;
     }
 
-    public static Class<?> getNMSClass(String clazz) throws Exception {
-        return Class.forName("net.minecraft.server." + serverVersion + "." + clazz);
+    public static Class<?> getNMSClass(String clazz) throws ReflectionException {
+        try {
+            return Class.forName("net.minecraft.server." + serverVersion + "." + clazz);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object getObject(Object obj, String fname) throws Exception {
-        return getField(obj.getClass(), fname).get(obj);
+    public static Object getObject(Object obj, String fname) throws ReflectionException {
+        try {
+            return getField(obj.getClass(), fname).get(obj);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initargs) throws Exception {
-        return getConstructor(clazz, args).newInstance(initargs);
+    public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initargs) throws ReflectionException {
+        try {
+            return getConstructor(clazz, args).newInstance(initargs);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws Exception {
-        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
+    public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectionException {
+        try {
+            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs)
-            throws Exception {
-        return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initargs);
+    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initargs) throws ReflectionException {
+        try {
+            return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initargs);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initargs) throws Exception {
-        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initargs);
+    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initargs) throws ReflectionException {
+        try {
+            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initargs);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeMethod(Object obj, String method) throws Exception {
-        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
+    public static Object invokeMethod(Object obj, String method) throws ReflectionException {
+        try {
+            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Object invokeMethod(Object obj, String method, Object[] initargs) throws Exception {
-        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initargs);
+    public static Object invokeMethod(Object obj, String method, Object[] initargs) throws ReflectionException {
+        try {
+            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initargs);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
     }
 
     private static void setFieldAccessible(Field f) {
         reflect.setEditable(f);
     }
 
-    public static void setObject(Class<?> clazz, Object obj, String fname, Object value) throws Exception {
+    public static void setObject(Class<?> clazz, Object obj, String fname, Object value) {
         // getField(clazz, fname).set(obj, value);
         reflect.setValue(clazz, fname, obj, value);
     }

@@ -25,4 +25,8 @@ public class ReflectionException extends Exception {
     public ReflectionException(String message) {
         super(message);
     }
+
+    public ReflectionException(Exception e) {
+        super(e);
+    }
 }

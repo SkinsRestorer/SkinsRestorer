@@ -70,8 +70,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
         if (MH_HEALTH_UPDATE != null) {
             MH_HEALTH_UPDATE.invoke(player);
         } else {
-            val handle = MH_GET_HANDLE.invoke(player);
-            ReflectionUtil.invokeMethod(handle, "triggerHealthUpdate");
+            ReflectionUtil.invokeMethod(MH_GET_HANDLE.invoke(player), "triggerHealthUpdate");
         }
     }
 }
