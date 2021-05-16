@@ -59,6 +59,7 @@ import org.spongepowered.api.text.Text;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -153,6 +154,8 @@ public class SkinsRestorer implements ISRPlugin {
             CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
             CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
             CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+            CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+                    Arrays.asList(v.split(", "))));
 
             new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
 

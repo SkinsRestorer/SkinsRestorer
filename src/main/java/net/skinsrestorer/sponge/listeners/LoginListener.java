@@ -41,13 +41,13 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
 
     @Override
     public void handle(Auth event) {
-        if (event.isCancelled())
+        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
             return;
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        GameProfile profile = event.getProfile();
+        final GameProfile profile = event.getProfile();
 
         profile.getName().ifPresent(name -> {
             try {

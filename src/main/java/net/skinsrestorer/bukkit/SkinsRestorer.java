@@ -56,6 +56,8 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -303,18 +305,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
 
-        manager.getCommandConditions().addCondition("permOrSkinWithoutPerm", (context -> {
-            BukkitCommandIssuer issuer = context.getIssuer();
-            if (issuer.hasPermission("skinsrestorer.command") || Config.SKINWITHOUTPERM)
-                return;
-
-            throw new ConditionFailedException("You don't have access to change your skin.");
-        }));
-        // Use with @Conditions("permOrSkinWithoutPerm")
-
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
         CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
+        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+                Arrays.asList(v.split(", "))));
 
         new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
 

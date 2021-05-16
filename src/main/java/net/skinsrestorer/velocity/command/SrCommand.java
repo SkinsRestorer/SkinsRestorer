@@ -102,7 +102,7 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("drop|remove")
     @CommandPermission("%srDrop")
-    @CommandCompletion("player|skin @players")
+    @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String[] targets) {
@@ -114,7 +114,7 @@ public class SrCommand extends BaseCommand {
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.name()).replace("%targets", targetList)));
+            source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList)));
         });
     }
 
@@ -123,7 +123,7 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
-    public void onProps(CommandSource source, OnlinePlayer target) {
+    public void onProps(CommandSource source, @Single OnlinePlayer target) {
         plugin.getService().execute(() -> {
             GameProfile.Property prop = target.getPlayer().getGameProfileProperties().get(0);
 
@@ -158,7 +158,7 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
-    public void onApplySkin(CommandSource source, OnlinePlayer target) {
+    public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
         plugin.getService().execute(() -> {
             try {
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(target.getPlayer()));
@@ -171,16 +171,16 @@ public class SrCommand extends BaseCommand {
 
     @Subcommand("createcustom")
     @CommandPermission("%srCreateCustom")
-    @CommandCompletion("@players")
+    @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <name> <skinurl>")
-    public void onCreateCustom(CommandSource source, String name, String skinUrl) {
+    @Syntax(" <skinName> <skinUrl> [steve/slim]")
+    public void onCreateCustom(CommandSource source, String skinName, String skinUrl, @Optional SkinType skinType) {
         plugin.getService().execute(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
+                    source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
                     source.sendMessage(plugin.deserialize(Locale.ERROR_INVALID_URLSKIN));
                 }
@@ -190,8 +190,15 @@ public class SrCommand extends BaseCommand {
         });
     }
 
+    @SuppressWarnings("unused")
     public enum PlayerOrSkin {
         PLAYER,
         SKIN,
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        STEVE,
+        SLIM,
     }
 }

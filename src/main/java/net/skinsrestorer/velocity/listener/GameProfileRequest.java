@@ -39,19 +39,21 @@ public class GameProfileRequest {
         log = plugin.getSrLogger();
     }
 
+    //todo make async, add getOrCreateSkinForPlayer
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
-        String name = event.getUsername();
-
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
         if (event.isOnlineMode())
             return;
 
+        final String name = event.getUsername();
+        final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
+
         //todo: default skinurl support
         try {
-            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), plugin.getSkinStorage().getDefaultSkinName(name)));
+            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
         } catch (SkinRequestException ignored) {
         }
     }

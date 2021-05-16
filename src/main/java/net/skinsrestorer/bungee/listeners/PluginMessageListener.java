@@ -109,7 +109,7 @@ public class PluginMessageListener implements Listener {
                 break;
             case "setSkin":
                 String skin = in.readUTF();
-                plugin.getSkinCommand().onSkinSetOther(player, new OnlinePlayer(player), skin);
+                plugin.getSkinCommand().onSkinSetOther(player, new OnlinePlayer(player), skin, null);
                 break;
             default:
                 break;

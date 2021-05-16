@@ -54,42 +54,53 @@ public class MineSkinAPI {
     @Setter
     Object coolVariable = null;
 
-    public IProperty genSkin(String url) throws SkinRequestException {
+    public IProperty genSkin(String url, String skinType) throws SkinRequestException {
 
         getCoolVariable().toString();
         setCoolVariable(null);
 
-                String errResp = "";
+        String skinVariant = "";
+        if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
+            skinVariant = "&variant=" + skinType;
 
         try {
-            String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8"));
+            final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
             if (output.isEmpty()) //when both api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-            JsonElement elm = new JsonParser().parse(output);
-            JsonObject obj = elm.getAsJsonObject();
+            final JsonElement elm = new JsonParser().parse(output);
+            final JsonObject obj = elm.getAsJsonObject();
 
             if (obj.has("data")) {
-                JsonObject dta = obj.get("data").getAsJsonObject();
+                final JsonObject dta = obj.get("data").getAsJsonObject();
 
                 if (dta.has("texture")) {
-                    JsonObject tex = dta.get("texture").getAsJsonObject();
+                    final JsonObject tex = dta.get("texture").getAsJsonObject();
                     return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
-                errResp = obj.get("error").getAsString();
+                final String errResp = obj.get("error").getAsString();
 
-                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests")) {
-                    logger.debug("[SkinsRestorer] MS API skin generation fail (accountId:" + obj.get("accountId").getAsInt() + "); trying again... ");
-
-                    if (obj.has("delay"))
+                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
+                    logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+                    if (obj.has("delay")) {
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                    } else if (obj.has("nextRequest")) {
+                        final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
+                        if (nextRequestMilS > 0)
+                            TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+                        return genSkin(url, skinType); // try again after nextRequest
+                    } else {
+                        TimeUnit.SECONDS.sleep(2);
+                    }
+                    return genSkin(url, skinType); // try again
 
-                    return genSkin(url); // try again if given account fails (will stop if no more accounts)
                 } else if (errResp.equals("No accounts available")) {
-                    logger.debug("[ERROR] MS No accounts available " + url);
+                    logger.debug("[ERROR] " + errResp + " for: " + url);
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
+                logger.debug("[ERROR] MS:reason: " + errResp);
+                throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
             }
         } catch (IOException e) {
             logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
@@ -101,12 +112,7 @@ public class MineSkinAPI {
 
         // throw exception after all tries have failed
         logger.debug("[ERROR] MS:could not generate skin url: " + url);
-        logger.debug("[ERROR] MS:reason: " + errResp);
-
-        if (!errResp.isEmpty())
-            throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN); //todo: consider sending err_resp to admins
-        else
-            throw new SkinRequestException(Locale.MS_API_FAILED);
+        throw new SkinRequestException(Locale.MS_API_FAILED);
     }
 
     private String queryURL(String query) throws IOException {
