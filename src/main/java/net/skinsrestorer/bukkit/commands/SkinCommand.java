@@ -266,7 +266,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getSkinData(skinentry));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS);
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
@@ -283,7 +283,7 @@ public class SkinCommand extends BaseCommand {
                 //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS); //todo: should this not be sender? -> hidden skin set?
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); //todo: should this not be sender? -> hidden skin set?
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
