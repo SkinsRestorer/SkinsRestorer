@@ -53,6 +53,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -135,6 +136,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         if (!updaterDisabled.exists()) {
             updateChecker = new UpdateChecker(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
             updater = new SpigetUpdate(this, 2124);
+            updater.setVersionComparator(VersionComparator.SEM_VER_SNAPSHOT);
             checkUpdate(bungeeEnabled, true);
 
             getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
