@@ -67,7 +67,7 @@ import java.util.logging.Logger;
 @Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements SRPlugin {
     @Getter
-    private static final String CONFIG_PATH = "plugins" + File.separator + "SkinsRestorer" + File.separator + "";
+    private static final String CONFIG_PATH = "plugins" + File.separator + "skinsrestorer" + File.separator + "";
     @Getter
     private static SkinsRestorer instance;
     @Getter
