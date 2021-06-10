@@ -396,16 +396,16 @@
         </dependency>
         <!-- ViaBackwards (needed as a dependency to to fix 1.16.1 -> 1.15.2) -->
         <dependency>
-            <groupId>nl.matsv</groupId>
-            <artifactId>viabackwards-core</artifactId>
-            <version>3.2.0</version>
+            <groupId>com.viaversion</groupId>
+            <artifactId>viabackwards-common</artifactId>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- ViaVersion -->
         <dependency>
-            <groupId>us.myles</groupId>
+            <groupId>com.viaversion</groupId>
             <artifactId>viaversion</artifactId>
-            <version>3.2.0</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- GUI backwards support -->
