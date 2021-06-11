@@ -34,12 +34,14 @@ import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
+import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.YamlConfig;
 import net.skinsrestorer.shared.update.UpdateChecker;
+import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -68,8 +70,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
-    private SpigetUpdate updater;
     private UpdateChecker updateChecker;
+    private UpdateDownloaderGithub updateDownloader;
     private SRLogger srLogger;
     private SkinStorage skinStorage;
     private MojangAPI mojangAPI;
@@ -134,9 +136,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Check for updates
         if (!updaterDisabled.exists()) {
-            updateChecker = new UpdateChecker(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
-            updater = new SpigetUpdate(this, 2124);
-            updater.setVersionComparator(VersionComparator.SEM_VER_SNAPSHOT);
+            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+            updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
 
             getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
@@ -409,7 +410,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updater.checkForUpdate(new UpdateCallback() {
+        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 if (updateDownloaded)
@@ -417,10 +418,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                 String failReason = null;
                 if (hasDirectDownload) {
-                    if (updater.downloadUpdate()) {
+                    if (updateDownloader.downloadUpdate()) {
                         updateDownloaded = true;
                     } else {
-                        failReason = updater.getFailReason().toString();
+                        failReason = updateDownloader.getFailReason().toString();
                     }
                 }
 
