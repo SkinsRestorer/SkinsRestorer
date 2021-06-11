@@ -52,18 +52,27 @@ public class UniversalSkinFactory implements SkinFactory {
             plugin.getSrLogger().warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
         }
 
-        // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
-        // todo: reuse code
-        // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
-        // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-        if (viaVersion || protocolSupportExists) {
-            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
-            return new OldSkinRefresher();
-        }
-
         if (PaperLib.isPaper()) {
+            // force OldSkinRefresher on VersionHack plugins (ViaVersion & ProtocolHack).
+            // todo: reuse code
+            // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+            boolean viaVersion = false;
+            boolean protocolSupportExists = false;
+            try {
+                viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+            } catch (NoClassDefFoundError ignored) {
+            }
+            try {
+                protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+            } catch (NoClassDefFoundError ignored) {
+            }
+
+            if (viaVersion || protocolSupportExists) {
+                plugin.getLogger().log(Level.INFO, "VersionHack plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
+                return new OldSkinRefresher();
+            }
+
+            // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher();
             } catch (ExceptionInInitializerError ignored) {
@@ -111,12 +120,14 @@ public class UniversalSkinFactory implements SkinFactory {
                 try {
                     ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.hidePlayer(player);
                 }
 
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.showPlayer(player);
                 }
             }
