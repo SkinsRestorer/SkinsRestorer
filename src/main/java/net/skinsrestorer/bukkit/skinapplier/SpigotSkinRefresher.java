@@ -264,7 +264,11 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
-                sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
+                try {
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if (sendRespawnPacketDirectly) {
