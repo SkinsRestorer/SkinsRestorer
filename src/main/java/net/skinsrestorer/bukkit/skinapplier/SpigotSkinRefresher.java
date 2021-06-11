@@ -26,18 +26,10 @@ import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import nl.matsv.viabackwards.protocol.protocol1_15_2to1_16.Protocol1_15_2To1_16;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import us.myles.ViaVersion.api.PacketWrapper;
-import us.myles.ViaVersion.api.Via;
-import us.myles.ViaVersion.api.data.UserConnection;
-import us.myles.ViaVersion.api.protocol.ProtocolRegistry;
-import us.myles.ViaVersion.api.protocol.ProtocolVersion;
-import us.myles.ViaVersion.api.type.Type;
-import us.myles.ViaVersion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -90,8 +82,8 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
-                if (Bukkit.getPluginManager().isPluginEnabled("ViaBackwards")
-                        && ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion()) {
+                if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
+                        && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
                     log.info("Activating ViaBackwards workaround.");
                 }
@@ -272,29 +264,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
-                UserConnection connection = Via.getManager().getConnection(player.getUniqueId());
-                if (connection != null
-                        && connection.getProtocolInfo() != null
-                        && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
-                    // ViaBackwards double-sends a respawn packet when its dimension ID matches the current world's.
-                    // In order to get around this, we send a packet directly into Via's connection, bypassing the 1.16 conversion step
-                    // and therefore bypassing their workaround.
-                    // TODO: This assumes 1.16 methods; probably stop hardcoding this when 1.17 comes around
-                    Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
-
-                    PacketWrapper packetWrapper = new PacketWrapper(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
-
-                    packetWrapper.write(Type.INT, dimension);
-                    packetWrapper.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
-                    packetWrapper.write(Type.UNSIGNED_BYTE, (short) gamemodeId);
-                    packetWrapper.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
-                    try {
-                        packetWrapper.send(Protocol1_15_2To1_16.class, true, true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    sendRespawnPacketDirectly = false;
-                }
+                sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
             }
 
             if (sendRespawnPacketDirectly) {

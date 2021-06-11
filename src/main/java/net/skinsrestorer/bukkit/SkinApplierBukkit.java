@@ -62,6 +62,7 @@ public class SkinApplierBukkit {
             log.warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
         }
 
+        if (PaperLib.isPaper()) {
         // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
         // todo: reuse code
         // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
@@ -73,7 +74,7 @@ public class SkinApplierBukkit {
             return new SpigotSkinRefresher(plugin, log);
         }
 
-        if (PaperLib.isPaper()) {
+            // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
             } catch (ExceptionInInitializerError ignored) {
