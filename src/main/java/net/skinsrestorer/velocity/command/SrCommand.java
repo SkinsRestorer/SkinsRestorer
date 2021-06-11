@@ -29,8 +29,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.util.GameProfile;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -42,16 +43,12 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")
@@ -108,16 +105,16 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
+    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String[] targets) {
         plugin.getService().execute(() -> {
-            if (e == PlayerOrSkin.PLAYER)
+            if (playerOrSkin == PlayerOrSkin.PLAYER)
                 for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                    plugin.getSkinStorage().removeSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", e.toString()).replace("%targets", targetList)));
+            source.sendMessage(plugin.deserialize(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList)));
         });
     }
 
@@ -164,7 +161,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
         plugin.getService().execute(() -> {
             try {
-                plugin.getSkinApplierVelocity().applySkin(new PlayerWrapper(target.getPlayer()));
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(target.getPlayer()));
                 source.sendMessage(plugin.deserialize("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 source.sendMessage(plugin.deserialize("ERROR: player skin could NOT be refreshed!"));

@@ -27,7 +27,8 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -43,16 +44,12 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")
@@ -110,16 +107,16 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSource source, PlayerOrSkin e, String[] targets) {
+    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String[] targets) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
-            if (e == PlayerOrSkin.PLAYER)
+            if (playerOrSkin == PlayerOrSkin.PLAYER)
                 for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                    plugin.getSkinStorage().removeSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.toString()).replace("%targets", targetList)));
+            source.sendMessage(plugin.parseMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList)));
         });
     }
 
@@ -169,7 +166,7 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(target.getPlayer().getName());
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getPlayer().getName());
 
                 plugin.getSkinApplierSponge().updateProfileSkin(target.getPlayer().getProfile(), skin);
                 source.sendMessage(plugin.parseMessage("success: player skin has been refreshed!"));
@@ -184,13 +181,13 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSource source, String skinName, String skinUrl, @Optional SkinType skinType) {
+    public void onCreateCustom(CommandSource source, String name, String skinUrl, @Optional SkinType skinType) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
+                    source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
                 } else {
                     source.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
                 }

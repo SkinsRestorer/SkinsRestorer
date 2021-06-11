@@ -19,30 +19,21 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils.property;
+package net.skinsrestorer.shared.utils;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-import java.io.Serializable;
+@RequiredArgsConstructor
+@Getter
+public enum Platform {
+    BUKKIT(true, false, false, false),
+    BUNGEECORD(false, true, false, false),
+    SPONGE(false, false, true, false),
+    VELOCITY(false, false, false, true);
 
-@Data
-public class GenericProperty implements Serializable, IProperty {
-    private String name;
-    private String value;
-    private String signature;
-
-    public GenericProperty() {
-    }
-
-    @SuppressWarnings("unused")
-    public GenericProperty(IProperty property) {
-        name = property.getName();
-        value = property.getValue();
-        signature = property.getSignature();
-    }
-
-    @Override
-    public Object getHandle() {
-        return this;
-    }
+    private final boolean isBukkit;
+    private final boolean isBungee;
+    private final boolean isSponge;
+    private final boolean isVelocity;
 }

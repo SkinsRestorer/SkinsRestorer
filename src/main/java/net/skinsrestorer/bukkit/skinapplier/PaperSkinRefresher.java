@@ -19,11 +19,12 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit.skinapplier;
 
 import lombok.SneakyThrows;
 import lombok.val;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
 
 import java.lang.invoke.MethodHandle;
@@ -34,12 +35,12 @@ import java.util.function.Consumer;
 /**
  * https://github.com/SkinsRestorer/SkinsRestorerX/pull/240
  */
-final class PaperSkinRefresher implements Consumer<Player> {
-    private static final MethodHandle MH_REFRESH;
-    private static final MethodHandle MH_GET_HANDLE;
-    private static MethodHandle MH_HEALTH_UPDATE = null;
+public final class PaperSkinRefresher implements Consumer<Player> {
+    private final MethodHandle MH_REFRESH;
+    private final MethodHandle MH_GET_HANDLE;
+    private MethodHandle MH_HEALTH_UPDATE = null;
 
-    static {
+    public PaperSkinRefresher(SRLogger logger) {
         try {
             val field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             field.setAccessible(true);
@@ -54,9 +55,9 @@ final class PaperSkinRefresher implements Consumer<Player> {
             } catch (Exception ignored) {
             }
 
-            System.out.println("[SkinsRestorer] Using PaperSkinRefresher");
+            logger.info("Using PaperSkinRefresher");
         } catch (Exception e) {
-            System.out.println("[SkinsRestorer] Failed PaperSkinRefresher");
+            logger.info("Failed PaperSkinRefresher");
             throw new ExceptionInInitializerError(e);
         }
     }
@@ -69,8 +70,7 @@ final class PaperSkinRefresher implements Consumer<Player> {
         if (MH_HEALTH_UPDATE != null) {
             MH_HEALTH_UPDATE.invoke(player);
         } else {
-            val handle = MH_GET_HANDLE.invoke(player);
-            ReflectionUtil.invokeMethod(handle, "triggerHealthUpdate");
+            ReflectionUtil.invokeMethod(MH_GET_HANDLE.invoke(player), "triggerHealthUpdate");
         }
     }
 }

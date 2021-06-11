@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -36,16 +37,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+@RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
-    private final SkinsGUI skinsGUI;
     private final SkinsRestorer plugin;
-
-    public GUICommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        skinsGUI = new SkinsGUI(plugin);
-    }
+    private final SkinsGUI skinsGUI;
 
     //todo is help even needed for /skins?
     @HelpCommand
@@ -56,17 +53,17 @@ public class GUICommand extends BaseCommand {
 
     @Default
     @CommandPermission("%skins")
-    public void onDefault(Player p) {
+    public void onDefault(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-                p.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(p.getName())));
+            if (!player.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(player.getName())) {
+                player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(player.getName())));
                 return;
             }
-            p.sendMessage(Locale.SKINSMENU_OPEN);
+            player.sendMessage(Locale.SKINSMENU_OPEN);
 
-            SkinsGUI.getMenus().put(p.getName(), 0);
-            Inventory inventory = skinsGUI.getGUI(p, 0);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> p.openInventory(inventory));
+            SkinsGUI.getMenus().put(player.getName(), 0);
+            Inventory inventory = skinsGUI.getGUI(player, 0);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(inventory));
         });
     }
 }

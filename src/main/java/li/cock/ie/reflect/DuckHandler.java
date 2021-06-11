@@ -27,7 +27,7 @@ public class DuckHandler implements IDuckHandler {
     @Override
     public void process(Throwable ex) {
         if (debug) {
-            ex.printStackTrace(System.err);
+            ex.printStackTrace();
         }
 
         this.ex = ex;

@@ -27,8 +27,10 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -44,16 +46,12 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")
@@ -113,17 +111,17 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (e == PlayerOrSkin.PLAYER)
+            if (playerOrSkin == PlayerOrSkin.PLAYER)
                 for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                    plugin.getSkinStorage().removeSkin(targetPlayer);
             else
                 for (String targetSkin : targets)
                     plugin.getSkinStorage().removeSkinData(targetSkin);
 
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", e.toString()).replace("%targets", targetList));
+            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList));
         });
     }
 
@@ -189,12 +187,12 @@ public class SrCommand extends BaseCommand {
             try {
                 final Player player = target.getPlayer();
                 final String name = player.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getFactory().applySkin(player, plugin.getMineSkinAPI().genSkin(skin, null));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null));
                 } else {
-                    plugin.getFactory().applySkin(player, plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
                 sender.sendMessage("success: player skin has been refreshed!");
             } catch (Exception ignored) {
@@ -208,13 +206,13 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSender sender, String skinName, String skinUrl, @Optional SkinType skinType) {
+    public void onCreateCustom(CommandSender sender, String name, String skinUrl, @Optional SkinType skinType) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName));
+                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }

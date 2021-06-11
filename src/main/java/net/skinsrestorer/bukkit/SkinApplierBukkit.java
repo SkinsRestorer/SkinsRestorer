@@ -19,12 +19,17 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit;
 
 import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bukkit.skinapplier.PaperSkinRefresher;
+import net.skinsrestorer.bukkit.skinapplier.SpigotSkinRefresher;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -34,55 +39,90 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class UniversalSkinFactory implements SkinFactory {
+public class SkinApplierBukkit {
     private final SkinsRestorer plugin;
-    private final Consumer<Player> refresh = detectRefresh();
+    private final SRLogger log;
+    private final Consumer<Player> refresh;
     private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
     private boolean enableDismountEntities;
     private boolean enableRemountPlayer;
 
-    private static Consumer<Player> detectRefresh() {
-        SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
+    public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) {
+        this.plugin = plugin;
+        this.log = log;
+        refresh = detectRefresh(plugin);
+    }
 
+    private Consumer<Player> detectRefresh(SkinsRestorer plugin) {
         // Giving warning when using java 9+ regarding illegal reflection access
         final String version = System.getProperty("java.version");
         if (!version.startsWith("1.")) {
-            plugin.getSrLogger().warning("[!] WARNING [!]");
-            plugin.getSrLogger().warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
+            log.warning("[!] WARNING [!]");
+            log.warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
         }
 
         if (PaperLib.isPaper()) {
-            // force OldSkinRefresher on VersionHack plugins (ViaVersion & ProtocolHack).
-            // todo: reuse code
-            // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-            boolean viaVersion = false;
-            boolean protocolSupportExists = false;
-            try {
-                viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-            } catch (NoClassDefFoundError ignored) {
-            }
-            try {
-                protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-            } catch (NoClassDefFoundError ignored) {
-            }
-
-            if (viaVersion || protocolSupportExists) {
-                plugin.getLogger().log(Level.INFO, "VersionHack plugin (ViaVersion or ProtocolSupport) detected, forcing OldSkinRefresher");
-                return new OldSkinRefresher();
-            }
+        // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
+        // todo: reuse code
+        // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
+        // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+        if (viaVersion || protocolSupportExists) {
+            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+            return new SpigotSkinRefresher(plugin, log);
+        }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher();
+                return new PaperSkinRefresher(log);
             } catch (ExceptionInInitializerError ignored) {
             }
         }
 
-        return new OldSkinRefresher();
+        return new SpigotSkinRefresher(plugin, log);
     }
 
-    @Override
+    /**
+     * Applies the skin In other words, sets the skin data, but no changes will
+     * be visible until you reconnect or force update with
+     *
+     * @param player   Player
+     * @param property Property Object
+     */
+    protected void applySkin(Player player, IProperty property) {
+        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
+
+        Bukkit.getPluginManager().callEvent(applyEvent);
+
+        if (applyEvent.isCancelled())
+            return;
+
+        // delay 1 servertick so we override online-mode
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            try {
+                if (property == null)
+                    return;
+
+                Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+                Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+                Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+                ReflectionUtil.invokeMethod(propMap, "clear");
+                ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
+
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Instantly updates player's skin
+     *
+     * @param player - Player
+     */
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;
@@ -108,7 +148,7 @@ public class UniversalSkinFactory implements SkinFactory {
                 }
             }
 
-            //dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
+            // Dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
             if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
                 for (Entity passenger : player.getPassengers()) {
                     player.removePassenger(passenger);

@@ -26,20 +26,20 @@ import lombok.Setter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
-import org.jetbrains.annotations.NotNull;
+import net.skinsrestorer.api.property.IProperty;
+import org.jetbrains.annotations.Nullable;
 
+@Getter
 public class SkinApplyBungeeEvent extends Event implements Cancellable {
-    @Getter
+    @Nullable
     private final ProxiedPlayer who;
-    @Getter
     @Setter
     private boolean isCancelled = false;
-    @Getter
     @Setter
-    private String nick;
+    private IProperty property;
 
-    public SkinApplyBungeeEvent(@NotNull ProxiedPlayer who, String nick) {
+    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, IProperty property) {
         this.who = who;
-        this.nick = nick;
+        this.property = property;
     }
 }

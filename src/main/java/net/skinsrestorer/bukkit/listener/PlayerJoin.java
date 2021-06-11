@@ -21,8 +21,9 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
@@ -42,29 +43,22 @@ public class PlayerJoin implements Listener {
     }
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent e) {
+    public void onJoin(final PlayerJoinEvent event) {
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final SkinStorage skinStorage = plugin.getSkinStorage();
-                final Player player = e.getPlayer();
+                final Player player = event.getPlayer();
                 final String name = player.getName();
-                final String skin = skinStorage.getDefaultSkinNameIfEnabled(name);
-                Object texture;
+                final String skin = skinStorage.getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    texture = plugin.getMineSkinAPI().genSkin(skin, null);
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null));
                 } else {
-                    texture = skinStorage.getOrCreateSkinForPlayer(skin, false);
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
-                if (texture == null) {
-                    //todo add a notification that they can change their skin! (perms, config check etc)
-                    return;
-                }
-
-                plugin.getFactory().applySkin(player, texture);
             } catch (SkinRequestException ignored) {
             }
         });

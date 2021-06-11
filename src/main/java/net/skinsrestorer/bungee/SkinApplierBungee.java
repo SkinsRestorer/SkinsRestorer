@@ -19,51 +19,67 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bungee;
 
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
-import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.ISRApplier;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class SkinApplierBungee implements ISRApplier {
+@RequiredArgsConstructor
+public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public SkinApplierBungee(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
+    public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
+        try {
+            applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void applySkin(final ProxiedPlayer p, String nick, InitialHandler handler) throws Exception {
-        if (p == null)
-            return;
+    protected void applySkin(ProxiedPlayer player, IProperty property) {
+        try {
+            applySkin(player, property, (InitialHandler) player.getPendingConnection());
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
+    }
 
-        if (handler == null) {
-            handler = (InitialHandler) p.getPendingConnection();
+    private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
+        if (player != null && handler == null) {
+            handler = (InitialHandler) player.getPendingConnection();
         }
 
-        nick = plugin.getProxy().getPluginManager().callEvent(new SkinApplyBungeeEvent(p, nick)).getNick();
+        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(nick, false);
+        plugin.getProxy().getPluginManager().callEvent(event);
+        if (event.isCancelled())
+            return;
 
+        applyWithProperty(player, handler, (Property) event.getProperty());
+    }
+
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws ReflectionException {
         if (handler.isOnlineMode()) {
-            sendUpdateRequest(p, textures);
+            sendUpdateRequest(player, textures);
             return;
         }
 
         LoginResult profile = handler.getLoginProfile();
-
         if (profile == null) {
             try {
                 // NEW BUNGEECORD (id, name, property)
@@ -82,24 +98,20 @@ public class SkinApplierBungee implements ISRApplier {
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
 
         if (plugin.isMultiBungee()) {
-            sendUpdateRequest(p, textures);
+            sendUpdateRequest(player, textures);
         } else {
-            sendUpdateRequest(p, null);
+            sendUpdateRequest(player, null);
         }
     }
 
-    public void applySkin(final PlayerWrapper p) throws Exception {
-        applySkin(p.get(ProxiedPlayer.class), p.get(ProxiedPlayer.class).getName(), null);
-    }
-
-    private void sendUpdateRequest(ProxiedPlayer p, Property textures) {
-        if (p == null)
+    private void sendUpdateRequest(ProxiedPlayer player, Property textures) {
+        if (player == null)
             return;
 
-        if (p.getServer() == null)
+        if (player.getServer() == null)
             return;
 
-        log.debug("Sending skin update request for " + p.getName());
+        log.debug("Sending skin update request for " + player.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
@@ -112,7 +124,7 @@ public class SkinApplierBungee implements ISRApplier {
                 out.writeUTF(textures.getSignature());
             }
 
-            p.getServer().sendData("sr:skinchange", b.toByteArray());
+            player.getServer().sendData("sr:skinchange", b.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }

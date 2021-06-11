@@ -28,12 +28,15 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -47,7 +50,6 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
-import net.skinsrestorer.velocity.utils.SkinApplierVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -105,22 +107,17 @@ public class SkinsRestorer implements ISRPlugin {
             srLogger.info("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.VELOCITY);
-
         // Init config files
         Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init listener
         proxy.getEventManager().register(this, new GameProfileRequest(this));
@@ -129,7 +126,7 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Init SkinApplier
-        skinApplierVelocity = new SkinApplierVelocity(this);
+        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
 
         // Init API
         skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
@@ -156,8 +153,8 @@ public class SkinsRestorer implements ISRPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        manager.registerCommand(new SkinCommand(this));
-        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new SkinCommand(this, srLogger));
+        manager.registerCommand(new SrCommand(this, srLogger));
     }
 
     private boolean initStorage() {
@@ -194,6 +191,7 @@ public class SkinsRestorer implements ISRPlugin {
         return LegacyComponentSerializer.legacySection().deserialize(string);
     }
 
+    @Override
     public String getVersion() {
         Optional<PluginContainer> plugin = getProxy().getPluginManager().getPlugin("skinsrestorer");
 
@@ -211,17 +209,18 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
-            throw new UnsupportedOperationException();
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, playerWrapper.get(Player.class).getUsername());
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            try {
-                skinApplierVelocity.applySkin(player);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierVelocity.applySkin(playerWrapper.get(Player.class), props);
         }
     }
 }

@@ -26,6 +26,8 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -39,7 +41,6 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
-import net.skinsrestorer.sponge.utils.SkinApplierSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -47,6 +48,7 @@ import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
@@ -104,22 +106,18 @@ public class SkinsRestorer implements ISRPlugin {
             srLogger.info("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.SPONGE);
 
         // Init config files
         Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init commands
         initCommands();
@@ -163,8 +161,8 @@ public class SkinsRestorer implements ISRPlugin {
 
             SharedMethods.allowIllegalACFNames();
 
-            manager.registerCommand(new SkinCommand(this));
-            manager.registerCommand(new SrCommand(this));
+            manager.registerCommand(new SkinCommand(this, srLogger));
+            manager.registerCommand(new SrCommand(this, srLogger));
         });
     }
 
@@ -202,6 +200,7 @@ public class SkinsRestorer implements ISRPlugin {
         return Text.builder(msg).build();
     }
 
+    @Override
     public String getVersion() {
         Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("skinsrestorer");
 
@@ -219,17 +218,18 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
-            throw new UnsupportedOperationException();
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, playerWrapper.get(Player.class).getName());
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            try {
-                skinApplierSponge.applySkin(player);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierSponge.applySkin(playerWrapper.get(Player.class), props);
         }
     }
 }

@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class LoggerImpl implements ISRLogger {
+    @SuppressWarnings("SpongeLogging")
     private final Logger logger;
     private final ISRConsole console;
 

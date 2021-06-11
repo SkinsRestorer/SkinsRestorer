@@ -26,13 +26,14 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import lombok.val;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.IProperty;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -41,19 +42,23 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 public class MineSkinAPI {
     private final SRLogger logger;
-    private @Getter
-    @Setter
-    SkinStorage skinStorage;
+    private final MojangAPI mojangAPI;
 
-    public MineSkinAPI(SRLogger logger) {
-        this.logger = logger;
-    }
+    @Getter
+    @Setter
+    Object coolVariable = null;
 
     public IProperty genSkin(String url, String skinType) throws SkinRequestException {
+
+        getCoolVariable().toString();
+        setCoolVariable(null);
+
         String skinVariant = "";
         if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
             skinVariant = "&variant=" + skinType;
@@ -71,7 +76,7 @@ public class MineSkinAPI {
 
                 if (dta.has("texture")) {
                     final JsonObject tex = dta.get("texture").getAsJsonObject();
-                    return skinStorage.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
+                    return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
                 final String errResp = obj.get("error").getAsString();

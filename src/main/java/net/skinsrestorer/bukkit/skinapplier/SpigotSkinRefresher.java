@@ -19,10 +19,11 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinfactory;
+package net.skinsrestorer.bukkit.skinapplier;
 
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -37,27 +38,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
-public class OldSkinRefresher implements Consumer<Player> {
-    private static Class<?> playOutRespawn;
-    private static Class<?> playOutPlayerInfo;
-    private static Class<?> playOutPosition;
-    private static Class<?> packet;
-    private static Class<?> playOutHeldItemSlot;
-    private static Class<?> enumPlayerInfoAction;
+public class SpigotSkinRefresher implements Consumer<Player> {
+    private Class<?> playOutRespawn;
+    private Class<?> playOutPlayerInfo;
+    private Class<?> playOutPosition;
+    private Class<?> packet;
+    private Class<?> playOutHeldItemSlot;
+    private Class<?> enumPlayerInfoAction;
 
-    private static Enum<?> peaceful;
-    private static Enum<?> removePlayer;
-    private static Enum<?> addPlayer;
+    private Enum<?> peaceful;
+    private Enum<?> removePlayerEnum;
+    private Enum<?> addPlayerEnum;
 
-    private static boolean useViabackwards = false;
+    private boolean useViabackwards = false;
 
-    static {
+    public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
         try {
-            SkinsRestorer plugin = SkinsRestorer.getPlugin(SkinsRestorer.class);
-            SRLogger log = plugin.getSrLogger();
-
             packet = ReflectionUtil.getNMSClass("Packet");
             playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot");
             playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition");
@@ -69,36 +66,37 @@ public class OldSkinRefresher implements Consumer<Player> {
             }
             peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL");
             try {
-                removePlayer = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
-                addPlayer = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
+                removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
+                addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
             } catch (Exception e) {
                 try {
                     //1.8 or below
-                    removePlayer = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
-                    addPlayer = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                    removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
+                    addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
                 } catch (Exception e1) {
                     // Forge
-                    removePlayer = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
-                    addPlayer = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
+                    removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
+                    addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
                 }
             }
 
-            plugin.getServer().getScheduler().runTask(plugin, () -> {
+            Bukkit.getScheduler().runTask(plugin, () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    plugin.getLogger().log(Level.INFO, "Activating ViaBackwards workaround.");
+                    log.info("Activating ViaBackwards workaround.");
                 }
             });
 
             log.info("Using SpigotSkinRefresher");
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private void sendPacket(Object playerConnection, Object packet) throws Exception {
-        ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{OldSkinRefresher.packet}, packet);
+    private void sendPacket(Object playerConnection, Object packet) throws ReflectionException {
+        ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{this.packet}, packet);
     }
 
     public void accept(Player player) {
@@ -109,24 +107,21 @@ public class OldSkinRefresher implements Consumer<Player> {
             List<Object> set = new ArrayList<>();
             set.add(craftHandle);
 
-            Object removePlayer;
-            Object addPlayer;
-
-            removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{OldSkinRefresher.removePlayer.getClass(), Iterable.class}, OldSkinRefresher.removePlayer, set);
-            addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{OldSkinRefresher.addPlayer.getClass(), Iterable.class}, OldSkinRefresher.addPlayer, set);
+            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
+            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(craftHandle, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
-            Object worlddata = ReflectionUtil.getObject(world, "worldData");
+            Object worldData = ReflectionUtil.getObject(world, "worldData");
 
-            Object worldtype;
+            Object worldType;
 
             try {
-                worldtype = ReflectionUtil.invokeMethod(worlddata, "getType");
+                worldType = ReflectionUtil.invokeMethod(worldData, "getType");
             } catch (Exception ignored) {
-                worldtype = ReflectionUtil.invokeMethod(worlddata, "getGameType");
+                worldType = ReflectionUtil.invokeMethod(worldData, "getGameType");
             }
 
             World.Environment environment = player.getWorld().getEnvironment();
@@ -143,9 +138,9 @@ public class OldSkinRefresher implements Consumer<Player> {
                 dimension = environment.getId();
                 respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                         new Class<?>[]{
-                                int.class, peaceful.getClass(), worldtype.getClass(), enumGamemode.getClass()
+                                int.class, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
                         },
-                        dimension, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                        dimension, difficulty, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
             } catch (Exception ignored) {
                 if (environment.equals(World.Environment.NETHER))
                     dimension = -1;
@@ -165,37 +160,38 @@ public class OldSkinRefresher implements Consumer<Player> {
                 try {
                     respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                             new Class<?>[]{
-                                    dimensionManagerClass, peaceful.getClass(), worldtype.getClass(), enumGamemode.getClass()
+                                    dimensionManagerClass, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
                             },
-                            dimensionManger, difficulty, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                            dimensionManger, difficulty, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                 } catch (Exception ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
                     try {
                         respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                                 new Class<?>[]{
-                                        dimensionManagerClass, worldtype.getClass(), enumGamemode.getClass()
+                                        dimensionManagerClass, worldType.getClass(), enumGamemode.getClass()
                                 },
-                                dimensionManger, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                                dimensionManger, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                     } catch (Exception ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
                         Object seed;
                         try {
-                            seed = ReflectionUtil.invokeMethod(worlddata, "getSeed");
+                            seed = ReflectionUtil.invokeMethod(worldData, "getSeed");
                         } catch (Exception ignored4) {
                             // 1.16
                             seed = ReflectionUtil.invokeMethod(world, "getSeed");
                         }
 
+                        //noinspection UnstableApiUsage
                         long seedEncrypted = Hashing.sha256().hashString(seed.toString(), StandardCharsets.UTF_8).asLong();
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
                                     new Class<?>[]{
-                                            dimensionManagerClass, long.class, worldtype.getClass(), enumGamemode.getClass()
+                                            dimensionManagerClass, long.class, worldType.getClass(), enumGamemode.getClass()
                                     },
-                                    dimensionManger, seedEncrypted, worldtype, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                                    dimensionManger, seedEncrypted, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
                         } catch (Exception ignored5) {
                             // Minecraft 1.16.1 changes
                             try {
@@ -268,7 +264,11 @@ public class OldSkinRefresher implements Consumer<Player> {
 
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
-                sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
+                try {
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if (sendRespawnPacketDirectly) {
@@ -291,7 +291,7 @@ public class OldSkinRefresher implements Consumer<Player> {
                     player.setOp(true);
                 });
             }
-        } catch (Exception e) {
+        } catch (ReflectionException | NoSuchMethodException e) {
             e.printStackTrace();
         }
     }

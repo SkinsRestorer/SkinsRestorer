@@ -27,14 +27,16 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -45,16 +47,12 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
+@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
-
-    public SrCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        logger = plugin.getSrLogger();
-    }
 
     @HelpCommand
     @Syntax(" [help]")
@@ -113,15 +111,15 @@ public class SrCommand extends BaseCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin e, String[] targets) {
-        if (e == PlayerOrSkin.PLAYER)
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
+        if (playerOrSkin == PlayerOrSkin.PLAYER)
             for (String targetPlayer : targets)
-                plugin.getSkinStorage().removePlayerSkin(targetPlayer);
+                plugin.getSkinStorage().removeSkin(targetPlayer);
         else
             for (String targetSkin : targets)
                 plugin.getSkinStorage().removeSkinData(targetSkin);
         String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-        sender.sendMessage(TextComponent.fromLegacyText(Locale.DATA_DROPPED.replace("%playerOrSkin", e.toString()).replace("%targets", targetList)));
+        sender.sendMessage(TextComponent.fromLegacyText(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList)));
     }
 
     @Subcommand("props")
@@ -130,8 +128,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, @Single OnlinePlayer target) {
-        InitialHandler h = (InitialHandler) target.getPlayer().getPendingConnection();
-        LoginResult.Property prop = h.getLoginProfile().getProperties()[0];
+        LoginResult.Property prop = ((InitialHandler) target.getPlayer().getPendingConnection()).getLoginProfile().getProperties()[0];
 
         if (prop == null) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.NO_SKIN_DATA));
@@ -167,11 +164,11 @@ public class SrCommand extends BaseCommand {
     public void onApplySkin(CommandSender sender, @Single OnlinePlayer target) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
-                final ProxiedPlayer p = target.getPlayer();
-                final String name = p.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+                final ProxiedPlayer player = target.getPlayer();
+                final String name = player.getName();
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
-                plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 sender.sendMessage(TextComponent.fromLegacyText("success: player skin has been refreshed!"));
             } catch (Exception ignored) {
                 sender.sendMessage(TextComponent.fromLegacyText("ERROR: player skin could NOT be refreshed!"));

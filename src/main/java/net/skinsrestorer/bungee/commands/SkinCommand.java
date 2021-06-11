@@ -27,32 +27,29 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.property.IProperty;
 
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public SkinCommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -65,8 +62,8 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     @SuppressWarnings({"unused"})
-    public void onSkinSetShort(ProxiedPlayer p, String skin) {
-        onSkinSetOther(p, new OnlinePlayer(p), skin, null);
+    public void onSkinSetShort(ProxiedPlayer player, String skin) {
+        onSkinSetOther(player, new OnlinePlayer(player), skin, null);
     }
 
     @HelpCommand
@@ -82,8 +79,8 @@ public class SkinCommand extends BaseCommand {
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     @SuppressWarnings({"unused"})
-    public void onSkinClear(ProxiedPlayer p) {
-        onSkinClearOther(p, new OnlinePlayer(p));
+    public void onSkinClear(ProxiedPlayer player) {
+        onSkinClearOther(player, new OnlinePlayer(player));
     }
 
     @Subcommand("clear")
@@ -98,15 +95,15 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            final ProxiedPlayer p = target.getPlayer();
-            final String pName = p.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(pName, true);
+            final ProxiedPlayer player = target.getPlayer();
+            final String pName = player.getName();
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removePlayerSkin(pName);
+            plugin.getSkinStorage().removeSkin(pName);
 
-            if (setSkin(sender, p, skin, false, true, null)) {
-                if (sender == p)
+            if (setSkin(sender, player, skin, false, true, null)) {
+                if (sender == player)
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CLEAR_SUCCESS));
                 else
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CLEAR_ISSUER.replace("%player", pName)));
@@ -118,8 +115,8 @@ public class SkinCommand extends BaseCommand {
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     @SuppressWarnings({"unused"})
-    public void onSkinUpdate(ProxiedPlayer p) {
-        onSkinUpdateOther(p, new OnlinePlayer(p));
+    public void onSkinUpdate(ProxiedPlayer player) {
+        onSkinUpdateOther(player, new OnlinePlayer(player));
     }
 
     @Subcommand("update")
@@ -134,8 +131,8 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            final ProxiedPlayer p = target.getPlayer();
-            String skin = plugin.getSkinStorage().getPlayerSkin(p.getName());
+            final ProxiedPlayer player = target.getPlayer();
+            String skin = plugin.getSkinStorage().getSkinName(player.getName());
 
             try {
                 if (skin != null) {
@@ -152,16 +149,16 @@ public class SkinCommand extends BaseCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(p.getName(), true);
+                    skin = plugin.getSkinStorage().getDefaultSkinName(player.getName(), true);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
                 return;
             }
 
-            if (setSkin(sender, p, skin, false, false, null)) {
-                if (sender == p)
-                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", p.getName())));
+            if (setSkin(sender, player, skin, false, false, null)) {
+                if (sender == player)
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", player.getName())));
                 else
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_UPDATING_SKIN));
             }
@@ -173,9 +170,9 @@ public class SkinCommand extends BaseCommand {
     @CommandCompletion("@skin")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
-    public void onSkinSet(ProxiedPlayer p, String[] skin) {
+    public void onSkinSet(ProxiedPlayer player, String[] skin) {
         if (skin.length > 0) {
-            onSkinSetOther(p, new OnlinePlayer(p), skin[0], null);
+            onSkinSetOther(player, new OnlinePlayer(player), skin[0], null);
         } else {
             throw new InvalidCommandArgument(true);
         }
@@ -188,16 +185,16 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
-            final ProxiedPlayer p = target.getPlayer();
+            final ProxiedPlayer player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(p.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
                     return;
                 }
             }
 
-            if (setSkin(sender, p, skin, true, false, skinType) && (sender != p)) {
-                sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", p.getName())));
+            if (setSkin(sender, player, skin, true, false, skinType) && (sender != player)) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.ADMIN_SET_SKIN.replace("%player", player.getName())));
             }
         });
     }
@@ -208,21 +205,21 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
-    public void onSkinSetUrl(ProxiedPlayer p, String url, @Optional SkinType skinType) {
+    public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinType skinType) {
             if (C.validUrl(url)) {
-                onSkinSetOther(p, new OnlinePlayer(p), url, skinType);
+                onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
             } else {
-                p.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+                player.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
             }
     }
 
-    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin) {
-        return setSkin(sender, p, skin, true, false, null);
+    private boolean setSkin(CommandSender sender, ProxiedPlayer player, String skin) {
+        return setSkin(sender, player, skin, true, false, null);
     }
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    private boolean setSkin(CommandSender sender, ProxiedPlayer p, String skin, boolean save, boolean clear, SkinType skinType) {
+    private boolean setSkin(CommandSender sender, ProxiedPlayer player, String skin, boolean save, boolean clear, SkinType skinType) {
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.INVALID_PLAYER.replace("%player", skin)));
             return false;
@@ -244,8 +241,8 @@ public class SkinCommand extends BaseCommand {
 
         CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
-        final String pName = p.getName();
-        final String oldSkinName = plugin.getSkinStorage().getPlayerSkin(pName);
+        final String pName = player.getName();
+        final String oldSkinName = plugin.getSkinStorage().getSkinName(pName);
 
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM && !clear) {
@@ -260,6 +257,7 @@ public class SkinCommand extends BaseCommand {
                 return false;
             }
 
+
             try {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.MS_UPDATING_SKIN));
                 String skinentry = " " + pName; // so won't overwrite premium playernames
@@ -268,10 +266,11 @@ public class SkinCommand extends BaseCommand {
                 } // max len of 16 char
                 plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType)),
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setPlayerSkin(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
+                plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS));
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl")));
+
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
@@ -283,24 +282,25 @@ public class SkinCommand extends BaseCommand {
             }
         } else {
             try {
-                plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+                plugin.getSkinStorage().getSkinForPlayer(skin, false);
 
                 if (save) {
-                    plugin.getSkinStorage().setPlayerSkin(pName, skin);
-                    plugin.getSkinApplierBungee().applySkin(new PlayerWrapper(p));
+                    plugin.getSkinStorage().setSkinName(pName, skin);
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
                 } else {
-                    plugin.getSkinApplierBungee().applySkin(p, skin, null);
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS)); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin))); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    IProperty props = plugin.getSkinStorage().createProperty("textures", "", "");
+
+                    IProperty props = plugin.getMojangAPI().createProperty("textures", "", "");
                     try {
                         plugin.getSkinStorage().setSkinData("00", props);
-                        plugin.getSkinApplierBungee().applySkin(p, "00", null);
+                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), "00");
                     } catch (Exception ignored) {
                     }
                     return true; //todo should we return success when applySkin may have thrown a Exception?
@@ -313,13 +313,13 @@ public class SkinCommand extends BaseCommand {
         }
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(p, oldSkinName, save);
+        rollback(player, oldSkinName, save);
         return false;
     }
 
-    private void rollback(ProxiedPlayer p, String oldSkinName, boolean save) {
+    private void rollback(ProxiedPlayer player, String oldSkinName, boolean save) {
         if (save)
-            plugin.getSkinStorage().setPlayerSkin(p.getName(), oldSkinName != null ? oldSkinName : p.getName());
+            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName != null ? oldSkinName : player.getName());
     }
 
     private void sendHelp(CommandSender sender) {

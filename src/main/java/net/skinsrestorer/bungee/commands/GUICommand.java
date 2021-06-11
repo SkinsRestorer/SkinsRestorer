@@ -27,6 +27,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -34,14 +35,11 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 
+@RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
     private final SkinsRestorer plugin;
-
-    public GUICommand(SkinsRestorer plugin) {
-        this.plugin = plugin;
-    }
 
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
@@ -51,13 +49,13 @@ public class GUICommand extends BaseCommand {
 
     @Default
     @CommandPermission("%skins")
-    public void onDefault(ProxiedPlayer p) {
-        if (!p.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(p.getName())) {
-            p.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(p.getName())))));
+    public void onDefault(ProxiedPlayer player) {
+        if (!player.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(player.getName())) {
+            player.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(player.getName())))));
             return;
         }
-        p.sendMessage(TextComponent.fromLegacyText(Locale.SKINSMENU_OPEN));
+        player.sendMessage(TextComponent.fromLegacyText(Locale.SKINSMENU_OPEN));
 
-        plugin.getPluginMessageListener().sendGuiOpenRequest(p);
+        plugin.getPluginMessageListener().sendGuiOpenRequest(player);
     }
 }

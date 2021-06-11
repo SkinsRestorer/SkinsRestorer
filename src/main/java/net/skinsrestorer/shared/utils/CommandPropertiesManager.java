@@ -110,7 +110,7 @@ public class CommandPropertiesManager {
                 inputStream.close();
             }
         } catch (IOException ex) {
-            System.out.println("Could not save " + outFile.getName() + " to " + outFile);
+            logger.warning("Could not save " + outFile.getName() + " to " + outFile);
             ex.printStackTrace();
         }
     }

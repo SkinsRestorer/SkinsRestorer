@@ -25,16 +25,19 @@ import co.aikar.commands.BungeeCommandIssuer;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
-import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -67,8 +70,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private MineSkinAPI mineSkinAPI;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
-    private SkinsRestorerAPI skinsRestorerBungeeAPI;
+    private SkinsRestorerAPI skinsRestorerAPI;
 
+    @Override
     public String getVersion() {
         return getDescription().getVersion();
     }
@@ -93,22 +97,17 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             srLogger.info("Updater Disabled");
         }
 
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUNGEECORD);
-
         // Init config files
         Config.load(getDataFolder(), getResourceAsStream("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this, srLogger));
@@ -119,7 +118,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         getProxy().registerChannel("sr:skinchange");
 
         // Init SkinApplier
-        skinApplierBungee = new SkinApplierBungee(this);
+        skinApplierBungee = new SkinApplierBungee(this, srLogger);
 
         // Init message channel
         getProxy().registerChannel("sr:messagechannel");
@@ -129,7 +128,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Init API
-        skinsRestorerBungeeAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
@@ -151,9 +150,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        this.skinCommand = new SkinCommand(this);
+        this.skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new SrCommand(this, srLogger));
         manager.registerCommand(new GUICommand(this));
     }
 
@@ -199,17 +198,19 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
-            throw new UnsupportedOperationException();
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, playerWrapper.get(ProxiedPlayer.class).getName());
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            try {
-                skinApplierBungee.applySkin(player);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
+        }
+
+        @SneakyThrows
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), props);
         }
     }
 }

@@ -22,13 +22,14 @@
 package net.skinsrestorer.api;
 
 import lombok.Getter;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.MojangAPI;
 
 /**
- * API Example: https://github.com/SkinsRestorer/SkinsRestorerAPIExample
- * For more info please refer first to https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI
+ * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a>
+ * For more info please refer first to <a href="https://github.com/SkinsRestorer/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a>
  * Advanced help or getting problems? join our discord before submitting issues!
  */
 @SuppressWarnings({"unused"})
@@ -55,45 +56,57 @@ public abstract class SkinsRestorerAPI {
      * Returned object needs to be casted to either BungeeCord's property or
      * Mojang's property (old or new)
      *
-     * @param uuid - The players uuid
+     * @param uuid The players uuid
      * @return Property object (New Mojang, Old Mojang or Bungee)
      **/
-    public Object getProfile(String uuid) {
-        return mojangAPI.getSkinProperty(uuid).getHandle();
+    public IProperty getProfile(String uuid) {
+        return mojangAPI.getProfile(uuid);
     }
 
+    /**
+     * Get a players custom skin.
+     * @param name The players name
+     * @return the players custom skin name if set or null if not set
+     */
     public String getSkinName(String name) {
-        return skinStorage.getPlayerSkin(name);
+        return skinStorage.getSkinName(name);
     }
 
-    public Object getSkinData(String skin) {
-        return skinStorage.getSkinData(skin).getHandle();
+    public IProperty getSkinData(String skin) {
+        return skinStorage.getSkinData(skin);
     }
 
+    /**
+     * Check if a player got a custom skin.
+     * @param name The players name
+     * @return true if a player has a custom skin set
+     */
     public boolean hasSkin(String name) {
-        return skinStorage.getPlayerSkin(name) != null;
+        return skinStorage.getSkinName(name) != null;
     }
 
     /**
      * Saves custom player's skin name to database
      *
-     * @param name - Players name
-     * @param skin - Skin name
+     * @param name Players name
+     * @param skin Skin name
      **/
     public void setSkinName(String name, String skin) {
-        skinStorage.setPlayerSkin(name, skin);
+        skinStorage.setSkinName(name, skin);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
-        skinStorage.setPlayerSkin(playerName, skinName);
-        skinStorage.getOrCreateSkinForPlayer(skinName, false);
+        skinStorage.setSkinName(playerName, skinName);
+        skinStorage.getSkinForPlayer(skinName, false);
     }
 
     public void removeSkin(String playerName) {
-        skinStorage.removePlayerSkin(playerName);
+        skinStorage.removeSkin(playerName);
     }
 
-    public abstract void applySkin(PlayerWrapper player, Object props);
+    public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
 
-    public abstract void applySkin(PlayerWrapper player);
+    public abstract void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException;
+
+    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty props);
 }

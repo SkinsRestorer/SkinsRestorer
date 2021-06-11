@@ -27,13 +27,15 @@ import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
-import net.skinsrestorer.bukkit.skinfactory.SkinFactory;
-import net.skinsrestorer.bukkit.skinfactory.UniversalSkinFactory;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -44,7 +46,6 @@ import net.skinsrestorer.shared.utils.*;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.console.BukkitConsoleImpl;
-import net.skinsrestorer.shared.utils.property.GenericProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -52,7 +53,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -63,11 +66,11 @@ import java.util.TreeMap;
 
 @Getter
 @SuppressWarnings("Duplicates")
-public class SkinsRestorer extends JavaPlugin {
-    private SkinFactory factory;
-    private UpdateChecker updateChecker;
+public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
+    private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
+    private UpdateChecker updateChecker;
     private UpdateDownloaderGithub updateDownloader;
     private SRLogger srLogger;
     private SkinStorage skinStorage;
@@ -91,6 +94,7 @@ public class SkinsRestorer extends JavaPlugin {
         return map;
     }
 
+    @Override
     public String getVersion() {
         return getDescription().getVersion();
     }
@@ -106,9 +110,9 @@ public class SkinsRestorer extends JavaPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
-        factory = new UniversalSkinFactory(this);
+        skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
-        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + factory.getClass().getSimpleName() + "§a.");
+        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
@@ -134,15 +138,12 @@ public class SkinsRestorer extends JavaPlugin {
         if (!updaterDisabled.exists()) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
             updateDownloader = new UpdateDownloaderGithub(this);
-            checkUpdate(bungeeEnabled);
+            checkUpdate(bungeeEnabled, true);
 
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () ->
-                    checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
         } else {
             srLogger.info("Updater Disabled");
         }
-
-        skinStorage = new SkinStorage(srLogger, SkinStorage.Platform.BUKKIT);
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
@@ -161,11 +162,11 @@ public class SkinsRestorer extends JavaPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                factory.applySkin(player, skinStorage.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                skinsRestorerAPI.applySkin(new PlayerWrapper(player), mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 
-                            factory.updateSkin(player);
+                            skinApplierBukkit.updateSkin(player);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -174,7 +175,7 @@ public class SkinsRestorer extends JavaPlugin {
             });
 
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:messagechannel");
-            Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:messagechannel", (channel, player, message) -> {
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:messagechannel", (channel, channelPlayer, message) -> {
                 if (!channel.equals("sr:messagechannel"))
                     return;
 
@@ -185,18 +186,18 @@ public class SkinsRestorer extends JavaPlugin {
                         String subChannel = in.readUTF();
 
                         if (subChannel.equalsIgnoreCase("OPENGUI")) {
-                            Player p = Bukkit.getPlayer(in.readUTF());
-                            if (p == null)
+                            Player player = Bukkit.getPlayer(in.readUTF());
+                            if (player == null)
                                 return;
 
-                            SkinsGUI.getMenus().put(p.getName(), 0);
+                            SkinsGUI.getMenus().put(player.getName(), 0);
 
-                            requestSkinsFromBungeeCord(p, 0);
+                            requestSkinsFromBungeeCord(player, 0);
                         }
 
                         if (subChannel.equalsIgnoreCase("returnSkins")) {
-                            Player p = Bukkit.getPlayer(in.readUTF());
-                            if (p == null)
+                            Player player = Bukkit.getPlayer(in.readUTF());
+                            if (player == null)
                                 return;
 
                             int page = in.readInt();
@@ -210,13 +211,13 @@ public class SkinsRestorer extends JavaPlugin {
                             //convert
                             Map<String, Object> newSkinList = new TreeMap<>();
 
-                            skinList.forEach((name, property) -> newSkinList.put(name, getSkinStorage().createProperty(property.getName(), property.getValue(), property.getSignature())));
+                            skinList.forEach((name, property) -> newSkinList.put(name, mojangAPI.createProperty(property.getName(), property.getValue(), property.getSignature())));
 
                             SkinsGUI skinsGUI = new SkinsGUI(this);
                             ++page; // start counting from 1
-                            Inventory inventory = skinsGUI.getGUI(p, page, newSkinList);
+                            Inventory inventory = skinsGUI.getGUI(player, page, newSkinList);
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> p.openInventory(inventory));
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -235,16 +236,13 @@ public class SkinsRestorer extends JavaPlugin {
         Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger);
-        mineSkinAPI = new MineSkinAPI(srLogger);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
 
-        skinStorage.setMojangAPI(mojangAPI);
         // Init storage
         if (!initStorage())
             return;
-
-        mojangAPI.setSkinStorage(skinStorage);
-        mineSkinAPI.setSkinStorage(skinStorage);
 
         // Init commands
         initCommands();
@@ -261,45 +259,45 @@ public class SkinsRestorer extends JavaPlugin {
         }
     }
 
-    public void requestSkinsFromBungeeCord(Player p, int page) {
+    public void requestSkinsFromBungeeCord(Player player, int page) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("getSkins");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
             out.writeInt(page); // Page
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void requestSkinClearFromBungeeCord(Player p) {
+    public void requestSkinClearFromBungeeCord(Player player) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("clearSkin");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void requestSkinSetFromBungeeCord(Player p, String skin) {
+    public void requestSkinSetFromBungeeCord(Player player, String skin) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             out.writeUTF("setSkin");
-            out.writeUTF(p.getName());
+            out.writeUTF(player.getName());
             out.writeUTF(skin);
 
-            p.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
+            player.sendPluginMessage(this, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -320,10 +318,10 @@ public class SkinsRestorer extends JavaPlugin {
 
         SharedMethods.allowIllegalACFNames();
 
-        skinCommand = new SkinCommand(this);
+        skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new GUICommand(this, new SkinsGUI(this)));
     }
 
     private boolean initStorage() {
@@ -411,10 +409,6 @@ public class SkinsRestorer extends JavaPlugin {
         }
     }
 
-    private void checkUpdate(boolean bungeeMode) {
-        checkUpdate(bungeeMode, true);
-    }
-
     private void checkUpdate(boolean bungeeMode, boolean showUpToDate) {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
@@ -450,13 +444,18 @@ public class SkinsRestorer extends JavaPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper player, Object props) {
-            getFactory().applySkin(player.get(Player.class), props);
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierBukkit.applySkin(playerWrapper.get(Player.class), props);
         }
 
         @Override
-        public void applySkin(PlayerWrapper player) {
-            getFactory().applySkin(player.get(Player.class), getSkinData(getSkinName(player.get(Player.class).getName())));
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, playerWrapper.get(Player.class).getName());
+        }
+
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false));
         }
     }
 }
