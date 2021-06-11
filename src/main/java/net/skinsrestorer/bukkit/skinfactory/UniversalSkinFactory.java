@@ -111,12 +111,14 @@ public class UniversalSkinFactory implements SkinFactory {
                 try {
                     ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.hidePlayer(player);
                 }
 
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
+                    //noinspection deprecation
                     ps.showPlayer(player);
                 }
             }
