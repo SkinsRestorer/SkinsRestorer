@@ -63,16 +63,16 @@ public class SkinApplierBukkit {
         }
 
         if (PaperLib.isPaper()) {
-        // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
-        // todo: reuse code
-        // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
-        // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-        if (viaVersion || protocolSupportExists) {
-            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-            return new SpigotSkinRefresher(plugin, log);
-        }
+            // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
+            // todo: reuse code
+            // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
+            // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+            boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+            boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+            if (viaVersion || protocolSupportExists) {
+                plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                return new SpigotSkinRefresher(plugin, log);
+            }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {

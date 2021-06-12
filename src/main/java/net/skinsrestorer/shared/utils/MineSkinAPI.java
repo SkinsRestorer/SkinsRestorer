@@ -28,7 +28,6 @@ import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.val;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Locale;
@@ -42,7 +41,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor

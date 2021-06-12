@@ -24,7 +24,6 @@ package net.skinsrestorer.sponge.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.RequiredArgsConstructor;
@@ -288,7 +287,8 @@ public class SkinCommand extends BaseCommand {
 
     private void rollback(Player player, String oldSkinName, boolean save) {
         if (save)
-            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName != null ? oldSkinName : player.getName());    }
+            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName != null ? oldSkinName : player.getName());
+    }
 
     private void sendHelp(CommandSource source) {
         if (!Locale.SR_LINE.isEmpty())

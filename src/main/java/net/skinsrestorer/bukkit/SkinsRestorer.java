@@ -21,8 +21,6 @@
  */
 package net.skinsrestorer.bukkit;
 
-import co.aikar.commands.BukkitCommandIssuer;
-import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -53,13 +51,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.inventivetalent.update.spiget.SpigetUpdate;
 import org.inventivetalent.update.spiget.UpdateCallback;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;

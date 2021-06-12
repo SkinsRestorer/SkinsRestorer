@@ -65,6 +65,7 @@ public abstract class SkinsRestorerAPI {
 
     /**
      * Get a players custom skin.
+     *
      * @param name The players name
      * @return the players custom skin name if set or null if not set
      */
@@ -78,6 +79,7 @@ public abstract class SkinsRestorerAPI {
 
     /**
      * Check if a player got a custom skin.
+     *
      * @param name The players name
      * @return true if a player has a custom skin set
      */

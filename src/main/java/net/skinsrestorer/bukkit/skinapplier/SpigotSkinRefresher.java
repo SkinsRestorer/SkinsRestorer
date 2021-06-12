@@ -33,10 +33,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class SpigotSkinRefresher implements Consumer<Player> {
@@ -107,8 +104,15 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             List<Object> set = new ArrayList<>();
             set.add(craftHandle);
 
-            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
-            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
+            Object removePlayer;
+            Object addPlayer;
+            try {
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
+            } catch (ReflectionException e) {
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Collection.class}, this.removePlayerEnum, set);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Collection.class}, this.addPlayerEnum, set);
+            }
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet
