@@ -55,16 +55,16 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
     public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
         try {
-            packet = ReflectionUtil.getNMSClass("Packet");
-            playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot");
-            playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition");
-            playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
-            playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn");
+            packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
+            playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
+            playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
+            playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+            playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
             try {
-                enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction");
+                enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", "");
             } catch (Exception ignored) {
             }
-            peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL");
+            peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty", "net.minecraft.world.EnumDifficulty"), "PEACEFUL");
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
@@ -148,7 +148,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                     dimension = 1;
 
                 // 1.13.x needs the dimensionManager instead of dimension id
-                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
+                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
 
                 Object dimensionManger = null;

@@ -137,11 +137,19 @@ public class ReflectionUtil {
         return m;
     }
 
-    public static Class<?> getNMSClass(String clazz) throws ReflectionException {
+    public static Class<?> getNMSClass(String clazz, String fullClassName) throws ReflectionException {
+        try {
+            return forNameWithFallback(clazz, fullClassName);
+        } catch (ClassNotFoundException e) {
+            throw new ReflectionException(e);
+        }
+    }
+
+    private static Class<?> forNameWithFallback(String clazz, String fullClassName) throws ClassNotFoundException {
         try {
             return Class.forName("net.minecraft.server." + serverVersion + "." + clazz);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
+        } catch (ClassNotFoundException ignored) {
+            return Class.forName(fullClassName);
         }
     }
 

@@ -47,7 +47,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             MethodHandles.publicLookup();
             val lookup = (MethodHandles.Lookup) field.get(null);
             MH_REFRESH = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
-            MH_GET_HANDLE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "getHandle", MethodType.methodType(ReflectionUtil.getNMSClass("EntityPlayer")));
+            MH_GET_HANDLE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "getHandle", MethodType.methodType(ReflectionUtil.getNMSClass("EntityPlayer", "net.minecraft.server.level.EntityPlayer")));
 
             // XP won't get updated on unsupported Paper builds
             try {
