@@ -33,10 +33,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class SpigotSkinRefresher implements Consumer<Player> {
@@ -45,7 +42,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
     private Class<?> playOutPosition;
     private Class<?> packet;
     private Class<?> playOutHeldItemSlot;
-    private Class<?> enumPlayerInfoAction;
 
     private Enum<?> peaceful;
     private Enum<?> removePlayerEnum;
@@ -55,22 +51,21 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
     public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
         try {
-            packet = ReflectionUtil.getNMSClass("Packet");
-            playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot");
-            playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition");
-            playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo");
-            playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn");
-            try {
-                enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction");
-            } catch (Exception ignored) {
-            }
-            peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty"), "PEACEFUL");
+            packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
+            playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
+            playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
+            playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+            playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+
+            peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty", "net.minecraft.world.EnumDifficulty"), "PEACEFUL");
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
             } catch (Exception e) {
                 try {
-                    //1.8 or below
+                    Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+
+                    // 1.8 or below
                     removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
                     addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
                 } catch (Exception e1) {
@@ -107,15 +102,28 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             List<Object> set = new ArrayList<>();
             set.add(craftHandle);
 
-            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
-            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
+            Object removePlayer;
+            Object addPlayer;
+            try {
+                //1.17+
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass().getSuperclass(), Collection.class}, this.removePlayerEnum, set);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass().getSuperclass(), Collection.class}, this.addPlayerEnum, set);
+            } catch (Exception ignored) {
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
+            }
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(craftHandle, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
-            Object worldData = ReflectionUtil.getObject(world, "worldData");
+            Object worldData;
 
+            try {
+                worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
+            } catch (Exception ignored) {
+                worldData = ReflectionUtil.getObject(world, "worldData");
+            }
             Object worldType;
 
             try {
@@ -128,7 +136,14 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             int dimension = 0;
 
-            Object playerIntManager = ReflectionUtil.getObject(craftHandle, "playerInteractManager");
+            Object playerIntManager;
+
+            try {
+                playerIntManager = ReflectionUtil.getObject(craftHandle, "d");
+            } catch (Exception e) {
+                playerIntManager = ReflectionUtil.getObject(craftHandle, "playerInteractManager");
+            }
+
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
             int gamemodeId = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
@@ -148,7 +163,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                     dimension = 1;
 
                 // 1.13.x needs the dimensionManager instead of dimension id
-                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager");
+                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
                 Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
 
                 Object dimensionManger = null;
@@ -242,22 +257,40 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             Object pos;
 
             try {
-                // 1.9+
+                // 1.17+
                 pos = ReflectionUtil.invokeConstructor(playOutPosition,
                         new Class<?>[]{double.class, double.class, double.class, float.class, float.class, Set.class,
-                                int.class},
-                        l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
-            } catch (Exception e) {
-                // 1.8 -
-                pos = ReflectionUtil.invokeConstructor(playOutPosition,
-                        new Class<?>[]{double.class, double.class, double.class, float.class, float.class,
-                                Set.class},
-                        l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                                int.class, boolean.class},
+                        l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
+            } catch (Exception e1) {
+                try {
+                    // 1.9-1.16.5
+                    pos = ReflectionUtil.invokeConstructor(playOutPosition,
+                            new Class<?>[]{double.class, double.class, double.class, float.class, float.class, Set.class,
+                                    int.class},
+                            l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
+                } catch (Exception e2) {
+                    // 1.8 -
+                    pos = ReflectionUtil.invokeConstructor(playOutPosition,
+                            new Class<?>[]{double.class, double.class, double.class, float.class, float.class,
+                                    Set.class},
+                            l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                }
             }
+
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
 
-            Object playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+            Object playerCon;
+
+            try {
+                //1.17+
+                playerCon = ReflectionUtil.getObject(craftHandle, "b");
+            } catch (ReflectionException e) {
+                //1.16
+                playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
+            }
+
 
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);

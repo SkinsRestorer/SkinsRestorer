@@ -30,28 +30,28 @@ import org.bukkit.entity.Player;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
 import java.util.function.Consumer;
 
 /**
  * https://github.com/SkinsRestorer/SkinsRestorerX/pull/240
  */
 public final class PaperSkinRefresher implements Consumer<Player> {
-    private final MethodHandle MH_REFRESH;
-    private final MethodHandle MH_GET_HANDLE;
-    private MethodHandle MH_HEALTH_UPDATE = null;
+    private Method MH_REFRESH;
+    private Method MH_GET_HANDLE;
+    private Method MH_HEALTH_UPDATE;
 
     public PaperSkinRefresher(SRLogger logger) {
         try {
-            val field = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-            field.setAccessible(true);
-            MethodHandles.publicLookup();
-            val lookup = (MethodHandles.Lookup) field.get(null);
-            MH_REFRESH = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "refreshPlayer", MethodType.methodType(Void.TYPE));
-            MH_GET_HANDLE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "getHandle", MethodType.methodType(ReflectionUtil.getNMSClass("EntityPlayer")));
+            MH_REFRESH = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            MH_REFRESH.setAccessible(true);
+            MH_GET_HANDLE = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+            MH_GET_HANDLE.setAccessible(true);
 
             // XP won't get updated on unsupported Paper builds
             try {
-                MH_HEALTH_UPDATE = lookup.findVirtual(ReflectionUtil.getBukkitClass("entity.CraftPlayer"), "triggerHealthUpdate", MethodType.methodType(Void.TYPE));
+                MH_HEALTH_UPDATE = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
+                MH_HEALTH_UPDATE.setAccessible(true);
             } catch (Exception ignored) {
             }
 

@@ -24,7 +24,6 @@ package net.skinsrestorer.bungee.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.MessageKeys;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import lombok.RequiredArgsConstructor;
@@ -206,11 +205,11 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
     public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinType skinType) {
-            if (C.validUrl(url)) {
-                onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
-            } else {
-                player.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
-            }
+        if (C.validUrl(url)) {
+            onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
+        } else {
+            player.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+        }
     }
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer player, String skin) {

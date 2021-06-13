@@ -55,29 +55,23 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) {
-        // Giving warning when using java 9+ regarding illegal reflection access
-        final String version = System.getProperty("java.version");
-        if (!version.startsWith("1.")) {
-            log.warning("[!] WARNING [!]");
-            log.warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
-        }
-
         if (PaperLib.isPaper()) {
-        // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
-        // todo: reuse code
-        // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
-        // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
-        boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-        boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-        if (viaVersion || protocolSupportExists) {
-            plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-            return new SpigotSkinRefresher(plugin, log);
-        }
+            // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
+            // todo: reuse code
+            // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
+            // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+            boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+            boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+            if (viaVersion || protocolSupportExists) {
+                plugin.getLogger().log(Level.INFO, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                return new SpigotSkinRefresher(plugin, log);
+            }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
-            } catch (ExceptionInInitializerError ignored) {
+            } catch (ExceptionInInitializerError e) {
+                e.printStackTrace();
             }
         }
 
