@@ -55,13 +55,6 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) {
-        // Giving warning when using java 9+ regarding illegal reflection access
-        final String version = System.getProperty("java.version");
-        if (!version.startsWith("1.")) {
-            log.warning("[!] WARNING [!]");
-            log.warning("Below message about \"Illegal reflective access\" can be IGNORED, we will fix this in a later release!");
-        }
-
         if (PaperLib.isPaper()) {
             // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // todo: reuse code
@@ -77,7 +70,8 @@ public class SkinApplierBukkit {
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
-            } catch (ExceptionInInitializerError ignored) {
+            } catch (ExceptionInInitializerError e) {
+                e.printStackTrace();
             }
         }
 

@@ -48,15 +48,7 @@ public class MineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
 
-    @Getter
-    @Setter
-    Object coolVariable = null;
-
     public IProperty genSkin(String url, String skinType) throws SkinRequestException {
-
-        getCoolVariable().toString();
-        setCoolVariable(null);
-
         String skinVariant = "";
         if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
             skinVariant = "&variant=" + skinType;
