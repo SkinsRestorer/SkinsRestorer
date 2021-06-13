@@ -149,39 +149,39 @@ public class SkinsGUI extends ItemStack implements Listener {
         return is;
     }
 
-    // Todo increase performance by excluding non item clicks from this event before e.getView (use if performance will be increased.)
+    // TODO: increase performance by excluding non item clicks from this event before event#getView() (use if performance will be increased.)
     @EventHandler(ignoreCancelled = true)
-    public void onCLick(InventoryClickEvent e) {
+    public void onCLick(InventoryClickEvent event) {
         // Cancel if clicked outside inventory
-        if (e.getClickedInventory() == null)
+        if (event.getClickedInventory() == null)
             return;
 
-        if (e.getView().getTopInventory().getType() != InventoryType.CHEST)
+        if (event.getView().getTopInventory().getType() != InventoryType.CHEST)
             return;
 
         try {
-            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
+            if (!event.getView().getTitle().contains("Skins Menu") && !event.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
                 return;
         } catch (IllegalStateException ex) {
             return;
         }
 
-        if (!(e.getWhoClicked() instanceof Player))
+        if (!(event.getWhoClicked() instanceof Player))
             return;
 
-        Player player = (Player) e.getWhoClicked();
+        Player player = (Player) event.getWhoClicked();
 
         // Cancel picking up items
-        if (e.getCurrentItem() == null) {
-            e.setCancelled(true);
+        if (event.getCurrentItem() == null) {
+            event.setCancelled(true);
             return;
         }
 
-        ItemStack currentItem = e.getCurrentItem();
+        ItemStack currentItem = event.getCurrentItem();
 
         // Cancel white panels.
         if (!currentItem.hasItemMeta()) {
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
@@ -216,11 +216,11 @@ public class SkinsGUI extends ItemStack implements Listener {
                 default:
                     break;
             }
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
-        // Todo use #setSkin() function from SkinCommand.class
+        // TODO: use #setSkin() function from SkinCommand.class
         switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
             case PLAYER_HEAD:
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -256,7 +256,7 @@ public class SkinsGUI extends ItemStack implements Listener {
             default:
                 break;
         }
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
     private enum GlassType {

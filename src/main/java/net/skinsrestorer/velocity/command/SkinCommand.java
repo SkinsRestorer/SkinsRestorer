@@ -41,7 +41,7 @@ import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.concurrent.TimeUnit;
 
-//todo update deprecated source.sendMessage for velocity
+// TODO: update deprecated CommandSource#sendMessage() for velocity
 @RequiredArgsConstructor
 @SuppressWarnings("deprecation")
 @CommandAlias("skin")

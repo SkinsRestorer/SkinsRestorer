@@ -75,7 +75,7 @@ public class MojangAPI {
         return null;
     }
 
-    // TODO Deal with duplicated code
+    // TODO: Deal with duplicated code
 
     public IProperty getProfile(String uuid) {
         return getProfile(uuid, true);
@@ -232,7 +232,7 @@ public class MojangAPI {
 
             return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException e) {
-            throw new SkinRequestException(Locale.NOT_PREMIUM); //TODO: check flow of code
+            throw new SkinRequestException(Locale.NOT_PREMIUM); // TODO: check flow of code
         }
     }
 

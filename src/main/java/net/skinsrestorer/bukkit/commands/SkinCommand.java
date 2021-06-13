@@ -152,7 +152,7 @@ public class SkinCommand extends BaseCommand {
                 return;
             }
 
-            // todo Use its own code instead of bloat setskin
+            // TODO: Use its own code instead of bloat #setSkin()
             if (setSkin(sender, player, skin, false, false, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
@@ -215,7 +215,7 @@ public class SkinCommand extends BaseCommand {
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
-    //todo align setSkin with the other platforms so that it match and can be merged on a later stage!
+    // TODO: align #setSkin() with the other platforms so that it match and can be merged on a later stage!
     private boolean setSkin(CommandSender sender, Player player, String skin, boolean save, boolean clear, SkinType skinType) {
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
@@ -279,10 +279,10 @@ public class SkinCommand extends BaseCommand {
                 if (save)
                     plugin.getSkinStorage().setSkinName(pName, skin);
 
-                //todo getOrCreateSkinForPlayer is nested and on different places around bungee/sponge/velocity
+                // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); //todo: should this not be sender? -> hidden skin set?
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO:: should this not be sender? -> hidden skin set?
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {

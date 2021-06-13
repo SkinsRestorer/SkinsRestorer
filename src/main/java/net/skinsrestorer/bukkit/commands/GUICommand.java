@@ -44,7 +44,7 @@ public class GUICommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SkinsGUI skinsGUI;
 
-    //todo is help even needed for /skins?
+    // TODO: is help even needed for /skins?
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
         sender.sendMessage("SkinsRestorer Help");

@@ -51,7 +51,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
 
         profile.getName().ifPresent(name -> {
             try {
-                //todo: add default skinurl support
+                // TODO: add default skinurl support
                 plugin.getSkinApplierSponge().updateProfileSkin(profile, plugin.getSkinStorage().getDefaultSkinName(name));
             } catch (SkinRequestException ignored) {
             }

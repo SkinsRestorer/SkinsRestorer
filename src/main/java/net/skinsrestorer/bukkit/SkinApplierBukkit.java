@@ -56,10 +56,8 @@ public class SkinApplierBukkit {
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) {
         if (PaperLib.isPaper()) {
-            // force OldSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
-            // todo: reuse code
-            // No need to check for all three Vias as ViaVersion has to be installed for the other two to work.
-            // Ran with getPlugin != null instead of isPluginEnabled as older Spigot builds return false during the login process even if enabled
+            // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
+            // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersion || protocolSupportExists) {
@@ -93,7 +91,7 @@ public class SkinApplierBukkit {
         if (applyEvent.isCancelled())
             return;
 
-        // delay 1 servertick so we override online-mode
+        // delay 1 server tick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try {
                 if (property == null)
@@ -121,7 +119,7 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        if (checkOptFileChecked)
+        if (!checkOptFileChecked)
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {

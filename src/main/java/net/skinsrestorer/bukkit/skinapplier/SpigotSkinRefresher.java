@@ -49,7 +49,11 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
     private boolean useViabackwards = false;
 
+    private final SkinsRestorer plugin;
+
     public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
+        this.plugin = plugin;
+
         try {
             packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
             playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
@@ -117,15 +121,15 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(craftHandle, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
-            Object worldData;
 
+            Object worldData;
             try {
                 worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
             } catch (Exception ignored) {
                 worldData = ReflectionUtil.getObject(world, "worldData");
             }
-            Object worldType;
 
+            Object worldType;
             try {
                 worldType = ReflectionUtil.invokeMethod(worldData, "getType");
             } catch (Exception ignored) {
@@ -255,7 +259,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             }
 
             Object pos;
-
             try {
                 // 1.17+
                 pos = ReflectionUtil.invokeConstructor(playOutPosition,
@@ -314,11 +317,11 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             sendPacket(playerCon, slot);
 
             ReflectionUtil.invokeMethod(player, "updateScaledHealth");
-            ReflectionUtil.invokeMethod(player, "updateInventory");
+            player.updateInventory();
             ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                Bukkit.getScheduler().runTask(SkinsRestorer.getPlugin(SkinsRestorer.class), () -> {
+                Bukkit.getScheduler().runTask(plugin, () -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);
