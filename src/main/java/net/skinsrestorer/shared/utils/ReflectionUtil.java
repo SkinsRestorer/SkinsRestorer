@@ -148,7 +148,7 @@ public class ReflectionUtil {
             }
         }
 
-        throw new ReflectionException("Constructor for class \"%s\" not found.".formatted(clazz.getName()));
+        throw new ReflectionException(String.format("Constructor for class \"%s\" not found.", clazz.getName()));
     }
 
     public static Class<?> getNMSClass(String clazz, String fullClassName) throws ReflectionException {
