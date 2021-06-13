@@ -42,7 +42,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
     private Class<?> playOutPosition;
     private Class<?> packet;
     private Class<?> playOutHeldItemSlot;
-    private Class<?> enumPlayerInfoAction;
 
     private Enum<?> peaceful;
     private Enum<?> removePlayerEnum;
@@ -58,18 +57,15 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
             playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
 
-            try {
-                enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", "");
-            } catch (Exception ignored) {
-            }
-
             peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty", "net.minecraft.world.EnumDifficulty"), "PEACEFUL");
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
             } catch (Exception e) {
                 try {
-                    //1.8 or below
+                    Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+
+                    // 1.8 or below
                     removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
                     addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
                 } catch (Exception e1) {
