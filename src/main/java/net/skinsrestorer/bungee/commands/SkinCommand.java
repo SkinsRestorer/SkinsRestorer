@@ -291,7 +291,7 @@ public class SkinCommand extends BaseCommand {
                 }
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin))); //todo: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin))); // TODO: should this not be sender? -> hidden skin update?? (maybe when p has no perms)
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
@@ -302,7 +302,7 @@ public class SkinCommand extends BaseCommand {
                         plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), "00");
                     } catch (Exception ignored) {
                     }
-                    return true; //todo should we return success when applySkin may have thrown a Exception?
+                    return true; // TODO: should we return success when #applySkin() may have thrown a Exception?
                 }
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {

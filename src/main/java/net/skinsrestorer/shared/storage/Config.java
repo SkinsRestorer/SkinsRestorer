@@ -55,7 +55,7 @@ public class Config {
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
     public static boolean USE_OLD_SKIN_HELP = false;
-    public static boolean DISABLE_PREFIX = true; //TODO: turn false after a few updates
+    public static boolean DISABLE_PREFIX = true; // TODO: turn false after a few updates
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;

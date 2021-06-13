@@ -60,7 +60,7 @@ public class SkinStorage {
 
         List<String> toRemove = new ArrayList<>();
         Config.DEFAULT_SKINS.forEach(skin -> {
-            //todo: add try for skinUrl
+            // TODO: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
                     getSkinForPlayer(skin, false);
@@ -398,7 +398,7 @@ public class SkinStorage {
         setSkinData(name, textures, Long.toString(System.currentTimeMillis()));
     }
 
-    // todo: CUSTOM_GUI
+    // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
     public Map<String, Object> getSkins(int number) {
         //Using mysql
@@ -441,7 +441,7 @@ public class SkinStorage {
             String[] fileNames = skinsFolder.list(skinFileFilter);
 
             if (fileNames == null)
-                //todo should this not also be null if no skin is valid?
+                // TODO: should this not also be null if no skin is valid?
                 return list;
 
             Arrays.sort(fileNames);
@@ -465,10 +465,10 @@ public class SkinStorage {
         return list;
     }
 
-    // Todo: remove duplicated code and use existing methods....
-    // Todo: needs a lot refactoring!
-    // Todo: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
-    // Todo: That should save lots of duplicated code
+    // TODO: remove duplicated code and use existing methods....
+    // TODO: needs a lot refactoring!
+    // TODO: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
+    // TODO: That should save lots of duplicated code
     public Map<String, GenericProperty> getSkinsRaw(int number) {
         Map<String, GenericProperty> list = new TreeMap<>();
 

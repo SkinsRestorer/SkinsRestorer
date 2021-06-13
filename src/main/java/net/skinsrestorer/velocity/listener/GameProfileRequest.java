@@ -39,7 +39,7 @@ public class GameProfileRequest {
         log = plugin.getSrLogger();
     }
 
-    //todo make async, add getOrCreateSkinForPlayer
+    // TODO: make async, add #getSkinForPlayer()
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
         if (Config.DISABLE_ONJOIN_SKINS)
@@ -51,7 +51,7 @@ public class GameProfileRequest {
         final String name = event.getUsername();
         final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
-        //todo: default skinurl support
+        // TODO: default skinurl support
         try {
             event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
         } catch (SkinRequestException ignored) {
