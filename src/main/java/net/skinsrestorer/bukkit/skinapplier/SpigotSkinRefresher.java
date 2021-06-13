@@ -50,8 +50,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
     private Class<?> enumPlayerInfoAction;
     private Class<?> entityPlayer;
 
-    private Constructor<?> playOutPlayerInfoConstructor1;
-
     private Enum<?> peaceful;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
@@ -101,22 +99,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            Constructor<?>[] cs = playOutPlayerInfo.getDeclaredConstructors();
-
-            //1.17+
-            //Workaround because the Reflection package is whining about the enum type
-            for (Constructor<?> c : cs) {
-                if (c.getParameterCount() == 2) {
-                    Class<?>[] clss = c.getParameterTypes();
-
-                    if (clss[0].getSimpleName().equals("EnumPlayerInfoAction")
-                            && clss[1] == Collection.class ) {
-                        playOutPlayerInfoConstructor1 = c;
-                        break;
-                    }
-                }
-            }
-
             log.info("Using SpigotSkinRefresher");
         } catch (Exception e) {
             e.printStackTrace();
@@ -138,15 +120,16 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             Object removePlayer;
             Object addPlayer;
             try {
-                removePlayer = playOutPlayerInfoConstructor1.newInstance(this.removePlayerEnum, set);
-                addPlayer = playOutPlayerInfoConstructor1.newInstance(this.addPlayerEnum, set);
+                //1.17+
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass().getSuperclass(), Collection.class}, this.removePlayerEnum, set);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass().getSuperclass(), Collection.class}, this.addPlayerEnum, set);
             } catch (Exception ignored) {
                 try {
-                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
-                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
-                } catch (ReflectionException e2) {
                     removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Collection.class}, this.removePlayerEnum, set);
                     addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Collection.class}, this.addPlayerEnum, set);
+                } catch (ReflectionException e2) {
+                    removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
+                    addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
                 }
             }
 
