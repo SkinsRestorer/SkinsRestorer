@@ -28,8 +28,8 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.function.Predicate;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class ReflectionUtil {
     private static final DuckBypass reflect = new DuckBypass();
@@ -138,7 +138,7 @@ public class ReflectionUtil {
         return m;
     }
 
-    private static Constructor<?> findConstructor(Class clazz, Predicate<Constructor<?>> assertion) throws ReflectionException{
+    private static Constructor<?> findConstructor(Class clazz, Predicate<Constructor<?>> assertion) throws ReflectionException {
         for (Constructor<?> cstr : clazz.getDeclaredConstructors()) {
             try {
                 if (assertion.test(cstr)) {
@@ -175,7 +175,7 @@ public class ReflectionUtil {
         }
     }
 
-    public static Object invokeConstructor(Class<?> clazz, Predicate<Constructor<?>> assertion, Object... initargs) throws ReflectionException{
+    public static Object invokeConstructor(Class<?> clazz, Predicate<Constructor<?>> assertion, Object... initargs) throws ReflectionException {
         try {
             return findConstructor(clazz, assertion).newInstance(initargs);
         } catch (Exception e) {

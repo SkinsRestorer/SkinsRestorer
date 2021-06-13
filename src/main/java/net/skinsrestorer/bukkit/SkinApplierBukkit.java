@@ -93,7 +93,7 @@ public class SkinApplierBukkit {
         if (applyEvent.isCancelled())
             return;
 
-        // delay 1 servertick so we override online-mode
+        // delay 1 server tick so we override online-mode
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             try {
                 if (property == null)
@@ -121,7 +121,7 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        if (checkOptFileChecked)
+        if (!checkOptFileChecked)
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
