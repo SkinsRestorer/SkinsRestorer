@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -124,6 +125,9 @@ public class MineSkinAPI {
                 con.setReadTimeout(90000);
                 con.setDoOutput(true);
                 con.setDoInput(true);
+
+                if (!Config.MINESKIN_API_KEY.equals("null"))
+                    con.setRequestProperty("Authorization", Config.MINESKIN_API_KEY);
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);
