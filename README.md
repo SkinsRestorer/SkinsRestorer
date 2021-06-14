@@ -10,7 +10,7 @@
 [![Spigot rating](https://img.shields.io/spiget/rating/2124?label=Spigot%20rating)](https://www.spigotmc.org/resources/2124/)
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![download badge](https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
-&nbsp;&nbsp;&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/lastSuccessfulBuild/artifact/target/SkinsRestorer.jar)
+&nbsp;&nbsp;&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/lastBuild/artifact/target/SkinsRestorer.jar)
 
 This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
 
