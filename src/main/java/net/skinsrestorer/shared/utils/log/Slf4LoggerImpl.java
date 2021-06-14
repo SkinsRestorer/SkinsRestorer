@@ -21,15 +21,13 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import org.slf4j.Logger;
 
+@RequiredArgsConstructor
 public class Slf4LoggerImpl implements ISRLogger {
     private final Logger logger;
-
-    public Slf4LoggerImpl(Logger logger) {
-        this.logger = logger;
-    }
 
     @Override
     public void log(SRLogLevel level, String message) {
@@ -39,6 +37,9 @@ public class Slf4LoggerImpl implements ISRLogger {
                 break;
             case WARNING:
                 logger.warn(message);
+                break;
+            case SEVERE:
+                logger.error(message);
                 break;
             default:
                 break;
@@ -53,6 +54,9 @@ public class Slf4LoggerImpl implements ISRLogger {
                 break;
             case WARNING:
                 logger.warn(message, throwable);
+                break;
+            case SEVERE:
+                logger.error(message, throwable);
                 break;
             default:
                 break;

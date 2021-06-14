@@ -37,19 +37,16 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public class SpigotSkinRefresher implements Consumer<Player> {
+    private final SkinsRestorer plugin;
     private Class<?> playOutRespawn;
     private Class<?> playOutPlayerInfo;
     private Class<?> playOutPosition;
     private Class<?> packet;
     private Class<?> playOutHeldItemSlot;
-
     private Enum<?> peaceful;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
-
     private boolean useViabackwards = false;
-
-    private final SkinsRestorer plugin;
 
     public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
         this.plugin = plugin;

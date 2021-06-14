@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.utils.log;
 
 public enum SRLogLevel {
+    SEVERE,
     WARNING,
     INFO
 }

@@ -24,6 +24,8 @@ package net.skinsrestorer.shared.utils;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.File;

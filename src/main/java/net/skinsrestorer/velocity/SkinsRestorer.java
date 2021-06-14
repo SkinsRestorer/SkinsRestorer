@@ -45,6 +45,8 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
@@ -87,7 +89,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent e) {
+    public void onProxyInitialize(ProxyInitializeEvent event) {
         srLogger.info("Enabling SkinsRestorer v" + getVersion());
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 

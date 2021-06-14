@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -122,7 +123,7 @@ public class MineSkinAPI {
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);
                 output.close();
-                StringBuilder outstr = new StringBuilder();
+                StringBuilder outStr = new StringBuilder();
                 InputStream is;
 
                 try {
@@ -133,10 +134,10 @@ public class MineSkinAPI {
 
                 DataInputStream input = new DataInputStream(is);
                 for (int c = input.read(); c != -1; c = input.read())
-                    outstr.append((char) c);
+                    outStr.append((char) c);
 
                 input.close();
-                return outstr.toString();
+                return outStr.toString();
             } catch (Exception ignored) {
             }
         }
