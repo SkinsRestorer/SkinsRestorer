@@ -72,22 +72,27 @@ public class MineSkinAPI {
 
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
                     logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+
                     if (obj.has("delay")) {
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                     } else if (obj.has("nextRequest")) {
                         final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
+
                         if (nextRequestMilS > 0)
                             TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+
                         return genSkin(url, skinType); // try again after nextRequest
                     } else {
                         TimeUnit.SECONDS.sleep(2);
                     }
-                    return genSkin(url, skinType); // try again
 
+                    return genSkin(url, skinType); // try again
                 } else if (errResp.equals("No accounts available")) {
                     logger.debug("[ERROR] " + errResp + " for: " + url);
+
                     throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 }
+
                 logger.debug("[ERROR] MS:reason: " + errResp);
                 throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
             }
