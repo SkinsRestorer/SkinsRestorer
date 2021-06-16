@@ -55,7 +55,7 @@ public class MineSkinAPI {
 
         try {
             final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
-            if (output.isEmpty()) //when both api time out
+            if (output.isEmpty()) //api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
             final JsonElement elm = new JsonParser().parse(output);
@@ -69,24 +69,23 @@ public class MineSkinAPI {
                     return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
-                final String errResp = obj.get("error").getAsString();
+                // if "Too many requests"
+                if (obj.has("delay")) {
+                    TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                } else if (obj.has("nextRequest")) {
+                    final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
 
+                    if (nextRequestMilS > 0)
+                        TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+
+                    return genSkin(url, skinType); // try again after nextRequest
+                } else {
+                    TimeUnit.SECONDS.sleep(2);
+                }
+
+                final String errResp = obj.get("error").getAsString();
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
                     logger.debug("[ERROR] MS " + errResp + ", trying again... ");
-
-                    if (obj.has("delay")) {
-                        TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-                    } else if (obj.has("nextRequest")) {
-                        final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
-
-                        if (nextRequestMilS > 0)
-                            TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
-
-                        return genSkin(url, skinType); // try again after nextRequest
-                    } else {
-                        TimeUnit.SECONDS.sleep(2);
-                    }
-
                     return genSkin(url, skinType); // try again
                 } else if (errResp.equals("No accounts available")) {
                     logger.debug("[ERROR] " + errResp + " for: " + url);
