@@ -94,7 +94,7 @@ public class MojangAPI {
                 JsonObject raw = obj.getAsJsonObject("raw");
 
                 if (raw.has("status") && raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    return getSkinPropertyMojang(uuid, true);
+                    return getProfileMojang(uuid, true);
                 }
 
                 GenericProperty property = new GenericProperty();
@@ -104,13 +104,13 @@ public class MojangAPI {
             }
         } catch (Exception e) {
             if (tryNext)
-                return getSkinPropertyMojang(uuid, true);
+                return getProfileMojang(uuid, true);
         }
 
         return null;
     }
 
-    protected IProperty getSkinPropertyMojang(String uuid, boolean tryNext) {
+    public IProperty getProfileMojang(String uuid, boolean tryNext) {
         if (tryNext)
             logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
 
@@ -124,13 +124,13 @@ public class MojangAPI {
             }
         } catch (Exception e) {
             if (tryNext)
-                return getSkinPropertyBackup(uuid, true);
+                return getProfileBackup(uuid, true);
         }
 
         return null;
     }
 
-    protected IProperty getSkinPropertyBackup(String uuid, boolean tryNext) {
+    protected IProperty getProfileBackup(String uuid, boolean tryNext) {
         if (tryNext)
             logger.debug("Trying backup API to get skin property for " + uuid + ".");
 
@@ -178,7 +178,7 @@ public class MojangAPI {
         return null;
     }
 
-    protected String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
+    public String getUUIDMojang(String name, boolean tryNext) throws SkinRequestException {
         if (tryNext)
             logger.debug("Trying Mojang API to get UUID for player " + name + ".");
 

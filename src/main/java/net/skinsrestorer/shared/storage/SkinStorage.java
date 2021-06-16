@@ -593,7 +593,7 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            IProperty textures = mojangAPI.getProfile(mojangAPI.getUUID(name));
+            IProperty textures = mojangAPI.getProfileMojang(mojangAPI.getUUIDMojang(name, true), true);
 
             if (textures != null) {
                 setSkinData(name, textures);
