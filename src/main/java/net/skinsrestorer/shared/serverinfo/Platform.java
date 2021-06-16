@@ -19,21 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.serverinfo;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Getter
 public enum Platform {
-    BUKKIT(true, false, false, false),
-    BUNGEECORD(false, true, false, false),
-    SPONGE(false, false, true, false),
-    VELOCITY(false, false, false, true);
-
-    private final boolean isBukkit;
-    private final boolean isBungee;
-    private final boolean isSponge;
-    private final boolean isVelocity;
+    BUKKIT,
+    BUNGEECORD,
+    SPONGE,
+    VELOCITY;
 }

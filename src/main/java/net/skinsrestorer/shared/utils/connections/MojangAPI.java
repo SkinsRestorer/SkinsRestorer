@@ -28,7 +28,7 @@ import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.Platform;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
