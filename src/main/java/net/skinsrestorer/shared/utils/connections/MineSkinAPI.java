@@ -28,6 +28,7 @@ import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -54,7 +55,7 @@ public class MineSkinAPI {
 
         try {
             final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
-            if (output.isEmpty()) //when both api time out
+            if (output.isEmpty()) //api time out
                 throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
             final JsonElement elm = new JsonParser().parse(output);
@@ -70,9 +71,9 @@ public class MineSkinAPI {
             } else if (obj.has("error")) {
                 final String errResp = obj.get("error").getAsString();
 
-                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
-                    logger.debug("[ERROR] MS " + errResp + ", trying again... ");
-
+                //If we send to many request, go sleep and try again.
+                if (errResp.equals("Too many requests")) {
+                    // if "Too many requests"
                     if (obj.has("delay")) {
                         TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
                     } else if (obj.has("nextRequest")) {
@@ -84,7 +85,14 @@ public class MineSkinAPI {
                         return genSkin(url, skinType); // try again after nextRequest
                     } else {
                         TimeUnit.SECONDS.sleep(2);
+
+                        return genSkin(url, skinType); // try again after nextRequest
                     }
+                }
+
+                if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
+                    logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+                    TimeUnit.SECONDS.sleep(5);
 
                     return genSkin(url, skinType); // try again
                 } else if (errResp.equals("No accounts available")) {
@@ -96,6 +104,9 @@ public class MineSkinAPI {
                 logger.debug("[ERROR] MS:reason: " + errResp);
                 throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
             }
+        } catch (SkinRequestException e) {
+            //return SkinRequestException if caught.
+            throw new SkinRequestException(e.getMessage());
         } catch (IOException e) {
             logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
         } catch (JsonSyntaxException e) {
@@ -124,6 +135,9 @@ public class MineSkinAPI {
                 con.setReadTimeout(90000);
                 con.setDoOutput(true);
                 con.setDoInput(true);
+
+                if (!Config.MINESKIN_API_KEY.equals("null"))
+                    con.setRequestProperty("Authorization", Config.MINESKIN_API_KEY);
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);
