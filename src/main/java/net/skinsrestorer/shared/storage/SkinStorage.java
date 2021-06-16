@@ -27,7 +27,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.RowSet;
@@ -80,9 +80,8 @@ public class SkinStorage {
 
     /**
      * This methods seeks out players actual skin (chosen or not) and returns
-     * either null (if no skin data found) or the property object conatining all
+     * either null (if no skin data found) or the property object containing all
      * the skin data.
-     * <player>
      * Also, it schedules a skin update to stay up to date with skin changes.
      *
      * @param name   Player name to search skin for
@@ -104,7 +103,7 @@ public class SkinStorage {
                 if (!C.validMojangUsername(skin))
                     throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin));
 
-                textures = mojangAPI.getProfile(mojangAPI.getUUID(skin, true));
+                textures = mojangAPI.getProfile(mojangAPI.getUUID(skin));
 
                 if (textures == null)
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -126,7 +125,6 @@ public class SkinStorage {
 
     /**
      * Returns the custom skin name that player has set.
-     * <player>
      * Returns null if player has no custom skin set.
      **/
     public String getSkinName(String name) {
@@ -246,7 +244,7 @@ public class SkinStorage {
 
     private IProperty updateOutdated(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && C.validMojangUsername(name) && isOld(Long.parseLong(timestamp))) {
-            IProperty skin = mojangAPI.getProfile(mojangAPI.getUUID(name, true));
+            IProperty skin = mojangAPI.getProfile(mojangAPI.getUUID(name));
 
             if (skin != null) {
                 setSkinData(name, skin);
@@ -595,7 +593,7 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            IProperty textures = mojangAPI.getSkinPropertyMojang(mojangAPI.getUUIDMojang(name));
+            IProperty textures = mojangAPI.getProfileMojang(mojangAPI.getUUIDMojang(name, true), true);
 
             if (textures != null) {
                 setSkinData(name, textures);
@@ -637,7 +635,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (C.validMojangUsername(player) || mojangAPI.getUUID(player, true) != null) {
+                    if (C.validMojangUsername(player) || mojangAPI.getUUID(player) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }

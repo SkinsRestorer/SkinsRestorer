@@ -18,9 +18,11 @@
 # (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true.  (!)
 # (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord).              (!)
 
-  ##########
-  # Basics #
-  ##########
+##########
+# Basics #
+##########
+
+# Core features are here
 
 # If true, players can change skins without permission.
 # see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms.
@@ -33,8 +35,17 @@ SkinChangeCooldown: 30
 SkinErrorCooldown: 5
 
   #################
-  # Customization #
-  #################
+# Customization #
+#################
+
+# Here you can design the plugin the way you want it.
+
+# True will  make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml.
+# This is more customizable, but at the cost of permission specific help.
+UseOldSkinHelp: false
+
+#Ignore messages.yml 'PREFIX ='
+DisablePrefix: false
 
 # Enable or disable default skins
 # ApplyForPremium: false will only put a skin on skinless/steve players.
@@ -68,6 +79,8 @@ CustomGUI:
   ############
   # Advanced #
   ############
+
+# Below Config options are OPTIONAL and are irrelevant for small servers.
 
 # Allows the usage of per-skin permission.
 # Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.McLive
@@ -105,25 +118,25 @@ NoSkinIfLoginCanceled: true
 RestrictSkinUrls:
   Enabled: false
   List:
-  - https://i.imgur.com
-  - http://i.imgur.com
-  - https://storage.googleapis.com
-  - http://storage.googleapis.com
-  - https://cdn.discordapp.com
-  - http://cdn.discordapp.com
-  - https://textures.minecraft.net
-  - http://textures.minecraft.net
+    - https://i.imgur.com
+    - http://i.imgur.com
+    - https://storage.googleapis.com
+    - http://storage.googleapis.com
+    - https://cdn.discordapp.com
+    - http://cdn.discordapp.com
+    - https://textures.minecraft.net
+    - http://textures.minecraft.net
+
+# Here you can fill in your APIKey for lower MineSkin request times.
+# Key can be requested from https://mineskin.org/apikey
+# ((?) not needed for small servers / those not using the SkinUrl api (?))
+MineskinAPIKey: null
 
   #################
-  # Compatibility #
-  #################
+# Compatibility #
+#################
 
-# True will again make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml.
-# This is more customizable, but at the cost of permission specific help.
-UseOldSkinHelp: false
-
-#Ignore messages.yml 'PREFIX ='
-DisablePrefix: false
+# If we break things, you can disable it here.
 
 # Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.
 DismountPlayerOnSkinUpdate: true
@@ -136,8 +149,10 @@ RemountPlayerOnSkinUpdate: true
 DismountPassengersOnSkinUpdate: false
 
   ###############
-  # Danger Zone #
-  ###############
+# Danger Zone #
+###############
+
+# ABSOLUTELY DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU DO
 
 # <!! Warning !!>
 # Enabling this will stop SkinsRestorer to change skins on join.
@@ -156,13 +171,14 @@ Updater:
 # To block all types of automatic updates (which can risk keeping a exploit):
 # Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )
 
-  ################
-  # DEV's corner #
-  ################
+################
+# DEV's corner #
+################
+
+# Enable these on the dev's request
 
 # Enable to start receiving debug messages about api requests & more.
 Debug: false
-
 
 # End #
 

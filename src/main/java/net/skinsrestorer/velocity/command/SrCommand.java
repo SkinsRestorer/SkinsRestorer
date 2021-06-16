@@ -35,7 +35,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -178,7 +178,7 @@ public class SrCommand extends BaseCommand {
         plugin.getService().execute(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {

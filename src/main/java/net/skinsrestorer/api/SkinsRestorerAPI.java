@@ -25,7 +25,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.MojangAPI;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 
 /**
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a>

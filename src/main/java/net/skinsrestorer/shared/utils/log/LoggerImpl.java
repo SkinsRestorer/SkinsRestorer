@@ -43,6 +43,9 @@ public class LoggerImpl implements ISRLogger {
             case WARNING:
                 logger.log(Level.WARNING, message);
                 break;
+            case SEVERE:
+                logger.severe(message);
+                break;
             default:
                 break;
         }
@@ -56,6 +59,9 @@ public class LoggerImpl implements ISRLogger {
                 break;
             case WARNING:
                 logger.log(Level.WARNING, message, throwable);
+                break;
+            case SEVERE:
+                logger.log(Level.SEVERE, message, throwable);
                 break;
             default:
                 break;

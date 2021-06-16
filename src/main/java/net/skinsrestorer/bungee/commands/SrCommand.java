@@ -40,7 +40,7 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Arrays;
@@ -185,7 +185,7 @@ public class SrCommand extends BaseCommand {
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {

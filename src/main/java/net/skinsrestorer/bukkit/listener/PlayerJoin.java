@@ -55,7 +55,7 @@ public class PlayerJoin implements Listener {
                 final String skin = skinStorage.getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
                 } else {
                     plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }

@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils.connections;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -85,14 +85,14 @@ public class ServiceChecker {
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        IProperty mojang = mojangAPI.getSkinPropertyMojang(NOTCH_UUID, false);
+        IProperty mojang = mojangAPI.getProfileMojang(NOTCH_UUID, false);
         if (mojang != null) {
             response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        IProperty mojangBackup = mojangAPI.getSkinPropertyBackup(NOTCH_UUID, false);
+        IProperty mojangBackup = mojangAPI.getProfileBackup(NOTCH_UUID, false);
         if (mojangBackup != null) {
             response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup);
             response.incrementWorkingProfile();

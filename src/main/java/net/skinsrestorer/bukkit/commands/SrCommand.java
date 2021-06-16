@@ -35,7 +35,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.shared.utils.ServiceChecker;
+import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -190,7 +190,7 @@ public class SrCommand extends BaseCommand {
                 final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
                 if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null));
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
                 } else {
                     plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
                 }
@@ -210,7 +210,7 @@ public class SrCommand extends BaseCommand {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
                             Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                     sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
