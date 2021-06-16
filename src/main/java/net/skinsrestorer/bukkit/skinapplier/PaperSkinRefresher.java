@@ -45,7 +45,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             try {
                 healthUpdateMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
                 healthUpdateMethod.setAccessible(true);
-            } catch (NoSuchMethodError ignored) {
+            } catch (NoSuchMethodException ignored) {
             }
 
             logger.info("Using PaperSkinRefresher");
