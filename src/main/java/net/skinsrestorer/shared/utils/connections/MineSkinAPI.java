@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
@@ -42,6 +43,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -52,14 +54,14 @@ public class MineSkinAPI {
     private final MojangAPI mojangAPI;
     private final Queue<UUID> queue = new LinkedList<>();
 
-    public IProperty genSkin(String url, String skinType) throws SkinRequestException {
-        UUID methodUUID = UUID.randomUUID();
-        queue.add(methodUUID);
+    public IProperty genSkin(String url, String skinType, @Nullable UUID methodUUID) throws SkinRequestException {
+        if (methodUUID == null) {
+            methodUUID = UUID.randomUUID();
+            queue.add(methodUUID);
+        }
 
         if (queue.element().equals(methodUUID)) {
-            String skinVariant = "";
-            if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
-                skinVariant = "&variant=" + skinType;
+            String skinVariant = skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim") ? "&variant=" + skinType : "";
 
             try {
                 final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
@@ -87,18 +89,18 @@ public class MineSkinAPI {
                         if (obj.has("delay")) {
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
 
-                            return genSkin(url, skinType); // try again after nextRequest
+                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
                         } else if (obj.has("nextRequest")) {
                             final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
 
                             if (nextRequestMilS > 0)
                                 TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
 
-                            return genSkin(url, skinType); // try again after nextRequest
+                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
                         } else {
                             TimeUnit.SECONDS.sleep(2);
 
-                            return genSkin(url, skinType); // try again after nextRequest
+                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
                         }
                     }
 
@@ -106,7 +108,7 @@ public class MineSkinAPI {
                         logger.debug("[ERROR] MS " + errResp + ", trying again... ");
                         TimeUnit.SECONDS.sleep(5);
 
-                        return genSkin(url, skinType); // try again
+                        return genSkin(url, skinType, methodUUID); // try again
                     } else if (errResp.equals("No accounts available")) {
                         logger.debug("[ERROR] " + errResp + " for: " + url);
 
@@ -137,7 +139,7 @@ public class MineSkinAPI {
                 throw new SkinRequestException(Locale.MS_API_FAILED);
             }
 
-            return genSkin(url, skinType);
+            return genSkin(url, skinType, methodUUID);
         }
     }
 
