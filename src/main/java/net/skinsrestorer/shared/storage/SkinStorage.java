@@ -370,10 +370,8 @@ public class SkinStorage {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKINTABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?)"
                     + " ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?", name, value, signature, timestamp, value, signature, timestamp);
         } else {
-            // Remove all whitespace
-            name = name.replaceAll("\\s", "");
-            //Escape all Windows / Linux forbidden printable ASCII characters
-            name = name.replaceAll("[\\\\/:*?\"<>|]", "·");
+            name = removeWhitespaces(name);
+            name = removeForbiddenChars(name);
             File skinFile = new File(skinsFolder, name + ".skin");
 
             try {
@@ -672,8 +670,12 @@ public class SkinStorage {
         return str.replaceAll("[\\\\/:*?\"<>|]", "·");
     }
 
+    //todo remove all Whitespace after last starting space.
     private String removeWhitespaces(String str) {
-        // Remove all whitespace
+        // Remove all whitespace expect when startsWith " ".
+        if (str.startsWith(" ")) {
+            return str;
+        }
         return str.replaceAll("\\s", "");
     }
 }
