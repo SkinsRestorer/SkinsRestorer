@@ -104,6 +104,9 @@ public class MineSkinAPI {
                 logger.debug("[ERROR] MS:reason: " + errResp);
                 throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
             }
+        } catch (SkinRequestException e) {
+            //return SkinRequestException if caught.
+            throw new SkinRequestException(e.getMessage());
         } catch (IOException e) {
             logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
         } catch (JsonSyntaxException e) {
