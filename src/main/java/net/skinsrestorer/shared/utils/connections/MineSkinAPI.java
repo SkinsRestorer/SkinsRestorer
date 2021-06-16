@@ -86,6 +86,8 @@ public class MineSkinAPI {
                         // if "Too many requests"
                         if (obj.has("delay")) {
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+
+                            return genSkin(url, skinType); // try again after nextRequest
                         } else if (obj.has("nextRequest")) {
                             final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
 
@@ -100,7 +102,7 @@ public class MineSkinAPI {
                         }
                     }
 
-                    if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
+                    if (errResp.equals("Failed to generate skin data") || errResp.equals("Failed to change skin")) {
                         logger.debug("[ERROR] MS " + errResp + ", trying again... ");
                         TimeUnit.SECONDS.sleep(5);
 
