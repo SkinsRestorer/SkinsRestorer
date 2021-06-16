@@ -57,14 +57,6 @@ public class MineSkinAPI {
         queue.add(methodUUID);
 
         if (queue.element().equals(methodUUID)) {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                throw new SkinRequestException(Locale.MS_API_FAILED);
-            }
-
-            return genSkin(url, skinType);
-        } else {
             String skinVariant = "";
             if (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim"))
                 skinVariant = "&variant=" + skinType;
@@ -136,6 +128,14 @@ public class MineSkinAPI {
             // throw exception after all tries have failed
             logger.debug("[ERROR] MS:could not generate skin url: " + url);
             throw new SkinRequestException(Locale.MS_API_FAILED);
+        } else {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                throw new SkinRequestException(Locale.MS_API_FAILED);
+            }
+
+            return genSkin(url, skinType);
         }
     }
 
