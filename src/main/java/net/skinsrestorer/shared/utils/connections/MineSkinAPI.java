@@ -69,23 +69,31 @@ public class MineSkinAPI {
                     return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                 }
             } else if (obj.has("error")) {
-                // if "Too many requests"
-                if (obj.has("delay")) {
-                    TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-                } else if (obj.has("nextRequest")) {
-                    final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
+                final String errResp = obj.get("error").getAsString();
 
-                    if (nextRequestMilS > 0)
-                        TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+                //If we send to many request, go sleep and try again.
+                if (errResp.equals("Too many requests")) {
+                    // if "Too many requests"
+                    if (obj.has("delay")) {
+                        TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                    } else if (obj.has("nextRequest")) {
+                        final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
 
-                    return genSkin(url, skinType); // try again after nextRequest
-                } else {
-                    TimeUnit.SECONDS.sleep(2);
+                        if (nextRequestMilS > 0)
+                            TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+
+                        return genSkin(url, skinType); // try again after nextRequest
+                    } else {
+                        TimeUnit.SECONDS.sleep(2);
+
+                        return genSkin(url, skinType); // try again after nextRequest
+                    }
                 }
 
-                final String errResp = obj.get("error").getAsString();
                 if (errResp.equals("Failed to generate skin data") || errResp.equals("Too many requests") || errResp.equals("Failed to change skin")) {
                     logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+                    TimeUnit.SECONDS.sleep(5);
+
                     return genSkin(url, skinType); // try again
                 } else if (errResp.equals("No accounts available")) {
                     logger.debug("[ERROR] " + errResp + " for: " + url);
