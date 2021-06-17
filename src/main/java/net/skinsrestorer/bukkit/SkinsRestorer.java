@@ -108,7 +108,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
+        // Init all essential classes
         mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+
         skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
@@ -235,9 +240,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-
         // Init storage
         if (!initStorage())
             return;
@@ -247,9 +249,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Init listener
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
-
-        // Init API
-        skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 
         // Run connection check
         if (!bungeeEnabled) {
