@@ -108,6 +108,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
 
+        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
         skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
@@ -234,7 +235,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
 

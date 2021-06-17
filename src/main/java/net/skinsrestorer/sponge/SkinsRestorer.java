@@ -109,7 +109,6 @@ public class SkinsRestorer implements ISRPlugin {
             srLogger.info("Updater Disabled");
         }
 
-
         // Init config files
         Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
