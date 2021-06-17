@@ -21,7 +21,6 @@
  */
 package net.skinsrestorer.shared.serverinfo;
 
-import io.papermc.lib.PaperLib;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -62,8 +61,8 @@ public class ServerData {
         private final boolean velocity;
 
         public ClassInfo(Platform platform) {
-            spigot = PaperLib.isSpigot();
-            paper = PaperLib.isSpigot();
+            spigot = isClassPresent("org.spigotmc.SpigotConfig");
+            paper = isClassPresent("com.destroystokyo.paper.PaperConfig");
             craftBukkit = platform == Platform.BUKKIT || isClassPresent("org.bukkit.Bukkit");
             spongeVanilla = isClassPresent("org.spongepowered.server.SpongeVanilla");
             spongeForge = isClassPresent("org.spongepowered.mod.SpongeCoremod");
