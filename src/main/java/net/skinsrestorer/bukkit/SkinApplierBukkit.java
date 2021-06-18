@@ -61,7 +61,7 @@ public class SkinApplierBukkit {
             boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersion || protocolSupportExists) {
-                plugin.getLogger().info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                plugin.getSrLogger().info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return new SpigotSkinRefresher(plugin, log);
             }
 

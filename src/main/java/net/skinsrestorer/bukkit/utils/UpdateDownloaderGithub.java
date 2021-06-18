@@ -105,16 +105,16 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         }
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
-        plugin.getLogger().info("[GitHubUpdate] Downloading update...");
+        plugin.getSrLogger().info("[GitHubUpdate] Downloading update...");
         Bukkit.getScheduler().runTaskAsynchronously(plugin, downloadAsync(releaseInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());
+                plugin.getSrLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getLogger().log(Level.WARNING, "[GitHubUpdate] Could not download update", exception);
+                plugin.getSrLogger().warning("[GitHubUpdate] Could not download update", exception);
             }
         }));
 
