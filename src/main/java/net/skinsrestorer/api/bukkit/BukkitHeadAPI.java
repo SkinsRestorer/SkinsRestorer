@@ -43,6 +43,7 @@ public class BukkitHeadAPI {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
 
+        //noinspection unchecked
         propertyMap.put("textures", new Property("textures", b64stringTexture));
 
         ItemMeta headMeta = head.getItemMeta();

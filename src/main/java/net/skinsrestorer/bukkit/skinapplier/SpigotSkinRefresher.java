@@ -145,9 +145,10 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                 playerIntManager = ReflectionUtil.getObject(craftHandle, "playerInteractManager");
             }
 
+
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
-            int gamemodeId = (int) ReflectionUtil.invokeMethod(enumGamemode, "getId");
+            int gamemodeId = player.getGameMode().getValue();
 
             Object respawn;
             try {
@@ -156,7 +157,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                         new Class<?>[]{
                                 int.class, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
                         },
-                        dimension, difficulty, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                        dimension, difficulty, worldType, enumGamemode);
             } catch (Exception ignored) {
                 if (environment.equals(World.Environment.NETHER))
                     dimension = -1;
@@ -178,7 +179,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                             new Class<?>[]{
                                     dimensionManagerClass, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
                             },
-                            dimensionManger, difficulty, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                            dimensionManger, difficulty, worldType, enumGamemode);
                 } catch (Exception ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
@@ -187,7 +188,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                                 new Class<?>[]{
                                         dimensionManagerClass, worldType.getClass(), enumGamemode.getClass()
                                 },
-                                dimensionManger, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                                dimensionManger, worldType, enumGamemode);
                     } catch (Exception ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
@@ -207,7 +208,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                                     new Class<?>[]{
                                             dimensionManagerClass, long.class, worldType.getClass(), enumGamemode.getClass()
                                     },
-                                    dimensionManger, seedEncrypted, worldType, ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId));
+                                    dimensionManger, seedEncrypted, worldType, enumGamemode);
                         } catch (Exception ignored5) {
                             // Minecraft 1.16.1 changes
                             try {
@@ -223,8 +224,8 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                                         typeKey,
                                         dimensionKey,
                                         seedEncrypted,
-                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
-                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        enumGamemode,
+                                        enumGamemode,
                                         ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
                                         ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
                                         true
@@ -243,8 +244,8 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                                         dimensionManager,
                                         dimensionKey,
                                         seedEncrypted,
-                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
-                                        ReflectionUtil.invokeMethod(enumGamemode.getClass(), null, "getById", new Class<?>[]{int.class}, gamemodeId),
+                                        enumGamemode,
+                                        enumGamemode,
                                         ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
                                         ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
                                         true
