@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.utils;
 
 import li.cock.ie.reflect.DuckBypass;
+import net.skinsrestorer.shared.exception.FieldNotFoundException;
 import net.skinsrestorer.shared.exception.ReflectionException;
 import org.bukkit.Bukkit;
 
@@ -170,6 +171,30 @@ public class ReflectionUtil {
     public static Object getObject(Object obj, String fname) throws ReflectionException {
         try {
             return getField(obj.getClass(), fname).get(obj);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
+    }
+
+    public static Object getFieldByClassName(Object obj, String className) throws ReflectionException {
+        try {
+            for (Field f : obj.getClass().getDeclaredFields()) {
+                if (f.getClass().getSimpleName().equalsIgnoreCase(className)) {
+                    setFieldAccessible(f);
+
+                    return f;
+                }
+            }
+
+            for (Field f : obj.getClass().getFields()) {
+                if (f.getClass().getSimpleName().equalsIgnoreCase(className)) {
+                    setFieldAccessible(f);
+
+                    return f;
+                }
+            }
+
+            throw new FieldNotFoundException("Could not find field of type " + className + " in " + obj.getClass().getSimpleName());
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
