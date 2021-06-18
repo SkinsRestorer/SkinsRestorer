@@ -275,16 +275,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
 
-            Object playerCon;
-
-            try {
-                //1.17+
-                playerCon = ReflectionUtil.getObject(craftHandle, "b");
-            } catch (ReflectionException e) {
-                //1.16
-                playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
-            }
-
+            Object playerCon = ReflectionUtil.getFieldByClassName(craftHandle, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
