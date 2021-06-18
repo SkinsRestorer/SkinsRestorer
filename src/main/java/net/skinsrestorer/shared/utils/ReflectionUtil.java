@@ -179,18 +179,18 @@ public class ReflectionUtil {
     public static Object getFieldByClassName(Object obj, String className) throws ReflectionException {
         try {
             for (Field f : obj.getClass().getDeclaredFields()) {
-                if (f.getClass().getSimpleName().equalsIgnoreCase(className)) {
+                if (f.getType().getSimpleName().equalsIgnoreCase(className)) {
                     setFieldAccessible(f);
 
-                    return f;
+                    return f.get(obj);
                 }
             }
 
             for (Field f : obj.getClass().getFields()) {
-                if (f.getClass().getSimpleName().equalsIgnoreCase(className)) {
+                if (f.getType().getSimpleName().equalsIgnoreCase(className)) {
                     setFieldAccessible(f);
 
-                    return f;
+                    return f.get(obj);
                 }
             }
 
