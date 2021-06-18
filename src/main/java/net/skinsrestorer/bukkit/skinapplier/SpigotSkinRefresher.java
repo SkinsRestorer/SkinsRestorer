@@ -137,13 +137,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             int dimension = 0;
 
-            Object playerIntManager;
-
-            try {
-                playerIntManager = ReflectionUtil.getObject(craftHandle, "d");
-            } catch (Exception e) {
-                playerIntManager = ReflectionUtil.getObject(craftHandle, "playerInteractManager");
-            }
+            Object playerIntManager = ReflectionUtil.getFieldByClassName(craftHandle, "PlayerInteractManager");
 
 
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
@@ -282,16 +276,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
 
-            Object playerCon;
-
-            try {
-                //1.17+
-                playerCon = ReflectionUtil.getObject(craftHandle, "b");
-            } catch (ReflectionException e) {
-                //1.16
-                playerCon = ReflectionUtil.getObject(craftHandle, "playerConnection");
-            }
-
+            Object playerCon = ReflectionUtil.getFieldByClassName(craftHandle, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
