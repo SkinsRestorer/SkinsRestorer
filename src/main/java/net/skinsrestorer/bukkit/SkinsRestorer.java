@@ -84,6 +84,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             ObjectInputStream ois = new ObjectInputStream(bis);
 
             while (bis.available() > 0) {
+                //noinspection unchecked
                 map = (Map<String, GenericProperty>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -117,6 +118,14 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
+
+        try {
+            Class.forName("us.myles.ViaVersion.api.Via");
+            srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        } catch (ClassNotFoundException ignored) {
+        }
 
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
