@@ -19,31 +19,32 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.utils.connections;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
-    private @Setter
+    private static final String NOTCH_UUID = "069a79f444e94726a5befca90e38aaf5";
     @Getter
-    ServiceCheckResponse response;
-    private @Setter
-    MojangAPI mojangAPI;
+    private final ServiceCheckResponse response;
+    @Setter
+    private MojangAPI mojangAPI;
 
     public ServiceChecker() {
-        this.response = new ServiceCheckResponse();
+        response = new ServiceCheckResponse();
     }
 
     public void checkServices() {
         // ##### UUID requests #####
         try {
-            String uuid = this.mojangAPI.getUUID("Notch", false);
+            String uuid = mojangAPI.getUUID("Notch", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
                 response.addResult("MineTools UUID §a✔ Notch UUID: §b" + uuid);
@@ -56,7 +57,7 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = this.mojangAPI.getUUIDMojang("Notch", false);
+            String uuid = mojangAPI.getUUIDMojang("Notch", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
                 response.addResult("Mojang-API UUID §a✔ Notch UUID: §b" + uuid);
@@ -69,7 +70,7 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = this.mojangAPI.getUUIDBackup("Notch", false);
+            String uuid = mojangAPI.getUUIDBackup("Notch", false);
             response.addResult("Mojang-API (Backup) UUID §a✔ Notch UUID: §b" + uuid);
             response.incrementWorkingUUID();
         } catch (Exception e) {
@@ -77,36 +78,36 @@ public class ServiceChecker {
         }
 
         // ##### Profile requests #####
-        Object minetools = this.mojangAPI.getSkinProperty("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty minetools = mojangAPI.getProfile(NOTCH_UUID, false);
         if (minetools != null) {
-            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools.toString());
+            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools);
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        Object mojang = this.mojangAPI.getSkinPropertyMojang("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty mojang = mojangAPI.getProfileMojang(NOTCH_UUID, false);
         if (mojang != null) {
-            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang.toString());
+            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        Object mojangBackup = this.mojangAPI.getSkinPropertyBackup("069a79f444e94726a5befca90e38aaf5", false);
+        IProperty mojangBackup = mojangAPI.getProfileBackup(NOTCH_UUID, false);
         if (mojangBackup != null) {
-            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup.toString());
+            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
     }
 
     public static class ServiceCheckResponse {
-        private final @Getter
-        List<String> results = new LinkedList<>();
+        @Getter
+        private final List<String> results = new LinkedList<>();
         private final AtomicInteger workingUUID = new AtomicInteger();
         private final AtomicInteger workingProfile = new AtomicInteger();
 
         public void addResult(String result) {
-            this.results.add(result);
+            results.add(result);
         }
 
         public Integer getWorkingUUID() {

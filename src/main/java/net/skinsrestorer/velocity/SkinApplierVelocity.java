@@ -19,18 +19,16 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.velocity.utils;
+package net.skinsrestorer.velocity;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.shared.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.SRApplier;
-import net.skinsrestorer.shared.utils.SRLogger;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -38,32 +36,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SkinApplierVelocity implements SRApplier {
+@RequiredArgsConstructor
+public class SkinApplierVelocity {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public SkinApplierVelocity(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
-
-    public void applySkin(PlayerWrapper player, SkinsRestorerAPI api) throws SkinRequestException {
-        String skin = api.getSkinName(player.get(Player.class).getUsername());
-
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
-        List<Property> oldProperties = player.get(Player.class).getGameProfileProperties();
-        List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
-
-        player.get(Player.class).setGameProfileProperties(newProperties);
-        sendUpdateRequest(player.get(Player.class), textures);
-    }
-
-    public void applySkin(PlayerWrapper player, Property property) {
-        player.get(Player.class).setGameProfileProperties(updatePropertiesSkin(player.get(Player.class).getGameProfileProperties(), property));
+    protected void applySkin(Player player, IProperty property) {
+        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
+        sendUpdateRequest(player, (Property) property.getHandle());
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getOrCreateSkinForPlayer(skin, false);
+        Property textures = (Property) plugin.getSkinStorage().getSkinForPlayer(skin, false).getHandle();
 
         List<Property> oldProperties = profile.getProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);
@@ -90,9 +74,9 @@ public class SkinApplierVelocity implements SRApplier {
         return properties;
     }
 
-    private void sendUpdateRequest(Player p, Property textures) {
-        p.getCurrentServer().ifPresent(serverConnection -> {
-            log.log("Sending skin update request for " + p.getUsername());
+    private void sendUpdateRequest(Player player, Property textures) {
+        player.getCurrentServer().ifPresent(serverConnection -> {
+            log.debug("Sending skin update request for " + player.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

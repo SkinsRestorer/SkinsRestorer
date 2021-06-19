@@ -21,9 +21,9 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -40,21 +40,19 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
     }
 
     @Override
-    public void handle(Auth e) {
-        if (e.isCancelled())
+    public void handle(Auth event) {
+        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
             return;
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        GameProfile profile = e.getProfile();
+        final GameProfile profile = event.getProfile();
 
         profile.getName().ifPresent(name -> {
             try {
-                String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
-
-                //todo: add default skinurl support
-                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
+                // TODO: add default skinurl support
+                plugin.getSkinApplierSponge().updateProfileSkin(profile, plugin.getSkinStorage().getDefaultSkinName(name));
             } catch (SkinRequestException ignored) {
             }
         });

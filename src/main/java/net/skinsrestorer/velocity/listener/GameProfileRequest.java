@@ -24,9 +24,9 @@ package net.skinsrestorer.velocity.listener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
-import net.skinsrestorer.shared.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 public class GameProfileRequest {
@@ -39,21 +39,21 @@ public class GameProfileRequest {
         log = plugin.getSrLogger();
     }
 
+    // TODO: make async, add #getSkinForPlayer()
     @Subscribe
-    public void onGameProfileRequest(GameProfileRequestEvent e) {
-        String name = e.getUsername();
-
+    public void onGameProfileRequest(GameProfileRequestEvent event) {
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        if (e.isOnlineMode())
+        if (event.isOnlineMode())
             return;
 
-        String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+        final String name = event.getUsername();
+        final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
-        //todo: default skinurl support
+        // TODO: default skinurl support
         try {
-            e.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(e.getGameProfile(), skin));
+            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
         } catch (SkinRequestException ignored) {
         }
     }

@@ -19,8 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.exception;
 
-public interface SRPlugin {
-    SRApplier getApplier();
+public class ReflectionException extends Exception {
+    public ReflectionException(String message) {
+        super(message);
+    }
+
+    public ReflectionException(Exception e) {
+        super(e);
+    }
 }

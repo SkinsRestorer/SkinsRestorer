@@ -30,11 +30,11 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
@@ -46,29 +46,29 @@ public class LoginListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onLogin(final LoginEvent e) {
-        if (e.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
+    public void onLogin(final LoginEvent event) {
+        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
             return;
 
         if (Config.DISABLE_ONJOIN_SKINS)
             return;
 
-        e.registerIntent(plugin);
+        event.registerIntent(plugin);
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-            final PendingConnection connection = e.getConnection();
+            final PendingConnection connection = event.getConnection();
             final String name = connection.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinNameIfEnabled(name);
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
             try {
-                // todo: add default skinurl support
-                plugin.getSkinApplierBungee().applySkin(null, skin, (InitialHandler) connection);
+                // TODO: add default skinurl support
+                plugin.getSkinApplierBungee().applySkin(skin, (InitialHandler) connection);
             } catch (SkinRequestException ignored) {
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
 
-            e.completeIntent(plugin);
+            event.completeIntent(plugin);
         });
     }
 

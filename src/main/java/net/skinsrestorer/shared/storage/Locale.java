@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -52,13 +53,16 @@ public class Locale {
     public static String HELP_SR_DROP = "Removes players or skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin properties.";
     public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
-    public static String HELP_SR_CreateCustom = "Name & create a custom skin";
+    public static String HELP_SR_CreateCustom = "Create a custom server wide skin";
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
-    public static String SYNTAX_SKINURL = " <url>";
+    public static String SYNTAX_SKINURL = " <SkinUrl> [steve/slim]";
     public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
     public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
+    public static String Completions_Skin = "<Skin>";
+    public static String Completions_SkinName = "<SkinName>";
+    public static String Completions_SkinUrl = "<SkinUrl>";
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
@@ -101,12 +105,10 @@ public class Locale {
             + "\n   &2/skin <skinname> &7-&f Changes your skin."
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
-    //private static YamlConfig locale = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "messages", true);
-    private static YamlConfig locale;
 
-    public static void load(String path) {
+    public static void load(File path, SRLogger logger) {
         try {
-            locale = new YamlConfig(path + File.separator, "messages", true);
+            YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
             locale.saveDefaultConfig();
             locale.reload();
 
@@ -117,14 +119,14 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
-                    if (!Arrays.stream(IGNORE_PREFIX).anyMatch(f.getName()::contains))
+                    if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
                         parsed = C.c(locale.getString("PREFIX", null)) + parsed;
                 }
 
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            System.out.println("§e[§2SkinsRestorer§e] §cCan't read messages.yml! Try removing it and restart your server.");
+            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.");
         }
     }
 }

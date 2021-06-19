@@ -19,14 +19,27 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.update;
+package net.skinsrestorer.api.bungeecord.events;
 
-public class UpdateException extends RuntimeException {
-    public UpdateException(String message) {
-        super(message);
-    }
+import lombok.Getter;
+import lombok.Setter;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.plugin.Cancellable;
+import net.md_5.bungee.api.plugin.Event;
+import net.skinsrestorer.api.property.IProperty;
+import org.jetbrains.annotations.Nullable;
 
-    public UpdateException(String message, Throwable cause) {
-        super(message, cause);
+@Getter
+public class SkinApplyBungeeEvent extends Event implements Cancellable {
+    @Nullable
+    private final ProxiedPlayer who;
+    @Setter
+    private boolean isCancelled = false;
+    @Setter
+    private IProperty property;
+
+    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, IProperty property) {
+        this.who = who;
+        this.property = property;
     }
 }

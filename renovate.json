@@ -9,6 +9,6 @@
     "xknat"
   ],
   "ignoreDeps": [
-    "us.myles:viaversion"
+    "com.viaversion:viaversion"
   ]
 }

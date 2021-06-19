@@ -21,6 +21,8 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import net.skinsrestorer.shared.utils.log.SRLogger;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -29,6 +31,8 @@ public class Config {
     public static boolean SKINWITHOUTPERM = false;
     public static int SKIN_CHANGE_COOLDOWN = 30;
     public static int SKIN_ERROR_COOLDOWN = 5;
+    public static boolean USE_OLD_SKIN_HELP = false;
+    public static boolean DISABLE_PREFIX = false;
     public static boolean DEFAULT_SKINS_ENABLED = false;
     public static boolean DEFAULT_SKINS_PREMIUM = false;
     public static List<String> DEFAULT_SKINS = null;
@@ -52,8 +56,7 @@ public class Config {
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
-    public static boolean USE_OLD_SKIN_HELP = false;
-    public static boolean DISABLE_PREFIX = true; //TODO: turn false after a few updates
+    public static String MINESKIN_API_KEY = "null";
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
@@ -68,13 +71,15 @@ public class Config {
     // private static YamlConfig config = new YamlConfig("plugins" + File.separator + "SkinsRestorer" + File.separator + "", "config", false);
     private static YamlConfig config;
 
-    public static void load(String path, InputStream is) {
-        config = new YamlConfig(path + File.separator, "config", false);
+    public static void load(File path, InputStream is, SRLogger logger) {
+        config = new YamlConfig(path, "config.yml", false, logger);
         config.saveDefaultConfig(is);
         config.reload();
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
+        USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
+        DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
         DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
         DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names", ".skin");
@@ -83,8 +88,6 @@ public class Config {
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
         CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
         CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
-        DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
-        USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
         MULTIBUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTIBUNGEE_ENABLED);
@@ -102,6 +105,7 @@ public class Config {
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
+        MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);

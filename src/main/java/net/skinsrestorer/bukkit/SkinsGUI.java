@@ -27,7 +27,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.SRLogger;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SkinsGUI extends ItemStack implements Listener {
     @Getter
     private static final Map<String, Integer> menus = new ConcurrentHashMap<>();
-
     @Getter
     private final SRLogger srLogger;
     private final SkinsRestorer plugin;
@@ -58,8 +57,8 @@ public class SkinsGUI extends ItemStack implements Listener {
         srLogger = plugin.getSrLogger();
     }
 
-    public Inventory getGUI(Player p, int page, Map<String, Object> skinsList) {
-        Inventory inventory = Bukkit.createInventory(p, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
+    public Inventory getGUI(Player player, int page, Map<String, Object> skinsList) {
+        Inventory inventory = Bukkit.createInventory(player, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
 
         ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
         ItemStack delete = new GuiGlass(GlassType.DELETE).getItemStack();
@@ -102,7 +101,8 @@ public class SkinsGUI extends ItemStack implements Listener {
 
         skinsList.forEach((name, property) -> {
             if (name.chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                this.srLogger.logAlways("[SkinsRestorer] ERROR: skin " + name + ".skin contains a Upper case! \nPlease rename the file name to a lower case!.");
+                srLogger.info("ERROR: skin " + name + ".skin contains a Upper case!");
+                srLogger.info("Please rename the file name to a lower case!.");
                 return;
             }
 
@@ -119,14 +119,14 @@ public class SkinsGUI extends ItemStack implements Listener {
         return inventory;
     }
 
-    public Inventory getGUI(Player p, int page) {
+    public Inventory getGUI(Player player, int page) {
         if (page > 999)
             page = 999;
         int skinNumber = 36 * page;
 
         Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1
-        return this.getGUI(p, page, skinsList);
+        return getGUI(player, page, skinsList);
     }
 
     private ItemStack createSkull(String name, Object property) {
@@ -142,72 +142,72 @@ public class SkinsGUI extends ItemStack implements Listener {
         try {
             BukkitHeadAPI.setSkull(is, ((Property) property).getValue());
         } catch (Exception e) {
-            this.srLogger.logAlways("[SkinsRestorer] ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+            srLogger.info("ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
             e.printStackTrace();
         }
 
         return is;
     }
 
-    // Todo increase performance by excluding non item clicks from this event before e.getView (use if performance will be increased.)
+    // TODO: increase performance by excluding non item clicks from this event before event#getView() (use if performance will be increased.)
     @EventHandler(ignoreCancelled = true)
-    public void onCLick(InventoryClickEvent e) {
+    public void onCLick(InventoryClickEvent event) {
         // Cancel if clicked outside inventory
-        if (e.getClickedInventory() == null)
+        if (event.getClickedInventory() == null)
             return;
 
-        if (e.getView().getTopInventory().getType() != InventoryType.CHEST)
+        if (event.getView().getTopInventory().getType() != InventoryType.CHEST)
             return;
 
         try {
-            if (!e.getView().getTitle().contains("Skins Menu") && !e.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
+            if (!event.getView().getTitle().contains("Skins Menu") && !event.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
                 return;
         } catch (IllegalStateException ex) {
             return;
         }
 
-        if (!(e.getWhoClicked() instanceof Player))
+        if (!(event.getWhoClicked() instanceof Player))
             return;
 
-        Player player = (Player) e.getWhoClicked();
+        Player player = (Player) event.getWhoClicked();
 
         // Cancel picking up items
-        if (e.getCurrentItem() == null) {
-            e.setCancelled(true);
+        if (event.getCurrentItem() == null) {
+            event.setCancelled(true);
             return;
         }
 
-        ItemStack currentItem = e.getCurrentItem();
+        ItemStack currentItem = event.getCurrentItem();
 
         // Cancel white panels.
         if (!currentItem.hasItemMeta()) {
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
         if (plugin.isBungeeEnabled()) {
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         String skin = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
                         plugin.requestSkinSetFromBungeeCord(player, skin);
                     });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
                             plugin.requestSkinClearFromBungeeCord(player));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         int currentPageG = getMenus().get(player.getName());
                         getMenus().put(player.getName(), currentPageG + 1);
                         plugin.requestSkinsFromBungeeCord(player, currentPageG + 1);
                     });
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
-                    Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         int currentPageY = getMenus().get(player.getName());
                         getMenus().put(player.getName(), currentPageY - 1);
                         plugin.requestSkinsFromBungeeCord(player, currentPageY - 1);
@@ -216,14 +216,14 @@ public class SkinsGUI extends ItemStack implements Listener {
                 default:
                     break;
             }
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
-        // Todo use #setSkin() function from SkinCommand.class
+        // TODO: use #setSkin() function from SkinCommand.class
         switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
             case PLAYER_HEAD:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final String skinName = Objects.requireNonNull(currentItem.getItemMeta()).getDisplayName();
                     plugin.getSkinCommand().onSkinSetShort(player, skinName);
                 });
@@ -234,29 +234,29 @@ public class SkinsGUI extends ItemStack implements Listener {
                 player.closeInventory();
                 break;
             case GREEN_STAINED_GLASS_PANE:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final int currentPageA = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageA + 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageA + 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                             player.openInventory(newInventory));
                 });
                 break;
             case YELLOW_STAINED_GLASS_PANE:
-                Bukkit.getScheduler().runTaskAsynchronously(SkinsRestorer.getInstance(), () -> {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     final int currentPageB = getMenus().get(player.getName());
                     getMenus().put(player.getName(), currentPageB - 1);
                     Inventory newInventory = getGUI((player).getPlayer(), currentPageB - 1);
 
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SkinsRestorer.getInstance(), () ->
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                             player.openInventory(newInventory));
                 });
                 break;
             default:
                 break;
         }
-        e.setCancelled(true);
+        event.setCancelled(true);
     }
 
     private enum GlassType {
@@ -264,10 +264,10 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public static class GuiGlass {
-        private @Getter
-        ItemStack itemStack;
-        private @Getter
-        String text;
+        @Getter
+        private ItemStack itemStack;
+        @Getter
+        private String text;
 
         public GuiGlass(GlassType glassType) {
             switch (glassType) {
@@ -276,16 +276,16 @@ public class SkinsGUI extends ItemStack implements Listener {
                     text = " ";
                     break;
                 case PREV:
-                    this.itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
+                    itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
                     break;
                 case NEXT:
-                    this.itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_NEXT_PAGE);
+                    itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_NEXT_PAGE);
                     break;
                 case DELETE:
-                    this.itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    this.text = C.c(Locale.SKINSMENU_REMOVE_SKIN);
+                    itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+                    text = C.c(Locale.SKINSMENU_REMOVE_SKIN);
                     break;
             }
 

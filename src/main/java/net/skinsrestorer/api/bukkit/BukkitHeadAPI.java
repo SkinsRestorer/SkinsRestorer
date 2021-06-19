@@ -32,7 +32,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class BukkitHeadAPI {
-    private BukkitHeadAPI() {}
+    private BukkitHeadAPI() {
+    }
 
     public static void setSkull(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -42,6 +43,7 @@ public class BukkitHeadAPI {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
 
+        //noinspection unchecked
         propertyMap.put("textures", new Property("textures", b64stringTexture));
 
         ItemMeta headMeta = head.getItemMeta();

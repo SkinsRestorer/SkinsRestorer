@@ -19,17 +19,10 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.utils.log;
 
-public class SkinRequestException extends Exception {
-    private final String reason;
-
-    public SkinRequestException(String reason) {
-        this.reason = reason;
-    }
-
-    @Override
-    public String getMessage() {
-        return reason;
-    }
+public enum SRLogLevel {
+    SEVERE,
+    WARNING,
+    INFO
 }

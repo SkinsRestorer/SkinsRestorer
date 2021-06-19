@@ -19,11 +19,19 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.api.property;
 
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
+import lombok.ToString;
+import net.md_5.bungee.connection.LoginResult.Property;
 
-public interface SRApplier {
-    void applySkin(PlayerWrapper playerWrapper, SkinsRestorerAPI api) throws Exception;
+@ToString
+public class BungeeProperty extends Property implements IProperty {
+    public BungeeProperty(String name, String value, String signature) {
+        super(name, value, signature);
+    }
+
+    @Override
+    public Object getHandle() {
+        return this;
+    }
 }

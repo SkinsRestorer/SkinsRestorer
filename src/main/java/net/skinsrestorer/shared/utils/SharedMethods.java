@@ -21,9 +21,20 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.connections.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
+
+import java.io.File;
 import java.util.regex.Pattern;
 
 public class SharedMethods {
+    private SharedMethods() {
+    }
+
     public static void allowIllegalACFNames() {
         try {
             Class<?> patternClass = Class.forName("co.aikar.commands.ACFPatterns");
@@ -32,5 +43,48 @@ public class SharedMethods {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void runServiceCheck(MojangAPI mojangAPI, SRLogger log) {
+        ServiceChecker checker = new ServiceChecker();
+        checker.setMojangAPI(mojangAPI);
+        checker.checkServices();
+        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+
+        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+            log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] -------------------------");
+            log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            log.info("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
+            log.info("§c[§4Critical§c] ----------------------------------------------------------------------");
+        }
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public static boolean initMysql(SRLogger srLogger, SkinStorage skinStorage, File dataFolder) {
+        if (Config.MYSQL_ENABLED) {
+            try {
+                MySQL mysql = new MySQL(
+                        srLogger,
+                        Config.MYSQL_HOST,
+                        Config.MYSQL_PORT,
+                        Config.MYSQL_DATABASE,
+                        Config.MYSQL_USERNAME,
+                        Config.MYSQL_PASSWORD,
+                        Config.MYSQL_CONNECTIONOPTIONS
+                );
+
+                mysql.openConnection();
+                mysql.createTable();
+
+                skinStorage.setMysql(mysql);
+            } catch (Exception e) {
+                srLogger.info("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+                return false;
+            }
+        } else {
+            skinStorage.loadFolders(dataFolder);
+        }
+
+        return true;
     }
 }
