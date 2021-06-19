@@ -10,7 +10,7 @@ SkinsRestorer
 
 ### README
 
-This website for skinsrestorer is still under construction!
+This website for SkinsRestorer is still under construction!
 
 ### JavaDocs
 
