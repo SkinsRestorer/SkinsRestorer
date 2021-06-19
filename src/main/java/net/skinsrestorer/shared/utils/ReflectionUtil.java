@@ -29,14 +29,28 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class ReflectionUtil {
     private static final DuckBypass reflect = new DuckBypass();
     public static String serverVersion = null;
 
+    private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
+
     static {
+        builtInMap.put(Integer.class, Integer.TYPE);
+        builtInMap.put(Long.class, Long.TYPE);
+        builtInMap.put(Double.class, Double.TYPE);
+        builtInMap.put(Float.class, Float.TYPE);
+        builtInMap.put(Boolean.class, Boolean.TYPE);
+        builtInMap.put(Character.class, Character.TYPE);
+        builtInMap.put(Byte.class, Byte.TYPE);
+        builtInMap.put(Short.class, Short.TYPE);
+
         try {
             Class.forName("org.bukkit.Bukkit");
             serverVersion = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf('.') + 1);
@@ -176,25 +190,25 @@ public class ReflectionUtil {
         }
     }
 
-    public static Object getFieldByClassName(Object obj, String className) throws ReflectionException {
+    public static Object getFieldByType(Object obj, String typeName) throws ReflectionException {
+        return getFieldByType(obj, obj.getClass(), typeName);
+    }
+
+    private static Object getFieldByType(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
         try {
-            for (Field f : obj.getClass().getDeclaredFields()) {
-                if (f.getType().getSimpleName().equalsIgnoreCase(className)) {
+            for (Field f : superClass.getDeclaredFields()) {
+                if (f.getType().getSimpleName().equalsIgnoreCase(typeName)) {
                     setFieldAccessible(f);
 
                     return f.get(obj);
                 }
             }
 
-            for (Field f : obj.getClass().getFields()) {
-                if (f.getType().getSimpleName().equalsIgnoreCase(className)) {
-                    setFieldAccessible(f);
-
-                    return f.get(obj);
-                }
+            if (superClass.getSuperclass() != null) {
+                return getFieldByType(obj, superClass.getSuperclass(), typeName);
             }
 
-            throw new FieldNotFoundException("Could not find field of type " + className + " in " + obj.getClass().getSimpleName());
+            throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
@@ -214,6 +228,22 @@ public class ReflectionUtil {
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
+    }
+
+    public static Object invokeConstructor(Class<?> clazz, Object... initargs) throws ReflectionException {
+        try {
+            return getConstructor(clazz, toClassArray(initargs)).newInstance(initargs);
+        } catch (Exception e) {
+            throw new ReflectionException(e);
+        }
+    }
+
+    private static Class<?>[] toClassArray(Object[] args) {
+        return Stream.of(args).map(Object::getClass).map(ReflectionUtil::convertToPrimitive).toArray(Class<?>[]::new);
+    }
+
+    private static Class<?> convertToPrimitive(Class<?> clazz) {
+        return builtInMap.getOrDefault(clazz, clazz);
     }
 
     public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectionException {
@@ -258,6 +288,7 @@ public class ReflectionUtil {
 
     private static void setFieldAccessible(Field f) {
         reflect.setEditable(f);
+        f.setAccessible(true);
     }
 
     public static void setObject(Class<?> clazz, Object obj, String fname, Object value) {
