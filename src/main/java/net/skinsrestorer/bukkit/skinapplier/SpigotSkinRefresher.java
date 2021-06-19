@@ -31,7 +31,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Consumer;
@@ -106,7 +105,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             Object removePlayer;
             Object addPlayer;
             try {
-                //1.17+
+                // 1.17+
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass().getSuperclass(), Collection.class}, this.removePlayerEnum, set);
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass().getSuperclass(), Collection.class}, this.addPlayerEnum, set);
             } catch (Exception ignored) {
@@ -135,114 +134,48 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             World.Environment environment = player.getWorld().getEnvironment();
 
-            int dimension = 0;
-
-            Object playerIntManager = ReflectionUtil.getFieldByClassName(craftHandle, "PlayerInteractManager");
-
+            Object playerIntManager = ReflectionUtil.getFieldByType(craftHandle, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
             int gamemodeId = player.getGameMode().getValue();
+            int dimension = environment.getId();
 
             Object respawn;
             try {
-                dimension = environment.getId();
-                respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                        new Class<?>[]{
-                                int.class, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
-                        },
-                        dimension, difficulty, worldType, enumGamemode);
+                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimension, difficulty, worldType, enumGamemode);
             } catch (Exception ignored) {
-                if (environment.equals(World.Environment.NETHER))
-                    dimension = -1;
-                else if (environment.equals(World.Environment.THE_END))
-                    dimension = 1;
-
                 // 1.13.x needs the dimensionManager instead of dimension id
-                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
-                Method m = dimensionManagerClass.getDeclaredMethod("a", Integer.TYPE);
-
-                Object dimensionManger = null;
-                try {
-                    dimensionManger = m.invoke(null, dimension);
-                } catch (Exception ignored2) {
-                }
+                Object worldObject = ReflectionUtil.getFieldByType(craftHandle, "World");
+                Object dimensionManager = ReflectionUtil.getFieldByType(worldObject, "DimensionManager");
 
                 try {
-                    respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                            new Class<?>[]{
-                                    dimensionManagerClass, peaceful.getClass(), worldType.getClass(), enumGamemode.getClass()
-                            },
-                            dimensionManger, difficulty, worldType, enumGamemode);
+                    respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, difficulty, worldType, enumGamemode);
                 } catch (Exception ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
                     try {
-                        respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                                new Class<?>[]{
-                                        dimensionManagerClass, worldType.getClass(), enumGamemode.getClass()
-                                },
-                                dimensionManger, worldType, enumGamemode);
+                        respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, worldType, enumGamemode);
                     } catch (Exception ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
-                        Object seed;
-                        try {
-                            seed = ReflectionUtil.invokeMethod(worldData, "getSeed");
-                        } catch (Exception ignored4) {
-                            // 1.16
-                            seed = ReflectionUtil.invokeMethod(world, "getSeed");
-                        }
-
                         //noinspection UnstableApiUsage
-                        long seedEncrypted = Hashing.sha256().hashString(seed.toString(), StandardCharsets.UTF_8).asLong();
+                        long seedEncrypted = Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong();
                         try {
-                            respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                                    new Class<?>[]{
-                                            dimensionManagerClass, long.class, worldType.getClass(), enumGamemode.getClass()
-                                    },
-                                    dimensionManger, seedEncrypted, worldType, enumGamemode);
+                            respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, seedEncrypted, worldType, enumGamemode);
                         } catch (Exception ignored5) {
+                            Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
+                            boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
+                            boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+
                             // Minecraft 1.16.1 changes
                             try {
-                                Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
+                                Object typeKey = ReflectionUtil.invokeMethod(worldObject, "getTypeKey");
 
-                                Object typeKey = ReflectionUtil.invokeMethod(worldServer, "getTypeKey");
-                                Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
-
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                                        new Class<?>[]{
-                                                typeKey.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
-                                        },
-                                        typeKey,
-                                        dimensionKey,
-                                        seedEncrypted,
-                                        enumGamemode,
-                                        enumGamemode,
-                                        ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
-                                        ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
-                                        true
-                                );
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemode, debug, flat, true);
                             } catch (Exception ignored6) {
                                 // Minecraft 1.16.2 changes
-                                Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
-
-                                Object dimensionManager = ReflectionUtil.invokeMethod(worldServer, "getDimensionManager");
-                                Object dimensionKey = ReflectionUtil.invokeMethod(worldServer, "getDimensionKey");
-
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn,
-                                        new Class<?>[]{
-                                                dimensionManager.getClass(), dimensionKey.getClass(), long.class, enumGamemode.getClass(), enumGamemode.getClass(), boolean.class, boolean.class, boolean.class
-                                        },
-                                        dimensionManager,
-                                        dimensionKey,
-                                        seedEncrypted,
-                                        enumGamemode,
-                                        enumGamemode,
-                                        ReflectionUtil.invokeMethod(worldServer, "isDebugWorld"),
-                                        ReflectionUtil.invokeMethod(worldServer, "isFlatWorld"),
-                                        true
-                                );
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemode, debug, flat, true);
                             }
                         }
                     }
@@ -272,10 +205,8 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                 }
             }
 
-
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
-
-            Object playerCon = ReflectionUtil.getFieldByClassName(craftHandle, "PlayerConnection");
+            Object playerCon = ReflectionUtil.getFieldByType(craftHandle, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
@@ -309,7 +240,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                     player.setOp(true);
                 });
             }
-        } catch (ReflectionException | NoSuchMethodException e) {
+        } catch (ReflectionException e) {
             e.printStackTrace();
         }
     }
