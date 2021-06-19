@@ -119,12 +119,14 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
 
-        try {
-            Class.forName("us.myles.ViaVersion.api.Via");
-            srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        } catch (ClassNotFoundException ignored) {
+        if (getServer().getPluginManager().getPlugin("ViaVersion") != null) {
+            try {
+                Class.forName("com.viaversion.viaversion.api.Via");
+            } catch (ClassNotFoundException e) {
+                srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
         }
 
         // Detect MundoSK
