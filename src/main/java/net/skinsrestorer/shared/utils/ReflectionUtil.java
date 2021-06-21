@@ -153,19 +153,6 @@ public class ReflectionUtil {
         return m;
     }
 
-    private static Constructor<?> findConstructor(Class clazz, Predicate<Constructor<?>> assertion) throws ReflectionException {
-        for (Constructor<?> cstr : clazz.getDeclaredConstructors()) {
-            try {
-                if (assertion.test(cstr)) {
-                    return cstr;
-                }
-            } catch (Exception ignored) {
-            }
-        }
-
-        throw new ReflectionException(String.format("Constructor for class \"%s\" not found.", clazz.getName()));
-    }
-
     public static Class<?> getNMSClass(String clazz, String fullClassName) throws ReflectionException {
         try {
             return forNameWithFallback(clazz, fullClassName);
@@ -209,14 +196,6 @@ public class ReflectionUtil {
             }
 
             throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    public static Object invokeConstructor(Class<?> clazz, Predicate<Constructor<?>> assertion, Object... initargs) throws ReflectionException {
-        try {
-            return findConstructor(clazz, assertion).newInstance(initargs);
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
