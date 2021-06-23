@@ -586,7 +586,7 @@ public class SkinStorage {
             }
         }
 
-        if (timestamp.equals("0") || C.validMojangUsername(name))
+        if (timestamp.equals("0"))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
