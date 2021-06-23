@@ -55,6 +55,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -93,7 +94,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
-            getProxy().getScheduler().schedule(this, this::checkUpdate, 10, 10, TimeUnit.MINUTES);
+            Random rn = new Random();
+            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
+            getProxy().getScheduler().schedule(this, this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
