@@ -60,6 +60,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 
 @Getter
@@ -155,7 +156,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
 
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * 10, 20 * 60 * 10);
+            Random rn = new Random();
+            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20 * 60 * delayInt, 20 * 60 * delayInt);
         } else {
             srLogger.info("Updater Disabled");
         }

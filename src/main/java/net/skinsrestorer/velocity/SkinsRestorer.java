@@ -62,6 +62,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -105,7 +106,9 @@ public class SkinsRestorer implements ISRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), getSrLogger(), "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
-            getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(60, TimeUnit.MINUTES).delay(60, TimeUnit.MINUTES).schedule();
+            Random rn = new Random();
+            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
+            getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES).schedule();
         } else {
             srLogger.info("Updater Disabled");
         }
