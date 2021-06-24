@@ -66,88 +66,91 @@ public class MineSkinAPI {
             throw new SkinRequestException(Locale.MS_API_FAILED);
         }
 
-        if (queue.element().equals(methodUUID)) {
-            String skinVariant = skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim") ? "&variant=" + skinType : "";
+        try {
+            if (queue.element().equals(methodUUID)) {
+                String skinVariant = skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim") ? "&variant=" + skinType : "";
 
-            try {
-                final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
-                if (output.isEmpty()) //api time out
-                    throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
+                try {
+                    final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
+                    if (output.isEmpty()) //api time out
+                        throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-                final JsonElement elm = new JsonParser().parse(output);
-                final JsonObject obj = elm.getAsJsonObject();
+                    final JsonElement elm = new JsonParser().parse(output);
+                    final JsonObject obj = elm.getAsJsonObject();
 
-                if (obj.has("data")) {
-                    final JsonObject dta = obj.get("data").getAsJsonObject();
+                    if (obj.has("data")) {
+                        final JsonObject dta = obj.get("data").getAsJsonObject();
 
-                    if (dta.has("texture")) {
-                        final JsonObject tex = dta.get("texture").getAsJsonObject();
+                        if (dta.has("texture")) {
+                            final JsonObject tex = dta.get("texture").getAsJsonObject();
 
-                        queue.remove();
-                        return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
-                    }
-                } else if (obj.has("error")) {
-                    final String errResp = obj.get("error").getAsString();
-
-                    // If we send to many request, go sleep and try again.
-                    if (errResp.equals("Too many requests")) {
-                        fails.get(methodUUID).incrementAndGet();
-
-                        // If "Too many requests"
-                        if (obj.has("delay")) {
-                            TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-
-                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
-                        } else if (obj.has("nextRequest")) {
-                            final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
-
-                            if (nextRequestMilS > 0)
-                                TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
-
-                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
-                        } else {
-                            TimeUnit.SECONDS.sleep(2);
-
-                            return genSkin(url, skinType, methodUUID); // try again after nextRequest
+                            return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                         }
+                    } else if (obj.has("error")) {
+                        final String errResp = obj.get("error").getAsString();
+
+                        // If we send to many request, go sleep and try again.
+                        if (errResp.equals("Too many requests")) {
+                            fails.get(methodUUID).incrementAndGet();
+
+                            // If "Too many requests"
+                            if (obj.has("delay")) {
+                                TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+
+                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
+                            } else if (obj.has("nextRequest")) {
+                                final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
+
+                                if (nextRequestMilS > 0)
+                                    TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+
+                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
+                            } else {
+                                TimeUnit.SECONDS.sleep(2);
+
+                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
+                            }
+                        }
+
+                        if (errResp.equals("Failed to generate skin data") || errResp.equals("Failed to change skin")) {
+                            logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+                            TimeUnit.SECONDS.sleep(5);
+
+                            return genSkin(url, skinType, methodUUID); // try again
+                        } else if (errResp.equals("No accounts available")) {
+                            logger.debug("[ERROR] " + errResp + " for: " + url);
+
+                            throw new SkinRequestException(Locale.ERROR_MS_FULL);
+                        }
+
+                        logger.debug("[ERROR] MS:reason: " + errResp);
+                        throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
-
-                    if (errResp.equals("Failed to generate skin data") || errResp.equals("Failed to change skin")) {
-                        logger.debug("[ERROR] MS " + errResp + ", trying again... ");
-                        TimeUnit.SECONDS.sleep(5);
-
-                        return genSkin(url, skinType, methodUUID); // try again
-                    } else if (errResp.equals("No accounts available")) {
-                        logger.debug("[ERROR] " + errResp + " for: " + url);
-
-                        throw new SkinRequestException(Locale.ERROR_MS_FULL);
-                    }
-
-                    logger.debug("[ERROR] MS:reason: " + errResp);
-                    throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
+                } catch (SkinRequestException e) {
+                    //return SkinRequestException if caught.
+                    throw new SkinRequestException(e.getMessage());
+                } catch (IOException e) {
+                    logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+                } catch (JsonSyntaxException e) {
+                    logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (SkinRequestException e) {
-                //return SkinRequestException if caught.
-                throw new SkinRequestException(e.getMessage());
-            } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
-            } catch (JsonSyntaxException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-            // throw exception after all tries have failed
-            logger.debug("[ERROR] MS:could not generate skin url: " + url);
-            throw new SkinRequestException(Locale.MS_API_FAILED);
-        } else {
-            try {
-                TimeUnit.MILLISECONDS.sleep(100);
-            } catch (InterruptedException e) {
+                // throw exception after all tries have failed
+                logger.debug("[ERROR] MS:could not generate skin url: " + url);
                 throw new SkinRequestException(Locale.MS_API_FAILED);
-            }
+            } else {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new SkinRequestException(Locale.MS_API_FAILED);
+                }
 
-            return genSkin(url, skinType, methodUUID);
+                return genSkin(url, skinType, methodUUID);
+            }
+        } finally {
+            queue.remove();
         }
     }
 
