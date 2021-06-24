@@ -42,21 +42,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 public class MineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final Queue<UUID> queue = new LinkedList<>();
+    private final Map<UUID, AtomicInteger> fails = new HashMap<>();
 
     public IProperty genSkin(String url, String skinType, @Nullable UUID methodUUID) throws SkinRequestException {
         if (methodUUID == null) {
             methodUUID = UUID.randomUUID();
             queue.add(methodUUID);
+        }
+
+        fails.putIfAbsent(methodUUID, new AtomicInteger());
+
+        if (fails.get(methodUUID).get() >= 5) {
+            queue.remove();
+            throw new SkinRequestException(Locale.MS_API_FAILED);
         }
 
         if (queue.element().equals(methodUUID)) {
@@ -82,9 +89,11 @@ public class MineSkinAPI {
                 } else if (obj.has("error")) {
                     final String errResp = obj.get("error").getAsString();
 
-                    //If we send to many request, go sleep and try again.
+                    // If we send to many request, go sleep and try again.
                     if (errResp.equals("Too many requests")) {
-                        // if "Too many requests"
+                        fails.get(methodUUID).incrementAndGet();
+
+                        // If "Too many requests"
                         if (obj.has("delay")) {
                             TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
 
