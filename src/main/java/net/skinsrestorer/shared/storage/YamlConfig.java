@@ -45,11 +45,13 @@ public class YamlConfig {
         this.logger = logger;
 
         if (!path.exists())
+            //noinspection ResultOfMethodCallIgnored
             path.mkdirs();
     }
 
     private void createNewFile() {
         try {
+            //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
         } catch (Exception e) {
             e.printStackTrace();

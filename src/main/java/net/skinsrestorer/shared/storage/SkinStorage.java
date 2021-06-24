@@ -48,9 +48,11 @@ public class SkinStorage {
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");
+        //noinspection ResultOfMethodCallIgnored
         skinsFolder.mkdirs();
 
         playersFolder = new File(pluginFolder, "Players");
+        //noinspection ResultOfMethodCallIgnored
         playersFolder.mkdirs();
     }
 
