@@ -62,7 +62,7 @@ public class MineSkinAPI {
         fails.putIfAbsent(methodUUID, new AtomicInteger());
 
         if (fails.get(methodUUID).get() >= 5) {
-            queue.remove();
+            queue.remove(methodUUID);
             throw new SkinRequestException(Locale.MS_API_FAILED);
         }
 
@@ -150,7 +150,7 @@ public class MineSkinAPI {
                 return genSkin(url, skinType, methodUUID);
             }
         } finally {
-            queue.remove();
+            queue.remove(methodUUID);
         }
     }
 
