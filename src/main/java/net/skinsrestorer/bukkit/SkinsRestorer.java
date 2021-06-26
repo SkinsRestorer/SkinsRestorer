@@ -397,7 +397,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         File warning = new File(getDataFolder(), "(README) Use bungee config for settings! (README)");
         try {
             if (!warning.exists() && bungeeEnabled) {
+                //noinspection ResultOfMethodCallIgnored
                 warning.getParentFile().mkdirs();
+                //noinspection ResultOfMethodCallIgnored
                 warning.createNewFile();
 
                 try (FileWriter writer = new FileWriter(warning)) {
