@@ -635,7 +635,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (C.validMojangUsername(player) || mojangAPI.getUUID(player) != null) {
+                    if (mojangAPI.getUUID(player) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }
