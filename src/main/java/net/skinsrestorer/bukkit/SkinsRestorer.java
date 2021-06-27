@@ -124,9 +124,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             try {
                 Class.forName("com.viaversion.viaversion.api.Via");
             } catch (ClassNotFoundException e) {
-                srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
+                getServer().getScheduler().runTaskTimerAsynchronously(this, () -> srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 20 * 15, 20 * 15);
             }
         }
 
@@ -397,7 +395,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         File warning = new File(getDataFolder(), "(README) Use bungee config for settings! (README)");
         try {
             if (!warning.exists() && bungeeEnabled) {
+                //noinspection ResultOfMethodCallIgnored
                 warning.getParentFile().mkdirs();
+                //noinspection ResultOfMethodCallIgnored
                 warning.createNewFile();
 
                 try (FileWriter writer = new FileWriter(warning)) {

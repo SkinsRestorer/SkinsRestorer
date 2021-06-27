@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
-    private static final String NOTCH_UUID = "069a79f444e94726a5befca90e38aaf5";
+    private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
     @Getter
     private final ServiceCheckResponse response;
     @Setter
@@ -44,10 +44,10 @@ public class ServiceChecker {
     public void checkServices() {
         // ##### UUID requests #####
         try {
-            String uuid = mojangAPI.getUUID("Notch", false);
+            String uuid = mojangAPI.getUUID("xknat", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
-                response.addResult("MineTools UUID §a✔ Notch UUID: §b" + uuid);
+                response.addResult("MineTools UUID §a✔ xknat UUID: §b" + uuid);
                 response.incrementWorkingUUID();
             } else {
                 response.addResult("MineTools UUID §c✘ Error getting UUID: null");
@@ -57,10 +57,10 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = mojangAPI.getUUIDMojang("Notch", false);
+            String uuid = mojangAPI.getUUIDMojang("xknat", false);
 
             if (uuid != null && !uuid.equalsIgnoreCase("null")) {
-                response.addResult("Mojang-API UUID §a✔ Notch UUID: §b" + uuid);
+                response.addResult("Mojang-API UUID §a✔ xknat UUID: §b" + uuid);
                 response.incrementWorkingUUID();
             } else {
                 response.addResult("Mojang-API UUID §c✘ Error getting UUID: null");
@@ -70,31 +70,31 @@ public class ServiceChecker {
         }
 
         try {
-            String uuid = mojangAPI.getUUIDBackup("Notch", false);
-            response.addResult("Mojang-API (Backup) UUID §a✔ Notch UUID: §b" + uuid);
+            String uuid = mojangAPI.getUUIDBackup("xknat", false);
+            response.addResult("Mojang-API (Backup) UUID §a✔ xknat UUID: §b" + uuid);
             response.incrementWorkingUUID();
         } catch (Exception e) {
             response.addResult("Mojang-API (Backup) UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         // ##### Profile requests #####
-        IProperty minetools = mojangAPI.getProfile(NOTCH_UUID, false);
+        IProperty minetools = mojangAPI.getProfile(XKNAT_UUID, false);
         if (minetools != null) {
-            response.addResult("MineTools Profile §a✔ Notch Profile: §b" + minetools);
+            response.addResult("MineTools Profile §a✔ xknat Profile: §b" + minetools);
             response.incrementWorkingProfile();
         } else
             response.addResult("MineTools Profile §c✘ Error getting Profile: null");
 
-        IProperty mojang = mojangAPI.getProfileMojang(NOTCH_UUID, false);
+        IProperty mojang = mojangAPI.getProfileMojang(XKNAT_UUID, false);
         if (mojang != null) {
-            response.addResult("Mojang-API Profile §a✔ Notch Profile: §b" + mojang);
+            response.addResult("Mojang-API Profile §a✔ xknat Profile: §b" + mojang);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
 
-        IProperty mojangBackup = mojangAPI.getProfileBackup(NOTCH_UUID, false);
+        IProperty mojangBackup = mojangAPI.getProfileBackup(XKNAT_UUID, false);
         if (mojangBackup != null) {
-            response.addResult("Mojang-API (Backup) Profile §a✔ Notch Profile: §b" + mojangBackup);
+            response.addResult("Mojang-API (Backup) Profile §a✔ xknat Profile: §b" + mojangBackup);
             response.incrementWorkingProfile();
         } else
             response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
