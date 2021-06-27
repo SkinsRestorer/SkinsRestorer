@@ -22,6 +22,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,15 +39,12 @@ import java.util.Properties;
 /**
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
  */
+@RequiredArgsConstructor
 public class UpdateDownloader {
     private final SkinsRestorer plugin;
 
     @Getter
     protected DownloadFailReason failReason;
-
-    public UpdateDownloader(SkinsRestorer plugin) {
-        this.plugin = plugin;
-    }
 
     public boolean downloadUpdate() {
         ResourceInfo latestResourceInfo = plugin.getUpdateChecker().getLatestResourceInfo();
