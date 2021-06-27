@@ -32,14 +32,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class ReflectionUtil {
     private static final DuckBypass reflect = new DuckBypass();
-    public static String serverVersion = null;
-
     private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
+    public static String serverVersion = null;
 
     static {
         builtInMap.put(Integer.class, Integer.TYPE);

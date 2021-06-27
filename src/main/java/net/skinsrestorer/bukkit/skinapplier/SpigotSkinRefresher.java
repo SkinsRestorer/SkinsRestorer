@@ -42,7 +42,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
     private Class<?> playOutPosition;
     private Class<?> packet;
     private Class<?> playOutHeldItemSlot;
-    private Enum<?> peaceful;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
@@ -57,7 +56,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
             playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
             playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
 
-            peaceful = ReflectionUtil.getEnum(ReflectionUtil.getNMSClass("EnumDifficulty", "net.minecraft.world.EnumDifficulty"), "PEACEFUL");
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");

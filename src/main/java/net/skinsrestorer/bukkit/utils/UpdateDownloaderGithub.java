@@ -34,7 +34,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.logging.Level;
 
 public class UpdateDownloaderGithub extends UpdateDownloader {
     private final SkinsRestorer plugin;
