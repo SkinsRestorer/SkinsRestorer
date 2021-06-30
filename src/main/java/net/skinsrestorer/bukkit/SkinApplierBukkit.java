@@ -36,7 +36,6 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
@@ -84,29 +83,31 @@ public class SkinApplierBukkit {
      * @param property Property Object
      */
     protected void applySkin(Player player, IProperty property) {
-        SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
-        Bukkit.getPluginManager().callEvent(applyEvent);
+            Bukkit.getPluginManager().callEvent(applyEvent);
 
-        if (applyEvent.isCancelled())
-            return;
+            if (applyEvent.isCancelled())
+                return;
 
-        // delay 1 server tick so we override online-mode
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            try {
-                if (property == null)
-                    return;
+            // delay 1 server tick so we override online-mode
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+                try {
+                    if (property == null)
+                        return;
 
-                Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-                Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-                Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-                ReflectionUtil.invokeMethod(propMap, "clear");
-                ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
+                    Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+                    Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+                    Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+                    ReflectionUtil.invokeMethod(propMap, "clear");
+                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
 
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
 

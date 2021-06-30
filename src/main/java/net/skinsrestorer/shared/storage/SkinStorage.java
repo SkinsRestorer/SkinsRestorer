@@ -48,9 +48,11 @@ public class SkinStorage {
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");
+        //noinspection ResultOfMethodCallIgnored
         skinsFolder.mkdirs();
 
         playersFolder = new File(pluginFolder, "Players");
+        //noinspection ResultOfMethodCallIgnored
         playersFolder.mkdirs();
     }
 
@@ -586,7 +588,7 @@ public class SkinStorage {
             }
         }
 
-        if (timestamp.equals("0") || C.validMojangUsername(name))
+        if (timestamp.equals("0"))
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
@@ -633,7 +635,7 @@ public class SkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (C.validMojangUsername(player) || mojangAPI.getUUID(player) != null) {
+                    if (C.validMojangUsername(player) && mojangAPI.getUUID(player) != null) {
                         // player is premium, return his skin name instead of default skin
                         return player;
                     }

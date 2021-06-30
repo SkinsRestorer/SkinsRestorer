@@ -55,7 +55,7 @@ public class ViaWorkaround {
 
             packet.write(Type.INT, dimension);
             packet.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
-            packet.write(Type.UNSIGNED_BYTE, (short) gamemodeId);
+            packet.write(Type.UNSIGNED_BYTE, ((Integer) gamemodeId).shortValue());
             packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
             packet.send(Protocol1_15_2To1_16.class);
             return false;

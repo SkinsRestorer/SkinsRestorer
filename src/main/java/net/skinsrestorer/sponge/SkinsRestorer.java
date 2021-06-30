@@ -36,7 +36,10 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.CommandPropertiesManager;
+import net.skinsrestorer.shared.utils.CommandReplacements;
+import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -64,6 +67,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -103,8 +107,10 @@ public class SkinsRestorer implements ISRPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate();
 
+            Random rn = new Random();
+            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
             Sponge.getScheduler().createTaskBuilder().execute(() ->
-                    checkUpdate(false)).interval(10, TimeUnit.MINUTES).delay(10, TimeUnit.MINUTES);
+                    checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
