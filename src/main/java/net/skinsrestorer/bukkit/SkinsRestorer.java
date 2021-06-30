@@ -124,7 +124,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             try {
                 Class.forName("com.viaversion.viaversion.api.Via");
             } catch (ClassNotFoundException e) {
-                getServer().getScheduler().runTaskTimerAsynchronously(this, () -> srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 20 * 15, 20 * 15);
+                getServer().getScheduler().runTaskTimerAsynchronously(this, () -> srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50, 20 * 60);
             }
         }
 
