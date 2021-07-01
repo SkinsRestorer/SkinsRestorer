@@ -134,13 +134,6 @@ public class SpigotSkinRefresher implements Consumer<Player> {
 
             Object playerIntManager = ReflectionUtil.getFieldByType(craftHandle, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
-            Enum<?> enumGamemodePrevious;
-            try {
-                // 1.16+
-                enumGamemodePrevious = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "c");
-            } catch (Exception ignored) {
-                enumGamemodePrevious = null;
-            }
 
             int gamemodeId = player.getGameMode().getValue();
             int dimension = environment.getId();
@@ -172,6 +165,7 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                             Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
                             boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
                             boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+                            Enum<?> enumGamemodePrevious = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "c");
 
                             // Minecraft 1.16.1 changes
                             try {
