@@ -165,7 +165,9 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                             Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
                             boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
                             boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
-                            Enum<?> enumGamemodePrevious = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "c");
+                            List<Object> gameModeList = ReflectionUtil.getFieldByTypeList(playerIntManager, "EnumGamemode");
+
+                            Enum<?> enumGamemodePrevious = (Enum<?>) getFromListExcluded(gameModeList, enumGamemode);
 
                             // Minecraft 1.16.1 changes
                             try {
@@ -242,5 +244,14 @@ public class SpigotSkinRefresher implements Consumer<Player> {
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
+    }
+
+    private Object getFromListExcluded(List<Object> list, Object... excluded) {
+        for (Object obj : list) {
+            if (obj != excluded)
+                return obj;
+        }
+
+        return null;
     }
 }
