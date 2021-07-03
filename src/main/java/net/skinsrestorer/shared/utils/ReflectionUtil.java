@@ -22,7 +22,6 @@
 package net.skinsrestorer.shared.utils;
 
 import li.cock.ie.reflect.DuckBypass;
-import lombok.Getter;
 import net.skinsrestorer.shared.exception.EnumNotFoundException;
 import net.skinsrestorer.shared.exception.FieldNotFoundException;
 import net.skinsrestorer.shared.exception.ReflectionException;
@@ -35,10 +34,9 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class ReflectionUtil {
+    public static final String SERVER_VERSION;
     private static final DuckBypass reflect = new DuckBypass();
     private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
-    @Getter
-    private static final String SERVER_VERSION;
 
     static {
         builtInMap.put(Integer.class, Integer.TYPE);
