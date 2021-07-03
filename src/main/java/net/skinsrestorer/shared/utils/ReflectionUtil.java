@@ -29,9 +29,7 @@ import org.bukkit.Bukkit;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ReflectionUtil {
@@ -180,20 +178,34 @@ public class ReflectionUtil {
     }
 
     private static Object getFieldByType(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
+        return getFieldByTypeList(obj, superClass, typeName).get(0);
+    }
+
+    public static List<Object> getFieldByTypeList(Object obj, String typeName) throws ReflectionException {
+        return getFieldByTypeList(obj, obj.getClass(), typeName);
+    }
+
+    public static List<Object> getFieldByTypeList(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
+        List<Object> fields = new ArrayList<>();
+
         try {
             for (Field f : superClass.getDeclaredFields()) {
                 if (f.getType().getSimpleName().equalsIgnoreCase(typeName)) {
                     setFieldAccessible(f);
 
-                    return f.get(obj);
+                    fields.add(f.get(obj));
                 }
             }
 
             if (superClass.getSuperclass() != null) {
-                return getFieldByType(obj, superClass.getSuperclass(), typeName);
+                fields.addAll(getFieldByTypeList(obj, superClass.getSuperclass(), typeName));
             }
 
-            throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
+            if (fields.isEmpty() && obj.getClass() == superClass) {
+                throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
+            } else {
+                return fields;
+            }
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
