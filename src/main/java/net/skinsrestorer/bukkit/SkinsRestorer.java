@@ -118,7 +118,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
 
-        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.serverVersion + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
+        srLogger.info("§aDetected Minecraft §e" + ReflectionUtil.getSERVER_VERSION() + "§a, using §e" + skinApplierBukkit.getClass().getSimpleName() + "§a.");
 
         if (getServer().getPluginManager().getPlugin("ViaVersion") != null) {
             try {

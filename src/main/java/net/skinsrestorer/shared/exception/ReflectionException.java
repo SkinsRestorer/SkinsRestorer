@@ -21,7 +21,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
-public class ReflectionException extends Exception {
+public class ReflectionException extends ReflectiveOperationException {
     public ReflectionException(String message) {
         super(message);
     }
