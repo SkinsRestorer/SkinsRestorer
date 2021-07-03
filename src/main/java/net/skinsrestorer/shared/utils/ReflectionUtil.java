@@ -201,7 +201,7 @@ public class ReflectionUtil {
                 fields.addAll(getFieldByTypeList(obj, superClass.getSuperclass(), typeName));
             }
 
-            if (fields.isEmpty()) {
+            if (fields.isEmpty() && obj.getClass() == superClass) {
                 throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
             } else {
                 return fields;
