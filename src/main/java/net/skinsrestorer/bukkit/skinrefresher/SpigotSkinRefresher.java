@@ -19,8 +19,9 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package net.skinsrestorer.bukkit.skinapplier;
+package net.skinsrestorer.bukkit.skinrefresher;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.ReflectionException;
@@ -34,7 +35,8 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
@@ -97,21 +99,9 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     public void accept(Player player) {
         try {
             final Object craftHandle = ReflectionUtil.invokeMethod(player, "getHandle");
-            Location l = player.getLocation();
 
-            List<Object> set = new ArrayList<>();
-            set.add(craftHandle);
-
-            Object removePlayer;
-            Object addPlayer;
-            try {
-                // 1.17+
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass().getSuperclass(), Collection.class}, this.removePlayerEnum, set);
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass().getSuperclass(), Collection.class}, this.addPlayerEnum, set);
-            } catch (Exception ignored) {
-                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.removePlayerEnum.getClass(), Iterable.class}, this.removePlayerEnum, set);
-                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, new Class<?>[]{this.addPlayerEnum.getClass(), Iterable.class}, this.addPlayerEnum, set);
-            }
+            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(craftHandle));
+            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(craftHandle));
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet
@@ -187,30 +177,22 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 }
             }
 
+            Location l = player.getLocation();
             Object pos;
             try {
                 // 1.17+
-                pos = ReflectionUtil.invokeConstructor(playOutPosition,
-                        new Class<?>[]{double.class, double.class, double.class, float.class, float.class, Set.class,
-                                int.class, boolean.class},
-                        l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
+                pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
             } catch (Exception e1) {
                 try {
                     // 1.9-1.16.5
-                    pos = ReflectionUtil.invokeConstructor(playOutPosition,
-                            new Class<?>[]{double.class, double.class, double.class, float.class, float.class, Set.class,
-                                    int.class},
-                            l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
+                    pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
                 } catch (Exception e2) {
                     // 1.8 -
-                    pos = ReflectionUtil.invokeConstructor(playOutPosition,
-                            new Class<?>[]{double.class, double.class, double.class, float.class, float.class,
-                                    Set.class},
-                            l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                    pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
                 }
             }
 
-            Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, new Class<?>[]{int.class}, player.getInventory().getHeldItemSlot());
+            Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, player.getInventory().getHeldItemSlot());
             Object playerCon = ReflectionUtil.getFieldByType(craftHandle, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
@@ -269,7 +251,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 for (Method m : dimensionManagerClass.getDeclaredMethods()) {
                     if (m.getReturnType() == dimensionManagerClass && m.getParameterCount() == 1 && m.getParameterTypes()[0] == Integer.TYPE) {
                         m.setAccessible(true);
-                        return m.invoke(null,dimension );
+                        return m.invoke(null, dimension);
                     }
                 }
             } catch (InvocationTargetException | IllegalAccessException e2) {
