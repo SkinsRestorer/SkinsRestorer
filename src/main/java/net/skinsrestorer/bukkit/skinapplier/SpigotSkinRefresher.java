@@ -165,15 +165,18 @@ public class SpigotSkinRefresher implements Consumer<Player> {
                             Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
                             boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
                             boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+                            List<Object> gameModeList = ReflectionUtil.getFieldByTypeList(playerIntManager, "EnumGamemode");
+
+                            Enum<?> enumGamemodePrevious = (Enum<?>) getFromListExcluded(gameModeList, enumGamemode);
 
                             // Minecraft 1.16.1 changes
                             try {
                                 Object typeKey = ReflectionUtil.invokeMethod(worldObject, "getTypeKey");
 
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemode, debug, flat, true);
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
                             } catch (Exception ignored6) {
                                 // Minecraft 1.16.2 changes
-                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemode, debug, flat, true);
+                                respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
                             }
                         }
                     }
@@ -241,5 +244,14 @@ public class SpigotSkinRefresher implements Consumer<Player> {
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
+    }
+
+    private Object getFromListExcluded(List<Object> list, Object... excluded) {
+        for (Object obj : list) {
+            if (obj != excluded)
+                return obj;
+        }
+
+        return null;
     }
 }
