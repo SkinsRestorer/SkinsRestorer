@@ -66,10 +66,6 @@ public class ReflectionUtil {
         return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION_STRING + "." + clazz);
     }
 
-    public static Class<?> getBungeeClass(String path, String clazz) throws ClassNotFoundException {
-        return Class.forName("net.md_5.bungee." + path + "." + clazz);
-    }
-
     public static Class<?> getNMSClass(String clazz, String fullClassName) throws ReflectionException {
         try {
             return forNameWithFallback(clazz, fullClassName);
@@ -242,10 +238,7 @@ public class ReflectionUtil {
 
             int i = 0;
             for (Class<?> parameter : constructor.getParameterTypes()) {
-                parameter = convertToPrimitive(parameter);
-                Class<?> arg = convertToPrimitive(args[i].getClass());
-
-                if (!(parameter.isInstance(args[i]) || parameter == arg))
+                if (!isAssignable(parameter, args[i]))
                     break;
 
                 i++;
@@ -256,6 +249,12 @@ public class ReflectionUtil {
         }
 
         throw new ReflectionException("Could not find constructor with args " + Arrays.stream(args).map(Object::getClass).map(Class::getSimpleName).collect(Collectors.joining(", ")) + " in " + clazz.getSimpleName());
+    }
+
+    private static boolean isAssignable(Class<?> clazz, Object obj) {
+        clazz = convertToPrimitive(clazz);
+
+        return clazz.isInstance(obj) || clazz == convertToPrimitive(obj.getClass());
     }
 
     private static Class<?>[] toClassArray(Object[] args) {
@@ -298,9 +297,9 @@ public class ReflectionUtil {
         }
     }
 
-    public static Object invokeMethod(Object obj, String method, Object[] initargs) throws ReflectionException {
+    public static Object invokeMethod(Object obj, String method, Object[] initArgs) throws ReflectionException {
         try {
-            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initargs);
+            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initArgs);
         } catch (Exception e) {
             throw new ReflectionException(e);
         }

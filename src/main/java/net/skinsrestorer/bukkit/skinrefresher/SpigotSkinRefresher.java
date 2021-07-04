@@ -24,12 +24,12 @@ package net.skinsrestorer.bukkit.skinrefresher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,16 +41,17 @@ import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
     private final SkinsRestorer plugin;
-    private Class<?> playOutRespawn;
-    private Class<?> playOutPlayerInfo;
-    private Class<?> playOutPosition;
-    private Class<?> packet;
-    private Class<?> playOutHeldItemSlot;
+    private final Class<?> playOutRespawn;
+    private final Class<?> playOutPlayerInfo;
+    private final Class<?> playOutPosition;
+    private final Class<?> packet;
+    private final Class<?> playOutHeldItemSlot;
+    private final Method getHandleMethod;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) {
+    public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
 
         try {
@@ -77,6 +78,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 }
             }
 
+            getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+
             Bukkit.getScheduler().runTask(plugin, () -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
@@ -88,7 +91,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             log.info("Using SpigotSkinRefresher");
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new InitializeException(e);
         }
     }
 
@@ -96,16 +99,17 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
         ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{this.packet}, packet);
     }
 
+    @Override
     public void accept(Player player) {
         try {
-            final Object craftHandle = ReflectionUtil.invokeMethod(player, "getHandle");
+            final Object entityPlayer = getHandleMethod.invoke(player);
 
-            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(craftHandle));
-            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(craftHandle));
+            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
+            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
 
             // Slowly getting from object to object till i get what I need for
             // the respawn packet
-            Object world = ReflectionUtil.invokeMethod(craftHandle, "getWorld");
+            Object world = ReflectionUtil.invokeMethod(entityPlayer, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
 
             Object worldData;
@@ -122,22 +126,20 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 worldType = ReflectionUtil.invokeMethod(worldData, "getGameType");
             }
 
-            World.Environment environment = player.getWorld().getEnvironment();
-
-            Object playerIntManager = ReflectionUtil.getFieldByType(craftHandle, "PlayerInteractManager");
+            Object playerIntManager = ReflectionUtil.getFieldByType(entityPlayer, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
             //noinspection deprecation
             int gamemodeId = player.getGameMode().getValue();
             //noinspection deprecation
-            int dimension = environment.getId();
+            int dimension = player.getWorld().getEnvironment().getId();
 
             Object respawn;
             try {
                 respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimension, difficulty, worldType, enumGamemode);
             } catch (Exception ignored) {
                 // 1.13.x needs the dimensionManager instead of dimension id
-                Object worldObject = ReflectionUtil.getFieldByType(craftHandle, "World");
+                Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                 Object dimensionManager = getDimensionManager(worldObject, dimension);
 
                 try {
@@ -193,7 +195,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             }
 
             Object slot = ReflectionUtil.invokeConstructor(playOutHeldItemSlot, player.getInventory().getHeldItemSlot());
-            Object playerCon = ReflectionUtil.getFieldByType(craftHandle, "PlayerConnection");
+            Object playerCon = ReflectionUtil.getFieldByType(entityPlayer, "PlayerConnection");
 
             sendPacket(playerCon, removePlayer);
             sendPacket(playerCon, addPlayer);
@@ -201,7 +203,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
                 try {
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, craftHandle, dimension, world, gamemodeId);
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, world, gamemodeId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -211,14 +213,14 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 sendPacket(playerCon, respawn);
             }
 
-            ReflectionUtil.invokeMethod(craftHandle, "updateAbilities");
+            ReflectionUtil.invokeMethod(entityPlayer, "updateAbilities");
 
             sendPacket(playerCon, pos);
             sendPacket(playerCon, slot);
 
             ReflectionUtil.invokeMethod(player, "updateScaledHealth");
             player.updateInventory();
-            ReflectionUtil.invokeMethod(craftHandle, "triggerHealthUpdate");
+            ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
             if (player.isOp()) {
                 Bukkit.getScheduler().runTask(plugin, () -> {
@@ -227,7 +229,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     player.setOp(true);
                 });
             }
-        } catch (ReflectionException e) {
+        } catch (ReflectionException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
