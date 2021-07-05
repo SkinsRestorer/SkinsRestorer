@@ -405,8 +405,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 }
             }
 
-            if (warning.exists() && !bungeeEnabled)
-                Files.delete(warning.toPath());
+            if (!bungeeEnabled)
+                Files.deleteIfExists(warning.toPath());
         } catch (Exception ignored) {
         }
 
