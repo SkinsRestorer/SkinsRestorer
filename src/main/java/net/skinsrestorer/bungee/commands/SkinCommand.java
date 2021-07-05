@@ -170,11 +170,10 @@ public class SkinCommand extends BaseCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(ProxiedPlayer player, String[] skin) {
-        if (skin.length > 0) {
-            onSkinSetOther(player, new OnlinePlayer(player), skin[0], null);
-        } else {
+        if (skin.length == 0)
             throw new InvalidCommandArgument(true);
-        }
+
+        onSkinSetOther(player, new OnlinePlayer(player), skin[0], null);
     }
 
     @Subcommand("set")
@@ -205,11 +204,12 @@ public class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinUrl")
     @SuppressWarnings({"unused"})
     public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinType skinType) {
-        if (C.validUrl(url)) {
-            onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
-        } else {
+        if (!C.validUrl(url)) {
             player.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+            return;
         }
+
+        onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
     }
 
     private boolean setSkin(CommandSender sender, ProxiedPlayer player, String skin) {
