@@ -68,7 +68,7 @@ public class SkinCommand extends BaseCommand {
     @HelpCommand
     @Syntax(" [help]")
     public void onHelp(CommandSource commandSource, CommandHelp help) {
-        if (Config.USE_OLD_SKIN_HELP)
+        if (Config.ENABLE_CUSTOM_HELP)
             sendHelp(commandSource);
         else
             help.showHelp();
@@ -309,7 +309,7 @@ public class SkinCommand extends BaseCommand {
     private void sendHelp(CommandSource commandSource) {
         if (!Locale.SR_LINE.isEmpty())
             commandSource.sendMessage(plugin.deserialize(Locale.SR_LINE));
-        commandSource.sendMessage(plugin.deserialize(Locale.HELP_PLAYER.replace("%ver%", plugin.getVersion())));
+        commandSource.sendMessage(plugin.deserialize(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", plugin.getVersion())));
         if (!Locale.SR_LINE.isEmpty())
             commandSource.sendMessage(plugin.deserialize(Locale.SR_LINE));
     }
