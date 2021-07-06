@@ -112,17 +112,12 @@ public class Config {
         DEBUG = config.getBoolean("Debug", DEBUG);
 
         if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {
-            // TODO: warning logger
-            DEFAULT_SKINS_ENABLED = false;
-        }
-
-        if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty()) {
-            // TODO: warning logger
+            logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
             DEFAULT_SKINS_ENABLED = false;
         }
 
         if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty()) {
-            // TODO: warning logger
+            logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
             RESTRICT_SKIN_URLS_ENABLED = false;
         }
 

@@ -626,7 +626,7 @@ public class SkinStorage {
         player = player.replaceAll("^\\\\s+", "");
         player = player.replaceAll("\\\\s+$", "");
 
-        if (Config.DEFAULT_SKINS_ENABLED && !Config.DEFAULT_SKINS.isEmpty()) {
+        if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
