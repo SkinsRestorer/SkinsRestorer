@@ -542,7 +542,7 @@ public class SkinStorage {
     }
 
     /**
-     * @param name
+     * @param name Skin name
      * @return True on updated
      * @throws SkinRequestException On updating disabled OR invalid username + api error
      */
@@ -553,12 +553,12 @@ public class SkinStorage {
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Check if updating is disabled for skin (by timestamp = 0)
-        String timestamp = "";
+        boolean updateDisabled = false;
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT timestamp FROM " + Config.MYSQL_SKINTABLE + " WHERE Nick=?", name);
             if (crs != null)
                 try {
-                    timestamp = crs.getString("timestamp");
+                    updateDisabled = crs.getString("timestamp").equals("0");
                 } catch (Exception ignored) {
                 }
         } else {
@@ -568,15 +568,13 @@ public class SkinStorage {
             File skinFile = new File(skinsFolder, name + ".skin");
 
             try {
-                if (!skinFile.exists()) {
-                    timestamp = "";
-                } else {
+                if (skinFile.exists()) {
                     try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
                         for (int i = 0; i < 3; i++) {
                             String line = buf.readLine();
 
                             if (i == 2)
-                                timestamp = line;
+                                updateDisabled = line.equals("0");
                         }
                     }
                 }
@@ -584,7 +582,7 @@ public class SkinStorage {
             }
         }
 
-        if (timestamp.equals("0"))
+        if (updateDisabled)
             throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
