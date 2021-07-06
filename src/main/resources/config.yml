@@ -42,7 +42,7 @@ SkinErrorCooldown: 5
 
 # True will  make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml.
 # This is more customizable, but at the cost of permission specific help.
-UseOldSkinHelp: false
+EnableCustomHelp: false
 
 #Ignore messages.yml 'PREFIX ='
 DisablePrefix: false
