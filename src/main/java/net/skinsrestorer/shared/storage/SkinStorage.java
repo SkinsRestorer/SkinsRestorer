@@ -289,13 +289,11 @@ public class SkinStorage {
             name = removeForbiddenChars(name);
             File playerFile = new File(playersFolder, name + ".player");
 
-            if (playerFile.exists()) {
                 try {
-                    Files.delete(playerFile.toPath());
+                    Files.deleteIfExists(playerFile.toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
         }
     }
 
@@ -314,13 +312,11 @@ public class SkinStorage {
             name = removeForbiddenChars(name);
             File skinFile = new File(skinsFolder, name + ".skin");
 
-            if (skinFile.exists()) {
                 try {
-                    Files.delete(skinFile.toPath());
+                    Files.deleteIfExists(skinFile.toPath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
         }
     }
 
