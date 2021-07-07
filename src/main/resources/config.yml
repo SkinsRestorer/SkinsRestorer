@@ -34,7 +34,7 @@ SkinWithoutPerm: true
 SkinChangeCooldown: 30
 SkinErrorCooldown: 5
 
-  #################
+#################
 # Customization #
 #################
 
@@ -76,9 +76,9 @@ CustomGUI:
     - "xknat"
     - "McLive"
 
-  ############
-  # Advanced #
-  ############
+############
+# Advanced #
+############
 
 # Below Config options are OPTIONAL and are irrelevant for small servers.
 
@@ -148,7 +148,7 @@ RemountPlayerOnSkinUpdate: true
 # Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.
 DismountPassengersOnSkinUpdate: false
 
-  ###############
+###############
 # Danger Zone #
 ###############
 
