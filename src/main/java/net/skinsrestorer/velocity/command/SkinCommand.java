@@ -29,7 +29,7 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
@@ -188,13 +188,13 @@ public class SkinCommand extends BaseCommand {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!source.hasPermission("skinsrestorer.ownskin") && !getSenderName(source).equalsIgnoreCase(player.getUsername()) || !skin.equalsIgnoreCase(getSenderName(source))) {
-                    source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
+                    source.sendMessage(LegacyComponentSerializer.legacySection().deserialize(Locale.PLAYER_HAS_NO_PERMISSION_SKIN));
                     return;
                 }
             }
 
             if (setSkin(source, player, skin, true, false, skinType) && (source != player)) {
-                source.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ADMIN_SET_SKIN.replace("%player", player.getUsername())));
+                source.sendMessage(LegacyComponentSerializer.legacySection().deserialize(Locale.ADMIN_SET_SKIN.replace("%player", player.getUsername())));
             }
         });
     }
@@ -207,7 +207,7 @@ public class SkinCommand extends BaseCommand {
     @SuppressWarnings({"unused"})
     public void onSkinSetUrl(Player player, String url, @Optional SkinType skinType) {
         if (!C.validUrl(url)) {
-            player.sendMessage(LegacyComponentSerializer.legacy().deserialize(Locale.ERROR_INVALID_URLSKIN));
+            player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(Locale.ERROR_INVALID_URLSKIN));
             return;
         }
 
