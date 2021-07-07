@@ -56,7 +56,7 @@ public class Config {
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
-    public static String MINESKIN_API_KEY = "null";
+    public static String MINESKIN_API_KEY = "";
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
@@ -127,9 +127,16 @@ public class Config {
         if (!DISMOUNT_PLAYER_ON_UPDATE)
             REMOUNT_PLAYER_ON_UPDATE = false;
 
-        if (config.getBoolean("UseOldSkinHelp"))
-            logger.warning("[Config] UseOldSkinHelp has been renamed! use \"EnableCustomHelp\"");
-        ENABLE_CUSTOM_HELP = true;
+        try {
+            if (config.getBoolean("UseOldSkinHelp")) {
+                logger.warning("[Config] UseOldSkinHelp has been renamed! use \"EnableCustomHelp\"");
+                ENABLE_CUSTOM_HELP = true;
+            }
+        } catch (Exception ignored) {
+        }
+
+        if (MINESKIN_API_KEY.equals("key"))
+            MINESKIN_API_KEY = "";
     }
 
     public static void set(String path, Object value) {

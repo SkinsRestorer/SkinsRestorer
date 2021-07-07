@@ -170,7 +170,7 @@ public class MineSkinAPI {
                 con.setDoOutput(true);
                 con.setDoInput(true);
 
-                if (!Config.MINESKIN_API_KEY.equals("null"))
+                if (!Config.MINESKIN_API_KEY.isEmpty())
                     con.setRequestProperty("Authorization", Config.MINESKIN_API_KEY);
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
