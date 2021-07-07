@@ -396,7 +396,7 @@
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viabackwards-common</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- ViaVersion -->
