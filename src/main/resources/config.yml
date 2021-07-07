@@ -130,9 +130,9 @@ RestrictSkinUrls:
 # Here you can fill in your APIKey for lower MineSkin request times.
 # Key can be requested from https://mineskin.org/apikey
 # ((?) not needed for small servers / those not using the SkinUrl api (?))
-MineskinAPIKey: null
+MineskinAPIKey: "key"
 
-  #################
+#################
 # Compatibility #
 #################
 
