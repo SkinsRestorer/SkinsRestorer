@@ -109,14 +109,14 @@ public class Locale {
     public static void load(File path, SRLogger logger) {
         try {
             YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
-            locale.saveDefaultConfig();
+            locale.saveDefaultConfig(null);
             locale.reload();
 
             for (Field f : Locale.class.getFields()) {
                 if (f.getType() != String.class)
                     continue;
 
-                String parsed = C.c(locale.getString(f.getName(), f.get(null)));
+                String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
                     if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
                         parsed = C.c(locale.getString("PREFIX", null)) + parsed;

@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <!--suppress MavenModelInspection -->
                 <version>3.3.0</version>
                 <configuration>
                     <excludePackageNames>
@@ -98,7 +99,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <!--suppress MavenModelInspection -->
+                <version>3.3.0-SNAPSHOT</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <minimizeJar>true</minimizeJar>
@@ -253,6 +255,13 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <!-- Spigot API -->
@@ -429,6 +438,13 @@
             <groupId>com.gilecode.yagson</groupId>
             <artifactId>j9-reflection-utils</artifactId>
             <version>[1.0,)</version>
+        </dependency>
+        <!-- Configuration library -->
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <!-- Modify this line to target the loader you wish to use. -->
+            <artifactId>configurate-yaml</artifactId>
+            <version>4.1.1</version>
         </dependency>
     </dependencies>
 </project>
