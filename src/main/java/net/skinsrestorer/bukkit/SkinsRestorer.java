@@ -167,7 +167,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         // Init SkinsGUI click listener even when on bungee
-        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this), this);
+        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this, srLogger), this);
 
         if (bungeeEnabled) {
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
@@ -234,7 +234,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                             skinList.forEach((name, property) -> newSkinList.put(name, mojangAPI.createProperty(property.getName(), property.getValue(), property.getSignature())));
 
-                            SkinsGUI skinsGUI = new SkinsGUI(this);
+                            SkinsGUI skinsGUI = new SkinsGUI(this, srLogger);
                             ++page; // start counting from 1
                             Inventory inventory = skinsGUI.getGUI(player, page, newSkinList);
 
@@ -335,7 +335,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this, srLogger));
-        manager.registerCommand(new GUICommand(this, new SkinsGUI(this)));
+        manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
     }
 
     private boolean initStorage() {

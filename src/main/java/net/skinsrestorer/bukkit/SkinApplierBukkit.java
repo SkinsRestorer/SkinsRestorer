@@ -51,17 +51,17 @@ public class SkinApplierBukkit {
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh(plugin);
+        refresh = detectRefresh();
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
         if (PaperLib.isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
-            boolean viaVersion = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-            boolean protocolSupport = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
-            if (viaVersion || protocolSupport) {
-                plugin.getSrLogger().info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+            boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
+            boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+            if (viaVersionExists || protocolSupportExists) {
+                log.info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return new SpigotSkinRefresher(plugin, log);
             }
 
