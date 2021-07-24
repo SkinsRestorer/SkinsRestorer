@@ -51,7 +51,7 @@ public class SkinApplierBukkit {
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh();
+        refresh = detectRefresh(plugin);
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
