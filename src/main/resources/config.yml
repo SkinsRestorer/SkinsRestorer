@@ -161,7 +161,7 @@ DisableOnJoinSkins: false
 
 # <!! Warning !!>
 # Enable this will require players to run "/skin update" to update their skin.
-DisableAutoUpdateSkin: true
+DisallowAutoUpdateSkin: false
 
 # Updater Settings
 Updater:
