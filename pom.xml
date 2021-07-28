@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <!--suppress MavenModelInspection -->
                 <version>3.3.0</version>
                 <configuration>
                     <excludePackageNames>
@@ -136,6 +137,14 @@
                             <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>mysql:mysql-connector-java</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
