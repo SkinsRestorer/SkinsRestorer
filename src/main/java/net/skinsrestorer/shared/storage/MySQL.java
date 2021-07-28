@@ -62,7 +62,7 @@ public class MySQL {
 
     public Connection openConnection() throws SQLException {
         try {
-            Class.forName("com.mysql.jdbc.Driver").getConstructor().newInstance();
+            Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }
