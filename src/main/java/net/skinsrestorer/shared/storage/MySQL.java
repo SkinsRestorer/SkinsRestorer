@@ -26,6 +26,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,7 +61,12 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        com.mysql.cj.jdbc.Driver.getOSName();
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
+        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
         logger.info("Connected to MySQL!");

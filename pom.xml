@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <!--suppress MavenModelInspection -->
                 <version>3.3.0</version>
                 <configuration>
                     <excludePackageNames>
@@ -136,6 +137,14 @@
                             <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>mysql:mysql-connector-java</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -390,7 +399,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
+            <version>8.0.26</version>
         </dependency>
         <!-- ViaBackwards (needed as a dependency to to fix 1.16.1 -> 1.15.2) -->
         <dependency>
