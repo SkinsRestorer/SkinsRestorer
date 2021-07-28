@@ -60,7 +60,7 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        com.mysql.cj.jdbc.Driver.getOSName();
+        new com.mysql.cj.jdbc.Driver();
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
         logger.info("Connected to MySQL!");
