@@ -419,7 +419,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.2.0</version>
+            <version>8.3.0</version>
         </dependency>
         <!-- PaperLib -->
         <dependency>
