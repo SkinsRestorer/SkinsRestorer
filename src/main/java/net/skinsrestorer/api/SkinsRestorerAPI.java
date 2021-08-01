@@ -25,6 +25,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 
 /**
@@ -37,13 +38,15 @@ public abstract class SkinsRestorerAPI {
     @Getter
     private static SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
+    private final MineSkinAPI mineSkinAPI;
     private final SkinStorage skinStorage;
 
-    protected SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+    protected SkinsRestorerAPI(MojangAPI mojangAPI, MineSkinAPI mineSkinAPI, SkinStorage skinStorage) {
         if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
         this.mojangAPI = mojangAPI;
+        this.mineSkinAPI = mineSkinAPI;
         this.skinStorage = skinStorage;
     }
 
