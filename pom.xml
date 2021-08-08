@@ -138,6 +138,16 @@
                             <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/SPONGEPO.SF</exclude>
+                                <exclude>META-INF/SPONGEPO.DSA</exclude>
+                                <exclude>META-INF/SPONGEPO.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>

@@ -119,13 +119,13 @@ public class Locale {
                 String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
                     if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
-                        parsed = C.c(locale.getString("PREFIX", null)) + parsed;
+                        parsed = C.c(locale.getString("PREFIX", "")) + parsed;
                 }
 
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.");
+            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.", e);
         }
     }
 }

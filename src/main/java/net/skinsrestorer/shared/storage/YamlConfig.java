@@ -21,8 +21,6 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import com.google.common.reflect.TypeToken;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -37,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class YamlConfig {
-    private final File path;
     private final String name;
     private final boolean setMissing;
     private final File file;
@@ -45,7 +42,6 @@ public class YamlConfig {
     private ConfigurationNode config;
 
     public YamlConfig(File path, String name, boolean setMissing, SRLogger logger) {
-        this.path = path;
         this.name = name;
         this.setMissing = setMissing;
         this.file = new File(path, name);
@@ -86,7 +82,7 @@ public class YamlConfig {
 
     public ConfigurationNode get(String path) {
         try {
-            return config.node((Object) path.split("\\."));
+            return config.node((Object[]) path.split("\\."));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,9 +148,7 @@ public class YamlConfig {
     }
 
     public void reload() throws ConfigurateException {
-        YamlConfigurationLoader loader = YamlConfigurationLoader.builder().path(file.toPath()).build();
-
-        config = loader.load();
+        config = YamlConfigurationLoader.builder().path(file.toPath()).build().load();
     }
 
     private void save() throws ConfigurateException {
@@ -163,11 +157,17 @@ public class YamlConfig {
 
     public void set(String path, Object value) {
         try {
-            config.node(path.split("\\."), value);
+            ConfigurationNode node = config.node((Object[]) path.split("\\."));
+            if (value instanceof List) {
+                //noinspection unchecked
+                node.setList(String.class, (List<String>) value);
+            } else {
+                node.set(value);
+            }
+
             save();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }
