@@ -380,7 +380,7 @@
             <artifactId>acf-bungee</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
-        <!-- ACF for skinsrestorer.sponge -->
+        <!-- ACF for sponge -->
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-sponge</artifactId>
@@ -452,7 +452,6 @@
         <!-- Configuration library -->
         <dependency>
             <groupId>org.spongepowered</groupId>
-            <!-- Modify this line to target the loader you wish to use. -->
             <artifactId>configurate-yaml</artifactId>
             <version>4.1.1</version>
         </dependency>

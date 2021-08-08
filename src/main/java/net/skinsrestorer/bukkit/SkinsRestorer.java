@@ -124,7 +124,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             srLogger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server! ", e);
         }
 
-        srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getClass().getSimpleName() + ChatColor.GREEN + ".");
+        srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
         if (getServer().getPluginManager().getPlugin("ViaVersion") != null) {
             try {

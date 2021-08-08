@@ -22,6 +22,7 @@
 package net.skinsrestorer.bukkit;
 
 import io.papermc.lib.PaperLib;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
@@ -42,6 +43,7 @@ import java.util.function.Consumer;
 public class SkinApplierBukkit {
     private final SkinsRestorer plugin;
     private final SRLogger log;
+    @Getter
     private final Consumer<Player> refresh;
     private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
