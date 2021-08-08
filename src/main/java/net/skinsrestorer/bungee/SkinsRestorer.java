@@ -201,7 +201,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
         public SkinsRestorerBungeeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage);
         }
 
         @Override

@@ -456,7 +456,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
         public SkinsRestorerBukkitAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage);
         }
 
         @Override
