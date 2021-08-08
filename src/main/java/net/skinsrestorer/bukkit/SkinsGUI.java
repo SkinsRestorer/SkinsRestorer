@@ -24,6 +24,7 @@ package net.skinsrestorer.bukkit;
 import com.cryptomorin.xseries.XMaterial;
 import com.mojang.authlib.properties.Property;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -45,17 +46,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequiredArgsConstructor
 public class SkinsGUI extends ItemStack implements Listener {
     @Getter
     private static final Map<String, Integer> menus = new ConcurrentHashMap<>();
     private final SkinsRestorer plugin;
-    @Getter
     private final SRLogger log;
-
-    public SkinsGUI(SkinsRestorer plugin, SRLogger log) {
-        this.plugin = plugin;
-        this.log = log;
-    }
 
     public Inventory getGUI(Player player, int page, Map<String, Object> skinsList) {
         Inventory inventory = Bukkit.createInventory(player, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));

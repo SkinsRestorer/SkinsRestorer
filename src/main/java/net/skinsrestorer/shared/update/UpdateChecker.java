@@ -87,7 +87,7 @@ public class UpdateChecker {
         List<String> upToDateMessages = new LinkedList<>();
         upToDateMessages.add("§a----------------------------------------------");
         upToDateMessages.add("§a    +==================+");
-        upToDateMessages.add("§a    | SkinsRestorer |");
+        upToDateMessages.add("§a    |   SkinsRestorer  |");
         upToDateMessages.add("§a    |------------------|");
         if (bungeeMode) {
 

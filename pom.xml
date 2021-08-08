@@ -147,6 +147,12 @@
                                 <exclude>META-INF/SPONGEPO.RSA</exclude>
                             </excludes>
                         </filter>
+                        <filter>
+                            <artifact>mysql:mysql-connector-java</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
                     </filters>
                 </configuration>
                 <executions>
@@ -409,7 +415,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
+            <version>8.0.26</version>
         </dependency>
         <!-- ViaBackwards (needed as a dependency to to fix 1.16.1 -> 1.15.2) -->
         <dependency>
@@ -429,7 +435,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.2.0</version>
+            <version>8.3.0</version>
         </dependency>
         <!-- PaperLib -->
         <dependency>
