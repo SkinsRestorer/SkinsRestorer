@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -74,7 +75,11 @@ public class Config {
     public static void load(File path, InputStream is, SRLogger logger) {
         config = new YamlConfig(path, "config.yml", false, logger);
         config.saveDefaultConfig(is);
-        config.reload();
+        try {
+            config.reload();
+        } catch (ConfigurateException e) {
+            e.printStackTrace();
+        }
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
