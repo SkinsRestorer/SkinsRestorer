@@ -265,7 +265,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         initCommands();
 
         // Init listener
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoin(this, srLogger), this);
 
         // Run connection check
         if (!bungeeEnabled) {
