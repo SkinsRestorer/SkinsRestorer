@@ -111,6 +111,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+        skinApplierBungee = new SkinApplierBungee(this, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -124,18 +126,12 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         getProxy().registerChannel("sr:skinchange");
 
-        // Init SkinApplier
-        skinApplierBungee = new SkinApplierBungee(this, srLogger);
-
         // Init message channel
         getProxy().registerChannel("sr:messagechannel");
         pluginMessageListener = new PluginMessageListener(this);
         getProxy().getPluginManager().registerListener(this, pluginMessageListener);
 
         multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
-
-        // Init API
-        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);

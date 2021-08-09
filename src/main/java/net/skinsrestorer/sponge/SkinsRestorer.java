@@ -122,6 +122,8 @@ public class SkinsRestorer implements ISRPlugin {
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+        skinApplierSponge = new SkinApplierSponge(this);
 
         // Init storage
         if (!initStorage())
@@ -129,12 +131,6 @@ public class SkinsRestorer implements ISRPlugin {
 
         // Init commands
         initCommands();
-
-        // Init SkinApplier
-        skinApplierSponge = new SkinApplierSponge(this);
-
-        // Init API
-        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
