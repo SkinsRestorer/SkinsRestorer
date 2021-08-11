@@ -116,9 +116,16 @@ public class Config {
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
+        //__Default__Skins
         if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {
             logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
             DEFAULT_SKINS_ENABLED = false;
+        }
+
+        //__Disabled__Skins
+        if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty()) {
+            logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
+            DISABLED_SKINS_ENABLED = false;
         }
 
         if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty()) {
