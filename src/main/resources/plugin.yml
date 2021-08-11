@@ -1,4 +1,4 @@
-name: ${project.name}
+name: SkinsRestorer
 main: net.skinsrestorer.bukkit.SkinsRestorer
 version: ${project.version}
 description: ${project.description}

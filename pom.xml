@@ -4,7 +4,7 @@
 
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>14.1.1</version>
+    <version>14.1.2</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <!--suppress MavenModelInspection -->
                 <version>3.3.0</version>
                 <configuration>
                     <excludePackageNames>
@@ -98,7 +99,8 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <!--suppress MavenModelInspection -->
+                <version>3.3.0-SNAPSHOT</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
                     <minimizeJar>true</minimizeJar>
@@ -136,6 +138,22 @@
                             <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
                         </relocation>
                     </relocations>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/SPONGEPO.SF</exclude>
+                                <exclude>META-INF/SPONGEPO.DSA</exclude>
+                                <exclude>META-INF/SPONGEPO.RSA</exclude>
+                            </excludes>
+                        </filter>
+                        <filter>
+                            <artifact>mysql:mysql-connector-java</artifact>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                        </filter>
+                    </filters>
                 </configuration>
                 <executions>
                     <execution>
@@ -248,7 +266,18 @@
             <id>viaversion</id>
             <url>https://repo.viaversion.com</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-snapshots</id>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencies>
         <!-- Spigot API -->
@@ -297,7 +326,7 @@
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>1.1.8</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Mojang Auth Library (needed for SkinsGUI) -->
@@ -357,7 +386,7 @@
             <artifactId>acf-bungee</artifactId>
             <version>0.5.0-SNAPSHOT</version>
         </dependency>
-        <!-- ACF for skinsrestorer.sponge -->
+        <!-- ACF for sponge -->
         <dependency>
             <groupId>co.aikar</groupId>
             <artifactId>acf-sponge</artifactId>
@@ -365,9 +394,9 @@
         </dependency>
         <!-- ACF for velocity -->
         <dependency>
-            <groupId>co.aikar</groupId>
+            <groupId>com.github.AlexProgrammerDE.commands</groupId>
             <artifactId>acf-velocity</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
+            <version>4da0ffec3c</version>
         </dependency>
         <!-- gson -->
         <dependency>
@@ -386,13 +415,13 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.23</version>
+            <version>8.0.26</version>
         </dependency>
         <!-- ViaBackwards (needed as a dependency to to fix 1.16.1 -> 1.15.2) -->
         <dependency>
             <groupId>com.viaversion</groupId>
             <artifactId>viabackwards-common</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
         <!-- ViaVersion -->
@@ -406,7 +435,7 @@
         <dependency>
             <groupId>com.github.cryptomorin</groupId>
             <artifactId>XSeries</artifactId>
-            <version>8.1.0</version>
+            <version>8.3.0</version>
         </dependency>
         <!-- PaperLib -->
         <dependency>
@@ -425,6 +454,12 @@
             <groupId>com.gilecode.yagson</groupId>
             <artifactId>j9-reflection-utils</artifactId>
             <version>[1.0,)</version>
+        </dependency>
+        <!-- Configuration library -->
+        <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>4.1.1</version>
         </dependency>
     </dependencies>
 </project>

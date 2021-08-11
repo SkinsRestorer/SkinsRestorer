@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,14 +37,10 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+@RequiredArgsConstructor
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public LoginListener(SkinsRestorer plugin, SRLogger log) {
-        this.plugin = plugin;
-        this.log = log;
-    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {

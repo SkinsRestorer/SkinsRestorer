@@ -22,6 +22,7 @@
 package net.skinsrestorer.bungee.listeners;
 
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -33,12 +34,9 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import java.io.*;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class PluginMessageListener implements Listener {
     private final SkinsRestorer plugin;
-
-    public PluginMessageListener(SkinsRestorer plugin) {
-        this.plugin = plugin;
-    }
 
     private static byte[] convertToByteArray(Map<String, GenericProperty> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();

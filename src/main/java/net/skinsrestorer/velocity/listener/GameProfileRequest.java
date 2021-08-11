@@ -24,20 +24,16 @@ package net.skinsrestorer.velocity.listener;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
+@RequiredArgsConstructor
 public class GameProfileRequest {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    @Inject
-    public GameProfileRequest(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     // TODO: make async, add #getSkinForPlayer()
     @Subscribe

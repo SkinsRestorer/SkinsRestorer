@@ -122,6 +122,8 @@ public class SkinsRestorer implements ISRPlugin {
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+        skinApplierSponge = new SkinApplierSponge(this);
 
         // Init storage
         if (!initStorage())
@@ -130,12 +132,6 @@ public class SkinsRestorer implements ISRPlugin {
         // Init commands
         initCommands();
 
-        // Init SkinApplier
-        skinApplierSponge = new SkinApplierSponge(this);
-
-        // Init API
-        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
-
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
@@ -143,7 +139,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
         if (!Sponge.getServer().getOnlineMode()) {
-            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
+            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this, srLogger));
         }
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
@@ -222,7 +218,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
         public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage);
         }
 
         @Override

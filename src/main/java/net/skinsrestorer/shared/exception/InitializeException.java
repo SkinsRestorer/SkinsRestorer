@@ -21,12 +21,11 @@
  */
 package net.skinsrestorer.shared.exception;
 
-public class ReflectionException extends ReflectiveOperationException {
-    public ReflectionException(String message) {
-        super(message);
-    }
-
-    public ReflectionException(Exception e) {
+/**
+ * Used for constructors that fail initializing.
+ */
+public class InitializeException extends Exception {
+    public InitializeException(Exception e) {
         super(e);
     }
 }

@@ -86,20 +86,20 @@ public class UpdateChecker {
     public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
         List<String> upToDateMessages = new LinkedList<>();
         upToDateMessages.add("§a----------------------------------------------");
-        upToDateMessages.add("§a    +===============+");
-        upToDateMessages.add("§a    | SkinsRestorer |");
+        upToDateMessages.add("§a    +==================+");
+        upToDateMessages.add("§a    |   SkinsRestorer  |");
+        upToDateMessages.add("§a    |------------------|");
         if (bungeeMode) {
-            upToDateMessages.add("§a    |---------------|");
-            upToDateMessages.add("§a    |  §eBungee Mode§a  |");
+
+            upToDateMessages.add("§a    |   §eBungee Mode§a    |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
-                upToDateMessages.add("§a    |---------------|");
-                upToDateMessages.add("§a    |  §9§n§lBukkit only§a  |");
+                upToDateMessages.add("§a    |  §9§n§lStandalone Mode§a |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
-        upToDateMessages.add("§a    +===============+");
+        upToDateMessages.add("§a    +==================+");
         upToDateMessages.add("§a----------------------------------------------");
         upToDateMessages.add("§b    Current version: §a" + currentVersion);
         upToDateMessages.add("§a    This is the latest version!");
@@ -117,20 +117,20 @@ public class UpdateChecker {
         List<String> updateAvailableMessages = new LinkedList<>();
 
         updateAvailableMessages.add("§a----------------------------------------------");
-        updateAvailableMessages.add("§a    +===============+");
-        updateAvailableMessages.add("§a    | SkinsRestorer |");
+        updateAvailableMessages.add("§a    +==================+");
+        updateAvailableMessages.add("§a    |   SkinsRestorer  |");
+        updateAvailableMessages.add("§a    |------------------|");
         if (bungeeMode) {
-            updateAvailableMessages.add("§a    |---------------|");
-            updateAvailableMessages.add("§a    |  §eBungee Mode§a  |");
+
+            updateAvailableMessages.add("§a    |   §eBungee Mode§a    |");
         } else {
             try {
                 Bukkit.getName(); //try if it is running bukkit
-                updateAvailableMessages.add("§a    |---------------|");
-                updateAvailableMessages.add("§a    |  §9§n§lBukkit only§a  |");
+                updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
             } catch (NoClassDefFoundError ignored) {
             }
         }
-        updateAvailableMessages.add("§a    +===============+");
+        updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a----------------------------------------------");
         updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
         updateAvailableMessages.add("§b    New version: §c" + newVersion);

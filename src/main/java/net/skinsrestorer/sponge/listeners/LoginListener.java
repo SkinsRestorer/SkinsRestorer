@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -30,14 +31,10 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 
+@RequiredArgsConstructor
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public LoginListener(SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     @Override
     public void handle(Auth event) {

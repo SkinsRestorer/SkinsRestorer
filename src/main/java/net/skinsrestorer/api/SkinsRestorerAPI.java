@@ -25,11 +25,12 @@ import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 
 /**
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a>
- * For more info please refer first to <a href="https://github.com/SkinsRestorer/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a>
+ * For more info please refer first to <a href="https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a>
  * Advanced help or getting problems? join our discord before submitting issues!
  */
 @SuppressWarnings({"unused"})
@@ -37,13 +38,15 @@ public abstract class SkinsRestorerAPI {
     @Getter
     private static SkinsRestorerAPI api;
     private final MojangAPI mojangAPI;
+    private final MineSkinAPI mineSkinAPI;
     private final SkinStorage skinStorage;
 
-    protected SkinsRestorerAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+    protected SkinsRestorerAPI(MojangAPI mojangAPI, MineSkinAPI mineSkinAPI, SkinStorage skinStorage) {
         if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
         this.mojangAPI = mojangAPI;
+        this.mineSkinAPI = mineSkinAPI;
         this.skinStorage = skinStorage;
     }
 
@@ -53,48 +56,54 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Returned object needs to be casted to either BungeeCord's property or
-     * Mojang's property (old or new)
+     * Returned property contains all skin data.
+     * You can get the wrapped object using {@link IProperty#getHandle()}
      *
      * @param uuid The players uuid
-     * @return Property object (New Mojang, Old Mojang or Bungee)
+     * @return The players skin property
      **/
     public IProperty getProfile(String uuid) {
         return mojangAPI.getProfile(uuid);
     }
 
     /**
-     * Get a players custom skin.
+     * Returns the custom skin name that player has set.
+     * Returns null if player has no custom skin set.
      *
-     * @param name The players name
-     * @return the players custom skin name if set or null if not set
+     * @param playerName The players name
+     * @return The players custom skin name if set or null if not set
      */
-    public String getSkinName(String name) {
-        return skinStorage.getSkinName(name);
-    }
-
-    public IProperty getSkinData(String skin) {
-        return skinStorage.getSkinData(skin);
+    public String getSkinName(String playerName) {
+        return skinStorage.getSkinName(playerName);
     }
 
     /**
      * Check if a player got a custom skin.
      *
-     * @param name The players name
+     * @param playerName The players name
      * @return true if a player has a custom skin set
      */
-    public boolean hasSkin(String name) {
-        return skinStorage.getSkinName(name) != null;
+    public boolean hasSkin(String playerName) {
+        return getSkinName(playerName) != null;
     }
 
     /**
      * Saves custom player's skin name to database
      *
-     * @param name Players name
-     * @param skin Skin name
+     * @param playerName Players name
+     * @param skinName Skin name
      **/
-    public void setSkinName(String name, String skin) {
-        skinStorage.setSkinName(name, skin);
+    public void setSkinName(String playerName, String skinName) {
+        skinStorage.setSkinName(playerName, skinName);
+    }
+
+    /**
+     * Returns property object containing skin data of the wanted skin
+     *
+     * @param skinName Skin name
+     **/
+    public IProperty getSkinData(String skinName) {
+        return skinStorage.getSkinData(skinName);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {

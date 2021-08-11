@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -31,7 +32,7 @@ public class Config {
     public static boolean SKINWITHOUTPERM = false;
     public static int SKIN_CHANGE_COOLDOWN = 30;
     public static int SKIN_ERROR_COOLDOWN = 5;
-    public static boolean USE_OLD_SKIN_HELP = false;
+    public static boolean ENABLE_CUSTOM_HELP = false;
     public static boolean DISABLE_PREFIX = false;
     public static boolean DEFAULT_SKINS_ENABLED = false;
     public static boolean DEFAULT_SKINS_PREMIUM = false;
@@ -56,12 +57,12 @@ public class Config {
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
-    public static String MINESKIN_API_KEY = "null";
+    public static String MINESKIN_API_KEY = "";
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
     public static boolean DISABLE_ONJOIN_SKINS = false;
-    public static boolean DISABLE_AUTO_UPDATE_SKIN = false;
+    public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
     public static boolean DEBUG = false;
 
 
@@ -74,11 +75,15 @@ public class Config {
     public static void load(File path, InputStream is, SRLogger logger) {
         config = new YamlConfig(path, "config.yml", false, logger);
         config.saveDefaultConfig(is);
-        config.reload();
+        try {
+            config.reload();
+        } catch (ConfigurateException e) {
+            e.printStackTrace();
+        }
         SKINWITHOUTPERM = config.getBoolean("SkinWithoutPerm", SKINWITHOUTPERM);
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
-        USE_OLD_SKIN_HELP = config.getBoolean("UseOldSkinHelp", USE_OLD_SKIN_HELP);
+        ENABLE_CUSTOM_HELP = config.getBoolean("EnableCustomHelp", ENABLE_CUSTOM_HELP);
         DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
         DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
         DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);
@@ -101,7 +106,7 @@ public class Config {
         MYSQL_PLAYERTABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYERTABLE);
         MYSQL_CONNECTIONOPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTIONOPTIONS);
         DISABLE_ONJOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ONJOIN_SKINS);
-        DISABLE_AUTO_UPDATE_SKIN = config.getBoolean("DisableAutoUpdateSkin", DISABLE_AUTO_UPDATE_SKIN);
+        DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
@@ -111,18 +116,20 @@ public class Config {
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
+        //__Default__Skins
         if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {
-            // TODO: warning logger
+            logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
             DEFAULT_SKINS_ENABLED = false;
         }
 
+        //__Disabled__Skins
         if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty()) {
-            // TODO: warning logger
-            DEFAULT_SKINS_ENABLED = false;
+            logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
+            DISABLED_SKINS_ENABLED = false;
         }
 
         if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty()) {
-            // TODO: warning logger
+            logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
             RESTRICT_SKIN_URLS_ENABLED = false;
         }
 
@@ -131,6 +138,17 @@ public class Config {
 
         if (!DISMOUNT_PLAYER_ON_UPDATE)
             REMOUNT_PLAYER_ON_UPDATE = false;
+
+        try {
+            if (config.getBoolean("UseOldSkinHelp")) {
+                logger.warning("[Config] UseOldSkinHelp has been renamed! use \"EnableCustomHelp\"");
+                ENABLE_CUSTOM_HELP = true;
+            }
+        } catch (Exception ignored) {
+        }
+
+        if (MINESKIN_API_KEY.equals("key"))
+            MINESKIN_API_KEY = "";
     }
 
     public static void set(String path, Object value) {

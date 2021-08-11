@@ -21,24 +21,27 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 
 public class YamlConfig {
-    private final File path;
     private final String name;
     private final boolean setMissing;
     private final File file;
     private final SRLogger logger;
-    private Object config;
+    private ConfigurationNode config;
 
     public YamlConfig(File path, String name, boolean setMissing, SRLogger logger) {
-        this.path = path;
         this.name = name;
         this.setMissing = setMissing;
         this.file = new File(path, name);
@@ -49,87 +52,46 @@ public class YamlConfig {
             path.mkdirs();
     }
 
-    private void createNewFile() {
-        try {
-            //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void saveDefaultConfig() {
-        saveDefaultConfig(null);
-    }
-
     public void saveDefaultConfig(InputStream is) {
         if (file.exists())
             return;
 
         // create empty file if we got no InputStream with default config
         if (is == null) {
-            createNewFile();
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
 
-        saveResource(is, name, false);
-        reload();
-    }
-
-    public void saveResource(InputStream in, String resourcePath, boolean replace) {
-        if (resourcePath == null || resourcePath.equals("")) {
-            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
-        }
-
-        resourcePath = resourcePath.replace('\\', '/');
-        if (in == null) {
-            throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in ");
-        }
-
-        File outFile = new File(path, resourcePath);
-        int lastIndex = resourcePath.lastIndexOf('/');
-        File outDir = new File(path, resourcePath.substring(0, Math.max(lastIndex, 0)));
-
-        if (!outDir.exists()) {
-            outDir.mkdirs();
+        try {
+            Files.copy(is, file.toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {
-            if (!outFile.exists() || replace) {
-                try (OutputStream out = new FileOutputStream(outFile)) {
-                    byte[] buf = new byte[1024];
-                    int len;
-                    while ((len = in.read(buf)) > 0) {
-                        out.write(buf, 0, len);
-                    }
-                }
-                in.close();
-            } else {
-                logger.warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
-            }
-        } catch (IOException ex) {
-            logger.warning("Could not save " + outFile.getName() + " to " + outFile);
-            ex.printStackTrace();
+            reload();
+        } catch (ConfigurateException e) {
+            e.printStackTrace();
         }
     }
 
-    public Object get(String path) {
+    public ConfigurationNode get(String path) {
         try {
-            return ReflectionUtil.invokeMethod(config.getClass(), config, "get", new Class<?>[]{String.class}, path);
+            return config.node((Object[]) path.split("\\."));
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public Object get(String path, Object defValue) {
-        if (get(path) == null && !setMissing) {
-            logger.info(path + " is missing in " + name + "! Using default value.");
-            return defValue;
-        }
-
+    public ConfigurationNode get(String path, String defValue) {
         // Save new values if enabled (locale file)
-        if (get(path) == null && setMissing) {
+        if (get(path).virtual() && setMissing) {
             logger.info("Saving new config value " + path + " to " + name);
             set(path, defValue);
         }
@@ -138,45 +100,41 @@ public class YamlConfig {
     }
 
     public boolean getBoolean(String path) {
-        return Boolean.parseBoolean(getString(path));
+        return get(path).getBoolean();
     }
 
     public boolean getBoolean(String path, Boolean defValue) {
-        return Boolean.parseBoolean(getString(path, defValue));
+        return get(path).getBoolean(defValue);
     }
 
     public int getInt(String path) {
-        return Integer.parseInt(getString(path));
+        return get(path).getInt();
     }
 
     public int getInt(String path, Integer defValue) {
-        return Integer.parseInt(getString(path, defValue));
+        return get(path).getInt(defValue);
     }
 
     private String getString(String path) {
-        String s;
-        s = get(path).toString();
-        return s;
+        return get(path).getString();
     }
 
-    public String getString(String path, Object defValue) {
-        return get(path, defValue).toString();
+    public String getString(String path, String defValue) {
+        return get(path, defValue).getString(defValue);
     }
 
     public List<String> getStringList(String path) {
         try {
-            return (List<String>) ReflectionUtil.invokeMethod(config.getClass(), config, "getStringList",
-                    new Class<?>[]{String.class}, path);
+            return get(path).getList(String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     public List<String> getStringList(String path, String whatToDelete) {
         try {
-            List<String> list = (List<String>) ReflectionUtil.invokeMethod(config.getClass(), config, "getStringList",
-                    new Class<?>[]{String.class}, path);
+            List<String> list = getStringList(path);
             List<String> newList = new ArrayList<>();
 
             for (String str : list)
@@ -186,70 +144,30 @@ public class YamlConfig {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptyList();
     }
 
-    private boolean isEmpty() {
-        try {
-            try (Scanner input = new Scanner(file)) {
-                if (input.hasNextLine())
-                    return false;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return true;
+    public void reload() throws ConfigurateException {
+        config = YamlConfigurationLoader.builder().path(file.toPath()).build().load();
     }
 
-    public void reload() {
-        try {
-            Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
-                    null, "getProvider", new Class<?>[]{Class.class},
-                    Class.forName("net.md_5.bungee.config.YamlConfiguration"));
-
-            config = ReflectionUtil.invokeMethod(provider.getClass(), provider, "load", new Class<?>[]{File.class}, file);
-        } catch (Exception e) {
-            try {
-                config = ReflectionUtil.invokeMethod(Class.forName("org.bukkit.configuration.file.YamlConfiguration"),
-                        null, "loadConfiguration", new Class<?>[]{File.class}, file);
-            } catch (Exception ex) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void save() {
-        try {
-            Object provider = ReflectionUtil.invokeMethod(Class.forName("net.md_5.bungee.config.ConfigurationProvider"),
-                    null, "getProvider", new Class<?>[]{Class.class},
-                    Class.forName("net.md_5.bungee.config.YamlConfiguration"));
-
-            ReflectionUtil.invokeMethod(provider.getClass(), provider, "save",
-                    new Class<?>[]{Class.forName("net.md_5.bungee.config.Configuration"), File.class}, config, file);
-        } catch (Exception e) {
-            try {
-                ReflectionUtil.invokeMethod(config.getClass(), config, "save", new Class<?>[]{File.class}, file);
-            } catch (Exception ex) {
-                try {
-                    ReflectionUtil.invokeMethod(config.getClass(), config, "save",
-                            new Class<?>[]{Class.forName("org.bukkit.configuration.Configuration"), File.class},
-                            config, file);
-                } catch (Exception exc) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    private void save() throws ConfigurateException {
+        YamlConfigurationLoader.builder().path(file.toPath()).build().save(config);
     }
 
     public void set(String path, Object value) {
         try {
-            ReflectionUtil.invokeMethod(config.getClass(), config, "set", new Class<?>[]{String.class, Object.class},
-                    path, value);
+            ConfigurationNode node = config.node((Object[]) path.split("\\."));
+            if (value instanceof List) {
+                //noinspection unchecked
+                node.setList(String.class, (List<String>) value);
+            } else {
+                node.set(value);
+            }
+
             save();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 }

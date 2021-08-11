@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -33,14 +34,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+@RequiredArgsConstructor
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
-
-    public PlayerJoin(final SkinsRestorer plugin) {
-        this.plugin = plugin;
-        log = plugin.getSrLogger();
-    }
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {

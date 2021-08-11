@@ -106,12 +106,12 @@ public class SkinsRestorer implements ISRPlugin {
 
         // Check for updates
         if (!updaterDisabled.exists()) {
-            updateChecker = new UpdateCheckerGitHub(2124, getVersion(), getSrLogger(), "SkinsRestorerUpdater/Velocity");
+            updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
             Random rn = new Random();
             int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-            getProxy().getScheduler().buildTask(this, this::checkUpdate).repeat(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES).schedule();
+            proxy.getScheduler().buildTask(this, this::checkUpdate).repeat(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES).schedule();
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -123,22 +123,18 @@ public class SkinsRestorer implements ISRPlugin {
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
+        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
 
         // Init storage
         if (!initStorage())
             return;
 
         // Init listener
-        proxy.getEventManager().register(this, new GameProfileRequest(this));
+        proxy.getEventManager().register(this, new GameProfileRequest(this, srLogger));
 
         // Init commands
         initCommands();
-
-        // Init SkinApplier
-        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
-
-        // Init API
-        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
 
         srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
@@ -148,7 +144,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @SuppressWarnings({"deprecation"})
     private void initCommands() {
-        VelocityCommandManager manager = new VelocityCommandManager(getProxy(), this);
+        VelocityCommandManager manager = new VelocityCommandManager(proxy, this);
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
 
@@ -202,7 +198,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Override
     public String getVersion() {
-        Optional<PluginContainer> plugin = getProxy().getPluginManager().getPlugin("skinsrestorer");
+        Optional<PluginContainer> plugin = proxy.getPluginManager().getPlugin("skinsrestorer");
 
         if (!plugin.isPresent())
             return "";
@@ -214,7 +210,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
         public SkinsRestorerVelocityAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage);
         }
 
         @Override

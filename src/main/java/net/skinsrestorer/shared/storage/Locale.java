@@ -101,7 +101,7 @@ public class Locale {
     public static String RELOAD = "&2Config and Locale has been reloaded!";
     public static String OUTDATED = "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
     public static String SR_LINE = "&7&m----------------------------------------";
-    public static String HELP_PLAYER = "  &2&lSkinsRestorer &7- &f&lv%ver%"
+    public static String CUSTOM_HELP_IF_ENABLED = "  &2&lSkinsRestorer &7- &f&lv%ver%"
             + "\n   &2/skin <skinname> &7-&f Changes your skin."
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
@@ -109,24 +109,23 @@ public class Locale {
     public static void load(File path, SRLogger logger) {
         try {
             YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
-            locale.saveDefaultConfig();
+            locale.saveDefaultConfig(null);
             locale.reload();
 
             for (Field f : Locale.class.getFields()) {
-
                 if (f.getType() != String.class)
                     continue;
 
-                String parsed = C.c(locale.getString(f.getName(), f.get(null)));
+                String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
                 if (!Config.DISABLE_PREFIX) {
                     if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
-                        parsed = C.c(locale.getString("PREFIX", null)) + parsed;
+                        parsed = C.c(locale.getString("PREFIX", "")) + parsed;
                 }
 
                 f.set(null, parsed);
             }
         } catch (Exception e) {
-            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.");
+            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.", e);
         }
     }
 }
