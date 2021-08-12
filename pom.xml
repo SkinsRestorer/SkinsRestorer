@@ -4,7 +4,7 @@
 
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>14.1.2</version>
+    <version>14.1.3</version>
     <packaging>jar</packaging>
 
     <name>SkinsRestorer</name>
@@ -136,6 +136,14 @@
                         <relocation>
                             <pattern>co.aikar.timings.lib</pattern>
                             <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.yaml.snakeyaml</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.snakeyaml</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.spongepowered.configurate</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.configurate</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
