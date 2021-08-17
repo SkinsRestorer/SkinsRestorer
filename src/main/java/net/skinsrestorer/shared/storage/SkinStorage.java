@@ -70,7 +70,7 @@ public class SkinStorage {
             } catch (SkinRequestException e) {
                 // removing skin from list
                 toRemove.add(skin);
-                logger.warning("[WARNING] DefaultSkin '" + skin + "' could not be found or requested! Removing from list..");
+                logger.warning("[WARNING] DefaultSkin '" + skin + "'(.skin) could not be found or requested! Removing from list..");
 
                 logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ");
                 if (Config.DEBUG)
@@ -78,6 +78,11 @@ public class SkinStorage {
             }
         });
         Config.DEFAULT_SKINS.removeAll(toRemove);
+
+        if (Config.DEFAULT_SKINS.isEmpty()) {
+            logger.warning("[WARNING] No more working DefaultSkin left... disabling feature");
+            Config.DEFAULT_SKINS_ENABLED = false;
+        }
     }
 
     /**
