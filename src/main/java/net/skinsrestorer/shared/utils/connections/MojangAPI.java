@@ -81,9 +81,16 @@ public class MojangAPI {
         return null;
     }
 
+    /**
+     * Get the skin from a single request
+     *
+     * @param nameOrUuid name or trimmed (-) uuid
+     * @return IProperty skin
+     * @throws SkinRequestException on
+     */
     public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
         IProperty skin = getProfile(nameOrUuid, false);
-        if (skin !=null)
+        if (skin != null)
             return skin;
 
         if (!nameOrUuid.matches("[a-f0-9]{32}"))
@@ -182,10 +189,13 @@ public class MojangAPI {
         try {
             final String output = readURL(SKIN_URL_ASHCON.replace("%uuid%", uuid), MetricsCounter.Service.ASHCON);
             final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-            final JsonObject textures = obj.get("textures").getAsJsonObject();
-            final JsonObject rawTextures = textures.get("raw").getAsJsonObject();
 
-            return createProperty("textures", rawTextures.get("value").getAsString(), rawTextures.get("signature").getAsString());
+            if (obj.has("textures")) {
+                final JsonObject textures = obj.get("textures").getAsJsonObject();
+                final JsonObject rawTextures = textures.get("raw").getAsJsonObject();
+
+                return createProperty("textures", rawTextures.get("value").getAsString(), rawTextures.get("signature").getAsString());
+            }
         } catch (Exception ignored) {
         }
         if (tryNext)
