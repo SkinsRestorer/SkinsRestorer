@@ -40,13 +40,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MojangAPI {
-    private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";
+    private static final String UUID_URL_ASHCON = "https://api.ashcon.app/mojang/v2/user/%name%";
     private static final String UUID_URL_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";
-    private static final String UUID_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%name%";
+    private static final String UUID_URL_MINETOOLS = "https://api.minetools.eu/uuid/%name%";
 
-    private static final String SKIN_URL = "https://api.minetools.eu/profile/%uuid%";
+    private static final String SKIN_URL_ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
+    private static final String SKIN_URL_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
+
     private final SRLogger logger;
     private final Platform platform;
     private Class<? extends IProperty> propertyClass;
@@ -86,7 +87,7 @@ public class MojangAPI {
 
     public IProperty getProfile(String uuid, boolean tryNext) {
         try {
-            String output = readURL(SKIN_URL.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL_MINETOOLS.replace("%uuid%", uuid));
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             if (obj.has("raw")) {
@@ -134,7 +135,7 @@ public class MojangAPI {
             logger.debug("Trying backup API to get skin property for " + uuid + ".");
 
         try {
-            String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
+            String output = readURL(SKIN_URL_ASHCON.replace("%uuid%", uuid), 10000);
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
@@ -158,7 +159,7 @@ public class MojangAPI {
      */
     protected String getUUID(String name, boolean tryNext) throws SkinRequestException {
         try {
-            String output = readURL(UUID_URL.replace("%name%", name));
+            String output = readURL(UUID_URL_MINETOOLS.replace("%name%", name));
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
@@ -209,7 +210,7 @@ public class MojangAPI {
             logger.debug("Trying backup API to get UUID for player " + name + ".");
 
         try {
-            String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
+            String output = readURL(UUID_URL_ASHCON.replace("%name%", name), 10000);
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
