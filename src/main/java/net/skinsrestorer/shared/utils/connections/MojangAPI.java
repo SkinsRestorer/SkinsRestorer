@@ -79,6 +79,19 @@ public class MojangAPI {
         return null;
     }
 
+    public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
+        IProperty skin = getProfile(nameOrUuid, false);
+        if (skin !=null)
+            return skin;
+
+        if (!nameOrUuid.matches("[a-f0-9]{32}"))
+            nameOrUuid = getUUIDMojang(nameOrUuid, true);
+
+        skin = getProfileMojang(nameOrUuid, true);
+
+        return skin;
+    }
+
     // TODO: Deal with duplicated code
 
     public String getUUID(String name) throws SkinRequestException {
