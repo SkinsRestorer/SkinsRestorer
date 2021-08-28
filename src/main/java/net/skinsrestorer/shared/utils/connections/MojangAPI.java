@@ -40,13 +40,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MojangAPI {
-    private static final String UUID_URL = "https://api.minetools.eu/uuid/%name%";
+    private static final String UUID_URL_ASHCON = "https://api.ashcon.app/mojang/v2/user/%name%";
     private static final String UUID_URL_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";
-    private static final String UUID_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%name%";
+    private static final String UUID_URL_MINETOOLS = "https://api.minetools.eu/uuid/%name%";
 
-    private static final String SKIN_URL = "https://api.minetools.eu/profile/%uuid%";
+    private static final String SKIN_URL_ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private static final String SKIN_URL_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
-    private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
+    private static final String SKIN_URL_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
+
     private final SRLogger logger;
     private final Platform platform;
     private final MetricsCounter metricsCounter;
@@ -80,74 +81,20 @@ public class MojangAPI {
         return null;
     }
 
+    public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
+        IProperty skin = getProfile(nameOrUuid, false);
+        if (skin !=null)
+            return skin;
+
+        if (!nameOrUuid.matches("[a-f0-9]{32}"))
+            nameOrUuid = getUUIDMojang(nameOrUuid, true);
+
+        skin = getProfileMojang(nameOrUuid, true);
+
+        return skin;
+    }
+
     // TODO: Deal with duplicated code
-
-    public IProperty getProfile(String uuid) {
-        return getProfile(uuid, true);
-    }
-
-    public IProperty getProfile(String uuid, boolean tryNext) {
-        try {
-            String output = readURL(SKIN_URL.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS);
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-
-            if (obj.has("raw")) {
-                JsonObject raw = obj.getAsJsonObject("raw");
-
-                if (raw.has("status") && raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                    return getProfileMojang(uuid, true);
-                }
-
-                GenericProperty property = new GenericProperty();
-                if (property.valuesFromJson(raw)) {
-                    return createProperty("textures", property.getValue(), property.getSignature());
-                }
-            }
-        } catch (Exception e) {
-            if (tryNext)
-                return getProfileMojang(uuid, true);
-        }
-
-        return null;
-    }
-
-    public IProperty getProfileMojang(String uuid, boolean tryNext) {
-        if (tryNext)
-            logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
-
-        try {
-            String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-
-            GenericProperty property = new GenericProperty();
-            if (obj.has("properties") && property.valuesFromJson(obj)) {
-                return createProperty("textures", property.getValue(), property.getSignature());
-            }
-        } catch (Exception e) {
-            if (tryNext)
-                return getProfileBackup(uuid, true);
-        }
-
-        return null;
-    }
-
-    protected IProperty getProfileBackup(String uuid, boolean tryNext) {
-        if (tryNext)
-            logger.debug("Trying backup API to get skin property for " + uuid + ".");
-
-        try {
-            String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), MetricsCounter.Service.ASHCON, 10000);
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-            JsonObject textures = obj.get("textures").getAsJsonObject();
-            JsonObject rawTextures = textures.get("raw").getAsJsonObject();
-
-            return createProperty("textures", rawTextures.get("value").getAsString(), rawTextures.get("signature").getAsString());
-        } catch (Exception e) {
-            logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
-        }
-
-        return null;
-    }
 
     public String getUUID(String name) throws SkinRequestException {
         return getUUID(name, true);
@@ -160,21 +107,22 @@ public class MojangAPI {
      */
     protected String getUUID(String name, boolean tryNext) throws SkinRequestException {
         try {
-            String output = readURL(UUID_URL.replace("%name%", name), MetricsCounter.Service.MINE_TOOLS);
+            final String output = readURL(UUID_URL_ASHCON.replace("%name%", name), MetricsCounter.Service.ASHCON);
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-            if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
-                return getUUIDMojang(name, true);
+            if (obj.has("code")) {
+                if (obj.get("code").getAsInt() == 404) {
+                    throw new SkinRequestException(Locale.NOT_PREMIUM);
+                }
+                //throw new SkinRequestException(Locale.ALT_API_FAILED); <- WIP (might not be good when there is a 202 mojang down error)
             }
 
-            if (obj.get("id") == null)
-                throw new SkinRequestException(Locale.NOT_PREMIUM);
-
-            return obj.get("id").getAsString();
-        } catch (IOException e) {
-            if (tryNext)
-                return getUUIDMojang(name, true);
+            if (obj.has("uuid"))
+                return obj.get("uuid").getAsString().replace("-", "");
+        } catch (IOException ignored) {
         }
+        if (tryNext)
+            return getUUIDMojang(name, true);
 
         return null;
     }
@@ -184,13 +132,13 @@ public class MojangAPI {
             logger.debug("Trying Mojang API to get UUID for player " + name + ".");
 
         try {
-            String output = readURL(UUID_URL_MOJANG.replace("%name%", name), MetricsCounter.Service.MOJANG);
+            final String output = readURL(UUID_URL_MOJANG.replace("%name%", name), MetricsCounter.Service.MOJANG);
 
+            //todo get http code instead of checking for isEmpty
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
 
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
-
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             if (obj.has("error")) {
                 if (tryNext)
                     return getUUIDBackup(name, true);
@@ -198,10 +146,10 @@ public class MojangAPI {
             }
 
             return obj.get("id").getAsString();
-        } catch (IOException e) {
-            if (tryNext)
-                return getUUIDBackup(name, true);
+        } catch (IOException ignored) {
         }
+        if (tryNext)
+            return getUUIDBackup(name, true);
 
         return null;
     }
@@ -211,22 +159,85 @@ public class MojangAPI {
             logger.debug("Trying backup API to get UUID for player " + name + ".");
 
         try {
-            String output = readURL(UUID_URL_BACKUP.replace("%name%", name), MetricsCounter.Service.ASHCON, 10000);
+            final String output = readURL(UUID_URL_MINETOOLS.replace("%name%", name), MetricsCounter.Service.MINE_TOOLS, 10000);
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
-            JsonObject obj = new Gson().fromJson(output, JsonObject.class);
+            /* Depricated code
+            if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                return getUUIDMojang(name, true);
+            } */
 
-            if (obj.has("code")) {
-                if (obj.get("error").getAsString().equalsIgnoreCase("Not Found")) {
-                    throw new SkinRequestException(Locale.NOT_PREMIUM);
+            if (obj.get("id") != null)
+                return obj.get("id").getAsString();
+        } catch (IOException ignored) {
+        }
+        throw new SkinRequestException(Locale.NOT_PREMIUM); // TODO: check flow of code
+    }
+
+    public IProperty getProfile(String uuid) {
+        return getProfile(uuid, true);
+    }
+
+    public IProperty getProfile(String uuid, boolean tryNext) {
+        try {
+            final String output = readURL(SKIN_URL_ASHCON.replace("%uuid%", uuid), MetricsCounter.Service.ASHCON);
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
+            final JsonObject textures = obj.get("textures").getAsJsonObject();
+            final JsonObject rawTextures = textures.get("raw").getAsJsonObject();
+
+            return createProperty("textures", rawTextures.get("value").getAsString(), rawTextures.get("signature").getAsString());
+        } catch (Exception ignored) {
+        }
+        if (tryNext)
+            return getProfileMojang(uuid, true);
+
+        return null;
+    }
+
+    public IProperty getProfileMojang(String uuid, boolean tryNext) {
+        if (tryNext)
+            logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
+
+        try {
+            final String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
+            final GenericProperty property = new GenericProperty();
+            if (obj.has("properties") && property.valuesFromJson(obj)) {
+                return createProperty("textures", property.getValue(), property.getSignature());
+            }
+        } catch (Exception ignored) {
+        }
+        if (tryNext)
+            return getProfileBackup(uuid, true);
+
+        return null;
+    }
+
+    protected IProperty getProfileBackup(String uuid, boolean tryNext) {
+        if (tryNext)
+            logger.debug("Trying backup API to get skin property for " + uuid + ".");
+
+        try {
+            final String output = readURL(SKIN_URL_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10000);
+            final JsonObject obj = new Gson().fromJson(output, JsonObject.class);
+            if (obj.has("raw")) {
+                final JsonObject raw = obj.getAsJsonObject("raw");
+                // Break on ERR
+                if (raw.has("status") && raw.get("status").getAsString().equalsIgnoreCase("ERR")) {
+                    throw new SkinRequestException("");
                 }
 
-                throw new SkinRequestException(Locale.ALT_API_FAILED);
+                GenericProperty property = new GenericProperty();
+                if (property.valuesFromJson(raw)) {
+                    return createProperty("textures", property.getValue(), property.getSignature());
+                }
             }
-
-            return obj.get("uuid").getAsString().replace("-", "");
-        } catch (IOException e) {
-            throw new SkinRequestException(Locale.NOT_PREMIUM); // TODO: check flow of code
+        } catch (Exception ignored) {
         }
+        if (tryNext)
+            logger.debug(SRLogLevel.WARNING, "Failed to get skin property from backup API. (" + uuid + ")");
+
+        return null;
     }
 
     private String readURL(String url, MetricsCounter.Service service) throws IOException {
