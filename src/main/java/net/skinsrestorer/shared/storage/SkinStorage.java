@@ -81,10 +81,10 @@ public class SkinStorage {
     }
 
     /**
-     * This methods seeks out players actual skin (chosen or not) and returns
-     * either null (if no skin data found) or the property object containing all
+     * This method seeks out a players actual skin (chosen or not) and returns
+     * either null (if no skin data found) or the property containing all
      * the skin data.
-     * Also, it schedules a skin update to stay up to date with skin changes.
+     * It also schedules a skin update to stay up to date with skin changes.
      *
      * @param name   Player name to search skin for
      * @param silent Whether to throw errors or not
@@ -184,7 +184,7 @@ public class SkinStorage {
      * Returns property object containing skin data of the wanted skin
      *
      * @param skinName       Skin name
-     * @param updateOutdated On true we update the skin if expired
+     * @param updateOutdated On true, we update the skin if expired
      **/
     // #getSkinData() also create while we have #getSkinForPlayer()
     public IProperty getSkinData(String skinName, boolean updateOutdated) {
@@ -257,6 +257,9 @@ public class SkinStorage {
         return mojangAPI.createProperty("textures", value, signature);
     }
 
+    /**
+     * @see SkinStorage#getSkinData(String, boolean)
+     */
     public IProperty getSkinData(String skinName) {
         return getSkinData(skinName, true);
     }
@@ -388,6 +391,9 @@ public class SkinStorage {
         }
     }
 
+    /**
+     * @see SkinStorage#setSkinData(String, IProperty, String)
+     */
     public void setSkinData(String skinName, IProperty textures) {
         setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
     }
@@ -603,6 +609,9 @@ public class SkinStorage {
         return false;
     }
 
+    /**
+     * @see SkinStorage#getDefaultSkinName(String, boolean)
+     */
     public String getDefaultSkinName(String playerName) {
         return getDefaultSkinName(playerName, false);
     }
