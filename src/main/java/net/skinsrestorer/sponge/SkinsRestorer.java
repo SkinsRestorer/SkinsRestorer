@@ -89,6 +89,7 @@ public class SkinsRestorer implements ISRPlugin {
     private Logger log;
     @Inject
     private PluginContainer container;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
@@ -119,8 +120,8 @@ public class SkinsRestorer implements ISRPlugin {
         Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
-        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
         skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
         skinApplierSponge = new SkinApplierSponge(this);
@@ -142,10 +143,10 @@ public class SkinsRestorer implements ISRPlugin {
             Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this, srLogger));
         }
 
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
     }
 
     @SuppressWarnings({"deprecation"})

@@ -76,6 +76,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
     private SkinsRestorerAPI skinsRestorerAPI;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
 
     @Override
     public String getVersion() {
@@ -88,10 +89,10 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
 
         if (!updaterDisabled.exists()) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
@@ -108,8 +109,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         Config.load(getDataFolder(), getResourceAsStream("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
 
-        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
         skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
         skinApplierBungee = new SkinApplierBungee(this, srLogger);

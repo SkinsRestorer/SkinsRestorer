@@ -49,11 +49,13 @@ public class MojangAPI {
     private static final String SKIN_URL_BACKUP = "https://api.ashcon.app/mojang/v2/user/%uuid%";
     private final SRLogger logger;
     private final Platform platform;
+    private final MetricsCounter metricsCounter;
     private Class<? extends IProperty> propertyClass;
 
-    public MojangAPI(SRLogger logger, Platform platform) {
+    public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
         this.logger = logger;
         this.platform = platform;
+        this.metricsCounter = metricsCounter;
 
         if (platform == Platform.BUKKIT) {
             propertyClass = BukkitProperty.class;
@@ -86,7 +88,7 @@ public class MojangAPI {
 
     public IProperty getProfile(String uuid, boolean tryNext) {
         try {
-            String output = readURL(SKIN_URL.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS);
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             if (obj.has("raw")) {
@@ -114,7 +116,7 @@ public class MojangAPI {
             logger.debug("Trying Mojang API to get skin property for " + uuid + ".");
 
         try {
-            String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid));
+            String output = readURL(SKIN_URL_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
             GenericProperty property = new GenericProperty();
@@ -134,7 +136,7 @@ public class MojangAPI {
             logger.debug("Trying backup API to get skin property for " + uuid + ".");
 
         try {
-            String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), 10000);
+            String output = readURL(SKIN_URL_BACKUP.replace("%uuid%", uuid), MetricsCounter.Service.ASHCON, 10000);
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             JsonObject textures = obj.get("textures").getAsJsonObject();
             JsonObject rawTextures = textures.get("raw").getAsJsonObject();
@@ -158,7 +160,7 @@ public class MojangAPI {
      */
     protected String getUUID(String name, boolean tryNext) throws SkinRequestException {
         try {
-            String output = readURL(UUID_URL.replace("%name%", name));
+            String output = readURL(UUID_URL.replace("%name%", name), MetricsCounter.Service.MINE_TOOLS);
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
@@ -182,7 +184,7 @@ public class MojangAPI {
             logger.debug("Trying Mojang API to get UUID for player " + name + ".");
 
         try {
-            String output = readURL(UUID_URL_MOJANG.replace("%name%", name));
+            String output = readURL(UUID_URL_MOJANG.replace("%name%", name), MetricsCounter.Service.MOJANG);
 
             if (output.isEmpty())
                 throw new SkinRequestException(Locale.NOT_PREMIUM);
@@ -209,7 +211,7 @@ public class MojangAPI {
             logger.debug("Trying backup API to get UUID for player " + name + ".");
 
         try {
-            String output = readURL(UUID_URL_BACKUP.replace("%name%", name), 10000);
+            String output = readURL(UUID_URL_BACKUP.replace("%name%", name), MetricsCounter.Service.ASHCON, 10000);
 
             JsonObject obj = new Gson().fromJson(output, JsonObject.class);
 
@@ -227,13 +229,13 @@ public class MojangAPI {
         }
     }
 
-    private String readURL(String url) throws IOException {
-        return readURL(url, 5000);
+    private String readURL(String url, MetricsCounter.Service service) throws IOException {
+        return readURL(url, service, 5000);
     }
 
-    private String readURL(String url, int timeout) throws IOException {
+    private String readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
         HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
-        MetricsCounter.incrAPI(url);
+        metricsCounter.increment(service);
 
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "SkinsRestorer");

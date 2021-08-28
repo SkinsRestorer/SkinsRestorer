@@ -22,6 +22,7 @@
 package net.skinsrestorer.shared.interfaces;
 
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.MetricsCounter;
 
 import java.io.File;
 
@@ -31,4 +32,6 @@ public interface ISRPlugin {
     SkinStorage getSkinStorage();
 
     String getVersion();
+
+    MetricsCounter getMetricsCounter();
 }
