@@ -24,7 +24,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build website with Maven
-        run: ./gradlew site
+        run: ./gradlew javadocs
+      - name: Move files
+        run: |
+          mv ./build/docs/javadoc ./docs
       - name: Commit files
         run: |
           git add .
