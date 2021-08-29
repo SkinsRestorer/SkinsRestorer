@@ -21,6 +21,7 @@
  */
 package net.skinsrestorer.velocity;
 
+import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -45,8 +46,6 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.CommandPropertiesManager;
-import net.skinsrestorer.shared.utils.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -62,8 +61,8 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -84,6 +83,7 @@ public class SkinsRestorer implements ISRPlugin {
     private MojangAPI mojangAPI;
     private MineSkinAPI mineSkinAPI;
     private SkinsRestorerAPI skinsRestorerAPI;
+    private CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
@@ -117,7 +117,7 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Config.load(dataFolder, getResource("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY);
@@ -142,21 +142,10 @@ public class SkinsRestorer implements ISRPlugin {
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
-    @SuppressWarnings({"deprecation"})
     private void initCommands() {
-        VelocityCommandManager manager = new VelocityCommandManager(proxy, this);
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
+        manager = new VelocityCommandManager(proxy, this);
 
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.split(", "))));
-
-        new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
-
-        SharedMethods.allowIllegalACFNames();
+        prepareACF(manager, srLogger);
 
         manager.registerCommand(new SkinCommand(this, srLogger));
         manager.registerCommand(new SrCommand(this, srLogger));
@@ -206,6 +195,11 @@ public class SkinsRestorer implements ISRPlugin {
         Optional<String> version = plugin.get().getDescription().getVersion();
 
         return version.orElse("");
+    }
+
+    @Override
+    public InputStream getResource(String resource) {
+        return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {

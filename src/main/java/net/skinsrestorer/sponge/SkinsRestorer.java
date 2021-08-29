@@ -36,8 +36,6 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.CommandPropertiesManager;
-import net.skinsrestorer.shared.utils.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -64,8 +62,8 @@ import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +83,7 @@ public class SkinsRestorer implements ISRPlugin {
     private MojangAPI mojangAPI;
     private MineSkinAPI mineSkinAPI;
     private SkinsRestorerAPI skinsRestorerAPI;
+    private SpongeCommandManager manager;
     @Inject
     private Logger log;
     @Inject
@@ -116,7 +115,7 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(dataFolder, getClass().getClassLoader().getResourceAsStream("config.yml"), srLogger);
+        Config.load(dataFolder, getResource("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE);
@@ -148,22 +147,11 @@ public class SkinsRestorer implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
     }
 
-    @SuppressWarnings({"deprecation"})
     private void initCommands() {
         Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
-            SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);
-            // optional: enable unstable api to use help
-            manager.enableUnstableAPI("help");
+            manager = new SpongeCommandManager(pluginContainer);
 
-            CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-            CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-            CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-            CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                    Arrays.asList(v.split(", "))));
-
-            new CommandPropertiesManager(manager, dataFolder, getClass().getClassLoader().getResourceAsStream("command-messages.properties"), srLogger);
-
-            SharedMethods.allowIllegalACFNames();
+            prepareACF(manager, srLogger);
 
             manager.registerCommand(new SkinCommand(this, srLogger));
             manager.registerCommand(new SrCommand(this, srLogger));
@@ -214,6 +202,11 @@ public class SkinsRestorer implements ISRPlugin {
         Optional<String> version = plugin.get().getVersion();
 
         return version.orElse("");
+    }
+
+    @Override
+    public InputStream getResource(String resource) {
+        return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
     private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
