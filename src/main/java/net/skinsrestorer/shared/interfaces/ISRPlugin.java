@@ -21,9 +21,16 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
+import co.aikar.commands.CommandManager;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.CommandPropertiesManager;
+import net.skinsrestorer.shared.utils.CommandReplacements;
+import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public interface ISRPlugin {
     File getDataFolder();
@@ -31,4 +38,22 @@ public interface ISRPlugin {
     SkinStorage getSkinStorage();
 
     String getVersion();
+
+    InputStream getResource(String resource);
+
+    @SuppressWarnings({"deprecation"})
+    default void prepareACF(CommandManager<?, ?, ?, ?, ?, ?> manager, SRLogger srLogger) {
+        // optional: enable unstable api to use help
+        manager.enableUnstableAPI("help");
+
+        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
+        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
+        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+                Arrays.asList(v.call().split(", "))));
+
+        CommandPropertiesManager.load(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
+
+        SharedMethods.allowIllegalACFNames();
+    }
 }

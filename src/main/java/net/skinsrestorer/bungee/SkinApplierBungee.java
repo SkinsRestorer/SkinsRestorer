@@ -32,6 +32,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
@@ -60,7 +61,8 @@ public class SkinApplierBungee {
     }
 
     private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
-        if (player != null && handler == null) {
+        if (handler == null) {
+            assert player != null;
             handler = (InitialHandler) player.getPendingConnection();
         }
 
@@ -74,11 +76,19 @@ public class SkinApplierBungee {
     }
 
     private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws ReflectionException {
-        if (handler.isOnlineMode()) {
-            sendUpdateRequest(player, textures);
-            return;
-        }
+        applyToHandler(handler, textures);
 
+        if (player == null)
+            return;
+
+        if (plugin.isMultiBungee()) {
+            sendUpdateRequest(player, textures);
+        } else {
+            sendUpdateRequest(player, null);
+        }
+    }
+
+    private void applyToHandler(InitialHandler handler, Property textures) throws ReflectionException {
         LoginResult profile = handler.getLoginProfile();
         if (profile == null) {
             try {
@@ -96,18 +106,9 @@ public class SkinApplierBungee {
 
         profile.setProperties(newProps);
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-
-        if (plugin.isMultiBungee()) {
-            sendUpdateRequest(player, textures);
-        } else {
-            sendUpdateRequest(player, null);
-        }
     }
 
-    private void sendUpdateRequest(ProxiedPlayer player, Property textures) {
-        if (player == null)
-            return;
-
+    private void sendUpdateRequest(@NotNull ProxiedPlayer player, Property textures) {
         if (player.getServer() == null)
             return;
 

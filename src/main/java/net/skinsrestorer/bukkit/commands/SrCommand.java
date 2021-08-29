@@ -66,6 +66,8 @@ public class SrCommand extends BaseCommand {
         Locale.load(plugin.getDataFolder(), logger);
         Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
 
+        plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
+
         sender.sendMessage(Locale.RELOAD);
     }
 
