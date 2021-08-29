@@ -8,28 +8,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
+    - name: Set up JDK 16
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
+        java-version: '16'
         distribution: 'adopt'
-    
-    - name: Cache local Maven repository
-      uses: actions/cache@v2
+    - uses: actions/cache@v2
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
-    
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
-    
-    - name: Show folders
-      run: find .
-
+          ${{ runner.os }}-gradle-
+    - name: Build with Gradle
+      run: ./gradlew build
     - name: Upload artifact
       uses: actions/upload-artifact@v2.2.4
       with:
         name: SkinsRestorer
-        path: ./target/SkinsRestorer.jar
+        path: ./build/libs/SkinsRestorer.jar

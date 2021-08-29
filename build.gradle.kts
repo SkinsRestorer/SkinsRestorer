@@ -1,7 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-
 plugins {
     java
     `maven-publish`
@@ -9,6 +8,13 @@ plugins {
     id("org.cadixdev.licenser") version "0.6.1"
     id("net.kyori.blossom") version "1.2.0"
     id("net.kyori.indra.license-header") version "2.0.6"
+    id("gradle.site") version "0.6"
+}
+
+site {
+    outputDir.set(file("$rootDir/docs"))
+    websiteUrl.set("https://docs.skinsrestorer.net")
+    vcsUrl.set("https://github.com/SkinsRestorer/SkinsRestorerX")
 }
 
 repositories {
@@ -103,6 +109,10 @@ publishing {
     publications.create<MavenPublication>("maven") {
         from(components["java"])
     }
+    repositories {
+        maven(url = "https://repo.codemc.org/repository/maven-releases/")
+        maven(url = "https://repo.codemc.org/repository/maven-snapshots")
+    }
 }
 
 tasks.withType<JavaCompile>() {
@@ -123,6 +133,10 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+
+    jar {
+        enabled = false
+    }
 }
 
 tasks.create<ConfigureShadowRelocation>("relocateShadowJar") {
@@ -134,4 +148,5 @@ tasks.named<ShadowJar>("shadowJar").configure {
     dependsOn(tasks["relocateShadowJar"])
     exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
     minimize()
+    archiveFileName.set("SkinsRestorer.jar")
 }
