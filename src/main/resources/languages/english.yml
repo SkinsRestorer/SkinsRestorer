@@ -1,4 +1,4 @@
-# Generated on ${project.version} #
+# Generated on ${version} #
 
 # Prefix that is send before each nonhelp message
 prefix: "&e[&2SkinsRestorer&e]"

@@ -1,7 +1,7 @@
 name: SkinsRestorer
 main: net.skinsrestorer.bukkit.SkinsRestorer
-version: ${project.version}
-description: ${project.description}
+version: ${version}
+description: ${description}
 website: https://skinsrestorer.net/
 authors: [Th3Tr0LLeR, McLive, DoNotSpamPls, knat]
 softdepend: ["ViaBackwards"]

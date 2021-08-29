@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.velocity;
 
@@ -38,7 +36,6 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.data.PluginData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.Config;
@@ -70,7 +67,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = PluginData.NAME, version = PluginData.VERSION, description = PluginData.DESCRIPTION, url = PluginData.URL, authors = {"Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "{version}", description = "{description}", url = "{url}", authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
     private final SRLogger srLogger;
