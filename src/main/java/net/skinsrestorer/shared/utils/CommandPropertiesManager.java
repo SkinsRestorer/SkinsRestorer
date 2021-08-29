@@ -24,10 +24,9 @@ import co.aikar.commands.Locales;
 import co.aikar.locales.MessageKey;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Properties;
 
@@ -50,7 +49,7 @@ public class CommandPropertiesManager {
         try (InputStream in = new FileInputStream(outFile)) {
             Properties props = new Properties();
 
-            props.load(in);
+            props.load(new InputStreamReader(in, StandardCharsets.UTF_8));
             props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();
