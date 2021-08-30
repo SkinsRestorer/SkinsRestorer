@@ -61,6 +61,8 @@ public class MySQL {
     public Connection openConnection() throws SQLException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
+            //noinspection ResultOfMethodCallIgnored
+            com.mysql.cj.jdbc.Driver.getOSName(); // Small bypass to shade mysql
         } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             e.printStackTrace();
         }

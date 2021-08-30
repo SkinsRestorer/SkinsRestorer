@@ -1,6 +1,5 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.kyori.indra.repository.sonatypeSnapshots
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 
 plugins {
     java
@@ -55,23 +54,24 @@ repositories {
 }
 
 dependencies {
-    implementation("net.md-5:bungeecord-config:1.16-R0.4")
-    implementation("org.bstats:bstats-bukkit:2.2.1")
-    implementation("org.bstats:bstats-bungeecord:2.2.1")
-    implementation("org.bstats:bstats-sponge:2.2.1")
-    implementation("org.bstats:bstats-velocity:2.2.1")
-    implementation("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT")
-    implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    implementation("co.aikar:acf-bungee:0.5.0-SNAPSHOT")
-    implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
-    implementation("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("mysql:mysql-connector-java:8.0.26")
-    implementation("com.github.cryptomorin:XSeries:8.4.0")
-    implementation("io.papermc:paperlib:1.0.6")
-    implementation("co.aikar:minecraft-timings:1.0.4")
-    implementation("com.gilecode.yagson:j9-reflection-utils:1.0")
-    implementation("org.spongepowered:configurate-yaml:4.1.2")
+    shadow("org.bstats:bstats-bukkit:2.2.1")
+    shadow("org.bstats:bstats-bungeecord:2.2.1")
+    shadow("org.bstats:bstats-sponge:2.2.1")
+    shadow("org.bstats:bstats-velocity:2.2.1")
+    shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
+        exclude("org.bukkit", "bukkit")
+    }
+    shadow("co.aikar:acf-paper:0.5.0-SNAPSHOT")
+    shadow("co.aikar:acf-bungee:0.5.0-SNAPSHOT")
+    shadow("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
+    shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
+    shadow("com.google.code.gson:gson:2.8.8")
+    shadow("mysql:mysql-connector-java:8.0.26")
+    shadow("com.github.cryptomorin:XSeries:8.4.0")
+    shadow("io.papermc:paperlib:1.0.6")
+    shadow("co.aikar:minecraft-timings:1.0.4")
+    shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
+    shadow("org.spongepowered:configurate-yaml:4.1.2")
 
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
@@ -104,7 +104,7 @@ license {
     includes.add("src/main/java/net/skinsrestorer/**/*.java")
 }
 
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
@@ -123,6 +123,14 @@ tasks {
         dependsOn(shadowJar)
     }
 
+    shadowJar {
+        dependsOn(getByName("relocateShadowJar") as ConfigureShadowRelocation)
+        exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
+        minimize()
+        configurations = listOf(project.configurations.shadow.get())
+        archiveFileName.set("SkinsRestorer.jar")
+    }
+
     jar {
         enabled = false
     }
@@ -131,16 +139,9 @@ tasks {
         options.compilerArgs.add("-parameters")
         options.isFork = true
     }
-}
 
-tasks.create<ConfigureShadowRelocation>("relocateShadowJar") {
-    target = tasks["shadowJar"] as ShadowJar
-    prefix = "net.skinsrestorer.shadow"
-}
-
-tasks.named<ShadowJar>("shadowJar").configure {
-    dependsOn(tasks["relocateShadowJar"])
-    exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
-    minimize()
-    archiveFileName.set("SkinsRestorer.jar")
+    create<ConfigureShadowRelocation>("relocateShadowJar") {
+        target = shadowJar.get()
+        prefix = "net.skinsrestorer.shade"
+    }
 }
