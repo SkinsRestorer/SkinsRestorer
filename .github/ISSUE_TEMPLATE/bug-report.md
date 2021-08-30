@@ -1,5 +1,7 @@
 ---
-name: Bug Report about: Got any issue? title: ''
+name: Bug Report 
+about: Got any issue? 
+title: ''
 labels: ''
 assignees: 'xknat'
 
@@ -8,7 +10,7 @@ assignees: 'xknat'
 <!--
 ```
 ===========================================
-= WARNING! Github is only for code issue. =
+= WARNING! Github is only for code issues. =
 = For user support, go to our discord!    =
 = http://skinsrestorer.net/discord        =
 ===========================================
