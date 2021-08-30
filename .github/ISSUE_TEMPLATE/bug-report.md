@@ -9,11 +9,11 @@ assignees: 'xknat'
 
 <!--
 ```
-===========================================
+============================================
 = WARNING! Github is only for code issues. =
-= For user support, go to our discord!    =
-= http://skinsrestorer.net/discord        =
-===========================================
+= For user support, go to our discord!     =
+= http://skinsrestorer.net/discord         =
+============================================
 ```
 -->
 
