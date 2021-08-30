@@ -89,8 +89,7 @@ dependencies {
 
 group = "net.skinsrestorer"
 version = "14.1.4-SNAPSHOT"
-description =
-    "Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity servers."
+description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 indra {
@@ -121,6 +120,12 @@ tasks {
 
     jar {
         enabled = false
+    }
+
+    compileJava {
+        options.compilerArgs.add("-parameters")
+        options.isFork = true
+        options.forkOptions.executable = "javac"
     }
 }
 
