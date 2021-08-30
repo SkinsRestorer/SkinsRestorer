@@ -142,6 +142,6 @@ tasks {
 
     create<ConfigureShadowRelocation>("relocateShadowJar") {
         target = shadowJar.get()
-        prefix = "net.skinsrestorer.shade"
+        prefix = "net.skinsrestorer.shadow"
     }
 }
