@@ -1,13 +1,17 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.kyori.indra.repository.sonatypeSnapshots
 
 plugins {
     java
     `maven-publish`
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("net.kyori.blossom") version "1.2.0"
+    id("net.kyori.indra") version "2.0.6"
+    id("net.kyori.indra.git") version "2.0.6"
+    id("net.kyori.indra.publishing") version "2.0.6"
     id("net.kyori.indra.license-header") version "2.0.6"
+    id("net.kyori.blossom") version "1.2.0"
     id("gradle.site") version "0.6"
 }
 
@@ -20,52 +24,35 @@ site {
 repositories {
     mavenLocal()
     mavenCentral()
+    sonatypeSnapshots()
     maven {
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
-
     maven {
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
-
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-    }
-
     maven {
         url = uri("https://repo.spongepowered.org/maven")
     }
-
     maven {
         url = uri("https://libraries.minecraft.net")
     }
-
     maven {
         url = uri("https://repo.codemc.org/repository/maven-public")
     }
-
-    maven {
-        url = uri("https://repo.inventivetalent.org/content/groups/public/")
-    }
-
     maven {
         url = uri("https://repo.aikar.co/content/groups/aikar/")
     }
-
     maven {
         url = uri("https://repo.velocitypowered.com/snapshots/")
     }
-
     maven {
         url = uri("https://repo.viaversion.com")
     }
-
     maven {
         url = uri("https://jitpack.io")
     }
 }
-
-
 
 dependencies {
     implementation("net.md-5:bungeecord-config:1.16-R0.4")
@@ -73,7 +60,7 @@ dependencies {
     implementation("org.bstats:bstats-bungeecord:2.2.1")
     implementation("org.bstats:bstats-sponge:2.2.1")
     implementation("org.bstats:bstats-velocity:2.2.1")
-    implementation("org.inventivetalent.spiget-update:bukkit:1.4.2-SNAPSHOT")
+    implementation("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT")
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
     implementation("co.aikar:acf-bungee:0.5.0-SNAPSHOT")
     implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
@@ -102,17 +89,15 @@ dependencies {
 
 group = "net.skinsrestorer"
 version = "14.1.4-SNAPSHOT"
-description = "Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity servers."
+description =
+    "Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity servers."
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
-    }
-    repositories {
-        maven(url = "https://repo.codemc.org/repository/maven-releases/")
-        maven(url = "https://repo.codemc.org/repository/maven-snapshots")
-    }
+indra {
+    publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
+    publishSnapshotsTo("codemc-snapshots", "https://repo.codemc.org/repository/maven-snapshots")
+    github("SkinsRestorer", "SkinsRestorerX")
+    gpl3OnlyLicense()
 }
 
 tasks.withType<JavaCompile>() {

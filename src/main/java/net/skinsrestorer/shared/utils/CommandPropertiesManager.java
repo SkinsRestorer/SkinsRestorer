@@ -25,7 +25,6 @@ import co.aikar.locales.MessageKey;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Properties;

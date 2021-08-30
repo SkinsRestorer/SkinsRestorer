@@ -89,7 +89,7 @@ public abstract class SkinsRestorerAPI {
      * Saves custom player's skin name to database
      *
      * @param playerName Players name
-     * @param skinName Skin name
+     * @param skinName   Skin name
      **/
     public void setSkinName(String playerName, String skinName) {
         skinStorage.setSkinName(playerName, skinName);
