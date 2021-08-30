@@ -125,7 +125,6 @@ tasks {
     compileJava {
         options.compilerArgs.add("-parameters")
         options.isFork = true
-        options.forkOptions.executable = "javac"
     }
 }
 
