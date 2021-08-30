@@ -103,6 +103,9 @@ tasks.withType<JavaCompile>() {
     options.encoding = "UTF-8"
 }
 
+net.kyori.indra.Indra.SOURCE_FILES.remove("**/*.java")
+net.kyori.indra.Indra.SOURCE_FILES.add("src/main/java/net/skinsrestorer/**/*.java")
+
 blossom {
     replaceToken("{version}", version)
     replaceToken("{description}", rootProject.description)
