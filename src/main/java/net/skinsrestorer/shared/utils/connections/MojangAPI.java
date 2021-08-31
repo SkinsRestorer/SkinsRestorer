@@ -86,7 +86,7 @@ public class MojangAPI {
      *
      * @param nameOrUuid name or trimmed (-) uuid
      * @return IProperty skin
-     * @throws SkinRequestException on
+     * @throws SkinRequestException on not premium or error
      */
     public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
         IProperty skin = getProfile(nameOrUuid, false);
