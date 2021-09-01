@@ -72,7 +72,6 @@ dependencies {
     shadow("co.aikar:minecraft-timings:1.0.4")
     shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
     shadow("org.spongepowered:configurate-yaml:4.1.2")
-    shadow("org.apache.any23:apache-any23-encoding:2.4")
 
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
@@ -153,6 +152,9 @@ tasks.withType<JavaCompile> {
 }
 
 blossom {
+    replaceTokenIn("src/main/java/net/skinsrestorer/velocity/")
+    replaceTokenIn("src/main/java/net/skinsrestorer/sponge/")
+
     replaceToken("{version}", version)
     replaceToken("{description}", rootProject.description)
     replaceToken("{url}", "https://skinsrestorer.net/")
