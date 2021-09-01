@@ -34,22 +34,22 @@ repositories {
         url = uri("https://repo.spongepowered.org/maven")
     }
     maven {
-        url = uri("https://libraries.minecraft.net")
-    }
-    maven {
         url = uri("https://repo.codemc.org/repository/maven-public")
     }
     maven {
         url = uri("https://repo.aikar.co/content/groups/aikar/")
     }
     maven {
-        url = uri("https://repo.velocitypowered.com/snapshots/")
+        url = uri("https://nexus.velocitypowered.com/repository/maven-public/")
     }
     maven {
         url = uri("https://repo.viaversion.com")
     }
     maven {
         url = uri("https://jitpack.io")
+    }
+    maven {
+        url = uri("https://libraries.minecraft.net")
     }
 }
 
