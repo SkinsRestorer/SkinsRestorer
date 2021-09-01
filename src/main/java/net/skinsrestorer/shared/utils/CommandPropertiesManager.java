@@ -23,8 +23,10 @@ import co.aikar.commands.CommandManager;
 import co.aikar.commands.Locales;
 import co.aikar.locales.MessageKey;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.apache.any23.encoding.TikaEncodingDetector;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Properties;
@@ -32,23 +34,30 @@ import java.util.Properties;
 public class CommandPropertiesManager {
     private static final String FILE = "command-messages.properties";
 
-    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, File configPath, InputStream inputStream, SRLogger logger) {
+    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, File configPath, InputStream defaultConfigStream, SRLogger logger) {
         File outFile = new File(configPath, FILE);
 
-        try {
-            if (!outFile.exists()) {
-                Files.copy(inputStream, outFile.toPath());
-                inputStream.close();
+        Charset usedCharset = StandardCharsets.UTF_8;
+        if (outFile.exists()) {
+            try (InputStream in = new FileInputStream(outFile)) {
+                usedCharset = Charset.forName(new TikaEncodingDetector().guessEncoding(in));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException ex) {
-            logger.warning("Could not save " + outFile.getName() + " to " + outFile);
-            ex.printStackTrace();
+        } else {
+            try {
+                Files.copy(defaultConfigStream, outFile.toPath());
+                defaultConfigStream.close();
+            } catch (IOException ex) {
+                logger.warning("Could not save " + outFile.getName() + " to " + outFile);
+                ex.printStackTrace();
+            }
         }
 
         try (InputStream in = new FileInputStream(outFile)) {
             Properties props = new Properties();
 
-            props.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+            props.load(new InputStreamReader(in, usedCharset));
             props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
         } catch (IOException e) {
             e.printStackTrace();

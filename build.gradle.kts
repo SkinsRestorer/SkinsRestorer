@@ -72,6 +72,7 @@ dependencies {
     shadow("co.aikar:minecraft-timings:1.0.4")
     shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
     shadow("org.spongepowered:configurate-yaml:4.1.2")
+    shadow("org.apache.any23:apache-any23-encoding:2.4")
 
     compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
@@ -94,12 +95,16 @@ java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
 
 indra {
-    publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
-    publishSnapshotsTo("codemc-snapshots", "https://repo.codemc.org/repository/maven-snapshots")
+    includeJavaSoftwareComponentInPublications()
     github("SkinsRestorer", "SkinsRestorerX")
     gpl3OnlyLicense()
+    //publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
+    publishSnapshotsTo("codemc", "https://repo.codemc.org/repository/maven-snapshots/")
 
     configurePublications {
+        artifact("build/libs/SkinsRestorer.jar") {
+            extension = "jar"
+        }
         pom {
             organization {
                 name.set("SkinsRestorer")
@@ -121,6 +126,19 @@ indra {
         versionMapping {
             usage(Usage.JAVA_API) { fromResolutionOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME) }
             usage(Usage.JAVA_RUNTIME) { fromResolutionResult() }
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            credentials {
+                username = System.getenv("CODEMC_USERNAME")
+                password = System.getenv("CODEMC_PASSWORD")
+            }
+            name = "codemc"
+            url = uri("https://repo.codemc.org/repository/maven-snapshots/")
         }
     }
 }
