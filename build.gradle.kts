@@ -78,7 +78,7 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-proxy:1.16-R0.5-SNAPSHOT")
     compileOnly("org.spongepowered:spongeapi:7.3.0")
-    compileOnly("com.velocitypowered:velocity-api:3.0.0")
+    compileOnly("com.velocitypowered:velocity-api:3.0.1")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("com.viaversion:viabackwards-common:4.0.1")
     compileOnly("com.viaversion:viaversion:4.0.0")
