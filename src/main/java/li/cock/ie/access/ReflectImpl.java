@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.access;
 
 import li.cock.ie.reflect.DuckReflect;
@@ -23,13 +22,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 public class ReflectImpl extends DefaultImpl {
+    private final boolean _canUnsafeAccess;
     private boolean _canGetValue = true;
     private boolean _canSetValue = true;
     private boolean _canGetNewInstance = false;
-
     private boolean _useDefaultAccess = true;
-    private final boolean _canUnsafeAccess;
-
     private boolean _classesExist = false;
     private boolean _newInstancesExist = false;
     private boolean _methodsExist = false;

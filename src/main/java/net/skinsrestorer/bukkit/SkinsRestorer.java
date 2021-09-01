@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit;
 
@@ -42,7 +40,9 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.YamlConfig;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
@@ -60,7 +60,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -80,6 +79,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private SkinsRestorerAPI skinsRestorerAPI;
     private SkinCommand skinCommand;
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private PaperCommandManager manager;
 
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
         Map<String, GenericProperty> map = new TreeMap<>();
@@ -319,19 +319,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private void initCommands() {
-        PaperCommandManager manager = new PaperCommandManager(this);
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
+        manager = new PaperCommandManager(this);
 
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.split(", "))));
-
-        new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
-
-        SharedMethods.allowIllegalACFNames();
+        prepareACF(manager, srLogger);
 
         skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);

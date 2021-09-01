@@ -110,12 +110,20 @@
                             <shadedPattern>net.skinsrestorer.shade.metrics</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>org.inventivetalent</pattern>
+                            <pattern>org.inventivetalent.update.spiget</pattern>
                             <shadedPattern>net.skinsrestorer.shade.updater</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>co.aikar.commands</pattern>
                             <shadedPattern>net.skinsrestorer.shade.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.timings.lib</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.locales</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.locales</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>net.md_5.bungee.config</pattern>
@@ -134,16 +142,28 @@
                             <shadedPattern>net.skinsrestorer.shade.mysql</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>co.aikar.timings.lib</pattern>
-                            <shadedPattern>net.skinsrestorer.shade.timingslib</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>org.yaml.snakeyaml</pattern>
                             <shadedPattern>net.skinsrestorer.shade.snakeyaml</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.spongepowered.configurate</pattern>
                             <shadedPattern>net.skinsrestorer.shade.configurate</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.google</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.google</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>io.leangen.geantyref</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.geantyref</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.checkerframework</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.checkerframework</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.jetbrains</pattern>
+                            <shadedPattern>net.skinsrestorer.shade.jetbrains</shadedPattern>
                         </relocation>
                     </relocations>
                     <filters>
