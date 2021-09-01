@@ -74,13 +74,13 @@ public class SkinsRestorer implements ISRPlugin {
     private final File dataFolder;
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     private UpdateChecker updateChecker;
     private SkinApplierVelocity skinApplierVelocity;
     private SkinStorage skinStorage;
     private MojangAPI mojangAPI;
     private MineSkinAPI mineSkinAPI;
     private SkinsRestorerAPI skinsRestorerAPI;
-    private final MetricsCounter metricsCounter = new MetricsCounter();
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     @Inject

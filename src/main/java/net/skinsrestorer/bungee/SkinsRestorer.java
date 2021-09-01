@@ -61,6 +61,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final File configPath = getDataFolder();
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     private boolean multiBungee;
     private boolean outdated;
     private UpdateChecker updateChecker;
@@ -72,7 +73,6 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
     private SkinsRestorerAPI skinsRestorerAPI;
-    private final MetricsCounter metricsCounter = new MetricsCounter();
     private BungeeCommandManager manager;
 
     @Override

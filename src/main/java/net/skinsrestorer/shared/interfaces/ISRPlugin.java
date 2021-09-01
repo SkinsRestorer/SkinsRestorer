@@ -21,9 +21,9 @@ package net.skinsrestorer.shared.interfaces;
 
 import co.aikar.commands.CommandManager;
 import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
+import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 

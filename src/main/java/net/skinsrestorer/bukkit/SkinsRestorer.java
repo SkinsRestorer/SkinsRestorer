@@ -67,6 +67,7 @@ import java.util.TreeMap;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
@@ -78,7 +79,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private MineSkinAPI mineSkinAPI;
     private SkinsRestorerAPI skinsRestorerAPI;
     private SkinCommand skinCommand;
-    private final MetricsCounter metricsCounter = new MetricsCounter();
     private PaperCommandManager manager;
 
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {

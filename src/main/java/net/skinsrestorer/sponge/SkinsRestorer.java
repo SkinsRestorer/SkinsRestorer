@@ -71,6 +71,7 @@ public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
     private final File dataFolder;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
@@ -85,7 +86,6 @@ public class SkinsRestorer implements ISRPlugin {
     private Logger log;
     @Inject
     private PluginContainer container;
-    private final MetricsCounter metricsCounter = new MetricsCounter();
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
