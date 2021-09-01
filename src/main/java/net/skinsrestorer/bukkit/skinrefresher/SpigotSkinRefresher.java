@@ -105,7 +105,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
             Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
 
-            // Slowly getting from object to object till i get what I need for
+            // Slowly getting from object to object till we get what is needed for
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(entityPlayer, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
@@ -127,9 +127,9 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object playerIntManager = ReflectionUtil.getFieldByType(entityPlayer, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
-            //noinspection deprecation
+            @SuppressWarnings("deprecation")
             int gamemodeId = player.getGameMode().getValue();
-            //noinspection deprecation
+            @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
             Object respawn;
@@ -201,7 +201,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
                 try {
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, world, gamemodeId);
+                    //noinspection UnstableApiUsage
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(), gamemodeId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

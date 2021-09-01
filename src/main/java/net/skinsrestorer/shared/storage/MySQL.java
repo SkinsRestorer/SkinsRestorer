@@ -109,6 +109,7 @@ public class MySQL {
                     i++;
                     ps.setObject(i, obj);
                 }
+
             return ps;
         } catch (SQLException e) {
             logger.warning("MySQL error: " + e.getMessage());
@@ -139,13 +140,11 @@ public class MySQL {
         try {
             Future<CachedRowSet> future = exe.submit(() -> {
                 try (PreparedStatement ps = prepareStatement(conn, query, vars)) {
-
                     assert ps != null;
+
                     try (ResultSet rs = ps.executeQuery()) {
                         CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
                         crs.populate(rs);
-                        rs.close();
-                        ps.close();
 
                         if (crs.next())
                             return crs;

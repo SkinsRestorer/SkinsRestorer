@@ -20,6 +20,8 @@
 package net.skinsrestorer.shared.exception;
 
 public class EnumNotFoundException extends ReflectiveOperationException {
+    private static final long serialVersionUID = -1133593687030970956L;
+
     public EnumNotFoundException(String message) {
         super(message);
     }

@@ -51,8 +51,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
 
-            JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
+            releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
 
             releaseInfo.assets.forEach(gitHubAssetInfo -> {
                 releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
@@ -63,7 +62,6 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                     callback.upToDate();
                 }
             });
-
         } catch (Exception e) {
             log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
             if (Config.DEBUG)

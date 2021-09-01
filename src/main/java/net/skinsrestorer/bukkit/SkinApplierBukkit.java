@@ -117,6 +117,7 @@ public class SkinApplierBukkit {
      *
      * @param player - Player
      */
+    @SuppressWarnings("deprecation")
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;
@@ -154,14 +155,12 @@ public class SkinApplierBukkit {
                 try {
                     ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
-                    //noinspection deprecation
                     ps.hidePlayer(player);
                 }
 
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
-                    //noinspection deprecation
                     ps.showPlayer(player);
                 }
             }

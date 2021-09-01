@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.utils.connections;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -73,8 +72,7 @@ public class MineSkinAPI {
                     if (output.isEmpty()) //api time out
                         throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-                    final JsonElement elm = new JsonParser().parse(output);
-                    final JsonObject obj = elm.getAsJsonObject();
+                    final JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
                     if (obj.has("data")) {
                         final JsonObject dta = obj.get("data").getAsJsonObject();

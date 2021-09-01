@@ -11,13 +11,6 @@ plugins {
     id("net.kyori.indra.publishing") version "2.0.6"
     id("net.kyori.indra.license-header") version "2.0.6"
     id("net.kyori.blossom") version "1.2.0"
-    id("gradle.site") version "0.6"
-}
-
-site {
-    outputDir.set(file("$rootDir/docs"))
-    websiteUrl.set("https://docs.skinsrestorer.net")
-    vcsUrl.set("https://github.com/SkinsRestorer/SkinsRestorerX")
 }
 
 repositories {
@@ -189,5 +182,9 @@ tasks {
     create<ConfigureShadowRelocation>("relocateShadowJar") {
         target = shadowJar.get()
         prefix = "net.skinsrestorer.shadow"
+    }
+
+    javadoc {
+        exclude("li/cock/ie/**")
     }
 }
