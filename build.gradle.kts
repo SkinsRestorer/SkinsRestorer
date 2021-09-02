@@ -1,5 +1,5 @@
-import net.kyori.indra.repository.sonatypeSnapshots
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import net.kyori.indra.repository.sonatypeSnapshots
 
 plugins {
     java

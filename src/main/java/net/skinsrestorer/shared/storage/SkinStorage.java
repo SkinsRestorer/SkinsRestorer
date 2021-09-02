@@ -363,8 +363,8 @@ public class SkinStorage {
     /**
      * Saves skin data to database
      *
-     * @param skinName Skin name
-     * @param textures Property object
+     * @param skinName  Skin name
+     * @param textures  Property object
      * @param timestamp timestamp string in millis
      **/
     public void setSkinData(String skinName, IProperty textures, String timestamp) {

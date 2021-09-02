@@ -62,7 +62,7 @@ public class Config {
     public static boolean DISABLE_ON_JOIN_SKINS = false;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
     public static boolean DEBUG = false;
-    
+
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
     public static String LOCALE_FILE = "english.yml";
 
