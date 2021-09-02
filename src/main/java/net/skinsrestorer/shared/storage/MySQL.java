@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.intellij.lang.annotations.Language;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
@@ -100,7 +101,7 @@ public class MySQL {
         return con;
     }
 
-    private PreparedStatement prepareStatement(Connection conn, String query, Object... vars) {
+    private PreparedStatement prepareStatement(Connection conn, @Language("sql") String query, Object... vars) {
         try {
             PreparedStatement ps = conn.prepareStatement(query);
             int i = 0;
@@ -118,7 +119,7 @@ public class MySQL {
         return null;
     }
 
-    public void execute(final String query, final Object... vars) {
+    public void execute(@Language("sql") final String query, final Object... vars) {
         Connection conn = getConnection();
 
         try (PreparedStatement ps = prepareStatement(conn, query, vars)) {
@@ -133,7 +134,7 @@ public class MySQL {
         }
     }
 
-    public CachedRowSet query(final String query, final Object... vars) {
+    public CachedRowSet query(@Language("sql") final String query, final Object... vars) {
         Connection conn = getConnection();
         CachedRowSet rowSet = null;
 
@@ -149,7 +150,6 @@ public class MySQL {
                         if (crs.next())
                             return crs;
                     }
-
                 } catch (SQLException e) {
                     logger.warning("MySQL error: " + e.getMessage());
                 }
@@ -166,5 +166,4 @@ public class MySQL {
 
         return rowSet;
     }
-
 }
