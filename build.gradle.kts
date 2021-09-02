@@ -180,6 +180,7 @@ tasks {
 
     compileJava {
         options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-Xlint:-processing")
         options.isFork = true
     }
 
@@ -190,5 +191,6 @@ tasks {
 
     javadoc {
         exclude("li/cock/ie/**")
+        title = "SkinsRestorer Javadocs"
     }
 }

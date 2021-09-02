@@ -139,7 +139,7 @@ public class SrCommand extends BaseCommand {
                 Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
 
                 Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
-                        new Class[]{Object.class}, "textures");
+                        new Class<?>[]{Object.class}, "textures");
 
                 if (props == null || props.isEmpty()) {
                     sender.sendMessage(Locale.NO_SKIN_DATA);

@@ -102,7 +102,7 @@ public class SkinApplierBukkit {
                     Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
                     Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
                     ReflectionUtil.invokeMethod(propMap, "clear");
-                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
+                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
 
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
                 } catch (Exception e) {
