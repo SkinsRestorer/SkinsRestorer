@@ -72,7 +72,7 @@ public abstract class SkinsRestorerAPI {
      * @return The players custom skin name if set or null if not set
      */
     public String getSkinName(String playerName) {
-        return skinStorage.getSkinName(playerName);
+        return skinStorage.getSkinName(playerName).orElse(null);
     }
 
     /**
