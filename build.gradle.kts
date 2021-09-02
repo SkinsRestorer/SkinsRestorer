@@ -10,7 +10,7 @@ plugins {
     id("net.kyori.indra.git") version "2.0.6"
     id("net.kyori.indra.publishing") version "2.0.6"
     id("net.kyori.indra.license-header") version "2.0.6"
-    id("net.kyori.blossom") version "1.2.0"
+    id("net.kyori.blossom") version "1.3.0"
 }
 
 repositories {
