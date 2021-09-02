@@ -43,19 +43,19 @@ public class MySQL {
     private Connection con;
 
     public void createTable() {
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYERTABLE + "` ("
+        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYER_TABLE + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKINTABLE + "` ("
+        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKIN_TABLE + "` ("
                 + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Value` text COLLATE utf8_unicode_ci,"
                 + "`Signature` text COLLATE utf8_unicode_ci,"
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        execute("ALTER TABLE `" + Config.MYSQL_SKINTABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
     public Connection openConnection() throws SQLException {

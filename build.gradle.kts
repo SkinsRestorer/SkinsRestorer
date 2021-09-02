@@ -90,7 +90,7 @@ indra {
     includeJavaSoftwareComponentInPublications()
     github("SkinsRestorer", "SkinsRestorerX")
     gpl3OnlyLicense()
-    //publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
+    publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
     publishSnapshotsTo("codemc", "https://repo.codemc.org/repository/maven-snapshots/")
 
     configurePublications {

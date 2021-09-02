@@ -240,7 +240,7 @@ public class SkinCommand extends BaseCommand {
         final String oldSkinName = plugin.getSkinStorage().getSkinName(pName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
-                    && !Config.SKINWITHOUTPERM
+                    && !Config.SKIN_WITHOUT_PERM
                     && !clear) {//ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
                 CooldownStorage.resetCooldown(senderName);
