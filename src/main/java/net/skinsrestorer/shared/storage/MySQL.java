@@ -104,12 +104,12 @@ public class MySQL {
     private PreparedStatement prepareStatement(Connection conn, @Language("sql") String query, Object... vars) {
         try {
             PreparedStatement ps = conn.prepareStatement(query);
+
             int i = 0;
-            if (query.contains("?") && vars.length != 0)
-                for (Object obj : vars) {
-                    i++;
-                    ps.setObject(i, obj);
-                }
+            for (Object obj : vars) {
+                i++;
+                ps.setObject(i, obj);
+            }
 
             return ps;
         } catch (SQLException e) {
