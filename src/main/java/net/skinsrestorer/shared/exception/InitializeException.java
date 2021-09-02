@@ -23,6 +23,8 @@ package net.skinsrestorer.shared.exception;
  * Used for constructors that fail initializing.
  */
 public class InitializeException extends Exception {
+    private static final long serialVersionUID = 7174618370827939357L;
+
     public InitializeException(Exception e) {
         super(e);
     }

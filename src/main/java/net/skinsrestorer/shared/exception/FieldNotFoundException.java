@@ -20,6 +20,8 @@
 package net.skinsrestorer.shared.exception;
 
 public class FieldNotFoundException extends ReflectiveOperationException {
+    private static final long serialVersionUID = -1157594181223223976L;
+
     public FieldNotFoundException(String message) {
         super(message);
     }

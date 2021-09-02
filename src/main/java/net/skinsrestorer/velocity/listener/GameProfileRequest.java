@@ -35,7 +35,7 @@ public class GameProfileRequest {
     // TODO: make async, add #getSkinForPlayer()
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
-        if (Config.DISABLE_ONJOIN_SKINS)
+        if (Config.DISABLE_ON_JOIN_SKINS)
             return;
 
         if (event.isOnlineMode())

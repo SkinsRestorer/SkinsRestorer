@@ -39,7 +39,7 @@ public class PlayerJoin implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        if (Config.DISABLE_ONJOIN_SKINS)
+        if (Config.DISABLE_ON_JOIN_SKINS)
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
