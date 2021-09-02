@@ -92,7 +92,7 @@ public class SkinStorage {
      * @param name   Player name to search skin for
      * @param silent Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
-     **/
+     */
     public IProperty getSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
         Optional<String> skin = getSkinName(name);
 
@@ -133,7 +133,7 @@ public class SkinStorage {
      *
      * @param playerName the players name
      * @return the custom skin name a player has set or null if not set
-     **/
+     */
     public Optional<String> getSkinName(String playerName) {
         playerName = playerName.toLowerCase();
 
@@ -190,7 +190,7 @@ public class SkinStorage {
      *
      * @param skinName       Skin name
      * @param updateOutdated On true, we update the skin if expired
-     **/
+     */
     // #getSkinData() also create while we have #getSkinForPlayer()
     public IProperty getSkinData(String skinName, boolean updateOutdated) {
         skinName = skinName.toLowerCase();
@@ -249,12 +249,22 @@ public class SkinStorage {
         return null;
     }
 
-    private IProperty createProperty(String name, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
-        if (updateOutdated && C.validMojangUsername(name) && isOld(Long.parseLong(timestamp))) {
-            IProperty skin = mojangAPI.getProfile(mojangAPI.getUUID(name));
+    /**
+     * Create a platform specific property and also optionally update cached skin if outdated.
+     * @param playerName the players name
+     * @param updateOutdated whether the skin data shall be looked up again if the timestamp is too far away
+     * @param value skin data value
+     * @param signature signature to verify skin data
+     * @param timestamp time cached property data was created
+     * @return Platform specific property
+     * @throws SkinRequestException throws when no API calls were successful
+     */
+    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
+        if (updateOutdated && C.validMojangUsername(playerName) && isOld(Long.parseLong(timestamp))) {
+            IProperty skin = mojangAPI.getProfile(mojangAPI.getUUID(playerName));
 
             if (skin != null) {
-                setSkinData(name, skin);
+                setSkinData(playerName, skin);
                 return skin;
             }
         }
@@ -287,7 +297,7 @@ public class SkinStorage {
      * Removes custom players skin name from database
      *
      * @param name - Players name
-     **/
+     */
     public void removeSkin(String name) {
         name = name.toLowerCase();
 
@@ -309,7 +319,7 @@ public class SkinStorage {
      * Removes skin data from database
      *
      * @param skinName Skin name
-     **/
+     */
     public void removeSkinData(String skinName) {
         skinName = skinName.toLowerCase();
 
@@ -333,7 +343,7 @@ public class SkinStorage {
      *
      * @param playerName Players name
      * @param skinName   Skin name
-     **/
+     */
     public void setSkinName(String playerName, String skinName) {
         playerName = playerName.toLowerCase();
 
@@ -366,7 +376,7 @@ public class SkinStorage {
      * @param skinName  Skin name
      * @param textures  Property object
      * @param timestamp timestamp string in millis
-     **/
+     */
     public void setSkinData(String skinName, IProperty textures, String timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
