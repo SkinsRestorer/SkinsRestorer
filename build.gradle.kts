@@ -88,7 +88,9 @@ java.targetCompatibility = JavaVersion.VERSION_1_8
 
 indra {
     includeJavaSoftwareComponentInPublications()
-    github("SkinsRestorer", "SkinsRestorerX")
+    github("SkinsRestorer", "SkinsRestorerX") {
+        ci(true)
+    }
     gpl3OnlyLicense()
     publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
     publishSnapshotsTo("codemc", "https://repo.codemc.org/repository/maven-snapshots/")
@@ -98,6 +100,8 @@ indra {
             extension = "jar"
         }
         pom {
+            name.set("SkinsRestorer")
+            url.set("https://skinsrestorer.net/")
             organization {
                 name.set("SkinsRestorer")
                 url.set("https://skinsrestorer.net")
