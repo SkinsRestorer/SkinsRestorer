@@ -138,7 +138,7 @@ public class SkinStorage {
         playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT * FROM ? WHERE Nick=?", Config.MYSQL_PLAYER_TABLE, playerName);
+            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
 
             if (crs != null)
                 try {
@@ -196,7 +196,7 @@ public class SkinStorage {
         skinName = skinName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT * FROM ? WHERE Nick=?", Config.MYSQL_SKIN_TABLE, skinName);
+            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
             if (crs != null)
                 try {
                     final String value = crs.getString("Value");
@@ -302,7 +302,7 @@ public class SkinStorage {
         name = name.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM ? WHERE Nick=?", Config.MYSQL_PLAYER_TABLE, name);
+            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", name);
         } else {
             name = removeForbiddenChars(name);
             File playerFile = new File(playersFolder, name + ".player");
@@ -324,7 +324,7 @@ public class SkinStorage {
         skinName = skinName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM ? WHERE Nick=?", Config.MYSQL_SKIN_TABLE, skinName);
+            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
@@ -348,8 +348,8 @@ public class SkinStorage {
         playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("INSERT INTO ? (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
-                    Config.MYSQL_PLAYER_TABLE, playerName, skinName, skinName);
+            mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
+                    playerName, skinName, skinName);
         } else {
             playerName = removeForbiddenChars(playerName);
             File playerFile = new File(playersFolder, playerName + ".player");
@@ -383,8 +383,8 @@ public class SkinStorage {
         String signature = textures.getSignature();
 
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("INSERT INTO ? (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                    Config.MYSQL_SKIN_TABLE, skinName, value, signature, timestamp, value, signature, timestamp);
+            mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
+                    skinName, value, signature, timestamp, value, signature, timestamp);
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
@@ -437,7 +437,7 @@ public class SkinStorage {
                 }
             }
 
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM ? " + filterBy + " ORDER BY " + orderBy, Config.MYSQL_SKIN_TABLE);
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy);
             int i = 0;
             try {
                 do {
@@ -489,7 +489,7 @@ public class SkinStorage {
         Map<String, GenericProperty> list = new TreeMap<>();
 
         if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM ? ORDER BY `Nick`", Config.MYSQL_SKIN_TABLE);
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " ORDER BY `Nick`");
             int i = 0;
             int foundSkins = 0;
             try {
@@ -576,7 +576,7 @@ public class SkinStorage {
         // Check if updating is disabled for skin (by timestamp = 0)
         boolean updateDisabled = false;
         if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT timestamp FROM ? WHERE Nick=?", Config.MYSQL_SKIN_TABLE, skinName);
+            RowSet crs = mysql.query("SELECT timestamp FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
             if (crs != null)
                 try {
                     updateDisabled = crs.getString("timestamp").equals("0");
