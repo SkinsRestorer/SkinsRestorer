@@ -67,6 +67,7 @@ import java.util.TreeMap;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
@@ -107,14 +108,14 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1669);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
 
         // Init all essential classes
-        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
         skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 

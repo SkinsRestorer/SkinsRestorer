@@ -19,66 +19,45 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class MetricsCounter {
-    private static int mineskinCalls = 0;
-    private static int minetoolsCalls = 0;
-    private static int mojangCalls = 0;
-    private static int backupCalls = 0;
+    private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
 
-    private MetricsCounter() {
+    public void increment(Service service) {
+        map.putIfAbsent(service, new AtomicInteger());
+
+        map.get(service).incrementAndGet();
     }
 
-    public static int collectMineskinCalls() {
-        int value = mineskinCalls;
-        mineskinCalls = 0;
-        return value;
+    public int collect(Service service) {
+        map.putIfAbsent(service, new AtomicInteger());
+
+        return map.get(service).getAndSet(0);
     }
 
-    public static void incrMineskinCalls() {
-        mineskinCalls++;
+    public int collectMineskinCalls() {
+        return collect(Service.MINE_SKIN);
     }
 
-    public static int collectMinetoolsCalls() {
-        int value = minetoolsCalls;
-        minetoolsCalls = 0;
-        return value;
+    public int collectMinetoolsCalls() {
+        return collect(Service.MINE_TOOLS);
     }
 
-    public static void incrMinetoolsCalls() {
-        minetoolsCalls = minetoolsCalls + 1;
+    public int collectMojangCalls() {
+        return collect(Service.MOJANG);
     }
 
-    public static int collectMojangCalls() {
-        int value = mojangCalls;
-        mojangCalls = 0;
-        return value;
+    public int collectBackupCalls() {
+        return collect(Service.ASHCON);
     }
 
-    public static void incrMojangCalls() {
-        mojangCalls++;
-    }
-
-    public static int collectBackupCalls() {
-        int value = backupCalls;
-        backupCalls = 0;
-        return value;
-    }
-
-    public static void incrBackupCalls() {
-        backupCalls++;
-    }
-
-    public static void incrAPI(String url) {
-        if (url.startsWith("https://api.mineskin.org/"))
-            incrMineskinCalls();
-
-        if (url.startsWith("https://api.minetools.eu/"))
-            incrMinetoolsCalls();
-
-        if (url.startsWith("https://api.mojang.com/") || url.startsWith("https://sessionserver.mojang.com/"))
-            incrMojangCalls();
-
-        if (url.startsWith("https://api.ashcon.app/"))
-            incrBackupCalls();
+    public enum Service {
+        MINE_SKIN,
+        MINE_TOOLS,
+        MOJANG,
+        ASHCON
     }
 }

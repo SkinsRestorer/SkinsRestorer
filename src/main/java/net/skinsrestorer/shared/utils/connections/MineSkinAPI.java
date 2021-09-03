@@ -47,6 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
+    private final MetricsCounter metricsCounter;
     private final Queue<UUID> queue = new LinkedList<>();
     private final Map<UUID, AtomicInteger> fails = new HashMap<>();
 
@@ -153,7 +154,7 @@ public class MineSkinAPI {
     private String queryURL(String query) throws IOException {
         for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
             try {
-                MetricsCounter.incrAPI("https://api.mineskin.org/generate/url/");
+                metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
                 HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
 
                 con.setRequestMethod("POST");

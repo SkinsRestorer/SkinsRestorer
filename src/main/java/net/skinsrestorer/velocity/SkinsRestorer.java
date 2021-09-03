@@ -74,6 +74,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final File dataFolder;
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
     private UpdateChecker updateChecker;
     private SkinApplierVelocity skinApplierVelocity;
     private SkinStorage skinStorage;
@@ -96,10 +97,10 @@ public class SkinsRestorer implements ISRPlugin {
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
 
         // Check for updates
         if (!updaterDisabled.exists()) {
@@ -117,8 +118,8 @@ public class SkinsRestorer implements ISRPlugin {
         Config.load(dataFolder, getResource("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
 
-        mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
+        mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI);
         skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
         skinApplierVelocity = new SkinApplierVelocity(this, srLogger);

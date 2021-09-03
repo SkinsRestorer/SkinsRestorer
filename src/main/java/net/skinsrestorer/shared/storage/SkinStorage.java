@@ -108,7 +108,7 @@ public class SkinStorage {
                 if (!C.validMojangUsername(skin.get()))
                     throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin.get()));
 
-                textures = mojangAPI.getProfile(mojangAPI.getUUID(skin.get()));
+                textures = mojangAPI.getSkin(skin.get());
 
                 if (textures == null)
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -261,7 +261,7 @@ public class SkinStorage {
      */
     private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && C.validMojangUsername(playerName) && isOld(Long.parseLong(timestamp))) {
-            IProperty skin = mojangAPI.getProfile(mojangAPI.getUUID(playerName));
+            IProperty skin = mojangAPI.getSkin(playerName);
 
             if (skin != null) {
                 setSkinData(playerName, skin);
