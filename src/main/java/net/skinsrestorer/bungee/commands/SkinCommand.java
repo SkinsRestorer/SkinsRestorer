@@ -31,7 +31,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -279,8 +278,6 @@ public class SkinCommand extends BaseCommand {
             }
         } else {
             try {
-                plugin.getSkinStorage().getSkinForPlayer(skin, false);
-
                 if (save) {
                     plugin.getSkinStorage().setSkinName(pName, skin);
                     plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
@@ -293,14 +290,8 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-
-                    IProperty props = plugin.getMojangAPI().createProperty("textures", "", "");
-                    try {
-                        plugin.getSkinStorage().setSkinData("00", props);
-                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), "00");
-                    } catch (Exception ignored) {
-                    }
-                    return true; // TODO: should we return success when #applySkin() may have thrown a Exception?
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMojangAPI().createProperty("textures", "", ""));
+                    return true;
                 }
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
             } catch (Exception e) {

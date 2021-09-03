@@ -278,7 +278,6 @@ public class SkinCommand extends BaseCommand {
             // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         } else {
             try {
-                plugin.getSkinStorage().getSkinForPlayer(skin, false);
                 if (save)
                     plugin.getSkinStorage().setSkinName(pName, skin);
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player));
@@ -286,6 +285,10 @@ public class SkinCommand extends BaseCommand {
                     player.sendMessage(plugin.deserialize(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)));
                 return true;
             } catch (SkinRequestException e) {
+                if (clear) {
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMojangAPI().createProperty("textures", "", ""));
+                    return true;
+                }
                 source.sendMessage(plugin.deserialize(e.getMessage()));
                 // set custom skin name back to old one if there is an exception
             } catch (Exception e) {
