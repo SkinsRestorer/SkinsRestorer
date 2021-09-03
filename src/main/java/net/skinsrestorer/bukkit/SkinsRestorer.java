@@ -81,6 +81,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private SkinCommand skinCommand;
     private PaperCommandManager manager;
 
+    @SuppressWarnings("unchecked")
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
         Map<String, GenericProperty> map = new TreeMap<>();
         try {
@@ -88,7 +89,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             ObjectInputStream ois = new ObjectInputStream(bis);
 
             while (bis.available() > 0) {
-                //noinspection unchecked
                 map = (Map<String, GenericProperty>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {

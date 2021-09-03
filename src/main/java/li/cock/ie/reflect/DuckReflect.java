@@ -127,7 +127,7 @@ public class DuckReflect {
     }
 
     public <T> T newInstance(Class<T> type) {
-        return newInstance(getConstructor(type, null), null);
+        return newInstance(getConstructor(type, (Class<?>) null), (Object) null);
     }
 
     public Field getField(Class<?> type, boolean accessible, String name) {

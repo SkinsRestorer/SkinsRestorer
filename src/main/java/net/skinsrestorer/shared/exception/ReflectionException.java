@@ -20,6 +20,8 @@
 package net.skinsrestorer.shared.exception;
 
 public class ReflectionException extends ReflectiveOperationException {
+    private static final long serialVersionUID = -8198968403615763053L;
+
     public ReflectionException(String message) {
         super(message);
     }

@@ -28,20 +28,20 @@ import java.util.Map;
 
 public class CommandReplacements {
     public static final Map<String, CallableString<String>> permissions = ImmutableMap.<String, CallableString<String>>builder()
-            .put("skin", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command")
+            .put("skin", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command")
             .put("sr", () -> "skinsrestorer.admincommand")
 
-            .put("skins", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.gui")
+            .put("skins", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.gui")
 
-            .put("skinSet", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.set")
+            .put("skinSet", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.set")
             .put("skinSetOther", () -> "skinsrestorer.command.set.other")
 
-            .put("skinSetUrl", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.set.url")
+            .put("skinSetUrl", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.set.url")
 
-            .put("skinClear", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.clear")
+            .put("skinClear", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.clear")
             .put("skinClearOther", () -> "skinsrestorer.command.clear.other")
 
-            .put("skinUpdate", () -> Config.SKINWITHOUTPERM ? "" : "skinsrestorer.command.update")
+            .put("skinUpdate", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.update")
             .put("skinUpdateOther", () -> "skinsrestorer.command.update.other")
 
             .put("srReload", () -> "skinsrestorer.admincommand.reload")

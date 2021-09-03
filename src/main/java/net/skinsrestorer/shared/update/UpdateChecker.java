@@ -20,8 +20,6 @@
 package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.Getter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -41,8 +39,8 @@ import java.util.List;
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
  */
 public class UpdateChecker {
-    public static final String RESOURCE_INFO = "http://api.spiget.org/v2/resources/%s?ut=%s";
-    public static final String RESOURCE_VERSION = "http://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
+    public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
+    public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private final int resourceId;
     private final SRLogger log;
     @Getter
@@ -64,12 +62,10 @@ public class UpdateChecker {
             HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, resourceId, System.currentTimeMillis()))).openConnection();
             connection.setRequestProperty("User-Agent", getUserAgent());
 
-            JsonObject jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            latestResourceInfo = (new Gson()).fromJson(jsonObject, ResourceInfo.class);
-            connection = (HttpURLConnection) (new URL(String.format(RESOURCE_VERSION, resourceId, System.currentTimeMillis()))).openConnection();
+            latestResourceInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceInfo.class);
+            connection = (HttpURLConnection) new URL(String.format(RESOURCE_VERSION, resourceId, System.currentTimeMillis())).openConnection();
             connection.setRequestProperty("User-Agent", getUserAgent());
-            jsonObject = (new JsonParser()).parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            latestResourceInfo.latestVersion = (new Gson()).fromJson(jsonObject, ResourceVersion.class);
+            latestResourceInfo.latestVersion = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceVersion.class);
 
             if (isVersionNewer(currentVersion, latestResourceInfo.latestVersion.name)) {
                 callback.updateAvailable(latestResourceInfo.latestVersion.name, "https://spigotmc.org/" + latestResourceInfo.file.url, !latestResourceInfo.external);

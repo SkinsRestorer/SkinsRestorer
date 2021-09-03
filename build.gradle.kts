@@ -1,5 +1,5 @@
-import net.kyori.indra.repository.sonatypeSnapshots
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import net.kyori.indra.repository.sonatypeSnapshots
 
 plugins {
     java
@@ -11,13 +11,6 @@ plugins {
     id("net.kyori.indra.publishing") version "2.0.6"
     id("net.kyori.indra.license-header") version "2.0.6"
     id("net.kyori.blossom") version "1.3.0"
-    id("gradle.site") version "0.6"
-}
-
-site {
-    outputDir.set(file("$rootDir/docs"))
-    websiteUrl.set("https://docs.skinsrestorer.net")
-    vcsUrl.set("https://github.com/SkinsRestorer/SkinsRestorerX")
 }
 
 repositories {
@@ -95,9 +88,11 @@ java.targetCompatibility = JavaVersion.VERSION_1_8
 
 indra {
     includeJavaSoftwareComponentInPublications()
-    github("SkinsRestorer", "SkinsRestorerX")
+    github("SkinsRestorer", "SkinsRestorerX") {
+        ci(true)
+    }
     gpl3OnlyLicense()
-    //publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
+    publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
     publishSnapshotsTo("codemc", "https://repo.codemc.org/repository/maven-snapshots/")
 
     configurePublications {
@@ -105,6 +100,8 @@ indra {
             extension = "jar"
         }
         pom {
+            name.set("SkinsRestorer")
+            url.set("https://skinsrestorer.net/")
             organization {
                 name.set("SkinsRestorer")
                 url.set("https://skinsrestorer.net")
@@ -183,11 +180,17 @@ tasks {
 
     compileJava {
         options.compilerArgs.add("-parameters")
+        options.compilerArgs.add("-Xlint:-processing")
         options.isFork = true
     }
 
     create<ConfigureShadowRelocation>("relocateShadowJar") {
         target = shadowJar.get()
         prefix = "net.skinsrestorer.shadow"
+    }
+
+    javadoc {
+        exclude("li/cock/ie/**")
+        title = "SkinsRestorer Javadocs"
     }
 }

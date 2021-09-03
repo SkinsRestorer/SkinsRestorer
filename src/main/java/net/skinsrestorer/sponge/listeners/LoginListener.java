@@ -39,7 +39,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
         if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
             return;
 
-        if (Config.DISABLE_ONJOIN_SKINS)
+        if (Config.DISABLE_ON_JOIN_SKINS)
             return;
 
         final GameProfile profile = event.getProfile();

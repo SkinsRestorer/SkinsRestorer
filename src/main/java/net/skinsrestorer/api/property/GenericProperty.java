@@ -25,6 +25,7 @@ import java.io.Serializable;
 
 @Data
 public class GenericProperty implements Serializable, IProperty {
+    private static final long serialVersionUID = 8095720466547433965L;
     private String name;
     private String value;
     private String signature;

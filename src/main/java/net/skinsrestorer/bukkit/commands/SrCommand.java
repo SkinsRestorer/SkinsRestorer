@@ -139,7 +139,7 @@ public class SrCommand extends BaseCommand {
                 Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
 
                 Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
-                        new Class[]{Object.class}, "textures");
+                        new Class<?>[]{Object.class}, "textures");
 
                 if (props == null || props.isEmpty()) {
                     sender.sendMessage(Locale.NO_SKIN_DATA);
@@ -153,7 +153,7 @@ public class SrCommand extends BaseCommand {
 
                     byte[] decoded = Base64.getDecoder().decode(value);
                     String decodedString = new String(decoded);
-                    JsonObject jsonObject = new JsonParser().parse(decodedString).getAsJsonObject();
+                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
                     String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                     long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                     String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));

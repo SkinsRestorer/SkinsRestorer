@@ -153,11 +153,11 @@ public class YamlConfig {
         YamlConfigurationLoader.builder().path(file.toPath()).build().save(config);
     }
 
+    @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
         try {
             ConfigurationNode node = config.node((Object[]) path.split("\\."));
             if (value instanceof List) {
-                //noinspection unchecked
                 node.setList(String.class, (List<String>) value);
             } else {
                 node.set(value);
