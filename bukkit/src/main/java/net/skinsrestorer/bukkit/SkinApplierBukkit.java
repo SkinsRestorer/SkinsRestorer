@@ -45,11 +45,11 @@ public class SkinApplierBukkit {
     private final SRLogger log;
     @Getter
     private final Consumer<Player> refresh;
-    private boolean disableDismountPlayer;
-    private boolean enableDismountEntities;
-    private boolean enableRemountPlayer;
     @Setter
-    static boolean checkOptFileChecked = false;
+    static boolean checkOptFileChecked;
+    private static boolean disableDismountPlayer;
+    private static boolean enableDismountEntities;
+    private static boolean disableRemountPlayer;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
@@ -128,18 +128,21 @@ public class SkinApplierBukkit {
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;
+        log.info("[pre] enableRemountPlayer=" + disableRemountPlayer);
 
         if (!checkOptFileChecked)
             checkOptFile();
+
+        log.info("[suf] enableRemountPlayer=" + disableRemountPlayer);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
 
             // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-            if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
+            if ((Config.DISMOUNT_PLAYER_ON_UPDATE && !disableDismountPlayer) && vehicle != null) {
                 vehicle.removePassenger(player);
 
-                if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
+                if (Config.REMOUNT_PLAYER_ON_UPDATE && !disableRemountPlayer) {
                     // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                         // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
@@ -177,18 +180,22 @@ public class SkinApplierBukkit {
     }
 
     private void checkOptFile() {
+        log.info("checkOptFile");
         File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
         File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
+        File filetxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer.txt");
+        File filetxtEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities.txt");
+        File filetxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer.txt");
 
-        if (fileDisableDismountPlayer.exists())
+        if (fileDisableDismountPlayer.exists() || filetxtDisableDismountPlayer.exists())
             disableDismountPlayer = true;
 
-        if (fileEnableDismountEntities.exists())
+        if (fileEnableDismountEntities.exists() || filetxtEnableDismountEntities.exists())
             enableDismountEntities = true;
 
-        if (fileDisableRemountPlayer.exists())
-            enableRemountPlayer = false;
+        if (fileDisableRemountPlayer.exists() || filetxtDisableRemountPlayer.exists())
+            disableRemountPlayer = true;
 
         checkOptFileChecked = true;
     }

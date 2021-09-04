@@ -139,10 +139,12 @@ MineskinAPIKey: "key"
 # If we break things, you can disable it here.
 
 # Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.
+# File override = ./plugins/SkinsRestorer/disablesdismountplayer.txt
 DismountPlayerOnSkinUpdate: true
 
 # Remounts a player that was dismounted after a skin update (above option must be true).
 # Disabling this is only recommended if you use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.
+# File override = ./plugins/SkinsRestorer/disablesdismountplayer.txt
 RemountPlayerOnSkinUpdate: true
 
 # Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.
