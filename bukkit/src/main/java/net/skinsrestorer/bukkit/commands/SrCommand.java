@@ -28,6 +28,7 @@ import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
@@ -61,6 +62,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
+        SkinApplierBukkit.setCheckOptFileChecked(false);
         Locale.load(plugin.getDataFolder(), logger);
         Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
 

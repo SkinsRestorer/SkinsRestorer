@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
@@ -44,10 +45,11 @@ public class SkinApplierBukkit {
     private final SRLogger log;
     @Getter
     private final Consumer<Player> refresh;
-    private boolean checkOptFileChecked = false;
     private boolean disableDismountPlayer;
     private boolean enableDismountEntities;
     private boolean enableRemountPlayer;
+    @Setter
+    static boolean checkOptFileChecked = false;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
@@ -86,6 +88,9 @@ public class SkinApplierBukkit {
      * @param property Property Object
      */
     protected void applySkin(Player player, IProperty property) {
+        if (!player.isOnline())
+            return;
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
