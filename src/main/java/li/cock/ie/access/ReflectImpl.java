@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
-import java.lang.reflect.*;
+import li.cock.ie.reflect.DuckReflect;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class ReflectImpl extends DefaultImpl {
+    private final boolean _canUnsafeAccess;
     private boolean _canGetValue = true;
     private boolean _canSetValue = true;
     private boolean _canGetNewInstance = false;
-
     private boolean _useDefaultAccess = true;
-    private boolean _canUnsafeAccess;
-
     private boolean _classesExist = false;
     private boolean _newInstancesExist = false;
     private boolean _methodsExist = false;
@@ -55,29 +55,17 @@ public class ReflectImpl extends DefaultImpl {
         this._lazy = (canGetNewInstance & lazy);
         this._canUnsafeAccess = canUnsafeAccess;
 
-        if(!useDefaultAccess) {
+        if (!useDefaultAccess) {
             useDefaultAccess(false);
         }
 
-        if(canGetNewInstance & !_lazy) {
+        if (canGetNewInstance & !_lazy) {
             changeGetNewInstance(true);
         }
     }
 
     public ReflectImpl(DuckReflect reflect, boolean canSetModifiers, boolean canGetNewInstance, boolean useDefaultAccess, boolean canUnsafeAccess) {
         this(reflect, canSetModifiers, canGetNewInstance, useDefaultAccess, canUnsafeAccess, true);
-    }
-
-    public ReflectImpl(DuckReflect reflect, boolean canSetModifiers, boolean canGetNewInstance, boolean useDefaultAccess) {
-        this(reflect, canSetModifiers, canGetNewInstance, useDefaultAccess, false);
-    }
-
-    public ReflectImpl(DuckReflect reflect, boolean canSetModifiers, boolean canGetNewInstance) {
-        this(reflect, canSetModifiers, canGetNewInstance, false);
-    }
-
-    public ReflectImpl(DuckReflect reflect) {
-        this(reflect, true, true);
     }
 
     private void setClasses() {
@@ -88,11 +76,11 @@ public class ReflectImpl extends DefaultImpl {
     }
 
     private void setNewInstances() {
-        if(!_classesExist) {
+        if (!_classesExist) {
             setClasses();
         }
 
-        if(_classesExist) {
+        if (_classesExist) {
             this._newFieldAccessor = _reflect.getMethod(_reflectionFactory, "newFieldAccessor", Field.class, boolean.class);
             this._factory = _reflect.call(_reflectionFactory, "getReflectionFactory");
 
@@ -101,11 +89,11 @@ public class ReflectImpl extends DefaultImpl {
     }
 
     private void setMethods() {
-        if(!_newInstancesExist) {
+        if (!_newInstancesExist) {
             setNewInstances();
         }
 
-        if(_newInstancesExist) {
+        if (_newInstancesExist) {
             this._get = _reflect.getMethod(_fieldAccessor, "get", Object.class);
             this._set = _reflect.getMethod(_fieldAccessor, "set", Object.class, Object.class);
 
@@ -115,8 +103,8 @@ public class ReflectImpl extends DefaultImpl {
 
     @Override
     public Object getValue(Field target, Object obj) {
-        if(!_canGetValue) return null;
-        if(_useDefaultAccess) {
+        if (!_canGetValue) return null;
+        if (_useDefaultAccess) {
             return super.getValue(target, obj);
         }
 
@@ -126,8 +114,8 @@ public class ReflectImpl extends DefaultImpl {
 
     @Override
     public boolean setValue(Field target, Object obj, Object value) {
-        if(!_canSetValue) return false;
-        if(_useDefaultAccess) {
+        if (!_canSetValue) return false;
+        if (_useDefaultAccess) {
             return super.setValue(target, obj, value);
         }
 
@@ -136,16 +124,16 @@ public class ReflectImpl extends DefaultImpl {
     }
 
     private Object getConstructorAccessor(Constructor<?> target) {
-        if(_constructorAccessor != null) {
+        if (_constructorAccessor != null) {
             Object accessor = _reflect.getValue(_constructorAccessor, target);
-            if(accessor != null) return accessor;
+            if (accessor != null) return accessor;
         }
 
         _reflect.reset();
 
-        if(_acquireConstructorAccessor != null) {
+        if (_acquireConstructorAccessor != null) {
             Object accessor = _reflect.call(_acquireConstructorAccessor, target);
-            if(accessor != null) return accessor;
+            if (accessor != null) return accessor;
         }
 
         _reflect.reset();
@@ -155,8 +143,8 @@ public class ReflectImpl extends DefaultImpl {
 
     @Override
     public Object getNewInstance(Constructor<?> target, Object... args) {
-        if(!_canGetNewInstance) {
-            if(_lazy) {
+        if (!_canGetNewInstance) {
+            if (_lazy) {
                 changeGetNewInstance(true);
                 this._lazy = false;
 
@@ -168,7 +156,7 @@ public class ReflectImpl extends DefaultImpl {
 
         Object accessor = getConstructorAccessor(target);
 
-        if(this._newInstance == null & accessor != null) {
+        if (this._newInstance == null & accessor != null) {
             this._newInstance = _reflect.getMethod(accessor.getClass(), "newInstance", Object[].class);
         }
 
@@ -189,7 +177,7 @@ public class ReflectImpl extends DefaultImpl {
 
     @Override
     public boolean changeGetNewInstance(boolean enable) {
-        if(enable) {
+        if (enable) {
             if (_constructorAccessor == null & _acquireConstructorAccessor == null & _newConstructorAccessor == null & _newInstance == null) {
                 this._constructorAccessor = _reflect.getField(Constructor.class, "constructorAccessor");
                 this._acquireConstructorAccessor = _reflect.getMethod(Constructor.class, "acquireConstructorAccessor");
@@ -207,8 +195,8 @@ public class ReflectImpl extends DefaultImpl {
     }
 
     public boolean useDefaultAccess(boolean enable) {
-        if(!enable) {
-            if(!_methodsExist) {
+        if (!enable) {
+            if (!_methodsExist) {
                 setMethods();
             }
 
@@ -220,36 +208,4 @@ public class ReflectImpl extends DefaultImpl {
         }
     }
 
-    public boolean changeUnsafeAccess(boolean enable) {
-        this._canUnsafeAccess = enable;
-        return true;
-    }
-
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    public boolean useDefaultAccess() {
-        return _useDefaultAccess;
-    }
-
-    public boolean canUnsafeAccess() {
-        return _canUnsafeAccess;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        if(_lazy) {
-            changeGetNewInstance(true);
-            this._lazy = false;
-        }
-
-        return _canGetNewInstance;
-    }
 }

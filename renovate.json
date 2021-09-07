@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "baseBranches": [
+    "dev"
+  ],
+  "reviewers": [
+    "xknat"
+  ],
+  "ignoreDeps": [
+    "com.viaversion:viaversion"
+  ]
+}

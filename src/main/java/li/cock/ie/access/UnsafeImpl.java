@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
+import li.cock.ie.reflect.DuckReflect;
+
 import java.lang.reflect.*;
 
 public class UnsafeImpl implements IAccess {
@@ -52,19 +52,15 @@ public class UnsafeImpl implements IAccess {
     public UnsafeImpl(DuckReflect reflect, boolean canAccessObject, boolean canSetModifiers) {
         this._reflect = reflect;
 
-        if(canAccessObject) {
+        if (canAccessObject) {
             changeGetValue(true);
             changeSetValue(true);
         }
 
-        if(canSetModifiers) {
+        if (canSetModifiers) {
             changeSetFieldModifiers(true);
             changeSetMethodModifiers(true);
         }
-    }
-
-    public UnsafeImpl(DuckReflect reflect) {
-        this(reflect, true, false);
     }
 
     private void setClass() {
@@ -73,11 +69,11 @@ public class UnsafeImpl implements IAccess {
     }
 
     private void setInstance() {
-        if(!_classExists) {
+        if (!_classExists) {
             setClass();
         }
 
-        if(_classExists) {
+        if (_classExists) {
             this._unsafe = _reflect.newInstance(_unsafeClass);
             if (_unsafe == null) {
                 this._unsafe = _reflect.getValue(_unsafeClass, "theUnsafe");
@@ -88,13 +84,13 @@ public class UnsafeImpl implements IAccess {
     }
 
     private void setMethods(boolean canAccessObject, boolean canSetModifiers) {
-        if(!_instanceExists) {
+        if (!_instanceExists) {
             setInstance();
         }
 
-        if(_instanceExists) {
-            if(canAccessObject) {
-                if(!_canPrepareField) {
+        if (_instanceExists) {
+            if (canAccessObject) {
+                if (!_canPrepareField) {
                     this._staticFieldBase = _reflect.getMethod(_unsafeClass, "staticFieldBase", Field.class);
                     this._staticFieldOffset = _reflect.getMethod(_unsafeClass, "staticFieldOffset", Field.class);
                     this._objectFieldOffset = _reflect.getMethod(_unsafeClass, "objectFieldOffset", Field.class);
@@ -102,7 +98,7 @@ public class UnsafeImpl implements IAccess {
                     this._canPrepareField = (_staticFieldBase != null) & (_staticFieldOffset != null) & (_objectFieldOffset != null);
                 }
 
-                if(_canPrepareField) {
+                if (_canPrepareField) {
                     this._getObject = _reflect.getMethod(_unsafeClass, "getObject", Object.class, long.class);
                     this._putObject = _reflect.getMethod(_unsafeClass, "putObject", Object.class, long.class, Object.class);
 
@@ -110,7 +106,7 @@ public class UnsafeImpl implements IAccess {
                 }
             }
 
-            if(canSetModifiers) {
+            if (canSetModifiers) {
                 this._getAndSetInt = _reflect.getMethod(_unsafeClass, "getAndSetInt", Object.class, long.class, int.class);
                 this._canSetModifiers = (_getAndSetInt != null);
             }
@@ -118,12 +114,12 @@ public class UnsafeImpl implements IAccess {
     }
 
     private Object getFieldBase(Field target, Object obj, boolean isStatic) {
-        if(!isStatic) return obj;
+        if (!isStatic) return obj;
         return _reflect.call(_staticFieldBase, _unsafe, target);
     }
 
     private Long getFieldOffset(Field target, boolean isStatic) {
-        if(isStatic) {
+        if (isStatic) {
             return (Long) _reflect.call(_staticFieldOffset, _unsafe, target);
         } else {
             return (Long) _reflect.call(_objectFieldOffset, _unsafe, target);
@@ -132,26 +128,26 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public Object getValue(Field target, Object obj) {
-        if(!_canGetValue | (target == null)) return null;
+        if (!_canGetValue | (target == null)) return null;
 
         Boolean isStatic = Modifier.isStatic(target.getModifiers());
         Object base = getFieldBase(target, obj, isStatic);
         Long offset = getFieldOffset(target, isStatic);
 
-        if(base == null || !base.getClass().getName().equals("<unknown>"))
+        if (base == null || !base.getClass().getName().equals("<unknown>"))
             return _reflect.call(_getObject, _unsafe, base, offset);
         else return null;
     }
 
     @Override
     public boolean setValue(Field target, Object obj, Object value) {
-        if(!_canSetValue | (target == null)) return false;
+        if (!_canSetValue | (target == null)) return false;
 
         Boolean isStatic = Modifier.isStatic(target.getModifiers());
         Object base = getFieldBase(target, obj, isStatic);
         long offset = getFieldOffset(target, isStatic);
 
-        if(base == null || !base.getClass().getName().equals("<unknown>"))
+        if (base == null || !base.getClass().getName().equals("<unknown>"))
             return _reflect.exec(_putObject, _unsafe, base, offset, value);
         else return false;
     }
@@ -162,13 +158,13 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public boolean setModifiers(Field target, int mod) {
-        if(!_canSetFieldModifiers) return false;
+        if (!_canSetFieldModifiers) return false;
         return setModifiers(target, _FIELD_OFFSET, mod);
     }
 
     @Override
     public boolean setModifiers(Method target, int mod) {
-        if(!_canSetMethodModifiers) return false;
+        if (!_canSetMethodModifiers) return false;
         return setModifiers(target, _METHOD_OFFSET, mod);
     }
 
@@ -179,8 +175,8 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public boolean changeGetValue(boolean enable) {
-        if(enable) {
-            if(!_canAccessObject) {
+        if (enable) {
+            if (!_canAccessObject) {
                 setMethods(true, false);
             }
 
@@ -194,8 +190,8 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public boolean changeSetValue(boolean enable) {
-        if(enable) {
-            if(!_canAccessObject) {
+        if (enable) {
+            if (!_canAccessObject) {
                 setMethods(true, false);
             }
 
@@ -209,8 +205,8 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public boolean changeSetFieldModifiers(boolean enable) {
-        if(enable) {
-            if(!_canSetModifiers) {
+        if (enable) {
+            if (!_canSetModifiers) {
                 setMethods(false, true);
             }
 
@@ -224,8 +220,8 @@ public class UnsafeImpl implements IAccess {
 
     @Override
     public boolean changeSetMethodModifiers(boolean enable) {
-        if(enable) {
-            if(!_canSetModifiers) {
+        if (enable) {
+            if (!_canSetModifiers) {
                 setMethods(false, true);
             }
 
@@ -242,28 +238,4 @@ public class UnsafeImpl implements IAccess {
         return false;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return false;
-    }
 }

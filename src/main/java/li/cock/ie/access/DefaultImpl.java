@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
-import java.lang.reflect.*;
+import li.cock.ie.reflect.DuckReflect;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class DefaultImpl implements IAccess {
     protected DuckReflect _reflect;
@@ -37,7 +39,7 @@ public class DefaultImpl implements IAccess {
         this._reflect = reflect;
         this._lazy = (canSetModifiers & lazy);
 
-        if(canSetModifiers & !_lazy) {
+        if (canSetModifiers & !_lazy) {
             changeSetFieldModifiers(true);
             changeSetMethodModifiers(true);
         }
@@ -47,26 +49,22 @@ public class DefaultImpl implements IAccess {
         this(reflect, canSetModifiers, true);
     }
 
-    public DefaultImpl(DuckReflect reflect) {
-        this(reflect, false, false);
-    }
-
     @Override
     public Object getValue(Field target, Object obj) {
-        if(!_canGetValue) return null;
+        if (!_canGetValue) return null;
         return _reflect.getValue(target, obj);
     }
 
     @Override
     public boolean setValue(Field target, Object obj, Object value) {
-        if(!_canSetValue) return false;
+        if (!_canSetValue) return false;
         return _reflect.setValue(target, obj, value);
     }
 
     @Override
     public boolean setModifiers(Field target, int mod) {
-        if(!_canSetFieldModifiers) {
-            if(_lazy) {
+        if (!_canSetFieldModifiers) {
+            if (_lazy) {
                 changeSetFieldModifiers(true);
                 changeSetMethodModifiers(true);
                 this._lazy = false;
@@ -82,8 +80,8 @@ public class DefaultImpl implements IAccess {
 
     @Override
     public boolean setModifiers(Method target, int mod) {
-        if(!_canSetMethodModifiers) {
-            if(_lazy) {
+        if (!_canSetMethodModifiers) {
+            if (_lazy) {
                 changeSetFieldModifiers(true);
                 changeSetMethodModifiers(true);
                 this._lazy = false;
@@ -99,7 +97,7 @@ public class DefaultImpl implements IAccess {
 
     @Override
     public Object getNewInstance(Constructor<?> target, Object... args) {
-        if(!_canGetNewInstance) return null;
+        if (!_canGetNewInstance) return null;
         return _reflect.newInstance(target, args);
     }
 
@@ -117,8 +115,8 @@ public class DefaultImpl implements IAccess {
 
     @Override
     public boolean changeSetFieldModifiers(boolean enable) {
-        if(enable) {
-            if(_fieldModifiers == null) {
+        if (enable) {
+            if (_fieldModifiers == null) {
                 this._fieldModifiers = _reflect.getField(Field.class, "modifiers");
             }
 
@@ -132,8 +130,8 @@ public class DefaultImpl implements IAccess {
 
     @Override
     public boolean changeSetMethodModifiers(boolean enable) {
-        if(enable) {
-            if(_methodModifiers == null) {
+        if (enable) {
+            if (_methodModifiers == null) {
                 this._methodModifiers = _reflect.getField(Method.class, "modifiers");
             }
 
@@ -151,40 +149,4 @@ public class DefaultImpl implements IAccess {
         return true;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        if(_lazy) {
-            changeSetFieldModifiers(true);
-            changeSetMethodModifiers(true);
-            this._lazy = false;
-        }
-
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        if(_lazy) {
-            changeSetFieldModifiers(true);
-            changeSetMethodModifiers(true);
-            this._lazy = false;
-        }
-
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return _canGetNewInstance;
-    }
 }

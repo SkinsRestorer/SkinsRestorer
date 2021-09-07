@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.reflect;
 
-import li.cock.ie.access.*;
+import li.cock.ie.access.IAccess;
+import li.cock.ie.access.MultiImpl;
+
 import java.lang.reflect.*;
 
 public class DuckBypass {
-    private DuckReflect _reflect;
-    private IAccess _access;
+    private final DuckReflect _reflect;
+    private final IAccess _access;
 
     private boolean _replaced = false;
 
@@ -29,33 +30,13 @@ public class DuckBypass {
         this._reflect = reflect;
         this._access = access;
 
-        if(replaceSetAccessible) {
+        if (replaceSetAccessible) {
             replaceMethod();
         }
     }
 
-    public DuckBypass(DuckReflect reflect, IAccess access) {
-        this(reflect, access, false);
-    }
-
-    public DuckBypass(IAccess access, boolean debug) {
-        this(new DuckReflect(debug), access);
-    }
-
-    public DuckBypass(IAccess access) {
-        this(access, false);
-    }
-
     public DuckBypass(DuckReflect reflect, boolean replaceSetAccessible) {
         this(reflect, new MultiImpl(reflect), replaceSetAccessible);
-    }
-
-    public DuckBypass(DuckReflect reflect) {
-        this(reflect, false);
-    }
-
-    public DuckBypass(boolean replaceSetAccessible, boolean debug) {
-        this(new DuckReflect(debug), replaceSetAccessible);
     }
 
     public DuckBypass(boolean replaceSetAccessible) {
@@ -67,7 +48,7 @@ public class DuckBypass {
     }
 
     public void replaceMethod() {
-        if(!_replaced) {
+        if (!_replaced) {
             Method setAccessible = _reflect.getMethod(AccessibleObject.class, "setAccessible0", false, boolean.class);
             if (setAccessible != null) {
                 if (_access.setModifiers(setAccessible, Modifier.PUBLIC)) {
@@ -93,10 +74,6 @@ public class DuckBypass {
         _reflect.process(ex);
     }
 
-    public boolean setAccessible(AccessibleObject target) {
-        return _reflect.setAccessible(target);
-    }
-
     public Class<?> getClass(Object obj) {
         return _reflect.getClass(obj);
     }
@@ -105,80 +82,8 @@ public class DuckBypass {
         return _reflect.getClass(name);
     }
 
-    public <T> Constructor<T> getConstructor(Class<T> type, boolean accessible, Class<?>... argTypes) {
-        return _reflect.getConstructor(type, accessible, argTypes);
-    }
-
-    public <T> Constructor<T> getConstructor(Class<T> type, Class<?>... argTypes) {
-        return _reflect.getConstructor(type, argTypes);
-    }
-
-    public Class<?>[] getTypes(Object... values) {
-        Class<?>[] argTypes = null;
-
-        if(values != null) {
-            argTypes = new Class<?>[values.length];
-            for(int i = 0; i < values.length; ++i) {
-                argTypes[i] = getClass(values[i]);
-            }
-        }
-
-        return argTypes;
-    }
-
-    public Object newInstance(boolean replace, Constructor<?> target, Object... args) {
-        if(replace) replaceMethod();
-        return _access.getNewInstance(target, args);
-    }
-
-    public Object newInstance(Constructor<?> target, Object... args) {
-        return newInstance(true, target, args);
-    }
-
-    public <T> T newInstance(boolean replace, Class<T> type, Constructor<T> target, Object... args) {
-        try {
-            return type.cast(newInstance(replace, target, args));
-        } catch(Throwable ex) {
-            process(ex);
-        }
-
-        return null;
-    }
-
-    public <T> T newInstance(Class<T> type, Constructor<T> target, Object... args) {
-        return newInstance(true, type, target, args);
-    }
-
-    public <T> T newInstance(boolean replace, Class<T> type, Class<?>[] argTypes, Object... argValues) {
-        return newInstance(replace, type, getConstructor(type, argTypes), argValues);
-    }
-
-    public <T> T newInstance(Class<T> type, Class<?>[] argTypes, Object... argValues) {
-        return newInstance(true, type, argTypes, argValues);
-    }
-
-    public <T> T newInstance(boolean replace, Class<T> type, Object... argValues) {
-        return newInstance(replace, type, getTypes(argValues), argValues);
-    }
-
-    public <T> T newInstance(Class<T> type, Object... argValues) {
-        return newInstance(true, type, argValues);
-    }
-
-    public Field getField(Class<?> type, boolean accessible, String name) {
-        return _reflect.getField(type, accessible, name);
-    }
-
     public Field getField(Class<?> type, String name) {
         return _reflect.getField(type, name);
-    }
-
-    public Method getMethod(Class<?> type, String name, boolean accessible, Class<?>... argTypes) {
-        return _reflect.getMethod(type, name, accessible, argTypes);
-    }
-
-    public Method getMethod(Class<?> type, String name, Class<?>... argTypes) {
-        return _reflect.getMethod(type, name, argTypes);
     }
 
     public Object getValue(Field target, Object obj) {
@@ -200,7 +105,7 @@ public class DuckBypass {
     public <T> T getValue(Field target, Object obj, Class<T> valType) {
         try {
             return valType.cast(getValue(target, obj));
-        } catch(Throwable ex) {
+        } catch (Throwable ex) {
             process(ex);
         }
 
@@ -252,17 +157,13 @@ public class DuckBypass {
     }
 
     public boolean setModifiers(Member target, int mod) {
-        if(target instanceof Field) {
+        if (target instanceof Field) {
             return setModifiers((Field) target, mod);
-        } else if(target instanceof Method) {
+        } else if (target instanceof Method) {
             return setModifiers((Method) target, mod);
         }
 
         return false;
-    }
-
-    public boolean addModifier(Member target, int mod) {
-        return setModifiers(target, target.getModifiers() | mod);
     }
 
     public boolean delModifier(Member target, int mod) {
@@ -271,66 +172,10 @@ public class DuckBypass {
 
     public boolean setEditable(Member target) {
         int mod = target.getModifiers();
-        if(Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
+        if (Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
             return delModifier(target, Modifier.FINAL);
         }
 
         return true;
-    }
-
-    public Object call(Method target, Object obj, Object... argValues) {
-        return _reflect.call(target, obj, argValues);
-    }
-
-    public Object call(Method target, Object[] argValues) {
-        return _reflect.call(target, argValues);
-    }
-
-    public Object call(Method target) {
-        return _reflect.call(target);
-    }
-
-    public Object call(Class<?> type, String name, Class<?>[] argTypes, Object obj, Object... argValues) {
-        return _reflect.call(type, name, argTypes, obj, argValues);
-    }
-
-    public Object call(Class<?> type, String name, Class<?>[] argTypes, Object[] argValues) {
-        return _reflect.call(type, name, argTypes, argValues);
-    }
-
-    public Object call(Class<?> type, String name, Object obj) {
-        return _reflect.call(type, name, obj);
-    }
-
-    public Object call(Class<?> type, String name) {
-        return _reflect.call(type, name);
-    }
-
-    public boolean exec(Method target, Object obj, Object... argValues) {
-        return _reflect.exec(target, obj, argValues);
-    }
-
-    public boolean exec(Method target, Object[] argValues) {
-        return _reflect.exec(target, argValues);
-    }
-
-    public boolean exec(Method target) {
-        return _reflect.exec(target);
-    }
-
-    public boolean exec(Class<?> type, String name, Class<?>[] argTypes, Object obj, Object... argValues) {
-        return _reflect.exec(type, name, argTypes, obj, argValues);
-    }
-
-    public boolean exec(Class<?> type, String name, Class<?>[] argTypes, Object[] argValues) {
-        return _reflect.exec(type, name, argTypes, argValues);
-    }
-
-    public boolean exec(Class<?> type, String name, Object obj) {
-        return _reflect.exec(type, name, obj);
-    }
-
-    public boolean exec(Class<?> type, String name) {
-        return _reflect.exec(type, name);
     }
 }

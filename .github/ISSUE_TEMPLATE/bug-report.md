@@ -1,17 +1,30 @@
 ---
-name: Bug Report
-about: Got any issue?
+name: Bug Report 
+about: Got any issue? 
 title: ''
 labels: ''
-assignees: ''
+assignees: 'xknat'
 
 ---
 
+<!--
+```
+============================================
+= WARNING! Github is only for code issues. =
+= For user support, go to our discord!     =
+= http://skinsrestorer.net/discord         =
+============================================
+```
+-->
+
 ## Describe the bug
+
 A clear and concise description of what the bug is.
 
 ## How can we reproduce what you got?
+
 Steps to reproduce the behavior:
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -28,14 +41,23 @@ If applicable, add screenshots to help explain your problem.
 **On what platform does your server run? (Bungeecord/Spigot/Bukkit)**
 
 **What version? Do NOT answer LATEST**
-* SkinsRestorer: 13.6.2
-* Spigot/Bukkit/Bungeecord:
+
+* SkinsRestorer:
+* Spigot version:
+* Bungeecord version:
+* IF bungee, did you put the plugin on all servers: Yes / No
 * Java: 8
+* plugin list bungee & spigot:
+* MinecraftLauncher?:
+* if multiverse, (censored) worlds file:
 
 ## Logs
-Replace the links below by a paste of your startup logs (if you run a **Bungeecord** server, please send startup logs from **Bungeecord *AND* Spigot/Bukkit**)
+
+Replace the links below by a paste of your startup logs (if you run a **Bungeecord** server, please send startup logs
+from **Bungeecord *AND* Spigot/Bukkit**)
 https://gist.github.com
 https://hastebin.app
 
 ## Additional context
+
 Add any other context about the problem here.

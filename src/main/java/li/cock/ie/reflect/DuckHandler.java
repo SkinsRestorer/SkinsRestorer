@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.reflect;
 
 public class DuckHandler implements IDuckHandler {
+    private final boolean debug;
     private Throwable ex = null;
-    private boolean debug;
 
     public DuckHandler(boolean debug) {
         this.debug = debug;
     }
 
-    public DuckHandler() {
-        this(false);
-    }
-
     @Override
     public void process(Throwable ex) {
-        if(debug) {
-            ex.printStackTrace(System.err);
+        if (debug) {
+            ex.printStackTrace();
         }
 
         this.ex = ex;

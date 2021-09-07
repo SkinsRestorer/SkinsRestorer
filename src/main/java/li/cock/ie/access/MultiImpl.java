@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.access;
 
-import li.cock.ie.reflect.*;
-import java.lang.reflect.*;
-import java.util.*;
+import li.cock.ie.reflect.DuckReflect;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MultiImpl implements IAccess {
+    private final boolean _preferUnsafe;
     protected DuckReflect _reflect;
-    protected List<IAccess> _access = new ArrayList<IAccess>();
-
+    protected List<IAccess> _access = new ArrayList<>();
     private boolean _canGetValue;
     private boolean _canSetValue;
     private boolean _canSetFieldModifiers;
     private boolean _canSetMethodModifiers;
     private boolean _canGetNewInstance;
-
-    private boolean _preferUnsafe;
 
     public MultiImpl(DuckReflect reflect, boolean preferUnsafe, int getValDamage, int setValDamage, int setModifiersDamage, int newInstanceDamage) {
         this._reflect = reflect;
@@ -46,15 +48,15 @@ public class MultiImpl implements IAccess {
         ReflectImpl refImpl = new ReflectImpl(reflect, false, (newInstanceDamage > 1), (getValDamage < 2 & setValDamage < 2), (getValDamage > 2 | setValDamage > 2));
         UnsafeImpl unsImpl = new UnsafeImpl(reflect, (getValDamage > 2 | setValDamage > 2), (setModifiersDamage > 1));
 
-        if(getValDamage < 1) defImpl.changeGetValue(false);
-        if(getValDamage < 2) refImpl.changeGetValue(false);
-        if(getValDamage < 3) unsImpl.changeGetValue(false);
+        if (getValDamage < 1) defImpl.changeGetValue(false);
+        if (getValDamage < 2) refImpl.changeGetValue(false);
+        if (getValDamage < 3) unsImpl.changeGetValue(false);
 
-        if(setValDamage < 1) defImpl.changeSetValue(false);
-        if(setValDamage < 2) refImpl.changeSetValue(false);
-        if(setValDamage < 3) unsImpl.changeSetValue(false);
+        if (setValDamage < 1) defImpl.changeSetValue(false);
+        if (setValDamage < 2) refImpl.changeSetValue(false);
+        if (setValDamage < 3) unsImpl.changeSetValue(false);
 
-        if(newInstanceDamage < 1) defImpl.changeGetNewInstance(false);
+        if (newInstanceDamage < 1) defImpl.changeGetNewInstance(false);
 
         _access.add(defImpl);
         _access.add(refImpl);
@@ -67,10 +69,6 @@ public class MultiImpl implements IAccess {
 
     public MultiImpl(DuckReflect reflect, boolean preferUnsafe, int refDamage, int newInstanceDamage) {
         this(reflect, preferUnsafe, refDamage - refDamage / 5, refDamage / 5 + refDamage / 8, newInstanceDamage);
-    }
-
-    public MultiImpl(DuckReflect reflect, boolean preferUnsafe) {
-        this(reflect, preferUnsafe, 8, 2);
     }
 
     public MultiImpl(DuckReflect reflect, int refDamage, int newInstanceDamage) {
@@ -87,13 +85,13 @@ public class MultiImpl implements IAccess {
 
     @Override
     public Object getValue(Field target, Object obj) {
-        if(!_canGetValue) return null;
+        if (!_canGetValue) return null;
 
         _reflect.reset();
 
-        for(IAccess access : _access) {
-            Object res = access.getValue(target ,obj);
-            if(res != null & _reflect.check()) {
+        for (IAccess access : _access) {
+            Object res = access.getValue(target, obj);
+            if (res != null & _reflect.check()) {
                 return res;
             }
         }
@@ -102,8 +100,8 @@ public class MultiImpl implements IAccess {
     }
 
     private boolean defSetValue(Field target, Object obj, Object value) {
-        for(IAccess access : _access) {
-            if(access.setValue(target, obj, value) & _reflect.check()) {
+        for (IAccess access : _access) {
+            if (access.setValue(target, obj, value) & _reflect.check()) {
                 return true;
             }
         }
@@ -113,28 +111,28 @@ public class MultiImpl implements IAccess {
 
     @Override
     public boolean setValue(Field target, Object obj, Object value) {
-        if(!_canSetValue | (target == null)) return false;
+        if (!_canSetValue | (target == null)) return false;
 
         _reflect.reset();
 
         int mod = target.getModifiers();
-        if(Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
-            if(!_preferUnsafe) {
-                if(_access.get(0).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
+        if (Modifier.isFinal(mod) && Modifier.isStatic(mod)) {
+            if (!_preferUnsafe) {
+                if (_access.get(0).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
                     return defSetValue(target, obj, value);
-                } else if(_access.get(2).setValue(target, obj, value) & _reflect.check()) {
+                } else if (_access.get(2).setValue(target, obj, value) & _reflect.check()) {
                     return true;
-                } else if(_access.get(2).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
+                } else if (_access.get(2).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
                     return defSetValue(target, obj, value);
                 } else {
                     return false;
                 }
             } else {
-                if(_access.get(2).setValue(target, obj, value) & _reflect.check()) {
+                if (_access.get(2).setValue(target, obj, value) & _reflect.check()) {
                     return true;
-                } else if(_access.get(0).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
+                } else if (_access.get(0).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
                     return defSetValue(target, obj, value);
-                } else if(_access.get(2).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
+                } else if (_access.get(2).setModifiers(target, mod & ~Modifier.FINAL) & _reflect.check()) {
                     return defSetValue(target, obj, value);
                 } else {
                     return false;
@@ -147,12 +145,12 @@ public class MultiImpl implements IAccess {
 
     @Override
     public boolean setModifiers(Field target, int mod) {
-        if(!_canSetFieldModifiers) return false;
+        if (!_canSetFieldModifiers) return false;
 
         _reflect.reset();
 
-        for(IAccess access : _access) {
-            if(access.setModifiers(target, mod) & _reflect.check()) {
+        for (IAccess access : _access) {
+            if (access.setModifiers(target, mod) & _reflect.check()) {
                 return true;
             }
         }
@@ -162,12 +160,12 @@ public class MultiImpl implements IAccess {
 
     @Override
     public boolean setModifiers(Method target, int mod) {
-        if(!_canSetMethodModifiers) return false;
+        if (!_canSetMethodModifiers) return false;
 
         _reflect.reset();
 
-        for(IAccess access : _access) {
-            if(access.setModifiers(target, mod) & _reflect.check()) {
+        for (IAccess access : _access) {
+            if (access.setModifiers(target, mod) & _reflect.check()) {
                 return true;
             }
         }
@@ -177,13 +175,13 @@ public class MultiImpl implements IAccess {
 
     @Override
     public Object getNewInstance(Constructor<?> target, Object... args) {
-        if(!_canGetNewInstance) return null;
+        if (!_canGetNewInstance) return null;
 
         _reflect.reset();
 
-        for(IAccess access : _access) {
+        for (IAccess access : _access) {
             Object res = access.getNewInstance(target, args);
-            if(res != null & _reflect.check()) {
+            if (res != null & _reflect.check()) {
                 return res;
             }
         }
@@ -221,28 +219,4 @@ public class MultiImpl implements IAccess {
         return true;
     }
 
-    @Override
-    public boolean canGetValue() {
-        return _canGetValue;
-    }
-
-    @Override
-    public boolean canSetValue() {
-        return _canSetValue;
-    }
-
-    @Override
-    public boolean canSetFieldModifiers() {
-        return _canSetFieldModifiers;
-    }
-
-    @Override
-    public boolean canSetMethodModifiers() {
-        return _canSetMethodModifiers;
-    }
-
-    @Override
-    public boolean canGetNewInstance() {
-        return _canGetNewInstance;
-    }
 }
