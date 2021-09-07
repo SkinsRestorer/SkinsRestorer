@@ -279,13 +279,13 @@ public class SkinCommand extends BaseCommand {
             }
         }
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(player, oldSkinName.orElse(player.getName()), save);
+        rollback(pName, oldSkinName.orElse(pName), save);
         return false;
     }
 
-    private void rollback(Player player, String oldSkinName, boolean save) {
+    private void rollback(String pName, String oldSkinName, boolean save) {
         if (save)
-            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName);
+            plugin.getSkinStorage().setSkinName(pName, oldSkinName);
     }
 
     private void sendHelp(CommandSource source) {
