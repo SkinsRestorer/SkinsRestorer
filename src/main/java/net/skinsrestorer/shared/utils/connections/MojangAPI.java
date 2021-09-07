@@ -92,7 +92,6 @@ public class MojangAPI {
     public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
         final String finalNameOrUuid = nameOrUuid.trim().toUpperCase();
         if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(finalNameOrUuid))) {
-            System.out.println("MATCH!");
             return createProperty("textures", HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature);
         }
 
