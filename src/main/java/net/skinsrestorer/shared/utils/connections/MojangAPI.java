@@ -96,16 +96,14 @@ public class MojangAPI {
             return createProperty("textures", HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature);
         }
 
-        IProperty skin = getProfile(nameOrUuid, false);
+        final IProperty skin = getProfile(nameOrUuid, false);
         if (skin != null)
             return skin;
 
         if (!nameOrUuid.matches("[a-f0-9]{32}"))
             nameOrUuid = getUUIDMojang(nameOrUuid, true);
 
-        skin = getProfileMojang(nameOrUuid, true);
-
-        return skin;
+        return getProfileMojang(nameOrUuid, true);
     }
 
     // TODO: Deal with duplicated code
