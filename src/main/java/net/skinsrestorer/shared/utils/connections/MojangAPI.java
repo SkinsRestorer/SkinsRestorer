@@ -87,16 +87,14 @@ public class MojangAPI {
      * @throws SkinRequestException on not premium or error
      */
     public IProperty getSkin(String nameOrUuid) throws SkinRequestException {
-        IProperty skin = getProfile(nameOrUuid, false);
+        final IProperty skin = getProfile(nameOrUuid, false);
         if (skin != null)
             return skin;
 
         if (!nameOrUuid.matches("[a-f0-9]{32}"))
             nameOrUuid = getUUIDMojang(nameOrUuid, true);
 
-        skin = getProfileMojang(nameOrUuid, true);
-
-        return skin;
+        return getProfileMojang(nameOrUuid, true);
     }
 
     // TODO: Deal with duplicated code
@@ -151,7 +149,7 @@ public class MojangAPI {
             }
 
             return obj.get("id").getAsString();
-        } catch (IOException ignored) {
+        } catch (IOException ignored) { // mojang does throw IOException when uuid is not found
         }
         if (tryNext)
             return getUUIDBackup(name, true);
@@ -175,8 +173,13 @@ public class MojangAPI {
             if (obj.get("id") != null)
                 return obj.get("id").getAsString();
         } catch (IOException ignored) {
+            if (tryNext)
+                throw new SkinRequestException((Locale.ERROR_SERVER_OFFLINE)); // TODO: add mojang status check
         }
-        throw new SkinRequestException(Locale.NOT_PREMIUM); // TODO: check flow of code
+        if (tryNext)
+            throw new SkinRequestException(Locale.NOT_PREMIUM); // TODO: check flow of code
+
+        return null;
     }
 
     public IProperty getProfile(String uuid) {
