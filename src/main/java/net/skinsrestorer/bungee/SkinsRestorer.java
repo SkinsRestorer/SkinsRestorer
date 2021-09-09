@@ -62,17 +62,17 @@ import java.util.concurrent.TimeUnit;
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final File configPath = getDataFolder();
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private final SkinApplierBungee skinApplierBungee = new SkinApplierBungee(this, srLogger);
     private boolean multiBungee;
     private boolean outdated;
     private UpdateChecker updateChecker;
-    private SkinApplierBungee skinApplierBungee;
-    private SRLogger srLogger;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
-    private SkinsRestorerAPI skinsRestorerAPI;
     private BungeeCommandManager manager;
 
     @Override
@@ -82,7 +82,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
@@ -105,12 +105,6 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         // Init config files
         Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
-
-        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
-        skinApplierBungee = new SkinApplierBungee(this, srLogger);
 
         // Init storage
         if (!initStorage())

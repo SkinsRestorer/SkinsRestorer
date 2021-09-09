@@ -68,16 +68,16 @@ import java.util.TreeMap;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateChecker updateChecker;
     private UpdateDownloaderGithub updateDownloader;
-    private SRLogger srLogger;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
-    private SkinsRestorerAPI skinsRestorerAPI;
     private SkinCommand skinCommand;
     private PaperCommandManager manager;
 
@@ -104,7 +104,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1669);
@@ -112,12 +112,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
-
-        // Init all essential classes
-        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
 
         try {
             skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
