@@ -27,6 +27,9 @@ jobs:
       - name: Move files
         run: |
           mv ./build/docs/javadoc ./docs
+      - name: Create CNAME
+        run: |
+          echo "docs.skinsrestorer.net" > ./docs/CNAME
       - name: Commit files
         run: |
           git add .
