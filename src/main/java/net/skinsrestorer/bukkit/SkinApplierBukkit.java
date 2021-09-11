@@ -68,8 +68,9 @@ public class SkinApplierBukkit {
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
-            } catch (ExceptionInInitializerError e) {
+            } catch (InitializeException e) {
                 e.printStackTrace();
+                log.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
 

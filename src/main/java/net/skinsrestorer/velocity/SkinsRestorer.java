@@ -70,30 +70,33 @@ import java.util.concurrent.TimeUnit;
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "{version}", description = "{description}", url = "{url}", authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
-    private final SRLogger srLogger;
-    private final File dataFolder;
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private UpdateChecker updateChecker;
-    private SkinApplierVelocity skinApplierVelocity;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
-    private SkinsRestorerAPI skinsRestorerAPI;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    @Inject
+    @DataDirectory
+    private Path dataFolderPath;
+    private final File dataFolder = dataFolderPath.toFile();
+    @Inject
+    private Logger logger;
+    private final SRLogger srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(logger));
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private final SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
 
     @Inject
-    public SkinsRestorer(ProxyServer proxy, Logger logger, Metrics.Factory metricsFactory, @DataDirectory Path dataFolder) {
+    public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory) {
         this.proxy = proxy;
-        srLogger = new SRLogger(dataFolder.toFile(), new Slf4LoggerImpl(logger));
-        this.dataFolder = dataFolder.toFile();
         this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        srLogger.info("Enabling SkinsRestorer v" + getVersion());
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
@@ -117,12 +120,6 @@ public class SkinsRestorer implements ISRPlugin {
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
-
-        mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
-        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
 
         // Init storage
         if (!initStorage())

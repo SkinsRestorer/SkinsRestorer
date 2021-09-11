@@ -251,11 +251,12 @@ public class SkinStorage {
 
     /**
      * Create a platform specific property and also optionally update cached skin if outdated.
-     * @param playerName the players name
+     *
+     * @param playerName     the players name
      * @param updateOutdated whether the skin data shall be looked up again if the timestamp is too far away
-     * @param value skin data value
-     * @param signature signature to verify skin data
-     * @param timestamp time cached property data was created
+     * @param value          skin data value
+     * @param signature      signature to verify skin data
+     * @param timestamp      time cached property data was created
      * @return Platform specific property
      * @throws SkinRequestException throws when no API calls were successful
      */

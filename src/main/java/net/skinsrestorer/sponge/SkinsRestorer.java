@@ -70,33 +70,35 @@ import java.util.concurrent.TimeUnit;
 public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
-    private final File dataFolder;
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
     @Inject
     protected Game game;
-    private UpdateChecker updateChecker;
-    private SkinApplierSponge skinApplierSponge;
-    private SRLogger srLogger;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
-    private SkinsRestorerAPI skinsRestorerAPI;
-    private SpongeCommandManager manager;
+    @Inject
+    @ConfigDir(sharedRoot = false)
+    private Path dataFolderPath;
+    private final File dataFolder = dataFolderPath.toFile();
     @Inject
     private Logger log;
+    private final SRLogger srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private UpdateChecker updateChecker;
+    private SpongeCommandManager manager;
     @Inject
     private PluginContainer container;
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolder) {
+    public SkinsRestorer(Metrics.Factory metricsFactory) {
         metrics = metricsFactory.make(2337);
-        this.dataFolder = dataFolder.toFile();
     }
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(log));
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
         // Check for updates
@@ -115,12 +117,6 @@ public class SkinsRestorer implements ISRPlugin {
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), srLogger);
         Locale.load(dataFolder, srLogger);
-
-        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
-        skinApplierSponge = new SkinApplierSponge(this);
 
         // Init storage
         if (!initStorage())

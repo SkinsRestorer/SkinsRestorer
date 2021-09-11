@@ -36,11 +36,9 @@ public class SRLogger {
     public SRLogger(File pluginFolder, ISRLogger logger, boolean color) {
         this.logger = logger;
         this.color = color;
-
-        load(pluginFolder);
     }
 
-    private void load(File pluginFolder) {
+    public void load(File pluginFolder) {
         try {
             // Manual check config value
             File pluginConfigFile = new File(pluginFolder, "config.yml");
