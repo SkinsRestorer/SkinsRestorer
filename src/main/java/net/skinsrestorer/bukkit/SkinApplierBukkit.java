@@ -27,6 +27,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -55,7 +56,7 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
-        if (PaperLib.isPaper()) {
+        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
