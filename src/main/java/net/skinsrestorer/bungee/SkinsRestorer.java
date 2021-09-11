@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bungee;
 
@@ -43,8 +41,6 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.CommandPropertiesManager;
-import net.skinsrestorer.shared.utils.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -57,7 +53,7 @@ import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -65,17 +61,19 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final File configPath = getDataFolder();
+    private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private final SkinApplierBungee skinApplierBungee = new SkinApplierBungee(this, srLogger);
     private boolean multiBungee;
     private boolean outdated;
     private UpdateChecker updateChecker;
-    private SkinApplierBungee skinApplierBungee;
-    private SRLogger srLogger;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
-    private SkinsRestorerAPI skinsRestorerAPI;
+    private BungeeCommandManager manager;
 
     @Override
     public String getVersion() {
@@ -84,14 +82,14 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
 
         if (!updaterDisabled.exists()) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
@@ -105,14 +103,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(getDataFolder(), getResourceAsStream("config.yml"), srLogger);
+        Config.load(getDataFolder(), getResource("config.yml"), srLogger);
         Locale.load(getDataFolder(), srLogger);
-
-        mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
-        skinApplierBungee = new SkinApplierBungee(this, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -131,27 +123,16 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         pluginMessageListener = new PluginMessageListener(this);
         getProxy().getPluginManager().registerListener(this, pluginMessageListener);
 
-        multiBungee = Config.MULTIBUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
+        multiBungee = Config.MULTI_BUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Run connection check
         SharedMethods.runServiceCheck(mojangAPI, srLogger);
     }
 
-    @SuppressWarnings({"deprecation"})
     private void initCommands() {
-        BungeeCommandManager manager = new BungeeCommandManager(this);
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
+        manager = new BungeeCommandManager(this);
 
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.split(", "))));
-
-        new CommandPropertiesManager(manager, configPath, getResourceAsStream("command-messages.properties"), srLogger);
-
-        SharedMethods.allowIllegalACFNames();
+        prepareACF(manager, srLogger);
 
         this.skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);
@@ -193,6 +174,11 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
                 updateChecker.getUpToDateMessages(getVersion(), false).forEach(srLogger::info);
             }
         }));
+    }
+
+    @Override
+    public InputStream getResource(String resource) {
+        return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {

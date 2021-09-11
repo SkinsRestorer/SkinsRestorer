@@ -1,6 +1,6 @@
 ##################################
 #    SkinsRestorer Config.yml    #
-#      Generated on ${project.version}       #
+#      Generated on ${version}       #
 ##################################
 #
 # We from SRTeam thank you for using our plugin!
@@ -40,7 +40,7 @@ SkinErrorCooldown: 5
 
 # Here you can design the plugin the way you want it.
 
-# True will  make use of the 'HELP_PLAYER' & `SR_LINE` in messages.yml.
+# True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.
 # This is more customizable, but at the cost of permission specific help.
 EnableCustomHelp: false
 

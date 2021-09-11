@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.reflect;
 
 import java.lang.reflect.AccessibleObject;
@@ -128,7 +127,7 @@ public class DuckReflect {
     }
 
     public <T> T newInstance(Class<T> type) {
-        return newInstance(getConstructor(type, null), null);
+        return newInstance(getConstructor(type, (Class<?>) null), (Object) null);
     }
 
     public Field getField(Class<?> type, boolean accessible, String name) {

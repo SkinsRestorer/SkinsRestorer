@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.api.bukkit;
 
@@ -36,6 +34,7 @@ public class BukkitHeadAPI {
     private BukkitHeadAPI() {
     }
 
+    @SuppressWarnings("unchecked")
     public static void setSkull(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
         PropertyMap propertyMap = profile.getProperties();
@@ -44,7 +43,6 @@ public class BukkitHeadAPI {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
 
-        //noinspection unchecked
         propertyMap.put("textures", new Property("textures", b64stringTexture));
 
         ItemMeta headMeta = head.getItemMeta();

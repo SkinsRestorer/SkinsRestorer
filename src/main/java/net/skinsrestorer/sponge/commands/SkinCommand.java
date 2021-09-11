@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.sponge.commands;
 
@@ -130,31 +128,31 @@ public class SkinCommand extends BaseCommand {
             }
 
             final Player player = target.getPlayer();
-            String skin = plugin.getSkinStorage().getSkinName(player.getName());
+            java.util.Optional<String> skin = plugin.getSkinStorage().getSkinName(player.getName());
 
             try {
-                if (skin != null) {
+                if (skin.isPresent()) {
                     //filter skinUrl
-                    if (skin.startsWith(" ")) {
+                    if (skin.get().startsWith(" ")) {
                         source.sendMessage(plugin.parseMessage(Locale.ERROR_UPDATING_URL));
                         return;
                     }
 
-                    if (!plugin.getSkinStorage().updateSkinData(skin)) {
+                    if (!plugin.getSkinStorage().updateSkinData(skin.get())) {
                         source.sendMessage(plugin.parseMessage(Locale.ERROR_UPDATING_SKIN));
                         return;
                     }
 
                 } else {
                     // get DefaultSkin
-                    skin = plugin.getSkinStorage().getDefaultSkinName(player.getName(), true);
+                    skin = java.util.Optional.of(plugin.getSkinStorage().getDefaultSkinName(player.getName(), true));
                 }
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.parseMessage(e.getMessage()));
                 return;
             }
 
-            if (setSkin(source, player, skin, false, false, null)) {
+            if (setSkin(source, player, skin.get(), false, false, null)) {
                 if (source == player)
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", player.getName())));
                 else
@@ -238,10 +236,10 @@ public class SkinCommand extends BaseCommand {
         CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
         final String pName = player.getName();
-        final String oldSkinName = plugin.getSkinStorage().getSkinName(pName);
+        final java.util.Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(pName);
 
         if (C.validUrl(skin)) {
-            if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKINWITHOUTPERM) {
+            if (!source.hasPermission("skinsrestorer.command.set.url") && !Config.SKIN_WITHOUT_PERM) {
                 source.sendMessage(plugin.parseMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL));
                 CooldownStorage.resetCooldown(senderName);
                 return false;
@@ -281,13 +279,13 @@ public class SkinCommand extends BaseCommand {
             }
         }
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(player, oldSkinName, save);
+        rollback(pName, oldSkinName.orElse(pName), save);
         return false;
     }
 
-    private void rollback(Player player, String oldSkinName, boolean save) {
+    private void rollback(String pName, String oldSkinName, boolean save) {
         if (save)
-            plugin.getSkinStorage().setSkinName(player.getName(), oldSkinName != null ? oldSkinName : player.getName());
+            plugin.getSkinStorage().setSkinName(pName, oldSkinName);
     }
 
     private void sendHelp(CommandSource source) {

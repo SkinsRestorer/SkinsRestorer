@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
@@ -107,7 +105,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
             Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
 
-            // Slowly getting from object to object till i get what I need for
+            // Slowly getting from object to object till we get what is needed for
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(entityPlayer, "getWorld");
             Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
@@ -129,9 +127,9 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object playerIntManager = ReflectionUtil.getFieldByType(entityPlayer, "PlayerInteractManager");
             Enum<?> enumGamemode = (Enum<?>) ReflectionUtil.invokeMethod(playerIntManager, "getGameMode");
 
-            //noinspection deprecation
+            @SuppressWarnings("deprecation")
             int gamemodeId = player.getGameMode().getValue();
-            //noinspection deprecation
+            @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
             Object respawn;
@@ -203,7 +201,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
                 try {
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, world, gamemodeId);
+                    //noinspection UnstableApiUsage
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(), gamemodeId);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

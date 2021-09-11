@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
@@ -32,22 +30,42 @@ import java.util.function.Consumer;
 
 public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
-    private final Method getHandleMethod;
-    private Method healthUpdateMethod;
+    private final Consumer<Player> triggerHealthUpdate;
 
     public PaperSkinRefresher(SRLogger logger) throws InitializeException {
         try {
             refreshPlayerMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
-            getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-            getHandleMethod.setAccessible(true);
 
+            Consumer<Player> triggerHealthUpdate;
             // XP won't get updated on unsupported Paper builds
             try {
-                healthUpdateMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
+                Method healthUpdateMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
                 healthUpdateMethod.setAccessible(true);
+
+                triggerHealthUpdate = player -> {
+                    try {
+                        healthUpdateMethod.invoke(player);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                };
             } catch (NoSuchMethodException ignored) {
+                Method getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+                getHandleMethod.setAccessible(true);
+
+                Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
+                healthUpdateMethod.setAccessible(true);
+
+                triggerHealthUpdate = player -> {
+                    try {
+                        healthUpdateMethod.invoke(getHandleMethod.invoke(player));
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                };
             }
+            this.triggerHealthUpdate = triggerHealthUpdate;
 
             logger.info("Using PaperSkinRefresher");
         } catch (Exception e) {
@@ -60,11 +78,6 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     @SneakyThrows
     public void accept(Player player) {
         refreshPlayerMethod.invoke(player);
-
-        if (healthUpdateMethod != null) {
-            healthUpdateMethod.invoke(player);
-        } else {
-            ReflectionUtil.invokeMethod(getHandleMethod.invoke(player), "triggerHealthUpdate");
-        }
+        triggerHealthUpdate.accept(player);
     }
 }

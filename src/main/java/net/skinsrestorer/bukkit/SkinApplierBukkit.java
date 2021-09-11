@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit;
 
@@ -29,6 +27,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -57,7 +56,7 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
-        if (PaperLib.isPaper()) {
+        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
@@ -70,8 +69,9 @@ public class SkinApplierBukkit {
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
-            } catch (ExceptionInInitializerError e) {
+            } catch (InitializeException e) {
                 e.printStackTrace();
+                log.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
 
@@ -104,7 +104,7 @@ public class SkinApplierBukkit {
                     Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
                     Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
                     ReflectionUtil.invokeMethod(propMap, "clear");
-                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class[]{Object.class, Object.class}, "textures", property);
+                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
 
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
                 } catch (Exception e) {
@@ -119,6 +119,7 @@ public class SkinApplierBukkit {
      *
      * @param player - Player
      */
+    @SuppressWarnings("deprecation")
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;
@@ -156,14 +157,12 @@ public class SkinApplierBukkit {
                 try {
                     ps.hidePlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
-                    //noinspection deprecation
                     ps.hidePlayer(player);
                 }
 
                 try {
                     ps.showPlayer(plugin, player);
                 } catch (NoSuchMethodError ignored) {
-                    //noinspection deprecation
                     ps.showPlayer(player);
                 }
             }
