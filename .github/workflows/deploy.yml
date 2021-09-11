@@ -1,11 +1,10 @@
-name: Website deploy
+name: Javadoc
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +22,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Build website with Maven
-        run: ./gradlew javadocs
+      - name: Build javadoc with Gradle
+        run: ./gradlew javadoc
       - name: Move files
         run: |
           mv ./build/docs/javadoc ./docs
@@ -33,7 +32,7 @@ jobs:
           git add .
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -m "Deploy skinsrestorer website" -a
+          git commit -m "Deploy SkinsRestorer Javadoc" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
