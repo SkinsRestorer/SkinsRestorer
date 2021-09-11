@@ -23,7 +23,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -53,6 +52,19 @@ public class ServerVersion {
     }
 
     public boolean isNewer(ServerVersion version2) {
-        return VersionComparator.SEM_VER.isNewer(getFormatted(), version2.getFormatted());
+        if (this.equals(version2))
+            return false;
+
+        if (version2.major > major) {
+            return false;
+        } else if (version2.major < major) {
+            return true;
+        } else if (version2.minor > minor) {
+            return false;
+        } else if (version2.minor < minor) {
+            return true;
+        } else if (version2.patch > patch) {
+            return false;
+        } else return version2.patch < patch;
     }
 }
