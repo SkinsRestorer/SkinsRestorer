@@ -18,30 +18,39 @@ repositories {
     mavenCentral()
     sonatypeSnapshots()
     maven {
+        name = "SpigotMC Repository"
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
     maven {
+        name = "PaperMC Repository"
         url = uri("https://papermc.io/repo/repository/maven-public/")
     }
     maven {
+        name = "SpongePowered Repository"
         url = uri("https://repo.spongepowered.org/maven")
     }
     maven {
+        name = "CodeMC Repository"
         url = uri("https://repo.codemc.org/repository/maven-public")
     }
     maven {
+        name = "Aikar Repository"
         url = uri("https://repo.aikar.co/content/groups/aikar/")
     }
     maven {
+        name = "VelocityPowered Repository"
         url = uri("https://nexus.velocitypowered.com/repository/maven-public/")
     }
     maven {
+        name = "ViaVersion Repository"
         url = uri("https://repo.viaversion.com")
     }
     maven {
+        name = "JitPack Repository"
         url = uri("https://jitpack.io")
     }
     maven {
+        name = "Minecraft Repository"
         url = uri("https://libraries.minecraft.net")
     }
 }
@@ -66,10 +75,9 @@ dependencies {
     shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
     shadow("org.spongepowered:configurate-yaml:4.1.2")
 
-    compileOnly("org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-proxy:1.16-R0.5-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-proxy:1.17-R0.1-SNAPSHOT")
     compileOnly("org.spongepowered:spongeapi:7.3.0")
     compileOnly("com.velocitypowered:velocity-api:3.0.1")
     compileOnly("com.mojang:authlib:1.11")
