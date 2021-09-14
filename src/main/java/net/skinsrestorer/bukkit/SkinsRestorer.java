@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit;
 
@@ -42,7 +40,9 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.YamlConfig;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.*;
+import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
@@ -60,7 +60,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
@@ -68,18 +67,21 @@ import java.util.TreeMap;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
+    private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
+    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
     private UpdateChecker updateChecker;
     private UpdateDownloaderGithub updateDownloader;
-    private SRLogger srLogger;
-    private SkinStorage skinStorage;
-    private MojangAPI mojangAPI;
-    private MineSkinAPI mineSkinAPI;
-    private SkinsRestorerAPI skinsRestorerAPI;
     private SkinCommand skinCommand;
+    private PaperCommandManager manager;
 
+    @SuppressWarnings("unchecked")
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
         Map<String, GenericProperty> map = new TreeMap<>();
         try {
@@ -87,7 +89,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             ObjectInputStream ois = new ObjectInputStream(bis);
 
             while (bis.available() > 0) {
-                //noinspection unchecked
                 map = (Map<String, GenericProperty>) ois.readObject();
             }
         } catch (IOException | ClassNotFoundException e) {
@@ -103,20 +104,14 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+        srLogger.load(getDataFolder());
         File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1669);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", MetricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", MetricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", MetricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", MetricsCounter::collectBackupCalls));
-
-        // Init all essential classes
-        mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
 
         try {
             skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
@@ -318,19 +313,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private void initCommands() {
-        PaperCommandManager manager = new PaperCommandManager(this);
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
+        manager = new PaperCommandManager(this);
 
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.split(", "))));
-
-        new CommandPropertiesManager(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
-
-        SharedMethods.allowIllegalACFNames();
+        prepareACF(manager, srLogger);
 
         skinCommand = new SkinCommand(this, srLogger);
         manager.registerCommand(skinCommand);

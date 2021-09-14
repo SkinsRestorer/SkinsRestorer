@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package li.cock.ie.reflect;
 
 public class DuckHandler implements IDuckHandler {
-    private Throwable ex = null;
     private final boolean debug;
+    private Throwable ex = null;
 
     public DuckHandler(boolean debug) {
         this.debug = debug;

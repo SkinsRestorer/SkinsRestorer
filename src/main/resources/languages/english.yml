@@ -1,6 +1,6 @@
-# Generated on ${project.version} #
+# Generated on ${version} #
 
-# Prefix that is send before each nonhelp message
+# Prefix that is sent before each non help message
 prefix: "&e[&2SkinsRestorer&e]"
 
 # Message sent when the premium account with specified username does not exist
@@ -9,10 +9,10 @@ notPremium: "&4Error&8: &cPremium player with that name does not exist."
 # String sent to player when they do not have permission to use a command
 playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
 
-# Skinsrestorer cant update custom skins! Players should request skin again using /skin url
+# Skinsrestorer can't update custom skins! Players should request skin again using /skin url
 ERRORUpdatingURL: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url."
 
-# Error when try try to to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
+# Error when trying to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN: "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 
 # Message sent to player whose skin was changed
@@ -92,20 +92,20 @@ line: "&7&m----------------------------------------"
 
 # Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
 helpPlayer:
-    - "    &2&lSkinsRestorer &7- &f&lv%ver%"
-    - "    &2/skin set <skinname> &7-&f Changes your skin."
-    - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-    - "    &2/skin clear &7-&f Clears your skin."
-    
+  - "    &2&lSkinsRestorer &7- &f&lv%ver%"
+  - "    &2/skin set <skinname> &7-&f Changes your skin."
+  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
+  - "    &2/skin clear &7-&f Clears your skin."
+
 # Message line sent when requesting SkinsRestorer help and having skinsrestorer.cmds permission
 help: "    &2/sr &7- &fDisplay admin commands."
 
 # Message sent when requesting admin help
 help_admin:
-    - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-    - "    &2/sr config &7- &fhelp page for usefull in game config settings"
-    - "    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
-    - "    &2/sr drop <player> &7- &fDrops player skin data."
-    - "    &2/sr clear <player> &7- &fClears player data."
-    - "    &2/sr reload &7- &fReloads the config and locale"
-    - "    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
+  - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
+  - "    &2/sr config &7- &fhelp page for usefull in game config settings"
+  - "    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
+  - "    &2/sr drop <player> &7- &fDrops player skin data."
+  - "    &2/sr clear <player> &7- &fClears player data."
+  - "    &2/sr reload &7- &fReloads the config and locale"
+  - "    &2/sr props [player] &7- &fDisplays the players actual skin as properties"

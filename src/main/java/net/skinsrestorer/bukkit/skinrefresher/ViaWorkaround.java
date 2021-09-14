@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,7 +16,6 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
@@ -30,17 +28,16 @@ import com.viaversion.viaversion.api.type.Type;
 import com.viaversion.viaversion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
-import us.myles.ViaVersion.api.protocol.ProtocolRegistry;
 
 public final class ViaWorkaround {
     private ViaWorkaround() {
     }
 
     public static boolean isProtocolNewer() {
-        return ProtocolRegistry.SERVER_PROTOCOL >= ProtocolVersion.v1_16.getVersion();
+        return Via.getManager().getProtocolManager().getServerProtocolVersion().lowestSupportedVersion() >= ProtocolVersion.v1_16.getVersion();
     }
 
-    public static boolean sendCustomPacketVia(Player player, Object craftHandle, Integer dimension, Object world, Object gamemodeId) throws Exception {
+    public static boolean sendCustomPacketVia(Player player, Object craftHandle, Integer dimension, long seed, Object gamemodeId) throws Exception {
         UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(player.getUniqueId());
         if (connection != null
                 && connection.getProtocolInfo() != null
@@ -54,7 +51,7 @@ public final class ViaWorkaround {
             PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
 
             packet.write(Type.INT, dimension);
-            packet.write(Type.LONG, (long) ReflectionUtil.invokeMethod(world, "getSeed"));
+            packet.write(Type.LONG, seed);
             packet.write(Type.UNSIGNED_BYTE, ((Integer) gamemodeId).shortValue());
             packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
             packet.send(Protocol1_15_2To1_16.class);
