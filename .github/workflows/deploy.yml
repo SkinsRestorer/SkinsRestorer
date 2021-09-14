@@ -26,11 +26,9 @@ jobs:
         run: mvn -B site --file pom.xml
       - name: Move files
         run: |
+          rm -rf docs/
           mkdir docs
           mv ./target/site/* ./docs
-      - name: Create CNAME
-        run: |
-          echo "docs.skinsrestorer.net" > ./docs/CNAME
       - name: Generate version file
         run: |
           mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec > ./docs/VERSION.txt
