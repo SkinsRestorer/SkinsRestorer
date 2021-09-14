@@ -1,19 +1,25 @@
 # SkinsRestorerX
 
-<p align="center"><a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg" alt="Downloads"></a>
+<p align="center">
+<a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg" alt="Downloads"></a>
 <a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/downloads/2124?label=Spigot%20downloads" alt="Spigot downloads"></a>
-<a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/rating/2124?label=Spigot%20rating" alt="Spigot rating"></a></p>
-<p align="center"><a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/badge/icon" alt="Build Status"></a>
+<a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/rating/2124?label=Spigot%20rating" alt="Spigot rating"></a>
+</p>
+<p align="center">
+<a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/badge/icon" alt="Build Status"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/maven.yml"><img src="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml/badge.svg" alt="Java CI"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest"><img src="https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg" alt="Current Release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors"><img src="https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg" alt="Contributors"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/commits/master"><img src="https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg" alt="Commits since last release"></a>
-<a href="https://github.com/SkinsRestorer/SkinsRestorerX/blob/dev/LICENSE"><img src="https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg" alt="License"></a></p>
+<a href="https://github.com/SkinsRestorer/SkinsRestorerX/blob/dev/LICENSE"><img src="https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg" alt="License"></a>
+</p>
 <p align="center"><a href="https://discord.gg/sAhVsyU"><img src="https://discordapp.com/api/guilds/186794372468178944/embed.png" alt="Discord embed"></a></p>
 <p align="center"><a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/contains-cat-gifs.svg" alt="Contains Cat GIFs"></a></p>
 
-&nbsp;&nbsp;&nbsp;&nbsp;[![download badge](https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge)](https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar)
-&nbsp;[![download badge2](https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge)](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar)
+<p align="center">
+<a href="hhttps://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-LATEST-success?style=for-the-badge" alt="download badge"></a>
+<a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar"><img src="https://img.shields.io/badge/DOWNLOAD-DEV__BUILD-important?style=for-the-badge" alt="download2 badge"></a>
+</p>
 
 This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
 
