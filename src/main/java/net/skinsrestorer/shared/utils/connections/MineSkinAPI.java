@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,11 +16,9 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.shared.utils.connections;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -50,6 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
+    private final MetricsCounter metricsCounter;
     private final Queue<UUID> queue = new LinkedList<>();
     private final Map<UUID, AtomicInteger> fails = new HashMap<>();
 
@@ -75,8 +73,7 @@ public class MineSkinAPI {
                     if (output.isEmpty()) //api time out
                         throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-                    final JsonElement elm = new JsonParser().parse(output);
-                    final JsonObject obj = elm.getAsJsonObject();
+                    final JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
 
                     if (obj.has("data")) {
                         final JsonObject dta = obj.get("data").getAsJsonObject();
@@ -157,7 +154,7 @@ public class MineSkinAPI {
     private String queryURL(String query) throws IOException {
         for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
             try {
-                MetricsCounter.incrAPI("https://api.mineskin.org/generate/url/");
+                metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
                 HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
 
                 con.setRequestMethod("POST");

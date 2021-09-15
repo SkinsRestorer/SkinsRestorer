@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,13 +16,10 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -53,8 +49,7 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
 
-            JsonObject apiResponse = new JsonParser().parse(new InputStreamReader(connection.getInputStream())).getAsJsonObject();
-            releaseInfo = new Gson().fromJson(apiResponse, GitHubReleaseInfo.class);
+            releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
 
             releaseInfo.assets.forEach(gitHubAssetInfo -> {
                 releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
@@ -65,7 +60,6 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                     callback.upToDate();
                 }
             });
-
         } catch (Exception e) {
             log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
             if (Config.DEBUG)

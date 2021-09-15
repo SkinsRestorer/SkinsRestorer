@@ -1,9 +1,8 @@
 /*
- * #%L
  * SkinsRestorer
- * %%
+ *
  * Copyright (C) 2021 SkinsRestorer
- * %%
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -17,11 +16,9 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * #L%
  */
 package net.skinsrestorer.velocity.listener;
 
-import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +35,7 @@ public class GameProfileRequest {
     // TODO: make async, add #getSkinForPlayer()
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
-        if (Config.DISABLE_ONJOIN_SKINS)
+        if (Config.DISABLE_ON_JOIN_SKINS)
             return;
 
         if (event.isOnlineMode())
