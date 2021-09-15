@@ -89,7 +89,7 @@ dependencies {
 }
 
 group = "net.skinsrestorer"
-version = "14.1.4-SNAPSHOT"
+version = "14.1.4"
 description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
