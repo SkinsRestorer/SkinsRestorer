@@ -74,17 +74,12 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
     @Inject
     protected Game game;
-    @Inject
-    @ConfigDir(sharedRoot = false)
-    private Path dataFolderPath;
-    private final File dataFolder = dataFolderPath.toFile();
-    @Inject
-    private Logger log;
-    private final SRLogger srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
-    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
-    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
-    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private final File dataFolder;
+    private final SRLogger srLogger;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
+    private final SkinsRestorerAPI skinsRestorerAPI;
+    private final MineSkinAPI mineSkinAPI;
     private UpdateChecker updateChecker;
     private SpongeCommandManager manager;
     @Inject
@@ -92,8 +87,14 @@ public class SkinsRestorer implements ISRPlugin {
 
     // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory) {
+    public SkinsRestorer(Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
+        dataFolder = dataFolderPath.toFile();
+        srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
+        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     }
 
     @Listener
