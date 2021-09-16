@@ -50,7 +50,7 @@ public class MetricsCounter {
         return collect(Service.MOJANG);
     }
 
-    public int collectBackupCalls() {
+    public int collectAshconCalls() {
         return collect(Service.ASHCON);
     }
 

@@ -14,7 +14,6 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     sonatypeSnapshots()
     maven {
@@ -68,7 +67,7 @@ dependencies {
     shadow("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
     shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
     shadow("com.google.code.gson:gson:2.8.8")
-    shadow("mysql:mysql-connector-java:8.0.26")
+    shadow("org.mariadb.jdbc:mariadb-java-client:2.7.4")
     shadow("com.github.cryptomorin:XSeries:8.4.0")
     shadow("io.papermc:paperlib:1.0.6")
     shadow("co.aikar:minecraft-timings:1.0.4")
@@ -78,18 +77,22 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-proxy:1.17-R0.1-SNAPSHOT")
-    compileOnly("org.spongepowered:spongeapi:7.3.0")
-    compileOnly("com.velocitypowered:velocity-api:3.0.1")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("com.viaversion:viabackwards-common:4.0.1")
     compileOnly("com.viaversion:viaversion:4.0.0")
+
+    compileOnly("com.velocitypowered:velocity-api:3.0.1")
+    annotationProcessor("com.velocitypowered:velocity-api:3.0.1")
+
+    compileOnly("org.spongepowered:spongeapi:7.3.0")
+    annotationProcessor("org.spongepowered:spongeapi:7.3.0")
 
     compileOnly("org.projectlombok:lombok:1.18.20")
     annotationProcessor("org.projectlombok:lombok:1.18.20")
 }
 
 group = "net.skinsrestorer"
-version = "14.1.4"
+version = "14.1.5"
 description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.targetCompatibility = JavaVersion.VERSION_1_8
@@ -101,7 +104,7 @@ indra {
     }
     gpl3OnlyLicense()
     publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
-    publishSnapshotsTo("codemc", "https://repo.codemc.org/repository/maven-snapshots/")
+    publishSnapshotsTo("codemc-snapshots", "https://repo.codemc.org/repository/maven-snapshots/")
 
     configurePublications {
         artifact("build/libs/SkinsRestorer.jar") {
@@ -142,7 +145,8 @@ publishing {
                 password = System.getenv("CODEMC_PASSWORD")
             }
             name = "codemc"
-            url = uri("https://repo.codemc.org/repository/maven-snapshots/")
+            val repoName = if (version.toString().endsWith("SNAPSHOT")) "maven-snapshots" else "maven-releases"
+            url = uri("https://repo.codemc.org/repository/${repoName}/")
         }
     }
 }
@@ -157,8 +161,8 @@ tasks.withType<JavaCompile> {
 }
 
 blossom {
-    replaceTokenIn("src/main/java/net/skinsrestorer/velocity/")
-    replaceTokenIn("src/main/java/net/skinsrestorer/sponge/")
+    replaceTokenIn("src/main/java/net/skinsrestorer/velocity/SkinsRestorer.java")
+    replaceTokenIn("src/main/java/net/skinsrestorer/sponge/SkinsRestorer.java")
 
     replaceToken("{version}", version)
     replaceToken("{description}", rootProject.description)

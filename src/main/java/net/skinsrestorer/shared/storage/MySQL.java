@@ -25,7 +25,6 @@ import org.intellij.lang.annotations.Language;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,13 +59,7 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver").getConstructor().newInstance();
-            //noinspection ResultOfMethodCallIgnored
-            com.mysql.cj.jdbc.Driver.getOSName(); // Small bypass to shade mysql
-        } catch (ClassNotFoundException | InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        new org.mariadb.jdbc.Driver();
 
         con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 

@@ -75,23 +75,25 @@ public class SkinsRestorer implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
-    @Inject
-    @DataDirectory
-    private Path dataFolderPath;
-    private final File dataFolder = dataFolderPath.toFile();
-    @Inject
-    private Logger logger;
-    private final SRLogger srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(logger));
-    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
-    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
-    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-    private final SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
+    private final File dataFolder;
+    private final SRLogger srLogger;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
+    private final SkinsRestorerAPI skinsRestorerAPI;
+    private final MineSkinAPI mineSkinAPI;
+    private final SkinApplierVelocity skinApplierVelocity;
 
     @Inject
-    public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory) {
+    public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
+        dataFolder = dataFolderPath.toFile();
+        srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(logger));
+        mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
+        skinStorage = new SkinStorage(srLogger, mojangAPI);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
     }
 
     @Subscribe
@@ -103,7 +105,7 @@ public class SkinsRestorer implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         // Check for updates
         if (!updaterDisabled.exists()) {
