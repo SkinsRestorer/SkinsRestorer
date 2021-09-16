@@ -19,18 +19,13 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import com.mysql.cj.jdbc.NonRegisteringDriver;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
+import java.sql.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -64,16 +59,9 @@ public class MySQL {
     }
 
     public Connection openConnection() throws SQLException {
-        Properties info = new Properties();
+        new org.mariadb.jdbc.Driver();
 
-        if (username != null) {
-            info.put("user", username);
-        }
-        if (password != null) {
-            info.put("password", password);
-        }
-
-        con = new NonRegisteringDriver().connect("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, info);
+        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
 
         logger.info("Connected to MySQL!");
         return con;

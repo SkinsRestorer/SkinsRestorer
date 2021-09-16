@@ -67,7 +67,7 @@ dependencies {
     shadow("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
     shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
     shadow("com.google.code.gson:gson:2.8.8")
-    shadow("mysql:mysql-connector-java:8.0.26")
+    shadow("org.mariadb.jdbc:mariadb-java-client:2.7.4")
     shadow("com.github.cryptomorin:XSeries:8.4.0")
     shadow("io.papermc:paperlib:1.0.6")
     shadow("co.aikar:minecraft-timings:1.0.4")
