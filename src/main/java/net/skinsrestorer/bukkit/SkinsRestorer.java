@@ -111,7 +111,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("backup_calls", metricsCounter::collectBackupCalls));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         try {
             skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
