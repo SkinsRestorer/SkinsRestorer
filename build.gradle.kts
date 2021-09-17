@@ -9,7 +9,6 @@ plugins {
     id("net.kyori.indra") version "2.0.6"
     id("net.kyori.indra.git") version "2.0.6"
     id("net.kyori.indra.publishing") version "2.0.6"
-    id("net.kyori.indra.license-header") version "2.0.6"
     id("net.kyori.blossom") version "1.3.0"
 }
 
@@ -152,8 +151,10 @@ publishing {
 }
 
 license {
-    includes.remove("**/*.java")
-    includes.add("src/main/java/net/skinsrestorer/**/*.java")
+    include("**/net/skinsrestorer/**")
+
+    header(file("file_header.txt"))
+    newLine(false)
 }
 
 tasks.withType<JavaCompile> {

@@ -60,7 +60,6 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,8 +72,6 @@ public class SkinsRestorer implements ISRPlugin {
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private UpdateChecker updateChecker;
-    private CommandManager<?, ?, ?, ?, ?, ?> manager;
     private final File dataFolder;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
@@ -82,6 +79,10 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplierVelocity skinApplierVelocity;
+    private UpdateChecker updateChecker;
+    private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    @Inject
+    private PluginContainer container;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
@@ -184,14 +185,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Override
     public String getVersion() {
-        Optional<PluginContainer> plugin = proxy.getPluginManager().getPlugin("skinsrestorer");
-
-        if (!plugin.isPresent())
-            return "";
-
-        Optional<String> version = plugin.get().getDescription().getVersion();
-
-        return version.orElse("");
+        return container.getDescription().getVersion().orElse("Unknown");
     }
 
     @Override
