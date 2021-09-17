@@ -61,7 +61,6 @@ import org.spongepowered.api.text.Text;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -72,22 +71,21 @@ public class SkinsRestorer implements ISRPlugin {
     private final Metrics metrics;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-    @Inject
-    protected Game game;
     private final File dataFolder;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
+    @Inject
+    protected Game game;
     private UpdateChecker updateChecker;
     private SpongeCommandManager manager;
     @Inject
     private PluginContainer container;
 
-    // The metricsFactory parameter gets injected using @Inject
     @Inject
-    public SkinsRestorer(Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
+    public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         dataFolder = dataFolderPath.toFile();
         srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
@@ -189,14 +187,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Override
     public String getVersion() {
-        Optional<PluginContainer> plugin = Sponge.getPluginManager().getPlugin("skinsrestorer");
-
-        if (!plugin.isPresent())
-            return "";
-
-        Optional<String> version = plugin.get().getVersion();
-
-        return version.orElse("");
+        return container.getVersion().orElse("Unknown");
     }
 
     @Override

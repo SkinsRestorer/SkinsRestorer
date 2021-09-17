@@ -89,15 +89,15 @@ public class SkinStorage {
      * the skin data.
      * It also schedules a skin update to stay up to date with skin changes.
      *
-     * @param name   Player name to search skin for
+     * @param playerName   Player name to search skin for
      * @param silent Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      */
-    public IProperty getSkinForPlayer(final String name, boolean silent) throws SkinRequestException {
-        Optional<String> skin = getSkinName(name);
+    public IProperty getSkinForPlayer(final String playerName, boolean silent) throws SkinRequestException {
+        Optional<String> skin = getSkinName(playerName);
 
         if (!skin.isPresent()) {
-            skin = Optional.of(name.toLowerCase());
+            skin = Optional.of(playerName.toLowerCase());
         }
 
         IProperty textures = getSkinData(skin.get());

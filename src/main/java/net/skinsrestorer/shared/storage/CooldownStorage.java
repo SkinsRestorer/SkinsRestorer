@@ -19,12 +19,13 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public class CooldownStorage implements Runnable {
 
-    private static final ConcurrentHashMap<String, Long> cooldown = new ConcurrentHashMap<>();
+    private static final Map<String, Long> cooldown = new ConcurrentHashMap<>();
 
     public static boolean hasCooldown(String name) {
         Long expire = cooldown.get(name);
