@@ -88,21 +88,22 @@ public class SkinApplierBungee {
 
     private void applyToHandler(InitialHandler handler, Property textures) throws ReflectionException {
         LoginResult profile = handler.getLoginProfile();
+        Property[] newProps = new Property[]{textures};
+
         if (profile == null) {
             try {
                 // NEW BUNGEECORD (id, name, property)
-                profile = new LoginResult(null, null, new Property[]{textures});
+                profile = new LoginResult(null, null, newProps);
             } catch (Exception error) {
                 // FALL BACK TO OLD (id, property)
                 profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
                         new Class<?>[]{String.class, Property[].class},
-                        null, new Property[]{textures});
+                        null, newProps);
             }
+        } else {
+            profile.setProperties(newProps);
         }
 
-        Property[] newProps = new Property[]{textures};
-
-        profile.setProperties(newProps);
         ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
     }
 
