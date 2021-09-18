@@ -81,8 +81,10 @@ public class SrCommand extends BaseCommand {
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
+            int workingUuidCount = response.getWorkingUUID().get();
+            int workingProfileCount = response.getWorkingProfile().get();
 
-            if (Config.DEBUG || !(response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1))
+            if (Config.DEBUG || !(workingUuidCount >= 1 && workingProfileCount >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
                         source.sendMessage(plugin.parseMessage(result));
@@ -90,7 +92,7 @@ public class SrCommand extends BaseCommand {
             source.sendMessage(plugin.parseMessage("§7Working UUID API count: §6" + response.getWorkingUUID()));
             source.sendMessage(plugin.parseMessage("§7Working Profile API count: §6" + response.getWorkingProfile()));
 
-            if (response.getWorkingUUID() >= 1 && response.getWorkingProfile() >= 1)
+            if (workingUuidCount>= 1 && workingProfileCount >= 1)
                 source.sendMessage(plugin.parseMessage("§aThe plugin currently is in a working state."));
             else
                 source.sendMessage(plugin.parseMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info"));

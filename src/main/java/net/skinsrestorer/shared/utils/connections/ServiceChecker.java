@@ -96,8 +96,8 @@ public class ServiceChecker {
         } else response.addResult("Minetools Profile §c✘ Error getting Profile: null");
     }
 
+    @Getter
     public static class ServiceCheckResponse {
-        @Getter
         private final List<String> results = new LinkedList<>();
         private final AtomicInteger workingUUID = new AtomicInteger();
         private final AtomicInteger workingProfile = new AtomicInteger();
@@ -106,16 +106,8 @@ public class ServiceChecker {
             results.add(result);
         }
 
-        public Integer getWorkingUUID() {
-            return workingUUID.get();
-        }
-
         public void incrementWorkingUUID() {
             workingUUID.getAndIncrement();
-        }
-
-        public Integer getWorkingProfile() {
-            return workingProfile.get();
         }
 
         public void incrementWorkingProfile() {
