@@ -101,11 +101,11 @@ public abstract class SkinsRestorerAPI {
      * @param skinName Skin name
      **/
     public IProperty getSkinData(String skinName) {
-        return skinStorage.getSkinData(skinName);
+        return skinStorage.getSkinData(skinName).orElse(null);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
-        skinStorage.setSkinName(playerName, skinName);
+        setSkinName(playerName, skinName);
         skinStorage.getSkinForPlayer(skinName, false);
     }
 

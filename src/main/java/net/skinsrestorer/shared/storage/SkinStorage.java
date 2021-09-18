@@ -89,8 +89,8 @@ public class SkinStorage {
      * the skin data.
      * It also schedules a skin update to stay up to date with skin changes.
      *
-     * @param playerName   Player name to search skin for
-     * @param silent Whether to throw errors or not
+     * @param playerName Player name to search skin for
+     * @param silent     Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      */
     public IProperty getSkinForPlayer(final String playerName, boolean silent) throws SkinRequestException {
@@ -100,20 +100,20 @@ public class SkinStorage {
             skin = Optional.of(playerName.toLowerCase());
         }
 
-        IProperty textures = getSkinData(skin.get());
+        Optional<IProperty> textures = getSkinData(skin.get());
 
-        if (textures == null) {
+        if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
                 if (!C.validMojangUsername(skin.get()))
                     throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin.get()));
 
-                textures = mojangAPI.getSkin(skin.get());
+                textures = Optional.ofNullable(mojangAPI.getSkin(skin.get()));
 
-                if (textures == null)
+                if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
-                setSkinData(skin.get(), textures);
+                setSkinData(skin.get(), textures.get());
             } catch (SkinRequestException e) {
                 if (!silent)
                     throw e;
@@ -125,7 +125,7 @@ public class SkinStorage {
             }
         }
 
-        return textures;
+        return textures.get();
     }
 
     /**
@@ -192,7 +192,7 @@ public class SkinStorage {
      * @param updateOutdated On true, we update the skin if expired
      */
     // #getSkinData() also create while we have #getSkinForPlayer()
-    public IProperty getSkinData(String skinName, boolean updateOutdated) {
+    public Optional<IProperty> getSkinData(String skinName, boolean updateOutdated) {
         skinName = skinName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
@@ -203,7 +203,7 @@ public class SkinStorage {
                     final String signature = crs.getString("Signature");
                     final String timestamp = crs.getString("timestamp");
 
-                    return createProperty(skinName, updateOutdated, value, signature, timestamp);
+                    return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
                 } catch (Exception e) {
                     removeSkinData(skinName);
                     logger.info("Unsupported player format.. removing (" + skinName + ").");
@@ -215,38 +215,22 @@ public class SkinStorage {
 
             try {
                 if (!skinFile.exists())
-                    return null;
+                    return Optional.empty();
 
-                String value = null;
-                String signature = null;
-                String timestamp = null;
+                List<String> lines = Files.readAllLines(skinFile.toPath());
 
-                try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-                    for (int i = 0; i < 3; i++) {
-                        switch (i) {
-                            case 0:
-                                value = buf.readLine();
-                                break;
-                            case 1:
-                                signature = buf.readLine();
-                                break;
-                            case 2:
-                                timestamp = buf.readLine();
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
+                String value = lines.get(0);
+                String signature = lines.get(1);
+                String timestamp = lines.get(2);
 
-                return createProperty(skinName, updateOutdated, value, signature, timestamp);
+                return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
             } catch (Exception e) {
                 removeSkinData(skinName);
                 logger.info("Unsupported player format.. removing (" + skinName + ").");
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -276,7 +260,7 @@ public class SkinStorage {
     /**
      * @see SkinStorage#getSkinData(String, boolean)
      */
-    public IProperty getSkinData(String skinName) {
+    public Optional<IProperty> getSkinData(String skinName) {
         return getSkinData(skinName, true);
     }
 
@@ -528,27 +512,12 @@ public class SkinStorage {
                         if (!skinFile.exists())
                             return null;
 
-                        String value;
-                        String signature;
-                        try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-                            String line;
-                            value = "";
-                            signature = "";
-
-                            for (int i2 = 0; i2 < 3; i2++)
-                                if ((line = buf.readLine()) != null) {
-                                    if (value.isEmpty()) {
-                                        value = line;
-                                    } else if (signature.isEmpty()) {
-                                        signature = line;
-                                    }
-                                }
-                        }
+                        List<String> lines = Files.readAllLines(skinFile.toPath());
 
                         GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
-                        prop.setValue(value);
-                        prop.setSignature(signature);
+                        prop.setValue(lines.get(0)); // FIXME may throw exception if file invalid
+                        prop.setSignature(lines.get(1)); // FIXME may throw exception if file invalid
                         list.put(skinName, prop);
 
                         foundSkins++;
@@ -591,14 +560,7 @@ public class SkinStorage {
 
             try {
                 if (skinFile.exists()) {
-                    try (BufferedReader buf = new BufferedReader(new FileReader(skinFile))) {
-                        for (int i = 0; i < 3; i++) {
-                            String line = buf.readLine();
-
-                            if (i == 2)
-                                updateDisabled = line.equals("0");
-                        }
-                    }
+                    updateDisabled = Files.readAllLines(skinFile.toPath()).get(2).equals("0"); // FIXME may throw exception if file has no timestamp
                 }
             } catch (Exception ignored) {
             }
@@ -609,10 +571,10 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            IProperty textures = mojangAPI.getProfileMojang(mojangAPI.getUUIDMojang(skinName, true), true);
+            Optional<IProperty> textures = mojangAPI.getProfileMojang(mojangAPI.getUUIDMojang(skinName).get()); // FIXME Mojang may not have the uuid
 
-            if (textures != null) {
-                setSkinData(skinName, textures);
+            if (textures.isPresent()) {
+                setSkinData(skinName, textures.get());
                 return true;
             }
         } catch (SkinRequestException e) {
