@@ -128,7 +128,7 @@ public class MojangAPI {
                 //throw new SkinRequestException(Locale.ALT_API_FAILED); <- WIP (might not be good when there is a 202 mojang down error)
             }
 
-            if (obj.has("uuid"))
+            if (obj.has("uuid") && obj.get("uuid") != null)
                 return obj.get("uuid").getAsString().replace("-", "");
         } catch (IOException ignored) {
         }
@@ -155,8 +155,8 @@ public class MojangAPI {
                     return getUUIDBackup(name, true);
                 return null;
             }
-
-            return obj.get("id").getAsString();
+            if (obj.has("id") && obj.get("id") != null)
+                return obj.get("id").getAsString();
         } catch (IOException ignored) {
         }
         if (tryNext)
@@ -177,8 +177,7 @@ public class MojangAPI {
             if (obj.has("status") && obj.get("status").getAsString().equalsIgnoreCase("ERR")) {
                 return getUUIDMojang(name, true);
             } */
-
-            if (obj.get("id") != null)
+            if (obj.has("id") && obj.get("id") != null)
                 return obj.get("id").getAsString();
         } catch (IOException ignored) {
         }
