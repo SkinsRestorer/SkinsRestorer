@@ -48,10 +48,8 @@ public class SharedMethods {
         checker.setMojangAPI(mojangAPI);
         checker.checkServices();
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-        int workingUuidCount = response.getWorkingUUID().get();
-        int workingProfileCount = response.getWorkingProfile().get();
 
-        if (workingUuidCount == 0 || workingProfileCount == 0) {
+        if (response.getWorkingUUID().get() == 0 || response.getWorkingProfile().get() == 0) {
             log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] -------------------------");
             log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
             log.info("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");
