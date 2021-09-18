@@ -128,12 +128,9 @@ public class SkinApplierBukkit {
     public void updateSkin(Player player) {
         if (!player.isOnline())
             return;
-        log.info("[pre] enableRemountPlayer=" + disableRemountPlayer);
 
         if (!checkOptFileChecked)
             checkOptFile();
-
-        log.info("[suf] enableRemountPlayer=" + disableRemountPlayer);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
@@ -180,7 +177,6 @@ public class SkinApplierBukkit {
     }
 
     private void checkOptFile() {
-        log.info("checkOptFile");
         File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
         File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
@@ -197,6 +193,7 @@ public class SkinApplierBukkit {
         if (fileDisableRemountPlayer.exists() || filetxtDisableRemountPlayer.exists())
             disableRemountPlayer = true;
 
+        log.debug("[Debug] checkOptFile:\n  disableDismountPlayer = " + disableDismountPlayer + "\n  enableDismountEntities = " + enableDismountEntities + "\n  disableRemountPlayer = " + disableRemountPlayer);
         checkOptFileChecked = true;
     }
 }
