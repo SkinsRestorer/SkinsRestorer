@@ -79,9 +79,9 @@ public class ServiceChecker {
         // ##### Profile requests #####
         Optional<IProperty> ashcon = mojangAPI.getProfileAshcon(XKNAT_UUID);
         if (ashcon.isPresent()) {
-            response.addResult("MineTools Profile §a✔ xknat Profile: §b" + ashcon);
+            response.addResult("Ashcon Profile §a✔ xknat Profile: §b" + ashcon);
             response.incrementWorkingProfile();
-        } else response.addResult("MineTools Profile §c✘ Error getting Profile: null");
+        } else response.addResult("Ashcon Profile §c✘ Error getting Profile: null");
 
         Optional<IProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
         if (mojang.isPresent()) {
@@ -91,9 +91,9 @@ public class ServiceChecker {
 
         Optional<IProperty> minetools = mojangAPI.getProfileMinetools(XKNAT_UUID);
         if (minetools.isPresent()) {
-            response.addResult("Mojang-API (Backup) Profile §a✔ xknat Profile: §b" + minetools);
+            response.addResult("Minetools Profile §a✔ xknat Profile: §b" + minetools);
             response.incrementWorkingProfile();
-        } else response.addResult("Mojang-API (Backup) Profile §c✘ Error getting Profile: null");
+        } else response.addResult("Minetools Profile §c✘ Error getting Profile: null");
     }
 
     @Getter
