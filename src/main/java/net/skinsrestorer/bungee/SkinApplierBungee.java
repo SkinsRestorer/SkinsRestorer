@@ -44,7 +44,7 @@ public class SkinApplierBungee {
 
     public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
         try {
-            applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false), handler);
+            applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick, false).get(), handler); // FIXME
         } catch (ReflectionException e) {
             e.printStackTrace();
         }

@@ -19,14 +19,10 @@
  */
 package net.skinsrestorer.api.exception;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
+import net.skinsrestorer.shared.storage.Locale;
 
-    public SkinRequestException() {
-        super();
-    }
-
-    public SkinRequestException(String message) {
-        super(message);
+public class NotPremiumException extends SkinRequestException {
+    public NotPremiumException() {
+        super(Locale.NOT_PREMIUM);
     }
 }

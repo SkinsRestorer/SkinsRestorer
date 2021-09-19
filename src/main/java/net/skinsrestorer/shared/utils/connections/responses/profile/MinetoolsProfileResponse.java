@@ -17,16 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.exception;
+package net.skinsrestorer.shared.utils.connections.responses.profile;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
+import lombok.Getter;
 
-    public SkinRequestException() {
-        super();
-    }
+@Getter
+public class MinetoolsProfileResponse {
+    private Raw raw;
 
-    public SkinRequestException(String message) {
-        super(message);
+    @Getter
+    public static class Raw {
+        /**
+         * UUID without dashes
+         */
+        private String id;
+        private String name;
+        private PropertyResponse[] properties;
+        private String status;
     }
 }

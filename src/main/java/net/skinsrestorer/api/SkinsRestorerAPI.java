@@ -61,7 +61,7 @@ public abstract class SkinsRestorerAPI {
      * @return The players skin property
      **/
     public IProperty getProfile(String uuid) {
-        return mojangAPI.getProfile(uuid);
+        return mojangAPI.getProfile(uuid).orElse(null);
     }
 
     /**

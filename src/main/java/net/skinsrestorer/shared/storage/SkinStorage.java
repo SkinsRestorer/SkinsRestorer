@@ -93,7 +93,7 @@ public class SkinStorage {
      * @param silent     Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      */
-    public IProperty getSkinForPlayer(final String playerName, boolean silent) throws SkinRequestException {
+    public Optional<IProperty> getSkinForPlayer(final String playerName, boolean silent) throws SkinRequestException {
         Optional<String> skin = getSkinName(playerName);
 
         if (!skin.isPresent()) {
@@ -108,7 +108,7 @@ public class SkinStorage {
                 if (!C.validMojangUsername(skin.get()))
                     throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin.get()));
 
-                textures = Optional.ofNullable(mojangAPI.getSkin(skin.get()));
+                textures = mojangAPI.getSkin(skin.get());
 
                 if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
@@ -125,7 +125,7 @@ public class SkinStorage {
             }
         }
 
-        return textures.get();
+        return textures;
     }
 
     /**
@@ -246,11 +246,11 @@ public class SkinStorage {
      */
     private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
         if (updateOutdated && C.validMojangUsername(playerName) && isOld(Long.parseLong(timestamp))) {
-            IProperty skin = mojangAPI.getSkin(playerName);
+            Optional<IProperty> skin = mojangAPI.getSkin(playerName);
 
-            if (skin != null) {
-                setSkinData(playerName, skin);
-                return skin;
+            if (skin.isPresent()) {
+                setSkinData(playerName, skin.get());
+                return skin.get();
             }
         }
 
