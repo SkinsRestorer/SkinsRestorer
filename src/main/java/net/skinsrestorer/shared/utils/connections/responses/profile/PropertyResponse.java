@@ -17,16 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.exception;
+package net.skinsrestorer.shared.utils.connections.responses.profile;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
+import lombok.Getter;
 
-    public SkinRequestException() {
-        super();
-    }
-
-    public SkinRequestException(String message) {
-        super(message);
-    }
+@Getter
+public class PropertyResponse {
+    private String name;
+    private String value;
+    private String signature;
 }

@@ -49,7 +49,7 @@ public class SharedMethods {
         checker.checkServices();
         ServiceChecker.ServiceCheckResponse response = checker.getResponse();
 
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+        if (response.getWorkingUUID().get() == 0 || response.getWorkingProfile().get() == 0) {
             log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§c] -------------------------");
             log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
             log.info("§c[§4Critical§c] §cSee http://skinsrestorer.net/firewall for steps to resolve your issue!");

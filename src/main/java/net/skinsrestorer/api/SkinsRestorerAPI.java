@@ -61,7 +61,7 @@ public abstract class SkinsRestorerAPI {
      * @return The players skin property
      **/
     public IProperty getProfile(String uuid) {
-        return mojangAPI.getProfile(uuid);
+        return mojangAPI.getProfile(uuid).orElse(null);
     }
 
     /**
@@ -101,12 +101,12 @@ public abstract class SkinsRestorerAPI {
      * @param skinName Skin name
      **/
     public IProperty getSkinData(String skinName) {
-        return skinStorage.getSkinData(skinName);
+        return skinStorage.getSkinData(skinName).orElse(null);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
-        skinStorage.setSkinName(playerName, skinName);
-        skinStorage.getSkinForPlayer(skinName, false);
+        setSkinName(playerName, skinName);
+        skinStorage.getSkinForPlayer(skinName);
     }
 
     public void removeSkin(String playerName) {

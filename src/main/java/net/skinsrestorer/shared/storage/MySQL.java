@@ -67,7 +67,7 @@ public class MySQL {
         return con;
     }
 
-    public Connection getConnection() {
+    private Connection getConnection() {
         try {
             if (con == null || !con.isValid(1)) {
                 logger.info("MySQL connection lost! Creation a new one.");

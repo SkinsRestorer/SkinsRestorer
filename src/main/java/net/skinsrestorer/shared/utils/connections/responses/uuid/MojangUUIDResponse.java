@@ -17,16 +17,17 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.exception;
+package net.skinsrestorer.shared.utils.connections.responses.uuid;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
+import lombok.Getter;
 
-    public SkinRequestException() {
-        super();
-    }
-
-    public SkinRequestException(String message) {
-        super(message);
-    }
+@Getter
+public class MojangUUIDResponse {
+    private String name;
+    /**
+     * UUID without dashes
+     */
+    private String id;
+    private String error;
+    private String errorMessage;
 }
