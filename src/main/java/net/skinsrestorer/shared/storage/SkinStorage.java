@@ -63,7 +63,7 @@ public class SkinStorage {
             // TODO: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
-                    getSkinForPlayer(skin, false);
+                    getSkinForPlayer(skin);
                 }
             } catch (SkinRequestException e) {
                 // removing skin from list
@@ -90,10 +90,9 @@ public class SkinStorage {
      * It also schedules a skin update to stay up to date with skin changes.
      *
      * @param playerName Player name to search skin for
-     * @param silent     Whether to throw errors or not
      * @throws SkinRequestException If MojangAPI lookup errors
      */
-    public Optional<IProperty> getSkinForPlayer(final String playerName, boolean silent) throws SkinRequestException {
+    public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
         Optional<String> skin = getSkinName(playerName);
 
         if (!skin.isPresent()) {
@@ -101,7 +100,6 @@ public class SkinStorage {
         }
 
         Optional<IProperty> textures = getSkinData(skin.get());
-
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
@@ -113,19 +111,21 @@ public class SkinStorage {
                 if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
+                property = textures.get();
+
                 setSkinData(skin.get(), textures.get());
+
+                return textures.get();
             } catch (SkinRequestException e) {
-                if (!silent)
-                    throw e;
+                throw e;
             } catch (Exception e) {
                 e.printStackTrace();
 
-                if (!silent)
-                    throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
             }
+        } else {
+            return textures.get();
         }
-
-        return textures;
     }
 
     /**

@@ -61,6 +61,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -451,7 +452,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name, false).get()); // FIXME
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name));
         }
 
         @Override

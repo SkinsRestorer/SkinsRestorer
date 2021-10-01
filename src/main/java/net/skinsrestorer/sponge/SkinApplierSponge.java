@@ -46,7 +46,7 @@ public class SkinApplierSponge {
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin, false).get(), profile.getPropertyMap().get("textures")); // FIXME
+        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.getPropertyMap().get("textures"));
     }
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {

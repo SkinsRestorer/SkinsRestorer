@@ -27,6 +27,7 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -258,10 +259,12 @@ public class SkinCommand extends BaseCommand {
                 String skinentry = " " + pName; // so won't overwrite premium playernames
                 if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
-                plugin.getSkinStorage().setSkinData(skinentry, plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null),
+
+                IProperty generatedSkin = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
+                plugin.getSkinStorage().setSkinData(skinentry, generatedSkin,
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getSkinData(skinentry).get()); // FIXME
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), generatedSkin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
                 return true;
