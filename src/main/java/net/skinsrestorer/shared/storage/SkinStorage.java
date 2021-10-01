@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -514,8 +515,8 @@ public class SkinStorage {
 
                         GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
-                        prop.setValue(lines.get(0)); // FIXME may throw exception if file invalid
-                        prop.setSignature(lines.get(1)); // FIXME may throw exception if file invalid
+                        prop.setValue(lines.get(0));
+                        prop.setSignature(lines.get(1));
                         list.put(skinName, prop);
 
                         foundSkins++;
@@ -558,7 +559,7 @@ public class SkinStorage {
 
             try {
                 if (skinFile.exists()) {
-                    updateDisabled = Files.readAllLines(skinFile.toPath()).get(2).equals("0"); // FIXME may throw exception if file has no timestamp
+                    updateDisabled = Files.readAllLines(skinFile.toPath()).get(2).equals("0");
                 }
             } catch (Exception ignored) {
             }
@@ -569,17 +570,18 @@ public class SkinStorage {
 
         // Update Skin
         try {
-            Optional<IProperty> textures = mojangAPI.getProfileMojang(mojangAPI.getUUIDMojang(skinName).get()); // FIXME Mojang may not have the uuid
+            Optional<String> mojangUUID = mojangAPI.getUUIDMojang(skinName);
 
-            if (textures.isPresent()) {
-                setSkinData(skinName, textures.get());
-                return true;
+            if (mojangUUID.isPresent()) {
+                Optional<IProperty> textures = mojangAPI.getProfileMojang(mojangUUID.get());
+
+                if (textures.isPresent()) {
+                    setSkinData(skinName, textures.get());
+                    return true;
+                }
             }
-        } catch (SkinRequestException e) {
-            if (e.getMessage().equals(Locale.NOT_PREMIUM))
-                throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
-            else
-                throw e;
+        } catch (NotPremiumException e) {
+            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
         }
 
         return false;
