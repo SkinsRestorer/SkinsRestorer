@@ -111,8 +111,6 @@ public class SkinStorage {
                 if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
-                property = textures.get();
-
                 setSkinData(skin.get(), textures.get());
 
                 return textures.get();
