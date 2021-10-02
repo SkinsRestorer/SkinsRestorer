@@ -29,6 +29,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -97,7 +98,7 @@ public class SkinCommand extends BaseCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removeSkin(pName);
 
-            if (setSkin(sender, player, skin, false, true, null)) {
+            if (setSkin(wrap(sender), new PlayerWrapper(player), skin, false, true, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 else
@@ -152,7 +153,7 @@ public class SkinCommand extends BaseCommand {
             }
 
             // TODO: Use its own code instead of bloat #setSkin()
-            if (setSkin(sender, player, skin.get(), false, false, null)) {
+            if (setSkin(wrap(sender), new PlayerWrapper(player), skin.get(), false, false, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
                 else
@@ -188,7 +189,7 @@ public class SkinCommand extends BaseCommand {
                 }
             }
 
-            if (setSkin(sender, player, skin, true, false, skinType) && (sender != player))
+            if (setSkin(wrap(sender), new PlayerWrapper(player), skin, true, false, skinType) && (sender != player))
                 sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
         });
     }
@@ -209,13 +210,13 @@ public class SkinCommand extends BaseCommand {
     }
 
     private boolean setSkin(CommandSender sender, Player player, String skin) {
-        return setSkin(sender, player, skin, true, false, null);
+        return setSkin(wrap(sender), new PlayerWrapper(player), skin, true, false, null);
     }
 
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     // TODO: align #setSkin() with the other platforms so that it match and can be merged on a later stage!
-    private boolean setSkin(CommandSender sender, Player player, String skin, boolean save, boolean clear, SkinType skinType) {
+    private boolean setSkin(ISRCommandSender sender, PlayerWrapper player, String skin, boolean save, boolean clear, SkinType skinType) {
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
             return false;
@@ -264,7 +265,7 @@ public class SkinCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinentry, generatedSkin,
                         Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), generatedSkin);
+                plugin.getSkinsRestorerAPI().applySkin(player, generatedSkin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
                 return true;
@@ -281,14 +282,14 @@ public class SkinCommand extends BaseCommand {
                     plugin.getSkinStorage().setSkinName(pName, skin);
 
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
+                plugin.getSkinsRestorerAPI().applySkin(player, skin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO:: should this not be sender? -> hidden skin set?
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMojangAPI().createProperty("textures", "", ""));
-                    plugin.getSkinApplierBukkit().updateSkin(player);
+                    plugin.getSkinsRestorerAPI().applySkin(player, plugin.getMojangAPI().createProperty("textures", "", ""));
+                    plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class));
 
                     return true;
                 }
@@ -320,5 +321,24 @@ public class SkinCommand extends BaseCommand {
     public enum SkinType {
         STEVE,
         SLIM,
+    }
+
+    private ISRCommandSender wrap(CommandSender sender) {
+        return new ISRCommandSender() {
+            @Override
+            public void sendMessage(String message) {
+                sender.sendMessage(message);
+            }
+
+            @Override
+            public String getName() {
+                return sender.getName();
+            }
+
+            @Override
+            public boolean hasPermission(String permission) {
+                return sender.hasPermission(permission);
+            }
+        };
     }
 }

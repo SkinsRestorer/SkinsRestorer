@@ -212,7 +212,7 @@ public class MojangAPI {
 
         if (mojang.isPresent()) {
             return mojang;
-        } else {    
+        } else {
             return getProfileMinetools(name);
         }
     }

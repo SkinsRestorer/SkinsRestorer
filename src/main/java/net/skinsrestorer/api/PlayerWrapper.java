@@ -19,17 +19,30 @@
  */
 package net.skinsrestorer.api;
 
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+
 /**
  * Makes it possible to get all platforms into a single API merged.
  */
 public class PlayerWrapper {
-    private final Object player;
+    private final Object playerInstance;
+    private final ISRPlayer internalPlayer;
 
-    public PlayerWrapper(Object player) {
-        this.player = player;
+    public PlayerWrapper(Object playerInstance) {
+        this.playerInstance = playerInstance;
+
+        this.internalPlayer = SkinsRestorerAPI.getApi().getWrapperFactory().wrap(playerInstance);
     }
 
     public <A> A get(Class<A> playerClass) {
-        return playerClass.cast(player);
+        return playerClass.cast(playerInstance);
+    }
+
+    public String getName() {
+        return internalPlayer.getName();
+    }
+
+    public void sendMessage(String message) {
+        internalPlayer.sendMessage(message);
     }
 }

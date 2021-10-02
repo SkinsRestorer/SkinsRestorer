@@ -19,10 +19,12 @@
  */
 package net.skinsrestorer.api;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 
@@ -38,14 +40,17 @@ public abstract class SkinsRestorerAPI {
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
     private final SkinStorage skinStorage;
+    @Getter(value = AccessLevel.PROTECTED)
+    private final WrapperFactory wrapperFactory;
 
-    protected SkinsRestorerAPI(MojangAPI mojangAPI, MineSkinAPI mineSkinAPI, SkinStorage skinStorage) {
+    protected SkinsRestorerAPI(MojangAPI mojangAPI, MineSkinAPI mineSkinAPI, SkinStorage skinStorage, WrapperFactory wrapperFactory) {
         if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
         this.mojangAPI = mojangAPI;
         this.mineSkinAPI = mineSkinAPI;
         this.skinStorage = skinStorage;
+        this.wrapperFactory = wrapperFactory;
     }
 
     private static void setInstance(SkinsRestorerAPI api) {

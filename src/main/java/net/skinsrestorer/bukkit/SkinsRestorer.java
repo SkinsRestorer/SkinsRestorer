@@ -32,6 +32,7 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.Config;
@@ -43,6 +44,7 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.LoggerImpl;
@@ -61,7 +63,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -440,9 +441,37 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }));
     }
 
+    private static class WrapperFactoryBukkit extends WrapperFactory {
+        @Override
+        public ISRPlayer wrap(Object playerInstance) {
+            if (playerInstance instanceof Player) {
+                Player player = (Player) playerInstance;
+
+                return new ISRPlayer() {
+                    @Override
+                    public PlayerWrapper getWrapper() {
+                        return new PlayerWrapper(playerInstance);
+                    }
+
+                    @Override
+                    public String getName() {
+                        return player.getName();
+                    }
+
+                    @Override
+                    public void sendMessage(String message) {
+                        player.sendMessage(message);
+                    }
+                };
+            } else {
+                throw new IllegalArgumentException("Player instance is not valid!");
+            }
+        }
+    }
+
     private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
         public SkinsRestorerBukkitAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit());
         }
 
         @Override
