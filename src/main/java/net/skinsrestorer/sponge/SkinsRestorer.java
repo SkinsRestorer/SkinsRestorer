@@ -26,6 +26,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.Config;
@@ -35,6 +36,7 @@ import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -195,9 +197,37 @@ public class SkinsRestorer implements ISRPlugin {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
+    private static class WrapperFactorySponge extends WrapperFactory {
+        @Override
+        public ISRPlayer wrap(Object playerInstance) {
+            if (playerInstance instanceof Player) {
+                Player player = (Player) playerInstance;
+
+                return new ISRPlayer() {
+                    @Override
+                    public PlayerWrapper getWrapper() {
+                        return new PlayerWrapper(playerInstance);
+                    }
+
+                    @Override
+                    public String getName() {
+                        return player.getName();
+                    }
+
+                    @Override
+                    public void sendMessage(String message) {
+                        player.sendMessage(Text.builder(message).build());
+                    }
+                };
+            } else {
+                throw new IllegalArgumentException("Player instance is not valid!");
+            }
+        }
+    }
+
     private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
         public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage);
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge());
         }
 
         @Override

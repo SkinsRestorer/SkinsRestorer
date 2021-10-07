@@ -17,32 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api;
+package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 
-/**
- * Makes it possible to get all platforms into a single API merged.
- */
-public class PlayerWrapper {
-    private final Object playerInstance;
-    private final ISRPlayer internalPlayer;
-
-    public PlayerWrapper(Object playerInstance) {
-        this.playerInstance = playerInstance;
-
-        this.internalPlayer = SkinsRestorerAPI.getApi().getWrapperFactory().wrap(playerInstance);
-    }
-
-    public <A> A get(Class<A> playerClass) {
-        return playerClass.cast(playerInstance);
-    }
-
-    public String getName() {
-        return internalPlayer.getName();
-    }
-
-    public void sendMessage(String message) {
-        internalPlayer.sendMessage(message);
-    }
+public abstract class WrapperFactory {
+    public abstract ISRPlayer wrap(Object playerInstance);
 }
