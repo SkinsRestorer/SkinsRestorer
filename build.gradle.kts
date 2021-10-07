@@ -15,79 +15,48 @@ plugins {
 repositories {
     mavenCentral()
     sonatypeSnapshots()
-    maven {
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
         name = "SpigotMC Repository"
-        url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
     }
-    maven {
+    maven("https://papermc.io/repo/repository/maven-public/") {
         name = "PaperMC Repository"
-        url = uri("https://papermc.io/repo/repository/maven-public/")
     }
-    maven {
+    maven("https://repo.spongepowered.org/maven") {
         name = "SpongePowered Repository"
-        url = uri("https://repo.spongepowered.org/maven")
     }
-    maven {
+    maven("https://repo.codemc.org/repository/maven-public") {
         name = "CodeMC Repository"
-        url = uri("https://repo.codemc.org/repository/maven-public")
     }
-    maven {
+    maven("https://repo.aikar.co/content/groups/aikar/") {
         name = "Aikar Repository"
-        url = uri("https://repo.aikar.co/content/groups/aikar/")
     }
-    maven {
+    maven("https://nexus.velocitypowered.com/repository/maven-public/") {
         name = "VelocityPowered Repository"
-        url = uri("https://nexus.velocitypowered.com/repository/maven-public/")
     }
-    maven {
+    maven("https://repo.viaversion.com") {
         name = "ViaVersion Repository"
-        url = uri("https://repo.viaversion.com")
     }
-    maven {
+    maven("https://jitpack.io") {
         name = "JitPack Repository"
-        url = uri("https://jitpack.io")
     }
-    maven {
+    maven("https://libraries.minecraft.net") {
         name = "Minecraft Repository"
-        url = uri("https://libraries.minecraft.net")
     }
 }
 
 dependencies {
-    shadow("org.bstats:bstats-bukkit:2.2.1")
-    shadow("org.bstats:bstats-bungeecord:2.2.1")
-    shadow("org.bstats:bstats-sponge:2.2.1")
-    shadow("org.bstats:bstats-velocity:2.2.1")
+
+
     shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")
     }
-    shadow("co.aikar:acf-paper:0.5.0-SNAPSHOT")
-    shadow("co.aikar:acf-bungee:0.5.0-SNAPSHOT")
-    shadow("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
-    shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
+
     shadow("com.google.code.gson:gson:2.8.8")
     shadow("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-    shadow("com.github.cryptomorin:XSeries:8.4.0")
-    shadow("io.papermc:paperlib:1.0.6")
+
     shadow("co.aikar:minecraft-timings:1.0.4")
     shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
     shadow("org.spongepowered:configurate-yaml:4.1.2")
-
-    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-proxy:1.17-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:1.11")
-    compileOnly("com.viaversion:viabackwards-common:4.0.1")
-    compileOnly("com.viaversion:viaversion:4.0.0")
-
-    compileOnly("com.velocitypowered:velocity-api:3.0.1")
-    annotationProcessor("com.velocitypowered:velocity-api:3.0.1")
-
-    compileOnly("org.spongepowered:spongeapi:7.3.0")
-    annotationProcessor("org.spongepowered:spongeapi:7.3.0")
-
-    compileOnly("org.projectlombok:lombok:1.18.22")
-    annotationProcessor("org.projectlombok:lombok:1.18.22")
 }
 
 group = "net.skinsrestorer"
