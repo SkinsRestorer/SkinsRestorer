@@ -86,8 +86,8 @@ dependencies {
     compileOnly("org.spongepowered:spongeapi:7.3.0")
     annotationProcessor("org.spongepowered:spongeapi:7.3.0")
 
-    compileOnly("org.projectlombok:lombok:1.18.20")
-    annotationProcessor("org.projectlombok:lombok:1.18.20")
+    compileOnly("org.projectlombok:lombok:1.18.22")
+    annotationProcessor("org.projectlombok:lombok:1.18.22")
 }
 
 group = "net.skinsrestorer"
