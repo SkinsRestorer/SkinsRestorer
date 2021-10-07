@@ -24,6 +24,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
-public class MineSkinAPI {
+public class MineSkinAPI implements IMineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MetricsCounter metricsCounter;

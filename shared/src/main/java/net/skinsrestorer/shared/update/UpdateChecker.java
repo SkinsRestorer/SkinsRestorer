@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.inventivetalent.update.spiget.ResourceInfo;
 import org.inventivetalent.update.spiget.ResourceVersion;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -88,9 +87,9 @@ public class UpdateChecker {
             upToDateMessages.add("§a    |   §eBungee Mode§a    |");
         } else {
             try {
-                Bukkit.getName(); //try if it is running bukkit
+                Class.forName("org.bukkit.Bukkit"); //try if it is running bukkit
                 upToDateMessages.add("§a    |  §9§n§lStandalone Mode§a |");
-            } catch (NoClassDefFoundError ignored) {
+            } catch (ClassNotFoundException ignored) {
             }
         }
         upToDateMessages.add("§a    +==================+");
@@ -119,9 +118,9 @@ public class UpdateChecker {
             updateAvailableMessages.add("§a    |   §eBungee Mode§a    |");
         } else {
             try {
-                Bukkit.getName(); //try if it is running bukkit
+                Class.forName("org.bukkit.Bukkit"); //try if it is running bukkit
                 updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
-            } catch (NoClassDefFoundError ignored) {
+            } catch (ClassNotFoundException ignored) {
             }
         }
         updateAvailableMessages.add("§a    +==================+");

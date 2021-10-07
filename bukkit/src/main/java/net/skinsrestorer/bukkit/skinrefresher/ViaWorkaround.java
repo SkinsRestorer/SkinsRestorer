@@ -26,7 +26,7 @@ import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.api.type.Type;
 import com.viaversion.viaversion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import org.bukkit.entity.Player;
 
 public final class ViaWorkaround {

@@ -21,13 +21,14 @@ package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.property.*;
-import net.skinsrestorer.shared.exception.ReflectionException;
-import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MinetoolsProfileResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MojangProfileResponse;
@@ -46,7 +47,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MojangAPI {
+public class MojangAPI implements IMojangAPI {
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%name%";
 

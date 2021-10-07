@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRConsole;
+import net.skinsrestorer.api.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 
 import java.util.logging.Level;

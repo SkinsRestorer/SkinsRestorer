@@ -45,18 +45,8 @@ repositories {
 }
 
 dependencies {
-
-
-    shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
-        exclude("org.bukkit", "bukkit")
-    }
-
-    shadow("com.google.code.gson:gson:2.8.8")
-    shadow("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-
     shadow("co.aikar:minecraft-timings:1.0.4")
     shadow("com.gilecode.yagson:j9-reflection-utils:1.0")
-    shadow("org.spongepowered:configurate-yaml:4.1.2")
 }
 
 group = "net.skinsrestorer"

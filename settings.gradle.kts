@@ -7,7 +7,6 @@ rootProject.name = "skinsrestorer"
 dependencyResolutionManagement {
     repositories {
         mavenCentral()
-        //net.kyori.indra.repository.sonatypeSnapshots()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
@@ -47,8 +46,8 @@ gradleEnterprise {
     }
 }
 
-include("shared")
 include("api")
+include("shared")
 include("bukkit")
 include("bungee")
 include("velocity")

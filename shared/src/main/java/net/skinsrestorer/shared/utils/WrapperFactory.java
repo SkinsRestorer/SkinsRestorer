@@ -19,8 +19,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 
-public abstract class WrapperFactory {
+public abstract class WrapperFactory implements IWrapperFactory {
     public abstract ISRPlayer wrap(Object playerInstance);
 }

@@ -17,27 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.bungeecord.events;
+package net.skinsrestorer.shared.exception;
 
-import lombok.Getter;
-import lombok.Setter;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.plugin.Cancellable;
-import net.md_5.bungee.api.plugin.Event;
-import net.skinsrestorer.api.property.IProperty;
-import org.jetbrains.annotations.Nullable;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.shared.storage.Locale;
 
-@Getter
-public class SkinApplyBungeeEvent extends Event implements Cancellable {
-    @Nullable
-    private final ProxiedPlayer who;
-    @Setter
-    private boolean isCancelled = false;
-    @Setter
-    private IProperty property;
-
-    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, IProperty property) {
-        this.who = who;
-        this.property = property;
+public class NotPremiumException extends SkinRequestException {
+    public NotPremiumException() {
+        super(Locale.NOT_PREMIUM);
     }
 }

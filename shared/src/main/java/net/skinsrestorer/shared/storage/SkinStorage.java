@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;

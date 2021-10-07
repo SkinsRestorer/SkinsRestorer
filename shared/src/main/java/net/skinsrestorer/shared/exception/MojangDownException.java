@@ -17,18 +17,9 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils.log.console;
+package net.skinsrestorer.shared.exception;
 
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRConsole;
-import org.bukkit.command.ConsoleCommandSender;
+import net.skinsrestorer.api.exception.SkinRequestException;
 
-@RequiredArgsConstructor
-public class BukkitConsoleImpl implements ISRConsole {
-    private final ConsoleCommandSender consoleCommandSender;
-
-    @Override
-    public void sendMessage(String message) {
-        consoleCommandSender.sendMessage(message);
-    }
+public class MojangDownException extends SkinRequestException {
 }

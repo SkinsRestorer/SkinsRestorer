@@ -33,7 +33,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;

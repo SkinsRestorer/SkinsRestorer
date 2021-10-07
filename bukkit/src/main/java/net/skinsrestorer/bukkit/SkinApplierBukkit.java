@@ -27,7 +27,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.serverinfo.ServerVersion;
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;

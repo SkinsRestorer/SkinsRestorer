@@ -17,16 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.bukkit.utils;
 
-public class ReflectionException extends ReflectiveOperationException {
-    private static final long serialVersionUID = -8198968403615763053L;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.interfaces.ISRConsole;
+import org.bukkit.command.ConsoleCommandSender;
 
-    public ReflectionException(String message) {
-        super(message);
-    }
+@RequiredArgsConstructor
+public class BukkitConsoleImpl implements ISRConsole {
+    private final ConsoleCommandSender consoleCommandSender;
 
-    public ReflectionException(Exception e) {
-        super(e);
+    @Override
+    public void sendMessage(String message) {
+        consoleCommandSender.sendMessage(message);
     }
 }

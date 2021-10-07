@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
