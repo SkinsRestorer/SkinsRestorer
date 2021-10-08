@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -37,7 +38,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
-public class SkinStorage {
+public class SkinStorage implements ISkinStorage {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     @Setter

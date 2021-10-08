@@ -21,10 +21,10 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.exception.ReflectionException;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

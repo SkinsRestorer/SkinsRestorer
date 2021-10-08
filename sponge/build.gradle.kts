@@ -15,4 +15,12 @@ dependencies {
 
     shadow("org.bstats:bstats-sponge:2.2.1")
     shadow("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
+
+    implementation(project(":api"))
+    implementation(project(":shared"))
+
+    shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
+        exclude("org.bukkit", "bukkit")
+    }
+
 }

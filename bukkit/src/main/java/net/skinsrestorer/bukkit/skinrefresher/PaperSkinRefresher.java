@@ -20,8 +20,8 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
 

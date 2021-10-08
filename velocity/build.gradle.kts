@@ -15,4 +15,11 @@ dependencies {
 
     shadow("org.bstats:bstats-velocity:2.2.1")
     shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
+
+    implementation(project(":api"))
+    implementation(project(":shared"))
+
+    shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
+        exclude("org.bukkit", "bukkit")
+    }
 }
