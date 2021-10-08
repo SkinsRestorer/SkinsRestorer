@@ -4,9 +4,6 @@ plugins {
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.22")
-    annotationProcessor("org.projectlombok:lombok:1.18.22")
-
     compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT")

@@ -1,12 +1,9 @@
 dependencies {
-    api(projects.skinsrestorerApi)
+    implementation(projects.skinsrestorerApi)
 
     api("org.jetbrains:annotations:22.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
-
-    compileOnly("org.projectlombok:lombok:1.18.22")
-    annotationProcessor("org.projectlombok:lombok:1.18.22")
 
     api("org.spongepowered:configurate-yaml:4.1.2")
     api("com.google.code.gson:gson:2.8.8")
