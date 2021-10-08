@@ -73,6 +73,11 @@ setupSRSubproject("bungee")
 setupSRSubproject("velocity")
 setupSRSubproject("sponge")
 
+setupSubproject("skinsrestorer") {
+    projectDir = file("universal")
+}
+
+
 fun setupSRSubproject(name: String) {
     setupSubproject("skinsrestorer-$name") {
         projectDir = file(name)
@@ -83,3 +88,4 @@ inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
     include(name)
     project(":$name").apply(block)
 }
+

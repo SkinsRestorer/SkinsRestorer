@@ -1,8 +1,3 @@
-plugins {
-    id("java-library")
-    id("com.github.johnrengelman.shadow")
-}
-
 dependencies {
     api(projects.skinsrestorerApi)
 
@@ -17,8 +12,7 @@ dependencies {
     api("com.google.code.gson:gson:2.8.8")
     api("com.google.guava:guava:31.0.1-jre")
     api("org.mariadb.jdbc:mariadb-java-client:2.7.4")
-
-    shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
+    api("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")
     }
 

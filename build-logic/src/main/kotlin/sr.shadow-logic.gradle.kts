@@ -10,20 +10,20 @@ tasks {
         expand("version" to version, "description" to description)
     }
 
-    build {
-        dependsOn(shadowJar)
+    jar {
+        archiveClassifier.set("unshaded")
+        from(project.rootProject.file("LICENSE"))
     }
 
     shadowJar {
         dependsOn(getByName("relocateShadowJar") as ConfigureShadowRelocation)
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize()
-        configurations = listOf(project.configurations.shadow.get())
         archiveFileName.set("SkinsRestorer.jar")
     }
 
-    jar {
-        enabled = false
+    build {
+        dependsOn(shadowJar)
     }
 
     create<ConfigureShadowRelocation>("relocateShadowJar") {
@@ -31,3 +31,5 @@ tasks {
         prefix = "net.skinsrestorer.shadow"
     }
 }
+
+publishShadowJar()

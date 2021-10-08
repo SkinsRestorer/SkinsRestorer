@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
-
 plugins {
     base
     id("sr.build-logic")
@@ -19,6 +17,8 @@ val platforms = setOf(
 ).map { it.dependencyProject }
 
 val special = setOf(
+    projects.skinsrestorer,
+    projects.skinsrestorerShared,
     projects.skinsrestorerApi
 ).map { it.dependencyProject }
 
