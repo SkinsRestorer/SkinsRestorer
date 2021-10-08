@@ -3,9 +3,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-group = "net.skinsrestorer"
-version = "14.1.6-SNAPSHOT"
-
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")
@@ -16,8 +13,8 @@ dependencies {
     shadow("org.bstats:bstats-velocity:2.2.1")
     shadow("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
 
-    implementation(project(":api"))
-    implementation(project(":shared"))
+    implementation(projects.skinsrestorerApi)
+    implementation(projects.skinsrestorerShared)
 
     shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")

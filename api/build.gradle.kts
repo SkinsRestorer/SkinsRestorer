@@ -3,9 +3,6 @@ plugins {
     id("net.kyori.blossom")
 }
 
-group = "net.skinsrestorer"
-version = "14.1.6-SNAPSHOT"
-
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")

@@ -3,9 +3,6 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-group = "net.skinsrestorer"
-version = "14.1.6-SNAPSHOT"
-
 dependencies {
     compileOnly("org.projectlombok:lombok:1.18.22")
     annotationProcessor("org.projectlombok:lombok:1.18.22")
@@ -16,8 +13,8 @@ dependencies {
     shadow("org.bstats:bstats-bungeecord:2.2.1")
     shadow("co.aikar:acf-bungee:0.5.0-SNAPSHOT")
 
-    implementation(project(":api"))
-    implementation(project(":shared"))
+    implementation(projects.skinsrestorerApi)
+    implementation(projects.skinsrestorerShared)
 
     shadow("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")

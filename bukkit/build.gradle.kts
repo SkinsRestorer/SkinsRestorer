@@ -27,6 +27,8 @@ dependencies {
 
     compileOnly("com.mojang:authlib:1.11")
 
-    implementation(project(":api"))
-    implementation(project(":shared"))
+    shadow("co.aikar:minecraft-timings:1.0.4")
+
+    implementation(projects.skinsrestorerApi)
+    implementation(projects.skinsrestorerShared)
 }

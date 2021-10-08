@@ -3,11 +3,8 @@ plugins {
     id("com.github.johnrengelman.shadow")
 }
 
-group = "net.skinsrestorer"
-version = "14.1.6-SNAPSHOT"
-
 dependencies {
-    api(project(":api"))
+    api(projects.skinsrestorerApi)
 
     api("org.jetbrains:annotations:22.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
