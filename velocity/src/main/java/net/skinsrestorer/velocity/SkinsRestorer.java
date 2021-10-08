@@ -34,11 +34,12 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.builddata.BuildData;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.ISRPlugin;
 import net.skinsrestorer.api.serverinfo.Platform;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -68,7 +69,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "{version}", description = "{description}", url = "{url}", authors = {"Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
     private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

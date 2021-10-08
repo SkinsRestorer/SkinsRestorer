@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.builddata.BuildData;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
@@ -67,7 +68,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = "{version}", description = "{description}", url = "{url}", authors = {"Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
