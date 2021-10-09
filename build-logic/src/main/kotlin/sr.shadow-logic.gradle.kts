@@ -1,4 +1,4 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("sr.base-logic")
@@ -16,19 +16,29 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(getByName("relocateShadowJar"))
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize()
+        configureRelocations()
     }
 
     build {
         dependsOn(shadowJar)
     }
+}
 
-    create<ConfigureShadowRelocation>("relocateShadowJar") {
-        target = shadowJar.get()
-        prefix = "net.skinsrestorer.shadow"
-    }
+fun ShadowJar.configureRelocations() {
+    relocate("co.aikar", "net.skinsrestorer.shadow.aikar")
+    relocate("com.google.gson", "net.skinsrestorer.shadow.gson")
+    relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
+    relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
+    relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
+    relocate("io.leangen.geantyref", "net.skinsrestorer.shadow.geantyref")
+    relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
+    relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
+    relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
+    relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+    relocate("org.spongepowered.configurate", "net.skinsrestorer.shadow.configurate")
+    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
 }
 
 publishShadowJar()

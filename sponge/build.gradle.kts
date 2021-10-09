@@ -1,4 +1,5 @@
 dependencies {
+    implementation(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
 

@@ -1,4 +1,4 @@
-package net.skinsrestorer.api.builddata;
+package net.skinsrestorer.builddata;
 
 // The constants are replaced before compilation
 public class BuildData {

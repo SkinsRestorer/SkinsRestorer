@@ -66,6 +66,7 @@ gradleEnterprise {
 
 includeBuild("build-logic")
 
+setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")
 setupSRSubproject("bukkit")
@@ -87,4 +88,3 @@ inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
     include(name)
     project(":$name").apply(block)
 }
-

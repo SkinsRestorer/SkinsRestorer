@@ -16,7 +16,9 @@ val platforms = setOf(
     projects.skinsrestorerVelocity
 ).map { it.dependencyProject }
 
-val shadow = setOf(projects.skinsrestorerShared).map { it.dependencyProject }
+val shadow = setOf(
+    projects.skinsrestorerShared
+).map { it.dependencyProject }
 
 val special = setOf(
     projects.skinsrestorer,
