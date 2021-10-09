@@ -31,10 +31,12 @@ private fun Project.configurePublication(configurer: MavenPublication.() -> Unit
 
 fun Project.latestCommitHash(): String {
     val byteOut = ByteArrayOutputStream()
+
     exec {
         commandLine = listOf("git", "rev-parse", "--short", "HEAD")
         standardOutput = byteOut
     }
+
     return byteOut.toString(Charsets.UTF_8.name()).trim()
 }
 
