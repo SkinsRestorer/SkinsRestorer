@@ -1,9 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-plugins {
-    id("com.github.johnrengelman.shadow")
-}
-
 val platforms = setOf(
     rootProject.projects.skinsrestorerBukkit,
     rootProject.projects.skinsrestorerBungee,
@@ -12,7 +8,7 @@ val platforms = setOf(
 ).map { it.dependencyProject }
 
 tasks {
-    shadowJar {
+    jar {
         archiveClassifier.set("")
         archiveFileName.set("SkinsRestorer.jar")
         destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
@@ -23,8 +19,5 @@ tasks {
             dependsOn(platform.tasks.withType<Jar>())
             from(zipTree(shadowJarTask.archiveFile))
         }
-    }
-    build {
-        dependsOn(shadowJar)
     }
 }
