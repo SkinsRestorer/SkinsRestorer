@@ -14,7 +14,7 @@ val platforms = setOf(
 tasks {
     shadowJar {
         archiveClassifier.set("")
-        archiveFileName.set("SkinsRestorer-${project.version}.jar")
+        archiveFileName.set("SkinsRestorer.jar")
         destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         platforms.forEach { platform ->
