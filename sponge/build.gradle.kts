@@ -1,5 +1,5 @@
 dependencies {
-    implementation(projects.skinsrestorerBuildData)
+    compileOnly(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
 

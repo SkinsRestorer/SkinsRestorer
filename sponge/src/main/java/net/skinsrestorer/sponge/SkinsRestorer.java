@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import builddata.BuildData;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
