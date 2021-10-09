@@ -77,7 +77,6 @@ setupSubproject("skinsrestorer") {
     projectDir = file("universal")
 }
 
-
 fun setupSRSubproject(name: String) {
     setupSubproject("skinsrestorer-$name") {
         projectDir = file(name)

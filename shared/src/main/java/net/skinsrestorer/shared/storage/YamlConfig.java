@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import net.skinsrestorer.shared.exception.YamlException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -73,7 +74,7 @@ public class YamlConfig {
 
         try {
             reload();
-        } catch (ConfigurateException e) {
+        } catch (YamlException e) {
             e.printStackTrace();
         }
     }
@@ -145,12 +146,20 @@ public class YamlConfig {
         return Collections.emptyList();
     }
 
-    public void reload() throws ConfigurateException {
-        config = YamlConfigurationLoader.builder().path(file.toPath()).build().load();
+    public void reload() throws YamlException {
+        try {
+            config = YamlConfigurationLoader.builder().path(file.toPath()).build().load();
+        } catch (ConfigurateException ex) {
+            throw new YamlException(ex);
+        }
     }
 
-    private void save() throws ConfigurateException {
-        YamlConfigurationLoader.builder().path(file.toPath()).build().save(config);
+    private void save() throws YamlException {
+        try {
+            YamlConfigurationLoader.builder().path(file.toPath()).build().save(config);
+        } catch (ConfigurateException ex) {
+            throw new YamlException(ex);
+        }
     }
 
     @SuppressWarnings("unchecked")

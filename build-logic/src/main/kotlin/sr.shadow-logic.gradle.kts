@@ -16,10 +16,9 @@ tasks {
     }
 
     shadowJar {
-        dependsOn(getByName("relocateShadowJar") as ConfigureShadowRelocation)
+        dependsOn(getByName("relocateShadowJar"))
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize()
-        archiveFileName.set("SkinsRestorer.jar")
     }
 
     build {

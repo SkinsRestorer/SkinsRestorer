@@ -16,15 +16,17 @@ val platforms = setOf(
     projects.skinsrestorerVelocity
 ).map { it.dependencyProject }
 
+val shadow = setOf(projects.skinsrestorerShared).map { it.dependencyProject }
+
 val special = setOf(
     projects.skinsrestorer,
-    projects.skinsrestorerShared,
     projects.skinsrestorerApi
 ).map { it.dependencyProject }
 
 subprojects {
     when (this) {
         in platforms -> plugins.apply("sr.platform-logic")
+        in shadow -> plugins.apply("sr.shadow-logic")
         in special -> plugins.apply("sr.base-logic")
     }
 }

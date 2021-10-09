@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import net.skinsrestorer.shared.exception.YamlException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -71,7 +72,7 @@ public class Config {
         config.saveDefaultConfig(is);
         try {
             config.reload();
-        } catch (ConfigurateException e) {
+        } catch (YamlException e) {
             e.printStackTrace();
         }
         SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm", SKIN_WITHOUT_PERM);

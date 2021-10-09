@@ -2,7 +2,9 @@ dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
 
-    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT") {
+        exclude("com.google.code.gson", "gson")
+    }
 
     implementation("io.papermc:paperlib:1.0.6")
     implementation("org.bstats:bstats-bukkit:2.2.1")

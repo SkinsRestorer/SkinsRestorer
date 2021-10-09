@@ -1,10 +1,18 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("sr.shadow-logic")
 }
 
-tasks {
-    shadowJar {
-        archiveFileName.set("SkinsRestorer-${project.name.substringAfter("skinsrestorer-").capitalize()}-${project.version}.jar")
-        destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
-    }
+dependencies.implementation("com.google.code.gson:gson:2.8.8")
+dependencies.implementation("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
+    exclude("org.bukkit", "bukkit")
 }
+
+(tasks.getByName("shadowJar") as ShadowJar).archiveFileName.set(
+    "SkinsRestorer-${
+        project.name.substringAfter("skinsrestorer-").capitalize()
+    }-${project.version}.jar"
+)
+
+(tasks.getByName("shadowJar") as ShadowJar).destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
