@@ -1,4 +1,5 @@
 plugins {
+    id("sr.license-logic")
     id("net.kyori.blossom")
 }
 
