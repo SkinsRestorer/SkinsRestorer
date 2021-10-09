@@ -41,4 +41,4 @@ fun ShadowJar.configureRelocations() {
     relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
 }
 
-publishShadowJar()
+// publishShadowJar()
