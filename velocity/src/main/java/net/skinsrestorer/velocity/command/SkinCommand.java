@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -323,12 +323,6 @@ public class SkinCommand extends BaseCommand {
         return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
     }
 
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
-    }
-
     private ISRCommandSender wrap(CommandSource sender) {
         return new ISRCommandSender() {
             @Override
@@ -346,5 +340,11 @@ public class SkinCommand extends BaseCommand {
                 return sender.hasPermission(permission);
             }
         };
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        STEVE,
+        SLIM,
     }
 }

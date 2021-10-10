@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.shared.exception.YamlException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
 import java.io.InputStream;

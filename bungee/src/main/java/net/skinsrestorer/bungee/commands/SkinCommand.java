@@ -31,9 +31,9 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -320,12 +320,6 @@ public class SkinCommand extends BaseCommand {
             sender.sendMessage(TextComponent.fromLegacyText(Locale.SR_LINE));
     }
 
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
-    }
-
     private ISRCommandSender wrap(CommandSender sender) {
         return new ISRCommandSender() {
             @Override
@@ -343,5 +337,11 @@ public class SkinCommand extends BaseCommand {
                 return sender.hasPermission(permission);
             }
         };
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        STEVE,
+        SLIM,
     }
 }

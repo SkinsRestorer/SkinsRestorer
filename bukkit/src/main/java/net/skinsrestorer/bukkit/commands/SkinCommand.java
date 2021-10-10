@@ -27,9 +27,9 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -317,12 +317,6 @@ public class SkinCommand extends BaseCommand {
             sender.sendMessage(Locale.SR_LINE);
     }
 
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
-    }
-
     private ISRCommandSender wrap(CommandSender sender) {
         return new ISRCommandSender() {
             @Override
@@ -340,5 +334,11 @@ public class SkinCommand extends BaseCommand {
                 return sender.hasPermission(permission);
             }
         };
+    }
+
+    @SuppressWarnings("unused")
+    public enum SkinType {
+        STEVE,
+        SLIM,
     }
 }

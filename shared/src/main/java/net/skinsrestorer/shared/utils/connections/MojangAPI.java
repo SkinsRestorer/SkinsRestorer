@@ -21,14 +21,14 @@ package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.property.*;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.Platform;
+import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MinetoolsProfileResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MojangProfileResponse;
