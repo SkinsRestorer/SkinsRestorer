@@ -227,7 +227,7 @@ public class MojangAPI implements IMojangAPI {
                 final AshconResponse.Textures textures = obj.getTextures();
                 final AshconResponse.Textures.Raw rawTextures = textures.getRaw();
 
-                return Optional.of(createProperty("textures", rawTextures.getValue(), rawTextures.getValue()));
+                return Optional.of(createProperty("textures", rawTextures.getValue(), rawTextures.getSignature()));
             }
         } catch (Exception ignored) {
         }
