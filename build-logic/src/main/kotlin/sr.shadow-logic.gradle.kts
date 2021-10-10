@@ -27,7 +27,9 @@ tasks {
 }
 
 fun ShadowJar.configureRelocations() {
-    relocate("co.aikar", "net.skinsrestorer.shadow.aikar")
+    relocate("co.aikar.commands", "net.skinsrestorer.shadow.aikar.commands")
+    relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
+    relocate("co.aikar.timings.lib", "net.skinsrestorer.shadow.aikar.timings")
     relocate("com.google.gson", "net.skinsrestorer.shadow.gson")
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
