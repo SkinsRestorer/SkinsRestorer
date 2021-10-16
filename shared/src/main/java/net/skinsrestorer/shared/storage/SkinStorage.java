@@ -412,7 +412,7 @@ public class SkinStorage implements ISkinStorage {
             if (Config.CUSTOM_GUI_ENABLED) {
                 StringBuilder sb = new StringBuilder();
                 if (Config.CUSTOM_GUI_ONLY) {
-                    Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append("|").append(skin));
+                    Config.CUSTOM_GUI_SKINS.forEach(sb.append("|")::append);
 
                     filterBy = "WHERE Nick RLIKE '" + sb.substring(1) + "'";
                 } else {
