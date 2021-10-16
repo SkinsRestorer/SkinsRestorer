@@ -68,7 +68,6 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         }
 
         try (FileOutputStream output = new FileOutputStream(file)) {
-            FileOutputStream output = new FileOutputStream(file);
             output.getChannel().transferFrom(channel, 0L, 9223372036854775807L);
             output.flush();
         } catch (IOException e) {
