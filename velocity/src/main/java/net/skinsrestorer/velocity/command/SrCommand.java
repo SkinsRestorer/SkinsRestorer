@@ -81,7 +81,7 @@ public class SrCommand extends BaseCommand {
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
 
-            if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1))
+            if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
                         source.sendMessage(plugin.deserialize(result));

@@ -67,11 +67,9 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
             throw new UpdateException("Download failed", e);
         }
 
-        try {
-            FileOutputStream output = new FileOutputStream(file);
+        try (FileOutputStream output = new FileOutputStream(file)) {
             output.getChannel().transferFrom(channel, 0L, 9223372036854775807L);
             output.flush();
-            output.close();
         } catch (IOException e) {
             throw new UpdateException("Could not save file", e);
         }

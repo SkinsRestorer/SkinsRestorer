@@ -13,7 +13,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.7"
+    id("com.gradle.enterprise") version "3.7.1"
 }
 
 rootProject.name = "skinsrestorer-parent"
