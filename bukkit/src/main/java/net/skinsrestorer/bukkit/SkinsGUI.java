@@ -24,6 +24,7 @@ import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -51,7 +52,7 @@ public class SkinsGUI extends ItemStack implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public Inventory getGUI(Player player, int page, Map<String, Object> skinsList) {
+    public Inventory getGUI(Player player, int page, Map<String, IProperty> skinsList) {
         Inventory inventory = Bukkit.createInventory(player, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
 
         ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
@@ -118,12 +119,12 @@ public class SkinsGUI extends ItemStack implements Listener {
             page = 999;
         int skinNumber = 36 * page;
 
-        Map<String, Object> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+        Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
         ++page; // start counting from 1
         return getGUI(player, page, skinsList);
     }
 
-    private ItemStack createSkull(String name, Object property) {
+    private ItemStack createSkull(String name, IProperty property) {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 

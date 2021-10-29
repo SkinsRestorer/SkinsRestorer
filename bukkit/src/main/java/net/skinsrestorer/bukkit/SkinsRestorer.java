@@ -227,7 +227,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             Map<String, GenericProperty> skinList = convertToObject(msgBytes);
 
                             //convert
-                            Map<String, Object> newSkinList = new TreeMap<>();
+                            Map<String, IProperty> newSkinList = new TreeMap<>();
 
                             skinList.forEach((name, property) -> newSkinList.put(name, mojangAPI.createProperty(property.getName(), property.getValue(), property.getSignature())));
 

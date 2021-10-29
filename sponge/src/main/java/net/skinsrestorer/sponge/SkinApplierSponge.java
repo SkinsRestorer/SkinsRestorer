@@ -51,7 +51,7 @@ public class SkinApplierSponge {
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {
         ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", property.getValue(), property.getSignature());
-        oldProperties.clear();
+        oldProperties.removeIf(property2 -> property2.getName().equals("textures"));
         oldProperties.add(newTextures);
     }
 

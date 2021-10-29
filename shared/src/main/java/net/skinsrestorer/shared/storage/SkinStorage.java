@@ -400,9 +400,9 @@ public class SkinStorage implements ISkinStorage {
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
-    public Map<String, Object> getSkins(int number) {
+    public Map<String, IProperty> getSkins(int number) {
         //Using mysql
-        Map<String, Object> list = new TreeMap<>();
+        Map<String, IProperty> list = new TreeMap<>();
 
         if (Config.MYSQL_ENABLED) {
             String filterBy = "";
@@ -453,10 +453,10 @@ public class SkinStorage implements ISkinStorage {
                     if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
                             if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
-                                list.put(skinName.toLowerCase(), getSkinData(skinName, false));
+                                getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                         }
                     } else {
-                        list.put(skinName.toLowerCase(), getSkinData(skinName, false));
+                        getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                     }
                 }
                 i++;
