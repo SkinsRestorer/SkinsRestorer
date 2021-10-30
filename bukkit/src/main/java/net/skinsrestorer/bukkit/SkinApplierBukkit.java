@@ -188,7 +188,7 @@ public class SkinApplierBukkit {
         disableRemountPlayer = fileDisableRemountPlayer.exists() || fileTxtDisableRemountPlayer.exists();
         enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
 
-        log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", enableDismountEntities: " + enableDismountEntities + ", disableRemountPlayer: " + disableRemountPlayer + " }");
+        log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
     }
 }
