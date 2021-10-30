@@ -64,15 +64,15 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
             } catch (Exception e) {
                 try {
+                    // Forge
+                    removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
+                    addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
+                } catch (Exception e1) {
                     Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
 
                     // 1.8 or below
                     removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
                     addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
-                } catch (Exception e1) {
-                    // Forge
-                    removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
-                    addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
                 }
             }
 
