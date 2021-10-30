@@ -69,6 +69,12 @@ DataDropped: "&2Data dropped for %playerOrSkin %targets."
 # Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin has been created!"
 
+# /sr reload
+RELOAD: "&2Config and Locale has been reloaded!"
+
+# run when your using a outdated version of skinsrestorer
+OUTDATED: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+
   #################
   # Wait messages #
   #################
@@ -83,8 +89,8 @@ Wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin ag
   # Permissions messages #
   ########################
 
-noPermission-Skin: ""
-noPermission-Url: ""
+noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
+noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
 
 # Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
@@ -108,10 +114,6 @@ Error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. P
 Error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
 Error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
 Error-InvalidSkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
-
-
-RELOAD
-OUTDATED
 
   ######################
   # SkinsMenu messages #
@@ -156,5 +158,5 @@ customHelpIFenabled:
   - "    &2/skin update &7-&f Updates your skin."
 
 #
-#
+# please do not remove below version string!
 version: ${version}
