@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
@@ -44,10 +45,11 @@ public class SkinApplierBukkit {
     private final SRLogger log;
     @Getter
     private final Consumer<Player> refresh;
-    private boolean checkOptFileChecked = false;
-    private boolean disableDismountPlayer;
-    private boolean enableDismountEntities;
-    private boolean enableRemountPlayer;
+    @Setter
+    private static boolean optFileChecked;
+    private static boolean disableDismountPlayer;
+    private static boolean disableRemountPlayer;
+    private static boolean enableDismountEntities;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
@@ -86,6 +88,9 @@ public class SkinApplierBukkit {
      * @param property Property Object
      */
     protected void applySkin(Player player, IProperty property) {
+        if (!player.isOnline())
+            return;
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
@@ -124,17 +129,17 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        if (!checkOptFileChecked)
+        if (!optFileChecked)
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             Entity vehicle = player.getVehicle();
 
             // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-            if ((Config.DISMOUNT_PLAYER_ON_UPDATE || !disableDismountPlayer) && vehicle != null) {
+            if ((Config.DISMOUNT_PLAYER_ON_UPDATE && !disableDismountPlayer) && vehicle != null) {
                 vehicle.removePassenger(player);
 
-                if (Config.REMOUNT_PLAYER_ON_UPDATE || enableRemountPlayer) {
+                if (Config.REMOUNT_PLAYER_ON_UPDATE && !disableRemountPlayer) {
                     // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                     Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                         // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
@@ -173,18 +178,17 @@ public class SkinApplierBukkit {
 
     private void checkOptFile() {
         File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
-        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
+        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
+        File fileTxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disableDismountPlayer.txt");
+        File fileTxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disableRemountPlayer.txt");
+        File fileTxtEnableDismountEntities = new File(plugin.getDataFolder(), "enableDismountEntities.txt");
 
-        if (fileDisableDismountPlayer.exists())
-            disableDismountPlayer = true;
+        disableDismountPlayer = fileDisableDismountPlayer.exists() || fileTxtDisableDismountPlayer.exists();
+        disableRemountPlayer = fileDisableRemountPlayer.exists() || fileTxtDisableRemountPlayer.exists();
+        enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
 
-        if (fileEnableDismountEntities.exists())
-            enableDismountEntities = true;
-
-        if (fileDisableRemountPlayer.exists())
-            enableRemountPlayer = false;
-
-        checkOptFileChecked = true;
+        log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
+        optFileChecked = true;
     }
 }
