@@ -48,8 +48,8 @@ public class SkinApplierBukkit {
     @Setter
     private static boolean optFileChecked;
     private static boolean disableDismountPlayer;
-    private static boolean enableDismountEntities;
     private static boolean disableRemountPlayer;
+    private static boolean enableDismountEntities;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
@@ -178,15 +178,15 @@ public class SkinApplierBukkit {
 
     private void checkOptFile() {
         File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
-        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
+        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileTxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disableDismountPlayer.txt");
-        File fileTxtEnableDismountEntities = new File(plugin.getDataFolder(), "enableDismountEntities.txt");
         File fileTxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disableRemountPlayer.txt");
+        File fileTxtEnableDismountEntities = new File(plugin.getDataFolder(), "enableDismountEntities.txt");
 
         disableDismountPlayer = fileDisableDismountPlayer.exists() || fileTxtDisableDismountPlayer.exists();
-        enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
         disableRemountPlayer = fileDisableRemountPlayer.exists() || fileTxtDisableRemountPlayer.exists();
+        enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
 
         log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", enableDismountEntities: " + enableDismountEntities + ", disableRemountPlayer: " + disableRemountPlayer + " }");
         optFileChecked = true;
