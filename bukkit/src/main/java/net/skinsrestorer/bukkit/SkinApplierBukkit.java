@@ -46,7 +46,7 @@ public class SkinApplierBukkit {
     @Getter
     private final Consumer<Player> refresh;
     @Setter
-    static boolean checkOptFileChecked;
+    private static boolean optFileChecked;
     private static boolean disableDismountPlayer;
     private static boolean enableDismountEntities;
     private static boolean disableRemountPlayer;
@@ -129,7 +129,7 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        if (!checkOptFileChecked)
+        if (!optFileChecked)
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
@@ -180,20 +180,15 @@ public class SkinApplierBukkit {
         File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
         File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
         File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
-        File filetxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer.txt");
-        File filetxtEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities.txt");
-        File filetxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer.txt");
+        File fileTxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disableDismountPlayer.txt");
+        File fileTxtEnableDismountEntities = new File(plugin.getDataFolder(), "enableDismountEntities.txt");
+        File fileTxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disableRemountPlayer.txt");
 
-        if (fileDisableDismountPlayer.exists() || filetxtDisableDismountPlayer.exists())
-            disableDismountPlayer = true;
+        disableDismountPlayer = fileDisableDismountPlayer.exists() || fileTxtDisableDismountPlayer.exists();
+        enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
+        disableRemountPlayer = fileDisableRemountPlayer.exists() || fileTxtDisableRemountPlayer.exists();
 
-        if (fileEnableDismountEntities.exists() || filetxtEnableDismountEntities.exists())
-            enableDismountEntities = true;
-
-        if (fileDisableRemountPlayer.exists() || filetxtDisableRemountPlayer.exists())
-            disableRemountPlayer = true;
-
-        log.debug("[Debug] checkOptFile:\n  disableDismountPlayer = " + disableDismountPlayer + "\n  enableDismountEntities = " + enableDismountEntities + "\n  disableRemountPlayer = " + disableRemountPlayer);
-        checkOptFileChecked = true;
+        log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", enableDismountEntities: " + enableDismountEntities + ", disableRemountPlayer: " + disableRemountPlayer + " }");
+        optFileChecked = true;
     }
 }

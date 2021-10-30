@@ -62,7 +62,7 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        SkinApplierBukkit.setCheckOptFileChecked(false);
+        SkinApplierBukkit.setOptFileChecked(false);
         Locale.load(plugin.getDataFolder(), logger);
         Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
 
