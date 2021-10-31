@@ -33,6 +33,7 @@ import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
+import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -262,7 +263,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         initCommands();
 
         // Init listener
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(this, srLogger), this);
+        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+            Bukkit.getPluginManager().registerEvents(new PlayerJoin(this, srLogger), this);
+        } else {
+            srLogger.info("Hooking into ProtocolLib for instant skins on join!");
+            new ProtocolLibJoinListener(this);
+        }
 
         // Run connection check
         if (!bungeeEnabled) {

@@ -27,6 +27,7 @@ import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
@@ -105,19 +106,23 @@ public class SkinApplierBukkit {
 
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                try {
-                    Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-                    GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-                    profile.getProperties().removeAll("textures");
-                    //noinspection unchecked
-                    profile.getProperties().put("textures", property);
+                applyProperty(player, property);
 
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
             });
         });
+    }
+
+    public void applyProperty(Player player, IProperty property) {
+        try {
+            Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+            GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            profile.getProperties().removeAll("textures");
+            //noinspection unchecked
+            profile.getProperties().put("textures", property);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

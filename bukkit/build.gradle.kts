@@ -15,4 +15,5 @@ dependencies {
     compileOnly("com.viaversion:viabackwards-common:4.0.1")
     compileOnly("com.viaversion:viaversion:4.0.0")
     compileOnly("com.mojang:authlib:1.11")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
 }

@@ -50,6 +50,9 @@ dependencyResolutionManagement {
         maven("https://libraries.minecraft.net") {
             name = "Minecraft Repository"
         }
+        maven("https://repo.dmulloy2.net/repository/public/") {
+            name = "dmulloy2 Repository"
+        }
         mavenCentral()
     }
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
