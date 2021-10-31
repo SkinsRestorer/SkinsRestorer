@@ -88,45 +88,42 @@ public class MineSkinAPI implements IMineSkinAPI {
                         final String errResp = obj.get("error").getAsString();
 
                         // If we send to many request, go sleep and try again.
-                        if (errResp.equals("Too many requests")) {
-                            fails.get(methodUUID).incrementAndGet();
+                        switch (errResp) {
+                            case "Too many requests":
+                                fails.get(methodUUID).incrementAndGet();
 
-                            // If "Too many requests"
-                            if (obj.has("delay")) {
-                                TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                                // If "Too many requests"
+                                if (obj.has("delay")) {
+                                    TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
+                                } else if (obj.has("nextRequest")) {
+                                    final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
 
-                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
-                            } else if (obj.has("nextRequest")) {
-                                final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
-
-                                if (nextRequestMilS > 0)
-                                    TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
-
-                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
-                            } else {
-                                TimeUnit.SECONDS.sleep(2);
+                                    if (nextRequestMilS > 0)
+                                        TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
+                                } else {
+                                    TimeUnit.SECONDS.sleep(2);
+                                }
 
                                 return genSkin(url, skinType, methodUUID); // try again after nextRequest
-                            }
-                        }
 
-                        if (errResp.equals("Failed to generate skin data") || errResp.equals("Failed to change skin")) {
-                            logger.debug("[ERROR] MS " + errResp + ", trying again... ");
-                            TimeUnit.SECONDS.sleep(5);
+                            case "Failed to generate skin data":
+                            case "Failed to change skin":
+                                logger.debug("[ERROR] MS " + errResp + ", trying again... ");
+                                TimeUnit.SECONDS.sleep(5);
 
-                            return genSkin(url, skinType, methodUUID); // try again
-                        } else if (errResp.equals("No accounts available")) {
-                            logger.debug("[ERROR] " + errResp + " for: " + url);
+                                return genSkin(url, skinType, methodUUID); // try again
 
-                            throw new SkinRequestException(Locale.ERROR_MS_FULL);
+                            case "No accounts available":
+                                logger.debug("[ERROR] " + errResp + " for: " + url);
+
+                                throw new SkinRequestException(Locale.ERROR_MS_FULL);
                         }
 
                         logger.debug("[ERROR] MS:reason: " + errResp);
                         throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
                     }
                 } catch (SkinRequestException e) {
-                    //return SkinRequestException if caught.
-                    throw new SkinRequestException(e.getMessage());
+                    throw e;
                 } catch (IOException e) {
                     logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
                 } catch (JsonSyntaxException e) {

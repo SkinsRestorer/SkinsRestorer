@@ -54,7 +54,7 @@ public class CommandPropertiesManager {
             Properties props = new Properties();
 
             props.load(new InputStreamReader(in, StandardCharsets.UTF_8));
-            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), v.toString()));
+            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }
