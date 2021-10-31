@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import com.mojang.authlib.GameProfile;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -99,17 +100,17 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
+            if (property == null)
+                return;
+
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 try {
-                    if (property == null)
-                        return;
-
                     Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-                    Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-                    Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-                    ReflectionUtil.invokeMethod(propMap, "clear");
-                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
+                    GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+                    profile.getProperties().removeAll("textures");
+                    //noinspection unchecked
+                    profile.getProperties().put("textures", property);
 
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
                 } catch (Exception e) {
