@@ -129,6 +129,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                     throw new SkinRequestException(e.getMessage());
                 } catch (IOException e) {
                     logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+                    throw new SkinRequestException(Locale.ERROR_MS_FULL);
                 } catch (JsonSyntaxException e) {
                     logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
                 } catch (Exception e) {
@@ -189,6 +190,9 @@ public class MineSkinAPI implements IMineSkinAPI {
 
                 input.close();
                 return outStr.toString();
+            } catch (IOException e) {
+                if (i == 2)
+                    throw e;
             } catch (Exception ignored) {
             }
         }
