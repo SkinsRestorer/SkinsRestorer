@@ -89,7 +89,10 @@ Wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin ag
   # Permissions messages #
   ########################
 
+# This is thrown on config.PerSkinPermissions
 noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
+
+# When the player does have access to "/skin" but not "/skin url"
 noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
 
 # Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
@@ -105,15 +108,29 @@ skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
   # Error messages #
   ##################
 
+# Thrown when no premium player was found from the mojang api
 Error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+
+# When a invalid skin (example: "null") is being set
 Error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
+
+# When a admin does try to update the skin of another player
 Error-NoSkin: "&4Error&8: &cThis player has no skin set."
+
+#when a admin does run /sr props on a player that does have no skin
 Error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
 
+# On updating disabled OR invalid username OR api error (this does occur when api does time out)
 Error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+
+# When a player does try to run /skin update while wearing a skin url
 Error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
+
+# when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
 Error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
-Error-InvalidSkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+
+# when a player runs /skin url but does not provide a url
+Error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
 
   ######################
   # SkinsMenu messages #
