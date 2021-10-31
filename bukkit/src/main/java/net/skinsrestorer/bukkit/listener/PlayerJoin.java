@@ -44,10 +44,8 @@ public class PlayerJoin implements Listener {
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = event.getPlayer();
-                final String name = player.getName();
-                final String skin = skinStorage.getDefaultSkinName(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(player.getName());
 
                 if (C.validUrl(skin)) {
                     plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
