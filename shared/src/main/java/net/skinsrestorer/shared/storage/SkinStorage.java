@@ -162,27 +162,28 @@ public class SkinStorage implements ISkinStorage {
                 if (!playerFile.exists())
                     return Optional.empty();
 
-                String skin = null;
-
-                try (BufferedReader buf = new BufferedReader(new FileReader(playerFile))) {
-                    final String line = buf.readLine();
-                    if (line != null)
-                        skin = line;
-                }
+                List<String> lines = Files.readAllLines(playerFile.toPath());
 
                 // Maybe useless
-                if (skin == null) {
+                if (lines.size() < 1) {
                     removeSkin(playerName);
                     return Optional.empty();
                 }
 
-                return Optional.of(skin);
+                return Optional.of(lines.get(0));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * @see SkinStorage#getSkinData(String, boolean)
+     */
+    public Optional<IProperty> getSkinData(String skinName) {
+        return getSkinData(skinName, true);
     }
 
     /**
@@ -258,13 +259,6 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
-     * @see SkinStorage#getSkinData(String, boolean)
-     */
-    public Optional<IProperty> getSkinData(String skinName) {
-        return getSkinData(skinName, true);
-    }
-
-    /**
      * Checks if updating skins is disabled and if skin expired
      *
      * @param timestamp in milliseconds
@@ -281,16 +275,16 @@ public class SkinStorage implements ISkinStorage {
     /**
      * Removes custom players skin name from database
      *
-     * @param name - Players name
+     * @param playerName - Players name
      */
-    public void removeSkin(String name) {
-        name = name.toLowerCase();
+    public void removeSkin(String playerName) {
+        playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", name);
+            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
         } else {
-            name = removeForbiddenChars(name);
-            File playerFile = new File(playersFolder, name + ".player");
+            playerName = removeForbiddenChars(playerName);
+            File playerFile = new File(playersFolder, playerName + ".player");
 
             try {
                 Files.deleteIfExists(playerFile.toPath());
@@ -356,6 +350,13 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
+     * @see SkinStorage#setSkinData(String, IProperty, String)
+     */
+    public void setSkinData(String skinName, IProperty textures) {
+        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
+    }
+
+    /**
      * Saves skin data to database
      *
      * @param skinName  Skin name
@@ -389,13 +390,6 @@ public class SkinStorage implements ISkinStorage {
                 e.printStackTrace();
             }
         }
-    }
-
-    /**
-     * @see SkinStorage#setSkinData(String, IProperty, String)
-     */
-    public void setSkinData(String skinName, IProperty textures) {
-        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
     }
 
     // TODO: CUSTOM_GUI
@@ -630,13 +624,7 @@ public class SkinStorage implements ISkinStorage {
             if (!getSkinName(playerName).isPresent() || clear) {
                 final List<String> skins = Config.DEFAULT_SKINS;
 
-                String randomSkin;
-
-                if (skins.size() > 1) {
-                    randomSkin = skins.get(new Random().nextInt(skins.size()));
-                } else {
-                    randomSkin = skins.get(0);
-                }
+                String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0);
 
                 // return player name if there are no default skins set
                 return randomSkin != null ? randomSkin : playerName;
