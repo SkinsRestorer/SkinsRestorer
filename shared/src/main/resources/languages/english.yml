@@ -37,9 +37,9 @@ Syntax-SkinUpdate-Other: " <target>"
 Syntax-SkinClear-Other: " <target>"
 
 # Auto completion messages
-Completions-Skin: ""
-Completions-Skinname: ""
-Completions-SkinUrl: ""
+Completions-Skin: "<Skin>"
+Completions-Skinname: "<SkinName>"
+Completions-SkinUrl: "<SkinUrl>"
 
   ####################
   # Success messages #
@@ -82,7 +82,7 @@ OUTDATED: "&4You are running an outdated version of SkinsRestorer!\n&cPlease upd
 # Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
 
-#
+# When a skin has been requested to many times from mojang directly.
 Wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
 
   ########################
@@ -95,7 +95,7 @@ noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
 # Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
 
-#
+# config.RestrictSkinUrls will make this line appear.
 urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
 
 # Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
@@ -129,6 +129,7 @@ SkinsMenu-Remove-Skin: "&2Click to select this skin"
   #######
   # API #
   #######
+
 Status-OK: "&2Mojang API connection successful!"
 Error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
 Error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
