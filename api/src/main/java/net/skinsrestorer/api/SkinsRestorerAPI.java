@@ -77,7 +77,7 @@ public abstract class SkinsRestorerAPI {
      * @return The players custom skin name if set or null if not set
      */
     public String getSkinName(String playerName) {
-        return skinStorage.getSkinName(playerName).orElse(null);
+        return skinStorage.getSkinOfPlayer(playerName).orElse(null);
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class SkinsRestorerAPI {
      * @param skinName   Skin name
      **/
     public void setSkinName(String playerName, String skinName) {
-        skinStorage.setSkinName(playerName, skinName);
+        skinStorage.setSkinNameOfPlayer(playerName, skinName);
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     public void removeSkin(String playerName) {
-        skinStorage.removeSkin(playerName);
+        skinStorage.removeSkinOfPlayer(playerName);
     }
 
     public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;

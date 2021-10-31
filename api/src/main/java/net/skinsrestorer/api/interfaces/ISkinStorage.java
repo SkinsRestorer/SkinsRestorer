@@ -25,13 +25,38 @@ import net.skinsrestorer.api.property.IProperty;
 import java.util.Optional;
 
 public interface ISkinStorage {
-    Optional<String> getSkinName(String playerName);
+    /**
+     * Returns the custom skin a player has set.
+     *
+     * @param playerName the players name
+     * @return the custom skin name a player has set or empty if not set
+     */
+    Optional<String> getSkinOfPlayer(String playerName);
 
-    void setSkinName(String playerName, String skinName);
+    void setSkinNameOfPlayer(String playerName, String skinName);
 
+    /**
+     * Returns property object containing skin data of the wanted skin
+     *
+     * @param skinName       Skin name
+     */
     Optional<IProperty> getSkinData(String skinName);
 
-    IProperty getSkinForPlayer(String skinName) throws SkinRequestException;
+    /**
+     * This method seeks out a players actual skin (chosen or not) and returns
+     * either null (if no skin data found) or the property containing all
+     * the skin data.
+     * It also schedules a skin update to stay up to date with skin changes.
+     *
+     * @param playerName Player name to search skin for
+     * @throws SkinRequestException If MojangAPI lookup errors
+     */
+    IProperty getSkinForPlayer(String playerName) throws SkinRequestException;
 
-    void removeSkin(String playerName);
+    /**
+     * Removes custom players skin name from database
+     *
+     * @param playerName - Players name
+     */
+    void removeSkinOfPlayer(String playerName);
 }
