@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.listener;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -45,13 +46,7 @@ public class PlayerJoin implements Listener {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final Player player = event.getPlayer();
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(player.getName());
-
-                if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
-                } else {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
-                }
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
             } catch (SkinRequestException ignored) {
             }
         });

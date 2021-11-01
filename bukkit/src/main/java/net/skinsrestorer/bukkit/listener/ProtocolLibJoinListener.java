@@ -31,6 +31,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.bukkit.listener.protocol.WrapperPlayServerPlayerInfo;
+import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
@@ -40,6 +41,9 @@ public class ProtocolLibJoinListener {
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
+                if (Config.DISABLE_ON_JOIN_SKINS)
+                    return;
+
                 WrapperPlayServerPlayerInfo wrapper = new WrapperPlayServerPlayerInfo(event.getPacket());
 
                 if (wrapper.getAction() != EnumWrappers.PlayerInfoAction.ADD_PLAYER)
@@ -52,7 +56,7 @@ public class ProtocolLibJoinListener {
                     return;
 
                 try {
-                    IProperty property = skinsRestorer.getSkinStorage().getSkinForPlayer(event.getPlayer().getName());
+                    IProperty property = skinsRestorer.getSkinStorage().getDefaultSkinForPlayer(event.getPlayer().getName());
 
                     skinsRestorer.getSkinApplierBukkit().applyProperty(event.getPlayer(), property);
 
