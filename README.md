@@ -73,7 +73,7 @@ supported this project by contributing.
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer</artifactId>
-    <version>14.1.5-SNAPSHOT</version>
+    <version>14.1.6-SNAPSHOT</version>
 </dependency>
 ```
 
