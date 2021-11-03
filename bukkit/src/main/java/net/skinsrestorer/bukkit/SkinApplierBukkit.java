@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import com.mojang.authlib.GameProfile;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
@@ -99,24 +101,28 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
+            if (property == null)
+                return;
+
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                try {
-                    if (property == null)
-                        return;
+                applyProperty(player, property);
 
-                    Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-                    Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-                    Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-                    ReflectionUtil.invokeMethod(propMap, "clear");
-                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
-
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
             });
         });
+    }
+
+    public void applyProperty(Player player, IProperty property) {
+        try {
+            Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+            GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            profile.getProperties().removeAll("textures");
+            //noinspection unchecked
+            profile.getProperties().put("textures", property);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

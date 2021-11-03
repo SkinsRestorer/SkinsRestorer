@@ -21,12 +21,14 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -41,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinStorage implements ISkinStorage {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
+    private final MineSkinAPI mineSkinAPI;
     @Setter
     private MySQL mysql;
     private File skinsFolder;
@@ -82,6 +85,16 @@ public class SkinStorage implements ISkinStorage {
         if (Config.DEFAULT_SKINS.isEmpty()) {
             logger.warning("[WARNING] No more working DefaultSkin left... disabling feature");
             Config.DEFAULT_SKINS_ENABLED = false;
+        }
+    }
+
+    public IProperty getDefaultSkinForPlayer(final String playerName) throws SkinRequestException {
+        final String skin = getDefaultSkinName(playerName);
+
+        if (C.validUrl(skin)) {
+            return mineSkinAPI.genSkin(skin, null, null);
+        } else {
+            return getSkinForPlayer(skin);
         }
     }
 
