@@ -23,11 +23,8 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
-        maven("https://papermc.io/repo/repository/maven-public/") {
+        maven("https://papermc.io/repo/repository/maven-releases/") {
             name = "PaperMC Repository"
-        }
-        maven("https://oss.sonatype.org/content/repositories/snapshots") {
-            name = "Bungeecord Repository"
         }
         maven("https://repo.spongepowered.org/maven") {
             name = "SpongePowered Repository"
@@ -50,8 +47,8 @@ dependencyResolutionManagement {
         maven("https://libraries.minecraft.net") {
             name = "Minecraft Repository"
         }
-        maven("https://repo.dmulloy2.net/repository/public/") {
-            name = "dmulloy2 Repository"
+        maven("https://oss.sonatype.org/content/repositories/snapshots") {
+            name = "Sonatype Repository"
         }
         mavenCentral()
     }
