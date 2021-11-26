@@ -77,9 +77,9 @@ public class CommandReplacements {
             .build();
 
     public static final Map<String, CallableString<String>> completions = ImmutableMap.<String, CallableString<String>>builder()
-            .put("skin", () -> Locale.COMPLETIONS_SKIN.replace(Locale.PREFIX, ""))
-            .put("skinName", () -> Locale.COMPLETIONS_SKINNAME.replace(Locale.PREFIX, ""))
-            .put("skinUrl", () -> Locale.COMPLETIONS_SKINURL.replace(Locale.PREFIX, ""))
+            .put("skin", () -> Locale.COMPLETIONS_SKIN)
+            .put("skinName", () -> Locale.COMPLETIONS_SKINNAME)
+            .put("skinUrl", () -> Locale.COMPLETIONS_SKINURL)
             .build();
 
     private CommandReplacements() {
