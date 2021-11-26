@@ -65,7 +65,7 @@ public class CommandReplacements {
             .put("%helpSrDrop", () -> Locale.HELP_SR_DROP)
             .put("%helpSrProps", () -> Locale.HELP_SR_PROPS)
             .put("%helpSrApplySkin", () -> Locale.HELP_SR_APPLY_SKIN)
-            .put("%helpSrCreateCustom", () -> Locale.HELP_SR_CreateCustom)
+            .put("%helpSrCreateCustom", () -> Locale.HELP_SR_CREATECUSTOM)
             .build();
     public static final Map<String, CallableString<String>> syntax = ImmutableMap.<String, CallableString<String>>builder()
             .put("%SyntaxDefaultCommand", () -> Locale.SYNTAX_DEFAULTCOMMAND)
@@ -77,9 +77,9 @@ public class CommandReplacements {
             .build();
 
     public static final Map<String, CallableString<String>> completions = ImmutableMap.<String, CallableString<String>>builder()
-            .put("skin", () -> Locale.Completions_Skin.replace(Locale.PREFIX, ""))
-            .put("skinName", () -> Locale.Completions_SkinName.replace(Locale.PREFIX, ""))
-            .put("skinUrl", () -> Locale.Completions_SkinUrl.replace(Locale.PREFIX, ""))
+            .put("skin", () -> Locale.COMPLETIONS_SKIN)
+            .put("skinName", () -> Locale.COMPLETIONS_SKINNAME)
+            .put("skinUrl", () -> Locale.COMPLETIONS_SKINURL)
             .build();
 
     private CommandReplacements() {
