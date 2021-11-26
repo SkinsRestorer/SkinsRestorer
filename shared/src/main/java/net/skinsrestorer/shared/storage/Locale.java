@@ -31,6 +31,7 @@ public class Locale {
             "PREFIX",
             "HELP_",
             "SYNTAX_",
+            "COMPLETIONS_",
             "SKINSMENU_TITLE_NEW",
             "SKINSMENU_NEXT_PAGE",
             "SKINSMENU_PREVIOUS_PAGE",
@@ -115,9 +116,8 @@ public class Locale {
                     continue;
 
                 String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
-                if (!Config.DISABLE_PREFIX) {
-                    if (Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains))
-                        parsed = C.c(locale.getString("PREFIX", "")) + parsed;
+                if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
+                    parsed = C.c(locale.getString("PREFIX", "")) + parsed;
                 }
 
                 f.set(null, parsed);
