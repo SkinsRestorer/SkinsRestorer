@@ -5,8 +5,9 @@
 #
 # We from SRTeam thank you for using our plugin!
 #
-# For more information about messages        -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations/
-# For Advanced help or other go to our Discord: https://discord.me/SkinsRestorer/
+# Wiki    --> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations/
+# Discord --> https://discord.me/SkinsRestorer/
+# File source --> https://github.com/SkinsRestorer/SkinsRestorerX/blob/stable/shared/src/main/resources/languages/english.yml
 
 # Prefix that is sent before each non 'help-', 'syntax-' or 'completions-' message
 prefix: "&e[&2SkinsRestorer&e]"
@@ -160,21 +161,19 @@ MS-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!
   # CUSTOM HELP #
   ###############
 
-# WARNING WARNING WARNING
-# Make sure to enable in config!
-
-# String used as a divider
-customHelpIFenabled-line: "&7&m----------------------------------------"
-
-# Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
-# WIP -> missing commands & should match current acf color
+# [!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
-  - "    &2&lSkinsRestorer &7- &f&lv%ver%"
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
+  - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
   - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
+  - "    &2/skin set <skinname> &7-&f Changes your skin."
+  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
   - "    &2/skin clear &7-&f Clears your skin."
   - "    &2/skin update &7-&f Updates your skin."
 
-#
+# String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
+customHelpIFenabled-line: "&7&m----------------------------------------"
+
+# End #
+
 # please do not remove below version string!
 version: ${version}
