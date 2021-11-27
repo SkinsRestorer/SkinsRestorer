@@ -87,7 +87,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 }
             });
 
-            log.info("Using SpigotSkinRefresher");
+            log.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }
