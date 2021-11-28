@@ -154,12 +154,12 @@ SkinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 
 Error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
 Error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-Error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later...";
-Error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later...";
-Error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later...";
+Error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
+Error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
+Error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
 
-ALT-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!";
-MS-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!";
+ALT-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+MS-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
 
   ###############
   # CUSTOM HELP #
