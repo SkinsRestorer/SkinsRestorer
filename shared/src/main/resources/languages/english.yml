@@ -37,7 +37,7 @@ Syntax-SkinUrl: " <SkinUrl> [steve/slim]"
 Syntax-SkinUpdate-Other: " <target>"
 Syntax-SkinClear-Other: " <target>"
 
-# Auto completion messages
+# Auto-completion messages that appear when typing the command
 Completions-Skin: "<Skin>"
 Completions-Skinname: "<SkinName>"
 Completions-SkinUrl: "<SkinUrl>"
@@ -73,12 +73,9 @@ skinCreateSuccess: "&2Skin %skin has been created!"
 # /sr reload
 RELOAD: "&2Config and Locale has been reloaded!"
 
-# run when your using a outdated version of skinsrestorer
-OUTDATED: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
-
-  #################
-  # Wait messages #
-  #################
+  ############################
+  # Wait & Cooldown messages #
+  ############################
 
 # Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
@@ -86,24 +83,24 @@ urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time
 # When a skin has been requested to many times from mojang directly.
 Wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
 
+# Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
+skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+
   ########################
   # Permissions messages #
   ########################
 
-# This is thrown on config.PerSkinPermissions
-noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
-
 # When the player does have access to "/skin" but not "/skin url"
 noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
+
+# This is thrown on config.PerSkinPermissions
+noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
 
 # Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
 
 # config.RestrictSkinUrls will make this line appear.
 urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
-
-# Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
 
   ##################
   # Error messages #
@@ -118,7 +115,7 @@ Error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
 # When a admin does try to update the skin of another player
 Error-NoSkin: "&4Error&8: &cThis player has no skin set."
 
-#when a admin does run /sr props on a player that does have no skin
+# when a admin does run /sr props on a player that does have no skin
 Error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
 
 # On updating disabled OR invalid username OR api error (this does occur when api does time out)
@@ -137,23 +134,30 @@ Error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploadi
   # SkinsMenu messages #
   ######################
 
+# Messages appearing when using /skins (gui)
+
 SkinsMenu-Open: "&2Opening the skins menu..."
+
 SkinsMenu-Title: "&9Skins Menu - Page %page"
-SkinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+
+SkinsMenu-Select-Skin: "&2Click to select this skin"
 SkinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-SkinsMenu-Select-Skin: "&c&l[ &7Remove Skin&c&l ]"
-SkinsMenu-Remove-Skin: "&2Click to select this skin"
+SkinsMenu-Remove-Skin: "&c&l[ &7Remove Skin&c&l ]"
+SkinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+
 
   #######
   # API #
   #######
 
-Status-OK: "&2Mojang API connection successful!"
+# These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
+
 Error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
 Error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 Error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later...";
 Error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later...";
 Error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later...";
+
 ALT-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!";
 MS-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!";
 
@@ -172,6 +176,16 @@ customHelpIFenabled:
 
 # String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
+
+  #################
+  # Miscellaneous #
+  #################
+
+# When everything is working as intended :)
+Status-OK: "&2Mojang API connection successful!"
+
+# Shown when your using a outdated version of skinsrestorer
+OUTDATED: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 
 # End #
 
