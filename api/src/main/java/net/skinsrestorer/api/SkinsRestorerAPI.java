@@ -128,7 +128,7 @@ public abstract class SkinsRestorerAPI {
      *
      * @param url pointing to a skin image url
      * @param skinType can be null, steve or slim
-     * @return Custom skin property containing "value" & "signature"
+     * @return Custom skin property containing "value" and "signature"
      * @throws SkinRequestException on error
      */
     public IProperty genSkinUrl(String url, @Nullable String skinType) throws SkinRequestException {
