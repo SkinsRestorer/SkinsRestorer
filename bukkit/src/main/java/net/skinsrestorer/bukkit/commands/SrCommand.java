@@ -22,28 +22,28 @@ package net.skinsrestorer.bukkit.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
@@ -76,8 +76,9 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sender.sendMessage("§3----------------------------------------------");
-            sender.sendMessage("§7Checking needed services for SR to work properly...");
+            List<String> statusMessages = new LinkedList<>();
+            statusMessages.add("§3----------------------------------------------");
+            statusMessages.add("§7Checking needed services for SR to work properly...");
 
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
@@ -89,22 +90,26 @@ public class SrCommand extends BaseCommand {
             if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
-                        sender.sendMessage(result);
+                        statusMessages.add(result);
                 }
 
-            sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
-            sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
+            statusMessages.add("§7Working UUID API count: §6" + response.getWorkingUUID());
+            statusMessages.add("§7Working Profile API count: §6" + response.getWorkingProfile());
 
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
-                sender.sendMessage("§aThe plugin currently is in a working state.");
+                statusMessages.add("§aThe plugin currently is in a working state.");
             else
-                sender.sendMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
-            sender.sendMessage("§3----------------------------------------------");
-            sender.sendMessage("§7SkinsRestorer §6v" + plugin.getVersion());
-            sender.sendMessage("§7Server: §6" + plugin.getServer().getVersion());
-            sender.sendMessage("§7BungeeMode: §6" + plugin.isBungeeEnabled());
-            sender.sendMessage("§7Finished checking services.");
-            sender.sendMessage("§3----------------------------------------------");
+                statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
+            statusMessages.add("§3----------------------------------------------");
+            statusMessages.add("§7MineSkin status: §6" + plugin.getMineSkinAPI().getStatus());
+            statusMessages.add("§3----------------------------------------------");
+            statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
+            statusMessages.add("§7Server: §6" + plugin.getServer().getVersion());
+            statusMessages.add("§7BungeeMode: §6" + plugin.isBungeeEnabled());
+            statusMessages.add("§7Finished checking services.");
+            statusMessages.add("§3----------------------------------------------");
+
+            statusMessages.forEach(sender::sendMessage);
         });
     }
 

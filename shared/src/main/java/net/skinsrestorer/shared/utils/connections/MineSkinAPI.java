@@ -34,10 +34,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -195,5 +192,13 @@ public class MineSkinAPI implements IMineSkinAPI {
         }
 
         return "";
+    }
+    public boolean getStatus() {
+        try {
+            IProperty generatedSkin = genSkin("http://textures.minecraft.net/texture/10f0c2e406bef83590bf2d8ed0de1e7a4e90e720bfff70b82cc6967bf56e5992", null, null);
+            return generatedSkin.getName().equals("textures");
+        } catch (Exception ignored) {
+        }
+        return false;
     }
 }
