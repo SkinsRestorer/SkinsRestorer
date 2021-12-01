@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -126,7 +127,7 @@ public class SkinStorage implements ISkinStorage {
                 if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
-                setSkinData(skin.get(), textures.get());
+                setSkinData(skin.get(), textures.get(), null);
 
                 return textures.get();
             } catch (SkinRequestException e) {
@@ -263,7 +264,7 @@ public class SkinStorage implements ISkinStorage {
             Optional<IProperty> skin = mojangAPI.getSkin(playerName);
 
             if (skin.isPresent()) {
-                setSkinData(playerName, skin.get());
+                setSkinData(playerName, skin.get(), null);
                 return skin.get();
             }
         }
@@ -363,23 +364,19 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
-     * @see SkinStorage#setSkinData(String, IProperty, String)
-     */
-    public void setSkinData(String skinName, IProperty textures) {
-        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
-    }
-
-    /**
      * Saves skin data to database
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in millis
+     * @param timestamp timestamp string in millis (null for current)
      */
-    public void setSkinData(String skinName, IProperty textures, String timestamp) {
+    public void setSkinData(String skinName, IProperty textures, @Nullable String timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
         String signature = textures.getSignature();
+
+        if (timestamp == null)
+            timestamp = Long.toString(System.currentTimeMillis());
 
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
@@ -584,7 +581,7 @@ public class SkinStorage implements ISkinStorage {
                 Optional<IProperty> textures = mojangAPI.getProfileMojang(mojangUUID.get());
 
                 if (textures.isPresent()) {
-                    setSkinData(skinName, textures.get());
+                    setSkinData(skinName, textures.get(), null);
                     return true;
                 }
             }

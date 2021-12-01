@@ -34,4 +34,6 @@ public interface ISkinStorage {
     IProperty getSkinForPlayer(String skinName) throws SkinRequestException;
 
     void removeSkin(String playerName);
+
+    void setSkinData(String skinName, IProperty textures, String timestamp);
 }
