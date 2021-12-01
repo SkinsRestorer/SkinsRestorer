@@ -33,7 +33,6 @@ import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -67,7 +66,7 @@ public class SkinApplierBukkit {
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersionExists || protocolSupportExists) {
-                log.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                log.info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return new SpigotSkinRefresher(plugin, log);
             }
 
@@ -102,9 +101,6 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
-            if (property == null)
-                return;
-
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 applyProperty(player, property);
@@ -117,7 +113,12 @@ public class SkinApplierBukkit {
     public void applyProperty(Player player, IProperty property) {
         try {
             Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-            GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            GameProfile profile;
+            try {
+                profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            } catch (Exception e) {
+                profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+            }
             profile.getProperties().removeAll("textures");
             //noinspection unchecked
             profile.getProperties().put("textures", property);

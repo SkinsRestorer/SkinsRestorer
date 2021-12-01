@@ -23,7 +23,7 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
-        maven("https://papermc.io/repo/repository/maven-releases/") {
+        maven("https://papermc.io/repo/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         maven("https://repo.spongepowered.org/maven") {
@@ -65,6 +65,8 @@ gradleEnterprise {
 }
 
 includeBuild("build-logic")
+
+include("mappings", "mappings:mc-1-18")
 
 setupSRSubproject("build-data")
 setupSRSubproject("api")
