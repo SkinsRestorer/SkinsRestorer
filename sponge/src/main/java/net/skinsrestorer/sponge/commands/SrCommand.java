@@ -22,6 +22,7 @@ package net.skinsrestorer.sponge.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -37,10 +38,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
@@ -72,7 +70,6 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
         Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
-            source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
             source.sendMessage(plugin.parseMessage("§7Checking needed services for SR to work properly..."));
 
             ServiceChecker checker = new ServiceChecker();
@@ -81,25 +78,30 @@ public class SrCommand extends BaseCommand {
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
+            List<String> statusMessages = new LinkedList<>();
 
+            statusMessages.add("§3----------------------------------------------");
             if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
-                        source.sendMessage(plugin.parseMessage(result));
+                        statusMessages.add(result);
                 }
-            source.sendMessage(plugin.parseMessage("§7Working UUID API count: §6" + response.getWorkingUUID()));
-            source.sendMessage(plugin.parseMessage("§7Working Profile API count: §6" + response.getWorkingProfile()));
+            statusMessages.add("§7Working UUID API count: §6" + response.getWorkingUUID());
+            statusMessages.add("§7Working Profile API count: §6" + response.getWorkingProfile());
 
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
-                source.sendMessage(plugin.parseMessage("§aThe plugin currently is in a working state."));
+                statusMessages.add("§aThe plugin currently is in a working state.");
             else
-                source.sendMessage(plugin.parseMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info"));
-            source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
-            source.sendMessage(plugin.parseMessage("§7SkinsRestorer §6v" + plugin.getVersion()));
-            source.sendMessage(plugin.parseMessage("§7Server: §6" + Sponge.getGame().getPlatform().getMinecraftVersion()));
-            source.sendMessage(plugin.parseMessage("§7BungeeMode: §6Sponge-Plugin"));
-            source.sendMessage(plugin.parseMessage("§7Finished checking services."));
-            source.sendMessage(plugin.parseMessage("§3----------------------------------------------"));
+            statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
+
+            statusMessages.add("§3----------------------------------------------");
+            statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
+            statusMessages.add("§7Server: §6" + Sponge.getGame().getPlatform().getMinecraftVersion());
+            statusMessages.add("§7BungeeMode: §6Sponge-Plugin");
+            statusMessages.add("§7Finished checking services.");
+            statusMessages.add("§3----------------------------------------------");
+
+            statusMessages.forEach(message -> source.sendMessage(plugin.parseMessage(message)));
         });
     }
 

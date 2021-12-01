@@ -39,6 +39,7 @@ import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -71,7 +72,6 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
         plugin.getService().execute(() -> {
-            source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
             source.sendMessage(plugin.deserialize("§7Checking needed services for SR to work properly..."));
 
             ServiceChecker checker = new ServiceChecker();
@@ -80,7 +80,9 @@ public class SrCommand extends BaseCommand {
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
+            List<String> statusMessages = new LinkedList<>();
 
+            source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
             if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
@@ -88,16 +90,20 @@ public class SrCommand extends BaseCommand {
                 }
             source.sendMessage(plugin.deserialize("§7Working UUID API count: §6" + response.getWorkingUUID()));
             source.sendMessage(plugin.deserialize("§7Working Profile API count: §6" + response.getWorkingProfile()));
+
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
                 source.sendMessage(plugin.deserialize("§aThe plugin currently is in a working state."));
             else
                 source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See http://skinsrestorer.net/firewall for more info"));
+
             source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
             source.sendMessage(plugin.deserialize("§7SkinsRestorer §6v" + plugin.getVersion()));
             source.sendMessage(plugin.deserialize("§7Server: §6" + plugin.getProxy().getVersion()));
             source.sendMessage(plugin.deserialize("§7BungeeMode: §6Velocity-Plugin"));
             source.sendMessage(plugin.deserialize("§7Finished checking services."));
             source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
+
+            statusMessages.forEach(message -> source.sendMessage(plugin.deserialize(message)));
         });
     }
 

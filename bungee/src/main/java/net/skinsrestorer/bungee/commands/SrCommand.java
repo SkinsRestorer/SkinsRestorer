@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -74,36 +75,39 @@ public class SrCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
-        sender.sendMessage(TextComponent.fromLegacyText("§7Checking needed services for SR to work properly..."));
-
         ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            sender.sendMessage(TextComponent.fromLegacyText("§7Checking needed services for SR to work properly..."));
+
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
             checker.checkServices();
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
+            List<String> statusMessages = new LinkedList<>();
 
+            statusMessages.add("§3----------------------------------------------");
             if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
-                        sender.sendMessage(TextComponent.fromLegacyText(result));
+                        statusMessages.add(result);
                 }
-            sender.sendMessage(TextComponent.fromLegacyText("§7Working UUID API count: §6 " + response.getWorkingUUID()));
-            sender.sendMessage(TextComponent.fromLegacyText("§7Working Profile API count: §6" + response.getWorkingProfile()));
+            statusMessages.add("§7Working UUID API count: §6" + response.getWorkingUUID());
+            statusMessages.add("§7Working Profile API count: §6" + response.getWorkingProfile());
 
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
-                sender.sendMessage(TextComponent.fromLegacyText("§aThe plugin currently is in a working state."));
+                statusMessages.add("§aThe plugin currently is in a working state.");
             else
-                sender.sendMessage(TextComponent.fromLegacyText("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info"));
+            statusMessages.add("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See http://skinsrestorer.net/firewall for more info");
 
-            sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
-            sender.sendMessage(TextComponent.fromLegacyText("§7SkinsRestorer §6v" + plugin.getVersion()));
-            sender.sendMessage(TextComponent.fromLegacyText("§7Server: §6" + plugin.getProxy().getVersion()));
-            sender.sendMessage(TextComponent.fromLegacyText("§7BungeeMode: §6Bungee-Plugin"));
-            sender.sendMessage(TextComponent.fromLegacyText("§7Finished checking services."));
-            sender.sendMessage(TextComponent.fromLegacyText("§3----------------------------------------------"));
+            statusMessages.add("§3----------------------------------------------");
+            statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
+            statusMessages.add("§7Server: §6" + plugin.getProxy().getVersion());
+            statusMessages.add("§7BungeeMode: §6Velocity-Plugin");
+            statusMessages.add("§7Finished checking services.");
+            statusMessages.add("§3----------------------------------------------");
+
+            statusMessages.forEach(message -> sender.sendMessage(TextComponent.fromLegacyText(message)));
         });
     }
 

@@ -76,9 +76,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            List<String> statusMessages = new LinkedList<>();
-            statusMessages.add("§3----------------------------------------------");
-            statusMessages.add("§7Checking needed services for SR to work properly...");
+            sender.sendMessage("§7Checking needed services for SR to work properly...");
 
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
@@ -86,7 +84,9 @@ public class SrCommand extends BaseCommand {
 
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
+            List<String> statusMessages = new LinkedList<>();
 
+            statusMessages.add("§3----------------------------------------------");
             if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
@@ -100,6 +100,7 @@ public class SrCommand extends BaseCommand {
                 statusMessages.add("§aThe plugin currently is in a working state.");
             else
                 statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
+
             statusMessages.add("§3----------------------------------------------");
             statusMessages.add("§7MineSkin status: §6" + plugin.getMineSkinAPI().getStatus());
             statusMessages.add("§3----------------------------------------------");
