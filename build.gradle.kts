@@ -32,4 +32,3 @@ subprojects {
         in special -> plugins.apply("sr.base-logic")
     }
 }
-
