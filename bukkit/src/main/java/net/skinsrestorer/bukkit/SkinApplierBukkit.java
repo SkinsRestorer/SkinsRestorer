@@ -117,11 +117,18 @@ public class SkinApplierBukkit {
     public void applyProperty(Player player, IProperty property) {
         try {
             Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-            GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-            profile.getProperties().removeAll("textures");
-            //noinspection unchecked
-            profile.getProperties().put("textures", property);
-        } catch (ReflectionException e) {
+            Object profile;
+            try {
+                profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            } catch (Exception e) {
+                profile = ReflectionUtil.getFieldByType(ep, "GameProfile");
+            }
+            Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
+            ReflectionUtil.invokeMethod(propMap, "clear");
+            ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
+
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

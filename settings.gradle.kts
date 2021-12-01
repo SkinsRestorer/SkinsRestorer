@@ -66,6 +66,8 @@ gradleEnterprise {
 
 includeBuild("build-logic")
 
+include("mappings", "mappings:mc-1-18")
+
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")
