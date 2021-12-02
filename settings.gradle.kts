@@ -2,6 +2,12 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
+    repositories {
+        maven("https://papermc.io/repo/repository/maven-public/") {
+            name = "PaperMC Repository"
+        }
+        gradlePluginPortal()
+    }
     plugins {
         id("com.github.johnrengelman.shadow") version "7.1.0"
         id("org.cadixdev.licenser") version "0.6.1"
@@ -9,6 +15,7 @@ pluginManagement {
         id("net.kyori.indra.git") version "2.0.6"
         id("net.kyori.indra.publishing") version "2.0.6"
         id("net.kyori.blossom") version "1.3.0"
+        id("io.papermc.paperweight.userdev") version "1.3.1"
     }
 }
 
@@ -52,7 +59,7 @@ dependencyResolutionManagement {
         }
         mavenCentral()
     }
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 }
 
 gradleEnterprise {
@@ -66,7 +73,7 @@ gradleEnterprise {
 
 includeBuild("build-logic")
 
-include("mappings", "mappings:mc-1-18")
+include("mappings:mc-1-18")
 
 setupSRSubproject("build-data")
 setupSRSubproject("api")
