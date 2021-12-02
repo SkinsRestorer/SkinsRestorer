@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
@@ -51,19 +52,30 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                     }
                 };
             } catch (NoSuchMethodException ignored) {
-                Method getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-                getHandleMethod.setAccessible(true);
+                try {
+                    Method getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+                    getHandleMethod.setAccessible(true);
 
-                Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
-                healthUpdateMethod.setAccessible(true);
+                    Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
+                    healthUpdateMethod.setAccessible(true);
 
-                triggerHealthUpdate = player -> {
-                    try {
-                        healthUpdateMethod.invoke(getHandleMethod.invoke(player));
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
-                    }
-                };
+                    triggerHealthUpdate = player -> {
+                        try {
+                            healthUpdateMethod.invoke(getHandleMethod.invoke(player));
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    };
+                } catch (NoSuchMethodException ignored2) {
+                    triggerHealthUpdate = player -> {
+                        try {
+                            Mapping1_18.triggerHealthUpdate(player);
+                        } catch (Exception exception) {
+                            exception.printStackTrace();
+                        }
+                    };
+
+                }
             }
             this.triggerHealthUpdate = triggerHealthUpdate;
 
