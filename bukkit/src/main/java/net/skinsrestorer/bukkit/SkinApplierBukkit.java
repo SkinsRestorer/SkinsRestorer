@@ -114,6 +114,7 @@ public class SkinApplierBukkit {
         });
     }
 
+    @SuppressWarnings("unchecked")
     public void applyProperty(Player player, IProperty property) {
         try {
             Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
@@ -124,7 +125,6 @@ public class SkinApplierBukkit {
                 profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
             }
             profile.getProperties().removeAll("textures");
-            //noinspection unchecked
             profile.getProperties().put("textures", property);
         } catch (ReflectionException e) {
             e.printStackTrace();
