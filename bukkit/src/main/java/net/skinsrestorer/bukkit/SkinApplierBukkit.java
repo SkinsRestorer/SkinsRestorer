@@ -29,6 +29,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -57,10 +58,10 @@ public class SkinApplierBukkit {
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh(plugin);
+        refresh = detectRefresh();
     }
 
-    private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
+    private Consumer<Player> detectRefresh() throws InitializeException {
         if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
@@ -68,7 +69,7 @@ public class SkinApplierBukkit {
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersionExists || protocolSupportExists) {
                 log.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return new SpigotSkinRefresher(plugin, log);
+                return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
@@ -80,7 +81,13 @@ public class SkinApplierBukkit {
             }
         }
 
-        return new SpigotSkinRefresher(plugin, log);
+        return selectSpigotRefresher();
+    }
+
+    private Consumer<Player> selectSpigotRefresher() throws InitializeException {
+        if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
+            return new MappingSpigotSkinRefresher(plugin, log);
+        } else return new SpigotSkinRefresher(plugin, log);
     }
 
     /**
