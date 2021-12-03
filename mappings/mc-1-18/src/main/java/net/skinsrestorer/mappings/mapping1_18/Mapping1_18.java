@@ -38,8 +38,7 @@ import java.util.function.Function;
 
 public class Mapping1_18 {
     public static void triggerHealthUpdate(Player player) {
-        ServerPlayer craftPlayer = (ServerPlayer) player;
-        craftPlayer.resetSentInfo();
+        ((CraftPlayer) player).getHandle().resetSentInfo();
     }
 
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
