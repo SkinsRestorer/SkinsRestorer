@@ -73,7 +73,9 @@ gradleEnterprise {
 
 includeBuild("build-logic")
 
-include("mappings:mc-1-18")
+setOf("1-18").forEach {
+    include("mappings:mc-$it")
+}
 
 setupSRSubproject("build-data")
 setupSRSubproject("api")

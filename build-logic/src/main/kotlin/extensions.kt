@@ -6,10 +6,7 @@ import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.kotlin.dsl.DependencyHandlerScope
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.*
 
 fun Project.publishShadowJar() {
     configurePublication {
@@ -35,6 +32,12 @@ private fun Project.configurePublication(configurer: MavenPublication.() -> Unit
 fun JavaPluginExtension.javaTarget(version: Int) {
     sourceCompatibility = JavaVersion.toVersion(version)
     targetCompatibility = JavaVersion.toVersion(version)
+}
+
+fun Project.setup(version: String) {
+    dependencies {
+        paperDevBundle(version)
+    }
 }
 
 fun DependencyHandlerScope.paperDevBundle(
