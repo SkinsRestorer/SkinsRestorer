@@ -26,8 +26,7 @@ import com.viaversion.viaversion.api.protocol.packet.PacketWrapper;
 import com.viaversion.viaversion.api.protocol.version.ProtocolVersion;
 import com.viaversion.viaversion.api.type.Type;
 import com.viaversion.viaversion.protocols.protocol1_15to1_14_4.ClientboundPackets1_15;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
-import org.bukkit.entity.Player;
+import net.skinsrestorer.mappings.mapping1_18.ViaPacketData;
 
 public final class ViaWorkaround {
     private ViaWorkaround() {
@@ -37,24 +36,25 @@ public final class ViaWorkaround {
         return Via.getManager().getProtocolManager().getServerProtocolVersion().lowestSupportedVersion() >= ProtocolVersion.v1_16.getVersion();
     }
 
-    public static boolean sendCustomPacketVia(Player player, Object craftHandle, Integer dimension, long seed, Object gamemodeId) throws Exception {
-        UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(player.getUniqueId());
+    public static boolean sendCustomPacketVia(ViaPacketData packetData) {
+        UserConnection connection = Via.getManager().getConnectionManager().getConnectedClient(packetData.getPlayer().getUniqueId());
         if (connection != null
                 && connection.getProtocolInfo() != null
                 && connection.getProtocolInfo().getProtocolVersion() < ProtocolVersion.v1_16.getVersion()) {
             // ViaBackwards double-sends isProtocolNewer respawn packet when its dimension ID matches the current world's.
             // In order to get around this, we send isProtocolNewer packet directly into Via's connection, bypassing the 1.16 conversion step
             // and therefore bypassing their workaround.
-            // TODO: This assumes 1.16 methods; probably stop hardcoding this when 1.17 comes around
-            Object worldServer = ReflectionUtil.invokeMethod(craftHandle, "getWorldServer");
-
             PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
 
-            packet.write(Type.INT, dimension);
-            packet.write(Type.LONG, seed);
-            packet.write(Type.UNSIGNED_BYTE, ((Integer) gamemodeId).shortValue());
-            packet.write(Type.STRING, (boolean) ReflectionUtil.invokeMethod(worldServer, "isFlatWorld") ? "flat" : "default");
-            packet.send(Protocol1_15_2To1_16.class);
+            packet.write(Type.INT, packetData.getDimension());
+            packet.write(Type.LONG, packetData.getSeed());
+            packet.write(Type.UNSIGNED_BYTE, packetData.getGamemodeId());
+            packet.write(Type.STRING, packetData.isFlat() ? "flat" : "default");
+            try {
+                packet.send(Protocol1_15_2To1_16.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return false;
         }
 

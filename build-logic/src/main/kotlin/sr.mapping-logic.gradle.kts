@@ -1,10 +1,8 @@
 plugins {
     java
+    id("sr.license-logic")
+    id("sr.core-dependencies")
     id("io.papermc.paperweight.userdev")
 }
 
-tasks {
-    build {
-        dependsOn(reobfJar)
-    }
-}
+tasks.named("build").get().dependsOn("reobfJar")

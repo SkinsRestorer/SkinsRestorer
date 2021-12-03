@@ -59,7 +59,6 @@ dependencyResolutionManagement {
         }
         mavenCentral()
     }
-    // repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 }
 
 gradleEnterprise {
@@ -80,6 +79,7 @@ setOf("1-18").forEach {
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")
+
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
 setupSRSubproject("velocity")
@@ -99,3 +99,4 @@ inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
     include(name)
     project(":$name").apply(block)
 }
+include("mapping-shared")
