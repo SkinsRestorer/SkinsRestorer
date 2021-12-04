@@ -25,6 +25,8 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -51,6 +53,7 @@ import java.util.List;
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
+    private SkinApplierBukkit skinApplierBukkit;
 
     @HelpCommand
     @Syntax(" [help]")
@@ -136,11 +139,8 @@ public class SrCommand extends BaseCommand {
     public void onProps(CommandSender sender, @Single OnlinePlayer target) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
-                Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
-                Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
-
-                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
+                PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(target.player).getProperties();
+                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
                         new Class<?>[]{Object.class}, "textures");
 
                 if (props == null || props.isEmpty()) {
