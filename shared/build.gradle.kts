@@ -15,9 +15,6 @@ dependencies {
     compileOnly("org.slf4j:slf4j-api:1.7.32")
 
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT") {
-        exclude("com.google.code.gson", "gson")
-    }
     compileOnly("net.md-5:bungeecord-proxy:1.17-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.0.1")
 }

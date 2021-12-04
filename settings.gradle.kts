@@ -99,4 +99,3 @@ inline fun setupSubproject(name: String, block: ProjectDescriptor.() -> Unit) {
     include(name)
     project(":$name").apply(block)
 }
-include("mapping-shared")

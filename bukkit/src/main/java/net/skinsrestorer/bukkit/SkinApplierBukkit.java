@@ -45,15 +45,15 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    private final SkinsRestorer plugin;
-    private final SRLogger log;
-    @Getter
-    private final Consumer<Player> refresh;
     @Setter
     private static boolean optFileChecked;
     private static boolean disableDismountPlayer;
     private static boolean disableRemountPlayer;
     private static boolean enableDismountEntities;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
+    @Getter
+    private final Consumer<Player> refresh;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;

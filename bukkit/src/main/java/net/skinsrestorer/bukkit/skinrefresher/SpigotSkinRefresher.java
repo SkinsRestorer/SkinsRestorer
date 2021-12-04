@@ -207,10 +207,10 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
                     //noinspection UnstableApiUsage
                     sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
-                                    dimension,
-                                    Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
-                                    ((Integer)gamemodeId).shortValue(),
-                                    flat));
+                            dimension,
+                            Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
+                            ((Integer) gamemodeId).shortValue(),
+                            flat));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
