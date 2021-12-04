@@ -124,6 +124,15 @@ public class SkinApplierBukkit {
     @SuppressWarnings("unchecked")
     public void applyProperty(Player player, IProperty property) {
         try {
+            GameProfile profile = getGameProfile(player);
+            profile.getProperties().removeAll("textures");
+            profile.getProperties().put("textures", property);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public GameProfile getGameProfile(Player player) throws ReflectionException {
             Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
             GameProfile profile;
             try {
@@ -131,11 +140,7 @@ public class SkinApplierBukkit {
             } catch (Exception e) {
                 profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
             }
-            profile.getProperties().removeAll("textures");
-            profile.getProperties().put("textures", property);
-        } catch (ReflectionException e) {
-            e.printStackTrace();
-        }
+        return profile;
     }
 
     /**
