@@ -5,4 +5,6 @@ plugins {
     id("io.papermc.paperweight.userdev")
 }
 
+dependencies.implementation(project(":mappings:shared"))
+
 tasks.named("build").get().dependsOn("reobfJar")

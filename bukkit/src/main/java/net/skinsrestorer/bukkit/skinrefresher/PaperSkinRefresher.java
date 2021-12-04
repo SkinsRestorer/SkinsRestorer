@@ -21,12 +21,14 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
+import net.skinsrestorer.bukkit.utils.MappingManager;
+import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class PaperSkinRefresher implements Consumer<Player> {
@@ -67,14 +69,19 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                         }
                     };
                 } catch (NoSuchMethodException ignored2) {
-                    triggerHealthUpdate = player -> {
-                        try {
-                            Mapping1_18.triggerHealthUpdate(player);
-                        } catch (Exception exception) {
-                            exception.printStackTrace();
-                        }
-                    };
-
+                    Optional<IMapping> mapping = MappingManager.getMapping();
+                    if (!mapping.isPresent()) {
+                        logger.severe("No mapping found for this version!");
+                        throw new InitializeException("No matching mapping found!");
+                    } else {
+                        triggerHealthUpdate = player -> {
+                            try {
+                                mapping.get().triggerHealthUpdate(player);
+                            } catch (Exception exception) {
+                                exception.printStackTrace();
+                            }
+                        };
+                    }
                 }
             }
             this.triggerHealthUpdate = triggerHealthUpdate;

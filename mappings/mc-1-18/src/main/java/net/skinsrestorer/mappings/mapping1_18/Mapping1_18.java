@@ -29,6 +29,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -36,16 +38,16 @@ import org.bukkit.entity.Player;
 import java.util.HashSet;
 import java.util.function.Function;
 
-public class Mapping1_18 {
-    public static void triggerHealthUpdate(Player player) {
-        ((CraftPlayer) player).getHandle().resetSentInfo();
-    }
-
+public class Mapping1_18 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
         player.connection.send(packet);
     }
 
-    public static void accept(Player player, Function<ViaPacketData, Boolean> viaFunction) {
+    public void triggerHealthUpdate(Player player) {
+        ((CraftPlayer) player).getHandle().resetSentInfo();
+    }
+
+    public void accept(Player player, Function<ViaPacketData, Boolean> viaFunction) {
         final ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 
         ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, ImmutableList.of(entityPlayer));
@@ -80,5 +82,10 @@ public class Mapping1_18 {
         ((CraftPlayer) player).updateScaledHealth();
         player.updateInventory();
         triggerHealthUpdate(player);
+    }
+
+    @Override
+    public String getVersion() {
+        return "9e9fe6961a80f3e586c25601590b51ec";
     }
 }

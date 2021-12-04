@@ -20,35 +20,44 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
-import net.skinsrestorer.mappings.mapping1_18.ViaPacketData;
+import net.skinsrestorer.bukkit.utils.MappingManager;
+import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final SkinsRestorer plugin;
+    private final IMapping mapping;
     private boolean useViabackwards = false;
 
     public MappingSpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
+        Optional<IMapping> mapping = MappingManager.getMapping();
+        if (!mapping.isPresent()) {
+            log.severe("No mapping found for this version!");
+            throw new InitializeException("No matching mapping found!");
+        } else {
+            this.mapping = mapping.get();
+        }
 
         Bukkit.getScheduler().runTask(plugin, () -> {
             // Wait to run task in order for ViaVersion to determine server protocol
             if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                     && ViaWorkaround.isProtocolNewer()) {
                 useViabackwards = true;
-                log.info("Activating ViaBackwards workaround.");
+                log.debug("Activating ViaBackwards workaround.");
             }
         });
 
         log.debug("Using MappingSpigotSkinRefresher");
     }
-
 
     @Override
     public void accept(Player player) {
@@ -60,7 +69,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
             viaFunction = data -> true;
         }
 
-        Mapping1_18.accept(player, viaFunction);
+        mapping.accept(player, viaFunction);
 
         if (player.isOp()) {
             Bukkit.getScheduler().runTask(plugin, () -> {

@@ -33,28 +33,31 @@ dependencyResolutionManagement {
         maven("https://papermc.io/repo/repository/maven-public/") {
             name = "PaperMC Repository"
         }
-        maven("https://repo.spongepowered.org/maven") {
+        maven("https://repo.spongepowered.org/maven/") {
             name = "SpongePowered Repository"
         }
         maven("https://nexus.velocitypowered.com/repository/maven-public/") {
             name = "VelocityPowered Repository"
         }
-        maven("https://repo.codemc.org/repository/maven-public") {
+        maven("https://repo.codemc.org/repository/maven-public/") {
             name = "CodeMC Repository"
+        }
+        maven("https://repo.codemc.org/repository/nms/") {
+            name = "CodeMC NMS Repository"
         }
         maven("https://repo.aikar.co/content/groups/aikar/") {
             name = "Aikar Repository"
         }
-        maven("https://repo.viaversion.com") {
+        maven("https://repo.viaversion.com/") {
             name = "ViaVersion Repository"
         }
-        maven("https://jitpack.io") {
+        maven("https://jitpack.io/") {
             name = "JitPack Repository"
         }
-        maven("https://libraries.minecraft.net") {
+        maven("https://libraries.minecraft.net/") {
             name = "Minecraft Repository"
         }
-        maven("https://oss.sonatype.org/content/repositories/snapshots") {
+        maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "Sonatype Repository"
         }
         mavenCentral()
@@ -72,6 +75,7 @@ gradleEnterprise {
 
 includeBuild("build-logic")
 
+include("mappings:shared")
 setOf("1-18").forEach {
     include("mappings:mc-$it")
 }

@@ -28,4 +28,8 @@ public class InitializeException extends Exception {
     public InitializeException(Exception e) {
         super(e);
     }
+
+    public InitializeException(String m) {
+        super(m);
+    }
 }

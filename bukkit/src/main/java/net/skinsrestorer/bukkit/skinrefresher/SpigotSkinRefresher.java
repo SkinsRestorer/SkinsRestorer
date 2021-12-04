@@ -24,7 +24,7 @@ import com.google.common.hash.Hashing;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.mappings.mapping1_18.ViaPacketData;
+import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -84,7 +84,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    log.info("Activating ViaBackwards workaround.");
+                    log.debug("Activating ViaBackwards workaround.");
                 }
             });
 
