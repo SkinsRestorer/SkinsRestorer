@@ -10,5 +10,7 @@
   ],
   "ignoreDeps": [
     "com.viaversion:viaversion"
-  ]
+  ],
+  "labels": [
+  "renovate"]
 }
