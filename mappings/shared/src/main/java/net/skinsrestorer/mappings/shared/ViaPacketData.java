@@ -17,19 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.mappings.shared;
 
-/**
- * Used for constructors that fail initializing.
- */
-public class InitializeException extends Exception {
-    private static final long serialVersionUID = 7174618370827939357L;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.entity.Player;
 
-    public InitializeException(Exception e) {
-        super(e);
-    }
-
-    public InitializeException(String m) {
-        super(m);
-    }
+@RequiredArgsConstructor
+@Getter
+public class ViaPacketData {
+    private final Player player;
+    private final Integer dimension;
+    private final long seed;
+    private final short gamemodeId;
+    private final boolean isFlat;
 }
