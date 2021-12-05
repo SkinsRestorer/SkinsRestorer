@@ -17,8 +17,8 @@ dependencies {
     implementation("io.papermc.paperweight.userdev:io.papermc.paperweight.userdev.gradle.plugin:1.3.1")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        jvmTarget = "17"
+tasks {
+    compileKotlin {
+        targetCompatibility = "17"
     }
 }
