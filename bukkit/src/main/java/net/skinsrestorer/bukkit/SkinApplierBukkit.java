@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import com.mojang.authlib.GameProfile;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +27,14 @@ import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -41,31 +45,31 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    private final SkinsRestorer plugin;
-    private final SRLogger log;
-    @Getter
-    private final Consumer<Player> refresh;
     @Setter
     private static boolean optFileChecked;
     private static boolean disableDismountPlayer;
     private static boolean disableRemountPlayer;
     private static boolean enableDismountEntities;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
+    @Getter
+    private final Consumer<Player> refresh;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh(plugin);
+        refresh = detectRefresh();
     }
 
-    private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
+    private Consumer<Player> detectRefresh() throws InitializeException {
         if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersionExists || protocolSupportExists) {
-                log.info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return new SpigotSkinRefresher(plugin, log);
+                log.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
@@ -77,7 +81,13 @@ public class SkinApplierBukkit {
             }
         }
 
-        return new SpigotSkinRefresher(plugin, log);
+        return selectSpigotRefresher();
+    }
+
+    private Consumer<Player> selectSpigotRefresher() throws InitializeException {
+        if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
+            return new MappingSpigotSkinRefresher(plugin, log);
+        } else return new SpigotSkinRefresher(plugin, log);
     }
 
     /**
@@ -99,24 +109,38 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
+            if (property == null)
+                return;
+
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                try {
-                    if (property == null)
-                        return;
+                applyProperty(player, property);
 
-                    Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-                    Object profile = ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-                    Object propMap = ReflectionUtil.invokeMethod(profile.getClass(), profile, "getProperties");
-                    ReflectionUtil.invokeMethod(propMap, "clear");
-                    ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "put", new Class<?>[]{Object.class, Object.class}, "textures", property);
-
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
             });
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    public void applyProperty(Player player, IProperty property) {
+        try {
+            GameProfile profile = getGameProfile(player);
+            profile.getProperties().removeAll("textures");
+            profile.getProperties().put("textures", property);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public GameProfile getGameProfile(Player player) throws ReflectionException {
+            Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+            GameProfile profile;
+            try {
+                profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            } catch (Exception e) {
+                profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+            }
+        return profile;
     }
 
     /**

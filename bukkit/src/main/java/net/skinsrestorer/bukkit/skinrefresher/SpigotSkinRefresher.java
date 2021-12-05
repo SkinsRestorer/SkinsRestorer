@@ -24,6 +24,7 @@ import com.google.common.hash.Hashing;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -83,11 +84,11 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    log.info("Activating ViaBackwards workaround.");
+                    log.debug("Activating ViaBackwards workaround.");
                 }
             });
 
-            log.info("Using SpigotSkinRefresher");
+            log.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }
@@ -201,8 +202,15 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
                 try {
+                    Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
+                    boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+
                     //noinspection UnstableApiUsage
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(), gamemodeId);
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
+                            dimension,
+                            Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
+                            ((Integer) gamemodeId).shortValue(),
+                            flat));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

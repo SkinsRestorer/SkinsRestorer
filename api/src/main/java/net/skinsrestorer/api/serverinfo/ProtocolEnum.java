@@ -52,7 +52,9 @@ public enum ProtocolEnum {
     MINECRAFT_1_16_2(751),
     MINECRAFT_1_16_3(753),
     MINECRAFT_1_16_4(754),
-    MINECRAFT_1_17(755);
+    MINECRAFT_1_17(755),
+    MINECRAFT_1_17_1(756),
+    MINECRAFT_1_18(757);
 
     static {
         List<String> SUPPORTED_VERSIONS;
@@ -67,7 +69,8 @@ public enum ProtocolEnum {
                 "1.14.x",
                 "1.15.x",
                 "1.16.x",
-                "1.17.x"
+                "1.17.x",
+                "1.18.x"
         );
 
         SUPPORTED_VERSIONS = supportedVersions.build();

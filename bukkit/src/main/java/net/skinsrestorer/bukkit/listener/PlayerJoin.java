@@ -24,8 +24,6 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -44,16 +42,8 @@ public class PlayerJoin implements Listener {
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = event.getPlayer();
-                final String name = player.getName();
-                final String skin = skinStorage.getDefaultSkinName(name);
-
-                if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
-                } else {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
-                }
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
             } catch (SkinRequestException ignored) {
             }
         });

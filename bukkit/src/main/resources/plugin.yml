@@ -4,7 +4,7 @@ version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/
 authors: [ "Th3Tr0LLeR", "McLive", "DoNotSpamPls", "knat", "AlexProgrammerDE" ]
-softdepend: [ "ViaBackwards" ]
+softdepend: [ "ViaBackwards", "ProtocolLib" ]
 api-version: 1.13
 commands:
   skin:

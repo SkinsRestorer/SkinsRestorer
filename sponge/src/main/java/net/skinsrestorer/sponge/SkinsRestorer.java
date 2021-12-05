@@ -93,9 +93,9 @@ public class SkinsRestorer implements ISRPlugin {
         dataFolder = dataFolderPath.toFile();
         srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+        skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
     }
 
     @Listener
