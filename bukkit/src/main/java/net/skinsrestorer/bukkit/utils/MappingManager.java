@@ -47,8 +47,9 @@ public class MappingManager {
         return Optional.empty();
     }
 
+    @SuppressWarnings("deprecation")
     private static String getMappingsVersion(Server server) {
-        @SuppressWarnings("deprecation") UnsafeValues craftMagicNumbers = server.getUnsafe();
+        UnsafeValues craftMagicNumbers = server.getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return (String) method.invoke(craftMagicNumbers, new Object[0]);

@@ -41,8 +41,8 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         this.plugin = plugin;
         Optional<IMapping> mapping = MappingManager.getMapping();
         if (!mapping.isPresent()) {
-            log.severe("No mapping found for this version!");
-            throw new InitializeException("No matching mapping found!");
+            log.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!");
+            throw new InitializeException("No mapping for this minecraft version found!");
         } else {
             this.mapping = mapping.get();
         }

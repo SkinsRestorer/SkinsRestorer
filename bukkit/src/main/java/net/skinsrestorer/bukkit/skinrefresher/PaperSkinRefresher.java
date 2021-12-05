@@ -71,8 +71,8 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                 } catch (NoSuchMethodException ignored2) {
                     Optional<IMapping> mapping = MappingManager.getMapping();
                     if (!mapping.isPresent()) {
-                        logger.severe("No mapping found for this version!");
-                        throw new InitializeException("No matching mapping found!");
+                        logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!");
+                        throw new InitializeException("No mapping for this minecraft version found!");
                     } else {
                         triggerHealthUpdate = player -> {
                             try {
