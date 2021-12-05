@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -33,7 +32,10 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.RowSet;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;

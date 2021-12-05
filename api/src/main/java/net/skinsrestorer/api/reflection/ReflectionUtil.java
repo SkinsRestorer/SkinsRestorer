@@ -180,7 +180,7 @@ public class ReflectionUtil {
         return getFieldByTypeList(obj, obj.getClass(), typeName);
     }
 
-    public static List<Object> getFieldByTypeList(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
+    private static List<Object> getFieldByTypeList(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
         List<Object> fields = new ArrayList<>();
 
         try {
