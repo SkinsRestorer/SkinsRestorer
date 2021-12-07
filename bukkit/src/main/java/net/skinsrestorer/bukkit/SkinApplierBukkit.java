@@ -62,7 +62,7 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh() throws InitializeException {
-        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+        if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
@@ -133,13 +133,13 @@ public class SkinApplierBukkit {
     }
 
     public GameProfile getGameProfile(Player player) throws ReflectionException {
-            Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-            GameProfile profile;
-            try {
-                profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-            } catch (Exception e) {
-                profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
-            }
+        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+        GameProfile profile;
+        try {
+            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+        } catch (Exception e) {
+            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+        }
         return profile;
     }
 
@@ -214,5 +214,27 @@ public class SkinApplierBukkit {
 
         log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
+    }
+
+    private boolean isPaper() {
+        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+            if (hasPaperMethods()) {
+                return true;
+            } else {
+                log.warning("Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private boolean hasPaperMethods() {
+        try {
+            ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            return true;
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            return false;
+        }
     }
 }
