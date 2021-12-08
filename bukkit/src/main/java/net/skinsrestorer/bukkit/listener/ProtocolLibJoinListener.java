@@ -32,13 +32,14 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.bukkit.listener.protocol.WrapperPlayServerPlayerInfo;
 import net.skinsrestorer.shared.storage.Config;
+import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
 
 public class ProtocolLibJoinListener {
     public ProtocolLibJoinListener(SkinsRestorer skinsRestorer) {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.NORMAL, PacketType.Play.Server.PLAYER_INFO) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.LOWEST, PacketType.Play.Server.PLAYER_INFO) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 if (Config.DISABLE_ON_JOIN_SKINS)
@@ -49,18 +50,21 @@ public class ProtocolLibJoinListener {
                 if (wrapper.getAction() != EnumWrappers.PlayerInfoAction.ADD_PLAYER)
                     return;
 
-                if (!wrapper.getData().get(0).getProfile().getName().equals(event.getPlayer().getName()))
+                String targetName = wrapper.getData().get(0).getProfile().getName();
+                Player targetPlayer = plugin.getServer().getPlayer(targetName);
+
+                if (targetPlayer == null)
                     return;
 
-                if (event.getPlayer().hasMetadata("skinsrestorer.appliedOnJoin"))
+                if (targetPlayer.hasMetadata("skinsrestorer.appliedOnJoin"))
                     return;
 
                 try {
-                    IProperty property = skinsRestorer.getSkinStorage().getDefaultSkinForPlayer(event.getPlayer().getName());
+                    IProperty property = skinsRestorer.getSkinStorage().getDefaultSkinForPlayer(targetName);
 
-                    skinsRestorer.getSkinApplierBukkit().applyProperty(event.getPlayer(), property);
+                    skinsRestorer.getSkinApplierBukkit().applyProperty(targetPlayer, property);
 
-                    event.getPlayer().setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(skinsRestorer, true));
+                    targetPlayer.setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(skinsRestorer, true));
 
                     List<PlayerInfoData> list = wrapper.getData();
                     PlayerInfoData data = wrapper.getData().get(0);
