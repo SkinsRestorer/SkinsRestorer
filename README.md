@@ -28,7 +28,7 @@ servers.
 
 ## :telescope: Compatibility
 
-- Java 8 till 17 ([AdoptOpenJDK](https://adoptopenjdk.net/)
+- Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
 - Minecraft 1.8.0 - 1.18
 
@@ -61,8 +61,8 @@ supported this project by contributing.
 
 ```xml
 <repository>
-    <id>codemc-snapshots</id>
-    <url>https://repo.codemc.org/repository/maven-snapshots/</url>
+    <id>codemc-releases</id>
+    <url>https://repo.codemc.org/repository/maven-releases/</url>
 </repository>
 ```
 
@@ -72,8 +72,8 @@ supported this project by contributing.
 <!-- SkinsRestorer API -->
 <dependency>
     <groupId>net.skinsrestorer</groupId>
-    <artifactId>skinsrestorer</artifactId>
-    <version>14.1.6-SNAPSHOT</version>
+    <artifactId>skinsrestorer-api</artifactId>
+    <version>14.1.7</version>
 </dependency>
 ```
 
