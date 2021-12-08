@@ -28,7 +28,7 @@ servers.
 
 ## :telescope: Compatibility
 
-- Java 8 till 17 ([AdoptOpenJDK](https://adoptopenjdk.net/)
+- Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
 - Minecraft 1.8.0 - 1.18
 
@@ -73,7 +73,7 @@ supported this project by contributing.
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
-    <version>14.1.7</version>
+    <version>14.1.8</version>
 </dependency>
 ```
 
