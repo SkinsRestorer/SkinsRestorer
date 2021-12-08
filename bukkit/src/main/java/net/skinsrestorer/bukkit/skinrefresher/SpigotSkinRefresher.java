@@ -63,7 +63,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
-            } catch (Exception e) {
+            } catch (Exception e1) {
                 try {
                     Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
                     removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 4);
@@ -73,7 +73,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         // Forge
                         removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
                         addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
-                    } catch (Exception e1) {
+                    } catch (Exception e3) {
                         Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
 
                         // 1.8 or below
