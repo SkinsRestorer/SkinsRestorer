@@ -34,6 +34,7 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -191,6 +192,42 @@ public class SrCommand extends BaseCommand {
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
                     sender.sendMessage(TextComponent.fromLegacyText(Locale.ERROR_INVALID_URLSKIN));
+                }
+            } catch (SkinRequestException e) {
+                sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
+            }
+        });
+    }
+
+    @Subcommand("setskinall")
+    @CommandCompletion("@Skin")
+    @Description("Set the skin to evey player")
+    @Syntax(" <Skin / Url> [steve/slim]")
+    public void onSetSkinAll(CommandSender sender, String skin, @Optional SkinType skinType) {
+        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+            if (sender != ProxyServer.getInstance().getConsole()) {
+                sender.sendMessage(TextComponent.fromLegacyText(Locale.PREFIX + "§4Only console may execute this command!"));
+                return;
+            }
+
+            String skinName = " ·setSkinAll";
+            try {
+                IProperty skinProps = null;
+                if (C.validUrl(skin)) {
+                    skinProps = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
+                } else {
+                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
+                }
+                if (skinProps == null) {
+                    sender.sendMessage(TextComponent.fromLegacyText(Locale.PREFIX + ("§4no skin found....")));
+                    return;
+                }
+
+                plugin.getSkinStorage().setSkinData(skinName, skinProps);
+                for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
+                    String pName = player.getName();
+                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(TextComponent.fromLegacyText(e.getMessage()));
