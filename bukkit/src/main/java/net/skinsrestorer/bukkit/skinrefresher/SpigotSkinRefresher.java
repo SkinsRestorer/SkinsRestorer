@@ -63,17 +63,25 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
-            } catch (Exception e) {
+            } catch (Exception e1) {
                 try {
-                    // Forge
-                    removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
-                    addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
-                } catch (Exception e1) {
-                    Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+                    Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
 
-                    // 1.8 or below
-                    removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
-                    addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                    // Cardboard and other platforms
+                    removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 4);
+                    addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 0);
+                } catch (Exception e2) {
+                    try {
+                        // Forge
+                        removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
+                        addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
+                    } catch (Exception e3) {
+                        Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+
+                        // 1.8 or below
+                        removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
+                        addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                    }
                 }
             }
 
