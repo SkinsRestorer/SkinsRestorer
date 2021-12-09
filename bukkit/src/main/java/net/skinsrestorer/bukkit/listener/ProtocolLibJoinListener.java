@@ -21,12 +21,14 @@ package net.skinsrestorer.bukkit.listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.ListenerOptions;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.google.common.collect.ImmutableList;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -39,7 +41,7 @@ import java.util.List;
 
 public class ProtocolLibJoinListener {
     public ProtocolLibJoinListener(SkinsRestorer skinsRestorer) {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.LOWEST, PacketType.Play.Server.PLAYER_INFO) {
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.LOWEST, ImmutableList.of(PacketType.Play.Server.PLAYER_INFO), ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 if (Config.DISABLE_ON_JOIN_SKINS)
