@@ -73,7 +73,6 @@ public class ProtocolLibJoinListener {
 
                     data.getProfile().getProperties().removeAll("textures");
                     data.getProfile().getProperties().put("textures", new WrappedSignedProperty(property.getName(), property.getValue(), property.getSignature()));
-                    list.set(0, new PlayerInfoData(data.getProfile(), data.getLatency(), data.getGameMode(), data.getDisplayName()));
                     wrapper.setData(list);
                 } catch (SkinRequestException ignored) {
                 }
