@@ -50,7 +50,12 @@ public class ProtocolLibJoinListener {
                 if (wrapper.getAction() != EnumWrappers.PlayerInfoAction.ADD_PLAYER)
                     return;
 
-                String targetName = wrapper.getData().get(0).getProfile().getName();
+                List<PlayerInfoData> list = wrapper.getData();
+                if (list.size() < 1)
+                    return;
+
+                PlayerInfoData data = list.get(0);
+                String targetName = data.getProfile().getName();
                 Player targetPlayer = plugin.getServer().getPlayer(targetName);
 
                 if (targetPlayer == null)
@@ -66,8 +71,6 @@ public class ProtocolLibJoinListener {
 
                     targetPlayer.setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(skinsRestorer, true));
 
-                    List<PlayerInfoData> list = wrapper.getData();
-                    PlayerInfoData data = wrapper.getData().get(0);
                     data.getProfile().getProperties().removeAll("textures");
                     data.getProfile().getProperties().put("textures", new WrappedSignedProperty(property.getName(), property.getValue(), property.getSignature()));
                     list.set(0, new PlayerInfoData(data.getProfile(), data.getLatency(), data.getGameMode(), data.getDisplayName()));
