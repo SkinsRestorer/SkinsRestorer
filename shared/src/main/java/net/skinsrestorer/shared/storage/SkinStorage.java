@@ -223,7 +223,7 @@ public class SkinStorage implements ISkinStorage {
                     return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
                 } catch (Exception e) {
                     removeSkinData(skinName);
-                    logger.info("Unsupported player format.. removing (" + skinName + ").");
+                    logger.info("Unsupported skin format.. removing (" + skinName + ").");
                 }
         } else {
             skinName = removeWhitespaces(skinName);
@@ -243,7 +243,7 @@ public class SkinStorage implements ISkinStorage {
                 return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
             } catch (Exception e) {
                 removeSkinData(skinName);
-                logger.info("Unsupported player format.. removing (" + skinName + ").");
+                logger.info("Unsupported skin format.. removing (" + skinName + ").");
             }
         }
 
