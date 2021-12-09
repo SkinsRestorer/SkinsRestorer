@@ -222,7 +222,7 @@ public class SkinApplierBukkit {
             if (hasPaperMethods()) {
                 return true;
             } else {
-                log.warning("Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                log.debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
                 return false;
             }
         } else {
