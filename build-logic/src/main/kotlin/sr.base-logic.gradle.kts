@@ -34,7 +34,7 @@ tasks {
 }
 
 signing {
-    it.isRequired = false
+    isRequired = false
 }
 
 java.javaTarget(8)

@@ -36,6 +36,7 @@ import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 public class Mapping1_18 implements IMapping {
@@ -85,7 +86,10 @@ public class Mapping1_18 implements IMapping {
     }
 
     @Override
-    public String getVersion() {
-        return "9e9fe6961a80f3e586c25601590b51ec";
+    public Set<String> getSupportedVersions() {
+        return Set.of(
+                "9e9fe6961a80f3e586c25601590b51ec", // 1.18
+                "20b026e774dbf715e40a0b2afe114792" // 1.18.1
+        );
     }
 }
