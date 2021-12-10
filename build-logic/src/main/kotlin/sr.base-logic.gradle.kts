@@ -31,7 +31,10 @@ tasks {
         )
         options.isFork = true
     }
-    signing.isRequired = false
+}
+
+signing {
+    isRequired = false
 }
 
 java.javaTarget(8)
