@@ -61,6 +61,7 @@ public class Config {
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
     public static boolean DISABLE_ON_JOIN_SKINS = false;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
+    public static boolean ENABLE_PROTOCOL_LISTENER = false;
     public static boolean DEBUG = false;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -108,6 +109,7 @@ public class Config {
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
+        ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener", ENABLE_PROTOCOL_LISTENER);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
         //__Default__Skins
