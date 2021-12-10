@@ -263,7 +263,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         initCommands();
 
         // Init listener
-        if (Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+        if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
             Bukkit.getPluginManager().registerEvents(new PlayerJoin(this, srLogger), this);
         } else {
             srLogger.info("Hooking into ProtocolLib for instant skins on join!");
