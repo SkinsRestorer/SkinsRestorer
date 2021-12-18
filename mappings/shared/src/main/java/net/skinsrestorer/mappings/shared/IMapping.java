@@ -2,6 +2,7 @@ package net.skinsrestorer.mappings.shared;
 
 import org.bukkit.entity.Player;
 
+import java.util.Set;
 import java.util.function.Function;
 
 public interface IMapping {
@@ -9,5 +10,5 @@ public interface IMapping {
 
     void accept(Player player, Function<ViaPacketData, Boolean> viaFunction);
 
-    String getVersion();
+    Set<String> getSupportedVersions();
 }

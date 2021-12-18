@@ -51,7 +51,12 @@ public class ReflectionUtil {
         if (SERVER_VERSION_STRING == null) {
             SERVER_VERSION = null;
         } else {
-            String[] strings = SERVER_VERSION_STRING.replace("v", "").replace("R", "").split("_");
+            String[] strings;
+            if (SERVER_VERSION_STRING.contains("_")) {
+                strings = SERVER_VERSION_STRING.replace("v", "").replace("R", "").split("_");
+            } else {
+                strings = SERVER_VERSION_STRING.replace("-R0.1-SNAPSHOT", "").split("\\.");
+            }
 
             SERVER_VERSION = new ServerVersion(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
         }
@@ -90,8 +95,20 @@ public class ReflectionUtil {
         throw new EnumNotFoundException("Enum constant not found " + constant);
     }
 
+    public static Enum<?> getEnum(Class<?> clazz, int ordinal) throws EnumNotFoundException {
+        try {
+            return (Enum<?>) clazz.getEnumConstants()[ordinal];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new EnumNotFoundException("Enum constant not found " + ordinal);
+        }
+    }
+
     public static Enum<?> getEnum(Class<?> clazz, String enumName, String constant) throws EnumNotFoundException, ClassNotFoundException {
         return getEnum(getSubClass(clazz, enumName), constant);
+    }
+
+    public static Enum<?> getEnum(Class<?> clazz, String enumName, int ordianl) throws EnumNotFoundException, ClassNotFoundException {
+        return getEnum(getSubClass(clazz, enumName), ordianl);
     }
 
     private static Class<?> getSubClass(Class<?> clazz, String className) throws ClassNotFoundException {
