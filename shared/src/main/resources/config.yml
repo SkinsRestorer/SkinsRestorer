@@ -158,12 +158,17 @@ DismountPassengersOnSkinUpdate: false
 # ABSOLUTELY DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU DO
 
 # <!! Warning !!>
-# Enabling this will stop SkinsRestorer to change skins on join.
-# Handy for when you want run /skin apply to apply skin after texturepack popup
+# Enabling this will stop SkinsRestorer from changing skins on join.
+# Handy for when you want run /skin apply to apply skin after resource pack popup
 DisableOnJoinSkins: false
 
 # <!! Warning !!>
-# Enable this will require players to run "/skin update" to update their skin.
+# Enabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.
+# When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred.
+DisableResourcePackFix: false
+
+# <!! Warning !!>
+# Enabling this will require players to run "/skin update" to update their skin.
 DisallowAutoUpdateSkin: false
 
 # <!! Warning Experimental !!>

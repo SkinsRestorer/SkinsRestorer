@@ -60,6 +60,7 @@ public class Config {
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
     public static boolean DISABLE_ON_JOIN_SKINS = false;
+    public static boolean DISABLE_RESOURCE_PACK_FIX = false;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
     public static boolean ENABLE_PROTOCOL_LISTENER = false;
     public static boolean DEBUG = false;
@@ -101,6 +102,7 @@ public class Config {
         MYSQL_PLAYER_TABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYER_TABLE);
         MYSQL_CONNECTION_OPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTION_OPTIONS);
         DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
+        DISABLE_RESOURCE_PACK_FIX = config.getBoolean("DisableResourcePackFix", DISABLE_RESOURCE_PACK_FIX);
         DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
