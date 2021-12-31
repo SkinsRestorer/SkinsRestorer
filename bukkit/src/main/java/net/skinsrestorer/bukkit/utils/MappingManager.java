@@ -36,10 +36,10 @@ public class MappingManager {
             .build();
 
     public static Optional<IMapping> getMapping() {
-        String mappingVersion = getMappingsVersion(Bukkit.getServer());
+        String mappingVersion = getMappingsVersion();
 
         for (IMapping mapping : mappings) {
-            if (mapping.getVersion().equals(mappingVersion)) {
+            if (mapping.getSupportedVersions().contains(mappingVersion)) {
                 return Optional.of(mapping);
             }
         }
@@ -48,8 +48,8 @@ public class MappingManager {
     }
 
     @SuppressWarnings("deprecation")
-    private static String getMappingsVersion(Server server) {
-        UnsafeValues craftMagicNumbers = server.getUnsafe();
+    public static String getMappingsVersion() {
+        UnsafeValues craftMagicNumbers = Bukkit.getServer().getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return (String) method.invoke(craftMagicNumbers, new Object[0]);

@@ -67,4 +67,9 @@ public class ServerVersion {
             return false;
         } else return version2.patch < patch;
     }
+
+    @Override
+    public String toString() {
+        return getFormatted();
+    }
 }
