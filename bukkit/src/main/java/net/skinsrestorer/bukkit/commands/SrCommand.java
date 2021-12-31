@@ -25,11 +25,13 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.properties.PropertyMap;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bukkit.SkinApplierBukkit;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -37,7 +39,9 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -51,6 +55,7 @@ import java.util.List;
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
+    private SkinApplierBukkit skinApplierBukkit;
 
     @HelpCommand
     @Syntax(" [help]")
@@ -136,11 +141,8 @@ public class SrCommand extends BaseCommand {
     public void onProps(CommandSender sender, @Single OnlinePlayer target) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                Object ep = ReflectionUtil.invokeMethod(target.getPlayer(), "getHandle");
-                Object profile = ReflectionUtil.invokeMethod(ep, "getProfile");
-                Object propMap = ReflectionUtil.invokeMethod(profile, "getProperties");
-
-                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propMap.getClass(), propMap, "get",
+                PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(target.player).getProperties();
+                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
                         new Class<?>[]{Object.class}, "textures");
 
                 if (props == null || props.isEmpty()) {
@@ -217,6 +219,43 @@ public class SrCommand extends BaseCommand {
                     sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                }
+            } catch (SkinRequestException e) {
+                sender.sendMessage(e.getMessage());
+            }
+        });
+    }
+
+    @Subcommand("setskinall")
+    @CommandCompletion("@Skin")
+    @Description("Set the skin to evey player")
+    @Syntax(" <Skin / Url> [steve/slim]")
+    public void onSetSkinAll(CommandSender sender, String skin, @Optional SkinType skinType) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            if (!(sender instanceof ConsoleCommandSender)) {
+                sender.sendMessage(Locale.PREFIX + ChatColor.DARK_RED + "Only console may execute this command!");
+                return;
+            }
+
+            String skinName = " ·setSkinAll";
+            try {
+                IProperty skinProps = null;
+                if (C.validUrl(skin)) {
+                    skinProps = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
+                } else {
+                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
+                }
+                if (skinProps == null) {
+                    sender.sendMessage(Locale.PREFIX + ChatColor.DARK_RED + "no skin found....");
+                    return;
+                }
+
+                plugin.getSkinStorage().setSkinData(skinName, skinProps);
+
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    String pName = player.getName();
+                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());

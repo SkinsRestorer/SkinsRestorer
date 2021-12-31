@@ -29,10 +29,12 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -43,31 +45,31 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    private final SkinsRestorer plugin;
-    private final SRLogger log;
-    @Getter
-    private final Consumer<Player> refresh;
     @Setter
     private static boolean optFileChecked;
     private static boolean disableDismountPlayer;
     private static boolean disableRemountPlayer;
     private static boolean enableDismountEntities;
+    private final SkinsRestorer plugin;
+    private final SRLogger log;
+    @Getter
+    private final Consumer<Player> refresh;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh(plugin);
+        refresh = detectRefresh();
     }
 
-    private Consumer<Player> detectRefresh(SkinsRestorer plugin) throws InitializeException {
-        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+    private Consumer<Player> detectRefresh() throws InitializeException {
+        if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
             boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
             if (viaVersionExists || protocolSupportExists) {
-                log.info("Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return new SpigotSkinRefresher(plugin, log);
+                log.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
@@ -79,7 +81,13 @@ public class SkinApplierBukkit {
             }
         }
 
-        return new SpigotSkinRefresher(plugin, log);
+        return selectSpigotRefresher();
+    }
+
+    private Consumer<Player> selectSpigotRefresher() throws InitializeException {
+        if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
+            return new MappingSpigotSkinRefresher(plugin, log);
+        } else return new SpigotSkinRefresher(plugin, log);
     }
 
     /**
@@ -113,16 +121,27 @@ public class SkinApplierBukkit {
         });
     }
 
+    @SuppressWarnings("unchecked")
     public void applyProperty(Player player, IProperty property) {
         try {
-            Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-            GameProfile profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+            GameProfile profile = getGameProfile(player);
             profile.getProperties().removeAll("textures");
-            //noinspection unchecked
             profile.getProperties().put("textures", property);
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
+    }
+
+    public GameProfile getGameProfile(Player player) throws ReflectionException {
+        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+        GameProfile profile;
+        try {
+            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
+        } catch (Exception e) {
+            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+        }
+      
+        return profile;
     }
 
     /**
@@ -196,5 +215,27 @@ public class SkinApplierBukkit {
 
         log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
+    }
+
+    private boolean isPaper() {
+        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+            if (hasPaperMethods()) {
+                return true;
+            } else {
+                log.debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private boolean hasPaperMethods() {
+        try {
+            ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            return true;
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            return false;
+        }
     }
 }

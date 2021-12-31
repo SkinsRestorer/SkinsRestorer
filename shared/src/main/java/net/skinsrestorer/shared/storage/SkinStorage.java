@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -34,6 +33,8 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.RowSet;
 import java.io.*;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
@@ -184,6 +185,8 @@ public class SkinStorage implements ISkinStorage {
                 }
 
                 return Optional.of(lines.get(0));
+            } catch (MalformedInputException e) {
+                removeSkin(playerName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -220,7 +223,7 @@ public class SkinStorage implements ISkinStorage {
                     return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
                 } catch (Exception e) {
                     removeSkinData(skinName);
-                    logger.info("Unsupported player format.. removing (" + skinName + ").");
+                    logger.info("Unsupported skin format.. removing (" + skinName + ").");
                 }
         } else {
             skinName = removeWhitespaces(skinName);
@@ -240,7 +243,7 @@ public class SkinStorage implements ISkinStorage {
                 return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
             } catch (Exception e) {
                 removeSkinData(skinName);
-                logger.info("Unsupported player format.. removing (" + skinName + ").");
+                logger.info("Unsupported skin format.. removing (" + skinName + ").");
             }
         }
 
@@ -350,7 +353,7 @@ public class SkinStorage implements ISkinStorage {
                 if (!playerFile.exists() && !playerFile.createNewFile())
                     throw new IOException("Could not create player file!");
 
-                try (FileWriter writer = new FileWriter(playerFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(playerFile), StandardCharsets.UTF_8)) {
                     skinName = removeWhitespaces(skinName);
                     skinName = removeForbiddenChars(skinName);
 
@@ -396,7 +399,7 @@ public class SkinStorage implements ISkinStorage {
                 if (!skinFile.exists() && !skinFile.createNewFile())
                     throw new IOException("Could not create skin file!");
 
-                try (FileWriter writer = new FileWriter(skinFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(skinFile), StandardCharsets.UTF_8)) {
                     writer.write(value + "\n" + signature + "\n" + timestamp);
                 }
             } catch (Exception e) {
