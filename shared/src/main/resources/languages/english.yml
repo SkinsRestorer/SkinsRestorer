@@ -12,6 +12,10 @@
 # Prefix that is sent before each non 'help-', 'syntax-' or 'completions-' message
 prefix: "&e[&2SkinsRestorer&e]"
 
+  #################
+  # Help messages #
+  #################
+
 # Help lines appearing in "/skin" OR "/skin help"
 help-SkinClear: "Clears your skin."
 help-SkinClear-Other: "Clears the skin of another player."
@@ -21,7 +25,7 @@ help-SkinSet: "Set the skin of another player."
 help-Skinset-Other: "Sets the skin of another player."
 help-SkinSet-Other-Url: "Set a skin by Image_url.png"
 
-# Help lines appearing in "/sr" OR "/sr help"
+# Admin help lines appearing in "/sr" OR "/sr help"
 help-SRreload: "Reloads the configuration file."
 help-SRStatus: "Checks plugin needed API services."
 help-SRDrop: "Removes players or skin data."
@@ -30,17 +34,17 @@ help-SRApply-Skin: "Re-apply the skin for target user."
 help-SRCreateCustom: "Create a custom server wide skin"
 
 # Syntax messages that appear when typing the command & in help
-Syntax-Defaultcommand: " <skin/url>"
-Syntax-SkinSet: " <skin>"
-Syntax-SkinSet-Other: " <target> <skin/url>"
-Syntax-SkinUrl: " <SkinUrl> [steve/slim]"
-Syntax-SkinUpdate-Other: " <target>"
-Syntax-SkinClear-Other: " <target>"
+syntax-Defaultcommand: " <skin/url>"
+syntax-SkinSet: " <skin>"
+syntax-SkinSet-Other: " <target> <skin/url>"
+syntax-SkinUrl: " <SkinUrl> [steve/slim]"
+syntax-SkinUpdate-Other: " <target>"
+syntax-SkinClear-Other: " <target>"
 
 # Auto-completion messages that appear when typing the command
-Completions-Skin: "<Skin>"
-Completions-Skinname: "<SkinName>"
-Completions-SkinUrl: "<SkinUrl>"
+completions-Skin: "<Skin>"
+completions-Skinname: "<SkinName>"
+completions-SkinUrl: "<SkinUrl>"
 
   ####################
   # Success messages #
@@ -65,13 +69,13 @@ skinUpdateSuccess: "&2Your skin has been updated."
 skinUpdateIssuer: "&2Skin updated for player %player."
 
 # Success message when using /sr drop command
-DataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&2Data dropped for %playerOrSkin %targets."
 
 # Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin has been created!"
 
 # /sr reload
-RELOAD: "&2Config and Locale has been reloaded!"
+reload: "&2Config and Locale has been reloaded!"
 
   ############################
   # Wait & Cooldown messages #
@@ -81,7 +85,7 @@ RELOAD: "&2Config and Locale has been reloaded!"
 urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
 
 # When a skin has been requested to many times from mojang directly.
-Wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
 
 # Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
@@ -107,28 +111,28 @@ urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the adm
   ##################
 
 # Thrown when no premium player was found from the mojang api
-Error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
 
 # When a invalid skin (example: "null") is being set
-Error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
+error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
 
 # When a admin does try to update the skin of another player
-Error-NoSkin: "&4Error&8: &cThis player has no skin set."
+error-NoSkin: "&4Error&8: &cThis player has no skin set."
 
 # when a admin does run /sr props on a player that does have no skin
-Error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
 
 # On updating disabled OR invalid username OR api error (this does occur when api does time out)
-Error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
 
 # When a player does try to run /skin update while wearing a skin url
-Error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
+error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
 
 # when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-Error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
+error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
 
 # when a player runs /skin url but does not provide a url
-Error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
 
   ######################
   # SkinsMenu messages #
@@ -136,14 +140,14 @@ Error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploadi
 
 # Messages appearing when using /skins (gui)
 
-SkinsMenu-Open: "&2Opening the skins menu..."
+skinsMenu-Open: "&2Opening the skins menu..."
 
-SkinsMenu-Title: "&9Skins Menu - Page %page"
+skinsMenu-Title: "&9Skins Menu - Page %page"
 
-SkinsMenu-Select-Skin: "&2Click to select this skin"
-SkinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-SkinsMenu-Remove-Skin: "&c&l[ &7Remove Skin&c&l ]"
-SkinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+skinsMenu-Select-Skin: "&2Click to select this skin"
+skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
+skinsMenu-Remove-Skin: "&c&l[ &7Remove Skin&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 
 
   #######
@@ -152,9 +156,9 @@ SkinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 
 # These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
 
-Error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
-Error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-Error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
+error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
+error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
+error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
 Error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
 Error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
 
