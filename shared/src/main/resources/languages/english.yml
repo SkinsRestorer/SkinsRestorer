@@ -162,8 +162,8 @@ error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly w
 error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
 error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
 
-ALT-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-MS-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
+alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
+ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
 
   ###############
   # CUSTOM HELP #
