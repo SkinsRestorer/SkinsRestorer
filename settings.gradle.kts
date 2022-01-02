@@ -73,8 +73,6 @@ gradleEnterprise {
     }
 }
 
-includeBuild("build-logic")
-
 include("mappings:shared")
 setOf("1-18").forEach {
     include("mappings:mc-$it")
