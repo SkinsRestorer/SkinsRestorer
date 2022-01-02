@@ -53,22 +53,22 @@ completions-SkinUrl: "<SkinUrl>"
 # Success message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
 
-# Success message displayed when using /sr set command
+# Success message displayed when using /sr set <player> <skin> command
 adminSetSkin: "&2You set %player's skin."
 
 # Success message to player whose skin was cleared
 skinClearSuccess: "&2Your skin has been cleared."
 
-# Success message sent to player that used /sr clear PLAYER command
+# Success message sent to player that used /sr clear <player> command
 skinClearIssuer: "&2Skin cleared for player %player."
 
 # Success message to player whose skin was updated
 skinUpdateSuccess: "&2Your skin has been updated."
 
-# Success message sent to player that used /sr update PLAYER command
+# Success message sent to player that used /sr update <player> command
 skinUpdateIssuer: "&2Skin updated for player %player."
 
-# Success message when using /sr drop command
+# Success message when using /sr drop <player/skin> command
 dataDropped: "&2Data dropped for %playerOrSkin %targets."
 
 # Success message when using /sr CreateCustom command
@@ -146,7 +146,7 @@ skinsMenu-Title: "&9Skins Menu - Page %page"
 
 skinsMenu-Select-Skin: "&2Click to select this skin"
 skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Remove-Skin: "&c&l[ &7Remove Skin&c&l ]"
+skinsMenu-Remove-Skin: "&c&l[ &7Clear Skin&c&l ]"
 skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 
 
