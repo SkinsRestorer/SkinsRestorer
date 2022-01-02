@@ -23,7 +23,7 @@ help-SkinUpdate: "Updates your skin."
 help-SkinUpdate-Other: "Updates the skin of another player."
 help-SkinSet: "Set the skin of another player."
 help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by Image_url.png"
+help-SkinSet-Other-Url: "Set a skin by image_url.png link"
 
 # Admin help lines appearing in "/sr" OR "/sr help"
 help-SRreload: "Reloads the configuration file."
@@ -31,7 +31,7 @@ help-SRStatus: "Checks plugin needed API services."
 help-SRDrop: "Removes players or skin data."
 help-SRProps: "Displays the players current skin properties."
 help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin"
+help-SRCreateCustom: "Create a custom server wide skin."
 
 # Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
