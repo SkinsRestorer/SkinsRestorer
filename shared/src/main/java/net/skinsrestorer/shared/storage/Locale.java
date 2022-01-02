@@ -46,13 +46,13 @@ public class Locale {
     public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
     public static String HELP_SKIN_SET = "Set the skin of another player.";
     public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
-    public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by Image_url.png";
+    public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by image_url.png link";
     public static String HELP_SR_RELOAD = "Reloads the configuration file.";
     public static String HELP_SR_STATUS = "Checks plugin needed API services.";
     public static String HELP_SR_DROP = "Removes players or skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin properties.";
     public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
-    public static String HELP_SR_CREATECUSTOM = "Create a custom server wide skin";
+    public static String HELP_SR_CREATECUSTOM = "Create a custom server wide skin.";
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
