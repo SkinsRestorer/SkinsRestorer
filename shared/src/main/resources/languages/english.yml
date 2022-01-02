@@ -186,7 +186,7 @@ customHelpIFenabled-line: "&7&m----------------------------------------"
   #################
 
 # When everything is working as intended :)
-Status-OK: "&2Mojang API connection successful!"
+status-OK: "&2Mojang API connection successful!"
 
 # Shown when your using a outdated version of skinsrestorer
 outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
