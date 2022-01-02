@@ -140,7 +140,7 @@ public class SkinApplierBukkit {
         } catch (Exception e) {
             profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
         }
-      
+
         return profile;
     }
 

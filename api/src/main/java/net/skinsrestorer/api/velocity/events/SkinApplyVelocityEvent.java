@@ -31,23 +31,23 @@ import java.util.Objects;
 
 @Getter
 public class SkinApplyVelocityEvent implements ResultedEvent<ResultedEvent.GenericResult> {
-	private final Player who;
-	@Setter
-	private IProperty property;
-	@NonNull
-	private GenericResult result = GenericResult.allowed();
+    private final Player who;
+    @Setter
+    private IProperty property;
+    @NonNull
+    private GenericResult result = GenericResult.allowed();
 
-	public SkinApplyVelocityEvent(@Nullable Player who, IProperty property) {
-		this.who = who;
-		this.property = property;
-	}
+    public SkinApplyVelocityEvent(@Nullable Player who, IProperty property) {
+        this.who = who;
+        this.property = property;
+    }
 
-	public GenericResult result() {
-		return result;
-	}
+    public GenericResult result() {
+        return result;
+    }
 
-	@Override
-	public void setResult(GenericResult result) {
-		this.result = Objects.requireNonNull(result);
-	}
+    @Override
+    public void setResult(GenericResult result) {
+        this.result = Objects.requireNonNull(result);
+    }
 }
