@@ -35,5 +35,7 @@ public interface ISkinStorage {
 
     void removeSkin(String playerName);
 
-    void setSkinData(String skinName, IProperty textures, String timestamp);
+    void setSkinData(String skinName, IProperty textures);
+
+    void setSkinData(String skinName, IProperty textures, long timestamp);
 }

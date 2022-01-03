@@ -118,8 +118,12 @@ public abstract class SkinsRestorerAPI {
      * @param textures Property object
      * @param timestamp timestamp string in millis (leave null for current)
      */
-    public void setSkinData(String skinName, IProperty textures, @Nullable String timestamp) {
-        skinStorage.setSkinData(skinName, textures, timestamp);
+    public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
+        if (timestamp == null) {
+            skinStorage.setSkinData(skinName, textures);
+        } else {
+            skinStorage.setSkinData(skinName, textures, timestamp);
+        }
     }
 
     /**

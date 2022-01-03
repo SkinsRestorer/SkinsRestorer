@@ -263,7 +263,7 @@ public class SkinCommand extends BaseCommand {
 
                 IProperty generatedSkin = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
                 plugin.getSkinStorage().setSkinData(skinentry, generatedSkin,
-                        Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                        System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
                 plugin.getSkinsRestorerAPI().applySkin(player, generatedSkin);
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
