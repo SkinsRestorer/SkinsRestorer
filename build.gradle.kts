@@ -1,6 +1,5 @@
 plugins {
     base
-    id("sr.build-logic")
 }
 
 allprojects {
