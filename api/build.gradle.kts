@@ -9,7 +9,7 @@ dependencies {
     compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
     compileOnly("com.velocitypowered:velocity-api:3.0.1")
-    compileOnly("org.spongepowered:spongeapi:7.3.0")
+    compileOnly("org.spongepowered:spongeapi:8.0.0")
 }
 
 indra {
