@@ -48,18 +48,12 @@ import net.skinsrestorer.sponge.listeners.LoginListener;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
-import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 import java.io.File;
 import java.io.InputStream;
@@ -67,8 +61,9 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+// @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
+@Plugin("skinsrestorer")
 public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
