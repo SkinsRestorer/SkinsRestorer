@@ -280,7 +280,7 @@ public class SkinsGUI extends ItemStack implements Listener {
                     break;
                 case DELETE:
                     itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                    text = C.c(Locale.SKINSMENU_REMOVE_SKIN);
+                    text = C.c(Locale.SKINSMENU_CLEAR_SKIN);
                     break;
             }
 
