@@ -1,7 +1,7 @@
 ---
 #Generated on ${version} #
 #Prefix that is sent before each non help message
-prefix: "&e[&2SkinsRestorer&e]"
+prefix: "&e[&2Restaurador de Skins&e]"
 #Message sent when the premium account with specified username does not exist
 notPremium: "&4Error&8: &cPremium player with that name does not exist."
 #String sent to player when they do not have permission to use a command
@@ -37,7 +37,7 @@ waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again
 #When proxy returned skin is empty
 genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!"
 #When none Player try's to set a skin
