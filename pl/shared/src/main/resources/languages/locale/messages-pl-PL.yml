@@ -11,13 +11,13 @@ ERRORUpdatingURL: "&4Error&8: &cYou can't update custom url skins! \n&cRequest a
 #Error when trying to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
 ERRORInvalidURLSKIN: "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
 #Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Twój skin został zmieniony."
 #Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Twój skin został zresetowany."
 #Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin gracza %player zresetowany."
 #Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Ustawiłeś skin %player."
 #Message displayed when using /sr set command and providing an invalid username
 invalidPlayer: "&4Error&8: &c%player is not a valid username."
 #Message displayed when using /sr set command and providing username of a player that is currently not online
@@ -37,7 +37,7 @@ waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again
 #When proxy returned skin is empty
 genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 #Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version: \n&e-> https://skinsrestorer.net/get/latest"
+outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #Message sent when using a player-only command
 playersOnly: "&4These commands are only for players!"
 #When none Player try's to set a skin
