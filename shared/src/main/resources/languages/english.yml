@@ -14,7 +14,7 @@ prefix: "&e[&2SkinsRestorer&e]"
 
   #################
   # Help messages #
-#################
+  #################
 
 # Help lines appearing in "/skin" OR "/skin help"
 help-SkinClear: "Clears your skin."
@@ -48,7 +48,7 @@ completions-SkinUrl: "<SkinUrl>"
 
   ####################
   # Success messages #
-####################
+  ####################
 
 # Success message sent to player whose skin was changed
 skinChangeSuccess: "&2Your skin has been changed."
@@ -79,7 +79,7 @@ reload: "&2Config and Locale has been reloaded!"
 
   ############################
   # Wait & Cooldown messages #
-############################
+  ############################
 
 # Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
@@ -92,7 +92,7 @@ skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
 
   ########################
   # Permissions messages #
-########################
+  ########################
 
 # When the player does have access to "/skin" but not "/skin url"
 noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
@@ -108,7 +108,7 @@ urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the adm
 
   ##################
   # Error messages #
-##################
+  ##################
 
 # Thrown when no premium player was found from the mojang api
 error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
@@ -136,7 +136,7 @@ error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploadi
 
   ######################
   # SkinsMenu messages #
-######################
+  ######################
 
 # Messages appearing when using /skins (gui)
 
@@ -152,7 +152,7 @@ skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 
   #######
   # API #
-#######
+  #######
 
 # These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
 
@@ -167,7 +167,7 @@ ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!
 
   ###############
   # CUSTOM HELP #
-###############
+  ###############
 
 # [!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
@@ -183,7 +183,7 @@ customHelpIFenabled-line: "&7&m----------------------------------------"
 
   #################
   # Miscellaneous #
-#################
+  #################
 
 # When everything is working as intended :)
 status-OK: "&2Mojang API connection successful!"
