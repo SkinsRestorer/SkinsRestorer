@@ -41,11 +41,11 @@ public class Locale {
     };
     public static String PREFIX = "&e[&2SkinsRestorer&e] ";
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
-    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
+    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
-    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
-    public static String HELP_SKIN_SET = "Sets your skin.";
-    public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
+    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of a target player.";
+    public static String HELP_SKIN_SET = "Set the skin of another player.";
+    public static String HELP_SKIN_SET_OTHER = "Sets the skin for a target player.";
     public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by image_url.png link";
     public static String HELP_SR_RELOAD = "Reloads the configuration file.";
     public static String HELP_SR_STATUS = "Checks plugin needed API services.";
