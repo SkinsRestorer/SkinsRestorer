@@ -1,80 +1,144 @@
 ---
-#Generated on ${version} #
-#Prefix that is sent before each non help message
+##############################
+#SkinsRestorer help msg    #
+#Generated on ${version}         #
+##############################
+#We from SRTeam thank you for using our plugin!
+#Wiki    --> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations/
+#Discord --> https://discord.me/SkinsRestorer/
+#File source --> https://github.com/SkinsRestorer/SkinsRestorerX/blob/stable/shared/src/main/resources/languages/english.yml
+#Prefix that is sent before each non 'help-', 'syntax-' or 'completions-' message
 prefix: "&e[&2SkinsRestorer&e]"
-#Message sent when the premium account with specified username does not exist
-notPremium: "&4Error&8: &cPremium player with that name does not exist."
-#String sent to player when they do not have permission to use a command
-playerNoPermission: "&4Error&8: &cYou don't have permission to do this."
-#Skinsrestorer can't update custom skins! Players should request skin again using /skin url
-ERRORUpdatingURL: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url."
-#Error when trying to do /skin ulr with a INVALID url. they should use imgur or see the guide using the link.
-ERRORInvalidURLSKIN: "&4Error&8: &cInvalid skin url or format, \n&c try uploading your skin to imgur and right click copy imgurl \n&cFor guide see: \n&c&n&o https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinURL."
-#Message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
-#Message sent to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
-#Message sent to player that used /sr clear PLAYER command
-skinClearIssuer: "&2Skin cleared for player %player."
-#Message displayed when using /sr set command
-adminSetSkin: "&2You set %player's skin."
-#Message displayed when using /sr set command and providing an invalid username
-invalidPlayer: "&4Error&8: &c%player is not a valid username."
-#Message displayed when using /sr set command and providing username of a player that is currently not online
-playerNotonline: "&4Error&8: &cPlayer is not online!"
-#Message displayed when using /sr drop command
-skinDataDropped: "&2Skin data for player %player dropped."
-#Message sent when the /sr reload command execution was successful
-reload: "&2Config and Locale has been reloaded!"
+#################
+#Help messages #
+#################
+#Help lines appearing in "/skin" OR "/skin help"
+help-SkinClear: "Elimina tu skin."
+help-SkinClear-Other: "Elimina la skin de otro jugador."
+help-SkinUpdate: "Actualiza tu skin."
+help-SkinUpdate-Other: "Actualiza la skin de otro jugador."
+help-SkinSet: "Selecciona tu skin."
+help-Skinset-Other: "Selecciona la skin de otro jugador."
+help-SkinSet-Other-Url: "Selecciona una skin por medio de un URL (image_url.png)"
+#Admin help lines appearing in "/sr" OR "/sr help"
+help-SRreload: "Recarga el archivo de configuración."
+help-SRStatus: "Comprueba los servicios API requeridos por el plugin."
+help-SRDrop: "Elimina la data o skin del jugador."
+help-SRProps: "Muestra las propiedades actuales de la skin del jugador."
+help-SRApply-Skin: "Reaplica la skin para el jugador seleccionado."
+help-SRCreateCustom: "Crea un skin personalizada para todo el servidor."
+#Syntax messages that appear when typing the command & in help
+syntax-Defaultcommand: " <skin/url>"
+syntax-SkinSet: " <skin>"
+syntax-SkinSet-Other: " <objetivo> <skin/url>"
+syntax-SkinUrl: " <SkinURL> [Steve/Slim]"
+syntax-SkinUpdate-Other: " <objetivo>"
+syntax-SkinClear-Other: " <objetivo>"
+#Auto-completion messages that appear when typing the command
+completions-Skin: "<Skin>"
+completions-Skinname: "<NombreSkin>"
+completions-SkinUrl: "<SkinURL>"
+####################
+#Success messages #
+####################
+#Success message sent to player whose skin was changed
+skinChangeSuccess: "&2Tu skin ha sido cambiada."
+#Success message displayed when using /sr set <player> <skin> command
+adminSetSkin: "&2Has seleccionado la skin de %player."
+#Success message to player whose skin was cleared
+skinClearSuccess: "&2Tu skin ha sido eliminada."
+#Success message sent to player that used /sr clear <player> command
+skinClearIssuer: "&2Se ha eliminado la skin de %player."
+#Success message to player whose skin was updated
+skinUpdateSuccess: "&2Tu skin ha sido actualizada."
+#Success message sent to player that used /sr update <player> command
+skinUpdateIssuer: "&2Se ha actualizado la skin de %player."
+#Success message when using /sr drop <player/skin> command
+dataDropped: "&2Data dropped for %playerOrSkin %targets."
+#Success message when using /sr CreateCustom command
+skinCreateSuccess: "&2¡Se ha creado la skin %skin!"
+#/sr reload
+reload: "&2¡Se ha recargado la configuración y locale!"
+############################
+#Wait & Cooldown messages #
+############################
+#Informing the player when we did queue a custom skin.
+urlSkin-waitMinute: "&2Subiendo skin, por favor, espera... (Puede tardar un tiempo)"
+#When a skin has been requested to many times from mojang directly.
+wait-a-Minute: "&4Error&8: &cPor favor, espera un minuto antes de solicitar esa skin de nuevo. (Rate Limited)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldownNew: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldown: "&4Error&8: &cPodrás volver a cambiar tu skin dentro de &e%s &csegundos."
+########################
+#Permissions messages #
+########################
+#When the player does have access to "/skin" but not "/skin url"
+noPermission-Url: "&4Error&8: &cNo tienes permiso para seleccionar skins vía URL."
+#This is thrown on config.PerSkinPermissions
+noPermission-Skin: "&4Error&8: &cNo tienes permiso para seleccionar esta skin."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
-#Can not set skin due to player name not being premium or having no skin
-noSkinData: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
-#Cooldown message
-waitMinute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
-#When proxy returned skin is empty
-genericError: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-#Message sent when server has an outdated version of SR
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
-#Message sent when using a player-only command
-playersOnly: "&4These commands are only for players!"
-#When none Player try's to set a skin
-notPlayer: "&4Error&8: &cYou need to be a player!"
-#=== GUI ===
-#/skins message
-menuOpen: "&2Opening the skins menu..."
-#Previus page [GUI]
-previusPage: "&e&l«&7 Previous Page&e&l «"
-#Next page [GUI]
-nextPage: "&a&l»&7 Next Page&a&l »"
-#Clear skin [GUI]
-removeSkin: "&c&l»&7 Remove Skin&c&l »"
-#item lore for skulls [GUI]
-selectSkin: "&2Click to select this skin"
-#=== DEBUG ===
-#old debug
-statusOk: "&2Mojang API connection successful!"
-#old debug
-altApiFailed: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-#=== OLD SKIN HELP ===
-#String used as a divider
-line: "&7&m----------------------------------------"
-#Message line sent when requesting SkinsRestorer help without skinsrestorer.cmds permission
-helpPlayer:
-  - "    &2&lSkinsRestorer &7- &f&lv%ver%"
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin clear &7-&f Clears your skin."
-#Message line sent when requesting SkinsRestorer help and having skinsrestorer.cmds permission
-help: "    &2/sr &7- &fDisplay admin commands."
-#Message sent when requesting admin help
-help_admin:
-  - "&2&lSkinsRestorer &7- &f&lv%ver% &c&lAdmin"
-  - "    &2/sr config &7- &fhelp page for usefull in game config settings"
-  - "    &2/sr set <player> <skin name> &7- &fChanges the skin of a player.."
-  - "    &2/sr drop <player> &7- &fDrops player skin data."
-  - "    &2/sr clear <player> &7- &fClears player data."
-  - "    &2/sr reload &7- &fReloads the config and locale"
-  - "    &2/sr props [player] &7- &fDisplays the players actual skin as properties"
+skinDisabled: "&4Error&8: &cEsta skin está deshabilitada por un administrador."
+#config.RestrictSkinUrls will make this line appear.
+urlSkin-DomainBlocked: "&4Error&8: &cEste dominio ha sido bloqueado por un administrador."
+##################
+#Error messages #
+##################
+#Thrown when no premium player was found from the mojang api
+error-Not-Premium: "&4Error&8: &cNo existe un jugador premium con ese nombre."
+#When a invalid skin (example: "null") is being set
+error-Invalid-Player: "&4Error&8: &c%player no es un nombre/URL válido."
+#When a admin does try to update the skin of another player
+error-NoSkin: "&4Error&8: &cEste jugador no tiene ninguna skin."
+#when a admin does run /sr props on a player that does have no skin
+error-NoSkin-Data: "&4Error&8\": &c¡Data de la Skin no adquirida! ¿Tiene el jugador una Skin?"
+#On updating disabled OR invalid username OR api error (this does occur when api does time out)
+error-Updating-Skin: "&4Error&8\": &cHa ocurrido un error al actualizar tu skin. ¡Inténtalo más tade!"
+#When a player does try to run /skin update while wearing a skin url
+error-Updating-Url: "&4Error&8: &c¡No puedes actualizar skins de URLs! \n&cSolicita otra usando /skin url"
+#when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
+error-Updating-CustomSkin: "&4Error&8: &cNo se puede actualizar la skin ya que es una personalizada."
+#when a player runs /skin url but does not provide a url
+error-Invalid-SkinUrl: "&4Error&8: &cURL/formato de skin no válido, \n&cPrueba a subir tu skin a imgur y haz clic dcho. en 'copiar dirección de la imagen' \n&cMás información en: &c&oskinsrestorer.net/skinurl"
+######################
+#SkinsMenu messages #
+######################
+#Messages appearing when using /skins (gui)
+skinsMenu-Open: "&2Abriendo el menú de skins..."
+skinsMenu-Title: "&9Menú de skins - Página %page"
+skinsMenu-Select-Skin: "&2Clic para seleccionar esta skin"
+skinsMenu-PreviousPage: "&e&l«&7 Página anterior&e&l «"
+skinsMenu-Clear-Skin: "&c&l[ &7Eliminar skin&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 Siguiente página&a&l »"
+#######
+#API #
+#######
+#These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
+error-SkinUrl-Timeout: "&4MS Error&8: &cSe ha agotado el tiempo de espera del API mientras se subia tu &cskin. Intentalo más tarde(MineSkin)"
+error-Generic-error: "&4Error&8: &c¡Ha ocurrido un error mientras se solicitaba la Skin Data, inténtalo más tarde!"
+error-MOJANG-API-OFFLINE: "&4Error&8: &cEl API de Mojan está offline por lo tanto no se pudo encontrar tu skin archivada. \n&cPor favor, inténtalo más tade..."
+error-MS-API-OFFLINE: "&4Error&8: &cEl API de MineSkin está offline, por lo tanto, no se pueden crear skins personalizadas ahora mismo. \n&cInténtalo más tarde..."
+error-SERVER-OFFLINE: "&4Error&8: &cEl servidor está teniendo problemas de conexión, por favor, inténtalo más tarde..."
+alt-API-FAILED: "&4Error&8: &c¡API del Skin Data saturada, por favor, inténtalo más tade!"
+ms-API-FAILED: "&4Error&8: &cAPI de MineSkin saturada, por favor, inténtalo más tade!"
+###############
+#CUSTOM HELP #
+###############
+#[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
+customHelpIFenabled:
+  - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
+  - "    &2/skin <NombreSkin> &7-&f Version corta de \"/skin set\"."
+  - "    &2/skin set <NombreSkin> &7-&f Cambia tu skin."
+  - "    &2/skin url <SkinURL> &7-&f Selecciona una skin por medio de Url (image_url.png)"
+  - "    &2/skin clear &7-&f Elimina tu skin."
+  - "    &2/skin update &7-&f Actualiza tu skin."
+#String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
+customHelpIFenabled-line: "&7&m----------------------------------------"
+#################
+#Miscellaneous #
+#################
+#When everything is working as intended :)
+status-OK: "&2¡Conexión con el API de Mojang correcta!"
+#Shown when your using a outdated version of skinsrestorer
+outdated: "&4Estás usando una versión desactualiza de SkinsRestorer!\n&cPor favor, actualiza a la ultima versión en Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+#End #
+#please do not remove below version string!
+version: '${version}'
