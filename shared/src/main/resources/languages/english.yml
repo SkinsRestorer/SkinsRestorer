@@ -1,197 +1,84 @@
-##############################
-#  SkinsRestorer help msg    #
-#  Generated on ${version}         #
-##############################
-#
-# We from SRTeam thank you for using our plugin!
-#
-# Wiki    --> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Locale-and-Translations/
-# Discord --> https://discord.me/SkinsRestorer/
-# File source --> https://github.com/SkinsRestorer/SkinsRestorerX/blob/stable/shared/src/main/resources/languages/english.yml
-
-# Prefix that is sent before each non 'help-', 'syntax-' or 'completions-' message
-prefix: "&e[&2SkinsRestorer&e]"
-
-  #################
-  # Help messages #
-  #################
-
-# Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Set the skin of another player."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
-
-# Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
-
-# Syntax messages that appear when typing the command & in help
-syntax-Defaultcommand: " <skin/url>"
-syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
-syntax-SkinUrl: " <SkinUrl> [steve/slim]"
-syntax-SkinUpdate-Other: " <target>"
-syntax-SkinClear-Other: " <target>"
-
-# Auto-completion messages that appear when typing the command
-completions-Skin: "<Skin>"
-completions-Skinname: "<SkinName>"
-completions-SkinUrl: "<SkinUrl>"
-
-  ####################
-  # Success messages #
-  ####################
-
-# Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
-
-# Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
-
-# Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
-
-# Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
-
-# Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
-
-# Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
-
-# Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
-
-# Success message when using /sr CreateCustom command
-skinCreateSuccess: "&2Skin %skin has been created!"
-
-# /sr reload
-reload: "&2Config and Locale has been reloaded!"
-
-  ############################
-  # Wait & Cooldown messages #
-  ############################
-
-# Informing the player when we did queue a custom skin.
-urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
-
-# When a skin has been requested to many times from mojang directly.
-wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
-
-# Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
-
-  ########################
-  # Permissions messages #
-  ########################
-
-# When the player does have access to "/skin" but not "/skin url"
-noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
-
-# This is thrown on config.PerSkinPermissions
-noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
-
-# Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
-
-# config.RestrictSkinUrls will make this line appear.
-urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
-
-  ##################
-  # Error messages #
-  ##################
-
-# Thrown when no premium player was found from the mojang api
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
-
-# When a invalid skin (example: "null") is being set
-error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
-
-# When a admin does try to update the skin of another player
-error-NoSkin: "&4Error&8: &cThis player has no skin set."
-
-# when a admin does run /sr props on a player that does have no skin
-error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
-
-# On updating disabled OR invalid username OR api error (this does occur when api does time out)
-error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
-
-# When a player does try to run /skin update while wearing a skin url
-error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
-
-# when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
-
-# when a player runs /skin url but does not provide a url
-error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
-
-  ######################
-  # SkinsMenu messages #
-  ######################
-
-# Messages appearing when using /skins (gui)
-
-skinsMenu-Open: "&2Opening the skins menu..."
-
-skinsMenu-Title: "&9Skins Menu - Page %page"
-
-skinsMenu-Select-Skin: "&2Click to select this skin"
-skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Clear-Skin: "&c&l[ &7Clear Skin&c&l ]"
-skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
-
-
-  #######
-  # API #
-  #######
-
-# These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
-
-error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
-error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
-error-MS-API-OFFLINE: "&4Error&8: &cMineSkin APII is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
-error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
-
-alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
-
-  ###############
-  # CUSTOM HELP #
-  ###############
-
-# [!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
-customHelpIFenabled:
-  - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
-  - "    &2/skin clear &7-&f Clears your skin."
-  - "    &2/skin update &7-&f Updates your skin."
-
-# String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
-customHelpIFenabled-line: "&7&m----------------------------------------"
-
-  #################
-  # Miscellaneous #
-  #################
-
-# When everything is working as intended :)
-status-OK: "&2Mojang API connection successful!"
-
-# Shown when your using a outdated version of skinsrestorer
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
-
-# End #
-
-# please do not remove below version string!
-version: ${version}
+PREFIX: '&e[&2SkinsRestorer&e] '
+HELP_SKIN_CLEAR: Clears your skin.
+HELP_SKIN_CLEAR_OTHER: Clears the skin of another player.
+HELP_SKIN_UPDATE: Updates your skin.
+HELP_SKIN_UPDATE_OTHER: Updates the skin of another player.
+HELP_SKIN_SET: Sets your skin.
+HELP_SKIN_SET_OTHER: Sets the skin of another player.
+HELP_SKIN_SET_OTHER_URL: Set a skin by Image_url.png
+HELP_SR_RELOAD: Reloads the configuration file.
+HELP_SR_STATUS: Checks plugin needed API services
+HELP_SR_DROP: Removes players or skin data.
+HELP_SR_PROPS: Displays the players current skin properties.
+HELP_SR_APPLY_SKIN: Re-apply the skin for target user.
+HELP_SR_CreateCustom: Create a custom server wide skin
+SYNTAX_DEFAULTCOMMAND: ' <skin/url>'
+SYNTAX_SKINSET: ' <skin>'
+SYNTAX_SKINSET_OTHER: ' <target> <skin/url>'
+SYNTAX_SKINURL: ' <SkinUrl> [steve/slim]'
+SYNTAX_SKINUPDATE_OTHER: ' <target>'
+SYNTAX_SKINCLEAR_OTHER: ' <target>'
+Completions_Skin: <Skin>
+Completions_SkinName: <SkinName>
+Completions_SkinUrl: <SkinUrl>
+PLAYER_HAS_NO_PERMISSION_SKIN: '&4Error&8: &cYou don''t have permission to set this
+    skin.'
+PLAYER_HAS_NO_PERMISSION_URL: '&4Error&8: &cYou don''t have permission to set skins
+    by URL.'
+SKIN_DISABLED: '&4Error&8: &cThis skin is disabled by an administrator.'
+SKINURL_DISALLOWED: '&4Error&8: &cThis domain has not been allowed by the administrator.'
+NOT_PREMIUM: '&4Error&8: &cPremium player with that name does not exist.'
+INVALID_PLAYER: '&4Error&8: &c%player is not a valid username or URL.'
+SKIN_COOLDOWN: '&4Error&8: &cYou can change your skin again in &e%s &cseconds.'
+SKIN_CHANGE_SUCCESS: '&2Your skin has been changed.'
+SKIN_CLEAR_SUCCESS: '&2Your skin has been cleared.'
+SKIN_CLEAR_ISSUER: '&2Skin cleared for player %player.'
+MS_UPDATING_SKIN: '&2Uploading skin, please wait...(This may take up some time)'
+SUCCESS_CREATE_SKIN: '&2Skin %skin has been created!'
+SUCCESS_UPDATING_SKIN: '&2Your skin has been updated.'
+SUCCESS_UPDATING_SKIN_OTHER: '&2Skin updated for player %player.'
+ERROR_UPDATING_SKIN: '&4Error&8: &cAn error occurred while updating your skin. Please
+    try again later!'
+ERROR_UPDATING_URL: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again\
+    \ using /skin url"
+ERROR_UPDATING_CUSTOMSKIN: '&4Error&8: &cSkin can''t be updated because its custom.'
+ERROR_INVALID_URLSKIN: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading\
+    \ your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+ERROR_MS_FULL: '&4MS Error&8: &cAPI timed out while uploading your &cskin. Please
+    try again later. (MineSkin)'
+ERROR_MS_GENERIC: '&4MS Error&8: &c%error%'
+GENERIC_ERROR: '&4Error&8: &cAn error occurred while requesting skin data, please
+    try again later!'
+WAIT_A_MINUTE: '&4Error&8: &cPlease wait a minute before requesting that skin again.
+    (Rate Limited)'
+ERROR_NO_SKIN: '&4Error&8: &cThis player has no skin set.'
+SKINSMENU_OPEN: '&2Opening the skins menu...'
+SKINSMENU_TITLE_NEW: '&9Skins Menu - Page %page'
+SKINSMENU_NEXT_PAGE: '&a&l»&7 Next Page&a&l »'
+SKINSMENU_PREVIOUS_PAGE: '&e&l«&7 Previous Page&e&l «'
+SKINSMENU_REMOVE_SKIN: '&c&l[ &7Remove Skin&c&l ]'
+SKINSMENU_SELECT_SKIN: '&2Click to select this skin'
+ADMIN_SET_SKIN: '&2You set %player''s skin.'
+DATA_DROPPED: '&2Data dropped for %playerOrSkin %targets.'
+STATUS_OK: '&2Mojang API connection successful!'
+ALT_API_FAILED: '&4Error&8: &cSkin Data API is overloaded, please try again later!'
+MS_API_FAILED: '&4Error&8: &cMineSkin API is overloaded, please try again later!'
+NO_SKIN_DATA: '&4Error&8: &cNo skin data acquired! Does this player have a skin?'
+RELOAD: '&2Config and Locale has been reloaded!'
+OUTDATED: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update\
+    \ to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+SR_LINE: '&7&m----------------------------------------'
+CUSTOM_HELP_IF_ENABLED: |4-
+      &2&lSkinsRestorer &7- &f&lv%ver%
+       &2/skin <skinname> &7-&f Changes your skin.
+        &2/skin update &7-&f Updates your skin.
+        &2/skin clear &7-&f Clears your skin.
+HELP_PLAYER: |4-
+      &2&lSkinsRestorer &7- &f&lv%ver%
+       &2/skin <skinname> &7-&f Changes your skin.
+        &2/skin update &7-&f Updates your skin.
+        &2/skin clear &7-&f Clears your skin.
+HELP_SR_CREATECUSTOM: Create a custom server wide skin
+COMPLETIONS_SKIN: <Skin>
+COMPLETIONS_SKINNAME: <SkinName>
+COMPLETIONS_SKINURL: <SkinUrl>
