@@ -13,15 +13,15 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "Скидає ваш скін."
+help-SkinClear-Other: "Скидає скін іншого гравця."
+help-SkinUpdate: "Оновлює ваш скін."
+help-SkinUpdate-Other: "Оновлює скін іншого гравця."
+help-SkinSet: "Встановлює ваш скін."
+help-Skinset-Other: "Встановлює скін іншого гравця."
+help-SkinSet-Other-Url: "Встановіть скін за посиланням image_url.png"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
+help-SRreload: "Перезавантажує файл конфіґурації."
 help-SRStatus: "Checks plugin needed API services."
 help-SRDrop: "Removes players or skin data."
 help-SRProps: "Displays the players current skin properties."
@@ -30,7 +30,7 @@ help-SRCreateCustom: "Create a custom server wide skin."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
+syntax-SkinSet-Other: " <target><skin/url>"
 syntax-SkinUrl: " <SkinUrl> [steve/slim]"
 syntax-SkinUpdate-Other: " <target>"
 syntax-SkinClear-Other: " <target>"
@@ -42,17 +42,17 @@ completions-SkinUrl: "<SkinUrl>"
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Ваш скін було очищено."
 #Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Ви встановили скін гравцю %player."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Ваш скін було очищено."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Скін очищено для гравця %player."
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "&2Ваш скін було оновлено."
 #Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
+skinUpdateIssuer: "&2Скін оновлено для гравця %player."
 #Success message when using /sr drop <player/skin> command
 dataDropped: "&2Data dropped for %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
