@@ -54,7 +54,7 @@ skinUpdateSuccess: "&2Tu skin ha sido actualizada."
 #Success message sent to player that used /sr update <player> command
 skinUpdateIssuer: "&2Se ha actualizado la skin de %player."
 #Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&2Data eliminada para %targets (%playerOrSkin)."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2¡Se ha creado la skin %skin!"
 #/sr reload
