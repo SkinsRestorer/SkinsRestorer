@@ -23,7 +23,7 @@ help-SkinSet-Other-Url: "Встановіть скін за посиланням
 #Admin help lines appearing in "/sr" OR "/sr help"
 help-SRreload: "Перезавантажує файл конфіґурації."
 help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
+help-SRDrop: "Вилучає гравців або дані скіну."
 help-SRProps: "Displays the players current skin properties."
 help-SRApply-Skin: "Re-apply the skin for target user."
 help-SRCreateCustom: "Create a custom server wide skin."
