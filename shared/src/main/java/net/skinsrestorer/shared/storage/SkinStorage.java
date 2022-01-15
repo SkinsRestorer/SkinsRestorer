@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -365,11 +366,8 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * @see SkinStorage#setSkinData(String, IProperty, String)
-     */
     public void setSkinData(String skinName, IProperty textures) {
-        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
+        setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
     /**
@@ -377,23 +375,25 @@ public class SkinStorage implements ISkinStorage {
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in millis
+     * @param timestamp timestamp string in millis (null for current)
      */
-    public void setSkinData(String skinName, IProperty textures, String timestamp) {
+    public void setSkinData(String skinName, IProperty textures, long timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
         String signature = textures.getSignature();
 
+        String timestampString = Long.toString(timestamp);
+
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                    skinName, value, signature, timestamp, value, signature, timestamp);
+                    skinName, value, signature, timestampString, value, signature, timestampString);
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
             File skinFile = new File(skinsFolder, skinName + ".skin");
 
             try {
-                if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
+                if (value.isEmpty() || signature.isEmpty() || timestampString.isEmpty())
                     return;
 
                 if (!skinFile.exists() && !skinFile.createNewFile())

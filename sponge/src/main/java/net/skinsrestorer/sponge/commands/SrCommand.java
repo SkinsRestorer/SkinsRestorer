@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -190,7 +190,7 @@ public class SrCommand extends BaseCommand {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
-                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
                 } else {
                     source.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));

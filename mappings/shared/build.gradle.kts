@@ -1,6 +1,5 @@
 plugins {
-    java
-    id("sr.core-dependencies")
+    id("sr.base-logic")
 }
 
 dependencies {
@@ -8,5 +7,3 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
 }
-
-java.javaTarget(8)

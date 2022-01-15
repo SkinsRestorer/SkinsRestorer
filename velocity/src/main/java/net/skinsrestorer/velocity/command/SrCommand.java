@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -95,7 +95,7 @@ public class SrCommand extends BaseCommand {
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
                 source.sendMessage(plugin.deserialize("§aThe plugin currently is in a working state."));
             else
-                source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See http://skinsrestorer.net/firewall for more info"));
+                source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See https://skinsrestorer.net/firewall for more info"));
             source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
             source.sendMessage(plugin.deserialize("§7SkinsRestorer §6v" + plugin.getVersion()));
             source.sendMessage(plugin.deserialize("§7Server: §6" + plugin.getProxy().getVersion()));
@@ -184,7 +184,7 @@ public class SrCommand extends BaseCommand {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
-                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
                     source.sendMessage(plugin.deserialize(Locale.ERROR_INVALID_URLSKIN));
