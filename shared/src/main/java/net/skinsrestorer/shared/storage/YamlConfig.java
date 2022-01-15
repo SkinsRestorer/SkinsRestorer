@@ -19,32 +19,23 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.shared.exception.YamlException;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class YamlConfig {
-    private final String name;
-    private final boolean setMissing;
     private final File file;
-    private final SRLogger logger;
-    private ConfigurationNode config;
+    private final AxiomConfiguration config = new AxiomConfiguration();
 
-    public YamlConfig(File path, String name, boolean setMissing, SRLogger logger) {
-        this.name = name;
-        this.setMissing = setMissing;
+    public YamlConfig(File path, String name) {
         this.file = new File(path, name);
-        this.logger = logger;
 
         if (!path.exists())
             //noinspection ResultOfMethodCallIgnored
@@ -52,24 +43,31 @@ public class YamlConfig {
     }
 
     public void saveDefaultConfig(InputStream is) {
-        if (file.exists())
-            return;
-
-        // create empty file if we got no InputStream with default config
-        if (is == null) {
+        if (file.exists() && is != null) {
             try {
-                //noinspection ResultOfMethodCallIgnored
-                file.createNewFile();
-            } catch (IOException e) {
+                AxiomConfiguration defaultConfig = new AxiomConfiguration();
+                defaultConfig.load(is);
+                config.mergeDefault(defaultConfig, true, false);
+                config.save(file.toPath());
+            } catch(IOException e) {
                 e.printStackTrace();
             }
-            return;
-        }
-
-        try {
-            Files.copy(is, file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            // create empty file if we got no InputStream with default config
+            if (is == null) {
+                try {
+                    //noinspection ResultOfMethodCallIgnored
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    Files.copy(is, file.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         try {
@@ -79,52 +77,36 @@ public class YamlConfig {
         }
     }
 
-    public ConfigurationNode get(String path) {
-        try {
-            return config.node((Object[]) path.split("\\."));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public ConfigurationNode get(String path, String defValue) {
-        // Save new values if enabled (locale file)
-        if (get(path).virtual() && setMissing) {
-            logger.info("Saving new config value " + path + " to " + name);
-            set(path, defValue);
-        }
-
-        return get(path);
-    }
-
     public boolean getBoolean(String path) {
-        return get(path).getBoolean();
+        return config.getBoolean(path);
     }
 
     public boolean getBoolean(String path, Boolean defValue) {
-        return get(path).getBoolean(defValue);
+        Boolean value = config.getBoolean(path);
+        return value == null ? defValue : value;
     }
 
     public int getInt(String path) {
-        return get(path).getInt();
+        return config.getInt(path);
     }
 
     public int getInt(String path, Integer defValue) {
-        return get(path).getInt(defValue);
+        Integer value = config.getInt(path);
+        return value == null ? defValue : value;
     }
 
     private String getString(String path) {
-        return get(path).getString();
+        return config.getString(path);
     }
 
     public String getString(String path, String defValue) {
-        return get(path, defValue).getString(defValue);
+        String value = config.getString(path);
+        return value == null ? defValue : value;
     }
 
     public List<String> getStringList(String path) {
         try {
-            return get(path).getList(String.class);
+            return config.getStringList(path);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,46 +114,29 @@ public class YamlConfig {
     }
 
     public List<String> getStringList(String path, String whatToDelete) {
-        try {
-            List<String> list = getStringList(path);
-            List<String> newList = new ArrayList<>();
-
-            for (String str : list)
-                newList.add(str.replace(whatToDelete, ""));
-
-            return newList;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Collections.emptyList();
+        return config.getStringList(path).stream()
+                .map(str -> str.replace(whatToDelete, "")).collect(Collectors.toList());
     }
 
     public void reload() throws YamlException {
         try {
-            config = YamlConfigurationLoader.builder().path(file.toPath()).build().load();
-        } catch (ConfigurateException ex) {
+            config.load(file.toPath());
+        } catch (IOException ex) {
             throw new YamlException(ex);
         }
     }
 
     private void save() throws YamlException {
         try {
-            YamlConfigurationLoader.builder().path(file.toPath()).build().save(config);
-        } catch (ConfigurateException ex) {
+            config.save(file.toPath());
+        } catch (IOException ex) {
             throw new YamlException(ex);
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void set(String path, Object value) {
         try {
-            ConfigurationNode node = config.node((Object[]) path.split("\\."));
-            if (value instanceof List) {
-                node.setList(String.class, (List<String>) value);
-            } else {
-                node.set(value);
-            }
-
+            config.set(path, value);
             save();
         } catch (Exception e) {
             e.printStackTrace();

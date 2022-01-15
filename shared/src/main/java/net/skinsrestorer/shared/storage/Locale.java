@@ -107,7 +107,7 @@ public class Locale {
 
     public static void load(File path, SRLogger logger) {
         try {
-            YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
+            YamlConfig locale = new YamlConfig(path, "messages.yml");
             locale.saveDefaultConfig(null);
             locale.reload();
 
