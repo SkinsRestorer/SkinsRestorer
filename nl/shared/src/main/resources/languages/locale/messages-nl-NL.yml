@@ -13,132 +13,132 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "Verwijdert je skin."
+help-SkinClear-Other: "Verwijdert de skin van een andere speler."
+help-SkinUpdate: "Werkt je skin bij."
+help-SkinUpdate-Other: "Werkt de skin van een andere speler bij."
+help-SkinSet: "Stelt je skin in."
+help-Skinset-Other: "Stelt de skin van een andere speler in."
+help-SkinSet-Other-Url: "Stel een skin in via image_url.png link"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRreload: "Herlaadt het configuratiebestand."
+help-SRStatus: "Controleert plugin benodigde API-diensten."
+help-SRDrop: "Verwijdert spelers of skin gegevens."
+help-SRProps: "Geeft de huidige skin eigenschappen van de spelers weer."
+help-SRApply-Skin: "Pas de skin opnieuw toe voor de doelgebruiker."
+help-SRCreateCustom: "Maak een aangepaste server brede skin."
 #Syntax messages that appear when typing the command & in help
-syntax-Defaultcommand: " <skin/url>"
+syntax-Defaultcommand: " <skin/link>"
 syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
-syntax-SkinUrl: " <SkinUrl> [steve/slim]"
-syntax-SkinUpdate-Other: " <target>"
-syntax-SkinClear-Other: " <target>"
+syntax-SkinSet-Other: " <target> <skin/link>"
+syntax-SkinUrl: " <SkinLink> [steve/slim]"
+syntax-SkinUpdate-Other: " <doel>"
+syntax-SkinClear-Other: " <doel>"
 #Auto-completion messages that appear when typing the command
 completions-Skin: "<Skin>"
-completions-Skinname: "<SkinName>"
-completions-SkinUrl: "<SkinUrl>"
+completions-Skinname: "<SkinNaam>"
+completions-SkinUrl: "<SkinLink>"
 ####################
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Je skin is aangepast."
 #Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Je hebt %player's skin ingesteld."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Je skin is gewist."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Skin gewist voor speler %player."
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "&bJouw skin is bijgewerkt."
 #Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
+skinUpdateIssuer: "&bSkin bijgewerkt voor speler %player."
 #Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&bGegevens verwijderd voor %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
-skinCreateSuccess: "&2Skin %skin has been created!"
+skinCreateSuccess: "&bSkin %skin is aangemaakt!"
 #/sr reload
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Configuratie en taal bestanden zijn opnieuw geladen!"
 ############################
 #Wait & Cooldown messages #
 ############################
 #Informing the player when we did queue a custom skin.
-urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
+urlSkin-waitMinute: "&bUploaden skin, even geduld a.u.b...(Dit kan even duren)"
 #When a skin has been requested to many times from mojang directly.
-wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+wait-a-Minute: "&4Fout&8: &cWacht alsjeblieft een minuut voordat je die skin opnieuw aanvraagt. (Rate Limited)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldown: "&4Fout&8: &cJe kan je skin opnieuw aanpassen over &e%s &cseconden."
 ########################
 #Permissions messages #
 ########################
 #When the player does have access to "/skin" but not "/skin url"
-noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
+noPermission-Url: "&4Fout&8: &cJe hebt geen toegang om skins via een link in te stellen."
 #This is thrown on config.PerSkinPermissions
-noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
+noPermission-Skin: "&4Fout&8: Je hebt geen toestemming om deze skin in te stellen."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Fout&8: &cDeze skin is uitgeschakeld door een beheerder."
 #config.RestrictSkinUrls will make this line appear.
-urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
+urlSkin-DomainBlocked: "&4Fout&8: &cDit domein is niet toegestaan door de beheerder."
 ##################
 #Error messages #
 ##################
 #Thrown when no premium player was found from the mojang api
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4Fout:&8: &cPremium speler met die naam bestaat niet."
 #When a invalid skin (example: "null") is being set
-error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
+error-Invalid-Player: "&4Fout&8: &c%player is geen geldige gebruikersnaam of URL."
 #When a admin does try to update the skin of another player
-error-NoSkin: "&4Error&8: &cThis player has no skin set."
+error-NoSkin: "&4Fout&8: Deze speler heeft geen skin ingesteld."
 #when a admin does run /sr props on a player that does have no skin
-error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+error-NoSkin-Data: "&4Fout&8: &cGeen skin gegevens gevonden! Heeft deze speler een skin?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
-error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+error-Updating-Skin: "&4Fout&8: Er is een fout opgetreden tijdens het bijwerken van je skin. Probeer het later opnieuw!"
 #When a player does try to run /skin update while wearing a skin url
-error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
+error-Updating-Url: "&4Fout&8: &cJe kunt een skin op maat (link) niet bijwerken! \n&cRequest opnieuw met behulp van /skin url"
 #when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
+error-Updating-CustomSkin: "&4Fout&8: &cSkin kan niet worden bijgewerkt omdat het op maak is (url)."
 #when a player runs /skin url but does not provide a url
-error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+error-Invalid-SkinUrl: "&4Fout&8: &cOngeldige skin-url of formaat, \n&cProbeer je skin te uploaden naar imgur en rechts klik op 'Afbeeldingsadres kopiëren' \n&cVoor handleiding zie: &c&oskinsrestorer.net/skinurl"
 ######################
 #SkinsMenu messages #
 ######################
 #Messages appearing when using /skins (gui)
-skinsMenu-Open: "&2Opening the skins menu..."
-skinsMenu-Title: "&9Skins Menu - Page %page"
-skinsMenu-Select-Skin: "&2Click to select this skin"
-skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Clear-Skin: "&c&l[ &7Clear Skin&c&l ]"
-skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+skinsMenu-Open: "&2Openen skins menu..."
+skinsMenu-Title: "&9Skin Menu - Pagina %page"
+skinsMenu-Select-Skin: "&2klik om deze skin te selecteren"
+skinsMenu-PreviousPage: "&e&l«&7 Vorige pagina&e&l «"
+skinsMenu-Clear-Skin: "&c&l[ &7Verwijder Skin&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 Volgende pagina&a&l »"
 #######
 #API #
 #######
 #These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
-error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
-error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
-error-MS-API-OFFLINE: "&4Error&8: &cMineSkin API is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
-error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
-alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
+error-SkinUrl-Timeout: "&4MS fout&8: &cAPI onderbreking tijdens het uploaden van je &cskin. Probeer het later opnieuw. (MineSkin)"
+error-Generic-error: "&4Fout&8: &cEr is een fout opgetreden bij het ophalen van de skin gegevens, probeer het later opnieuw!"
+error-MOJANG-API-OFFLINE: "&4Fout&8: &cMojang API is momenteel offline, helaas zijn we niet in staat om je gearchiveerde skin te vinden. \n&cProbeer het later opnieuw..."
+error-MS-API-OFFLINE: "&4Fout&8: &cMineSkin API is momenteel offline, helaas kunnen we op dit moment geen aangepaste skin maken. \n&cProbeer het later opnieuw..."
+error-SERVER-OFFLINE: "&4Error&8: &cServer heeft verbindingsproblemen, probeer het later opnieuw..."
+alt-API-FAILED: "&4Error&8: &cSkin Data API is overbelast, probeer het later opnieuw!"
+ms-API-FAILED: "&4Error&8: &cMineSkin API is overbelast, probeer het later opnieuw!"
 ###############
 #CUSTOM HELP #
 ###############
 #[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
   - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
-  - "    &2/skin clear &7-&f Clears your skin."
-  - "    &2/skin update &7-&f Updates your skin."
+  - "    &2/skin <skinnaam> &7-&f verkorte versie van \"/skin set\"."
+  - "    &2/skin set <skinnaam> &7-&f verandert je skin."
+  - "    &2/skin url <skinnaam> &7-&f een skin instellen via Image_url.png"
+  - "    &2/skin clear &7-&f Verwijdert je skin."
+  - "    &2/skin update &7-&f werkt je skin bij."
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #Miscellaneous #
 #################
 #When everything is working as intended :)
-status-OK: "&2Mojang API connection successful!"
+status-OK: "&2Mojang API verbinding succesvol!"
 #Shown when your using a outdated version of skinsrestorer
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+outdated: "&4Je gebruikt een verouderde versie van SkinsRestorer!\n&cWerk bij naar de laatste versie van Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
 version: '${version}'
