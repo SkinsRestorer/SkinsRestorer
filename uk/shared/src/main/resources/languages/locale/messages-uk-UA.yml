@@ -83,7 +83,7 @@ urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the adm
 #Error messages #
 ##################
 #Thrown when no premium player was found from the mojang api
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4Помилка&8: &cПреміум гравеця із таким іменем не існує."
 #When a invalid skin (example: "null") is being set
 error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
 #When a admin does try to update the skin of another player
