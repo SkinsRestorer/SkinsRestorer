@@ -13,20 +13,20 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "Очищает ваш скин."
+help-SkinClear-Other: "Очищает скин другого игрока."
+help-SkinUpdate: "Обновляет ваш скин."
+help-SkinUpdate-Other: "Обновляет скин другого игрока."
+help-SkinSet: "Устанавливает скин."
+help-Skinset-Other: "Устанавливает скин другого игрока."
+help-SkinSet-Other-Url: "Установить скин по ссылке image_url.png"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRreload: "Перезагружает файл конфигурации."
+help-SRStatus: "Проверяет плагину необходимые API сервисы."
+help-SRDrop: "Удаляет данные о игроках или скине."
+help-SRProps: "Отображает текущие свойства скина игрока."
+help-SRApply-Skin: "Повторное применение скина для целевого пользователя."
+help-SRCreateCustom: "Создать пользовательский скин для всего сервера."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
@@ -42,7 +42,7 @@ completions-SkinUrl: "<SkinUrl>"
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Ваш скин изменён."
 #Success message displayed when using /sr set <player> <skin> command
 adminSetSkin: "&2You set %player's skin."
 #Success message to player whose skin was cleared
