@@ -6,6 +6,6 @@ dependencies {
     compileOnly("org.spongepowered:spongeapi:7.3.0")
     annotationProcessor("org.spongepowered:spongeapi:7.3.0")
 
-    implementation("org.bstats:bstats-sponge:2.2.1")
+    implementation("org.bstats:bstats-sponge:3.0.0")
     implementation("co.aikar:acf-sponge:0.5.0-SNAPSHOT")
 }
