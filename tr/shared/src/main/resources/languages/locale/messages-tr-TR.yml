@@ -13,24 +13,24 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "Skinini temizler."
+help-SkinClear-Other: "Başka bir oyuncunun Skinini temizler."
+help-SkinUpdate: "Skininizi günceller."
+help-SkinUpdate-Other: "Başka bir oyuncunun Skinini günceller."
+help-SkinSet: "Skininizi ayarlar."
+help-Skinset-Other: "Başka bir oyuncunun Skinini ayarlar."
+help-SkinSet-Other-Url: "(image_url.png) Bağlantısıyla bir Skin ayarlayın."
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRreload: "Yapılandırma dosyasını yeniden yükler."
+help-SRStatus: "Eklentinin gerekli API hizmetlerini kontrol eder."
+help-SRDrop: "Oyuncuların Skin verilerini kaldırır."
+help-SRProps: "Oyuncuların mevcut Skin özelliklerini görüntüler."
+help-SRApply-Skin: "Hedef kullanıcı için Skini yeniden uygulayın."
+help-SRCreateCustom: "Özel bir sunucu geniş Skin oluşturun."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
+syntax-SkinSet-Other: " <target><skin/url>"
 syntax-SkinUrl: " <SkinUrl> [steve/slim]"
 syntax-SkinUpdate-Other: " <target>"
 syntax-SkinClear-Other: " <target>"
@@ -42,103 +42,103 @@ completions-SkinUrl: "<SkinUrl>"
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Skin'in değiştirildi."
 #Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2%player isimli oyuncunun Skin'ini ayarladın."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Skin'in kaldırıldı."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2%player isimli oyuncunun Skin'i kaldırıldı."
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "Skin'in güncellendi."
 #Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
+skinUpdateIssuer: "&2%player isimli oyuncunun Skin'i güncellendi."
 #Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&2%playerOrSkin %targets için veri düştü."
 #Success message when using /sr CreateCustom command
-skinCreateSuccess: "&2Skin %skin has been created!"
+skinCreateSuccess: "&2%skin İsimli Skin oluşturuldu!"
 #/sr reload
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2Yapılandırma ve Yerel ayar yeniden yüklendi!"
 ############################
 #Wait & Cooldown messages #
 ############################
 #Informing the player when we did queue a custom skin.
-urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
+urlSkin-waitMinute: "&2Skin yükleniyor, lütfen bekleyin... (Bu biraz zaman alabilir)"
 #When a skin has been requested to many times from mojang directly.
-wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+wait-a-Minute: "&4Hata&8: &cLütfen o Skini tekrar istemeden önce bir dakika bekleyin. (Oran Sınırlı)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldown: "&4Hata&8: &cSkininizi &e%s &csaniye içinde tekrar değiştirebilirsiniz."
 ########################
 #Permissions messages #
 ########################
 #When the player does have access to "/skin" but not "/skin url"
-noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
+noPermission-Url: "&4Hata&8: &cSkinleri URL'ye göre ayarlama izniniz yok."
 #This is thrown on config.PerSkinPermissions
-noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
+noPermission-Skin: "&4Hata&8: &cBu Skini ayarlama izniniz yok."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4Hata&8: &cBu Skin bir yönetici tarafından devre dışı bırakıldı."
 #config.RestrictSkinUrls will make this line appear.
-urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
+urlSkin-DomainBlocked: "&4Hata&8: &cBu etki alanına yönetici tarafından izin verilmedi."
 ##################
 #Error messages #
 ##################
 #Thrown when no premium player was found from the mojang api
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4Hata&8: &cBu ada sahip premium oyuncu mevcut değil."
 #When a invalid skin (example: "null") is being set
-error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
+error-Invalid-Player: "&4Hata&8: &c%player geçerli bir kullanıcı adı veya URL değil."
 #When a admin does try to update the skin of another player
-error-NoSkin: "&4Error&8: &cThis player has no skin set."
+error-NoSkin: "&4Hata&8: &cBu oyuncunun Skin seti yok."
 #when a admin does run /sr props on a player that does have no skin
-error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+error-NoSkin-Data: "&4Hata&8: &cSkin verisi alınmadı! Bu oyuncunun Skini var mı?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
-error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+error-Updating-Skin: "&4Hata&8: &cSkininiz güncellenirken bir hata oluştu. Lütfen daha sonra tekrar deneyiniz!"
 #When a player does try to run /skin update while wearing a skin url
-error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
+error-Updating-Url: "&4Hata&8: &cÖzel url Skinlerini güncelleyemezsiniz!\n&c/skin url'sini kullanarak tekrar istekte bulunun"
 #when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
+error-Updating-CustomSkin: "&4Hata&8: &cÖzel olduğu için Skin güncellenemiyor."
 #when a player runs /skin url but does not provide a url
-error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+error-Invalid-SkinUrl: "&4Hata&8: &cGeçersiz Skin URL'si veya biçimi,\n&cCildinizi imgur'a yüklemeyi deneyin ve 'resim adresini kopyala'yı' sağ tıklayın\n&cKılavuz için bakınız: &c&oskinsrestorer.net/skinurl"
 ######################
 #SkinsMenu messages #
 ######################
 #Messages appearing when using /skins (gui)
-skinsMenu-Open: "&2Opening the skins menu..."
-skinsMenu-Title: "&9Skins Menu - Page %page"
-skinsMenu-Select-Skin: "&2Click to select this skin"
-skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Clear-Skin: "&c&l[ &7Clear Skin&c&l ]"
-skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+skinsMenu-Open: "&2Skin menüsü açılıyor..."
+skinsMenu-Title: "&9Skin'ler Menüsü - Sayfa %page"
+skinsMenu-Select-Skin: "&2Bu Skini seçmek için tıkla"
+skinsMenu-PreviousPage: "&e&l«&7 Önceki Sayfa&e&l «"
+skinsMenu-Clear-Skin: "&c&l[ &7Skin Temizle&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 Sonraki Sayfa&a&l »"
 #######
 #API #
 #######
 #These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
-error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
-error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
-error-MS-API-OFFLINE: "&4Error&8: &cMineSkin API is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
-error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
-alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
+error-SkinUrl-Timeout: "&4MS Hatası&8: &cSkininizi yüklerken API zaman aşımına uğradı. Lütfen daha sonra tekrar deneyiniz. (MineSkin)"
+error-Generic-error: "&4Hata&8: &cSkin verileri istenirken bir hata oluştu, lütfen daha sonra tekrar deneyin!"
+error-MOJANG-API-OFFLINE: "&4Hata&8: &cMojang API şu anda çevrimdışı, ne yazık ki arşivlenmiş Skininizi bulamadık.\n&cLütfen daha sonra tekrar deneyiniz..."
+error-MS-API-OFFLINE: "&4Hata&8: &cMineSkin API şu anda çevrimdışı, ne yazık ki şu anda özel Skinler oluşturamıyoruz.\n&cLütfen daha sonra tekrar deneyiniz..."
+error-SERVER-OFFLINE: "&4Hata&8: &cSunucuda bağlantı sorunları var, lütfen daha sonra tekrar deneyin..."
+alt-API-FAILED: "&4Hata&8: &cSkin Data API aşırı yüklendi, lütfen daha sonra tekrar deneyin!"
+ms-API-FAILED: "&4Hata&8: &cMineSkin API aşırı yüklendi, lütfen daha sonra tekrar deneyin!"
 ###############
 #CUSTOM HELP #
 ###############
 #[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
   - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
-  - "    &2/skin clear &7-&f Clears your skin."
-  - "    &2/skin update &7-&f Updates your skin."
+  - "    &2/skin <skinname> &7-&f \"/skin set\" İfadesinin kısaltılmış versiyonu."
+  - "    &2/skin set <skinname> &7-&f Skininizi değiştirir."
+  - "    &2/skin url <skinname> &7-&f Image_url.png ile bir Skin ayarlayın."
+  - "    &2/skin clear &7-&f Skininizi temizler."
+  - "    &2/skin update &7-&f Skininizi günceller."
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #Miscellaneous #
 #################
 #When everything is working as intended :)
-status-OK: "&2Mojang API connection successful!"
+status-OK: "&2Mojang API bağlantısı başarılı!"
 #Shown when your using a outdated version of skinsrestorer
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+outdated: "&4SkinsRestorer'ın eski bir sürümünü kullanıyorsun!\n&cAşağıdaki linkten güncel versiyonu indirebilirsin: \n&ewww.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
 version: '${version}'
