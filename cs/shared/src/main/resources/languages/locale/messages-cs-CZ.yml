@@ -13,20 +13,20 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
-help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "Vymaže tvůj vzhled."
+help-SkinClear-Other: "Vymaže vzhled jiného hráče."
+help-SkinUpdate: "Aktualizuje svůj vzhled."
+help-SkinUpdate-Other: "Aktualizuje vzhled jiného hráče."
+help-SkinSet: "Nastaví vzhled."
+help-Skinset-Other: "Nastaví vzhled jiného hráče."
+help-SkinSet-Other-Url: "Nastaví vzhled podle odkazu image_url.png"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRreload: "Znovu načte konfigurační soubor."
+help-SRStatus: "Zkontroluje potřebné služby API pluginu."
+help-SRDrop: "Odstraní data hráče nebo vzhledu."
+help-SRProps: "Zobrazí aktuální vlastnosti vzhledu hráčů."
+help-SRApply-Skin: "Znovu aplikujte vzhled pro cílového hráče."
+help-SRCreateCustom: "Vytvořit vlastní vzhled pro celý server."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
@@ -42,21 +42,21 @@ completions-SkinUrl: "<SkinUrl>"
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Váš vzhled byl změněn."
 #Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2Nastavil jsi vzhled hráče %player."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Váš vzhled byl vymazán."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2Vzhled hráče %player byl vymazán."
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "&2Váš vzhled byl změněn."
 #Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
+skinUpdateIssuer: "&2Vzhled hráče %player byl aktualizován."
 #Success message when using /sr drop <player/skin> command
 dataDropped: "&2Data dropped for %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
-skinCreateSuccess: "&2Skin %skin has been created!"
+skinCreateSuccess: "&2Vzhled %skin byl vytvořen!"
 #/sr reload
 reload: "&2Config and Locale has been reloaded!"
 ############################
