@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -31,6 +32,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 @RequiredArgsConstructor
 public class PlayerResourcePackStatus implements Listener {
     private final SkinsRestorer plugin;
+    private final SRLogger log;
 
     @EventHandler
     public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
