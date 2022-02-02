@@ -20,6 +20,7 @@
 package net.skinsrestorer.bungee.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -39,6 +40,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
+    private final boolean isOnlineMode = BungeeCord.getInstance().getConfig().isOnlineMode();
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
@@ -52,7 +54,13 @@ public class LoginListener implements Listener {
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final PendingConnection connection = event.getConnection();
-            final String skin = plugin.getSkinStorage().getDefaultSkinName(connection.getName());
+            final String name = connection.getName();
+
+            // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
+            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+                return;
+
+            final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
             try {
                 // TODO: add default skinurl support
