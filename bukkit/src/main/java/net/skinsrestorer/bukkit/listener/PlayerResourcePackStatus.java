@@ -41,8 +41,8 @@ public class PlayerResourcePackStatus implements Listener {
         if (Config.DISABLE_RESOURCE_PACK_FIX)
             return;
         
-        // Wait for success or failure
-        if (event.getStatus() == PlayerResourcePackStatusEvent.Status.ACCEPTED)
+        // Cancel if ResourcePack has not been loaded.
+        if (event.getStatus() != PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
