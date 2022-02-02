@@ -53,6 +53,7 @@ public class Config {
     public static String MYSQL_PLAYER_TABLE = "Players";
     public static String MYSQL_CONNECTION_OPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
+    public static boolean ALWAYS_APPLY_PREMIUM = false;
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
     public static String MINESKIN_API_KEY = "";
@@ -98,6 +99,7 @@ public class Config {
         DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
         DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
+        ALWAYS_APPLY_PREMIUM = config.getBoolean("AlwaysApplyPremium", ALWAYS_APPLY_PREMIUM);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
