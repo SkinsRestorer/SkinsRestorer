@@ -56,11 +56,11 @@ public class Config {
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
     public static String MINESKIN_API_KEY = "";
+    public static boolean RESOURCE_PACK_FIX = true;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
     public static boolean DISABLE_ON_JOIN_SKINS = false;
-    public static boolean DISABLE_RESOURCE_PACK_FIX = false;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
     public static boolean ENABLE_PROTOCOL_LISTENER = false;
     public static boolean DEBUG = false;
@@ -101,16 +101,16 @@ public class Config {
         MYSQL_SKIN_TABLE = config.getString("MySQL.SkinTable", MYSQL_SKIN_TABLE);
         MYSQL_PLAYER_TABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYER_TABLE);
         MYSQL_CONNECTION_OPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTION_OPTIONS);
-        DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
-        DISABLE_RESOURCE_PACK_FIX = config.getBoolean("DisableResourcePackFix", DISABLE_RESOURCE_PACK_FIX);
-        DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
+        RESOURCE_PACK_FIX = config.getBoolean("ResourcePackFix", RESOURCE_PACK_FIX);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
+        DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
+        DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener", ENABLE_PROTOCOL_LISTENER);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
