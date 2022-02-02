@@ -34,7 +34,7 @@ public class PlayerResourcePackStatus implements Listener {
 
     @EventHandler
     public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
-        if (Config.RESOURCE_PACK_FIX)
+        if (!Config.RESOURCE_PACK_FIX)
             return;
 
         // Cancel if ResourcePack has not been loaded.
