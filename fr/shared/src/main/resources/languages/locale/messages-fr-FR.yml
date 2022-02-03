@@ -54,7 +54,7 @@ skinUpdateSuccess: "&2Your skin has been updated."
 #Success message sent to player that used /sr update <player> command
 skinUpdateIssuer: "&2Skin updated for player %player."
 #Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&2Données supprimées pour %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin has been created!"
 #/sr reload
@@ -78,36 +78,36 @@ noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
 skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
 #config.RestrictSkinUrls will make this line appear.
-urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
+urlSkin-DomainBlocked: "&4Error&8: &cCe domaine n'est pas autorisé par l'administrateur."
 ##################
 #Error messages #
 ##################
 #Thrown when no premium player was found from the mojang api
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4Error&8: &cAucun joueur premium avec ce pseudo n'existe."
 #When a invalid skin (example: "null") is being set
 error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
 #When a admin does try to update the skin of another player
-error-NoSkin: "&4Error&8: &cThis player has no skin set."
+error-NoSkin: "&4Error&8: &cCe joueur n'a pas de skin défini."
 #when a admin does run /sr props on a player that does have no skin
-error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+error-NoSkin-Data: "&4Error&8: &cAucune donnée de skin acquise ! Est-ce que ce joueur a un skin ?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
-error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+error-Updating-Skin: "&4Error&8: &cUne erreur est survenue lors de la mise à jour de votre skin. Veuillez réessayer ultérieurement !"
 #When a player does try to run /skin update while wearing a skin url
 error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
 #when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
+error-Updating-CustomSkin: "&4Error&8: &cLe skin ne peut pas être mis à jour car il est personnalisé."
 #when a player runs /skin url but does not provide a url
-error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+error-Invalid-SkinUrl: "&4Error&8: &cL'url ou le format du thème est invalide, \n&cEssayez de télécharger votre skin sur imgur et faites un clic droit sur 'Copier l'adresse de l'image' \n&cPour le guide, voir : &c&oskinsrestorer.net/skinurl"
 ######################
 #SkinsMenu messages #
 ######################
 #Messages appearing when using /skins (gui)
-skinsMenu-Open: "&2Opening the skins menu..."
+skinsMenu-Open: "&2Ouverture du menu des skins..."
 skinsMenu-Title: "&9Skins Menu - Page %page"
-skinsMenu-Select-Skin: "&2Click to select this skin"
-skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Clear-Skin: "&c&l[ &7Clear Skin&c&l ]"
-skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+skinsMenu-Select-Skin: "&2Cliquez pour sélectionner ce skin"
+skinsMenu-PreviousPage: "&e&l«&7 Page précédente&e&l «"
+skinsMenu-Clear-Skin: "&c&l[ &7Effacer le skin&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 Page Suivante&a&l »"
 #######
 #API #
 #######
@@ -115,19 +115,19 @@ skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
 error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
 error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
 error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
-error-MS-API-OFFLINE: "&4Error&8: &cMineSkin API is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
-error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
-alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
+error-MS-API-OFFLINE: "&4Erreur&8: &cMineSkin est actuellement hors ligne, nous ne pouvons malheureusement pas appliquer de skins personnalisés pour le moment. \n&cVeuillez réessayer plus tard..."
+error-SERVER-OFFLINE: "&4Erreur&8: &cLe serveur a des problèmes de connexion, veuillez réessayer plus tard..."
+alt-API-FAILED: "&4Error&8: &cSkin Data API est sturée, veuillez réessayer plus tard!"
+ms-API-FAILED: "&4Erreur&8: &cL'API MineSkin est surchargée, veuillez réessayer plus tard !"
 ###############
 #CUSTOM HELP #
 ###############
 #[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
   - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
+  - "    &2/skin <skinname> &7-&f Version réduite de \"/skin set\"."
+  - "    &2/skin set <skinname> &7-&f Modifie votre skin."
+  - "    &2/skin url <skinname> &7-&f Définir un skin par une image tel que : Image_url.png"
   - "    &2/skin clear &7-&f Clears your skin."
   - "    &2/skin update &7-&f Rétablit votre skin."
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
