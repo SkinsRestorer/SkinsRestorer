@@ -13,20 +13,20 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of another player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of another player."
+help-SkinClear: "Entfernt deinen Skin."
+help-SkinClear-Other: "Entfernt den Skin eines anderen Spielers."
+help-SkinUpdate: "Aktualisiert deinen Skin."
+help-SkinUpdate-Other: "Aktualisiert den Skin eines anderen Spielers."
 help-SkinSet: "Sets you skin."
-help-Skinset-Other: "Sets the skin of another player."
+help-Skinset-Other: "Setzt den Skin eines anderen Spielers."
 help-SkinSet-Other-Url: "Set a skin by image_url.png link"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
+help-SRreload: "Lädt die Konfigurationsdatei neu."
 help-SRStatus: "Checks plugin needed API services."
 help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
+help-SRProps: "Zeigt die aktuellen Skin-Eigenschaften des Spielers an."
 help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRCreateCustom: "Erstelle einen benutzerdefinierten Serverweiten Skin."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
@@ -42,11 +42,11 @@ completions-SkinUrl: "<SkinUrl>"
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2Dein Skin wurde geändert."
 #Success message displayed when using /sr set <player> <skin> command
 adminSetSkin: "&2You set %player's skin."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2Dein Skin wurde entfernt."
 #Success message sent to player that used /sr clear <player> command
 skinClearIssuer: "&2Skin cleared for player %player."
 #Success message to player whose skin was updated
