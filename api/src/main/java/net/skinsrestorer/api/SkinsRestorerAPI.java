@@ -28,9 +28,9 @@ import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.Base64;
 
 /**
@@ -117,8 +117,8 @@ public abstract class SkinsRestorerAPI {
     /**
      * Set SkinData to SkinsRestorer directly
      *
-     * @param skinName Skin name
-     * @param textures Property object
+     * @param skinName  Skin name
+     * @param textures  Property object
      * @param timestamp timestamp string in millis (leave null for current)
      */
     public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
@@ -133,7 +133,7 @@ public abstract class SkinsRestorerAPI {
      * Generates a skin using the https://mineskin.org/ api
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
-     * @param url pointing to a skin image url
+     * @param url      pointing to a skin image url
      * @param skinType can be null, steve or slim
      * @return Custom skin property containing "value" and "signature"
      * @throws SkinRequestException on error
