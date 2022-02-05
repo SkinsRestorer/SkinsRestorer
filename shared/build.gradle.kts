@@ -6,13 +6,13 @@ dependencies {
 
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.4")
+    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.5")
     implementation("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")
     }
 
     compileOnly("co.aikar:acf-core:0.5.0-SNAPSHOT")
-    compileOnly("org.slf4j:slf4j-api:1.7.32")
+    compileOnly("org.slf4j:slf4j-api:1.7.35")
 
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")

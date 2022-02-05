@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -28,9 +28,9 @@ import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
+import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.Base64;
 
 /**
@@ -112,6 +112,34 @@ public abstract class SkinsRestorerAPI {
      **/
     public IProperty getSkinData(String skinName) {
         return skinStorage.getSkinData(skinName).orElse(null);
+    }
+
+    /**
+     * Set SkinData to SkinsRestorer directly
+     *
+     * @param skinName Skin name
+     * @param textures Property object
+     * @param timestamp timestamp string in millis (leave null for current)
+     */
+    public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
+        if (timestamp == null) {
+            skinStorage.setSkinData(skinName, textures);
+        } else {
+            skinStorage.setSkinData(skinName, textures, timestamp);
+        }
+    }
+
+    /**
+     * Generates a skin using the https://mineskin.org/ api
+     * [WARNING] MineSkin api key might be REQUIRED in the future.
+     *
+     * @param url pointing to a skin image url
+     * @param skinType can be null, steve or slim
+     * @return Custom skin property containing "value" and "signature"
+     * @throws SkinRequestException on error
+     */
+    public IProperty genSkinUrl(String url, @Nullable String skinType) throws SkinRequestException {
+        return mineSkinAPI.genSkin(url, skinType, null);
     }
 
     /**

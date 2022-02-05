@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.velocity;
 
+import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
@@ -26,6 +27,7 @@ import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
@@ -40,8 +42,12 @@ public class SkinApplierVelocity {
     private final SRLogger log;
 
     protected void applySkin(Player player, IProperty property) {
-        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
-        sendUpdateRequest(player, (Property) property.getHandle());
+        plugin.getProxy().getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
+            if (event.getResult() != ResultedEvent.GenericResult.allowed())
+                return;
+            player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
+            sendUpdateRequest(player, (Property) property.getHandle());
+        });
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {

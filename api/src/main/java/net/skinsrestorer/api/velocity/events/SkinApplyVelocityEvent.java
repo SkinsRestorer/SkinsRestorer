@@ -17,40 +17,37 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.bukkit.events;
+package net.skinsrestorer.api.velocity.events;
 
+import com.velocitypowered.api.event.ResultedEvent;
+import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import net.skinsrestorer.api.property.IProperty;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 @Getter
-public class SkinApplyBukkitEvent extends Event implements Cancellable {
-    public static final HandlerList HANDLERS = new HandlerList();
+public class SkinApplyVelocityEvent implements ResultedEvent<ResultedEvent.GenericResult> {
     private final Player who;
     @Setter
     private IProperty property;
-    @Setter
-    private boolean isCancelled = false;
+    @NonNull
+    private GenericResult result = GenericResult.allowed();
 
-    public SkinApplyBukkitEvent(@NotNull Player who, IProperty property) {
-        super(true);
-        this.property = property;
+    public SkinApplyVelocityEvent(@Nullable Player who, IProperty property) {
         this.who = who;
+        this.property = property;
     }
 
-    @SuppressWarnings("unused")
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
+    public GenericResult result() {
+        return result;
     }
 
-    @NotNull
     @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
+    public void setResult(GenericResult result) {
+        this.result = Objects.requireNonNull(result);
     }
 }

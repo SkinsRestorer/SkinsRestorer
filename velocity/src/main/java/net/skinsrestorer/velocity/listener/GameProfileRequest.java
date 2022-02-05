@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -38,10 +38,12 @@ public class GameProfileRequest {
         if (Config.DISABLE_ON_JOIN_SKINS)
             return;
 
-        if (event.isOnlineMode())
+        final String name = event.getUsername();
+
+        // Skip online players if: enabled & no skinset & defaultskins.premium false
+        if (!Config.ALWAYS_APPLY_PREMIUM && event.isOnlineMode() && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
             return;
 
-        final String name = event.getUsername();
         final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
         // TODO: default skinurl support

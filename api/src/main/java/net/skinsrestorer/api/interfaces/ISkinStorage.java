@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -34,4 +34,8 @@ public interface ISkinStorage {
     IProperty getSkinForPlayer(String skinName) throws SkinRequestException;
 
     void removeSkin(String playerName);
+
+    void setSkinData(String skinName, IProperty textures);
+
+    void setSkinData(String skinName, IProperty textures, long timestamp);
 }
