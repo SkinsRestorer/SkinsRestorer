@@ -36,7 +36,7 @@ import java.util.Base64;
 /**
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a> <br>
  * For more info please refer first to <a href="https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a> <br>
- * Advanced help or getting problems? join our discord before submitting issues!
+ * Advanced help or getting problems? join our discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
 public abstract class SkinsRestorerAPI {
