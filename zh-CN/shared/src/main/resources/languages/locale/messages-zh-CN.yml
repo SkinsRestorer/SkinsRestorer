@@ -13,20 +13,20 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "清除你的皮肤。"
-help-SkinClear-Other: "清除另一个玩家的皮肤。"
-help-SkinUpdate: "更新你的皮肤。"
-help-SkinUpdate-Other: "更新另一个玩家的皮肤。"
-help-SkinSet: "设置你的皮肤。"
-help-Skinset-Other: "为另一个玩家设置皮肤。"
+help-SkinClear: "清除你的皮肤"
+help-SkinClear-Other: "清除另一位玩家的皮肤"
+help-SkinUpdate: "更新你的皮肤"
+help-SkinUpdate-Other: "更新另一位玩家的皮肤"
+help-SkinSet: "设置你的皮肤"
+help-Skinset-Other: "为另一位玩家设置皮肤"
 help-SkinSet-Other-Url: "通过图片链接（image_url.png）设置皮肤"
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "重新加载配置文件。"
-help-SRStatus: "检查插件所需的 API 服务。"
-help-SRDrop: "移除玩家或皮肤的数据。"
-help-SRProps: "显示玩家当前皮肤的属性。"
-help-SRApply-Skin: "为目标用户重新应用皮肤。"
-help-SRCreateCustom: "创建服务器范围的自定义皮肤。"
+help-SRreload: "重新加载配置文件"
+help-SRStatus: "检查插件所需的 API 服务"
+help-SRDrop: "移除玩家或皮肤的数据"
+help-SRProps: "显示玩家当前皮肤的属性"
+help-SRApply-Skin: "为目标用户重新应用皮肤"
+help-SRCreateCustom: "创建一个自定义的服务器范围的皮肤"
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
@@ -46,7 +46,7 @@ skinChangeSuccess: "&2你的皮肤已改变。"
 #Success message displayed when using /sr set <player> <skin> command
 adminSetSkin: "&2你为 %player 设置了皮肤。"
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2你的皮肤已清除。"
+skinClearSuccess: "&2你的皮肤已重置。"
 #Success message sent to player that used /sr clear <player> command
 skinClearIssuer: "&2已为&2 %player 清除皮肤。"
 #Success message to player whose skin was updated
@@ -67,7 +67,7 @@ urlSkin-waitMinute: "&2正在上传皮肤，请稍候... （这可能需要一�
 #When a skin has been requested to many times from mojang directly.
 wait-a-Minute: "&4错误&8: &c请稍等片刻后再请求该皮肤。（访问频率限制）"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4错误&8: &c你可以在 &e%s &c秒后再次更换皮肤。"
+skinCooldown: "&4错误&8: &c你需等候 &e%s &c秒后再次更换皮肤。"
 ########################
 #Permissions messages #
 ########################
@@ -125,11 +125,11 @@ ms-API-FAILED: "&4错误&8: &cMineSkin API 过载，请稍后再试！"
 #[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
   - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f 简化版本的 \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f 更改你的皮肤。"
+  - "    &2/skin <skinname> &7-&f 简化版本的 \"/skin set\""
+  - "    &2/skin set <skinname> &7-&f 更改你的皮肤"
   - "    &2/skin url <skinname> &7-&f 通过图像链接（Image_url.png）设置皮肤"
-  - "    &2/skin clear &7-&f 清除你的皮肤。"
-  - "    &2/skin update &7-&f 更新你的皮肤。"
+  - "    &2/skin clear &7-&f 清除你的皮肤"
+  - "    &2/skin update &7-&f 更新你的皮肤"
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
