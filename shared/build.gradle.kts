@@ -12,7 +12,7 @@ dependencies {
     }
 
     compileOnly("co.aikar:acf-core:0.5.0-SNAPSHOT")
-    compileOnly("org.slf4j:slf4j-api:1.7.35")
+    compileOnly("org.slf4j:slf4j-api:1.7.36")
 
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
