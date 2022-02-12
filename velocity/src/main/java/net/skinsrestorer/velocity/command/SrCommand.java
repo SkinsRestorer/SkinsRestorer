@@ -222,7 +222,7 @@ public class SrCommand extends BaseCommand {
                 plugin.getSkinStorage().setSkinData(skinName, skinProps);
                 for (Player player : proxy.getAllPlayers()) {
                     String pName = player.getUsername();
-                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinStorage().setSkinNameOfPlayer(pName, skinName); // set player to "whitespaced" name then reload skin
                     plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
                 }
             } catch (SkinRequestException e) {

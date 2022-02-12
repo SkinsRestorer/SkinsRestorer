@@ -57,7 +57,7 @@ public class LoginListener implements Listener {
             final String name = connection.getName();
 
             // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinOfPlayer(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
                 return;
 
             final String skin = plugin.getSkinStorage().getDefaultSkinName(name);

@@ -33,10 +33,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -192,7 +189,7 @@ public class SkinStorage implements ISkinStorage {
 
                 return Optional.of(lines.get(0));
             } catch (MalformedInputException e) {
-                removeSkin(playerName);
+                removeSkinOfPlayer(playerName);
             } catch (IOException e) {
                 e.printStackTrace();
             }

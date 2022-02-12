@@ -41,7 +41,7 @@ public class GameProfileRequest {
         final String name = event.getUsername();
 
         // Skip online players if: enabled & no skinset & defaultskins.premium false
-        if (!Config.ALWAYS_APPLY_PREMIUM && event.isOnlineMode() && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+        if (!Config.ALWAYS_APPLY_PREMIUM && event.isOnlineMode() && !plugin.getSkinStorage().getSkinOfPlayer(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
             return;
 
         final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
