@@ -12,5 +12,6 @@
     "com.viaversion:viaversion"
   ],
   "labels": [
-  "renovate"]
+    "renovate"
+  ]
 }

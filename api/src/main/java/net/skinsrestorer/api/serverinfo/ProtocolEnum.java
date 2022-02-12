@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public enum ProtocolEnum {
 
     MINECRAFT_1_8(47),

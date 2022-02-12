@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -180,7 +179,7 @@ public class SkinStorage implements ISkinStorage {
                 List<String> lines = Files.readAllLines(playerFile.toPath());
 
                 // Maybe useless
-                if (lines.size() < 1) {
+                if (lines.isEmpty()) {
                     removeSkin(playerName);
                     return Optional.empty();
                 }
@@ -640,7 +639,7 @@ public class SkinStorage implements ISkinStorage {
             if (!getSkinName(playerName).isPresent() || clear) {
                 final List<String> skins = Config.DEFAULT_SKINS;
 
-                String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0);
+                String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0); //todo reuse random
 
                 // return player name if there are no default skins set
                 return randomSkin != null ? randomSkin : playerName;

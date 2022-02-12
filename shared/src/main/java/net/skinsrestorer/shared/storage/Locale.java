@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 public class Locale {
-    public static final String[] IGNORE_PREFIX = {
+    private static final String[] IGNORE_PREFIX = {
             "PREFIX",
             "HELP_",
             "SYNTAX_",

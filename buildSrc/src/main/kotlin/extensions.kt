@@ -1,5 +1,4 @@
-import io.papermc.paperweight.util.constants.*
-import io.papermc.paperweight.userdev.PaperweightUserExtension
+import io.papermc.paperweight.util.constants.DEV_BUNDLE_CONFIG
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ExternalModuleDependency
@@ -49,4 +48,5 @@ fun DependencyHandlerScope.paperDevBundle(
     ext: String? = null,
     devBundleConfigurationName: String = DEV_BUNDLE_CONFIG,
     configurationAction: ExternalModuleDependency.() -> Unit = {}
-): ExternalModuleDependency = devBundleConfigurationName(group, artifactId, version, configuration, classifier, ext, configurationAction)
+): ExternalModuleDependency =
+    devBundleConfigurationName(group, artifactId, version, configuration, classifier, ext, configurationAction)
