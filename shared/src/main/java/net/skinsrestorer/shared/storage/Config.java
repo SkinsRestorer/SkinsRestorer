@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -53,6 +53,7 @@ public class Config {
     public static String MYSQL_PLAYER_TABLE = "Players";
     public static String MYSQL_CONNECTION_OPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
     public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
+    public static boolean ALWAYS_APPLY_PREMIUM = false;
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
     public static String MINESKIN_API_KEY = "";
@@ -61,6 +62,7 @@ public class Config {
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
     public static boolean DISABLE_ON_JOIN_SKINS = false;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
+    public static boolean ENABLE_PROTOCOL_LISTENER = false;
     public static boolean DEBUG = false;
 
     // UPCOMING MULTIPLE LANGUAGE SUPPORT
@@ -102,12 +104,14 @@ public class Config {
         DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
         DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
         NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
+        ALWAYS_APPLY_PREMIUM = config.getBoolean("AlwaysApplyPremium", ALWAYS_APPLY_PREMIUM);
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
+        ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener", ENABLE_PROTOCOL_LISTENER);
         DEBUG = config.getBoolean("Debug", DEBUG);
 
         //__Default__Skins

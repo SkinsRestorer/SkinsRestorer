@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -227,7 +227,8 @@ public class MojangAPI implements IMojangAPI {
                 final AshconResponse.Textures textures = obj.getTextures();
                 final AshconResponse.Textures.Raw rawTextures = textures.getRaw();
 
-                return Optional.of(createProperty("textures", rawTextures.getValue(), rawTextures.getSignature()));
+                if (!(rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()))
+                    return Optional.of(createProperty("textures", rawTextures.getValue(), rawTextures.getSignature()));
             }
         } catch (Exception ignored) {
         }
@@ -241,7 +242,9 @@ public class MojangAPI implements IMojangAPI {
             final MojangProfileResponse obj = new Gson().fromJson(output, MojangProfileResponse.class);
             if (obj.getProperties() != null) {
                 final PropertyResponse property = obj.getProperties()[0];
-                return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
+
+                if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
+                    return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
             }
         } catch (Exception ignored) {
         }
@@ -261,7 +264,8 @@ public class MojangAPI implements IMojangAPI {
                 }
 
                 PropertyResponse property = raw.getProperties()[0];
-                return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
+                if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
+                    return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
             }
         } catch (Exception ignored) {
         }

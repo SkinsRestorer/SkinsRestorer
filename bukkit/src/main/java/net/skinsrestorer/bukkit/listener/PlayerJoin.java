@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -24,9 +24,8 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,6 +35,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
+    private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
@@ -44,16 +44,14 @@ public class PlayerJoin implements Listener {
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                final SkinStorage skinStorage = plugin.getSkinStorage();
                 final Player player = event.getPlayer();
                 final String name = player.getName();
-                final String skin = skinStorage.getDefaultSkinName(name);
 
-                if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
-                } else {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
-                }
+                // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
+                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+                    return;
+
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
             } catch (SkinRequestException ignored) {
             }
         });

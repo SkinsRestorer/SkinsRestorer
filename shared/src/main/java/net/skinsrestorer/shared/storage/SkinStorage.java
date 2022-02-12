@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -27,14 +27,18 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
@@ -50,6 +54,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinStorage implements ISkinStorage {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
+    private final MineSkinAPI mineSkinAPI;
     @Setter
     private MySQL mysql;
     private File skinsFolder;
@@ -94,6 +99,25 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
+    public IProperty getDefaultSkinForPlayer(final String playerName) throws SkinRequestException {
+        final String skin = getDefaultSkinName(playerName);
+
+        if (C.validUrl(skin)) {
+            return mineSkinAPI.genSkin(skin, null, null);
+        } else {
+            return getSkinForPlayer(skin);
+        }
+    }
+
+    /**
+     * This method seeks out a players actual skin (chosen or not) and returns
+     * either null (if no skin data found) or the property containing all
+     * the skin data.
+     * It also schedules a skin update to stay up to date with skin changes.
+     *
+     * @param playerName Player name to search skin for
+     * @throws SkinRequestException If MojangAPI lookup errors
+     */
     @Override
     public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
         Optional<String> skin = getSkinOfPlayer(playerName);
@@ -167,6 +191,8 @@ public class SkinStorage implements ISkinStorage {
                 }
 
                 return Optional.of(lines.get(0));
+            } catch (MalformedInputException e) {
+                removeSkin(playerName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -213,7 +239,7 @@ public class SkinStorage implements ISkinStorage {
                     return Optional.of(createProperty(skinName, updateExpired, value, signature, timestamp));
                 } catch (Exception e) {
                     removeSkinData(skinName);
-                    logger.info("Unsupported player format.. removing (" + skinName + ").");
+                    logger.info("Unsupported skin format.. removing (" + skinName + ").");
                 }
         } else {
             skinName = removeWhitespaces(skinName);
@@ -233,7 +259,7 @@ public class SkinStorage implements ISkinStorage {
                 return Optional.of(createProperty(skinName, updateExpired, value, signature, timestamp));
             } catch (Exception e) {
                 removeSkinData(skinName);
-                logger.info("Unsupported player format.. removing (" + skinName + ").");
+                logger.info("Unsupported skin format.. removing (" + skinName + ").");
             }
         }
 
@@ -323,7 +349,7 @@ public class SkinStorage implements ISkinStorage {
                 if (!playerFile.exists() && !playerFile.createNewFile())
                     throw new IOException("Could not create player file!");
 
-                try (FileWriter writer = new FileWriter(playerFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(playerFile), StandardCharsets.UTF_8)) {
                     skinName = removeWhitespaces(skinName);
                     skinName = removeForbiddenChars(skinName);
 
@@ -335,11 +361,8 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * @see SkinStorage#setSkinData(String, IProperty, String)
-     */
     public void setSkinData(String skinName, IProperty textures) {
-        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
+        setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
     /**
@@ -347,29 +370,31 @@ public class SkinStorage implements ISkinStorage {
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in millis
+     * @param timestamp timestamp string in millis (null for current)
      */
-    public void setSkinData(String skinName, IProperty textures, String timestamp) {
+    public void setSkinData(String skinName, IProperty textures, long timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
         String signature = textures.getSignature();
 
+        String timestampString = Long.toString(timestamp);
+
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                    skinName, value, signature, timestamp, value, signature, timestamp);
+                    skinName, value, signature, timestampString, value, signature, timestampString);
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
             File skinFile = new File(skinsFolder, skinName + ".skin");
 
             try {
-                if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
+                if (value.isEmpty() || signature.isEmpty() || timestampString.isEmpty())
                     return;
 
                 if (!skinFile.exists() && !skinFile.createNewFile())
                     throw new IOException("Could not create skin file!");
 
-                try (FileWriter writer = new FileWriter(skinFile)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(skinFile), StandardCharsets.UTF_8)) {
                     writer.write(value + "\n" + signature + "\n" + timestamp);
                 }
             } catch (Exception e) {

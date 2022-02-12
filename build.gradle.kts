@@ -1,11 +1,10 @@
 plugins {
     base
-    id("sr.build-logic")
 }
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "14.1.6-SNAPSHOT"
+    version = "14.1.11-SNAPSHOT"
     description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 }
 
@@ -25,11 +24,18 @@ val special = setOf(
     projects.skinsrestorerApi
 ).map { it.dependencyProject }
 
+val mappings = setOf(
+    projects.mappings
+).map { it.dependencyProject }
+
 subprojects {
     when (this) {
         in platforms -> plugins.apply("sr.platform-logic")
         in shadow -> plugins.apply("sr.shadow-logic")
         in special -> plugins.apply("sr.base-logic")
+        in mappings -> subprojects.onEach {
+            if (it.name.startsWith("mc-")) it.plugins.apply("sr.mapping-logic")
+        }
     }
 }
 

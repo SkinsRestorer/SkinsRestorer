@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -31,9 +31,10 @@ import java.lang.reflect.Method;
 public class ClassDump {
     /**
      * Generates an overview/dump of a class, displaying useful info about it.
-     * @param clazz The class to be inspected.
+     *
+     * @param clazz    The class to be inspected.
      * @param instance Optional instance of the class to be dumped. Allows displaying of field values.
-     * @param <C> The classes generic type.
+     * @param <C>      The classes generic type.
      * @return String with newlines containing the classes dump.
      */
     public static <C> String dumpCLass(Class<C> clazz, @Nullable C instance) {

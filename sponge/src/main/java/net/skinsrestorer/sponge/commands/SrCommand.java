@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -26,7 +26,9 @@ import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -35,6 +37,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
 import java.util.Arrays;
@@ -187,10 +190,45 @@ public class SrCommand extends BaseCommand {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
-                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.parseMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name)));
                 } else {
                     source.sendMessage(plugin.parseMessage(Locale.ERROR_INVALID_URLSKIN));
+                }
+            } catch (SkinRequestException e) {
+                source.sendMessage(plugin.parseMessage(e.getMessage()));
+            }
+        });
+    }
+
+    @Subcommand("setskinall")
+    @CommandCompletion("@Skin")
+    @Description("Set the skin to evey player")
+    @Syntax(" <Skin / Url> [steve/slim]")
+    public void onSetSkinAll(CommandSource source, String skin, @Optional SkinType skinType) {
+        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+            if (source != Sponge.getServer().getConsole()) {
+                source.sendMessage(plugin.parseMessage(Locale.PREFIX + "&4Only console may execute this command!"));
+            }
+
+            String skinName = " ·setSkinAll";
+            try {
+                IProperty skinProps = null;
+                if (C.validUrl(skin)) {
+                    skinProps = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
+                } else {
+                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
+                }
+                if (skinProps == null) {
+                    source.sendMessage(plugin.parseMessage(Locale.PREFIX + ("&4no skin found....")));
+                    return;
+                }
+
+                plugin.getSkinStorage().setSkinData(skinName, skinProps);
+                for (Player player : Sponge.getServer().getOnlinePlayers()) {
+                    String pName = player.getName();
+                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
                 }
             } catch (SkinRequestException e) {
                 source.sendMessage(plugin.parseMessage(e.getMessage()));

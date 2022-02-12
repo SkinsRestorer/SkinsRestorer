@@ -114,6 +114,9 @@ MySQL:
 # Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 NoSkinIfLoginCanceled: true
 
+# This will make SkinsRestorer always apply the skin even if the player joins as premium on a online mode server.
+AlwaysApplyPremium: false
+
 # When enabled, Only websites from the list below is allowed to be set using /skin url <url>
 RestrictSkinUrls:
   Enabled: false
@@ -166,6 +169,11 @@ DisableOnJoinSkins: false
 # Enable this will require players to run "/skin update" to update their skin.
 DisallowAutoUpdateSkin: false
 
+# <!! Warning Experimental !!>
+# This enables the experimental ProtocolLib integration that allows instant skins on join.
+# Use with caution! This may decrease your TPS.
+EnableProtocolListener: false
+
 # Updater Settings
 Updater:
 # # <!! Warning !!>
@@ -200,6 +208,6 @@ Debug: false
 # Website: https://skinsrestorer.net/
 # Download: https://github.com/SkinsRestorer/SkinsRestorerX/releases
 # Wiki https://github.com/SkinsRestorer/SkinsRestorerX/wiki/
-# spigot: https://www.spigotmc.org/resources/skinsrestorer.2124/
-# github: https://github.com/SkinsRestorer/SkinsRestorerX/
-# discord: https://discord.me/SkinsRestorer/
+# Spigot: https://www.spigotmc.org/resources/skinsrestorer.2124/
+# Github: https://github.com/SkinsRestorer/SkinsRestorerX/
+# Discord: https://discord.me/SkinsRestorer/

@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -94,9 +94,9 @@ public class SkinsRestorer implements ISRPlugin {
         dataFolder = dataFolderPath.toFile();
         srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(logger));
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI);
-        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+        skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
         skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
     }
 
@@ -149,7 +149,7 @@ public class SkinsRestorer implements ISRPlugin {
         prepareACF(manager, srLogger);
 
         manager.registerCommand(new SkinCommand(this, srLogger));
-        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new SrCommand(this, srLogger, this.proxy));
     }
 
     private boolean initStorage() {

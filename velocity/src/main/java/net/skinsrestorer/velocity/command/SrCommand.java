@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -26,10 +26,13 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
@@ -47,6 +50,7 @@ import java.util.List;
 public class SrCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger logger;
+    private final ProxyServer proxy;
 
     @HelpCommand
     @Syntax(" [help]")
@@ -91,7 +95,7 @@ public class SrCommand extends BaseCommand {
             if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
                 source.sendMessage(plugin.deserialize("§aThe plugin currently is in a working state."));
             else
-                source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See http://skinsrestorer.net/firewall for more info"));
+                source.sendMessage(plugin.deserialize("§cPlugin currently can't fetch new skins. \\n Connection is likely blocked because of firewall. \\n Please See https://skinsrestorer.net/firewall for more info"));
             source.sendMessage(plugin.deserialize("§3----------------------------------------------"));
             source.sendMessage(plugin.deserialize("§7SkinsRestorer §6v" + plugin.getVersion()));
             source.sendMessage(plugin.deserialize("§7Server: §6" + plugin.getProxy().getVersion()));
@@ -180,7 +184,7 @@ public class SrCommand extends BaseCommand {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(skinName, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
-                            Long.toString(System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000))); // "generate" and save skin for 100 years
+                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_CREATE_SKIN.replace("%skin", skinName)));
                 } else {
                     source.sendMessage(plugin.deserialize(Locale.ERROR_INVALID_URLSKIN));
@@ -189,6 +193,46 @@ public class SrCommand extends BaseCommand {
                 source.sendMessage(plugin.deserialize(e.getMessage()));
             }
         });
+    }
+
+    @Subcommand("setskinall")
+    @CommandCompletion("@Skin")
+    @Description("Set the skin to evey player")
+    @Syntax(" <Skin / Url> [steve/slim]")
+    public void onSetSkinAll(CommandSource source, String skin, @Optional SkinType skinType) {
+        plugin.getService().execute(() -> {
+            if (!getSenderName(source).equals("CONSOLE")) {
+                source.sendMessage(plugin.deserialize(Locale.PREFIX + "&4Only console may execute this command!"));
+                return;
+            }
+
+            String skinName = " ·setSkinAll";
+            try {
+                IProperty skinProps = null;
+                if (C.validUrl(skin)) {
+                    skinProps = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
+                } else {
+                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
+                }
+                if (skinProps == null) {
+                    source.sendMessage(plugin.deserialize(Locale.PREFIX + ("&4no skin found....")));
+                    return;
+                }
+
+                plugin.getSkinStorage().setSkinData(skinName, skinProps);
+                for (Player player : proxy.getAllPlayers()) {
+                    String pName = player.getUsername();
+                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
+                }
+            } catch (SkinRequestException e) {
+                source.sendMessage(plugin.deserialize(e.getMessage()));
+            }
+        });
+    }
+
+    private String getSenderName(CommandSource source) {
+        return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
     }
 
     @SuppressWarnings("unused")

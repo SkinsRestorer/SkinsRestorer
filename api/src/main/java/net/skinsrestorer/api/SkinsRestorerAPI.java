@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.api;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -27,11 +29,14 @@ import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Base64;
 
 /**
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a> <br>
  * For more info please refer first to <a href="https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI">https://github.com/SkinsRestorer/SkinsRestorerX/wiki/SkinsRestorerAPI</a> <br>
- * Advanced help or getting problems? join our discord before submitting issues!
+ * Advanced help or getting problems? join our discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
 public abstract class SkinsRestorerAPI {
@@ -107,6 +112,53 @@ public abstract class SkinsRestorerAPI {
      **/
     public IProperty getSkinData(String skinName) {
         return skinStorage.getSkinData(skinName).orElse(null);
+    }
+
+    /**
+     * Set SkinData to SkinsRestorer directly
+     *
+     * @param skinName  Skin name
+     * @param textures  Property object
+     * @param timestamp timestamp string in millis (leave null for current)
+     */
+    public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
+        if (timestamp == null) {
+            skinStorage.setSkinData(skinName, textures);
+        } else {
+            skinStorage.setSkinData(skinName, textures, timestamp);
+        }
+    }
+
+    /**
+     * Generates a skin using the https://mineskin.org/ api
+     * [WARNING] MineSkin api key might be REQUIRED in the future.
+     *
+     * @param url      pointing to a skin image url
+     * @param skinType can be null, steve or slim
+     * @return Custom skin property containing "value" and "signature"
+     * @throws SkinRequestException on error
+     */
+    public IProperty genSkinUrl(String url, @Nullable String skinType) throws SkinRequestException {
+        return mineSkinAPI.genSkin(url, skinType, null);
+    }
+
+    /**
+     * Returns a https://textures.minecraft.net/id based on skin
+     * This is Usefull for skull plugins like Dynmap or DiscordSRV
+     * for example https://mc-heads.net/avatar/%texture_id%/%size%.png
+     *
+     * @param skinName
+     * @return textures.minecraft.net url
+     */
+    public String getSkinTextureUrl(String skinName) {
+        IProperty skin = getSkinData(skinName);
+        if (skin == null)
+            return null;
+        byte[] decoded = Base64.getDecoder().decode(skin.getValue());
+        String decodedString = new String(decoded);
+        JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+        String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+        return decodedSkin.substring(1, decodedSkin.length() - 1);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {

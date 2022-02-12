@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -24,6 +24,7 @@ import com.google.common.hash.Hashing;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -62,17 +63,25 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
-            } catch (Exception e) {
+            } catch (Exception e1) {
                 try {
-                    // Forge
-                    removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
-                    addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
-                } catch (Exception e1) {
-                    Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+                    Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
 
-                    // 1.8 or below
-                    removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
-                    addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                    // Cardboard and other platforms
+                    removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 4);
+                    addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 0);
+                } catch (Exception e2) {
+                    try {
+                        // Forge
+                        removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
+                        addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
+                    } catch (Exception e3) {
+                        Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+
+                        // 1.8 or below
+                        removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
+                        addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                    }
                 }
             }
 
@@ -83,11 +92,11 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    log.info("Activating ViaBackwards workaround.");
+                    log.debug("Activating ViaBackwards workaround.");
                 }
             });
 
-            log.info("Using SpigotSkinRefresher");
+            log.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }
@@ -201,8 +210,15 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             boolean sendRespawnPacketDirectly = true;
             if (useViabackwards) {
                 try {
+                    Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
+                    boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
+
                     //noinspection UnstableApiUsage
-                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(player, entityPlayer, dimension, Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(), gamemodeId);
+                    sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
+                            dimension,
+                            Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
+                            ((Integer) gamemodeId).shortValue(),
+                            flat));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

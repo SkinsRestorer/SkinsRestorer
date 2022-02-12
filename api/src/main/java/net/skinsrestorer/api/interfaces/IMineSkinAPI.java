@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,5 +19,11 @@
  */
 package net.skinsrestorer.api.interfaces;
 
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
+
+import java.util.UUID;
+
 public interface IMineSkinAPI {
+    IProperty genSkin(String url, String skinType, UUID methodUUID) throws SkinRequestException;
 }
