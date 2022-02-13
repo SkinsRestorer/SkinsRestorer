@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -30,7 +31,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -40,6 +40,7 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
@@ -50,6 +51,8 @@ public class SkinStorage implements ISkinStorage {
     private MySQL mysql;
     private File skinsFolder;
     private File playersFolder;
+    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");
@@ -657,7 +660,7 @@ public class SkinStorage implements ISkinStorage {
 
     private String removeForbiddenChars(String str) {
         // Escape all Windows / Linux forbidden printable ASCII characters
-        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
+        return FORBIDDENCHARS_PATTERN.matcher(str).replaceAll("·");
     }
 
     //todo remove all whitespace after last starting space.
@@ -666,6 +669,6 @@ public class SkinStorage implements ISkinStorage {
         if (str.startsWith(" ")) {
             return str;
         }
-        return str.replaceAll("\\s", "");
+        return StringUtils.remove(str, " ");
     }
 }
