@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import org.apache.commons.lang3.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -669,6 +668,6 @@ public class SkinStorage implements ISkinStorage {
         if (str.startsWith(" ")) {
             return str;
         }
-        return StringUtils.remove(str, " ");
+        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
 }
