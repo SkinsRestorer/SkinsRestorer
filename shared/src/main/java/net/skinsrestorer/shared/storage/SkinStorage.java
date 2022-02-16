@@ -52,6 +52,9 @@ public class SkinStorage implements ISkinStorage {
     private File playersFolder;
     private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+    private static final String LTRIM = "^\\\\s+";
+    private static final String RTRIM = "\\\\s+$";
+    private static final Pattern PTRIM = Pattern.compile("("+LTRIM+"|"+RTRIM+")");
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");
@@ -620,9 +623,8 @@ public class SkinStorage implements ISkinStorage {
      * @return setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinName(String playerName, boolean clear) {
-        // LTrim and RTrim player name
-        playerName = playerName.replaceAll("^\\\\s+", "");
-        playerName = playerName.replaceAll("\\\\s+$", "");
+        // Trim player name
+        PTRIM.matcher(playerName).replaceAll("");
 
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
