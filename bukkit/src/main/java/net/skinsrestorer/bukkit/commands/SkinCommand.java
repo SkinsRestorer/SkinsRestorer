@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class SkinCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SRLogger log;
+    private final IProperty emptySkin = plugin.getMojangAPI().createProperty("textures", "", "");
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -183,7 +184,7 @@ public class SkinCommand extends BaseCommand {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !sender.getName().equalsIgnoreCase(skin)) {
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
@@ -222,12 +223,10 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (Config.DISABLED_SKINS_ENABLED && !clear && !sender.hasPermission("skinsrestorer.bypassdisabled")) {
-            for (String dskin : Config.DISABLED_SKINS)
-                if (skin.equalsIgnoreCase(dskin)) {
+        if (Config.DISABLED_SKINS_ENABLED && !clear && !sender.hasPermission("skinsrestorer.bypassdisabled")
+                && Config.DISABLED_SKINS.stream().anyMatch(skin::equalsIgnoreCase)) {
                     sender.sendMessage(Locale.SKIN_DISABLED);
                     return false;
-                }
         }
 
         final String senderName = sender.getName();
@@ -236,8 +235,6 @@ public class SkinCommand extends BaseCommand {
             return false;
         }
 
-        CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-
         final String pName = player.getName();
         final java.util.Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(pName);
         if (C.validUrl(skin)) {
@@ -245,15 +242,16 @@ public class SkinCommand extends BaseCommand {
                     && !Config.SKIN_WITHOUT_PERM
                     && !clear) {//ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
-                CooldownStorage.resetCooldown(senderName);
                 return false;
             }
 
             if (!C.allowedSkinUrl(skin)) {
                 sender.sendMessage(Locale.SKINURL_DISALLOWED);
-                CooldownStorage.resetCooldown(senderName);
                 return false;
             }
+
+            //Apply cooldown to sender
+            CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
             try {
                 sender.sendMessage(Locale.MS_UPDATING_SKIN);
@@ -288,7 +286,7 @@ public class SkinCommand extends BaseCommand {
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    plugin.getSkinsRestorerAPI().applySkin(player, plugin.getMojangAPI().createProperty("textures", "", ""));
+                    plugin.getSkinsRestorerAPI().applySkin(player, emptySkin);
                     plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class));
 
                     return true;
