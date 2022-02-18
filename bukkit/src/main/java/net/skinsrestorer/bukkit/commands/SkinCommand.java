@@ -30,6 +30,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -44,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
-public class SkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand implements ISkinCommand {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
