@@ -149,7 +149,7 @@ public class SkinsRestorer implements ISRPlugin {
 
             prepareACF(manager, srLogger);
 
-            manager.registerCommand(new SkinCommand(this, srLogger));
+            manager.registerCommand(new SkinCommand(this));
             manager.registerCommand(new SrCommand(this, srLogger));
         });
     }

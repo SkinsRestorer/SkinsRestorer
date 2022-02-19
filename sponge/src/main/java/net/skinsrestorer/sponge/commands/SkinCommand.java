@@ -24,6 +24,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -47,8 +48,8 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand implements ISkinCommand {
+    @Getter
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -60,7 +61,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
-    @SuppressWarnings({"unused"})
     public void onSkinSetShort(Player player, @Single String skin) {
         onSkinSetOther(player, new OnlinePlayer(player), skin, null);
     }
@@ -68,8 +68,9 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @HelpCommand
     @Syntax(" [help]")
     public void onHelp(CommandSource source, CommandHelp help) {
+        ISRCommandSender wrapped = wrap(source);
         if (Config.ENABLE_CUSTOM_HELP)
-            sendHelp(source);
+            sendHelp(wrapped);
         else
             help.showHelp();
     }
@@ -77,7 +78,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
-    @SuppressWarnings({"unused"})
     public void onSkinClear(Player player) {
         onSkinClearOther(player, new OnlinePlayer(player));
     }
@@ -114,7 +114,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
-    @SuppressWarnings({"unused"})
     public void onSkinUpdate(Player player) {
         onSkinUpdateOther(player, new OnlinePlayer(player));
     }
@@ -211,10 +210,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
     }
 
-    private boolean setSkin(CommandSource source, Player player, String skin) {
-        return setSkin(wrap(source), new PlayerWrapper(player), skin, true, false, null);
-    }
-
     // if save is false, we won't save the skin skin name
     // because default skin names shouldn't be saved as the users custom skin
     private boolean setSkin(ISRCommandSender source, PlayerWrapper player, String skin, boolean save, boolean clear, SkinType skinType) {
@@ -289,19 +284,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         return false;
     }
 
-    private void rollback(String pName, String oldSkinName, boolean save) {
-        if (save)
-            plugin.getSkinStorage().setSkinName(pName, oldSkinName);
-    }
-
-    private void sendHelp(CommandSource source) {
-        if (!Locale.SR_LINE.isEmpty())
-            source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
-        source.sendMessage(plugin.parseMessage(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", plugin.getVersion())));
-        if (!Locale.SR_LINE.isEmpty())
-            source.sendMessage(plugin.parseMessage(Locale.SR_LINE));
-    }
-
     private ISRCommandSender wrap(CommandSource sender) {
         return new ISRCommandSender() {
             @Override
@@ -319,11 +301,5 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                 return sender.hasPermission(permission);
             }
         };
-    }
-
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
     }
 }

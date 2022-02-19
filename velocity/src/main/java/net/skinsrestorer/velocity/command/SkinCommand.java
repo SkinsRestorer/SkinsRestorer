@@ -26,6 +26,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -48,8 +49,8 @@ import java.util.concurrent.TimeUnit;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 public class SkinCommand extends BaseCommand implements ISkinCommand {
+    @Getter
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -68,13 +69,13 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
 
     @HelpCommand
     @Syntax(" [help]")
-    public void onHelp(CommandSource commandSource, CommandHelp help) {
+    public void onHelp(CommandSource source, CommandHelp help) {
+        ISRCommandSender wrapped = wrap(source);
         if (Config.ENABLE_CUSTOM_HELP)
-            sendHelp(commandSource);
+            sendHelp(wrapped);
         else
             help.showHelp();
     }
-
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
@@ -90,6 +91,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
+        ISRCommandSender wrapped = wrap(source);
         plugin.getService().execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
                 source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
@@ -103,7 +105,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removeSkin(pName);
 
-            if (setSkin(wrap(source), new PlayerWrapper(player), skin, false, true, null)) {
+            if (setSkin(wrapped, new PlayerWrapper(player), skin, false, true, null)) {
                 if (source == player)
                     source.sendMessage(plugin.deserialize(Locale.SKIN_CLEAR_SUCCESS));
                 else
@@ -127,6 +129,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
+        ISRCommandSender wrapped = wrap(source);
         plugin.getService().execute(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
                 source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
@@ -185,6 +188,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
+        ISRCommandSender wrapped = wrap(source);
         plugin.getService().execute(() -> {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
@@ -213,10 +217,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         }
 
         onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
-    }
-
-    private boolean setSkin(CommandSource source, Player player, String skin) {
-        return setSkin(wrap(source), new PlayerWrapper(player), skin, true, false, null);
     }
 
     // if save is false, we won't save the skin skin name
@@ -307,19 +307,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         return false;
     }
 
-    private void rollback(String pName, String oldSkinName, boolean save) {
-        if (save)
-            plugin.getSkinStorage().setSkinName(pName, oldSkinName);
-    }
-
-    private void sendHelp(CommandSource commandSource) {
-        if (!Locale.SR_LINE.isEmpty())
-            commandSource.sendMessage(plugin.deserialize(Locale.SR_LINE));
-        commandSource.sendMessage(plugin.deserialize(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", plugin.getVersion())));
-        if (!Locale.SR_LINE.isEmpty())
-            commandSource.sendMessage(plugin.deserialize(Locale.SR_LINE));
-    }
-
     private String getSenderName(CommandSource source) {
         return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
     }
@@ -341,11 +328,5 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                 return sender.hasPermission(permission);
             }
         };
-    }
-
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
     }
 }
