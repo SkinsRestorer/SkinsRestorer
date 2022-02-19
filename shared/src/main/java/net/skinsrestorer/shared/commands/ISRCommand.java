@@ -72,16 +72,20 @@ public interface ISRCommand {
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
 
-            if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
+            final int workingUUIDINT = response.getWorkingUUID().get();
+            final int workingProfileINT = response.getWorkingProfile().get();
+
+            // only print per API results if in a not working state
+            if (Config.DEBUG || workingUUIDINT == 0 || workingProfileINT == 0)
                 for (String result : results) {
                     if (Config.DEBUG || result.contains("✘"))
                         sender.sendMessage(result);
                 }
 
-            sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
-            sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
+            sender.sendMessage("§7Working UUID API count: §6" + workingUUIDINT);
+            sender.sendMessage("§7Working Profile API count: §6" + workingProfileINT);
 
-            if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
+            if (workingUUIDINT != 0 && workingProfileINT != 0)
                 sender.sendMessage("§aThe plugin currently is in a working state.");
             else
                 sender.sendMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
@@ -105,7 +109,7 @@ public interface ISRCommand {
                     plugin.getSkinStorage().removeSkinData(targetSkin);
 
             String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList));
+            sender.sendMessage(String.format(Locale.DATA_DROPPED, playerOrSkin.toString(), targetList));
         });
     }
 
@@ -177,7 +181,7 @@ public interface ISRCommand {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, String.valueOf(skinType)),
                             System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
+                    sender.sendMessage(String.format(Locale.SUCCESS_CREATE_SKIN, name));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }
@@ -229,11 +233,13 @@ public interface ISRCommand {
 
     List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
 
+    @SuppressWarnings("unused")
     enum PlayerOrSkin {
         PLAYER,
         SKIN,
     }
 
+    @SuppressWarnings("unused")
     enum SkinType {
         STEVE,
         SLIM,
