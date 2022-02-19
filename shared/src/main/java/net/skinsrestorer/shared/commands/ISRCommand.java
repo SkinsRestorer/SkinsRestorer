@@ -23,13 +23,11 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.Optional;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.authlib.properties.PropertyMap;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -40,7 +38,6 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Collection;
 import java.util.List;
 
 public interface ISRCommand {
@@ -116,39 +113,37 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(target.getWrapper()).getProperties(); // TODO: make not platform specific
-                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
-                        new Class<?>[]{Object.class}, "textures");
+                List<IProperty> properties = getPropertiesOfPlayer(target);
 
-                if (props == null || props.isEmpty()) {
+                if (properties == null || properties.isEmpty()) {
                     sender.sendMessage(Locale.NO_SKIN_DATA);
                     return;
                 }
 
-                for (Object prop : props) {
-                    String name = (String) ReflectionUtil.invokeMethod(prop, "getName");
-                    String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
-                    String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
+                IProperty prop = properties.get(0);
 
-                    byte[] decoded = Base64.getDecoder().decode(value);
-                    String decodedString = new String(decoded);
-                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                    String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-                    long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-                    String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
+                String name = prop.getName();
+                String value = prop.getValue();
+                String signature = prop.getSignature();
 
-                    sender.sendMessage("§aRequest time: §e" + requestDate);
-                    sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
-                    sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
-                    sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
-                    sender.sendMessage("§cMore info in console!");
+                byte[] decoded = Base64.getDecoder().decode(value);
+                String decodedString = new String(decoded);
+                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+                String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
+                long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
 
-                    // Console
-                    plugin.getSrLogger().info("§aName: §8" + name);
-                    plugin.getSrLogger().info("§aValue : §8" + value);
-                    plugin.getSrLogger().info("§aSignature : §8" + signature);
-                    plugin.getSrLogger().info("§aValue Decoded: §e" + Arrays.toString(decoded));
-                }
+                sender.sendMessage("§aRequest time: §e" + requestDate);
+                sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
+                sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
+                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
+                sender.sendMessage("§cMore info in console!");
+
+                // Console
+                plugin.getSrLogger().info("§aName: §8" + name);
+                plugin.getSrLogger().info("§aValue : §8" + value);
+                plugin.getSrLogger().info("§aSignature : §8" + signature);
+                plugin.getSrLogger().info("§aValue Decoded: §e" + Arrays.toString(decoded));
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage(Locale.NO_SKIN_DATA);
@@ -160,7 +155,6 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-
                 final String name = sender.getName();
                 final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
@@ -193,11 +187,10 @@ public interface ISRCommand {
         });
     }
 
-
     default void onSetSkinAll(ISRCommandSender sender, String skin, @Optional SkinType skinType) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (!(sender instanceof ConsoleCommandSender)) { //only make console perform this command
+            if (!sender.isConsole()) { // Only make console perform this command
                 sender.sendMessage(Locale.PREFIX + "Only console may execute this command!"); // TODO: add chat color
                 return;
             }
@@ -219,7 +212,7 @@ public interface ISRCommand {
 
                 for (ISRPlayer player : plugin.getOnlinePlayers()) {
                     String pName = player.getName();
-                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
+                    plugin.getSkinStorage().setSkinName(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
             } catch (SkinRequestException e) {
@@ -233,6 +226,8 @@ public interface ISRCommand {
     String getProxyMode();
 
     ISRPlugin getPlugin();
+
+    List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
 
     enum PlayerOrSkin {
         PLAYER,

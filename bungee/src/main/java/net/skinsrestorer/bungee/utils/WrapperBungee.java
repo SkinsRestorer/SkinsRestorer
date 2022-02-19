@@ -22,6 +22,7 @@ package net.skinsrestorer.bungee.utils;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.command.ConsoleCommandSender;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
@@ -42,6 +43,11 @@ public class WrapperBungee {
             @Override
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
+            }
+
+            @Override
+            public boolean isConsole() {
+                return sender instanceof ConsoleCommandSender;
             }
         };
     }

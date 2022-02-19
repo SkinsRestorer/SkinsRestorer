@@ -25,4 +25,8 @@ public interface ISRCommandSender {
     String getName();
 
     boolean hasPermission(String permission);
+
+    default boolean isConsole() {
+        return false;
+    }
 }

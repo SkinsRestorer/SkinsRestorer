@@ -23,6 +23,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class WrapperBukkit {
@@ -41,6 +42,11 @@ public class WrapperBukkit {
             @Override
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
+            }
+
+            @Override
+            public boolean isConsole() {
+                return sender instanceof ConsoleCommandSender;
             }
         };
     }

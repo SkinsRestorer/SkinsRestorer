@@ -26,8 +26,18 @@ import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.connection.InitialHandler;
+import net.md_5.bungee.connection.LoginResult;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISRCommand;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
@@ -111,5 +121,19 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @Override
     public String getProxyMode() {
         return "Bungee-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        LoginResult.Property[] props = ((InitialHandler) player.getWrapper().get(ProxiedPlayer.class)
+                .getPendingConnection()).getLoginProfile().getProperties();
+
+        if (props == null) {
+            return null;
+        } else {
+            return Arrays.stream(props)
+                    .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature()))
+                    .collect(Collectors.toList());
+        }
     }
 }

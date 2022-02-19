@@ -23,6 +23,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
@@ -42,6 +43,11 @@ public class WrapperSponge {
             @Override
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
+            }
+
+            @Override
+            public boolean isConsole() {
+                return sender instanceof ConsoleSource;
             }
         };
     }

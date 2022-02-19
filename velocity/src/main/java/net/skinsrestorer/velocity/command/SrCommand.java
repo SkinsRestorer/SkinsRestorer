@@ -25,10 +25,17 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
@@ -104,10 +111,6 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onSetSkinAll(wrapCommandSender(source), skin, skinType);
     }
 
-    private String getSenderName(CommandSource source) {
-        return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
-    }
-
     @Override
     public String getPlatformVersion() {
         return plugin.getProxy().getVersion().getVersion();
@@ -116,5 +119,16 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @Override
     public String getProxyMode() {
         return "Velocity-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        List<GameProfile.Property> prop = player.getWrapper().get(Player.class).getGameProfileProperties();
+
+        if (prop == null) {
+            return null;
+        }
+
+        return prop.stream().map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature())).collect(Collectors.toList());
     }
 }

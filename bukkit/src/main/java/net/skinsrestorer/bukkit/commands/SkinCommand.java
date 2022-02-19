@@ -110,7 +110,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         onSkinSetOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin, skinType);
-
     }
 
     @Subcommand("url")

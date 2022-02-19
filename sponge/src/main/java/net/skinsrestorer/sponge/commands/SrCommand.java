@@ -25,9 +25,18 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.profile.property.ProfileProperty;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
@@ -111,5 +120,13 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @Override
     public String getProxyMode() {
         return "Sponge-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get("textures");
+        return properties.stream()
+                .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
+                .collect(Collectors.toList());
     }
 }

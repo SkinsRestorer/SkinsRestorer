@@ -20,6 +20,7 @@
 package net.skinsrestorer.velocity.utils;
 
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -42,6 +43,11 @@ public class WrapperVelocity {
             @Override
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
+            }
+
+            @Override
+            public boolean isConsole() {
+                return sender instanceof ConsoleCommandSource;
             }
         };
     }
