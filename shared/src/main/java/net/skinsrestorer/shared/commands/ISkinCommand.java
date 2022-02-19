@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.annotation.Optional;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -36,6 +35,7 @@ import net.skinsrestorer.shared.utils.C;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static co.aikar.commands.CommandManager.getCurrentCommandManager;
@@ -53,10 +53,8 @@ public interface ISkinCommand {
     }
 
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
-        if (Config.ENABLE_CUSTOM_HELP)
-            sendHelp(sender);
-        else
-            help.showHelp();
+        if (Config.ENABLE_CUSTOM_HELP) sendHelp(sender);
+        else help.showHelp();
     }
 
     default void onSkinClear(ISRPlayer player) {
@@ -102,7 +100,7 @@ public interface ISkinCommand {
 
             try {
                 if (skin.isPresent()) {
-                    //filter skinUrl
+                    // Filter skinUrl
                     if (skin.get().startsWith(" ")) {
                         sender.sendMessage(Locale.ERROR_UPDATING_URL);
                         return;
@@ -138,7 +136,7 @@ public interface ISkinCommand {
         onSkinSetOther(player, player, skin[0], null);
     }
 
-    default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, @Optional SkinType skinType) {
+    default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinType skinType) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
@@ -153,7 +151,7 @@ public interface ISkinCommand {
         });
     }
 
-    default void onSkinSetUrl(ISRPlayer player, String url, @Optional SkinType skinType) {
+    default void onSkinSetUrl(ISRPlayer player, String url, SkinType skinType) {
         if (!C.validUrl(url)) {
             player.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             return;
@@ -199,12 +197,12 @@ public interface ISkinCommand {
             return false;
         }
 
-        final String pName = player.getName();
-        final java.util.Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(pName);
+        final String playerName = player.getName();
+        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(playerName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
-                    && !clear) { // ignore /skin clear when defaultSkin = url
+                    && !clear) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
@@ -219,14 +217,14 @@ public interface ISkinCommand {
 
             try {
                 sender.sendMessage(Locale.MS_UPDATING_SKIN);
-                String skinentry = " " + pName; // so won't overwrite premium player names
-                if (skinentry.length() > 16) // max len of 16 char
-                    skinentry = skinentry.substring(0, 16);
+                String skinEntry = " " + playerName; // so won't overwrite premium player names
+                if (skinEntry.length() > 16) // max len of 16 char
+                    skinEntry = skinEntry.substring(0, 16);
 
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, String.valueOf(skinType));
-                plugin.getSkinStorage().setSkinData(skinentry, generatedSkin,
+                plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
                         System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player, generatedSkin);
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
@@ -243,11 +241,13 @@ public interface ISkinCommand {
             // If skin is not an url, it's a username
             try {
                 if (save)
-                    plugin.getSkinStorage().setSkinName(pName, skin);
+                    plugin.getSkinStorage().setSkinName(playerName, skin);
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 SkinsRestorerAPI.getApi().applySkin(player, skin);
+
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO: should this not be sender? -> hidden skin set?
+
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
@@ -258,9 +258,10 @@ public interface ISkinCommand {
                 sender.sendMessage(e.getMessage());
             }
         }
+
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(pName, oldSkinName.orElse(pName), save);
+        rollback(playerName, oldSkinName.orElse(playerName), save);
         return false;
     }
 

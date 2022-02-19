@@ -72,20 +72,19 @@ public interface ISRCommand {
             ServiceChecker.ServiceCheckResponse response = checker.getResponse();
             List<String> results = response.getResults();
 
-            final int workingUUIDINT = response.getWorkingUUID().get();
-            final int workingProfileINT = response.getWorkingProfile().get();
+            final int workingUUIDCount = response.getWorkingUUID().get();
+            final int workingProfileCount = response.getWorkingProfile().get();
 
             // only print per API results if in a not working state
-            if (Config.DEBUG || workingUUIDINT == 0 || workingProfileINT == 0)
-                for (String result : results) {
+            if (Config.DEBUG || workingUUIDCount == 0 || workingProfileCount == 0)
+                for (String result : results)
                     if (Config.DEBUG || result.contains("✘"))
                         sender.sendMessage(result);
-                }
 
-            sender.sendMessage("§7Working UUID API count: §6" + workingUUIDINT);
-            sender.sendMessage("§7Working Profile API count: §6" + workingProfileINT);
+            sender.sendMessage("§7Working UUID API count: §6" + workingUUIDCount);
+            sender.sendMessage("§7Working Profile API count: §6" + workingProfileCount);
 
-            if (workingUUIDINT != 0 && workingProfileINT != 0)
+            if (workingUUIDCount != 0 && workingProfileCount != 0)
                 sender.sendMessage("§aThe plugin currently is in a working state.");
             else
                 sender.sendMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
@@ -101,15 +100,16 @@ public interface ISRCommand {
     default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (playerOrSkin == PlayerOrSkin.PLAYER)
-                for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removeSkin(targetPlayer);
-            else
-                for (String targetSkin : targets)
-                    plugin.getSkinStorage().removeSkinData(targetSkin);
+            switch (playerOrSkin) {
+                case PLAYER:
+                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkin(targetPlayer);
+                    break;
+                case SKIN:
+                    for (String targetSkin : targets) plugin.getSkinStorage().removeSkinData(targetSkin);
+                    break;
+            }
 
-            String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            sender.sendMessage(String.format(Locale.DATA_DROPPED, playerOrSkin.toString(), targetList));
+            sender.sendMessage(String.format(Locale.DATA_DROPPED, playerOrSkin, String.join(", ", targets)));
         });
     }
 
