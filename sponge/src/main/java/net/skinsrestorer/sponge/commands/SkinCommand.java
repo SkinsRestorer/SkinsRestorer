@@ -84,7 +84,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
-        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+        runAsync(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
                 return;
@@ -120,7 +120,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
-        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+        ISRCommandSender wrapped = wrap(source);
+        runAsync(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(source.getName())) {
                 source.sendMessage(plugin.parseMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(source.getName()))));
                 return;
@@ -178,7 +179,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
-        Sponge.getScheduler().createAsyncExecutor(plugin).execute(() -> {
+        ISRCommandSender wrapped = wrap(source);
+        runAsync(() -> {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!source.hasPermission("skinsrestorer.ownskin") && !source.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(source.getName())) {
@@ -186,7 +188,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                     return;
                 }
             }
-            if (setSkin(wrap(source), new PlayerWrapper(player), skin, true, false, skinType) && (source != player))
+            if (setSkin(wrapped, new PlayerWrapper(player), skin, true, false, skinType) && (source != player))
                 source.sendMessage(plugin.parseMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName())));
         });
     }
@@ -209,6 +211,11 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Override
     public void clearSkin(PlayerWrapper player) {
         // TODO: Maybe do something here?
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        plugin.getGame().getScheduler().createAsyncExecutor(plugin).execute(runnable);
     }
 
     private ISRCommandSender wrap(CommandSource sender) {

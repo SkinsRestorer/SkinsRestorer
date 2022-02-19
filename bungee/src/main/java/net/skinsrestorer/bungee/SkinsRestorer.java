@@ -137,7 +137,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         prepareACF(manager, srLogger);
 
-        this.skinCommand = new SkinCommand(this, srLogger);
+        this.skinCommand = new SkinCommand(this);
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this, srLogger));
         manager.registerCommand(new GUICommand(this));

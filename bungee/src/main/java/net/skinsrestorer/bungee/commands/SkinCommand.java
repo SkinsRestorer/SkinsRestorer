@@ -27,7 +27,6 @@ import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -39,7 +38,6 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 @RequiredArgsConstructor
 @CommandAlias("skin")
@@ -47,7 +45,6 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -89,7 +86,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(sender);
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+        runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
                 return;
@@ -126,7 +123,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(sender);
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+        runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(TextComponent.fromLegacyText(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName()))));
                 return;
@@ -185,7 +182,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         ISRCommandSender wrapped = wrap(sender);
-        ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> {
+        runAsync(() -> {
             final ProxiedPlayer player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !wrapped.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!wrapped.hasPermission("skinsrestorer.ownskin") && !wrapped.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
@@ -218,6 +215,11 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Override
     public void clearSkin(PlayerWrapper player) {
         plugin.getSkinsRestorerAPI().applySkin(player, emptySkin);
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        plugin.getProxy().getScheduler().runAsync(plugin, runnable);
     }
 
     private ISRCommandSender wrap(CommandSender sender) {

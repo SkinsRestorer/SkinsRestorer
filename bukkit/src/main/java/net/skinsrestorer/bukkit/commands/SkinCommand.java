@@ -36,8 +36,6 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -47,7 +45,6 @@ import org.bukkit.entity.Player;
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     @Default
     @SuppressWarnings({"deprecation"})
@@ -88,7 +85,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(sender);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName())));
                 return;
@@ -101,7 +98,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removeSkin(pName);
 
-            if (setSkin(wrap(sender), new PlayerWrapper(player), skin, false, true, null)) {
+            if (setSkin(wrapped, new PlayerWrapper(player), skin, false, true, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 else
@@ -125,7 +122,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(sender);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName())));
                 return;
@@ -157,7 +154,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
             }
 
             // TODO: Use its own code instead of bloat #setSkin()
-            if (setSkin(wrap(sender), new PlayerWrapper(player), skin.get(), false, false, null)) {
+            if (setSkin(wrapped, new PlayerWrapper(player), skin.get(), false, false, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
                 else
@@ -185,7 +182,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         ISRCommandSender wrapped = wrap(sender);
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        runAsync( () -> {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
@@ -237,5 +234,10 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void clearSkin(PlayerWrapper player) {
         SkinsRestorerAPI.getApi().applySkin(player, emptySkin);
         plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class)); // TODO: make not platform specific
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
     }
 }

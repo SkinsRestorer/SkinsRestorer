@@ -72,7 +72,7 @@ public interface ISkinCommand {
 
         final String senderName = sender.getName();
         if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(senderName)) {
-            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(senderName)));
+            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(senderName))));
             return false;
         }
 
@@ -81,7 +81,7 @@ public interface ISkinCommand {
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
-                    && !clear) {// ignore /skin clear when defaultSkin = url
+                    && !clear) { // ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
@@ -96,7 +96,7 @@ public interface ISkinCommand {
 
             try {
                 sender.sendMessage(Locale.MS_UPDATING_SKIN);
-                String skinentry = " " + pName; // so won't overwrite premium playernames
+                String skinentry = " " + pName; // so won't overwrite premium player names
                 if (skinentry.length() > 16) // max len of 16 char
                     skinentry = skinentry.substring(0, 16);
 
@@ -143,6 +143,8 @@ public interface ISkinCommand {
 
     void clearSkin(PlayerWrapper player);
 
+    void runAsync(Runnable runnable);
+    
     enum SkinType {
         STEVE,
         SLIM,

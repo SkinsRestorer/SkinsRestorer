@@ -88,7 +88,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(source);
-        plugin.getService().execute(() -> {
+        runAsync(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
                 source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
                 return;
@@ -126,7 +126,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
         ISRCommandSender wrapped = wrap(source);
-        plugin.getService().execute(() -> {
+        runAsync(() -> {
             if (!source.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(getSenderName(source))) {
                 source.sendMessage(plugin.deserialize(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(getSenderName(source)))));
                 return;
@@ -157,7 +157,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                 return;
             }
 
-            if (setSkin(wrap(source), new PlayerWrapper(player), skin.get(), false, false, null)) {
+            if (setSkin(wrapped, new PlayerWrapper(player), skin.get(), false, false, null)) {
                 if (source == player)
                     source.sendMessage(plugin.deserialize(Locale.SUCCESS_UPDATING_SKIN));
                 else
@@ -185,7 +185,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
         ISRCommandSender wrapped = wrap(source);
-        plugin.getService().execute(() -> {
+        runAsync(() -> {
             final Player player = target.getPlayer();
             if (Config.PER_SKIN_PERMISSIONS && !source.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!source.hasPermission("skinsrestorer.ownskin") && !getSenderName(source).equalsIgnoreCase(player.getUsername()) || !skin.equalsIgnoreCase(getSenderName(source))) {
@@ -218,6 +218,11 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Override
     public void clearSkin(PlayerWrapper player) {
         plugin.getSkinsRestorerAPI().applySkin(player, emptySkin);
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        plugin.getService().execute(runnable);
     }
 
     private String getSenderName(CommandSource source) {
