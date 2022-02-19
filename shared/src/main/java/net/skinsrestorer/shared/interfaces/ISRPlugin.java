@@ -40,6 +40,8 @@ public interface ISRPlugin {
 
     MetricsCounter getMetricsCounter();
 
+    SRLogger getSrLogger();
+
     InputStream getResource(String resource);
 
     @SuppressWarnings({"deprecation"})

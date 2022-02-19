@@ -166,6 +166,10 @@ public abstract class SkinsRestorerAPI {
         skinStorage.getSkinForPlayer(skinName);
     }
 
+    public IProperty createProperty(String name, String value, String signature) {
+        return mojangAPI.createProperty(name, value, signature);
+    }
+
     public void removeSkin(String playerName) {
         skinStorage.removeSkin(playerName);
     }

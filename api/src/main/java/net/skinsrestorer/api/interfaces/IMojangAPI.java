@@ -25,4 +25,6 @@ import java.util.Optional;
 
 public interface IMojangAPI {
     Optional<IProperty> getProfile(String uuid);
+
+    IProperty createProperty(String name, String value, String signature);
 }

@@ -27,9 +27,9 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.storage.Config;
@@ -40,8 +40,6 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @CommandAlias("skin")
@@ -196,7 +194,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                 }
             }
 
-            if (setSkin(wrap(sender), new PlayerWrapper(player), skin, true, false, skinType) && (sender != player))
+            if (setSkin(wrapped, new PlayerWrapper(player), skin, true, false, skinType) && (sender != player))
                 sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
         });
     }
@@ -216,95 +214,6 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
     }
 
-    // if save is false, we won't save the skin skin name
-    // because default skin names shouldn't be saved as the users custom skin
-    // TODO: align #setSkin() with the other platforms so that it match and can be merged on a later stage!
-    private boolean setSkin(ISRCommandSender sender, PlayerWrapper player, String skin, boolean save, boolean clear, SkinType skinType) {
-        if (skin.equalsIgnoreCase("null")) {
-            sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
-            return false;
-        }
-
-        if (Config.DISABLED_SKINS_ENABLED && !clear && !sender.hasPermission("skinsrestorer.bypassdisabled")) {
-            for (String dskin : Config.DISABLED_SKINS)
-                if (skin.equalsIgnoreCase(dskin)) {
-                    sender.sendMessage(Locale.SKIN_DISABLED);
-                    return false;
-                }
-        }
-
-        final String senderName = sender.getName();
-        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(senderName)) {
-            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(senderName)));
-            return false;
-        }
-
-        CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
-
-        final String pName = player.getName();
-        final java.util.Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(pName);
-        if (C.validUrl(skin)) {
-            if (!sender.hasPermission("skinsrestorer.command.set.url")
-                    && !Config.SKIN_WITHOUT_PERM
-                    && !clear) {//ignore /skin clear when defaultSkin = url
-                sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_URL);
-                CooldownStorage.resetCooldown(senderName);
-                return false;
-            }
-
-            if (!C.allowedSkinUrl(skin)) {
-                sender.sendMessage(Locale.SKINURL_DISALLOWED);
-                CooldownStorage.resetCooldown(senderName);
-                return false;
-            }
-
-            try {
-                sender.sendMessage(Locale.MS_UPDATING_SKIN);
-                String skinentry = " " + pName; // so won't overwrite premium playernames
-                if (skinentry.length() > 16) // max len of 16 char
-                    skinentry = skinentry.substring(0, 16);
-
-                IProperty generatedSkin = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
-                plugin.getSkinStorage().setSkinData(skinentry, generatedSkin,
-                        System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setSkinName(pName, skinentry); // set player to "whitespaced" name then reload skin
-                plugin.getSkinsRestorerAPI().applySkin(player, generatedSkin);
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
-                return true;
-            } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
-            } catch (Exception e) {
-                log.debug("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
-                sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-            }
-        } else {
-            //If skin is not a url, its a username
-            try {
-                if (save)
-                    plugin.getSkinStorage().setSkinName(pName, skin);
-
-                // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
-                plugin.getSkinsRestorerAPI().applySkin(player, skin);
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO:: should this not be sender? -> hidden skin set?
-                return true;
-            } catch (SkinRequestException e) {
-                if (clear) {
-                    plugin.getSkinsRestorerAPI().applySkin(player, plugin.getMojangAPI().createProperty("textures", "", ""));
-                    plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class));
-
-                    return true;
-                }
-                sender.sendMessage(e.getMessage());
-            }
-        }
-        // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(pName, oldSkinName.orElse(pName), save);
-        return false;
-    }
-
     private ISRCommandSender wrap(CommandSender sender) {
         return new ISRCommandSender() {
             @Override
@@ -322,5 +231,11 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
                 return sender.hasPermission(permission);
             }
         };
+    }
+
+    @Override
+    public void clearSkin(PlayerWrapper player) {
+        SkinsRestorerAPI.getApi().applySkin(player, emptySkin);
+        plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class)); // TODO: make not platform specific
     }
 }
