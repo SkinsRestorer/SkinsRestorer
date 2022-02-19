@@ -45,6 +45,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -200,26 +201,11 @@ public class SkinsRestorer implements ISRPlugin {
 
     private static class WrapperFactorySponge extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(Text.builder(message).build());
-                    }
-                };
+                return WrapperSponge.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

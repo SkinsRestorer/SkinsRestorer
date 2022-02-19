@@ -23,7 +23,6 @@ import co.aikar.commands.BungeeCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -38,6 +37,7 @@ import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -186,26 +186,11 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private static class WrapperFactoryBungee extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof ProxiedPlayer) {
                 ProxiedPlayer player = (ProxiedPlayer) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(TextComponent.fromLegacyText(message));
-                    }
-                };
+                return WrapperBungee.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

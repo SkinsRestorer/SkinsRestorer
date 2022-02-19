@@ -36,6 +36,7 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
+import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -449,26 +450,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     private static class WrapperFactoryBukkit extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(message);
-                    }
-                };
+                return WrapperBukkit.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

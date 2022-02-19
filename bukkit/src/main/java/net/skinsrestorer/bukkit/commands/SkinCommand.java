@@ -21,61 +21,52 @@ package net.skinsrestorer.bukkit.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.C;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapCommandSender;
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
+@SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
     private final SkinsRestorer plugin;
 
     @Default
-    @SuppressWarnings({"deprecation"})
     public void onDefault(CommandSender sender) {
-        onHelp(sender, getCurrentCommandManager().generateCommandHelp());
+        onDefault(wrapCommandSender(sender));
     }
 
     @Default
     @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
-    @SuppressWarnings({"unused"})
     public void onSkinSetShort(Player player, @Single String skin) {
-        onSkinSetOther(player, new OnlinePlayer(player), skin, null);
+        onSkinSetShort(wrapPlayer(player), skin);
     }
 
     @HelpCommand
     @Syntax(" [help]")
     public void onHelp(CommandSender sender, CommandHelp help) {
-        ISRCommandSender wrapped = wrap(sender);
-        if (Config.ENABLE_CUSTOM_HELP)
-            sendHelp(wrapped);
-        else
-            help.showHelp();
+        onHelp(wrapCommandSender(sender), help);
     }
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     public void onSkinClear(Player player) {
-        onSkinClearOther(player, new OnlinePlayer(player));
+        onSkinClear(wrapPlayer(player));
     }
 
     @Subcommand("clear")
@@ -84,35 +75,14 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, @Single OnlinePlayer target) {
-        ISRCommandSender wrapped = wrap(sender);
-        runAsync(() -> {
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
-                sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName())));
-                return;
-            }
-
-            final Player player = target.getPlayer();
-            final String pName = player.getName();
-            final String skin = plugin.getSkinStorage().getDefaultSkinName(pName, true);
-
-            // remove users defined skin from database
-            plugin.getSkinStorage().removeSkin(pName);
-
-            if (setSkin(wrapped, new PlayerWrapper(player), skin, false, true, null)) {
-                if (sender == player)
-                    sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
-                else
-                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", pName));
-            }
-        });
+        onSkinClearOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
-    @SuppressWarnings({"unused"})
     public void onSkinUpdate(Player player) {
-        onSkinUpdateOther(player, new OnlinePlayer(player));
+        onSkinUpdate(wrapPlayer(player));
     }
 
     @Subcommand("update")
@@ -121,46 +91,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, @Single OnlinePlayer target) {
-        ISRCommandSender wrapped = wrap(sender);
-        runAsync(() -> {
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
-                sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(sender.getName())));
-                return;
-            }
-
-            final Player player = target.getPlayer();
-            java.util.Optional<String> skin = plugin.getSkinStorage().getSkinName(player.getName());
-
-            try {
-                if (skin.isPresent()) {
-                    //filter skinUrl
-                    if (skin.get().startsWith(" ")) {
-                        sender.sendMessage(Locale.ERROR_UPDATING_URL);
-                        return;
-                    }
-
-                    if (!plugin.getSkinStorage().updateSkinData(skin.get())) {
-                        sender.sendMessage(Locale.ERROR_UPDATING_SKIN);
-                        return;
-                    }
-
-                } else {
-                    // get DefaultSkin
-                    skin = java.util.Optional.of(plugin.getSkinStorage().getDefaultSkinName(player.getName(), true));
-                }
-            } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
-                return;
-            }
-
-            // TODO: Use its own code instead of bloat #setSkin()
-            if (setSkin(wrapped, new PlayerWrapper(player), skin.get(), false, false, null)) {
-                if (sender == player)
-                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
-                else
-                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", player.getName()));
-            }
-        });
+        onSkinUpdateOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
     @Subcommand("set")
@@ -169,10 +100,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player player, String[] skin) {
-        if (skin.length == 0)
-            throw new InvalidCommandArgument(true);
-
-        onSkinSetOther(player, new OnlinePlayer(player), skin[0], null);
+        onSkinSet(wrapPlayer(player), skin);
     }
 
     @Subcommand("set")
@@ -181,19 +109,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
-        ISRCommandSender wrapped = wrap(sender);
-        runAsync( () -> {
-            final Player player = target.getPlayer();
-            if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
-                    sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
-                    return;
-                }
-            }
+        onSkinSetOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin, skinType);
 
-            if (setSkin(wrapped, new PlayerWrapper(player), skin, true, false, skinType) && (sender != player))
-                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
-        });
     }
 
     @Subcommand("url")
@@ -201,33 +118,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
-    @SuppressWarnings({"unused"})
     public void onSkinSetUrl(Player player, String url, @Optional SkinType skinType) {
-        if (!C.validUrl(url)) {
-            player.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-            return;
-        }
-
-        onSkinSetOther(player, new OnlinePlayer(player), url, skinType);
-    }
-
-    private ISRCommandSender wrap(CommandSender sender) {
-        return new ISRCommandSender() {
-            @Override
-            public void sendMessage(String message) {
-                sender.sendMessage(message);
-            }
-
-            @Override
-            public String getName() {
-                return sender.getName();
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return sender.hasPermission(permission);
-            }
-        };
+        onSkinSetUrl(wrapPlayer(player), url, skinType);
     }
 
     @Override

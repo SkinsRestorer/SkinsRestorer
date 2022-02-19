@@ -55,6 +55,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
+import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -198,26 +199,11 @@ public class SkinsRestorer implements ISRPlugin {
 
     private static class WrapperFactoryVelocity extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getUsername();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
-                    }
-                };
+                return WrapperVelocity.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
