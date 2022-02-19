@@ -125,9 +125,4 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void clearSkin(PlayerWrapper player) {
         // TODO: Maybe do something here?
     }
-
-    @Override
-    public void runAsync(Runnable runnable) {
-        plugin.getGame().getScheduler().createAsyncExecutor(plugin).execute(runnable);
-    }
 }

@@ -64,9 +64,11 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Getter
 @SuppressWarnings("Duplicates")
@@ -104,6 +106,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     @Override
     public String getVersion() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        getServer().getScheduler().runTaskAsynchronously(this, runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return getServer().getOnlinePlayers().stream().map(WrapperBukkit::wrapPlayer).collect(Collectors.toList());
     }
 
     @Override
@@ -328,7 +340,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         skinCommand = new SkinCommand(this);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
     }
 

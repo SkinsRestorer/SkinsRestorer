@@ -30,8 +30,6 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -64,16 +62,15 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
-    private final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final File dataFolder;
@@ -150,7 +147,7 @@ public class SkinsRestorer implements ISRPlugin {
         prepareACF(manager, srLogger);
 
         manager.registerCommand(new SkinCommand(this));
-        manager.registerCommand(new SrCommand(this, srLogger, this.proxy));
+        manager.registerCommand(new SrCommand(this));
     }
 
     private boolean initStorage() {
@@ -158,7 +155,7 @@ public class SkinsRestorer implements ISRPlugin {
         if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
         // Preload default skins
-        getService().execute(skinStorage::preloadDefaultSkins);
+        runAsync(skinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -167,7 +164,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     private void checkUpdate(boolean showUpToDate) {
-        getService().execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
@@ -183,10 +180,6 @@ public class SkinsRestorer implements ISRPlugin {
         }));
     }
 
-    public TextComponent deserialize(String string) {
-        return LegacyComponentSerializer.legacySection().deserialize(string);
-    }
-
     @Override
     public String getVersion() {
         return container.getDescription().getVersion().orElse("Unknown");
@@ -195,6 +188,16 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        proxy.getScheduler().buildTask(this, runnable).schedule();
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return proxy.getAllPlayers().stream().map(WrapperVelocity::wrapPlayer).collect(Collectors.toList());
     }
 
     private static class WrapperFactoryVelocity extends WrapperFactory {

@@ -60,13 +60,14 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
@@ -151,7 +152,7 @@ public class SkinsRestorer implements ISRPlugin {
             prepareACF(manager, srLogger);
 
             manager.registerCommand(new SkinCommand(this));
-            manager.registerCommand(new SrCommand(this, srLogger));
+            manager.registerCommand(new SrCommand(this));
         });
     }
 
@@ -185,10 +186,6 @@ public class SkinsRestorer implements ISRPlugin {
         }));
     }
 
-    public Text parseMessage(String msg) {
-        return Text.builder(msg).build();
-    }
-
     @Override
     public String getVersion() {
         return container.getVersion().orElse("Unknown");
@@ -197,6 +194,16 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public InputStream getResource(String resource) {
         return getClass().getClassLoader().getResourceAsStream(resource);
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        game.getScheduler().createAsyncExecutor(this).execute(runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
     }
 
     private static class WrapperFactorySponge extends WrapperFactory {

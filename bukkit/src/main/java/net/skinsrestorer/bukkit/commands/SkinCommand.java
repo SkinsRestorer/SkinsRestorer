@@ -127,9 +127,4 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         SkinsRestorerAPI.getApi().applySkin(player, emptySkin);
         plugin.getSkinApplierBukkit().updateSkin(player.get(Player.class)); // TODO: make not platform specific
     }
-
-    @Override
-    public void runAsync(Runnable runnable) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
-    }
 }

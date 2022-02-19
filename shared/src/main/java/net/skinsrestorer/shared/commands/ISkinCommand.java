@@ -65,7 +65,7 @@ public interface ISkinCommand {
 
     default void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
         ISRPlugin plugin = getPlugin();
-        runAsync(() -> {
+        plugin.runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sender.getName())));
                 return;
@@ -92,7 +92,7 @@ public interface ISkinCommand {
 
     default void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
         ISRPlugin plugin = getPlugin();
-        runAsync(() -> {
+        plugin.runAsync(() -> {
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
                 sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sender.getName())));
                 return;
@@ -139,7 +139,8 @@ public interface ISkinCommand {
     }
 
     default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, @Optional SkinType skinType) {
-        runAsync(() -> {
+        ISRPlugin plugin = getPlugin();
+        plugin.runAsync(() -> {
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
@@ -175,8 +176,6 @@ public interface ISkinCommand {
         if (save)
             getPlugin().getSkinStorage().setSkinName(pName, oldSkinName);
     }
-
-    ISRPlugin getPlugin();
 
     // if save is false, we won't save the skin name
     // because default skin names shouldn't be saved as the users custom skin
@@ -265,9 +264,9 @@ public interface ISkinCommand {
         return false;
     }
 
-    void clearSkin(PlayerWrapper player);
+    ISRPlugin getPlugin();
 
-    void runAsync(Runnable runnable);
+    void clearSkin(PlayerWrapper player);
 
     enum SkinType {
         STEVE,
