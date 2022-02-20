@@ -64,8 +64,9 @@ public interface ISkinCommand {
     default void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sender.getName())));
+            final String sName = sender.getName();
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sName)) {
+                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sName)));
                 return;
             }
 
@@ -76,10 +77,10 @@ public interface ISkinCommand {
             plugin.getSkinStorage().removeSkin(pName);
 
             if (setSkin(sender, target.getWrapper(), skin, false, true, null)) {
-                if (sender.getName().equals(target.getName()))
+                if (sender == target)
                     sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 else
-                    sender.sendMessage(String.format(Locale.SKIN_CLEAR_ISSUER, pName));
+                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", pName));
             }
         });
     }
@@ -91,12 +92,14 @@ public interface ISkinCommand {
     default void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sender.getName())) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sender.getName())));
+            final String sName = sender.getName();
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sName)) {
+                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sName)));
                 return;
             }
 
-            java.util.Optional<String> skin = plugin.getSkinStorage().getSkinName(player.getName());
+            final String pName = player.getName();
+            java.util.Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -113,7 +116,7 @@ public interface ISkinCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = java.util.Optional.of(plugin.getSkinStorage().getDefaultSkinName(player.getName(), true));
+                    skin = java.util.Optional.of(plugin.getSkinStorage().getDefaultSkinName(pName, true));
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
@@ -122,7 +125,7 @@ public interface ISkinCommand {
 
             if (setSkin(sender, player.getWrapper(), skin.get(), false, false, null)) {
                 if (sender == player)
-                    sender.sendMessage(String.format(Locale.SUCCESS_UPDATING_SKIN_OTHER, player.getName()));
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
                 else
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
             }
@@ -139,15 +142,17 @@ public interface ISkinCommand {
     default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinType skinType) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
+            final String sName = sender.getName();
+            final String pName = player.getName();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && !sender.getName().equalsIgnoreCase(player.getName()) || !skin.equalsIgnoreCase(sender.getName())) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (sender != player || !skin.equalsIgnoreCase(sName))) { // Todo: Test: sender != player
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
             if (setSkin(sender, player.getWrapper(), skin, true, false, skinType) && (sender != player))
-                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
+                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", pName));
         });
     }
 

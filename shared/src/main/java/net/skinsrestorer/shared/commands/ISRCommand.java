@@ -38,9 +38,11 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.LinkedList;
 import java.util.List;
 
 public interface ISRCommand {
+    @SuppressWarnings("unused")
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
         help.showHelp();
     }
@@ -62,8 +64,11 @@ public interface ISRCommand {
     default void onStatus(ISRCommandSender sender) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            sender.sendMessage("§3----------------------------------------------");
             sender.sendMessage("§7Checking needed services for SR to work properly...");
+
+            List<String> statusMessages = new LinkedList<>();
+            String breakLine = "§3----------------------------------------------";
+            statusMessages.add(breakLine);
 
             ServiceChecker checker = new ServiceChecker();
             checker.setMojangAPI(plugin.getMojangAPI());
@@ -79,21 +84,22 @@ public interface ISRCommand {
             if (Config.DEBUG || workingUUIDCount == 0 || workingProfileCount == 0)
                 for (String result : results)
                     if (Config.DEBUG || result.contains("✘"))
-                        sender.sendMessage(result);
+                        statusMessages.add(result);
 
-            sender.sendMessage("§7Working UUID API count: §6" + workingUUIDCount);
-            sender.sendMessage("§7Working Profile API count: §6" + workingProfileCount);
+            statusMessages.add("§7Working UUID API count: §6" + workingUUIDCount);
+            statusMessages.add("§7Working Profile API count: §6" + workingProfileCount);
 
             if (workingUUIDCount != 0 && workingProfileCount != 0)
-                sender.sendMessage("§aThe plugin currently is in a working state.");
+                statusMessages.add("§aThe plugin currently is in a working state.");
             else
-                sender.sendMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
-            sender.sendMessage("§3----------------------------------------------");
-            sender.sendMessage("§7SkinsRestorer §6v" + plugin.getVersion());
-            sender.sendMessage("§7Server: §6" + getPlatformVersion());
-            sender.sendMessage("§7ProxyMode: §6" + getProxyMode());
-            sender.sendMessage("§7Finished checking services.");
-            sender.sendMessage("§3----------------------------------------------");
+                statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
+            statusMessages.add(breakLine);
+            statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
+            statusMessages.add("§7Server: §6" + getPlatformVersion());
+            statusMessages.add("§7ProxyMode: §6" + getProxyMode());
+            statusMessages.add("§7Finished checking services.");
+            statusMessages.add(breakLine);
+            statusMessages.forEach(sender::sendMessage);
         });
     }
 
@@ -109,7 +115,7 @@ public interface ISRCommand {
                     break;
             }
 
-            sender.sendMessage(String.format(Locale.DATA_DROPPED, playerOrSkin, String.join(", ", targets)));
+            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", String.join(", ", targets)));
         });
     }
 
@@ -136,6 +142,8 @@ public interface ISRCommand {
                 String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                 long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
                 String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
+
+
 
                 sender.sendMessage("§aRequest time: §e" + requestDate);
                 sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
@@ -181,7 +189,7 @@ public interface ISRCommand {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, String.valueOf(skinType)),
                             System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
-                    sender.sendMessage(String.format(Locale.SUCCESS_CREATE_SKIN, name));
+                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }
@@ -215,7 +223,7 @@ public interface ISRCommand {
                 plugin.getSkinStorage().setSkinData(skinName, skinProps);
 
                 for (ISRPlayer player : plugin.getOnlinePlayers()) {
-                    String pName = player.getName();
+                    final String pName = player.getName();
                     plugin.getSkinStorage().setSkinName(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
