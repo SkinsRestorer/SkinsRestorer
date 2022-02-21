@@ -27,8 +27,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 
@@ -122,7 +122,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     }
 
     @Override
-    public void clearSkin(PlayerWrapper player) {
-        plugin.getSkinsRestorerAPI().applySkin(player, emptySkin);
+    public void clearSkin(ISRPlayer player) {
+        plugin.getSkinsRestorerAPI().applySkin(player.getWrapper(), emptySkin);
     }
 }

@@ -25,8 +25,8 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.command.CommandSource;
@@ -123,7 +123,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     }
 
     @Override
-    public void clearSkin(PlayerWrapper player) {
+    public void clearSkin(ISRPlayer player) {
         // TODO: Maybe do something here?
     }
 }

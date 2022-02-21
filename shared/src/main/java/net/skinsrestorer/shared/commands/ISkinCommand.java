@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -77,7 +76,7 @@ public interface ISkinCommand {
             // remove users defined skin from database
             plugin.getSkinStorage().removeSkin(pName);
 
-            if (setSkin(sender, target.getWrapper(), skin, false, true, null)) {
+            if (setSkin(sender, target, skin, false, true, null)) {
                 if (sender == target)
                     sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 else
@@ -124,7 +123,7 @@ public interface ISkinCommand {
                 return;
             }
 
-            if (setSkin(sender, player.getWrapper(), skin.get(), false, false, null)) {
+            if (setSkin(sender, player, skin.get(), false, false, null)) {
                 if (sender == player)
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
                 else
@@ -146,13 +145,13 @@ public interface ISkinCommand {
             final String sName = sender.getName();
             final String pName = player.getName();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (sender != player || !skin.equalsIgnoreCase(sName))) { // Todo: Test: sender != player
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sName))) { // Todo: Test: sender != player
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
-            if (setSkin(sender, player.getWrapper(), skin, true, false, skinVariant) && (sender != player))
+            if (setSkin(sender, player, skin, true, false, skinVariant) && !sender.equalsPlayer(player))
                 sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", pName));
         });
     }
@@ -183,7 +182,7 @@ public interface ISkinCommand {
 
     // if save is false, we won't save the skin name
     // because default skin names shouldn't be saved as the users custom skin
-    default boolean setSkin(ISRCommandSender sender, PlayerWrapper player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
+    default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
 
         if (skin.equalsIgnoreCase("null")) {
@@ -231,7 +230,7 @@ public interface ISkinCommand {
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
                         System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
-                SkinsRestorerAPI.getApi().applySkin(player, generatedSkin);
+                SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
@@ -249,7 +248,7 @@ public interface ISkinCommand {
                 if (save)
                     plugin.getSkinStorage().setSkinName(playerName, skin);
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
-                SkinsRestorerAPI.getApi().applySkin(player, skin);
+                SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO: should this not be sender? -> hidden skin set?
@@ -273,5 +272,5 @@ public interface ISkinCommand {
 
     ISRPlugin getPlugin();
 
-    void clearSkin(PlayerWrapper player);
+    void clearSkin(ISRPlayer player);
 }

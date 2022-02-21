@@ -154,8 +154,8 @@ public abstract class SkinsRestorerAPI {
         IProperty skin = getSkinData(skinName);
         if (skin == null)
             return null;
-        byte[] decoded = Base64.getDecoder().decode(skin.getValue());
-        String decodedString = new String(decoded);
+
+        String decodedString = new String(Base64.getDecoder().decode(skin.getValue()));
         JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
         String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
         return decodedSkin.substring(1, decodedSkin.length() - 1);
