@@ -27,6 +27,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -104,17 +105,17 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSender sender, String name, String skinUrl, @Optional SkinType skinType) {
-        onCreateCustom(wrapCommandSender(sender), name, skinUrl, skinType);
+    @Syntax(" <skinName> <skinUrl> [classic/slim]")
+    public void onCreateCustom(CommandSender sender, String name, String skinUrl, @Optional SkinVariant skinVariant) {
+        onCreateCustom(wrapCommandSender(sender), name, skinUrl, skinVariant);
     }
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
     @Description("Set the skin to evey player")
-    @Syntax(" <Skin / Url> [steve/slim]")
-    public void onSetSkinAll(CommandSender sender, String skinUrl, @Optional SkinType skinType) {
-        onSetSkinAll(wrapCommandSender(sender), skinUrl, skinType);
+    @Syntax(" <Skin / Url> [classic/slim]")
+    public void onSetSkinAll(CommandSender sender, String skinUrl, @Optional SkinVariant skinVariant) {
+        onSetSkinAll(wrapCommandSender(sender), skinUrl, skinVariant);
     }
 
     @Override

@@ -25,6 +25,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -99,17 +100,17 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSource source, String name, String skinUrl, @Optional SkinType skinType) {
-        onCreateCustom(wrapCommandSender(source), name, skinUrl, skinType);
+    @Syntax(" <skinName> <skinUrl> [classic/slim]")
+    public void onCreateCustom(CommandSource source, String name, String skinUrl, @Optional SkinVariant skinVariant) {
+        onCreateCustom(wrapCommandSender(source), name, skinUrl, skinVariant);
     }
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
     @Description("Set the skin to evey player")
-    @Syntax(" <Skin / Url> [steve/slim]")
-    public void onSetSkinAll(CommandSource source, String skin, @Optional SkinType skinType) {
-        onSetSkinAll(wrapCommandSender(source), skin, skinType);
+    @Syntax(" <Skin / Url> [classic/slim]")
+    public void onSetSkinAll(CommandSource source, String skin, @Optional SkinVariant skinVariant) {
+        onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
     @Override

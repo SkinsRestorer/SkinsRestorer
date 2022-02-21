@@ -28,6 +28,7 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -108,8 +109,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@players @skin")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
-    public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinType skinType) {
-        onSkinSetOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()), skin, skinType);
+    public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
+        onSkinSetOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()), skin, skinVariant);
     }
 
     @Subcommand("url")
@@ -117,8 +118,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
-    public void onSkinSetUrl(Player player, String url, @Optional SkinType skinType) {
-        onSkinSetUrl(wrapPlayer(player), url, skinType);
+    public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
+        onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
 
     @Override

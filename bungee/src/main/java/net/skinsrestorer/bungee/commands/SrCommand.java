@@ -29,6 +29,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -100,17 +101,17 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSender sender, String skinName, String skinUrl, @Optional SkinType skinType) {
-        onCreateCustom(wrapCommandSender(sender), skinName, skinUrl, skinType);
+    @Syntax(" <skinName> <skinUrl> [classic/slim]")
+    public void onCreateCustom(CommandSender sender, String skinName, String skinUrl, @Optional SkinVariant skinVariant) {
+        onCreateCustom(wrapCommandSender(sender), skinName, skinUrl, skinVariant);
     }
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
     @Description("Set the skin to evey player")
-    @Syntax(" <Skin / Url> [steve/slim]")
-    public void onSetSkinAll(CommandSender sender, String skin, @Optional SkinType skinType) {
-        onSetSkinAll(wrapCommandSender(sender), skin, skinType);
+    @Syntax(" <Skin / Url> [classic/slim]")
+    public void onSetSkinAll(CommandSender sender, String skin, @Optional SkinVariant skinVariant) {
+        onSetSkinAll(wrapCommandSender(sender), skin, skinVariant);
     }
 
     @Override

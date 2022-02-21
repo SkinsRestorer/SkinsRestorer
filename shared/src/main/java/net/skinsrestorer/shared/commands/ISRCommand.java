@@ -20,9 +20,9 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.Optional;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
@@ -34,12 +34,10 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public interface ISRCommand {
     @SuppressWarnings("unused")
@@ -141,9 +139,7 @@ public interface ISRCommand {
                 JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
                 String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
                 long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-                String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
-
-
+                String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
 
                 sender.sendMessage("§aRequest time: §e" + requestDate);
                 sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
@@ -182,12 +178,12 @@ public interface ISRCommand {
         });
     }
 
-    default void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinType skinType) {
+    default void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, String.valueOf(skinType)),
+                    plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
                     sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
@@ -199,7 +195,7 @@ public interface ISRCommand {
         });
     }
 
-    default void onSetSkinAll(ISRCommandSender sender, String skin, @Optional SkinType skinType) {
+    default void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) { // Only make console perform this command
@@ -211,7 +207,7 @@ public interface ISRCommand {
             try {
                 IProperty skinProps;
                 if (C.validUrl(skin)) {
-                    skinProps = SkinsRestorerAPI.getApi().genSkinUrl(skin, String.valueOf(skinType));
+                    skinProps = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 } else {
                     skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
                 }

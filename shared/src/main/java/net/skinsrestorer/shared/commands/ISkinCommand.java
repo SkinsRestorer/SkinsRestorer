@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.commands;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
@@ -99,7 +100,7 @@ public interface ISkinCommand {
             }
 
             final String pName = player.getName();
-            java.util.Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
+            Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -116,7 +117,7 @@ public interface ISkinCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = java.util.Optional.of(plugin.getSkinStorage().getDefaultSkinName(pName, true));
+                    skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(pName, true));
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
@@ -139,7 +140,7 @@ public interface ISkinCommand {
         onSkinSetOther(player, player, skin[0], null);
     }
 
-    default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinType skinType) {
+    default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String sName = sender.getName();
@@ -151,18 +152,18 @@ public interface ISkinCommand {
                 }
             }
 
-            if (setSkin(sender, player.getWrapper(), skin, true, false, skinType) && (sender != player))
+            if (setSkin(sender, player.getWrapper(), skin, true, false, skinVariant) && (sender != player))
                 sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", pName));
         });
     }
 
-    default void onSkinSetUrl(ISRPlayer player, String url, SkinType skinType) {
+    default void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {
             player.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             return;
         }
 
-        onSkinSetOther(player, player, url, skinType);
+        onSkinSetOther(player, player, url, skinVariant);
     }
 
     default void sendHelp(ISRCommandSender sender) {
@@ -182,7 +183,7 @@ public interface ISkinCommand {
 
     // if save is false, we won't save the skin name
     // because default skin names shouldn't be saved as the users custom skin
-    default boolean setSkin(ISRCommandSender sender, PlayerWrapper player, String skin, boolean save, boolean clear, SkinType skinType) {
+    default boolean setSkin(ISRCommandSender sender, PlayerWrapper player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
 
         if (skin.equalsIgnoreCase("null")) {
@@ -226,7 +227,7 @@ public interface ISkinCommand {
                 if (skinEntry.length() > 16) // max len of 16 char
                     skinEntry = skinEntry.substring(0, 16);
 
-                IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, String.valueOf(skinType));
+                IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
                         System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
@@ -273,9 +274,4 @@ public interface ISkinCommand {
     ISRPlugin getPlugin();
 
     void clearSkin(PlayerWrapper player);
-
-    enum SkinType {
-        STEVE,
-        SLIM,
-    }
 }

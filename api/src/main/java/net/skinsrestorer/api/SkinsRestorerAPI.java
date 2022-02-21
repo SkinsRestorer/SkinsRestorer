@@ -133,18 +133,18 @@ public abstract class SkinsRestorerAPI {
      * Generates a skin using the https://mineskin.org/ api
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
-     * @param url      pointing to a skin image url
-     * @param skinType can be null, steve or slim
+     * @param url         pointing to a skin image url
+     * @param skinVariant can be null, steve or slim
      * @return Custom skin property containing "value" and "signature"
      * @throws SkinRequestException on error
      */
-    public IProperty genSkinUrl(String url, @Nullable String skinType) throws SkinRequestException {
-        return mineSkinAPI.genSkin(url, skinType, null);
+    public IProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
+        return mineSkinAPI.genSkin(url, skinVariant, null);
     }
 
     /**
      * Returns a https://textures.minecraft.net/id based on skin
-     * This is Usefull for skull plugins like Dynmap or DiscordSRV
+     * This is useful for skull plugins like Dynmap or DiscordSRV
      * for example https://mc-heads.net/avatar/%texture_id%/%size%.png
      *
      * @param skinName

@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 
@@ -107,8 +108,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@players @skin")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
-    public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinType skinType) {
-        onSkinSetOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin, skinType);
+    public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
+        onSkinSetOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin, skinVariant);
     }
 
     @Subcommand("url")
@@ -116,8 +117,8 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
-    public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinType skinType) {
-        onSkinSetUrl(wrapPlayer(player), url, skinType);
+    public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinVariant skinVariant) {
+        onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
 
     @Override
