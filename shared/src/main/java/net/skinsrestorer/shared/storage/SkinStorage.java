@@ -43,6 +43,11 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
+    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+    private static final String LTRIM = "^\\\\s+";
+    private static final String RTRIM = "\\\\s+$";
+    private static final Pattern PTRIM = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -50,11 +55,6 @@ public class SkinStorage implements ISkinStorage {
     private MySQL mysql;
     private File skinsFolder;
     private File playersFolder;
-    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
-    private static final String LTRIM = "^\\\\s+";
-    private static final String RTRIM = "\\\\s+$";
-    private static final Pattern PTRIM = Pattern.compile("("+LTRIM+"|"+RTRIM+")");
 
     public void loadFolders(File pluginFolder) {
         skinsFolder = new File(pluginFolder, "Skins");

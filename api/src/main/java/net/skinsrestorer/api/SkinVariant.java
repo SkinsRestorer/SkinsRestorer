@@ -17,14 +17,9 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api;
 
-import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
-
-import java.util.UUID;
-
-public interface IMineSkinAPI {
-    IProperty genSkin(String url, SkinVariant skinVariant, UUID methodUUID) throws SkinRequestException;
+public enum SkinVariant {
+    CLASSIC,
+    SLIM
 }

@@ -56,7 +56,7 @@ public class Locale {
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
-    public static String SYNTAX_SKINURL = " <SkinUrl> [steve/slim]";
+    public static String SYNTAX_SKINURL = " <SkinUrl> [classic/slim]";
     public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
     public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
     public static String COMPLETIONS_SKIN = "<Skin>";
