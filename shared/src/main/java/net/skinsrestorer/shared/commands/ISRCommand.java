@@ -199,7 +199,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) { // Only make console perform this command
-                sender.sendMessage(Locale.PREFIX + "Only console may execute this command!"); // TODO: add chat color
+                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
                 return;
             }
 
@@ -212,7 +212,7 @@ public interface ISRCommand {
                     skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
                 }
                 if (skinProps == null) {
-                    sender.sendMessage(Locale.PREFIX + "no skin found...."); // TODO: add chat color
+                    sender.sendMessage(Locale.PREFIX + "§4no skin found....");
                     return;
                 }
 
