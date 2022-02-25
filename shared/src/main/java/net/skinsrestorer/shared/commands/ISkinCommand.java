@@ -145,7 +145,7 @@ public interface ISkinCommand {
             final String sName = sender.getName();
             final String pName = player.getName();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sName))) { // Todo: Test: sender != player
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sName))) {
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
