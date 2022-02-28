@@ -31,7 +31,7 @@ public class PlayerWrapper {
     public PlayerWrapper(Object playerInstance) {
         this.playerInstance = playerInstance;
 
-        this.internalPlayer = SkinsRestorerAPI.getApi().getWrapperFactory().wrap(playerInstance);
+        this.internalPlayer = SkinsRestorerAPI.getApi().getWrapperFactory().wrapPlayer(playerInstance);
     }
 
     public <A> A get(Class<A> playerClass) {

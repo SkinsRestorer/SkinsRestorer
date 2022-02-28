@@ -21,7 +21,7 @@ package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.PlayerWrapper;
 
-public interface ISRPlayer {
+public interface ISRPlayer extends ISRCommandSender {
     PlayerWrapper getWrapper();
 
     String getName();
