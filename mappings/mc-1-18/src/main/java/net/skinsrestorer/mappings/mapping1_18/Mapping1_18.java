@@ -89,7 +89,8 @@ public class Mapping1_18 implements IMapping {
     public Set<String> getSupportedVersions() {
         return Set.of(
                 "9e9fe6961a80f3e586c25601590b51ec", // 1.18
-                "20b026e774dbf715e40a0b2afe114792" // 1.18.1
+                "20b026e774dbf715e40a0b2afe114792", // 1.18.1
+                "eaeedbff51b16ead3170906872fda334" //1.18.2
         );
     }
 }
