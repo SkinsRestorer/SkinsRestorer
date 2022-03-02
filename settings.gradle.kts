@@ -3,7 +3,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
-        maven("https://papermc.io/repo/repository/maven-public/") {
+        maven("https://papermc.io/repo/repository/maven-snapshots/") {
             name = "PaperMC Repository"
         }
         gradlePluginPortal()
@@ -15,7 +15,7 @@ pluginManagement {
         id("net.kyori.indra.git") version "2.1.1"
         id("net.kyori.indra.publishing") version "2.1.1"
         id("net.kyori.blossom") version "1.3.0"
-        id("io.papermc.paperweight.userdev") version "1.3.1"
+        id("io.papermc.paperweight.userdev") version "1.3.5-SNAPSHOT"
     }
 }
 
