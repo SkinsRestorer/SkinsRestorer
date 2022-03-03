@@ -424,9 +424,9 @@ public class SkinStorage implements ISkinStorage {
             String orderBy = "Nick";
 
             // custom gui
-            if (Config.GUI_ENABLED) {
+            if (Config.GUI_CUSTOM_ENABLED) {
                 StringBuilder sb = new StringBuilder();
-                if (Config.CUSTOM_GUI_ONLY) {
+                if (Config.GUI_CUSTOM_SHOWONLYCUSTOM) {
                     Config.GUI_CUSTOM_SKINS.forEach(sb.append("|")::append);
 
                     filterBy = "WHERE Nick RLIKE '" + sb.substring(1) + "'";
@@ -465,7 +465,7 @@ public class SkinStorage implements ISkinStorage {
             for (String file : fileNames) {
                 String skinName = file.replace(".skin", "");
                 if (i >= number) {
-                    if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
+                    if (Config.GUI_CUSTOM_SHOWONLYCUSTOM) { //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String GuiSkins : Config.GUI_CUSTOM_SKINS) {
                             if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
                                 getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));

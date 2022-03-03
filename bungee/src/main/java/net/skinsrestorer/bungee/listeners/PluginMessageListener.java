@@ -72,8 +72,8 @@ public class PluginMessageListener implements Listener {
             //sr:messagechannel
             case "getSkins":
                 int page = in.readInt();
-                if (page > 999)
-                    page = 999;
+                if (page > 99)
+                    page = 99;
                 int skinNumber = 26 * page;
 
                 Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);

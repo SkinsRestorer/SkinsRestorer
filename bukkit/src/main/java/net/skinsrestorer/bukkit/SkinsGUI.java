@@ -105,7 +105,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         });
 
         // If the page is not empty, adding Next Page button.
-        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 999) {
+        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 99) {
             inventory.setItem(53, next);
             inventory.setItem(52, next);
             inventory.setItem(51, next);
@@ -115,8 +115,8 @@ public class SkinsGUI extends ItemStack implements Listener {
     }
 
     public Inventory getGUI(Player player, int page) {
-        if (page > 999)
-            page = 999;
+        if (page > 99)
+            page = 99;
         int skinNumber = 36 * page;
 
         Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
