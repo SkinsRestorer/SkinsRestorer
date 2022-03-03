@@ -147,7 +147,7 @@ public abstract class SkinsRestorerAPI {
      * This is useful for skull plugins like Dynmap or DiscordSRV
      * for example https://mc-heads.net/avatar/%texture_id%/%size%.png
      *
-     * @param skinName
+     * @param skinName Skin name
      * @return textures.minecraft.net url
      */
     public String getSkinTextureUrl(String skinName) {
