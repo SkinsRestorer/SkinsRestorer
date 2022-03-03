@@ -413,7 +413,7 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    // TODO: CUSTOM_GUI
+    // TODO: Merge with getSkinsRaw
     // seems to be that crs order is ignored...
     public Map<String, IProperty> getSkins(int number) {
         //Using mysql
@@ -483,11 +483,8 @@ public class SkinStorage implements ISkinStorage {
 
     // TODO: remove duplicated code and use existing methods....
     // TODO: needs a lot refactoring!
-    // TODO: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
-    // TODO: That should save lots of duplicated code
-    public Map<String, GenericProperty> getSkinsRaw(int number) {
-        Map<String, GenericProperty> list = new TreeMap<>();
-
+    public Map<String, IProperty> getSkinsRaw(int number) {
+        Map<String, IProperty> list = new TreeMap<>();
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " ORDER BY `Nick`");
             int i = 0;
@@ -495,11 +492,7 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number && foundSkins <= 26) {
-                        GenericProperty prop = new GenericProperty();
-                        prop.setName("textures");
-                        prop.setValue(crs.getString("Value"));
-                        prop.setSignature(crs.getString("Signature"));
-                        list.put(crs.getString("Nick"), prop);
+                        list.put(crs.getString("Nick"), mojangAPI.createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
                         foundSkins++;
                     }
                     i++;
