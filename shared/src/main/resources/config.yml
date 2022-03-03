@@ -1,4 +1,4 @@
-##################################
+1##################################
 #    SkinsRestorer Config.yml    #
 #      Generated on ${version}       #
 ##################################
@@ -67,15 +67,6 @@ DisabledSkins:
     - "Steve"
     - "Owner"
 
-# Custom list for the /skins GUI.
-# ShowOnlyCustomGUI will only show CustomGUI.Names in the gui.
-CustomGUI:
-  Enabled: false
-  ShowOnlyCustomGUI: true
-  Names:
-    - "xknat"
-    - "McLive"
-
 ############
 # Advanced #
 ############
@@ -134,6 +125,37 @@ RestrictSkinUrls:
 # Key can be requested from https://mineskin.org/apikey
 # ((?) not needed for small servers / those not using the SkinUrl api (?))
 MineskinAPIKey: "key"
+
+############
+# Skin GUI #
+############
+
+# /skins GUI settings
+SkinGUI:
+  # Here you can disable skin GUI (/skins)
+  Enabled: true
+  # If the skin GUI menu (/skins) is disabled (option above), should the command still be registred?
+  # and instead print a message to the player's chat?
+  # [!] Restart is required [!]
+  RegisterGUICommand: true
+  # If the Gui.DisabledGuiMessage.Enabled is true, what should be the message that is printed?
+  Message: "&e[&2SkinsRestorer&e]  /skins menu is currently disabled"
+  # Turn this true if your running a large server with a lot of skins to increase performance
+  CacheSkins: Auto
+  # Exclude urlskins from the skins gui
+  ExcludeUrlSkins: false
+  # Change the amount of displayed skulls in gui
+  # [!] Current max value = 26 [!]
+  SkullAmount: 26
+  # Custom list for the /skins GUI.
+  Custom:
+    Enabled: false
+    # If Gui.Custom.ShowOnlyCustom is true, the /skins GUI will
+    # only show skins from players listed in the Gui.Custom.Names
+    ShowOnlyCustom: true
+    Skins:
+      - "xknat"
+      - "McLive"
 
 #################
 # Compatibility #

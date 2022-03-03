@@ -37,9 +37,6 @@ public class Config {
     public static List<String> DEFAULT_SKINS = null;
     public static boolean DISABLED_SKINS_ENABLED = false;
     public static List<String> DISABLED_SKINS = null;
-    public static boolean CUSTOM_GUI_ENABLED = false;
-    public static boolean CUSTOM_GUI_ONLY = false;
-    public static List<String> CUSTOM_GUI_SKINS = null;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
     public static boolean MULTI_BUNGEE_ENABLED = false;
@@ -57,6 +54,16 @@ public class Config {
     public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
     public static List<String> RESTRICT_SKIN_URLS_LIST = null;
     public static String MINESKIN_API_KEY = "";
+
+    public static boolean GUI_ENABLED = true;
+    public static boolean GUI_REGISTERGUICOMMAND = true;
+    public static String GUI_MESSAGE = "&e[&2SkinsRestorer&e]  /skins menu is currently disabled";
+    public static String GUI_CACHESKINS = "Auto";
+    public static boolean GUI_EXCLUDEURLSKINS = false;
+    public static int GUI_SKULLAMOUNT = 26;
+    public static boolean GUI_CUSTOM_ENABLED = false;
+    public static boolean GUI_CUSTOM_SHOWONLYCUSTOM = true;
+    public static List<String> GUI_CUSTOM_SKINS = null;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
@@ -86,9 +93,6 @@ public class Config {
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names", ".skin");
         DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
-        CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
-        CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
-        CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
         MULTI_BUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTI_BUNGEE_ENABLED);
@@ -108,6 +112,15 @@ public class Config {
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
+        GUI_ENABLED = config.getBoolean("SkinGUI.Enabled", GUI_ENABLED);
+        GUI_REGISTERGUICOMMAND = config.getBoolean("SkinGUI.RegisterGUICommand", GUI_REGISTERGUICOMMAND);
+        GUI_MESSAGE = config.getString("SkinGUI.Message", GUI_MESSAGE);
+        GUI_CACHESKINS = config.getString("SkinGUI.RegisterGUICommand", GUI_CACHESKINS);
+        GUI_EXCLUDEURLSKINS = config.getBoolean("SkinGUI.ExcludeUrlSkins", GUI_EXCLUDEURLSKINS);
+        GUI_SKULLAMOUNT = config.getInt("SkinGUI.SkullAmount", GUI_SKULLAMOUNT);
+        GUI_CUSTOM_ENABLED = config.getBoolean("SkinGUI.Custom.Enabled", GUI_CUSTOM_ENABLED);
+        GUI_CUSTOM_SHOWONLYCUSTOM = config.getBoolean("SkinGUI.Custom.ShowOnlyCustom", GUI_CUSTOM_SHOWONLYCUSTOM);
+        GUI_CUSTOM_SKINS = config.getStringList("SkinGUI.Custom.Skins");
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
@@ -115,24 +128,26 @@ public class Config {
         DEBUG = config.getBoolean("Debug", DEBUG);
 
         //__Default__Skins
-        if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {
+        if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty() || DEFAULT_SKINS == null) {
             logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
             DEFAULT_SKINS_ENABLED = false;
         }
 
         //__Disabled__Skins
-        if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty()) {
+        if (DISABLED_SKINS_ENABLED && DISABLED_SKINS.isEmpty() || DISABLED_SKINS == null) {
             logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
             DISABLED_SKINS_ENABLED = false;
         }
 
-        if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty()) {
+        if (RESTRICT_SKIN_URLS_ENABLED && RESTRICT_SKIN_URLS_LIST.isEmpty() || RESTRICT_SKIN_URLS_LIST == null) {
             logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
             RESTRICT_SKIN_URLS_ENABLED = false;
         }
 
-        if (!CUSTOM_GUI_ENABLED)
-            CUSTOM_GUI_ONLY = false;
+        if (GUI_CUSTOM_ENABLED && GUI_CUSTOM_SKINS.isEmpty() || GUI_CUSTOM_SKINS == null) {
+            GUI_CUSTOM_ENABLED = false;
+            logger.warning("[Config] No SkinGUI.Custom.Skins found, disabling custom gui list");
+        }
 
         if (!DISMOUNT_PLAYER_ON_UPDATE)
             REMOUNT_PLAYER_ON_UPDATE = false;
