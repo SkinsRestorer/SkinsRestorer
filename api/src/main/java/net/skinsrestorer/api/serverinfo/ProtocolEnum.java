@@ -25,6 +25,7 @@ import java.util.List;
 
 public enum ProtocolEnum {
 
+    // https://minecraft.fandom.com/wiki/Protocol_version
     MINECRAFT_1_8(47),
     MINECRAFT_1_9(107),
     MINECRAFT_1_9_1(108),
@@ -55,6 +56,8 @@ public enum ProtocolEnum {
     MINECRAFT_1_17(755),
     MINECRAFT_1_17_1(756),
     MINECRAFT_1_18(757);
+    MINECRAFT_1_18_1(757);
+    MINECRAFT_1_18_2(758);
 
     static {
         List<String> SUPPORTED_VERSIONS;
