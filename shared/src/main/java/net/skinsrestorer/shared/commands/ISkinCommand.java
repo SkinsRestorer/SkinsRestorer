@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -228,7 +229,7 @@ public interface ISkinCommand {
 
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
-                        System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
+                        Instant.now().plus(100, ChronoUnit.YEARS).toEpochMilli()); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
@@ -241,6 +242,7 @@ public interface ISkinCommand {
             } catch (Exception e) {
                 plugin.getSrLogger().debug("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                e.printStackTrace();
             }
         } else {
             // If skin is not an url, it's a username
