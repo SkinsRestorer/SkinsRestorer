@@ -63,7 +63,7 @@ public class Mapping1_18 implements IMapping {
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    (Holder<DimensionType>) world.dimensionType(),
+                    world.dimensionType(),
                     world.dimension(),
                     BiomeManager.obfuscateSeed(world.getSeed()),
                     gamemode.getGameModeForPlayer(),
