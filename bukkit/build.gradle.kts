@@ -3,6 +3,7 @@ dependencies {
     implementation(projects.skinsrestorerShared)
     implementation(projects.mappings.shared)
     implementation(projects.mappings.mc118)
+    implementation(projects.mappings.mc1182)
 
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
