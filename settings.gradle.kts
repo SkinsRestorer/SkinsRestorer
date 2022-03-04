@@ -3,7 +3,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
-        maven("https://papermc.io/repo/repository/maven-snapshots/") {
+        maven("https://papermc.io/repo/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         gradlePluginPortal()
