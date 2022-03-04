@@ -229,7 +229,7 @@ public interface ISkinCommand {
 
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
-                        Instant.now().plus(100, ChronoUnit.YEARS).toEpochMilli()); // "generate" and save skin for 100 years
+                        System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                 plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
@@ -242,7 +242,6 @@ public interface ISkinCommand {
             } catch (Exception e) {
                 plugin.getSrLogger().debug("[ERROR] Exception: could not generate skin url:" + skin + "\nReason= " + e.getMessage());
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-                e.printStackTrace();
             }
         } else {
             // If skin is not an url, it's a username
