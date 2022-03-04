@@ -20,6 +20,7 @@
 package net.skinsrestorer.mappings.mapping1_18;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.core.Holder;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
@@ -29,6 +30,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
@@ -60,7 +62,15 @@ public class Mapping1_18 implements IMapping {
             ServerLevel world = entityPlayer.getLevel();
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
-            ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(world.dimensionType(), world.dimension(), BiomeManager.obfuscateSeed(world.getSeed()), gamemode.getGameModeForPlayer(), gamemode.getPreviousGameModeForPlayer(), world.isDebug(), world.isFlat(), true);
+            ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
+                    (Holder<DimensionType>) world.dimensionType(),
+                    world.dimension(),
+                    BiomeManager.obfuscateSeed(world.getSeed()),
+                    gamemode.getGameModeForPlayer(),
+                    gamemode.getPreviousGameModeForPlayer(),
+                    world.isDebug(),
+                    world.isFlat(),
+                    true);
 
             Location l = player.getLocation();
             ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false);
@@ -72,7 +82,7 @@ public class Mapping1_18 implements IMapping {
             @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
-            if (viaFunction.apply(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
+            if (Boolean.TRUE.equals(viaFunction.apply(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
                 sendPacket(entityPlayer, respawn);
             }
 
