@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")

@@ -4,7 +4,7 @@ dependencies {
     implementation(projects.mappings.shared)
     implementation(projects.mappings.mc118)
 
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
     }
 
