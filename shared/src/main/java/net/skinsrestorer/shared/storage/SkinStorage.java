@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -39,9 +39,15 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
+    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+    private static final String LTRIM = "^\\\\s+";
+    private static final String RTRIM = "\\\\s+$";
+    private static final Pattern PTRIM = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -365,11 +371,8 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * @see SkinStorage#setSkinData(String, IProperty, String)
-     */
     public void setSkinData(String skinName, IProperty textures) {
-        setSkinData(skinName, textures, Long.toString(System.currentTimeMillis()));
+        setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
     /**
@@ -377,23 +380,25 @@ public class SkinStorage implements ISkinStorage {
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in millis
+     * @param timestamp timestamp string in millis (null for current)
      */
-    public void setSkinData(String skinName, IProperty textures, String timestamp) {
+    public void setSkinData(String skinName, IProperty textures, long timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
         String signature = textures.getSignature();
 
+        String timestampString = Long.toString(timestamp);
+
         if (Config.MYSQL_ENABLED) {
             mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                    skinName, value, signature, timestamp, value, signature, timestamp);
+                    skinName, value, signature, timestampString, value, signature, timestampString);
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
             File skinFile = new File(skinsFolder, skinName + ".skin");
 
             try {
-                if (value.isEmpty() || signature.isEmpty() || timestamp.isEmpty())
+                if (value.isEmpty() || signature.isEmpty() || timestampString.isEmpty())
                     return;
 
                 if (!skinFile.exists() && !skinFile.createNewFile())
@@ -618,9 +623,8 @@ public class SkinStorage implements ISkinStorage {
      * @return setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinName(String playerName, boolean clear) {
-        // LTrim and RTrim player name
-        playerName = playerName.replaceAll("^\\\\s+", "");
-        playerName = playerName.replaceAll("\\\\s+$", "");
+        // Trim player name
+        PTRIM.matcher(playerName).replaceAll("");
 
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
@@ -657,7 +661,7 @@ public class SkinStorage implements ISkinStorage {
 
     private String removeForbiddenChars(String str) {
         // Escape all Windows / Linux forbidden printable ASCII characters
-        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
+        return FORBIDDENCHARS_PATTERN.matcher(str).replaceAll("·");
     }
 
     //todo remove all whitespace after last starting space.
@@ -666,6 +670,6 @@ public class SkinStorage implements ISkinStorage {
         if (str.startsWith(" ")) {
             return str;
         }
-        return str.replaceAll("\\s", "");
+        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
 }

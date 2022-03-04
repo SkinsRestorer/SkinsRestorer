@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -41,22 +41,22 @@ public class Locale {
     };
     public static String PREFIX = "&e[&2SkinsRestorer&e] ";
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
-    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of another player.";
+    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
-    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of another player.";
+    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of a target player.";
     public static String HELP_SKIN_SET = "Set the skin of another player.";
-    public static String HELP_SKIN_SET_OTHER = "Sets the skin of another player.";
-    public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by Image_url.png";
+    public static String HELP_SKIN_SET_OTHER = "Sets the skin for a target player.";
+    public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by image_url.png link";
     public static String HELP_SR_RELOAD = "Reloads the configuration file.";
-    public static String HELP_SR_STATUS = "Checks plugin needed API services";
+    public static String HELP_SR_STATUS = "Checks plugin needed API services.";
     public static String HELP_SR_DROP = "Removes players or skin data.";
     public static String HELP_SR_PROPS = "Displays the players current skin properties.";
     public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
-    public static String HELP_SR_CREATECUSTOM = "Create a custom server wide skin";
+    public static String HELP_SR_CREATECUSTOM = "Create a custom server wide skin.";
     public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
     public static String SYNTAX_SKINSET = " <skin>";
     public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
-    public static String SYNTAX_SKINURL = " <SkinUrl> [steve/slim]";
+    public static String SYNTAX_SKINURL = " <SkinUrl> [classic/slim]";
     public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
     public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
     public static String COMPLETIONS_SKIN = "<Skin>";
@@ -89,7 +89,7 @@ public class Locale {
     public static String SKINSMENU_TITLE_NEW = "&9Skins Menu - Page %page";
     public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
     public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
-    public static String SKINSMENU_REMOVE_SKIN = "&c&l[ &7Remove Skin&c&l ]";
+    public static String SKINSMENU_CLEAR_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin %targets.";

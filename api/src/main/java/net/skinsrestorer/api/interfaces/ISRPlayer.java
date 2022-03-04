@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,7 +21,7 @@ package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.PlayerWrapper;
 
-public interface ISRPlayer {
+public interface ISRPlayer extends ISRCommandSender {
     PlayerWrapper getWrapper();
 
     String getName();

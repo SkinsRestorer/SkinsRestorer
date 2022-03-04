@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -32,9 +32,9 @@ import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -45,44 +45,66 @@ public class Mapping1_18 implements IMapping {
     }
 
     public void triggerHealthUpdate(Player player) {
-        ((CraftPlayer) player).getHandle().resetSentInfo();
+        extractServerPlayer(player).resetSentInfo();
     }
 
     public void accept(Player player, Function<ViaPacketData, Boolean> viaFunction) {
-        final ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        try {
+            final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
 
-        ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, ImmutableList.of(entityPlayer));
-        ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, ImmutableList.of(entityPlayer));
+            ClientboundPlayerInfoPacket removePlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, ImmutableList.of(entityPlayer));
+            ClientboundPlayerInfoPacket addPlayer = new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, ImmutableList.of(entityPlayer));
 
-        // Slowly getting from object to object till we get what is needed for
-        // the respawn packet
-        ServerLevel world = entityPlayer.getLevel();
-        ServerPlayerGameMode gamemode = entityPlayer.gameMode;
+            // Slowly getting from object to object till we get what is needed for
+            // the respawn packet
+            ServerLevel world = entityPlayer.getLevel();
+            ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
-        ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(world.dimensionType(), world.dimension(), BiomeManager.obfuscateSeed(world.getSeed()), gamemode.getGameModeForPlayer(), gamemode.getPreviousGameModeForPlayer(), world.isDebug(), world.isFlat(), true);
+            ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
+                    world.dimensionType(),
+                    world.dimension(),
+                    BiomeManager.obfuscateSeed(world.getSeed()),
+                    gamemode.getGameModeForPlayer(),
+                    gamemode.getPreviousGameModeForPlayer(),
+                    world.isDebug(),
+                    world.isFlat(),
+                    true);
 
-        Location l = player.getLocation();
-        ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false);
-        ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
+            Location l = player.getLocation();
+            ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false);
+            ClientboundSetCarriedItemPacket slot = new ClientboundSetCarriedItemPacket(player.getInventory().getHeldItemSlot());
 
-        sendPacket(entityPlayer, removePlayer);
-        sendPacket(entityPlayer, addPlayer);
+            sendPacket(entityPlayer, removePlayer);
+            sendPacket(entityPlayer, addPlayer);
 
-        @SuppressWarnings("deprecation")
-        int dimension = player.getWorld().getEnvironment().getId();
+            @SuppressWarnings("deprecation")
+            int dimension = player.getWorld().getEnvironment().getId();
 
-        if (viaFunction.apply(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat()))) {
-            sendPacket(entityPlayer, respawn);
+            if (Boolean.TRUE.equals(viaFunction.apply(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
+                sendPacket(entityPlayer, respawn);
+            }
+
+            entityPlayer.onUpdateAbilities();
+
+            sendPacket(entityPlayer, pos);
+            sendPacket(entityPlayer, slot);
+
+            player.getClass().getMethod("updateScaledHealth").invoke(player);
+            player.updateInventory();
+            triggerHealthUpdate(player);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
+    }
 
-        entityPlayer.onUpdateAbilities();
-
-        sendPacket(entityPlayer, pos);
-        sendPacket(entityPlayer, slot);
-
-        ((CraftPlayer) player).updateScaledHealth();
-        player.updateInventory();
-        triggerHealthUpdate(player);
+    private ServerPlayer extractServerPlayer(Player player) {
+        try {
+            return (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override

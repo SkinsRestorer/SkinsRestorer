@@ -8,9 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -26,7 +26,7 @@ jobs:
         run: ./gradlew javadoc
       - name: Move files
         run: |
-          mv ./build/docs/javadoc ./docs
+          mv ./api/build/docs/javadoc ./docs
       - name: Create CNAME
         run: |
           echo "docs.skinsrestorer.net" > ./docs/CNAME

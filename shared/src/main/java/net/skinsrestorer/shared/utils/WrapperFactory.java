@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -23,5 +23,5 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 
 public abstract class WrapperFactory implements IWrapperFactory {
-    public abstract ISRPlayer wrap(Object playerInstance);
+    public abstract ISRPlayer wrapPlayer(Object playerInstance);
 }

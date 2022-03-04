@@ -1,11 +1,10 @@
 plugins {
     base
-    id("sr.build-logic")
 }
 
 allprojects {
     group = "net.skinsrestorer"
-    version = "14.1.10"
+    version = "14.1.11"
     description = "Ability to restore/change skins on servers! (Offline and Online Mode)"
 }
 

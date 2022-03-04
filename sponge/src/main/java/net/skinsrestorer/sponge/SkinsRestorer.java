@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -45,6 +45,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -59,13 +60,14 @@ import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
@@ -149,8 +151,8 @@ public class SkinsRestorer implements ISRPlugin {
 
             prepareACF(manager, srLogger);
 
-            manager.registerCommand(new SkinCommand(this, srLogger));
-            manager.registerCommand(new SrCommand(this, srLogger));
+            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(new SrCommand(this));
         });
     }
 
@@ -184,10 +186,6 @@ public class SkinsRestorer implements ISRPlugin {
         }));
     }
 
-    public Text parseMessage(String msg) {
-        return Text.builder(msg).build();
-    }
-
     @Override
     public String getVersion() {
         return container.getVersion().orElse("Unknown");
@@ -198,28 +196,23 @@ public class SkinsRestorer implements ISRPlugin {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
+    @Override
+    public void runAsync(Runnable runnable) {
+        game.getScheduler().createAsyncExecutor(this).execute(runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+    }
+
     private static class WrapperFactorySponge extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(Text.builder(message).build());
-                    }
-                };
+                return WrapperSponge.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

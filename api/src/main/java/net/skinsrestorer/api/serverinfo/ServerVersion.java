@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,14 +22,12 @@ package net.skinsrestorer.api.serverinfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 
 @Getter
 @RequiredArgsConstructor
-@ToString
 @EqualsAndHashCode
 public class ServerVersion {
     private final int major;
@@ -42,7 +40,7 @@ public class ServerVersion {
             String serverPackage = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null).getClass().getPackage().getName();
 
             return serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored) {
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | NullPointerException ignored) {
             return null;
         }
     }

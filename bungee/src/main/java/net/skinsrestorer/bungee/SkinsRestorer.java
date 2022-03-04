@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -23,7 +23,6 @@ import co.aikar.commands.BungeeCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -38,6 +37,7 @@ import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -57,8 +57,10 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Getter
 @SuppressWarnings("Duplicates")
@@ -137,9 +139,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
         prepareACF(manager, srLogger);
 
-        this.skinCommand = new SkinCommand(this, srLogger);
+        this.skinCommand = new SkinCommand(this);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
     }
 
@@ -184,28 +186,23 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
+    @Override
+    public void runAsync(Runnable runnable) {
+        getProxy().getScheduler().runAsync(this, runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return getProxy().getPlayers().stream().map(WrapperBungee::wrapPlayer).collect(Collectors.toList());
+    }
+
     private static class WrapperFactoryBungee extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof ProxiedPlayer) {
                 ProxiedPlayer player = (ProxiedPlayer) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(TextComponent.fromLegacyText(message));
-                    }
-                };
+                return WrapperBungee.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -25,4 +25,12 @@ public interface ISRCommandSender {
     String getName();
 
     boolean hasPermission(String permission);
+
+    default boolean isConsole() {
+        return false;
+    }
+
+    default boolean equalsPlayer(ISRPlayer player) {
+        return getName().equals(player.getName());
+    }
 }

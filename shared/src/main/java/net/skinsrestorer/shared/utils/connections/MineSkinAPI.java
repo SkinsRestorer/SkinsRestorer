@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.property.IProperty;
@@ -52,7 +53,8 @@ public class MineSkinAPI implements IMineSkinAPI {
     private final Queue<UUID> queue = new LinkedList<>();
     private final Map<UUID, AtomicInteger> fails = new HashMap<>();
 
-    public IProperty genSkin(String url, @Nullable String skinType, @Nullable UUID methodUUID) throws SkinRequestException {
+    @Override
+    public IProperty genSkin(String url, @Nullable SkinVariant skinVariant, @Nullable UUID methodUUID) throws SkinRequestException {
         if (methodUUID == null) {
             methodUUID = UUID.randomUUID();
             queue.add(methodUUID);
@@ -67,11 +69,11 @@ public class MineSkinAPI implements IMineSkinAPI {
 
         try {
             if (queue.element().equals(methodUUID)) {
-                String skinVariant = skinType != null && (skinType.equalsIgnoreCase("steve") || skinType.equalsIgnoreCase("slim")) ? "&variant=" + skinType : "";
+                String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase() : "";
 
                 try {
-                    final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariant);
-                    if (output.isEmpty()) //api time out
+                    final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+                    if (output.isEmpty()) // API time out
                         throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
                     final JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
@@ -104,14 +106,14 @@ public class MineSkinAPI implements IMineSkinAPI {
                                     TimeUnit.SECONDS.sleep(2);
                                 }
 
-                                return genSkin(url, skinType, methodUUID); // try again after nextRequest
+                                return genSkin(url, skinVariant, methodUUID); // try again after nextRequest
 
                             case "Failed to generate skin data":
                             case "Failed to change skin":
                                 logger.debug("[ERROR] MS " + errResp + ", trying again... ");
                                 TimeUnit.SECONDS.sleep(5);
 
-                                return genSkin(url, skinType, methodUUID); // try again
+                                return genSkin(url, skinVariant, methodUUID); // try again
 
                             case "No accounts available":
                                 logger.debug("[ERROR] " + errResp + " for: " + url);
@@ -143,7 +145,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                     throw new SkinRequestException(Locale.MS_API_FAILED);
                 }
 
-                return genSkin(url, skinType, methodUUID);
+                return genSkin(url, skinVariant, methodUUID);
             }
         } finally {
             queue.remove(methodUUID);

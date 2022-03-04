@@ -1,12 +1,9 @@
 plugins {
-    java
-    id("sr.core-dependencies")
+    id("sr.base-logic")
 }
 
 dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
     }
 }
-
-java.javaTarget(8)

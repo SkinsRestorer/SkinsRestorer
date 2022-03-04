@@ -30,7 +30,7 @@ servers.
 
 - Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
-- Minecraft 1.8.0 - 1.18
+- Minecraft 1.8.0 - 1.18.2
 
 ## :link: Links
 
@@ -73,7 +73,7 @@ supported this project by contributing.
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
-    <version>14.1.10</version>
+    <version>14.1.11</version>
 </dependency>
 ```
 

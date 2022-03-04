@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -20,16 +20,19 @@
 package net.skinsrestorer.shared.interfaces;
 
 import co.aikar.commands.CommandManager;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 
 public interface ISRPlugin {
     File getDataFolder();
@@ -40,7 +43,13 @@ public interface ISRPlugin {
 
     MetricsCounter getMetricsCounter();
 
+    SRLogger getSrLogger();
+
     InputStream getResource(String resource);
+
+    void runAsync(Runnable runnable);
+
+    Collection<ISRPlayer> getOnlinePlayers();
 
     @SuppressWarnings({"deprecation"})
     default void prepareACF(CommandManager<?, ?, ?, ?, ?, ?> manager, SRLogger srLogger) {
@@ -57,4 +66,8 @@ public interface ISRPlugin {
 
         SharedMethods.allowIllegalACFNames();
     }
+
+    CommandManager<?, ?, ?, ?, ?, ?> getManager();
+
+    MojangAPI getMojangAPI();
 }

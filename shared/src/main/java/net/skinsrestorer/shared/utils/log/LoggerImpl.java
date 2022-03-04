@@ -1,7 +1,7 @@
 /*
  * SkinsRestorer
  *
- * Copyright (C) 2021 SkinsRestorer
+ * Copyright (C) 2022 SkinsRestorer
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class LoggerImpl implements ISRLogger {
-    @SuppressWarnings("SpongeLogging")
     private final Logger logger;
     private final ISRConsole console;
 
