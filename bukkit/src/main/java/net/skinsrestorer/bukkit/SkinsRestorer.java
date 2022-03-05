@@ -422,12 +422,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         if (bungeeEnabled) {
-            srLogger.info("-------------------------/Warning\\-------------------------");
-            srLogger.info("This plugin is running in Bungee mode!");
-            srLogger.info("You have to do all configuration at config file");
-            srLogger.info("inside your Bungeecord server.");
-            srLogger.info("(Bungeecord-Server/plugins/SkinsRestorer/).");
-            srLogger.info("-------------------------\\Warning/-------------------------");
+            srLogger.info("-------------------------/Warning\\-------------------------" +
+                    "\nThis plugin is running in Bungee mode!" +
+                    "\nYou have to do all configuration at config file" +
+                    "\ninside your Bungeecord server." +
+                    "\n(Bungeecord-Server/plugins/SkinsRestorer/)." +
+                    "\n-------------------------\\Warning/-------------------------");
         }
     }
 
