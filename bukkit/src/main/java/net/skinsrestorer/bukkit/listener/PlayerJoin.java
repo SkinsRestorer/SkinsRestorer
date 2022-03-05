@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -36,10 +37,12 @@ public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
     private final boolean isOnlineMode = Bukkit.getOnlineMode();
+    @Setter
+    private static boolean resourcePack;
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        if (Config.DISABLE_ON_JOIN_SKINS)
+        if (Config.DISABLE_ON_JOIN_SKINS || (resourcePack && Config.RESOURCE_PACK_FIX))
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {

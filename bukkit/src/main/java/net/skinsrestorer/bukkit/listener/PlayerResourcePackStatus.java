@@ -39,6 +39,8 @@ public class PlayerResourcePackStatus implements Listener {
         if (!Config.RESOURCE_PACK_FIX)
             return;
 
+        PlayerJoin.setResourcePack(true);
+
         // Cancel if ResourcePack has not been loaded.
         if (event.getStatus() != PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
             return;
