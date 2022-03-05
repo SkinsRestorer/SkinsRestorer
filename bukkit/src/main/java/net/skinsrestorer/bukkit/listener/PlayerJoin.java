@@ -31,6 +31,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class PlayerJoin implements Listener {
     private final SkinsRestorer plugin;
@@ -45,13 +47,19 @@ public class PlayerJoin implements Listener {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 final Player player = event.getPlayer();
-                final String name = player.getName();
+                final String pName = player.getName();
+                Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
 
                 // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !skin.isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
                     return;
 
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
+                // Get default skin if enabled
+                if (Config.DEFAULT_SKINS_ENABLED)
+                    skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(player.getName()));
+
+
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin.orElse(pName));
             } catch (SkinRequestException ignored) {
             }
         });
