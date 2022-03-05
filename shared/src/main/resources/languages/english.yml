@@ -37,7 +37,7 @@ help-SRCreateCustom: "Create a custom server wide skin."
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
 syntax-SkinSet-Other: " <target> <skin/url>"
-syntax-SkinUrl: " <SkinUrl> [steve/slim]"
+syntax-SkinUrl: " <SkinUrl> [classic/slim]"
 syntax-SkinUpdate-Other: " <target>"
 syntax-SkinClear-Other: " <target>"
 

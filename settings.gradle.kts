@@ -15,7 +15,7 @@ pluginManagement {
         id("net.kyori.indra.git") version "2.1.1"
         id("net.kyori.indra.publishing") version "2.1.1"
         id("net.kyori.blossom") version "1.3.0"
-        id("io.papermc.paperweight.userdev") version "1.3.1"
+        id("io.papermc.paperweight.userdev") version "1.3.5"
     }
 }
 
@@ -74,7 +74,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18").forEach {
+setOf("1-18", "1-18-2").forEach {
     include("mappings:mc-$it")
 }
 

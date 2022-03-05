@@ -36,7 +36,7 @@ public class CooldownStorage implements Runnable {
         cooldown.remove(name);
     }
 
-    public static int getCooldown(String name) {
+    public static int getCooldown(String name) { // Todo: improve performance
         int int1 = Integer.parseInt(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(cooldown.get(name))));
         int int2 = Integer.parseInt(String.format("%d", TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         return int1 - int2;

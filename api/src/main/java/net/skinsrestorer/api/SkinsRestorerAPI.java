@@ -133,29 +133,29 @@ public abstract class SkinsRestorerAPI {
      * Generates a skin using the https://mineskin.org/ api
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
-     * @param url      pointing to a skin image url
-     * @param skinType can be null, steve or slim
+     * @param url         pointing to a skin image url
+     * @param skinVariant can be null, steve or slim
      * @return Custom skin property containing "value" and "signature"
      * @throws SkinRequestException on error
      */
-    public IProperty genSkinUrl(String url, @Nullable String skinType) throws SkinRequestException {
-        return mineSkinAPI.genSkin(url, skinType, null);
+    public IProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
+        return mineSkinAPI.genSkin(url, skinVariant, null);
     }
 
     /**
      * Returns a https://textures.minecraft.net/id based on skin
-     * This is Usefull for skull plugins like Dynmap or DiscordSRV
+     * This is useful for skull plugins like Dynmap or DiscordSRV
      * for example https://mc-heads.net/avatar/%texture_id%/%size%.png
      *
-     * @param skinName
+     * @param skinName Skin name
      * @return textures.minecraft.net url
      */
     public String getSkinTextureUrl(String skinName) {
         IProperty skin = getSkinData(skinName);
         if (skin == null)
             return null;
-        byte[] decoded = Base64.getDecoder().decode(skin.getValue());
-        String decodedString = new String(decoded);
+
+        String decodedString = new String(Base64.getDecoder().decode(skin.getValue()));
         JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
         String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
         return decodedSkin.substring(1, decodedSkin.length() - 1);
@@ -164,6 +164,10 @@ public abstract class SkinsRestorerAPI {
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
         setSkinName(playerName, skinName);
         skinStorage.getSkinForPlayer(skinName);
+    }
+
+    public IProperty createProperty(String name, String value, String signature) {
+        return mojangAPI.createProperty(name, value, signature);
     }
 
     public void removeSkin(String playerName) {
