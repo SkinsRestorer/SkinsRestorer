@@ -39,7 +39,6 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 @RequiredArgsConstructor
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
     private final boolean isOnlineMode = BungeeCord.getInstance().getConfig().isOnlineMode();
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -57,8 +56,10 @@ public class LoginListener implements Listener {
             final String name = connection.getName();
 
             // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM) {
+                event.completeIntent(plugin);
                 return;
+            }
 
             final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
 
