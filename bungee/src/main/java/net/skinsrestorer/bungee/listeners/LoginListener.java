@@ -39,6 +39,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 @RequiredArgsConstructor
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
+    private final SRLogger log;
     private final boolean isOnlineMode = BungeeCord.getInstance().getConfig().isOnlineMode();
 
     @EventHandler(priority = EventPriority.HIGH)
