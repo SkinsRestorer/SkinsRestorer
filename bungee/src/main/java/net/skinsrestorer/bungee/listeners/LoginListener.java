@@ -36,6 +36,8 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class LoginListener implements Listener {
     private final SkinsRestorer plugin;
@@ -44,10 +46,8 @@ public class LoginListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
-        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
-            return;
-
-        if (Config.DISABLE_ON_JOIN_SKINS)
+        if ((event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
+                || Config.DISABLE_ON_JOIN_SKINS)
             return;
 
         event.registerIntent(plugin);
@@ -55,18 +55,21 @@ public class LoginListener implements Listener {
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
             final PendingConnection connection = event.getConnection();
             final String name = connection.getName();
+            Optional<String> skin = plugin.getSkinStorage().getSkinName(name);
 
             // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM) {
+            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !skin.isPresent() && !Config.DEFAULT_SKINS_PREMIUM) {
                 event.completeIntent(plugin);
                 return;
             }
 
-            final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
+            // Get default skin if enabled
+            if (Config.DEFAULT_SKINS_ENABLED)
+                skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(name));
 
             try {
                 // TODO: add default skinurl support
-                plugin.getSkinApplierBungee().applySkin(skin, (InitialHandler) connection);
+                plugin.getSkinApplierBungee().applySkin(skin.orElse(name), (InitialHandler) connection);
             } catch (SkinRequestException ignored) {
             } catch (Exception e1) {
                 e1.printStackTrace();
@@ -76,7 +79,6 @@ public class LoginListener implements Listener {
         });
     }
 
-    //think we should no have EventPriority.HIGH just to check for updates...
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerConnect(final ServerConnectEvent e) {
         if (e.isCancelled())
