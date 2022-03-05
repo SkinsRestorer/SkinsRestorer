@@ -30,7 +30,7 @@ help-SRCreateCustom: "Create a custom server wide skin."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
 syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
+syntax-SkinSet-Other: " <target><skin/url>"
 syntax-SkinUrl: " <SkinUrl> [classic/slim]"
 syntax-SkinUpdate-Other: " <target>"
 syntax-SkinClear-Other: " <target>"
