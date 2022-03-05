@@ -48,7 +48,7 @@ public class PlayerJoin implements Listener {
                 final String name = player.getName();
 
                 // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinOfPlayer(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
                     return;
 
                 plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
