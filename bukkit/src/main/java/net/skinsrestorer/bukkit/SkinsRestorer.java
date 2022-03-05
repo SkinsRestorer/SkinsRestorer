@@ -37,6 +37,7 @@ import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
+import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -64,9 +65,11 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Getter
 @SuppressWarnings("Duplicates")
@@ -104,6 +107,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     @Override
     public String getVersion() {
         return getDescription().getVersion();
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        getServer().getScheduler().runTaskAsynchronously(this, runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return getServer().getOnlinePlayers().stream().map(WrapperBukkit::wrapPlayer).collect(Collectors.toList());
     }
 
     @Override
@@ -327,9 +340,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         prepareACF(manager, srLogger);
 
-        skinCommand = new SkinCommand(this, srLogger);
+        skinCommand = new SkinCommand(this);
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this, srLogger));
+        manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
     }
 
@@ -451,26 +464,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     private static class WrapperFactoryBukkit extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(message);
-                    }
-                };
+                return WrapperBukkit.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

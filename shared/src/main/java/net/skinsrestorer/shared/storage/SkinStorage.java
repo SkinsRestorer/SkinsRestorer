@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.jetbrains.annotations.Nullable;
 
 import javax.sql.RowSet;
 import java.io.*;
@@ -40,9 +39,15 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
+    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+    private static final String LTRIM = "^\\\\s+";
+    private static final String RTRIM = "\\\\s+$";
+    private static final Pattern PTRIM = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -618,9 +623,8 @@ public class SkinStorage implements ISkinStorage {
      * @return setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
      */
     public String getDefaultSkinName(String playerName, boolean clear) {
-        // LTrim and RTrim player name
-        playerName = playerName.replaceAll("^\\\\s+", "");
-        playerName = playerName.replaceAll("\\\\s+$", "");
+        // Trim player name
+        PTRIM.matcher(playerName).replaceAll("");
 
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
@@ -657,7 +661,7 @@ public class SkinStorage implements ISkinStorage {
 
     private String removeForbiddenChars(String str) {
         // Escape all Windows / Linux forbidden printable ASCII characters
-        return str.replaceAll("[\\\\/:*?\"<>|]", "·");
+        return FORBIDDENCHARS_PATTERN.matcher(str).replaceAll("·");
     }
 
     //todo remove all whitespace after last starting space.
@@ -666,6 +670,6 @@ public class SkinStorage implements ISkinStorage {
         if (str.startsWith(" ")) {
             return str;
         }
-        return str.replaceAll("\\s", "");
+        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
 }

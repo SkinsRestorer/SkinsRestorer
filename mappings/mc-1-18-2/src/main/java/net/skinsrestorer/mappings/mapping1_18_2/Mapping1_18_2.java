@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.mappings.mapping1_18;
+package net.skinsrestorer.mappings.mapping1_18_2;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.network.protocol.Packet;
@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
-public class Mapping1_18 implements IMapping {
+public class Mapping1_18_2 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
         player.connection.send(packet);
     }
@@ -61,7 +61,7 @@ public class Mapping1_18 implements IMapping {
             ServerPlayerGameMode gamemode = entityPlayer.gameMode;
 
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
-                    world.dimensionType(),
+                    world.dimensionTypeRegistration(),
                     world.dimension(),
                     BiomeManager.obfuscateSeed(world.getSeed()),
                     gamemode.getGameModeForPlayer(),
@@ -110,8 +110,7 @@ public class Mapping1_18 implements IMapping {
     @Override
     public Set<String> getSupportedVersions() {
         return Set.of(
-                "9e9fe6961a80f3e586c25601590b51ec", // 1.18
-                "20b026e774dbf715e40a0b2afe114792" // 1.18.1
+                "eaeedbff51b16ead3170906872fda334" // 1.18.2
         );
     }
 }
