@@ -35,8 +35,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public interface ISRCommand {
@@ -163,14 +161,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                final String name = sender.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
-
-                if (C.validUrl(skin)) {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), SkinsRestorerAPI.getApi().genSkinUrl(skin, null));
-                } else {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
-                }
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), plugin.getSkinStorage().getDefaultSkinForPlayer(sender.getName()));
                 sender.sendMessage("success: player skin has been refreshed!");
             } catch (Exception ignored) {
                 sender.sendMessage("ERROR: player skin could NOT be refreshed!");
