@@ -21,9 +21,12 @@ package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -33,6 +36,7 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 public class PlayerResourcePackStatus implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
+    private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
     public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
@@ -41,14 +45,17 @@ public class PlayerResourcePackStatus implements Listener {
 
         PlayerJoin.setResourcePack(true);
 
-        // Cancel if ResourcePack has not been loaded.
-        if (event.getStatus() != PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED)
-            return;
-
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()));
-            } catch (Exception ignored) {
+                final Player player = event.getPlayer();
+                final String name = player.getName();
+
+                // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
+                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+                    return;
+
+                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
+            } catch (SkinRequestException ignored) {
             }
         });
     }
