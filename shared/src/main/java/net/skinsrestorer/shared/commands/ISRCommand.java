@@ -163,15 +163,14 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                final String name = sender.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getName());
 
                 if (C.validUrl(skin)) {
                     SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), SkinsRestorerAPI.getApi().genSkinUrl(skin, null));
                 } else {
                     SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
                 }
-                sender.sendMessage("success: player skin has been refreshed!");
+                sender.sendMessage("Success: player skin has been refreshed!");
             } catch (Exception ignored) {
                 sender.sendMessage("ERROR: player skin could NOT be refreshed!");
             }
