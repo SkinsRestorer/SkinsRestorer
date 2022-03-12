@@ -14,7 +14,7 @@ prefix: "&e[&2SkinsRestorer&e]"
 #################
 #Help lines appearing in "/skin" OR "/skin help"
 help-SkinClear: "清除你的皮肤"
-help-SkinClear-Other: "Clears the skin of a target player."
+help-SkinClear-Other: "清除目标玩家的皮肤"
 help-SkinUpdate: "更新你的皮肤"
 help-SkinUpdate-Other: "Updates the skin of a target player."
 help-SkinSet: "Set the skin of another player."
