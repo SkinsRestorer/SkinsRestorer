@@ -130,7 +130,7 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     @Listener
