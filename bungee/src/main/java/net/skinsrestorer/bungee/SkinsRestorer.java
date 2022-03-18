@@ -131,7 +131,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         multiBungee = Config.MULTI_BUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        getProxy().getScheduler().runAsync(this, () -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     private void initCommands() {

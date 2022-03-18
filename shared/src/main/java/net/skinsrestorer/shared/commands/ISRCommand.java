@@ -170,9 +170,9 @@ public interface ISRCommand {
                 } else {
                     SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
                 }
-                sender.sendMessage("Success: player skin has been refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
-                sender.sendMessage("ERROR: player skin could NOT be refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);
             }
         });
     }
