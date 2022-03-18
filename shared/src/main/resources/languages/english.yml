@@ -74,6 +74,9 @@ dataDropped: "&2Data dropped for %playerOrSkin %targets."
 # Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin has been created!"
 
+# Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
+
 # /sr reload
 reload: "&2Config and Locale has been reloaded!"
 
@@ -133,6 +136,9 @@ error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custo
 
 # when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+
+# When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 
   ######################
   # SkinsMenu messages #

@@ -138,7 +138,7 @@ public class SkinsRestorer implements ISRPlugin {
         srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     private void initCommands() {

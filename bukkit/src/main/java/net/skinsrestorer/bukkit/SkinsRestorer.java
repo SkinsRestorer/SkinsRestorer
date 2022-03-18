@@ -285,7 +285,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Run connection check
         if (!bungeeEnabled) {
-            SharedMethods.runServiceCheck(mojangAPI, srLogger);
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                SharedMethods.runServiceCheck(mojangAPI, srLogger);
+            });
         }
     }
 

@@ -93,6 +93,8 @@ public class Locale {
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin %targets.";
+    public static String ADMIN_APPLYSKIN_SUCCES = "&2Player skin has been refreshed!";
+    public static String ADMIN_APPLYSKIN_ERROR = "&4ERROR&8: &cplayer skin could NOT be refreshed!";
     public static String STATUS_OK = "&2Mojang API connection successful!";
     public static String ALT_API_FAILED = "&4Error&8: &cSkin Data API is overloaded, please try again later!";
     public static String MS_API_FAILED = "&4Error&8: &cMineSkin API is overloaded, please try again later!";
