@@ -74,7 +74,7 @@ public class PluginMessageListener implements Listener {
                 int page = in.readInt();
                 if (page > 999)
                     page = 999;
-                int skinNumber = 26 * page;
+                int skinNumber = 25 * page;
 
                 Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
 
@@ -90,10 +90,16 @@ public class PluginMessageListener implements Listener {
 
                     out.writeShort(ba.length);
                     out.write(ba);
-
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
+
+                // Payload may not be larger than 32767 bytes -18 from channel name
+                if(b.toByteArray().length > 32749) {
+                    plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
+                    break;
+                }
+
 
                 player.getServer().sendData("sr:messagechannel", b.toByteArray());
                 break;

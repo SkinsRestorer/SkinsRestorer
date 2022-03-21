@@ -494,7 +494,7 @@ public class SkinStorage implements ISkinStorage {
             int foundSkins = 0;
             try {
                 do {
-                    if (i >= number && foundSkins <= 26) {
+                    if (i >= number && foundSkins <= 25) {
                         GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
                         prop.setValue(crs.getString("Value"));
@@ -522,7 +522,7 @@ public class SkinStorage implements ISkinStorage {
                 String skinName = file.replace(".skin", "");
 
                 File skinFile = new File(skinsFolder, file);
-                if (i >= number && foundSkins <= 26) {
+                if (i >= number && foundSkins <= 25) {
                     try {
                         if (!skinFile.exists())
                             return null;
