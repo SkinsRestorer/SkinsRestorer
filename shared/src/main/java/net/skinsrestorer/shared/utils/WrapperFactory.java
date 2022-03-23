@@ -23,5 +23,5 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 
 public abstract class WrapperFactory implements IWrapperFactory {
-    public abstract ISRPlayer wrap(Object playerInstance);
+    public abstract ISRPlayer wrapPlayer(Object playerInstance);
 }
