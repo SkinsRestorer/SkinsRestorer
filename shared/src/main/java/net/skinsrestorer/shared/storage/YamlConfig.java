@@ -47,7 +47,7 @@ public class YamlConfig {
             try {
                 AxiomConfiguration defaultConfig = new AxiomConfiguration();
                 defaultConfig.load(is);
-                config.mergeDefault(defaultConfig, true, false);
+                config.merge(defaultConfig, true, true, false);
                 config.save(file.toPath());
             } catch(IOException e) {
                 e.printStackTrace();
