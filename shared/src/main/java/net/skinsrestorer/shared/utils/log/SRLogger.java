@@ -29,11 +29,11 @@ public class SRLogger {
     private final ISRLogger logger;
     private final boolean color;
 
-    public SRLogger(File pluginFolder, ISRLogger logger) {
-        this(pluginFolder, logger, false);
+    public SRLogger(ISRLogger logger) {
+        this(logger, false);
     }
 
-    public SRLogger(File pluginFolder, ISRLogger logger, boolean color) {
+    public SRLogger(ISRLogger logger, boolean color) {
         this.logger = logger;
         this.color = color;
     }
