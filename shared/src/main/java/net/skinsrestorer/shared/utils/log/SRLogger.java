@@ -42,9 +42,10 @@ public class SRLogger {
         try {
             // Manual check config value
             File pluginConfigFile = new File(pluginFolder, "config.yml");
-            YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml", false, this);
 
             if (pluginConfigFile.exists()) {
+                YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml", false, this);
+
                 pluginConfig.reload();
 
                 if (pluginConfig.getBoolean("Debug")) {
@@ -98,10 +99,17 @@ public class SRLogger {
     }
 
     private void log(SRLogLevel level, String message) {
-        logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message);
+        logger.log(level, formatMessage(message));
     }
 
     private void log(SRLogLevel level, String message, Throwable thrown) {
-        logger.log(level, color ? "§e[§2SkinsRestorer§e] §r" + message : message, thrown);
+        logger.log(level, formatMessage(message), thrown);
+    }
+
+    private String formatMessage(String message) {
+        message = color ? "§e[§2SkinsRestorer§e] §r" + message : message;
+        message += "§r";
+        message = ANSIConverter.convertToAnsi(message);
+        return message;
     }
 }
