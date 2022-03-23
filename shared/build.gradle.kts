@@ -6,7 +6,7 @@ dependencies {
 
     implementation("org.spongepowered:configurate-yaml:4.1.2")
     implementation("com.google.code.gson:gson:2.9.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:2.7.5")
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.0.3")
     implementation("com.github.InventivetalentDev.Spiget-Update:bukkit:1.4.2-SNAPSHOT") {
         exclude("org.bukkit", "bukkit")
     }
