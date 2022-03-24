@@ -35,8 +35,11 @@ public abstract class LoginProfileListener {
 		String playerName = event.getPlayerName();
 		Optional<String> skin = plugin.getSkinStorage().getSkinName(playerName);
 
-		// Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-		if (event.isOnline() && !Config.ALWAYS_APPLY_PREMIUM && !skin.isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
+		// Skip players if: OnlineMode & no skin set & enabled & DefaultSkins.premium false
+		if (event.isOnline()
+				&& !skin.isPresent()
+				&& !Config.ALWAYS_APPLY_PREMIUM
+				&& !Config.DEFAULT_SKINS_PREMIUM)
 			return Optional.empty();
 
 		// Get default skin if enabled
