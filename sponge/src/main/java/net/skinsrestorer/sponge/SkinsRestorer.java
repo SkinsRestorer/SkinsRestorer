@@ -93,7 +93,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         dataFolder = dataFolderPath.toFile();
-        srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
+        srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);

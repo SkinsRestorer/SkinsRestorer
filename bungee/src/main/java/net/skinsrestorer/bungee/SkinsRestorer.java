@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final File configPath = getDataFolder();
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+    private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);

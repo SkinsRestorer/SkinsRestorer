@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final SRLogger srLogger = new SRLogger(new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
