@@ -72,169 +72,169 @@ import java.util.stream.Collectors;
 @Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
-	private static final boolean BUNGEE_ENABLED = false;
-	private final Metrics metrics;
-	private final MetricsCounter metricsCounter = new MetricsCounter();
-	private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-	private final File dataFolder;
-	private final SRLogger srLogger;
-	private final MojangAPI mojangAPI;
-	private final SkinStorage skinStorage;
-	private final SkinsRestorerAPI skinsRestorerAPI;
-	private final MineSkinAPI mineSkinAPI;
-	@Inject
-	protected Game game;
-	private UpdateChecker updateChecker;
-	private SpongeCommandManager manager;
-	@Inject
-	private PluginContainer container;
+    private static final boolean BUNGEE_ENABLED = false;
+    private final Metrics metrics;
+    private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
+    private final File dataFolder;
+    private final SRLogger srLogger;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
+    private final SkinsRestorerAPI skinsRestorerAPI;
+    private final MineSkinAPI mineSkinAPI;
+    @Inject
+    protected Game game;
+    private UpdateChecker updateChecker;
+    private SpongeCommandManager manager;
+    @Inject
+    private PluginContainer container;
 
-	@Inject
-	public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
-		metrics = metricsFactory.make(2337);
-		dataFolder = dataFolderPath.toFile();
-		srLogger = new SRLogger(new Slf4LoggerImpl(log));
-		mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
-		mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
-		skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-		skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
-	}
+    @Inject
+    public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
+        metrics = metricsFactory.make(2337);
+        dataFolder = dataFolderPath.toFile();
+        srLogger = new SRLogger(new Slf4LoggerImpl(log));
+        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+        skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
+        skinsRestorerAPI = new SkinsRestorerSpongeAPI(mojangAPI, skinStorage);
+    }
 
-	@Listener
-	public void onInitialize(GameInitializationEvent e) {
-		srLogger.load(getDataFolder());
-		File updaterDisabled = new File(dataFolder, "noupdate.txt");
+    @Listener
+    public void onInitialize(GameInitializationEvent e) {
+        srLogger.load(getDataFolder());
+        File updaterDisabled = new File(dataFolder, "noupdate.txt");
 
-		// Check for updates
-		if (!updaterDisabled.exists()) {
-			updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
-			checkUpdate();
+        // Check for updates
+        if (!updaterDisabled.exists()) {
+            updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
+            checkUpdate();
 
-			Random rn = new Random();
-			int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-			Sponge.getScheduler().createTaskBuilder().execute(() ->
-					checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES);
-		} else {
-			srLogger.info("Updater Disabled");
-		}
+            Random rn = new Random();
+            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
+            Sponge.getScheduler().createTaskBuilder().execute(() ->
+                    checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES);
+        } else {
+            srLogger.info("Updater Disabled");
+        }
 
-		// Init config files
-		Config.load(dataFolder, getResource("config.yml"), srLogger);
-		Locale.load(dataFolder, srLogger);
+        // Init config files
+        Config.load(dataFolder, getResource("config.yml"), srLogger);
+        Locale.load(dataFolder, srLogger);
 
-		// Init storage
-		if (!initStorage())
-			return;
+        // Init storage
+        if (!initStorage())
+            return;
 
-		// Init commands
-		initCommands();
+        // Init commands
+        initCommands();
 
-		// Run connection check
-		Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
-	}
+        // Run connection check
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+    }
 
-	@Listener
-	public void onServerStarted(GameStartedServerEvent event) {
-		Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
+    @Listener
+    public void onServerStarted(GameStartedServerEvent event) {
+        Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
 
-		metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-		metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-		metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-		metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
-	}
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
+    }
 
-	private void initCommands() {
-		Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
-			manager = new SpongeCommandManager(pluginContainer);
+    private void initCommands() {
+        Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
+            manager = new SpongeCommandManager(pluginContainer);
 
-			prepareACF(manager, srLogger);
+            prepareACF(manager, srLogger);
 
-			manager.registerCommand(new SkinCommand(this));
-			manager.registerCommand(new SrCommand(this));
-		});
-	}
+            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(new SrCommand(this));
+        });
+    }
 
-	private boolean initStorage() {
-		// Initialise MySQL
-		if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
+    private boolean initStorage() {
+        // Initialise MySQL
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
 
-		// Preload default skins
-		Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
-		return true;
-	}
+        // Preload default skins
+        Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
+        return true;
+    }
 
-	private void checkUpdate() {
-		checkUpdate(true);
-	}
+    private void checkUpdate() {
+        checkUpdate(true);
+    }
 
-	private void checkUpdate(boolean showUpToDate) {
-		Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
-			@Override
-			public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-				updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
-			}
+    private void checkUpdate(boolean showUpToDate) {
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
+            }
 
-			@Override
-			public void upToDate() {
-				if (!showUpToDate)
-					return;
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
 
-				updateChecker.getUpToDateMessages(getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
-			}
-		}));
-	}
+                updateChecker.getUpToDateMessages(getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
+            }
+        }));
+    }
 
-	@Override
-	public String getVersion() {
-		return container.getVersion().orElse("Unknown");
-	}
+    @Override
+    public String getVersion() {
+        return container.getVersion().orElse("Unknown");
+    }
 
-	@Override
-	public InputStream getResource(String resource) {
-		return getClass().getClassLoader().getResourceAsStream(resource);
-	}
+    @Override
+    public InputStream getResource(String resource) {
+        return getClass().getClassLoader().getResourceAsStream(resource);
+    }
 
-	@Override
-	public void runAsync(Runnable runnable) {
-		game.getScheduler().createAsyncExecutor(this).execute(runnable);
-	}
+    @Override
+    public void runAsync(Runnable runnable) {
+        game.getScheduler().createAsyncExecutor(this).execute(runnable);
+    }
 
-	@Override
-	public Collection<ISRPlayer> getOnlinePlayers() {
-		return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
-	}
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+    }
 
-	private static class WrapperFactorySponge extends WrapperFactory {
-		@Override
-		public ISRPlayer wrapPlayer(Object playerInstance) {
-			if (playerInstance instanceof Player) {
-				Player player = (Player) playerInstance;
+    private static class WrapperFactorySponge extends WrapperFactory {
+        @Override
+        public ISRPlayer wrapPlayer(Object playerInstance) {
+            if (playerInstance instanceof Player) {
+                Player player = (Player) playerInstance;
 
-				return WrapperSponge.wrapPlayer(player);
-			} else {
-				throw new IllegalArgumentException("Player instance is not valid!");
-			}
-		}
-	}
+                return WrapperSponge.wrapPlayer(player);
+            } else {
+                throw new IllegalArgumentException("Player instance is not valid!");
+            }
+        }
+    }
 
-	private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
-		public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-			super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge());
-		}
+    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
+        public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge());
+        }
 
-		@Override
-		public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-			applySkin(playerWrapper, playerWrapper.get(Player.class).getName());
-		}
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+            applySkin(playerWrapper, playerWrapper.get(Player.class).getName());
+        }
 
-		@Override
-		public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
-			applySkin(playerWrapper, skinStorage.getSkinForPlayer(name));
-		}
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name));
+        }
 
-		@Override
-		public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-			skinApplierSponge.applySkin(playerWrapper.get(Player.class), props);
-		}
-	}
+        @Override
+        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
+            skinApplierSponge.applySkin(playerWrapper.get(Player.class), props);
+        }
+    }
 }
