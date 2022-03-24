@@ -135,9 +135,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
-        if (!Sponge.getServer().getOnlineMode()) {
-            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this, srLogger));
-        }
+        Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));

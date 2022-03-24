@@ -184,6 +184,8 @@ public interface ISkinCommand {
     default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
 
+        // Escape "null" skin, this did cause crash in the past for some waterfall instances
+        // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
             return false;

@@ -19,76 +19,63 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.BungeeCord;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.connection.PendingConnection;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.listeners.LoginProfileEvent;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 
 @RequiredArgsConstructor
-public class LoginListener implements Listener {
+@Getter
+public class LoginListener extends LoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
-    private final boolean isOnlineMode = BungeeCord.getInstance().getConfig().isOnlineMode();
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
-        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
-            return;
-
-        if (Config.DISABLE_ON_JOIN_SKINS)
+        LoginProfileEvent profileEvent = wrap(event);
+        if (handleSync(profileEvent))
             return;
 
         event.registerIntent(plugin);
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-            final PendingConnection connection = event.getConnection();
-            final String name = connection.getName();
-
-            // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-            if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM) {
-                event.completeIntent(plugin);
-                return;
-            }
-
-            final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
-
-            try {
-                // TODO: add default skinurl support
-                plugin.getSkinApplierBungee().applySkin(skin, (InitialHandler) connection);
-            } catch (SkinRequestException ignored) {
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            handleAsync(profileEvent).ifPresent(name -> {
+                try {
+                    // TODO: add default skinurl support
+                    plugin.getSkinApplierBungee().applySkin(name, (InitialHandler) event.getConnection());
+                } catch (SkinRequestException e) {
+                    plugin.getSrLogger().debug(e);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
+            });
 
             event.completeIntent(plugin);
         });
     }
 
-    //think we should no have EventPriority.HIGH just to check for updates...
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onServerConnect(final ServerConnectEvent e) {
-        if (e.isCancelled())
-            return;
-
-        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-            if (plugin.isOutdated()) {
-                final ProxiedPlayer player = e.getPlayer();
-
-                if (player.hasPermission("skinsrestorer.admincommand"))
-                    player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
+    private LoginProfileEvent wrap(LoginEvent event) {
+        return new LoginProfileEvent() {
+            @Override
+            public boolean isOnline() {
+                return event.getConnection().isOnlineMode();
             }
-        });
+
+            @Override
+            public String getPlayerName() {
+                return event.getConnection().getName();
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return event.isCancelled();
+            }
+        };
     }
 }

@@ -130,7 +130,7 @@ public class SkinsRestorer implements ISRPlugin {
             return;
 
         // Init listener
-        proxy.getEventManager().register(this, new GameProfileRequest(this, srLogger));
+        proxy.getEventManager().register(this, new GameProfileRequest(this));
 
         // Init commands
         initCommands();
