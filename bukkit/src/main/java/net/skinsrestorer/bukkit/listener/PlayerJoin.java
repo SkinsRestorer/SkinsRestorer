@@ -19,49 +19,57 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.listeners.LoginProfileEvent;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.util.Optional;
-
 @RequiredArgsConstructor
-public class PlayerJoin implements Listener {
+@Getter
+public class PlayerJoin extends LoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
-    private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        if (Config.DISABLE_ON_JOIN_SKINS)
+        LoginProfileEvent profileEvent = wrap(event);
+
+        if (handleSync(profileEvent))
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                final Player player = event.getPlayer();
-                final String pName = player.getName();
-                Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
-
-                // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !skin.isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
-                    return;
-
-                // Get default skin if enabled
-                if (Config.DEFAULT_SKINS_ENABLED)
-                    skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(player.getName()));
-
-
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin.orElse(pName));
-            } catch (SkinRequestException ignored) {
-            }
+            handleAsync(profileEvent).ifPresent(name -> {
+                try {
+                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
+                } catch (SkinRequestException e) {
+                    plugin.getSrLogger().debug(e);
+                }
+            });
         });
+    }
+
+    private LoginProfileEvent wrap(PlayerJoinEvent event) {
+        return new LoginProfileEvent() {
+            @Override
+            public boolean isOnline() {
+                return Bukkit.getOnlineMode();
+            }
+
+            @Override
+            public String getPlayerName() {
+                return event.getPlayer().getName();
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+        };
     }
 }

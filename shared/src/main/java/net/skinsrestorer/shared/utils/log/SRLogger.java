@@ -60,6 +60,14 @@ public class SRLogger {
         debug(SRLogLevel.INFO, message);
     }
 
+    public void debug(String message, Throwable thrown) {
+        debug(SRLogLevel.WARNING, message, thrown);
+    }
+
+    public void debug(Throwable thrown) {
+        debug(SRLogLevel.WARNING, "Received error", thrown);
+    }
+
     public void debug(SRLogLevel level, String message) {
         if (!Config.DEBUG)
             return;

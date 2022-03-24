@@ -34,6 +34,7 @@ import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
+import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
@@ -116,7 +117,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             return;
 
         // Init listener
-        getProxy().getPluginManager().registerListener(this, new LoginListener(this, srLogger));
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
+        getProxy().getPluginManager().registerListener(this, new ConnectListener(this));
 
         // Init commands
         initCommands();
