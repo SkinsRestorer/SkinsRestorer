@@ -19,25 +19,25 @@
  */
 package net.skinsrestorer.sponge.utils;
 
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public class WrapperSponge {
-    public static ISRCommandSender wrapCommandSender(CommandSource sender) {
+    public static ISRCommandSender wrapCommandSender(CommandContext sender) {
         return new ISRCommandSender() {
             @Override
             public void sendMessage(String message) {
-                sender.sendMessage(Text.builder(message).build());
+                sender.sendMessage(Identity.nil(), LegacyComponentSerializer.legacySection().deserialize(message));
             }
 
             @Override
             public String getName() {
-                return sender.getName();
+                return sender.identifier().name();
             }
 
             @Override
@@ -52,7 +52,7 @@ public class WrapperSponge {
         };
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
+    public static ISRPlayer wrapPlayer(ServerPlayer player) {
         return new ISRPlayer() {
             @Override
             public PlayerWrapper getWrapper() {
@@ -61,12 +61,12 @@ public class WrapperSponge {
 
             @Override
             public String getName() {
-                return player.getName();
+                return player.name();
             }
 
             @Override
             public void sendMessage(String message) {
-                player.sendMessage(Text.builder(message).build());
+                player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
             }
 
             @Override

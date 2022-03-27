@@ -28,13 +28,13 @@ import net.skinsrestorer.sponge.SkinsRestorer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
+import static org.spongepowered.api.event.network.ServerSideConnectionEvent.Auth;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.api.profile.GameProfile;
 
 @RequiredArgsConstructor
 @Getter
-public class LoginListener extends LoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
+public class LoginListener extends LoginProfileListener implements EventListener<ServerSideConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
 
     @Override
@@ -43,9 +43,9 @@ public class LoginListener extends LoginProfileListener implements EventListener
         if (handleSync(wrapped))
             return;
 
-        final GameProfile profile = event.getProfile();
+        final GameProfile profile = event.profile();
 
-        profile.getName().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
+        profile.name().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
             try {
                 plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
             } catch (SkinRequestException e) {
@@ -58,12 +58,12 @@ public class LoginListener extends LoginProfileListener implements EventListener
         return new LoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Sponge.getServer().getOnlineMode();
+                return Sponge.server().isOnlineModeEnabled();
             }
 
             @Override
             public String getPlayerName() {
-                return event.getProfile().getName().orElseThrow(() -> new RuntimeException("Could not get player name!"));
+                return event.profile().name().orElseThrow(() -> new RuntimeException("Could not get player name!"));
             }
 
             @Override

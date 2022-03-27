@@ -22,14 +22,17 @@ package net.skinsrestorer.sponge;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.storage.WorldProperties;
+import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.api.util.Ticks;
+import org.spongepowered.api.world.server.ServerLocation;
+import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Collection;
 
@@ -37,47 +40,47 @@ import java.util.Collection;
 public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
-    protected void applySkin(Player player, IProperty property) {
-        setTexture(property, player.getProfile().getPropertyMap().get("textures"));
+    protected void applySkin(ServerPlayer player, IProperty property) {
+        setTexture(property, player.profile().properties().get("textures"));
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
+        Sponge.server().scheduler().executor(plugin.getContainer()).execute(() -> sendUpdate(player));
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.getPropertyMap().get("textures"));
+        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.properties().get("textures"));
     }
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {
-        ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", property.getValue(), property.getSignature());
-        oldProperties.removeIf(property2 -> property2.getName().equals("textures"));
+        ProfileProperty newTextures = Sponge.server().gameProfileManager().createProfileProperty("textures", property.getValue(), property.getSignature());
+        oldProperties.removeIf(property2 -> property2.name().equals("textures"));
         oldProperties.add(newTextures);
     }
 
-    private void sendUpdate(Player receiver) {
-        receiver.getTabList().removeEntry(receiver.getUniqueId());
-        receiver.getTabList().addEntry(TabListEntry.builder()
-                .displayName(receiver.getDisplayNameData().displayName().get())
-                .latency(receiver.getConnection().getLatency())
-                .list(receiver.getTabList())
-                .gameMode(receiver.getGameModeData().type().get())
-                .profile(receiver.getProfile())
+    private void sendUpdate(ServerPlayer receiver) {
+        receiver.tabList().removeEntry(receiver.uniqueId());
+        receiver.tabList().addEntry(TabListEntry.builder()
+                .displayName(receiver.displayName().get())
+                .latency(receiver.connection().latency())
+                .list(receiver.tabList())
+                .gameMode(receiver.gameMode().get())
+                .profile(receiver.profile())
                 .build());
 
         // Save position to teleport player back after respawn
-        Location<World> loc = receiver.getLocation();
-        Vector3d rotation = receiver.getRotation();
+        ServerLocation loc = receiver.serverLocation();
+        Vector3d rotation = receiver.rotation();
 
         // Simulate respawn to see skin active
-        for (WorldProperties w : Sponge.getServer().getAllWorldProperties()) {
-            if (!w.getUniqueId().equals(receiver.getWorld().getUniqueId())) {
-                Sponge.getServer().loadWorld(w.getUniqueId());
-                Sponge.getServer().getWorld(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
+        for (ResourceKey w : Sponge.server().worldManager().offlineWorldKeys()) {
+            if (!w.v().equals(receiver.world().getUniqueId())) {
+                Sponge.server().worldManager().loadWorld(w.getUniqueId());
+                Sponge.server().worldManager().world(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
                 receiver.setLocationAndRotation(loc, rotation);
                 break;
             }
         }
 
         receiver.offer(Keys.VANISH, true);
-        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin);
+        Sponge.server().scheduler().submit(Task.builder().execute(() -> receiver.offer(Keys.VANISH, false)).delay(Ticks.of(1)).plugin(plugin.getContainer()).build());
     }
 }
