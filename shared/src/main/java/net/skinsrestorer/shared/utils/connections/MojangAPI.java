@@ -58,20 +58,13 @@ public class MojangAPI implements IMojangAPI {
     private final SRLogger logger;
     private final Platform platform;
     private final MetricsCounter metricsCounter;
-    private Class<? extends IProperty> propertyClass;
+    private final Class<? extends IProperty> propertyClass;
 
     public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
         this.logger = logger;
         this.platform = platform;
         this.metricsCounter = metricsCounter;
-
-        if (platform == Platform.BUKKIT) {
-            propertyClass = BukkitProperty.class;
-        } else if (platform == Platform.BUNGEECORD) {
-            propertyClass = BungeeProperty.class;
-        } else if (platform == Platform.VELOCITY) {
-            propertyClass = VelocityProperty.class;
-        }
+        propertyClass = PropertyRegistry.selectPropertyForPlatform(platform);
     }
 
     /**

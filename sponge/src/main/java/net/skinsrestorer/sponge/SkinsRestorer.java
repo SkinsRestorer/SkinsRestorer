@@ -45,6 +45,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
@@ -53,13 +54,19 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.plugin.builtin.jvm.Plugin;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 // @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 @Getter
@@ -86,7 +93,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         dataFolder = dataFolderPath.toFile();
-        srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
+        srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -123,14 +130,12 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
-        if (!Sponge.getServer().getOnlineMode()) {
-            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this, srLogger));
-        }
+        Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
@@ -144,8 +149,8 @@ public class SkinsRestorer implements ISRPlugin {
 
             prepareACF(manager, srLogger);
 
-            manager.registerCommand(new SkinCommand(this, srLogger));
-            manager.registerCommand(new SrCommand(this, srLogger));
+            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(new SrCommand(this));
         });
     }
 
@@ -179,10 +184,6 @@ public class SkinsRestorer implements ISRPlugin {
         }));
     }
 
-    public Text parseMessage(String msg) {
-        return Text.builder(msg).build();
-    }
-
     @Override
     public String getVersion() {
         return container.getVersion().orElse("Unknown");
@@ -193,28 +194,23 @@ public class SkinsRestorer implements ISRPlugin {
         return getClass().getClassLoader().getResourceAsStream(resource);
     }
 
+    @Override
+    public void runAsync(Runnable runnable) {
+        game.getScheduler().createAsyncExecutor(this).execute(runnable);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+    }
+
     private static class WrapperFactorySponge extends WrapperFactory {
         @Override
-        public ISRPlayer wrap(Object playerInstance) {
+        public ISRPlayer wrapPlayer(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return new ISRPlayer() {
-                    @Override
-                    public PlayerWrapper getWrapper() {
-                        return new PlayerWrapper(playerInstance);
-                    }
-
-                    @Override
-                    public String getName() {
-                        return player.getName();
-                    }
-
-                    @Override
-                    public void sendMessage(String message) {
-                        player.sendMessage(Text.builder(message).build());
-                    }
-                };
+                return WrapperSponge.wrapPlayer(player);
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }

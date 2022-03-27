@@ -25,4 +25,12 @@ public interface ISRCommandSender {
     String getName();
 
     boolean hasPermission(String permission);
+
+    default boolean isConsole() {
+        return false;
+    }
+
+    default boolean equalsPlayer(ISRPlayer player) {
+        return getName().equals(player.getName());
+    }
 }

@@ -23,94 +23,54 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.connections.ServiceChecker;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.skinsrestorer.shared.commands.ISRCommand;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapCommandSender;
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-public class SrCommand extends BaseCommand {
+public class SrCommand extends BaseCommand implements ISRCommand {
+    @Getter
     private final SkinsRestorer plugin;
-    private final SRLogger logger;
-    private SkinApplierBukkit skinApplierBukkit;
 
     @HelpCommand
     @Syntax(" [help]")
     public void onHelp(CommandSender sender, CommandHelp help) {
-        help.showHelp();
+        onHelp(wrapCommandSender(sender), help);
     }
 
     @Subcommand("reload")
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSender sender) {
-        SkinApplierBukkit.setOptFileChecked(false);
-        Locale.load(plugin.getDataFolder(), logger);
-        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), logger);
-
-        plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
-
-        sender.sendMessage(Locale.RELOAD);
+        onReload(wrapCommandSender(sender));
     }
 
     @Subcommand("status")
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            sender.sendMessage("§3----------------------------------------------");
-            sender.sendMessage("§7Checking needed services for SR to work properly...");
-
-            ServiceChecker checker = new ServiceChecker();
-            checker.setMojangAPI(plugin.getMojangAPI());
-            checker.checkServices();
-
-            ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-            List<String> results = response.getResults();
-
-            if (Config.DEBUG || !(response.getWorkingUUID().get() >= 1) || !(response.getWorkingProfile().get() >= 1))
-                for (String result : results) {
-                    if (Config.DEBUG || result.contains("✘"))
-                        sender.sendMessage(result);
-                }
-
-            sender.sendMessage("§7Working UUID API count: §6" + response.getWorkingUUID());
-            sender.sendMessage("§7Working Profile API count: §6" + response.getWorkingProfile());
-
-            if (response.getWorkingUUID().get() >= 1 && response.getWorkingProfile().get() >= 1)
-                sender.sendMessage("§aThe plugin currently is in a working state.");
-            else
-                sender.sendMessage("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
-            sender.sendMessage("§3----------------------------------------------");
-            sender.sendMessage("§7SkinsRestorer §6v" + plugin.getVersion());
-            sender.sendMessage("§7Server: §6" + plugin.getServer().getVersion());
-            sender.sendMessage("§7BungeeMode: §6" + plugin.isBungeeEnabled());
-            sender.sendMessage("§7Finished checking services.");
-            sender.sendMessage("§3----------------------------------------------");
-        });
+        onStatus(wrapCommandSender(sender));
     }
 
     @Subcommand("drop|remove")
@@ -119,17 +79,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (playerOrSkin == PlayerOrSkin.PLAYER)
-                for (String targetPlayer : targets)
-                    plugin.getSkinStorage().removeSkin(targetPlayer);
-            else
-                for (String targetSkin : targets)
-                    plugin.getSkinStorage().removeSkinData(targetSkin);
-
-            String targetList = Arrays.toString(targets).substring(1, Arrays.toString(targets).length() - 1);
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", targetList));
-        });
+        onDrop(wrapCommandSender(sender), playerOrSkin, targets);
     }
 
 
@@ -139,46 +89,7 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSender sender, @Single OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(target.player).getProperties();
-                Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
-                        new Class<?>[]{Object.class}, "textures");
-
-                if (props == null || props.isEmpty()) {
-                    sender.sendMessage(Locale.NO_SKIN_DATA);
-                    return;
-                }
-
-                for (Object prop : props) {
-                    String name = (String) ReflectionUtil.invokeMethod(prop, "getName");
-                    String value = (String) ReflectionUtil.invokeMethod(prop, "getValue");
-                    String signature = (String) ReflectionUtil.invokeMethod(prop, "getSignature");
-
-                    byte[] decoded = Base64.getDecoder().decode(value);
-                    String decodedString = new String(decoded);
-                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                    String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-                    long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
-                    String requestDate = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date(timestamp));
-
-                    sender.sendMessage("§aRequest time: §e" + requestDate);
-                    sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
-                    sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
-                    sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
-                    sender.sendMessage("§cMore info in console!");
-
-                    // Console
-                    logger.info("§aName: §8" + name);
-                    logger.info("§aValue : §8" + value);
-                    logger.info("§aSignature : §8" + signature);
-                    logger.info("§aValue Decoded: §e" + Arrays.toString(decoded));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                sender.sendMessage(Locale.NO_SKIN_DATA);
-            }
-        });
+        onProps(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
     @Subcommand("applyskin")
@@ -187,91 +98,55 @@ public class SrCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSender sender, @Single OnlinePlayer target) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                final Player player = target.getPlayer();
-                final String name = player.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
-
-                if (C.validUrl(skin)) {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getMineSkinAPI().genSkin(skin, null, null));
-                } else {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skin);
-                }
-                sender.sendMessage("success: player skin has been refreshed!");
-            } catch (Exception ignored) {
-                sender.sendMessage("ERROR: player skin could NOT be refreshed!");
-            }
-        });
+        onApplySkin(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
     @Subcommand("createcustom")
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl> [steve/slim]")
-    public void onCreateCustom(CommandSender sender, String name, String skinUrl, @Optional SkinType skinType) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, plugin.getMineSkinAPI().genSkin(skinUrl, String.valueOf(skinType), null),
-                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
-                } else {
-                    sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
-                }
-            } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
-            }
-        });
+    @Syntax(" <skinName> <skinUrl> [classic/slim]")
+    public void onCreateCustom(CommandSender sender, String name, String skinUrl, @Optional SkinVariant skinVariant) {
+        onCreateCustom(wrapCommandSender(sender), name, skinUrl, skinVariant);
     }
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
     @Description("Set the skin to evey player")
-    @Syntax(" <Skin / Url> [steve/slim]")
-    public void onSetSkinAll(CommandSender sender, String skin, @Optional SkinType skinType) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (!(sender instanceof ConsoleCommandSender)) {
-                sender.sendMessage(Locale.PREFIX + ChatColor.DARK_RED + "Only console may execute this command!");
-                return;
-            }
-
-            String skinName = " ·setSkinAll";
-            try {
-                IProperty skinProps = null;
-                if (C.validUrl(skin)) {
-                    skinProps = plugin.getMineSkinAPI().genSkin(skin, String.valueOf(skinType), null);
-                } else {
-                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
-                }
-                if (skinProps == null) {
-                    sender.sendMessage(Locale.PREFIX + ChatColor.DARK_RED + "no skin found....");
-                    return;
-                }
-
-                plugin.getSkinStorage().setSkinData(skinName, skinProps);
-
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    String pName = player.getName();
-                    plugin.getSkinStorage().setSkinName(pName, skinName); // set player to "whitespaced" name then reload skin
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), skinProps);
-                }
-            } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
-            }
-        });
+    @Syntax(" <Skin / Url> [classic/slim]")
+    public void onSetSkinAll(CommandSender sender, String skinUrl, @Optional SkinVariant skinVariant) {
+        onSetSkinAll(wrapCommandSender(sender), skinUrl, skinVariant);
     }
 
-    @SuppressWarnings("unused")
-    public enum PlayerOrSkin {
-        PLAYER,
-        SKIN,
+    @Override
+    public void reloadCustomHook() {
+        SkinApplierBukkit.setOptFileChecked(false);
     }
 
-    @SuppressWarnings("unused")
-    public enum SkinType {
-        STEVE,
-        SLIM,
+    @Override
+    public String getPlatformVersion() {
+        return plugin.getServer().getVersion();
+    }
+
+    @Override
+    public String getProxyMode() {
+        return String.valueOf(plugin.isBungeeEnabled());
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        try {
+            PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(player.getWrapper().get(Player.class)).getProperties();
+            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
+                    new Class<?>[]{Object.class}, "textures");
+
+            return props.stream().map(prop -> {
+                Property property = (Property) prop;
+                return new GenericProperty(property.getName(), property.getValue(), property.getSignature());
+            }).collect(Collectors.toList());
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -19,11 +19,12 @@
  */
 package net.skinsrestorer.api.interfaces;
 
+import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 
 import java.util.UUID;
 
 public interface IMineSkinAPI {
-    IProperty genSkin(String url, String skinType, UUID methodUUID) throws SkinRequestException;
+    IProperty genSkin(String url, SkinVariant skinVariant, UUID methodUUID) throws SkinRequestException;
 }
