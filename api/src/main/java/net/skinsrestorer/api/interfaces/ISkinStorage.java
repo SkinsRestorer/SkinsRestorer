@@ -24,18 +24,72 @@ import net.skinsrestorer.api.property.IProperty;
 
 import java.util.Optional;
 
+/**
+ * SkinStorage
+ * <p>
+ * Skin name: A name assigned to a skin property. Cached in a .skin file with a timestamp for expiry.
+ * Player skin: Stored as a skin name in a .player file.
+ */
 public interface ISkinStorage {
-    Optional<String> getSkinName(String playerName);
+    /**
+     * Returns a players custom skin.
+     *
+     * @param playerName the players name
+     * @return the custom skin name a player has set or null if not set
+     */
+    Optional<String> getSkinOfPlayer(String playerName);
 
-    void setSkinName(String playerName, String skinName);
+    /**
+     * This method seeks out a players actual skin (chosen or not) and returns
+     * either null (if no skin data found) or the property containing all
+     * the skin data.
+     * It also schedules a skin update to stay up to date with skin changes.
+     *
+     * @param playerName Player name to search skin for
+     * @throws SkinRequestException If MojangAPI lookup errors
+     */
+    IProperty getSkinForPlayer(String playerName) throws SkinRequestException;
 
+    /**
+     * Removes custom players skin name from database
+     *
+     * @param playerName - Players name
+     */
+    void removeSkinOfPlayer(String playerName);
+
+    /**
+     * Saves custom player's skin name to database
+     *
+     * @param playerName Players name
+     * @param skinName   Skin name
+     */
+    void setSkinOfPlayer(String playerName, String skinName);
+
+    /**
+     * @see #getSkinData(String, boolean)
+     */
     Optional<IProperty> getSkinData(String skinName);
 
-    IProperty getSkinForPlayer(String skinName) throws SkinRequestException;
+    /**
+     * Returns property object containing skin data of the wanted skin
+     *
+     * @param skinName       Skin name
+     * @param updateOutdated On true, we update the skin if expired
+     */
+    Optional<IProperty> getSkinData(String skinName, boolean updateOutdated);
 
-    void removeSkin(String playerName);
-
+    /**
+     * Timestamp is set to current time
+     * @see #setSkinData(String, IProperty, long)
+     */
     void setSkinData(String skinName, IProperty textures);
 
+    /**
+     * Saves skin data to database
+     *
+     * @param skinName  Skin name
+     * @param textures  Property object
+     * @param timestamp timestamp string in millis (null for current)
+     */
     void setSkinData(String skinName, IProperty textures, long timestamp);
 }

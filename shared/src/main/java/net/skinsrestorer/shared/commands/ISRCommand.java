@@ -35,8 +35,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public interface ISRCommand {
@@ -106,7 +104,7 @@ public interface ISRCommand {
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
-                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkin(targetPlayer);
+                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkinOfPlayer(targetPlayer);
                     break;
                 case SKIN:
                     for (String targetSkin : targets) plugin.getSkinStorage().removeSkinData(targetSkin);
@@ -213,7 +211,7 @@ public interface ISRCommand {
 
                 for (ISRPlayer player : plugin.getOnlinePlayers()) {
                     final String pName = player.getName();
-                    plugin.getSkinStorage().setSkinName(pName, skinName); // Set player to "whitespaced" name then reload skin
+                    plugin.getSkinStorage().setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
             } catch (SkinRequestException e) {

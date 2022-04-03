@@ -43,11 +43,11 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
-    private static final Pattern FORBIDDENCHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private static final String LTRIM = "^\\\\s+";
     private static final String RTRIM = "\\\\s+$";
-    private static final Pattern PTRIM = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
+    private static final Pattern TRIM_PATTERN = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -105,17 +105,8 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * This method seeks out a players actual skin (chosen or not) and returns
-     * either null (if no skin data found) or the property containing all
-     * the skin data.
-     * It also schedules a skin update to stay up to date with skin changes.
-     *
-     * @param playerName Player name to search skin for
-     * @throws SkinRequestException If MojangAPI lookup errors
-     */
     public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
-        Optional<String> skin = getSkinName(playerName);
+        Optional<String> skin = getSkinOfPlayer(playerName);
 
         if (!skin.isPresent()) {
             skin = Optional.of(playerName.toLowerCase());
@@ -148,13 +139,8 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * Returns a players custom skin.
-     *
-     * @param playerName the players name
-     * @return the custom skin name a player has set or null if not set
-     */
-    public Optional<String> getSkinName(String playerName) {
+    @Override
+    public Optional<String> getSkinOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
@@ -166,7 +152,7 @@ public class SkinStorage implements ISkinStorage {
 
                     //maybe useless
                     if (skin.isEmpty()) {
-                        removeSkin(playerName);
+                        removeSkinOfPlayer(playerName);
                         return Optional.empty();
                     }
 
@@ -186,13 +172,13 @@ public class SkinStorage implements ISkinStorage {
 
                 // Maybe useless
                 if (lines.size() < 1) {
-                    removeSkin(playerName);
+                    removeSkinOfPlayer(playerName);
                     return Optional.empty();
                 }
 
                 return Optional.of(lines.get(0));
             } catch (MalformedInputException e) {
-                removeSkin(playerName);
+                removeSkinOfPlayer(playerName);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -202,19 +188,81 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
-     * @see SkinStorage#getSkinData(String, boolean)
+     * Create a platform specific property and also optionally update cached skin if outdated.
+     *
+     * @param playerName     the players name
+     * @param updateOutdated whether the skin data shall be looked up again if the timestamp is too far away
+     * @param value          skin data value
+     * @param signature      signature to verify skin data
+     * @param timestamp      time cached property data was created
+     * @return Platform specific property
+     * @throws SkinRequestException throws when no API calls were successful
      */
+    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
+        if (updateOutdated && C.validMojangUsername(playerName) && isExpired(Long.parseLong(timestamp))) {
+            Optional<IProperty> skin = mojangAPI.getSkin(playerName);
+
+            if (skin.isPresent()) {
+                setSkinData(playerName, skin.get());
+                return skin.get();
+            }
+        }
+
+        return mojangAPI.createProperty("textures", value, signature);
+    }
+
+    @Override
+    public void removeSkinOfPlayer(String playerName) {
+        playerName = playerName.toLowerCase();
+
+        if (Config.MYSQL_ENABLED) {
+            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
+        } else {
+            playerName = removeForbiddenChars(playerName);
+            File playerFile = new File(playersFolder, playerName + ".player");
+
+            try {
+                Files.deleteIfExists(playerFile.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void setSkinOfPlayer(String playerName, String skinName) {
+        playerName = playerName.toLowerCase();
+
+        if (Config.MYSQL_ENABLED) {
+            mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
+                    playerName, skinName, skinName);
+        } else {
+            playerName = removeForbiddenChars(playerName);
+            File playerFile = new File(playersFolder, playerName + ".player");
+
+            try {
+                if (!playerFile.exists() && !playerFile.createNewFile())
+                    throw new IOException("Could not create player file!");
+
+                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(playerFile), StandardCharsets.UTF_8)) {
+                    skinName = removeWhitespaces(skinName);
+                    skinName = removeForbiddenChars(skinName);
+
+                    writer.write(skinName);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
     public Optional<IProperty> getSkinData(String skinName) {
         return getSkinData(skinName, true);
     }
 
-    /**
-     * Returns property object containing skin data of the wanted skin
-     *
-     * @param skinName       Skin name
-     * @param updateOutdated On true, we update the skin if expired
-     */
     // #getSkinData() also create while we have #getSkinForPlayer()
+    @Override
     public Optional<IProperty> getSkinData(String skinName, boolean updateOutdated) {
         skinName = skinName.toLowerCase();
 
@@ -257,66 +305,6 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
-     * Create a platform specific property and also optionally update cached skin if outdated.
-     *
-     * @param playerName     the players name
-     * @param updateOutdated whether the skin data shall be looked up again if the timestamp is too far away
-     * @param value          skin data value
-     * @param signature      signature to verify skin data
-     * @param timestamp      time cached property data was created
-     * @return Platform specific property
-     * @throws SkinRequestException throws when no API calls were successful
-     */
-    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
-        if (updateOutdated && C.validMojangUsername(playerName) && isOld(Long.parseLong(timestamp))) {
-            Optional<IProperty> skin = mojangAPI.getSkin(playerName);
-
-            if (skin.isPresent()) {
-                setSkinData(playerName, skin.get());
-                return skin.get();
-            }
-        }
-
-        return mojangAPI.createProperty("textures", value, signature);
-    }
-
-    /**
-     * Checks if updating skins is disabled and if skin expired
-     *
-     * @param timestamp in milliseconds
-     * @return true if skin is outdated
-     */
-    private boolean isOld(long timestamp) {
-        // Don't update if timestamp is not 0 or update is disabled.
-        if (timestamp == 0 || Config.DISALLOW_AUTO_UPDATE_SKIN)
-            return false;
-
-        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
-    }
-
-    /**
-     * Removes custom players skin name from database
-     *
-     * @param playerName - Players name
-     */
-    public void removeSkin(String playerName) {
-        playerName = playerName.toLowerCase();
-
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
-        } else {
-            playerName = removeForbiddenChars(playerName);
-            File playerFile = new File(playersFolder, playerName + ".player");
-
-            try {
-                Files.deleteIfExists(playerFile.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
      * Removes skin data from database
      *
      * @param skinName Skin name
@@ -339,49 +327,12 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    /**
-     * Saves custom player's skin name to database
-     *
-     * @param playerName Players name
-     * @param skinName   Skin name
-     */
-    public void setSkinName(String playerName, String skinName) {
-        playerName = playerName.toLowerCase();
-
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
-                    playerName, skinName, skinName);
-        } else {
-            playerName = removeForbiddenChars(playerName);
-            File playerFile = new File(playersFolder, playerName + ".player");
-
-            try {
-                if (!playerFile.exists() && !playerFile.createNewFile())
-                    throw new IOException("Could not create player file!");
-
-                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(playerFile), StandardCharsets.UTF_8)) {
-                    skinName = removeWhitespaces(skinName);
-                    skinName = removeForbiddenChars(skinName);
-
-                    writer.write(skinName);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    @Override
     public void setSkinData(String skinName, IProperty textures) {
         setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
-    /**
-     * Saves skin data to database
-     *
-     * @param skinName  Skin name
-     * @param textures  Property object
-     * @param timestamp timestamp string in millis (null for current)
-     */
+    @Override
     public void setSkinData(String skinName, IProperty textures, long timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
@@ -447,11 +398,8 @@ public class SkinStorage implements ISkinStorage {
                 } while (crs.next());
             } catch (SQLException ignored) {
             }
-
-            // When not using mysql
-        } else {
-
-            //filter out non "*.skin" files.
+        } else { // When not using mysql
+            // Filter out non "*.skin" files.
             FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
 
             String[] fileNames = skinsFolder.list(skinFileFilter);
@@ -624,7 +572,7 @@ public class SkinStorage implements ISkinStorage {
      */
     public String getDefaultSkinName(String playerName, boolean clear) {
         // Trim player name
-        PTRIM.matcher(playerName).replaceAll("");
+        playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
 
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
@@ -641,7 +589,7 @@ public class SkinStorage implements ISkinStorage {
             }
 
             // return default skin name if user has no custom skin set, or we want to clear to default
-            if (!getSkinName(playerName).isPresent() || clear) {
+            if (!getSkinOfPlayer(playerName).isPresent() || clear) {
                 final List<String> skins = Config.DEFAULT_SKINS;
 
                 String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0);
@@ -656,12 +604,26 @@ public class SkinStorage implements ISkinStorage {
             return playerName;
 
         // empty if player has no custom skin, we'll return his name then
-        return getSkinName(playerName).orElse(playerName);
+        return getSkinOfPlayer(playerName).orElse(playerName);
+    }
+
+    /**
+     * Checks if updating skins is disabled and if skin expired
+     *
+     * @param timestamp in milliseconds
+     * @return true if skin is outdated
+     */
+    private boolean isExpired(long timestamp) {
+        // Don't update if timestamp is not 0 or update is disabled.
+        if (timestamp == 0 || Config.DISALLOW_AUTO_UPDATE_SKIN)
+            return false;
+
+        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     }
 
     private String removeForbiddenChars(String str) {
         // Escape all Windows / Linux forbidden printable ASCII characters
-        return FORBIDDENCHARS_PATTERN.matcher(str).replaceAll("·");
+        return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
     }
 
     //todo remove all whitespace after last starting space.
