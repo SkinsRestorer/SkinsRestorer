@@ -164,9 +164,9 @@ public interface ISRCommand {
         plugin.runAsync(() -> {
             try {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), plugin.getSkinStorage().getDefaultSkinForPlayer(sender.getName()));
-                sender.sendMessage("success: player skin has been refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
-                sender.sendMessage("ERROR: player skin could NOT be refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);
             }
         });
     }

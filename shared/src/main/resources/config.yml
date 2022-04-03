@@ -165,12 +165,12 @@ DismountPassengersOnSkinUpdate: false
 # ABSOLUTELY DO NOT CHANGE IF YOU DON'T KNOW WHAT YOU DO
 
 # <!! Warning !!>
-# Enabling this will stop SkinsRestorer from changing skins on join.
-# Handy for when you want run /skin apply to apply skin after resource pack popup
+# Enabling this will stop SkinsRestorer to change skins on join.
+# Handy for when you want run /skin apply to apply skin after texturepack popup
 DisableOnJoinSkins: false
 
 # <!! Warning !!>
-# Enabling this will require players to run "/skin update" to update their skin.
+# Enable this will require players to run "/skin update" to update their skin.
 DisallowAutoUpdateSkin: false
 
 # <!! Warning Experimental !!>
