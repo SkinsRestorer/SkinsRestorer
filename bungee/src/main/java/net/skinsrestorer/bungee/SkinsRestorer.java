@@ -34,6 +34,7 @@ import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
+import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
@@ -67,7 +68,7 @@ import java.util.stream.Collectors;
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final File configPath = getDataFolder();
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+    private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -116,7 +117,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
             return;
 
         // Init listener
-        getProxy().getPluginManager().registerListener(this, new LoginListener(this, srLogger));
+        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
+        getProxy().getPluginManager().registerListener(this, new ConnectListener(this));
 
         // Init commands
         initCommands();
@@ -131,7 +133,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         multiBungee = Config.MULTI_BUNGEE_ENABLED || ProxyServer.getInstance().getPluginManager().getPlugin("RedisBungee") != null;
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        getProxy().getScheduler().runAsync(this, () -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     private void initCommands() {

@@ -21,35 +21,50 @@ package net.skinsrestorer.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.listeners.LoginProfileEvent;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 @RequiredArgsConstructor
-public class GameProfileRequest {
+@Getter
+public class GameProfileRequest extends LoginProfileListener {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     // TODO: make async, add #getSkinForPlayer()
     @Subscribe
     public void onGameProfileRequest(GameProfileRequestEvent event) {
-        if (Config.DISABLE_ON_JOIN_SKINS)
+        LoginProfileEvent wrapped = wrap(event);
+        if (handleSync(wrapped))
             return;
 
-        final String name = event.getUsername();
+        handleAsync(wrapped).ifPresent(name -> {
+            try {
+                event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), name));
+            } catch (SkinRequestException e) {
+                plugin.getSrLogger().debug(e);
+            }
+        });
+    }
 
-        // Skip online players if: enabled & no skinset & defaultskins.premium false
-        if (!Config.ALWAYS_APPLY_PREMIUM && event.isOnlineMode() && !plugin.getSkinStorage().getSkinName(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
-            return;
+    private LoginProfileEvent wrap(GameProfileRequestEvent event) {
+        return new LoginProfileEvent() {
+            @Override
+            public boolean isOnline() {
+                return event.isOnlineMode();
+            }
 
-        final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
+            @Override
+            public String getPlayerName() {
+                return event.getUsername();
+            }
 
-        // TODO: default skinurl support
-        try {
-            event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), skin));
-        } catch (SkinRequestException ignored) {
-        }
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+        };
     }
 }

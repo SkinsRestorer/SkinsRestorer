@@ -33,7 +33,6 @@ import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
-import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
@@ -75,7 +74,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(getDataFolder(), new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final SRLogger srLogger = new SRLogger(new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -278,8 +277,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Init listener
         if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
-            Bukkit.getPluginManager().registerEvents(new PlayerJoin(this, srLogger), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this, srLogger), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
         } else {
             srLogger.info("Hooking into ProtocolLib for instant skins on join!");
             new ProtocolLibJoinListener(this);
@@ -287,7 +285,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Run connection check
         if (!bungeeEnabled) {
-            SharedMethods.runServiceCheck(mojangAPI, srLogger);
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                SharedMethods.runServiceCheck(mojangAPI, srLogger);
+            });
         }
     }
 

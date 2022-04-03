@@ -88,7 +88,7 @@ public class UpdateChecker {
         } else {
             try {
                 Class.forName("org.bukkit.Bukkit"); //try if it is running bukkit
-                upToDateMessages.add("§a    |  §9§n§lStandalone Mode§a |");
+                upToDateMessages.add("§a    |  §9§n§lStandalone Mode§r§a |");
             } catch (ClassNotFoundException ignored) {
             }
         }

@@ -126,9 +126,9 @@ public interface ISkinCommand {
 
             if (setSkin(sender, player, skin.get(), false, false, null)) {
                 if (sender == player)
-                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
-                else
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
+                else
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
             }
         });
     }
@@ -143,17 +143,15 @@ public interface ISkinCommand {
     default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            final String sName = sender.getName();
-            final String pName = player.getName();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sName))) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
             if (setSkin(sender, player, skin, true, false, skinVariant) && !sender.equalsPlayer(player))
-                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", pName));
+                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
         });
     }
 
@@ -186,6 +184,8 @@ public interface ISkinCommand {
     default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
 
+        // Escape "null" skin, this did cause crash in the past for some waterfall instances
+        // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
             return false;
