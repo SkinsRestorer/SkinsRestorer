@@ -33,7 +33,7 @@ public abstract class LoginProfileListener {
 	protected Optional<String> handleAsync(LoginProfileEvent event) {
 		ISRPlugin plugin = getPlugin();
 		String playerName = event.getPlayerName();
-		Optional<String> skin = plugin.getSkinStorage().getSkinName(playerName);
+		Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(playerName);
 
 		// Skip players if: OnlineMode & no skin set & enabled & DefaultSkins.premium false
 		if (event.isOnline()
