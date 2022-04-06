@@ -42,7 +42,7 @@ public class Config {
     public static List<String> CUSTOM_GUI_SKINS = null;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
-    public static boolean FORWARD_TEXTURES = false;
+    public static boolean FORWARD_TEXTURES = true;
     public static boolean MYSQL_ENABLED = false;
     public static String MYSQL_HOST = "localhost";
     public static String MYSQL_PORT = "3306";
