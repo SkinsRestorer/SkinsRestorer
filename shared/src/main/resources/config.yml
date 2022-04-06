@@ -90,13 +90,6 @@ PerSkinPermissions: false
 # Time that skins are stored in the database before we request again (in minutes).
 SkinExpiresAfter: 15
 
-# Multi-Bungee support
-# Enable this if you have issues with skins in multi-proxy environments.
-# (?) If you're using bungee and you have the plugin in all spigot servers and it still does not work, turn this on.
-# (This is automatically enabled if you have RedisBungee)
-MultiBungee:
-  Enabled: false
-
 # Settings for MySQL skin storage (recommended for big BungeeCord networks)
 # [!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]
 # [!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]
@@ -174,12 +167,19 @@ DisallowAutoUpdateSkin: false
 # Use with caution! This may decrease your TPS.
 EnableProtocolListener: false
 
+# <!! Warning !!>
+# When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.
+# This is optional sometimes as the backend may pick up the new one of the proxy.
+# It is recommended though to **KEEP THIS ON** because it keeps the backend data in sync.
+# This feature is required for solutions like RedisBungee and also fixes bugs in some cases.
+ForwardTextures: true
+
 # Updater Settings
 Updater:
 # # <!! Warning !!>
 # Using outdated version void's support, compatibility & stability.
 #
-# To block all types of automatic updates (which can risk keeping a exploit):
+# To block all types of automatic updates (which can risk keeping an exploit):
 # Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )
 
 ################
