@@ -48,7 +48,7 @@ public class MappingManager {
         return Optional.empty();
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation"})
     public static String getMappingsVersion() {
         UnsafeValues craftMagicNumbers = Bukkit.getServer().getUnsafe();
         try {

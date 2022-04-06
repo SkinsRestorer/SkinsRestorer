@@ -29,6 +29,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,7 +45,7 @@ public class SkinApplierBungee {
 
     public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
         try {
-            applySkin(null, plugin.getSkinStorage().getSkinForPlayer(nick), handler);
+            applyEvent(null, plugin.getSkinStorage().getSkinForPlayer(nick), handler);
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
@@ -52,18 +53,13 @@ public class SkinApplierBungee {
 
     protected void applySkin(ProxiedPlayer player, IProperty property) {
         try {
-            applySkin(player, property, (InitialHandler) player.getPendingConnection());
+            applyEvent(player, property, (InitialHandler) player.getPendingConnection());
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
     }
 
-    private void applySkin(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
-        if (handler == null) {
-            assert player != null;
-            handler = (InitialHandler) player.getPendingConnection();
-        }
-
+    private void applyEvent(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
         SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
         plugin.getProxy().getPluginManager().callEvent(event);
@@ -79,11 +75,7 @@ public class SkinApplierBungee {
         if (player == null)
             return;
 
-        if (plugin.isMultiBungee()) {
-            sendUpdateRequest(player, textures);
-        } else {
-            sendUpdateRequest(player, null);
-        }
+        sendUpdateRequest(player, Config.FORWARD_TEXTURES ? textures : null);
     }
 
     private void applyToHandler(InitialHandler handler, Property textures) throws ReflectionException {
