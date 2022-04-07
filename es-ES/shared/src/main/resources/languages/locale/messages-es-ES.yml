@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2Se ha actualizado la skin de %player."
 dataDropped: "&2Data eliminada para %targets (%playerOrSkin)."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2¡Se ha creado la skin %skin!"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2¡Se ha recargado la configuración y locale!"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4Error&8: &c¡No puedes actualizar skins de URLs! \n&cSoli
 error-Updating-CustomSkin: "&4Error&8: &cNo se puede actualizar la skin ya que es una personalizada."
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Error&8: &cURL/formato de skin no válido, \n&cPrueba a subir tu skin a imgur y haz clic dcho. en 'copiar dirección de la imagen' \n&cMás información en: &c&oskinsrestorer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
