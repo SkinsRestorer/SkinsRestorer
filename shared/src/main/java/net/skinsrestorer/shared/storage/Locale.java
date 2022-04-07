@@ -119,9 +119,9 @@ public class Locale {
                 if (f.getType() != String.class)
                     continue;
 
-                String parsed = locale.getString(f.getName(), (String) f.get(null));
+                String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
                 if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
-                    parsed = parsedPrefix + C.c(parsed);
+                    parsed = parsedPrefix + parsed;
                 }
 
                 f.set(null, parsed);
