@@ -93,7 +93,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         dataFolder = dataFolderPath.toFile();
-        srLogger = new SRLogger(this.dataFolder, new Slf4LoggerImpl(log));
+        srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -135,9 +135,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onServerStarted(GameStartedServerEvent event) {
-        if (!Sponge.getServer().getOnlineMode()) {
-            Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this, srLogger));
-        }
+        Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));

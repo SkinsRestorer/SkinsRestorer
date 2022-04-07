@@ -147,24 +147,17 @@ public class SkinsGUI extends ItemStack implements Listener {
     // TODO: increase performance by excluding non item clicks from this event before event#getView() (use if performance will be increased.)
     @EventHandler(ignoreCancelled = true)
     public void onCLick(InventoryClickEvent event) {
-        // Cancel if clicked outside inventory
-        if (event.getClickedInventory() == null)
-            return;
-
-        if (event.getView().getTopInventory().getType() != InventoryType.CHEST)
-            return;
-
         try {
-            if (!event.getView().getTitle().contains("Skins Menu") && !event.getView().getTitle().contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "")))
+            if (event.getClickedInventory() == null || // Cancel if clicked outside inventory
+                    event.getView().getTopInventory().getType() != InventoryType.CHEST || // Cancel if clicked in not inventory
+                    !(event.getWhoClicked() instanceof Player) || //cancel if no player
+                    (!event.getView().getTitle().startsWith("Skins Menu - Page ") && !event.getView().getTitle().replaceAll("[0-9]", "").contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "").replaceAll("[0-9]", "")))) //cancel if title name is not same
                 return;
-        } catch (IllegalStateException ex) {
+        } catch (IllegalStateException ignored) {
             return;
         }
 
-        if (!(event.getWhoClicked() instanceof Player))
-            return;
-
-        Player player = (Player) event.getWhoClicked();
+        final Player player = (Player) event.getWhoClicked();
 
         // Cancel picking up items
         if (event.getCurrentItem() == null) {
@@ -172,7 +165,7 @@ public class SkinsGUI extends ItemStack implements Listener {
             return;
         }
 
-        ItemStack currentItem = event.getCurrentItem();
+        final ItemStack currentItem = event.getCurrentItem();
 
         // Cancel white panels.
         if (!currentItem.hasItemMeta()) {

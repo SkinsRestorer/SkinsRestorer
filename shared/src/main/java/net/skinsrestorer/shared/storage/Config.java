@@ -42,7 +42,7 @@ public class Config {
     public static List<String> CUSTOM_GUI_SKINS = null;
     public static boolean PER_SKIN_PERMISSIONS = false;
     public static int SKIN_EXPIRES_AFTER = 20;
-    public static boolean MULTI_BUNGEE_ENABLED = false;
+    public static boolean FORWARD_TEXTURES = true;
     public static boolean MYSQL_ENABLED = false;
     public static String MYSQL_HOST = "localhost";
     public static String MYSQL_PORT = "3306";
@@ -86,7 +86,7 @@ public class Config {
         CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
         PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
         SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
-        MULTI_BUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTI_BUNGEE_ENABLED);
+        FORWARD_TEXTURES = config.getBoolean("ForwardTextures", FORWARD_TEXTURES);
         MYSQL_ENABLED = config.getBoolean("MySQL.Enabled", MYSQL_ENABLED);
         MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
         MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
