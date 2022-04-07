@@ -57,8 +57,13 @@ public class YamlConfig {
             if (is != null) {
                 try {
                     defaultConfig.load(is);
+
+                    String beforeMerge = config.saveToString();
                     config.merge(defaultConfig, true, true, false);
-                    config.save(file);
+
+                    if (!beforeMerge.equals(config.saveToString())) {
+                        config.save(file);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
