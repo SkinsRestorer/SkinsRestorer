@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2为玩家 %player 更新皮肤。"
 dataDropped: "&2已清除 %playerOrSkin %targets 的数据。"
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2皮肤 %skin 已创建！"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2配置文件和区域设置已重新加载。"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4错误&8：&c你不能更新自定义链接的皮肤！ \
 error-Updating-CustomSkin: "&4错误&8：&c该皮肤被设置为禁止更新。"
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4错误&8: &c无效的皮肤url 或格式， \n&c尝试上传你的皮肤到imgur 并右击'复制图像链接' \n&c指南见: &c&oskinsresturer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
