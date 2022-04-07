@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2A skin do jogador %player foi atualizada."
 dataDropped: "&2Informações de \"%playerOrSkin\" eliminadas do(s) jogador(es): %targets."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2 A skin \"%skin\" foi criada!"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2As configurações foram recarregadas!"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4Erro&8: &cNão podes atualizar skins de URLs! \n&cUsa nov
 error-Updating-CustomSkin: "&4Erro&8: &cA skin não pode ser atualizada pois é personalizada."
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Erro&8: &cFormato de URL inválido, \n&cExperimenta carregar a skin no imgur e clica em 'copiar endereço da imagem' \n&cMais informações em: &c&oskinsrestorer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
