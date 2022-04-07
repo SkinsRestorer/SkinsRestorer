@@ -23,7 +23,8 @@ import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.YamlConfig;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class SRLogger {
     private final ISRLogger logger;
@@ -38,13 +39,13 @@ public class SRLogger {
         this.color = color;
     }
 
-    public void load(File pluginFolder) {
+    public void load(Path pluginFolder) {
         try {
             // Manual check config value
-            File pluginConfigFile = new File(pluginFolder, "config.yml");
+            Path pluginConfigFile = pluginFolder.resolve("config.yml");
 
-            if (pluginConfigFile.exists()) {
-                YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml");
+            if (Files.exists(pluginConfigFile)) {
+                YamlConfig pluginConfig = new YamlConfig(pluginConfigFile);
 
                 pluginConfig.reload();
 

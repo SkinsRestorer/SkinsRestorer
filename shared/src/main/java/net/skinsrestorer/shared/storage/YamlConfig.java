@@ -22,48 +22,52 @@ package net.skinsrestorer.shared.storage;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.shared.exception.YamlException;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Collections;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class YamlConfig {
-    private final File file;
+    private final Path file;
     private final AxiomConfiguration config = new AxiomConfiguration();
+    private final AxiomConfiguration defaultConfig = new AxiomConfiguration();
 
-    public YamlConfig(File path, String name) {
-        this.file = new File(path, name);
+    public YamlConfig(Path file) {
+        this.file = file;
 
-        if (!path.exists())
-            //noinspection ResultOfMethodCallIgnored
-            path.mkdirs();
+        Path parent = file.getParent();
+        if (!Files.exists(parent)) {
+            try {
+                Files.createDirectories(parent);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void saveDefaultConfig(InputStream is) {
-        if (file.exists() && is != null) {
+        if (Files.exists(file) && is != null) {
             try {
-                AxiomConfiguration defaultConfig = new AxiomConfiguration();
                 defaultConfig.load(is);
                 config.merge(defaultConfig, true, true, false);
-                config.save(file.toPath());
-            } catch(IOException e) {
+                config.save(file);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             // create empty file if we got no InputStream with default config
             if (is == null) {
                 try {
-                    //noinspection ResultOfMethodCallIgnored
-                    file.createNewFile();
+                    Files.createFile(file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             } else {
                 try {
-                    Files.copy(is, file.toPath());
+                    defaultConfig.load(is);
+                    defaultConfig.save(file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -77,26 +81,44 @@ public class YamlConfig {
         }
     }
 
-    public boolean getBoolean(String path) {
-        return config.getBoolean(path);
+    public Boolean getBoolean(String path) {
+        Boolean value = config.getBoolean(path);
+
+        if (value == null) {
+            return defaultConfig.getBoolean(path); // Nullable
+        } else {
+            return value;
+        }
     }
 
-    public boolean getBoolean(String path, Boolean defValue) {
+    public Boolean getBoolean(String path, Boolean defValue) {
         Boolean value = config.getBoolean(path);
         return value == null ? defValue : value;
     }
 
-    public int getInt(String path) {
-        return config.getInt(path);
+    public Integer getInt(String path) {
+        Integer value = config.getInt(path);
+
+        if (value == null) {
+            return defaultConfig.getInt(path); // Nullable
+        } else {
+            return value;
+        }
     }
 
-    public int getInt(String path, Integer defValue) {
+    public Integer getInt(String path, Integer defValue) {
         Integer value = config.getInt(path);
         return value == null ? defValue : value;
     }
 
-    private String getString(String path) {
-        return config.getString(path);
+    public String getString(String path) {
+        String value = config.getString(path);
+
+        if (value == null) {
+            return defaultConfig.getString(path); // Nullable
+        } else {
+            return value;
+        }
     }
 
     public String getString(String path, String defValue) {
@@ -105,22 +127,23 @@ public class YamlConfig {
     }
 
     public List<String> getStringList(String path) {
-        try {
-            return config.getStringList(path);
-        } catch (Exception e) {
-            e.printStackTrace();
+        List<String> value = config.getStringList(path);
+
+        if (value == null) {
+            return defaultConfig.getStringList(path); // Nullable
+        } else {
+            return value;
         }
-        return Collections.emptyList();
     }
 
     public List<String> getStringList(String path, String whatToDelete) {
-        return config.getStringList(path).stream()
+        return getStringList(path).stream()
                 .map(str -> str.replace(whatToDelete, "")).collect(Collectors.toList());
     }
 
     public void reload() throws YamlException {
         try {
-            config.load(file.toPath());
+            config.load(file);
         } catch (IOException ex) {
             throw new YamlException(ex);
         }
@@ -128,7 +151,7 @@ public class YamlConfig {
 
     private void save() throws YamlException {
         try {
-            config.save(file.toPath());
+            config.save(file);
         } catch (IOException ex) {
             throw new YamlException(ex);
         }

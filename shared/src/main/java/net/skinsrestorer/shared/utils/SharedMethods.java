@@ -27,7 +27,7 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 public class SharedMethods {
@@ -59,7 +59,7 @@ public class SharedMethods {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean initMysql(SRLogger srLogger, SkinStorage skinStorage, File dataFolder) {
+    public static boolean initMysql(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(

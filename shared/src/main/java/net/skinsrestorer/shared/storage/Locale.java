@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.storage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class Locale {
@@ -107,9 +107,9 @@ public class Locale {
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
 
-    public static void load(File path, SRLogger logger) {
+    public static void load(Path dataFolder, SRLogger logger) {
         try {
-            YamlConfig locale = new YamlConfig(path, "messages.yml");
+            YamlConfig locale = new YamlConfig(dataFolder.resolve("messages.yml"));
             locale.saveDefaultConfig(null);
             locale.reload();
 
