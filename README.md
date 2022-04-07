@@ -23,7 +23,7 @@
 
 This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
 
-Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity
+Restoring offline mode skins & changing skins for Bukkit/Spigot/paper, BungeeCord/Waterfall, Sponge, CatServer and Velocity
 servers.
 
 ## :telescope: Compatibility
