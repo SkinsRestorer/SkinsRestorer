@@ -11,7 +11,7 @@ dependencies {
 
     implementation("org.fusesource.jansi:jansi:2.4.0")
 
-    implementation("net.skinsrestorer:axiom:1.1.1-SNAPSHOT")
+    implementation("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
 
     compileOnly("co.aikar:acf-core:0.5.0-SNAPSHOT")
     compileOnly("org.slf4j:slf4j-api:1.7.36")
