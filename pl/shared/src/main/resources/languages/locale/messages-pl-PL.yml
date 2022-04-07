@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2Skórka zaktualizowana u gracza %player."
 dataDropped: "&2Dane porzucone dla %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin został utworzony!"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2Config oraz Locale zostały przeładowanie!"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4Błąd&8: &cNie możesz zaktualizować niestandardowych u
 error-Updating-CustomSkin: "&4Błąd&8: &cSkórka nie może być zaktualizowana, ponieważ jest niestandardowa."
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Błąd&8: &cNieprawidłowy adres lub format skina, \n&cSpróbuj wgrać swojego skina do imgur następnie kliknij prawym przyciskiem myszy na obraz i wybierz 'kopiuj adres obrazu'\n&cDla poradnika zobacz: &c&oskinsrestorer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
