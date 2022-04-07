@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2%player isimli oyuncunun Skin'i güncellendi."
 dataDropped: "&2%playerOrSkin %targets için veri düştü."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2%skin İsimli Skin oluşturuldu!"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2Yapılandırma ve Yerel ayar yeniden yüklendi!"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4Hata&8: &cÖzel url Skinlerini güncelleyemezsiniz!\n&c/s
 error-Updating-CustomSkin: "&4Hata&8: &cÖzel olduğu için Skin güncellenemiyor."
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Hata&8: &cGeçersiz Skin URL'si veya biçimi,\n&cCildinizi imgur'a yüklemeyi deneyin ve 'resim adresini kopyala'yı' sağ tıklayın\n&cKılavuz için bakınız: &c&oskinsrestorer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
