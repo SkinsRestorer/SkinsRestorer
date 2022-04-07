@@ -57,6 +57,8 @@ skinUpdateIssuer: "&2Обновлен скин для игрока %p."
 dataDropped: "&2Данные сброшены для %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Скин %s был создан!"
+#Success message when using /sr ApplySkin command
+adminApplySkinSuccess: "&2Player skin has been refreshed!"
 #/sr reload
 reload: "&2Конфиг и локализация были перезагружены!"
 ############################
@@ -98,6 +100,8 @@ error-Updating-Url: "&4Ошибка&8: &cВы не можете обновить
 error-Updating-CustomSkin: "&4Error&8: &cSkin не может быть обновлен, потому что он пользовательский."
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Ошибка&8: &cНекорректная ссылка на скин или формат, \n&cПопробуйте загрузить скин для imgur и правой кнопкой мыши «Копировать адрес изображения» \n&cДля просмотра гида: &c&oskinsrestorer.net/skinurl"
+#When a player runs /sr ApplySkin but the skin could not be refreshed
+adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
 ######################
 #SkinsMenu messages #
 ######################
