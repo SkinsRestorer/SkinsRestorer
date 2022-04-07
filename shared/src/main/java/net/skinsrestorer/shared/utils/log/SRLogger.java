@@ -44,7 +44,7 @@ public class SRLogger {
             File pluginConfigFile = new File(pluginFolder, "config.yml");
 
             if (pluginConfigFile.exists()) {
-                YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml", false, this);
+                YamlConfig pluginConfig = new YamlConfig(pluginFolder, "config.yml");
 
                 pluginConfig.reload();
 

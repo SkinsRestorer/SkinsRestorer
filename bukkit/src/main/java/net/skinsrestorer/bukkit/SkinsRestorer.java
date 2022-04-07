@@ -148,7 +148,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml", false, srLogger);
+                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml");
                 mundoConfig.reload();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     srLogger.warning(ChatColor.DARK_RED + "----------------------------------------------");

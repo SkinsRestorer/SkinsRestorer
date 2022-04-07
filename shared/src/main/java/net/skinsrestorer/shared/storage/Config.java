@@ -69,13 +69,8 @@ public class Config {
     public static String LOCALE_FILE = "english.yml";
 
     public static void load(File path, InputStream is, SRLogger logger) {
-        YamlConfig config = new YamlConfig(path, "config.yml", false, logger);
+        YamlConfig config = new YamlConfig(path, "config.yml");
         config.saveDefaultConfig(is);
-        try {
-            config.reload();
-        } catch (YamlException e) {
-            e.printStackTrace();
-        }
         SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm", SKIN_WITHOUT_PERM);
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
