@@ -19,10 +19,6 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-
 public enum SRChatColor {
 	/**
 	 * Represents black

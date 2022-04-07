@@ -31,9 +31,6 @@ fun ShadowJar.configureRelocations() {
     relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
     relocate("co.aikar.timings.lib", "net.skinsrestorer.shadow.aikar.timings")
     relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
-    relocate("com.google.common", "net.skinsrestorer.shadow.google.common")
-    relocate("com.google.j2objc.annotations", "net.skinsrestorer.shadow.google.j2objc.annotations")
-    relocate("com.google.errorprone.annotation", "net.skinsrestorer.shadow.google.errorprone.annotation")
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
     relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
@@ -47,4 +44,5 @@ fun ShadowJar.configureRelocations() {
     relocate("org.checkerframework", "net.skinsrestorer.shadow.checkerframework")
     relocate("javax.annotation", "net.skinsrestorer.shadow.javaxannotation")
     relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
+    relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
 }
