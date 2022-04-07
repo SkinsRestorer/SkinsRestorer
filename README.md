@@ -7,7 +7,7 @@
 </p>
 <p align="center">
 <a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/badge/icon" alt="Build Status"></a>
-<a href="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/maven.yml"><img src="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml/badge.svg" alt="Java CI"></a>
+<a href="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml"><img src="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml/badge.svg?branch=stable" alt="Java CI"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest"><img src="https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg" alt="Current Release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors"><img src="https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg" alt="Contributors"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/commits/master"><img src="https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg" alt="Commits since last release"></a>
