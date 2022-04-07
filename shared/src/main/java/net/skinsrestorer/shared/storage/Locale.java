@@ -110,16 +110,18 @@ public class Locale {
     public static void load(Path dataFolder, SRLogger logger) {
         try {
             YamlConfig locale = new YamlConfig(dataFolder.resolve("messages.yml"));
-            locale.saveDefaultConfig(null);
-            locale.reload();
+            // TODO: Use a proper config loader
+            locale.loadConfig(null);
+
+            String parsedPrefix = C.c(locale.getString("PREFIX", ""));
 
             for (Field f : Locale.class.getFields()) {
                 if (f.getType() != String.class)
                     continue;
 
-                String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
+                String parsed = locale.getString(f.getName(), (String) f.get(null));
                 if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
-                    parsed = C.c(locale.getString("PREFIX", "")) + parsed;
+                    parsed = parsedPrefix + C.c(parsed);
                 }
 
                 f.set(null, parsed);

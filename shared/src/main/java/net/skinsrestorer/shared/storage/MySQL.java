@@ -22,13 +22,14 @@ package net.skinsrestorer.shared.storage;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.intellij.lang.annotations.Language;
+import org.mariadb.jdbc.MariaDbPoolDataSource;
 
 import javax.sql.rowset.CachedRowSet;
 import javax.sql.rowset.RowSetProvider;
-import java.sql.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @RequiredArgsConstructor
 public class MySQL {
@@ -39,8 +40,7 @@ public class MySQL {
     private final String username;
     private final String password;
     private final String options;
-    private final ExecutorService exe = Executors.newCachedThreadPool();
-    private Connection con;
+    private MariaDbPoolDataSource poolDataSource;
 
     public void createTable() {
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYER_TABLE + "` ("
@@ -58,66 +58,25 @@ public class MySQL {
         execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
-    public Connection openConnection() throws SQLException {
-        new org.mariadb.jdbc.Driver();
-
-        con = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + options, username, password);
+    public void connectPool() throws SQLException {
+        poolDataSource = new MariaDbPoolDataSource(
+                "jdbc:mysql://" + host + ":" + port + "/" + database +
+                        "?user=" + username +
+                        "&password=" + password +
+                        "&permitMysqlScheme" +
+                        "&maxPoolSize=10" +
+                        "&" + options);
 
         logger.info("Connected to MySQL!");
-        return con;
-    }
-
-    private Connection getConnection() {
-        try {
-            if (con == null || !con.isValid(1)) {
-                logger.info("MySQL connection lost! Creation a new one.");
-                con = openConnection();
-            }
-        } catch (SQLException e) {
-            logger.info("Could NOT connect to MySQL: " + e.getMessage());
-        }
-
-        try (PreparedStatement stmt = con.prepareStatement("SELECT 1")) {
-            stmt.execute();
-        } catch (SQLException e) {
-            logger.info("MySQL SELECT 1 failed. Reconnecting");
-
-            try {
-                con = openConnection();
-                return con;
-            } catch (SQLException e1) {
-                logger.warning("Couldn't reconnect to MySQL!");
-                e1.printStackTrace();
-            }
-        }
-
-        return con;
-    }
-
-    private PreparedStatement prepareStatement(Connection conn, @Language("sql") String query, Object... vars) {
-        try {
-            PreparedStatement ps = conn.prepareStatement(query);
-
-            int i = 0;
-            for (Object obj : vars) {
-                i++;
-                ps.setObject(i, obj);
-            }
-
-            return ps;
-        } catch (SQLException e) {
-            logger.warning("MySQL error: " + e.getMessage());
-        }
-
-        return null;
     }
 
     public void execute(@Language("sql") final String query, final Object... vars) {
-        Connection conn = getConnection();
+        try (Connection connection = poolDataSource.getConnection()) {
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                fillPreparedStatement(ps, vars);
 
-        try (PreparedStatement ps = prepareStatement(conn, query, vars)) {
-            assert ps != null;
-            ps.execute();
+                ps.execute();
+            }
         } catch (SQLException e) {
             if (e.getErrorCode() == 1060) {
                 return;
@@ -128,35 +87,30 @@ public class MySQL {
     }
 
     public CachedRowSet query(@Language("sql") final String query, final Object... vars) {
-        Connection conn = getConnection();
-        CachedRowSet rowSet = null;
+        try (Connection connection = poolDataSource.getConnection()) {
+            try (PreparedStatement ps = connection.prepareStatement(query)) {
+                fillPreparedStatement(ps, vars);
 
-        try {
-            Future<CachedRowSet> future = exe.submit(() -> {
-                try (PreparedStatement ps = prepareStatement(conn, query, vars)) {
-                    assert ps != null;
+                try (ResultSet rs = ps.executeQuery()) {
+                    CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
+                    crs.populate(rs);
 
-                    try (ResultSet rs = ps.executeQuery()) {
-                        CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
-                        crs.populate(rs);
-
-                        if (crs.next())
-                            return crs;
-                    }
-                } catch (SQLException e) {
-                    logger.warning("MySQL error: " + e.getMessage());
+                    if (crs.next())
+                        return crs;
                 }
-
-                return null;
-            });
-
-            if (future.get() != null)
-                rowSet = future.get();
-
-        } catch (Exception e) {
+            }
+        } catch (SQLException e) {
             logger.warning("MySQL error: " + e.getMessage());
         }
 
-        return rowSet;
+        return null;
+    }
+
+    private void fillPreparedStatement(PreparedStatement ps, Object... vars) throws SQLException {
+        int i = 0;
+        for (Object obj : vars) {
+            i++;
+            ps.setObject(i, obj);
+        }
     }
 }

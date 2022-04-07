@@ -64,12 +64,10 @@ public class Config {
     public static boolean ENABLE_PROTOCOL_LISTENER;
     public static boolean DEBUG;
 
-    // UPCOMING MULTIPLE LANGUAGE SUPPORT
-    public static String LOCALE_FILE = "english.yml";
-
     public static void load(Path dataFolder, InputStream is, SRLogger logger) {
         YamlConfig config = new YamlConfig(dataFolder.resolve("config.yml"));
-        config.saveDefaultConfig(is);
+        config.loadConfig(is);
+
         SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm");
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown");
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown");

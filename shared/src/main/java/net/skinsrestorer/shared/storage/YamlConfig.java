@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.storage;
 
 import net.skinsrestorer.axiom.AxiomConfiguration;
-import net.skinsrestorer.shared.exception.YamlException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,37 +46,38 @@ public class YamlConfig {
         }
     }
 
-    public void saveDefaultConfig(InputStream is) {
-        if (Files.exists(file) && is != null) {
+    public void loadConfig(InputStream is) {
+        if (Files.exists(file)) {
             try {
-                defaultConfig.load(is);
-                config.merge(defaultConfig, true, true, false);
-                config.save(file);
+                load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (is != null) {
+                try {
+                    defaultConfig.load(is);
+                    config.merge(defaultConfig, true, true, false);
+                    config.save(file);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (is == null) {
+            // create empty file if we got no InputStream with default config
+            try {
+                Files.createFile(file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            // create empty file if we got no InputStream with default config
-            if (is == null) {
-                try {
-                    Files.createFile(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    defaultConfig.load(is);
-                    defaultConfig.save(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            try {
+                defaultConfig.load(is);
+                defaultConfig.save(file);
+                load();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
-
-        try {
-            reload();
-        } catch (YamlException e) {
-            e.printStackTrace();
         }
     }
 
@@ -141,20 +141,12 @@ public class YamlConfig {
                 .map(str -> str.replace(whatToDelete, "")).collect(Collectors.toList());
     }
 
-    public void reload() throws YamlException {
-        try {
-            config.load(file);
-        } catch (IOException ex) {
-            throw new YamlException(ex);
-        }
+    public void load() throws IOException {
+        config.load(file);
     }
 
-    private void save() throws YamlException {
-        try {
-            config.save(file);
-        } catch (IOException ex) {
-            throw new YamlException(ex);
-        }
+    private void save() throws IOException {
+        config.save(file);
     }
 
     public void set(String path, Object value) {

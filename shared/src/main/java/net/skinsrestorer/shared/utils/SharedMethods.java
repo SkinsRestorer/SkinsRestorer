@@ -72,7 +72,7 @@ public class SharedMethods {
                         Config.MYSQL_CONNECTION_OPTIONS
                 );
 
-                mysql.openConnection();
+                mysql.connectPool();
                 mysql.createTable();
 
                 skinStorage.setMysql(mysql);

@@ -47,7 +47,7 @@ public class SRLogger {
             if (Files.exists(pluginConfigFile)) {
                 YamlConfig pluginConfig = new YamlConfig(pluginConfigFile);
 
-                pluginConfig.reload();
+                pluginConfig.load();
 
                 if (pluginConfig.getBoolean("Debug")) {
                     Config.DEBUG = true;
