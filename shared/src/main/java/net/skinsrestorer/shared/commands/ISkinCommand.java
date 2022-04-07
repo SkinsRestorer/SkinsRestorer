@@ -33,9 +33,6 @@ import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +72,7 @@ public interface ISkinCommand {
             final String skin = getPlugin().getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removeSkin(pName);
+            plugin.getSkinStorage().removeSkinOfPlayer(pName);
 
             if (setSkin(sender, target, skin, false, true, null)) {
                 if (sender == target)
@@ -100,7 +97,7 @@ public interface ISkinCommand {
             }
 
             final String pName = player.getName();
-            Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
+            Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -126,9 +123,9 @@ public interface ISkinCommand {
 
             if (setSkin(sender, player, skin.get(), false, false, null)) {
                 if (sender == player)
-                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
-                else
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
+                else
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", pName));
             }
         });
     }
@@ -143,17 +140,15 @@ public interface ISkinCommand {
     default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            final String sName = sender.getName();
-            final String pName = player.getName();
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sName))) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Locale.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
             if (setSkin(sender, player, skin, true, false, skinVariant) && !sender.equalsPlayer(player))
-                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", pName));
+                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
         });
     }
 
@@ -178,7 +173,7 @@ public interface ISkinCommand {
 
     default void rollback(String pName, String oldSkinName, boolean save) {
         if (save)
-            getPlugin().getSkinStorage().setSkinName(pName, oldSkinName);
+            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     // if save is false, we won't save the skin name
@@ -186,6 +181,8 @@ public interface ISkinCommand {
     default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean save, boolean clear, SkinVariant skinVariant) {
         ISRPlugin plugin = getPlugin();
 
+        // Escape "null" skin, this did cause crash in the past for some waterfall instances
+        // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
             sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
             return false;
@@ -204,7 +201,7 @@ public interface ISkinCommand {
         }
 
         final String playerName = player.getName();
-        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(playerName);
+        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinOfPlayer(playerName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
@@ -230,7 +227,7 @@ public interface ISkinCommand {
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
                         System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinStorage().setSkinOfPlayer(playerName, skinEntry); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
@@ -247,7 +244,7 @@ public interface ISkinCommand {
             // If skin is not an url, it's a username
             try {
                 if (save)
-                    plugin.getSkinStorage().setSkinName(playerName, skin);
+                    plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 

@@ -35,8 +35,6 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public interface ISRCommand {
@@ -106,7 +104,7 @@ public interface ISRCommand {
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
-                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkin(targetPlayer);
+                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkinOfPlayer(targetPlayer);
                     break;
                 case SKIN:
                     for (String targetSkin : targets) plugin.getSkinStorage().removeSkinData(targetSkin);
@@ -163,17 +161,16 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                final String name = sender.getName();
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(name);
+                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getName());
 
                 if (C.validUrl(skin)) {
                     SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), SkinsRestorerAPI.getApi().genSkinUrl(skin, null));
                 } else {
                     SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
                 }
-                sender.sendMessage("success: player skin has been refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
-                sender.sendMessage("ERROR: player skin could NOT be refreshed!");
+                sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);
             }
         });
     }
@@ -184,7 +181,7 @@ public interface ISRCommand {
             try {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
-                            System.currentTimeMillis() + Duration.of(100, ChronoUnit.YEARS).toMillis()); // "generate" and save skin for 100 years
+                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
@@ -220,7 +217,7 @@ public interface ISRCommand {
 
                 for (ISRPlayer player : plugin.getOnlinePlayers()) {
                     final String pName = player.getName();
-                    plugin.getSkinStorage().setSkinName(pName, skinName); // Set player to "whitespaced" name then reload skin
+                    plugin.getSkinStorage().setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
             } catch (SkinRequestException e) {

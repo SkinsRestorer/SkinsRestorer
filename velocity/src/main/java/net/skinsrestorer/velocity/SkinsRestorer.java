@@ -90,7 +90,7 @@ public class SkinsRestorer implements ISRPlugin {
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
         dataFolder = dataFolderPath.toFile();
-        srLogger = new SRLogger(dataFolder, new Slf4LoggerImpl(logger));
+        srLogger = new SRLogger(new Slf4LoggerImpl(logger));
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -130,7 +130,7 @@ public class SkinsRestorer implements ISRPlugin {
             return;
 
         // Init listener
-        proxy.getEventManager().register(this, new GameProfileRequest(this, srLogger));
+        proxy.getEventManager().register(this, new GameProfileRequest(this));
 
         // Init commands
         initCommands();
@@ -138,7 +138,7 @@ public class SkinsRestorer implements ISRPlugin {
         srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
-        SharedMethods.runServiceCheck(mojangAPI, srLogger);
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     private void initCommands() {

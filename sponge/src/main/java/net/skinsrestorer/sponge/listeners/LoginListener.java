@@ -19,37 +19,57 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.listeners.LoginProfileEvent;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.sponge.SkinsRestorer;
+import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 
 @RequiredArgsConstructor
-public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
+@Getter
+public class LoginListener extends LoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
 
     @Override
-    public void handle(Auth event) {
-        if (event.isCancelled() && Config.NO_SKIN_IF_LOGIN_CANCELED)
-            return;
-
-        if (Config.DISABLE_ON_JOIN_SKINS)
+    public void handle(@NotNull Auth event) {
+        LoginProfileEvent wrapped = wrap(event);
+        if (handleSync(wrapped))
             return;
 
         final GameProfile profile = event.getProfile();
 
-        profile.getName().ifPresent(name -> {
+        profile.getName().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
             try {
-                // TODO: add default skinurl support
-                plugin.getSkinApplierSponge().updateProfileSkin(profile, plugin.getSkinStorage().getDefaultSkinName(name));
-            } catch (SkinRequestException ignored) {
+                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
+            } catch (SkinRequestException e) {
+                plugin.getSrLogger().debug(e);
             }
         });
+    }
+
+    private LoginProfileEvent wrap(Auth event) {
+        return new LoginProfileEvent() {
+            @Override
+            public boolean isOnline() {
+                return Sponge.getServer().getOnlineMode();
+            }
+
+            @Override
+            public String getPlayerName() {
+                return event.getProfile().getName().orElseThrow(() -> new RuntimeException("Could not get player name!"));
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return event.isCancelled();
+            }
+        };
     }
 }
