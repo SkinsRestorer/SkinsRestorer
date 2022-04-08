@@ -56,8 +56,9 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -66,7 +67,7 @@ import java.util.stream.Collectors;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
-    private final File configPath = getDataFolder();
+    private final Path dataFolderPath = getDataFolder().toPath();
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
@@ -87,8 +88,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
+        srLogger.load(dataFolderPath);
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -96,7 +97,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
@@ -108,8 +109,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(getDataFolder(), getResource("config.yml"), srLogger);
-        Locale.load(getDataFolder(), srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -146,7 +147,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, getDataFolder())) {
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) {
             getProxy().getPluginManager().unregisterListeners(this);
             getProxy().getPluginManager().unregisterCommands(this);
             return false;

@@ -49,8 +49,8 @@ public interface ISRCommand {
     default void onReload(ISRCommandSender sender) {
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
-        Locale.load(plugin.getDataFolder(), plugin.getSrLogger());
-        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), plugin.getSrLogger());
+        Locale.load(plugin.getDataFolderPath(), plugin.getSrLogger());
+        Config.load(plugin.getDataFolderPath(), plugin.getResource("config.yml"), plugin.getSrLogger());
 
         plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
 

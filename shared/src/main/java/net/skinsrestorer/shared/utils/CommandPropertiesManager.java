@@ -24,22 +24,25 @@ import co.aikar.commands.Locales;
 import co.aikar.locales.MessageKey;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 
 public class CommandPropertiesManager {
     private static final String FILE = "command-messages.properties";
 
-    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, File configPath, InputStream defaultConfigStream, SRLogger logger) {
-        File outFile = new File(configPath, FILE);
+    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, InputStream defaultConfigStream, SRLogger logger) {
+        Path outFile = dataFolder.resolve(FILE);
 
-        if (!outFile.exists()) {
+        if (!Files.exists(outFile)) {
             try {
-                Files.copy(defaultConfigStream, outFile.toPath());
+                Files.copy(defaultConfigStream, outFile);
             } catch (IOException ex) {
-                logger.warning("Could not save " + outFile.getName() + " to " + outFile);
+                logger.warning("Could not save " + outFile.getFileName() + " to " + outFile);
                 ex.printStackTrace();
             }
         }
@@ -50,7 +53,7 @@ public class CommandPropertiesManager {
             ex.printStackTrace();
         }
 
-        try (InputStream in = new FileInputStream(outFile)) {
+        try (InputStream in = Files.newInputStream(outFile)) {
             Properties props = new Properties();
 
             props.load(new InputStreamReader(in, StandardCharsets.UTF_8));

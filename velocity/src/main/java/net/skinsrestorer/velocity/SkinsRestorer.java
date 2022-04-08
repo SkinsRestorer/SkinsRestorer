@@ -59,8 +59,8 @@ import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Random;
@@ -73,7 +73,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final File dataFolder;
+    private final Path dataFolderPath;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
@@ -89,7 +89,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
-        dataFolder = dataFolderPath.toFile();
+        this.dataFolderPath = dataFolderPath;
         srLogger = new SRLogger(new Slf4LoggerImpl(logger));
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
@@ -100,8 +100,8 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(dataFolder, "noupdate.txt");
+        srLogger.load(dataFolderPath);
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -110,7 +110,7 @@ public class SkinsRestorer implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         // Check for updates
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
@@ -122,8 +122,8 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), srLogger);
-        Locale.load(dataFolder, srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -152,7 +152,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) return false;
 
         // Preload default skins
         runAsync(skinStorage::preloadDefaultSkins);

@@ -29,22 +29,21 @@ tasks {
 fun ShadowJar.configureRelocations() {
     relocate("co.aikar.commands", "net.skinsrestorer.shadow.aikar.commands")
     relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
-    relocate("co.aikar.timings.lib", "net.skinsrestorer.shadow.aikar.timings")
+
     relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
-    relocate("com.google.common", "net.skinsrestorer.shadow.google.common")
-    relocate("com.google.j2objc.annotations", "net.skinsrestorer.shadow.google.j2objc.annotations")
-    relocate("com.google.errorprone.annotation", "net.skinsrestorer.shadow.google.errorprone.annotation")
+
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
     relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
-    relocate("io.leangen.geantyref", "net.skinsrestorer.shadow.geantyref")
-    relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
-    relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
-    relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
-    relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
-    relocate("org.spongepowered.configurate", "net.skinsrestorer.shadow.configurate")
-    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
-    relocate("org.checkerframework", "net.skinsrestorer.shadow.checkerframework")
-    relocate("javax.annotation", "net.skinsrestorer.shadow.javaxannotation")
     relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
+    relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
+
+    relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+
+    relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
+    relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
+
+    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
+    relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
+    relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
 }

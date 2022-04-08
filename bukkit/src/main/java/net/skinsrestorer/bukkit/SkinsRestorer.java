@@ -64,6 +64,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
@@ -79,6 +80,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI(mojangAPI, skinStorage);
+    private final Path dataFolderPath = getDataFolder().toPath();
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
@@ -120,8 +122,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
+        srLogger.load(dataFolderPath);
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1669);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -148,8 +150,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Detect MundoSK
         if (getServer().getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(new File(getDataFolder().getParentFile(), "MundoSK"), "config.yml");
-                mundoConfig.reload();
+                YamlConfig mundoConfig = new YamlConfig(dataFolderPath.getParent().resolve("MundoSK").resolve("config.yml"));
+                mundoConfig.load();
                 if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
                     srLogger.warning(ChatColor.DARK_RED + "----------------------------------------------");
                     srLogger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
@@ -166,7 +168,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         checkBungeeMode();
 
         // Check for updates
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
@@ -265,8 +267,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
          * ***************************************** */
 
         // Init config files
-        Config.load(getDataFolder(), getResource("config.yml"), srLogger);
-        Locale.load(getDataFolder(), srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -348,7 +350,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, getDataFolder())) {
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) {
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
