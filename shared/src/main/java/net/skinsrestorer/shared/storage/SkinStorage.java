@@ -405,9 +405,7 @@ public class SkinStorage implements ISkinStorage {
         } else { // When not using mysql
             List<Path> files = new ArrayList<>();
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                for (Path file : stream) {
-                    files.add(file);
-                }
+                stream.forEach(files::add);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -465,9 +463,7 @@ public class SkinStorage implements ISkinStorage {
             List<Path> files = new ArrayList<>();
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                for (Path file : stream) {
-                    files.add(file);
-                }
+                stream.forEach(files::add);
             } catch (IOException e) {
                 e.printStackTrace();
             }

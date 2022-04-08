@@ -31,15 +31,19 @@ fun ShadowJar.configureRelocations() {
     relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
 
     relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
+
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
     relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
+    relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
     relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
+
     relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
-    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
 
     relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
     relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
-    relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
+
+    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
     relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
+    relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
 }

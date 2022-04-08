@@ -35,10 +35,11 @@ import java.sql.SQLException;
 public class MySQL {
     private final SRLogger logger;
     private final String host;
-    private final String port;
+    private final int port;
     private final String database;
     private final String username;
     private final String password;
+    private final int maxPoolSize;
     private final String options;
     private MariaDbPoolDataSource poolDataSource;
 
@@ -64,7 +65,7 @@ public class MySQL {
                         "?user=" + username +
                         "&password=" + password +
                         "&permitMysqlScheme" +
-                        "&maxPoolSize=10" +
+                        "&maxPoolSize=" + maxPoolSize +
                         "&" + options);
 
         logger.info("Connected to MySQL!");

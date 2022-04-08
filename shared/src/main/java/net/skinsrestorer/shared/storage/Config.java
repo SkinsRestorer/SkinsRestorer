@@ -44,10 +44,11 @@ public class Config {
     public static boolean FORWARD_TEXTURES;
     public static boolean MYSQL_ENABLED;
     public static String MYSQL_HOST;
-    public static String MYSQL_PORT;
+    public static int MYSQL_PORT;
     public static String MYSQL_DATABASE;
     public static String MYSQL_USERNAME;
     public static String MYSQL_PASSWORD;
+    public static int MYSQL_MAX_POOL_SIZE;
     public static String MYSQL_SKIN_TABLE;
     public static String MYSQL_PLAYER_TABLE;
     public static String MYSQL_CONNECTION_OPTIONS;
@@ -86,10 +87,11 @@ public class Config {
         FORWARD_TEXTURES = config.getBoolean("ForwardTextures");
         MYSQL_ENABLED = config.getBoolean("MySQL.Enabled");
         MYSQL_HOST = config.getString("MySQL.Host");
-        MYSQL_PORT = config.getString("MySQL.Port");
+        MYSQL_PORT = config.getInt("MySQL.Port");
         MYSQL_DATABASE = config.getString("MySQL.Database");
         MYSQL_USERNAME = config.getString("MySQL.Username");
         MYSQL_PASSWORD = config.getString("MySQL.Password");
+        MYSQL_MAX_POOL_SIZE = config.getInt("MySQL.MaxPoolSize");
         MYSQL_SKIN_TABLE = config.getString("MySQL.SkinTable");
         MYSQL_PLAYER_TABLE = config.getString("MySQL.PlayerTable");
         MYSQL_CONNECTION_OPTIONS = config.getString("MySQL.ConnectionOptions");

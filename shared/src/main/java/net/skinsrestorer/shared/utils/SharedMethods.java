@@ -69,6 +69,7 @@ public class SharedMethods {
                         Config.MYSQL_DATABASE,
                         Config.MYSQL_USERNAME,
                         Config.MYSQL_PASSWORD,
+                        Config.MYSQL_MAX_POOL_SIZE,
                         Config.MYSQL_CONNECTION_OPTIONS
                 );
 

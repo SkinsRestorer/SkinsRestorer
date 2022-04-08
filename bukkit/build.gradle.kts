@@ -13,7 +13,6 @@ dependencies {
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("com.github.cryptomorin:XSeries:8.7.1")
-    implementation("co.aikar:minecraft-timings:1.0.4")
 
     compileOnly("com.viaversion:viabackwards-common:4.0.1")
     compileOnly("com.viaversion:viaversion:4.0.0")
