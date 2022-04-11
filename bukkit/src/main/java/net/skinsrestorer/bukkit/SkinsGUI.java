@@ -105,7 +105,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         });
 
         // If the page is not empty, adding Next Page button.
-        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 999) {
+        if (inventory.firstEmpty() == -1 || inventory.getItem(24) != null && page < 999) {
             inventory.setItem(53, next);
             inventory.setItem(52, next);
             inventory.setItem(51, next);
