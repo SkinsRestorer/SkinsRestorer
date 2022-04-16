@@ -74,6 +74,7 @@ supported this project by contributing.
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
     <version>14.1.14</version>
+    <scope>provided</scope>
 </dependency>
 ```
 
