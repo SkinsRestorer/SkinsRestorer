@@ -92,7 +92,7 @@ public class Locale {
     public static String SKINSMENU_CLEAR_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
-    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin %targets.";
+    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin \"%targets\".";
     public static String ADMIN_APPLYSKIN_SUCCES = "&2Player skin has been refreshed!";
     public static String ADMIN_APPLYSKIN_ERROR = "&4ERROR&8: &cplayer skin could NOT be refreshed!";
     public static String STATUS_OK = "&2Mojang API connection successful!";
