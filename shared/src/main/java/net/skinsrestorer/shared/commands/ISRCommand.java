@@ -99,19 +99,19 @@ public interface ISRCommand {
         });
     }
 
-    default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
+    default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
-                    for (String targetPlayer : targets) plugin.getSkinStorage().removeSkinOfPlayer(targetPlayer);
+                    plugin.getSkinStorage().removeSkinOfPlayer(target);
                     break;
                 case SKIN:
-                    for (String targetSkin : targets) plugin.getSkinStorage().removeSkinData(targetSkin);
+                    plugin.getSkinStorage().removeSkinData(target);
                     break;
             }
 
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", String.join(", ", targets)));
+            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", target));
         });
     }
 

@@ -77,7 +77,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String targets) {
         onDrop(wrapCommandSender(sender), playerOrSkin, targets);
     }
 
