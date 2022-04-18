@@ -111,7 +111,11 @@ public class MySQL {
         int i = 0;
         for (Object obj : vars) {
             i++;
-            ps.setObject(i, obj);
+            try {
+                ps.setObject(i, obj);
+            } catch (SQLException e) {
+                throw new SQLException("Error while setting prepared statement variable #" + i + " (" + obj + "): " + e.getMessage());
+            }
         }
     }
 }
