@@ -12,7 +12,7 @@
 # Not working or get error?  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
 # For advanced help or other, go to our Discord: https://discord.me/SkinsRestorer/
 
-# (?) update config? -> https://raw.githubusercontent.com/SkinsRestorer/SkinsRestorerX/master/src/main/resources/config.yml
+# (?) update config? -> https://raw.githubusercontent.com/SkinsRestorer/SkinsRestorerX/stable/shared/src/main/resources/config.yml
 # (?) Step by step config guide -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 
 # (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true.  (!)
@@ -199,11 +199,11 @@ Debug: false
 #
 # SkinFile Generator:
 # With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.
-# Check it out here: https://riflowth.github.io/SkinFile-Generator/
+# Check it out here: https://skinsrestorer.github.io/SkinFile-Generator/
 #
 # SkinSystem :
 # With SkinSystem, you, as a server owner, can connect AuthMe (and forum) with the SkinSystem website that you can host, to give your players the ability to upload custom skins.
-# Check it out here: https://github.com/riflowth/SkinSystem
+# Check it out here: https://github.com/SkinsRestorer/SkinSystem
 #
 # Useful Links #
 # Website: https://skinsrestorer.net/
