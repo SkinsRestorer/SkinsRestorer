@@ -43,9 +43,9 @@ public class SkinApplierBungee {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
+    public void applySkin(IProperty skin, InitialHandler handler) {
         try {
-            applyEvent(null, plugin.getSkinStorage().getSkinForPlayer(nick), handler);
+            applyEvent(null, skin, handler);
         } catch (ReflectionException e) {
             e.printStackTrace();
         }

@@ -22,7 +22,7 @@ package net.skinsrestorer.bukkit.listener;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
@@ -43,15 +43,10 @@ public class PlayerJoin extends LoginProfileListener implements Listener {
         if (handleSync(profileEvent))
             return;
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            handleAsync(profileEvent).ifPresent(name -> {
-                try {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
-                } catch (SkinRequestException e) {
-                    plugin.getSrLogger().debug(e);
-                }
-            });
-        });
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                handleAsync(profileEvent).ifPresent(result ->
+                        SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), result))
+        );
     }
 
     private LoginProfileEvent wrap(PlayerJoinEvent event) {

@@ -24,11 +24,12 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
-import org.spongepowered.api.command.parameter.CommandContext;
+import org.spongepowered.api.adventure.Audiences;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 public class WrapperSponge {
-    public static ISRCommandSender wrapCommandSender(CommandContext sender) {
+    public static ISRCommandSender wrapCommandSender(CommandCause sender) {
         return new ISRCommandSender() {
             @Override
             public void sendMessage(String message) {
@@ -37,7 +38,7 @@ public class WrapperSponge {
 
             @Override
             public String getName() {
-                return sender.identifier().name();
+                return sender.friendlyIdentifier().orElse(sender.identifier());
             }
 
             @Override
@@ -47,7 +48,7 @@ public class WrapperSponge {
 
             @Override
             public boolean isConsole() {
-                return sender instanceof ConsoleSource;
+                return sender.audience() == Audiences.system();
             }
         };
     }

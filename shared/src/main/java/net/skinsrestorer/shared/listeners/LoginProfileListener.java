@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.shared.listeners;
 
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 
@@ -30,7 +32,7 @@ public abstract class LoginProfileListener {
     }
 
     // TODO: add default skinurl support
-    protected Optional<String> handleAsync(LoginProfileEvent event) {
+    protected Optional<IProperty> handleAsync(LoginProfileEvent event) {
         ISRPlugin plugin = getPlugin();
         String playerName = event.getPlayerName();
         Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(playerName);
@@ -46,7 +48,15 @@ public abstract class LoginProfileListener {
         if (Config.DEFAULT_SKINS_ENABLED)
             skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(playerName));
 
-        return Optional.of(skin.orElse(playerName));
+        try {
+            return Optional.of(plugin.getSkinStorage().getSkinForPlayer(skin.orElse(playerName)));
+        } catch (SkinRequestException e) {
+            plugin.getSrLogger().debug(e);
+        } catch (Exception e2) {
+            e2.printStackTrace();
+        }
+
+        return Optional.empty();
     }
 
     protected abstract ISRPlugin getPlugin();

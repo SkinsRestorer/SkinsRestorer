@@ -51,8 +51,8 @@ public class SkinApplierVelocity {
         });
     }
 
-    public GameProfile updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        Property textures = (Property) plugin.getSkinStorage().getSkinForPlayer(skin).getHandle();
+    public GameProfile updateProfileSkin(GameProfile profile, IProperty skin) throws SkinRequestException {
+        Property textures = (Property) skin.getHandle();
 
         List<Property> oldProperties = profile.getProperties();
         List<Property> newProperties = updatePropertiesSkin(oldProperties, textures);

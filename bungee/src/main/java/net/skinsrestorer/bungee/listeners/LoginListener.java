@@ -26,7 +26,6 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
@@ -45,16 +44,8 @@ public class LoginListener extends LoginProfileListener implements Listener {
         event.registerIntent(plugin);
 
         plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-            handleAsync(profileEvent).ifPresent(name -> {
-                try {
-                    // TODO: add default skinurl support
-                    plugin.getSkinApplierBungee().applySkin(name, (InitialHandler) event.getConnection());
-                } catch (SkinRequestException e) {
-                    plugin.getSrLogger().debug(e);
-                } catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            });
+            handleAsync(profileEvent).ifPresent(result ->
+                    plugin.getSkinApplierBungee().applySkin(result, (InitialHandler) event.getConnection()));
 
             event.completeIntent(plugin);
         });

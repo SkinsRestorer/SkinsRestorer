@@ -44,6 +44,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.utils.SpongeLoggerIml;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.apache.logging.log4j.Logger;
 import org.bstats.charts.SingleLineChart;
@@ -97,7 +98,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         this.dataFolderPath = dataFolderPath;
-        srLogger = new SRLogger(new Slf4LoggerImpl(log));
+        srLogger = new SRLogger(new SpongeLoggerIml(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -140,7 +141,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Listener
     public void onServerStarted(StartedEngineEvent<Server> event) {
         Sponge.eventManager().registerListener(EventListenerRegistration
-                .builder(ServerSideConnectionEvent.Auth.class)
+                .builder(ServerSideConnectionEvent.Login.class)
                 .plugin(container).listener(new LoginListener(this)).build());
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -211,8 +212,8 @@ public class SkinsRestorer implements ISRPlugin {
     private static class WrapperFactorySponge extends WrapperFactory {
         @Override
         public ISRPlayer wrapPlayer(Object playerInstance) {
-            if (playerInstance instanceof Player) {
-                Player player = (Player) playerInstance;
+            if (playerInstance instanceof ServerPlayer) {
+                ServerPlayer player = (ServerPlayer) playerInstance;
 
                 return WrapperSponge.wrapPlayer(player);
             } else {

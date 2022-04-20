@@ -31,11 +31,9 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.sponge.SkinsRestorer;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,21 +49,21 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @HelpCommand
     @Syntax(" [help]")
-    public void onHelp(CommandSource source, CommandHelp help) {
+    public void onHelp(CommandCause source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }
 
     @Subcommand("reload")
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
-    public void onReload(CommandSource source) {
+    public void onReload(CommandCause source) {
         onReload(wrapCommandSender(source));
     }
 
     @Subcommand("status")
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
-    public void onStatus(CommandSource source) {
+    public void onStatus(CommandCause source) {
         onStatus(wrapCommandSender(source));
     }
 
@@ -74,7 +72,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String target) {
+    public void onDrop(CommandCause source, PlayerOrSkin playerOrSkin, String target) {
         onDrop(wrapCommandSender(source), playerOrSkin, target);
     }
 
@@ -83,7 +81,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
-    public void onProps(CommandSource source, @Single OnlinePlayer target) {
+    public void onProps(CommandCause source, @Single OnlinePlayer target) {
         onProps(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
     }
 
@@ -92,7 +90,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("@players")
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
-    public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
+    public void onApplySkin(CommandCause source, @Single OnlinePlayer target) {
         onApplySkin(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
     }
 
@@ -101,7 +99,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [classic/slim]")
-    public void onCreateCustom(CommandSource source, String name, String skinUrl, @Optional SkinVariant skinVariant) {
+    public void onCreateCustom(CommandCause source, String name, String skinUrl, @Optional SkinVariant skinVariant) {
         onCreateCustom(wrapCommandSender(source), name, skinUrl, skinVariant);
     }
 
@@ -109,13 +107,13 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("@Skin")
     @Description("Set the skin to evey player")
     @Syntax(" <Skin / Url> [classic/slim]")
-    public void onSetSkinAll(CommandSource source, String skin, @Optional SkinVariant skinVariant) {
+    public void onSetSkinAll(CommandCause source, String skin, @Optional SkinVariant skinVariant) {
         onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
     @Override
     public String getPlatformVersion() {
-        return plugin.getGame().getPlatform().getMinecraftVersion().getName();
+        return plugin.getGame().platform().minecraftVersion().name();
     }
 
     @Override
@@ -125,9 +123,8 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get("textures");
-        return properties.stream()
-                .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
+        return player.getWrapper().get(ServerPlayer.class).profile().properties().stream()
+                .map(property -> new GenericProperty(property.name(), property.value(), property.signature().orElse("")))
                 .collect(Collectors.toList());
     }
 }

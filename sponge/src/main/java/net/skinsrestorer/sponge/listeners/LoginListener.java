@@ -21,40 +21,34 @@ package net.skinsrestorer.sponge.listeners;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.EventListener;
-import static org.spongepowered.api.event.network.ServerSideConnectionEvent.Auth;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.api.profile.GameProfile;
 
 @RequiredArgsConstructor
 @Getter
-public class LoginListener extends LoginProfileListener implements EventListener<ServerSideConnectionEvent.Auth> {
+public class LoginListener extends LoginProfileListener implements EventListener<ServerSideConnectionEvent.Login> {
     private final SkinsRestorer plugin;
 
     @Override
-    public void handle(@NotNull Auth event) {
+    public void handle(@NotNull ServerSideConnectionEvent.Login event) {
         LoginProfileEvent wrapped = wrap(event);
         if (handleSync(wrapped))
             return;
 
-        final GameProfile profile = event.profile();
+        GameProfile profile = event.profile();
 
-        profile.name().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
-            try {
-                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
-            } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
-            }
-        });
+        profile.name().flatMap(name -> handleAsync(wrapped)).ifPresent(result ->
+                plugin.getSkinApplierSponge().updateProfileSkin(event.user(), result));
     }
 
-    private LoginProfileEvent wrap(Auth event) {
+    private LoginProfileEvent wrap(ServerSideConnectionEvent.Login event) {
         return new LoginProfileEvent() {
             @Override
             public boolean isOnline() {

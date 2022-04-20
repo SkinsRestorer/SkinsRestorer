@@ -25,6 +25,8 @@ import net.skinsrestorer.api.property.IProperty;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.effect.VanishState;
+import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.profile.GameProfile;
@@ -32,28 +34,31 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Ticks;
 import org.spongepowered.api.world.server.ServerLocation;
+import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
     protected void applySkin(ServerPlayer player, IProperty property) {
-        setTexture(property, player.profile().properties().get("textures"));
+        setTexture(player.user(), property);
 
         Sponge.server().scheduler().executor(plugin.getContainer()).execute(() -> sendUpdate(player));
     }
 
-    public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.properties().get("textures"));
+    public void updateProfileSkin(User user, IProperty skin) {
+        setTexture(user, skin);
     }
 
-    private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {
-        ProfileProperty newTextures = Sponge.server().gameProfileManager().createProfileProperty("textures", property.getValue(), property.getSignature());
-        oldProperties.removeIf(property2 -> property2.name().equals("textures"));
-        oldProperties.add(newTextures);
+    private void setTexture(User user, IProperty property) {
+        user.offer(Keys.UPDATE_GAME_PROFILE, true);
+        user.offer(Keys.SKIN_PROFILE_PROPERTY, ProfileProperty.of(ProfileProperty.TEXTURES, property.getValue(), property.getSignature()));
     }
 
     private void sendUpdate(ServerPlayer receiver) {
@@ -71,16 +76,22 @@ public class SkinApplierSponge {
         Vector3d rotation = receiver.rotation();
 
         // Simulate respawn to see skin active
-        for (ResourceKey w : Sponge.server().worldManager().offlineWorldKeys()) {
-            if (!w.v().equals(receiver.world().getUniqueId())) {
-                Sponge.server().worldManager().loadWorld(w.getUniqueId());
-                Sponge.server().worldManager().world(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
+        for (ResourceKey w : plugin.getGame().server().worldManager().offlineWorldKeys()) {
+            Optional<ServerWorldProperties> worldPropertiesOptional = plugin.getGame().server().worldManager().loadProperties(w).join();
+
+            if (worldPropertiesOptional.isPresent()
+                    && !worldPropertiesOptional.get().uniqueId().equals(receiver.world().uniqueId())) {
+                ServerWorld world = Sponge.server().worldManager().loadWorld(w).join();
+                receiver.setLocation(world.location(world.properties().spawnPosition()));
                 receiver.setLocationAndRotation(loc, rotation);
                 break;
             }
         }
 
-        receiver.offer(Keys.VANISH, true);
-        Sponge.server().scheduler().submit(Task.builder().execute(() -> receiver.offer(Keys.VANISH, false)).delay(Ticks.of(1)).plugin(plugin.getContainer()).build());
+        receiver.offer(Keys.VANISH_STATE, VanishState.vanished());
+        plugin.getGame().server().scheduler().submit(
+                        Task.builder().execute(() ->
+                                receiver.offer(Keys.VANISH_STATE, VanishState.unvanished())
+                        ).delay(Ticks.of(1)).plugin(plugin.getContainer()).build());
     }
 }
