@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -37,33 +38,28 @@ import java.util.List;
 /**
  * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
  */
+@RequiredArgsConstructor
 public class UpdateChecker {
     public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
+    private static final String LOG_ROW = "§a----------------------------------------------";
     private final int resourceId;
-    private final SRLogger log;
     @Getter
     private final String currentVersion;
+    private final SRLogger log;
     @Getter
     private final String userAgent;
     @Getter
     private ResourceInfo latestResourceInfo;
 
-    public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
-        this.resourceId = resourceId;
-        this.currentVersion = currentVersion;
-        this.log = log;
-        this.userAgent = userAgent;
-    }
-
     public void checkForUpdate(final UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, resourceId, System.currentTimeMillis()))).openConnection();
-            connection.setRequestProperty("User-Agent", getUserAgent());
+            connection.setRequestProperty("User-Agent", userAgent);
 
             latestResourceInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceInfo.class);
             connection = (HttpURLConnection) new URL(String.format(RESOURCE_VERSION, resourceId, System.currentTimeMillis())).openConnection();
-            connection.setRequestProperty("User-Agent", getUserAgent());
+            connection.setRequestProperty("User-Agent", userAgent);
             latestResourceInfo.latestVersion = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceVersion.class);
 
             if (isVersionNewer(currentVersion, latestResourceInfo.latestVersion.name)) {
@@ -78,25 +74,10 @@ public class UpdateChecker {
 
     public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
         List<String> upToDateMessages = new LinkedList<>();
-        upToDateMessages.add("§a----------------------------------------------");
-        upToDateMessages.add("§a    +==================+");
-        upToDateMessages.add("§a    |   SkinsRestorer  |");
-        upToDateMessages.add("§a    |------------------|");
-        if (bungeeMode) {
-
-            upToDateMessages.add("§a    |   §eBungee Mode§a    |");
-        } else {
-            try {
-                Class.forName("org.bukkit.Bukkit"); //try if it is running bukkit
-                upToDateMessages.add("§a    |  §9§n§lStandalone Mode§r§a |");
-            } catch (ClassNotFoundException ignored) {
-            }
-        }
-        upToDateMessages.add("§a    +==================+");
-        upToDateMessages.add("§a----------------------------------------------");
+        fillHeader(upToDateMessages, bungeeMode);
         upToDateMessages.add("§b    Current version: §a" + currentVersion);
         upToDateMessages.add("§a    This is the latest version!");
-        upToDateMessages.add("§a----------------------------------------------");
+        upToDateMessages.add(LOG_ROW);
 
         return upToDateMessages;
     }
@@ -108,23 +89,8 @@ public class UpdateChecker {
 
     public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
         List<String> updateAvailableMessages = new LinkedList<>();
+        fillHeader(updateAvailableMessages, bungeeMode);
 
-        updateAvailableMessages.add("§a----------------------------------------------");
-        updateAvailableMessages.add("§a    +==================+");
-        updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        updateAvailableMessages.add("§a    |------------------|");
-        if (bungeeMode) {
-
-            updateAvailableMessages.add("§a    |   §eBungee Mode§a    |");
-        } else {
-            try {
-                Class.forName("org.bukkit.Bukkit"); //try if it is running bukkit
-                updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
-            } catch (ClassNotFoundException ignored) {
-            }
-        }
-        updateAvailableMessages.add("§a    +==================+");
-        updateAvailableMessages.add("§a----------------------------------------------");
         updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
         updateAvailableMessages.add("§b    New version: §c" + newVersion);
 
@@ -141,12 +107,35 @@ public class UpdateChecker {
             updateAvailableMessages.add("§e    " + downloadUrl);
         }
 
-        updateAvailableMessages.add("§a----------------------------------------------");
+        updateAvailableMessages.add(LOG_ROW);
 
         return updateAvailableMessages;
     }
 
+    private void fillHeader(List<String> updateAvailableMessages, boolean bungeeMode) {
+        updateAvailableMessages.add(LOG_ROW);
+        updateAvailableMessages.add("§a    +==================+");
+        updateAvailableMessages.add("§a    |   SkinsRestorer  |");
+        updateAvailableMessages.add("§a    |------------------|");
+        if (bungeeMode) {
+            updateAvailableMessages.add("§a    |   §eBungee Mode§a    |");
+        } else if (isBukkit()) {
+            updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
+        }
+        updateAvailableMessages.add("§a    +==================+");
+        updateAvailableMessages.add(LOG_ROW);
+    }
+
     public boolean isVersionNewer(String oldVersion, String newVersion) {
         return VersionComparator.SEM_VER_SNAPSHOT.isNewer(oldVersion, newVersion);
+    }
+
+    private boolean isBukkit() {
+        try {
+            Class.forName("org.bukkit.Bukkit");
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
     }
 }

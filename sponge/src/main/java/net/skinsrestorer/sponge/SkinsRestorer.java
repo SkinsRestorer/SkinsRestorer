@@ -64,8 +64,8 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Random;
@@ -80,7 +80,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final Metrics metrics;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-    private final File dataFolder;
+    private final Path dataFolderPath;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
@@ -96,7 +96,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Inject
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
-        dataFolder = dataFolderPath.toFile();
+        this.dataFolderPath = dataFolderPath;
         srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
@@ -106,11 +106,11 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onInitialize(StartingEngineEvent<Server> e) {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(dataFolder, "noupdate.txt");
+        srLogger.load(getDataFolderPath());
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         // Check for updates
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate();
 
@@ -123,8 +123,8 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), srLogger);
-        Locale.load(dataFolder, srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -160,7 +160,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) return false;
 
         // Preload default skins
         Sponge.asyncScheduler().executor(container).execute(skinStorage::preloadDefaultSkins);

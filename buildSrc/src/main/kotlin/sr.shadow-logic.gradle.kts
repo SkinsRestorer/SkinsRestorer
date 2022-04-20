@@ -29,18 +29,21 @@ tasks {
 fun ShadowJar.configureRelocations() {
     relocate("co.aikar.commands", "net.skinsrestorer.shadow.aikar.commands")
     relocate("co.aikar.locales", "net.skinsrestorer.shadow.aikar.locales")
-    relocate("co.aikar.timings.lib", "net.skinsrestorer.shadow.aikar.timings")
-    relocate("com.google.gson", "net.skinsrestorer.shadow.gson")
+
+    relocate("com.google.gson", "net.skinsrestorer.shadow.google.gson")
+
     relocate("com.cryptomorin.xseries", "net.skinsrestorer.shadow.xseries")
     relocate("org.bstats", "net.skinsrestorer.shadow.bstats")
     relocate("io.papermc.lib", "net.skinsrestorer.shadow.paperlib")
-    relocate("io.leangen.geantyref", "net.skinsrestorer.shadow.geantyref")
-    relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
+    relocate("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
     relocate("org.inventivetalent.update.spiget", "net.skinsrestorer.shadow.spiget")
-    relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
-    relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
-    relocate("org.spongepowered.configurate", "net.skinsrestorer.shadow.configurate")
-    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
-}
 
-// publishShadowJar()
+    relocate("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+
+    relocate("org.intellij.lang.annotations", "net.skinsrestorer.shadow.ijannotations")
+    relocate("org.jetbrains.annotations", "net.skinsrestorer.shadow.jbannotations")
+
+    relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
+    relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
+    relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
+}

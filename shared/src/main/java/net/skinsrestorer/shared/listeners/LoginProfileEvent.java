@@ -20,9 +20,9 @@
 package net.skinsrestorer.shared.listeners;
 
 public interface LoginProfileEvent {
-	boolean isOnline();
+    boolean isOnline();
 
-	String getPlayerName();
+    String getPlayerName();
 
-	boolean isCancelled();
+    boolean isCancelled();
 }

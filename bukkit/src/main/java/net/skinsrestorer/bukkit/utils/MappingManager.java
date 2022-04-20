@@ -24,14 +24,14 @@ import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
 import net.skinsrestorer.mappings.mapping1_18_2.Mapping1_18_2;
 import net.skinsrestorer.mappings.shared.IMapping;
 import org.bukkit.Bukkit;
-import org.bukkit.UnsafeValues;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 public class MappingManager {
-    private static final ImmutableList<IMapping> mappings = ImmutableList.<IMapping>builder()
+    private static final List<IMapping> mappings = ImmutableList.<IMapping>builder()
             .add(new Mapping1_18())
             .add(new Mapping1_18_2())
             .build();
@@ -48,9 +48,9 @@ public class MappingManager {
         return Optional.empty();
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation"})
     public static String getMappingsVersion() {
-        UnsafeValues craftMagicNumbers = Bukkit.getServer().getUnsafe();
+        org.bukkit.UnsafeValues craftMagicNumbers = Bukkit.getServer().getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
             return (String) method.invoke(craftMagicNumbers, new Object[0]);

@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
@@ -46,7 +47,7 @@ public class SkinApplierVelocity {
             if (event.getResult() != ResultedEvent.GenericResult.allowed())
                 return;
             player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
-            sendUpdateRequest(player, (Property) property.getHandle());
+            sendUpdateRequest(player, Config.FORWARD_TEXTURES ? (Property) property.getHandle() : null);
         });
     }
 

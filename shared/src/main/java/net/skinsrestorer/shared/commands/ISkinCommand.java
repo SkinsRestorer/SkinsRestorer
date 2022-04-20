@@ -33,9 +33,6 @@ import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +72,7 @@ public interface ISkinCommand {
             final String skin = getPlugin().getSkinStorage().getDefaultSkinName(pName, true);
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removeSkin(pName);
+            plugin.getSkinStorage().removeSkinOfPlayer(pName);
 
             if (setSkin(sender, target, skin, false, true, null)) {
                 if (sender == target)
@@ -100,7 +97,7 @@ public interface ISkinCommand {
             }
 
             final String pName = player.getName();
-            Optional<String> skin = plugin.getSkinStorage().getSkinName(pName);
+            Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -176,7 +173,7 @@ public interface ISkinCommand {
 
     default void rollback(String pName, String oldSkinName, boolean save) {
         if (save)
-            getPlugin().getSkinStorage().setSkinName(pName, oldSkinName);
+            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     // if save is false, we won't save the skin name
@@ -204,7 +201,7 @@ public interface ISkinCommand {
         }
 
         final String playerName = player.getName();
-        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinName(playerName);
+        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinOfPlayer(playerName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
@@ -230,7 +227,7 @@ public interface ISkinCommand {
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 plugin.getSkinStorage().setSkinData(skinEntry, generatedSkin,
                         System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                plugin.getSkinStorage().setSkinName(playerName, skinEntry); // set player to "whitespaced" name then reload skin
+                plugin.getSkinStorage().setSkinOfPlayer(playerName, skinEntry); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
                 if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
@@ -245,9 +242,11 @@ public interface ISkinCommand {
             }
         } else {
             // If skin is not an url, it's a username
+            // Apply cooldown to sender
+            CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
             try {
                 if (save)
-                    plugin.getSkinStorage().setSkinName(playerName, skin);
+                    plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 

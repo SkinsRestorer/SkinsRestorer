@@ -25,29 +25,29 @@ import net.skinsrestorer.shared.storage.Config;
 import java.util.Optional;
 
 public abstract class LoginProfileListener {
-	protected boolean handleSync(LoginProfileEvent event) {
-		return Config.DISABLE_ON_JOIN_SKINS || (Config.NO_SKIN_IF_LOGIN_CANCELED && event.isCancelled());
-	}
+    protected boolean handleSync(LoginProfileEvent event) {
+        return Config.DISABLE_ON_JOIN_SKINS || (Config.NO_SKIN_IF_LOGIN_CANCELED && event.isCancelled());
+    }
 
-	// TODO: add default skinurl support
-	protected Optional<String> handleAsync(LoginProfileEvent event) {
-		ISRPlugin plugin = getPlugin();
-		String playerName = event.getPlayerName();
-		Optional<String> skin = plugin.getSkinStorage().getSkinName(playerName);
+    // TODO: add default skinurl support
+    protected Optional<String> handleAsync(LoginProfileEvent event) {
+        ISRPlugin plugin = getPlugin();
+        String playerName = event.getPlayerName();
+        Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(playerName);
 
-		// Skip players if: OnlineMode & no skin set & enabled & DefaultSkins.premium false
-		if (event.isOnline()
-				&& !skin.isPresent()
-				&& !Config.ALWAYS_APPLY_PREMIUM
-				&& !Config.DEFAULT_SKINS_PREMIUM)
-			return Optional.empty();
+        // Skip players if: OnlineMode & no skin set & enabled & DefaultSkins.premium false
+        if (event.isOnline()
+                && !skin.isPresent()
+                && !Config.ALWAYS_APPLY_PREMIUM
+                && !Config.DEFAULT_SKINS_PREMIUM)
+            return Optional.empty();
 
-		// Get default skin if enabled
-		if (Config.DEFAULT_SKINS_ENABLED)
-			skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(playerName));
+        // Get default skin if enabled
+        if (Config.DEFAULT_SKINS_ENABLED)
+            skin = Optional.ofNullable(plugin.getSkinStorage().getDefaultSkinName(playerName));
 
-		return Optional.of(skin.orElse(playerName));
-	}
+        return Optional.of(skin.orElse(playerName));
+    }
 
-	protected abstract ISRPlugin getPlugin();
+    protected abstract ISRPlugin getPlugin();
 }

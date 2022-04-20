@@ -7,5 +7,5 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.0.1")
 
     implementation("org.bstats:bstats-velocity:3.0.0")
-    implementation("com.github.AlexProgrammerDE.commands:acf-velocity:4da0ffec3c")
+    implementation("co.aikar:acf-velocity:0.5.1-SNAPSHOT")
 }

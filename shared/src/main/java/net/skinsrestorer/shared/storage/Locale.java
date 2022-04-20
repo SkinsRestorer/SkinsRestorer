@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.storage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
 import java.lang.reflect.Field;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class Locale {
@@ -92,7 +92,7 @@ public class Locale {
     public static String SKINSMENU_CLEAR_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
-    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin %targets.";
+    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin \"%targets\".";
     public static String ADMIN_APPLYSKIN_SUCCES = "&2Player skin has been refreshed!";
     public static String ADMIN_APPLYSKIN_ERROR = "&4ERROR&8: &cplayer skin could NOT be refreshed!";
     public static String STATUS_OK = "&2Mojang API connection successful!";
@@ -107,11 +107,13 @@ public class Locale {
             + "\n    &2/skin update &7-&f Updates your skin."
             + "\n    &2/skin clear &7-&f Clears your skin.";
 
-    public static void load(File path, SRLogger logger) {
+    public static void load(Path dataFolder, SRLogger logger) {
         try {
-            YamlConfig locale = new YamlConfig(path, "messages.yml", true, logger);
-            locale.saveDefaultConfig(null);
-            locale.reload();
+            YamlConfig locale = new YamlConfig(dataFolder.resolve("messages.yml"));
+            // TODO: Use a proper config loader
+            locale.loadConfig(null);
+
+            String parsedPrefix = C.c(locale.getString("PREFIX", ""));
 
             for (Field f : Locale.class.getFields()) {
                 if (f.getType() != String.class)
@@ -119,7 +121,7 @@ public class Locale {
 
                 String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
                 if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
-                    parsed = C.c(locale.getString("PREFIX", "")) + parsed;
+                    parsed = parsedPrefix + parsed;
                 }
 
                 f.set(null, parsed);

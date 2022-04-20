@@ -31,20 +31,20 @@ import net.skinsrestorer.shared.storage.Locale;
 
 @RequiredArgsConstructor
 public class ConnectListener implements Listener {
-	private final SkinsRestorer plugin;
+    private final SkinsRestorer plugin;
 
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onServerConnect(final ServerConnectEvent event) {
-		if (event.isCancelled())
-			return;
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onServerConnect(final ServerConnectEvent event) {
+        if (event.isCancelled())
+            return;
 
-		plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-			if (plugin.isOutdated()) {
-				final ProxiedPlayer player = event.getPlayer();
+        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+            if (plugin.isOutdated()) {
+                final ProxiedPlayer player = event.getPlayer();
 
-				if (player.hasPermission("skinsrestorer.admincommand"))
-					player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
-			}
-		});
-	}
+                if (player.hasPermission("skinsrestorer.admincommand"))
+                    player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
+            }
+        });
+    }
 }
