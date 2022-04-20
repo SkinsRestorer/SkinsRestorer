@@ -17,28 +17,27 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.utils;
+package net.skinsrestorer.sponge7.utils;
 
-import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
-import org.spongepowered.api.adventure.Audiences;
-import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.command.source.ConsoleSource;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
 
 public class WrapperSponge {
-    public static ISRCommandSender wrapCommandSender(CommandCause sender) {
+    public static ISRCommandSender wrapCommandSender(CommandSource sender) {
         return new ISRCommandSender() {
             @Override
             public void sendMessage(String message) {
-                sender.sendMessage(Identity.nil(), LegacyComponentSerializer.legacySection().deserialize(message));
+                sender.sendMessage(Text.builder(message).build());
             }
 
             @Override
             public String getName() {
-                return sender.friendlyIdentifier().orElse(sender.identifier());
+                return sender.getName();
             }
 
             @Override
@@ -48,12 +47,12 @@ public class WrapperSponge {
 
             @Override
             public boolean isConsole() {
-                return sender.audience() == Audiences.system();
+                return sender instanceof ConsoleSource;
             }
         };
     }
 
-    public static ISRPlayer wrapPlayer(ServerPlayer player) {
+    public static ISRPlayer wrapPlayer(Player player) {
         return new ISRPlayer() {
             @Override
             public PlayerWrapper getWrapper() {
@@ -62,12 +61,12 @@ public class WrapperSponge {
 
             @Override
             public String getName() {
-                return player.name();
+                return player.getName();
             }
 
             @Override
             public void sendMessage(String message) {
-                player.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
+                player.sendMessage(Text.builder(message).build());
             }
 
             @Override

@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.commands;
+package net.skinsrestorer.sponge8.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
@@ -30,15 +30,15 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
-import net.skinsrestorer.sponge.SkinsRestorer;
+import net.skinsrestorer.sponge8.SkinsRestorer;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
+import static net.skinsrestorer.sponge8.utils.WrapperSponge.wrapCommandSender;
+import static net.skinsrestorer.sponge8.utils.WrapperSponge.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")

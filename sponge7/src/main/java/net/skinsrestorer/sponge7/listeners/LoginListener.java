@@ -17,47 +17,53 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.listeners;
+package net.skinsrestorer.sponge7.listeners;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
-import net.skinsrestorer.sponge.SkinsRestorer;
+import net.skinsrestorer.sponge7.SkinsRestorer;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.event.EventListener;
-import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 
 @RequiredArgsConstructor
 @Getter
-public class LoginListener extends LoginProfileListener implements EventListener<ServerSideConnectionEvent.Login> {
+public class LoginListener extends LoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorer plugin;
 
     @Override
-    public void handle(@NotNull ServerSideConnectionEvent.Login event) {
+    public void handle(@NotNull Auth event) {
         LoginProfileEvent wrapped = wrap(event);
         if (handleSync(wrapped))
             return;
 
-        GameProfile profile = event.profile();
+        final GameProfile profile = event.getProfile();
 
-        profile.name().flatMap(name -> handleAsync(wrapped)).ifPresent(result ->
-                plugin.getSkinApplierSponge().updateProfileSkin(event.user(), result));
+        profile.getName().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
+            try {
+                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
+            } catch (SkinRequestException e) {
+                plugin.getSrLogger().debug(e);
+            }
+        });
     }
 
-    private LoginProfileEvent wrap(ServerSideConnectionEvent.Login event) {
+    private LoginProfileEvent wrap(Auth event) {
         return new LoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Sponge.server().isOnlineModeEnabled();
+                return Sponge.getServer().getOnlineMode();
             }
 
             @Override
             public String getPlayerName() {
-                return event.profile().name().orElseThrow(() -> new RuntimeException("Could not get player name!"));
+                return event.getProfile().getName().orElseThrow(() -> new RuntimeException("Could not get player name!"));
             }
 
             @Override

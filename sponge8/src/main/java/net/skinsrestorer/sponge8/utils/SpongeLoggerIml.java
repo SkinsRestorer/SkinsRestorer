@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.utils;
+package net.skinsrestorer.sponge8.utils;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRLogger;

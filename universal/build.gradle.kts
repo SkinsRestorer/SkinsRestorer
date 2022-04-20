@@ -3,7 +3,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 val platforms = setOf(
     rootProject.projects.skinsrestorerBukkit,
     rootProject.projects.skinsrestorerBungee,
-    rootProject.projects.skinsrestorerSponge,
+    rootProject.projects.skinsrestorerSponge7,
+    rootProject.projects.skinsrestorerSponge8,
     rootProject.projects.skinsrestorerVelocity
 ).map { it.dependencyProject }
 

@@ -25,7 +25,7 @@
     {
       "id": "skinsrestorer",
       "name": "SkinRestorer",
-      "entrypoint": "net.skinsrestorer.sponge.SkinsRestorer",
+      "entrypoint": "net.skinsrestorer.sponge8.SkinsRestorer",
       "description": "${description}"
     }
   ]

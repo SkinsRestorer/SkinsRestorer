@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.commands;
+package net.skinsrestorer.sponge7.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
@@ -28,12 +28,12 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.sponge.SkinsRestorer;
-import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import net.skinsrestorer.sponge7.SkinsRestorer;
+import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.entity.living.player.Player;
 
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
+import static net.skinsrestorer.sponge7.utils.WrapperSponge.wrapCommandSender;
+import static net.skinsrestorer.sponge7.utils.WrapperSponge.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("skin")
@@ -44,7 +44,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     private final SkinsRestorer plugin;
 
     @Default
-    public void onDefault(CommandCause source) {
+    public void onDefault(CommandSource source) {
         onDefault(wrapCommandSender(source));
     }
 
@@ -52,20 +52,20 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
-    public void onSkinSetShort(ServerPlayer player, @Single String skin) {
+    public void onSkinSetShort(Player player, @Single String skin) {
         onSkinSetShort(wrapPlayer(player), skin);
     }
 
     @HelpCommand
     @Syntax(" [help]")
-    public void onHelp(CommandCause source, CommandHelp help) {
+    public void onHelp(CommandSource source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
-    public void onSkinClear(ServerPlayer player) {
+    public void onSkinClear(Player player) {
         onSkinClear(wrapPlayer(player));
     }
 
@@ -74,7 +74,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@players")
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
-    public void onSkinClearOther(CommandCause source, @Single OnlinePlayer target) {
+    public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
         onSkinClearOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
     }
 
@@ -82,7 +82,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
-    public void onSkinUpdate(ServerPlayer player) {
+    public void onSkinUpdate(Player player) {
         onSkinUpdate(wrapPlayer(player));
     }
 
@@ -91,7 +91,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
-    public void onSkinUpdateOther(CommandCause source, @Single OnlinePlayer target) {
+    public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
         onSkinUpdateOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
     }
 
@@ -100,7 +100,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@skin")
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
-    public void onSkinSet(ServerPlayer player, String[] skin) {
+    public void onSkinSet(Player player, String[] skin) {
         onSkinSet(wrapPlayer(player), skin);
     }
 
@@ -109,7 +109,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@players @skin")
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
-    public void onSkinSetOther(CommandCause source, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
+    public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
         onSkinSetOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()), skin, skinVariant);
     }
 
@@ -118,7 +118,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
-    public void onSkinSetUrl(ServerPlayer player, String url, @Optional SkinVariant skinVariant) {
+    public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
 

@@ -84,8 +84,9 @@ setupSRSubproject("shared")
 
 setupSRSubproject("bukkit")
 setupSRSubproject("bungee")
+setupSRSubproject("sponge7")
+setupSRSubproject("sponge8")
 setupSRSubproject("velocity")
-setupSRSubproject("sponge")
 
 setupSubproject("skinsrestorer") {
     projectDir = file("universal")

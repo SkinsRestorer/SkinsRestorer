@@ -11,7 +11,8 @@ allprojects {
 val platforms = setOf(
     projects.skinsrestorerBukkit,
     projects.skinsrestorerBungee,
-    projects.skinsrestorerSponge,
+    projects.skinsrestorerSponge7,
+    projects.skinsrestorerSponge8,
     projects.skinsrestorerVelocity
 ).map { it.dependencyProject }
 

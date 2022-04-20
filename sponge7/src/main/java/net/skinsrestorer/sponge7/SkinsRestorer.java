@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge;
+package net.skinsrestorer.sponge7;
 
 import co.aikar.commands.SpongeCommandManager;
 import com.google.inject.Inject;
@@ -28,6 +28,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.serverinfo.Platform;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -41,29 +42,24 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
-import net.skinsrestorer.sponge.commands.SkinCommand;
-import net.skinsrestorer.sponge.commands.SrCommand;
-import net.skinsrestorer.sponge.listeners.LoginListener;
-import net.skinsrestorer.sponge.utils.SpongeLoggerIml;
-import net.skinsrestorer.sponge.utils.WrapperSponge;
-import org.apache.logging.log4j.Logger;
+import net.skinsrestorer.sponge7.commands.SkinCommand;
+import net.skinsrestorer.sponge7.commands.SrCommand;
+import net.skinsrestorer.sponge7.listeners.LoginListener;
+import net.skinsrestorer.sponge7.utils.WrapperSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.event.EventListenerRegistration;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
-import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
-import org.spongepowered.api.event.network.ServerSideConnectionEvent;
-import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.plugin.PluginContainer;
-import org.spongepowered.plugin.builtin.jvm.Plugin;
+import org.spongepowered.api.event.game.state.GameInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -73,9 +69,8 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-// @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 @Getter
-@Plugin("skinsrestorer")
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
@@ -98,7 +93,7 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         this.dataFolderPath = dataFolderPath;
-        srLogger = new SRLogger(new SpongeLoggerIml(log));
+        srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -106,7 +101,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     @Listener
-    public void onInitialize(StartingEngineEvent<Server> e) {
+    public void onInitialize(GameInitializationEvent e) {
         srLogger.load(getDataFolderPath());
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
@@ -117,8 +112,8 @@ public class SkinsRestorer implements ISRPlugin {
 
             Random rn = new Random();
             int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-            Sponge.server().scheduler().submit(Task.builder().execute(() ->
-                    checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES).plugin(container).build());
+            Sponge.getScheduler().createTaskBuilder().execute(() ->
+                    checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -135,14 +130,12 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Run connection check
-        Sponge.asyncScheduler().executor(container).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     @Listener
-    public void onServerStarted(StartedEngineEvent<Server> event) {
-        Sponge.eventManager().registerListener(EventListenerRegistration
-                .builder(ServerSideConnectionEvent.Login.class)
-                .plugin(container).listener(new LoginListener(this)).build());
+    public void onServerStarted(GameStartedServerEvent event) {
+        Sponge.getEventManager().registerListener(this, ClientConnectionEvent.Auth.class, new LoginListener(this));
 
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
@@ -151,12 +144,14 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     private void initCommands() {
-        manager = new SpongeCommandManager(container);
+        Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
+            manager = new SpongeCommandManager(pluginContainer);
 
-        prepareACF(manager, srLogger);
+            prepareACF(manager, srLogger);
 
-        manager.registerCommand(new SkinCommand(this));
-        manager.registerCommand(new SrCommand(this));
+            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(new SrCommand(this));
+        });
     }
 
     private boolean initStorage() {
@@ -164,7 +159,7 @@ public class SkinsRestorer implements ISRPlugin {
         if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) return false;
 
         // Preload default skins
-        Sponge.asyncScheduler().executor(container).execute(skinStorage::preloadDefaultSkins);
+        Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
         return true;
     }
 
@@ -173,7 +168,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     private void checkUpdate(boolean showUpToDate) {
-        Sponge.asyncScheduler().executor(container).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);
@@ -191,7 +186,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Override
     public String getVersion() {
-        return container.metadata().version().getQualifier();
+        return container.getVersion().orElse("Unknown");
     }
 
     @Override
@@ -201,19 +196,19 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Override
     public void runAsync(Runnable runnable) {
-        game.asyncScheduler().executor(container).execute(runnable);
+        game.getScheduler().createAsyncExecutor(this).execute(runnable);
     }
 
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
-        return game.server().onlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
     }
 
     private static class WrapperFactorySponge extends WrapperFactory {
         @Override
         public ISRPlayer wrapPlayer(Object playerInstance) {
-            if (playerInstance instanceof ServerPlayer) {
-                ServerPlayer player = (ServerPlayer) playerInstance;
+            if (playerInstance instanceof Player) {
+                Player player = (Player) playerInstance;
 
                 return WrapperSponge.wrapPlayer(player);
             } else {
@@ -229,7 +224,7 @@ public class SkinsRestorer implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-            applySkin(playerWrapper, playerWrapper.get(Player.class).name());
+            applySkin(playerWrapper, playerWrapper.get(Player.class).getName());
         }
 
         @Override
@@ -239,7 +234,7 @@ public class SkinsRestorer implements ISRPlugin {
 
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-            skinApplierSponge.applySkin(playerWrapper.get(ServerPlayer.class), props);
+            skinApplierSponge.applySkin(playerWrapper.get(Player.class), props);
         }
     }
 }

@@ -17,10 +17,9 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge;
+package net.skinsrestorer.sponge8;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
@@ -29,7 +28,6 @@ import org.spongepowered.api.effect.VanishState;
 import org.spongepowered.api.entity.living.player.User;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
-import org.spongepowered.api.profile.GameProfile;
 import org.spongepowered.api.profile.property.ProfileProperty;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.util.Ticks;
@@ -38,8 +36,6 @@ import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.api.world.server.storage.ServerWorldProperties;
 import org.spongepowered.math.vector.Vector3d;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
