@@ -1,8 +1,58 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
+import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
+import shadow.org.apache.tools.zip.ZipEntry
+import shadow.org.apache.tools.zip.ZipOutputStream
+import shadow.org.codehaus.plexus.util.IOUtil
+import java.io.BufferedReader
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.util.*
+import kotlin.collections.HashMap
 
 plugins {
     id("sr.base-logic")
     id("com.github.johnrengelman.shadow")
+}
+
+class ShadowResourceTransformer : Transformer {
+    @Internal
+    var replacedMap: MutableMap<String, String> = HashMap()
+
+    override fun getName(): String {
+        return "ShadowResourceTransformer"
+    }
+
+    override fun canTransformResource(element: FileTreeElement?): Boolean {
+        return element?.relativePath?.pathString?.contains("META-INF/services")!!
+    }
+
+    override fun transform(context: TransformerContext?) {
+        val content = context?.`is`?.bufferedReader()?.use(BufferedReader::readText)
+
+        val replaced = content
+            ?.replace("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
+            ?.replace("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+
+        if (content?.length!! < replaced?.length!!) {
+            replacedMap.put(context.path, replaced)
+        }
+    }
+
+    override fun hasTransformedResource(): Boolean {
+        return replacedMap.size > 0
+    }
+
+    override fun modifyOutputStream(os: ZipOutputStream?, preserveFileTimestamps: Boolean) {
+        replacedMap.forEach { (path, value) ->
+            val entry = ZipEntry(path)
+            entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
+            os?.putNextEntry(entry)
+            IOUtil.copy(ByteArrayInputStream(value.toByteArray()), os)
+            os?.closeEntry()
+        }
+    }
 }
 
 tasks {
@@ -19,6 +69,7 @@ tasks {
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
         minimize()
         configureRelocations()
+        transform(ShadowResourceTransformer())
     }
 
     build {
