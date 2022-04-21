@@ -11,12 +11,10 @@ import java.io.InputStream
 import java.util.*
 import kotlin.collections.HashMap
 
-
 plugins {
     id("sr.base-logic")
     id("com.github.johnrengelman.shadow")
 }
-
 
 class ShadowResourceTransformer : Transformer {
     @Internal
@@ -27,7 +25,6 @@ class ShadowResourceTransformer : Transformer {
     }
 
     override fun canTransformResource(element: FileTreeElement?): Boolean {
-        println(element?.relativePath?.pathString)
         return element?.relativePath?.pathString?.contains("META-INF/services")!!
     }
 
