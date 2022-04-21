@@ -6,14 +6,49 @@ import shadow.org.apache.tools.zip.ZipOutputStream
 import shadow.org.codehaus.plexus.util.IOUtil
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import java.util.*
-import kotlin.collections.HashMap
 
 plugins {
     id("sr.base-logic")
     id("com.github.johnrengelman.shadow")
+}
+
+val packages = mapOf<String, String>(
+    "org.fusesource.jansi" to "net.skinsrestorer.shadow.jansi",
+    "org.mariadb.jdbc" to "net.skinsrestorer.shadow.mariadb"
+)
+
+fun replaceSlash(text: String): String {
+    return text.replace(".", "/")
+}
+
+fun replacePackagDot(text: String): String {
+    var returnedText = text
+
+    for (entry in packages.entries) {
+        returnedText = returnedText.replace(entry.key, entry.value)
+    }
+
+    return returnedText;
+}
+
+fun replacePackagSlash(text: String): String {
+    var returnedText = text
+
+    for (entry in packages.entries) {
+        returnedText = returnedText.replace(replaceSlash(entry.key), replaceSlash(entry.value))
+    }
+
+    return returnedText;
+}
+
+fun replaceRelocation(text: String): String {
+    var returnedText = text
+
+    returnedText = replacePackagDot(returnedText)
+    returnedText = replacePackagSlash(returnedText)
+
+    return returnedText;
 }
 
 class ShadowResourceTransformer : Transformer {
@@ -25,17 +60,18 @@ class ShadowResourceTransformer : Transformer {
     }
 
     override fun canTransformResource(element: FileTreeElement?): Boolean {
-        return element?.relativePath?.pathString?.contains("META-INF/services")!!
+        val pathString: String = element?.relativePath?.pathString!!
+
+        return pathString.contains("META-INF/services")
+                || pathString.contains("META-INF/native-image/jansi")
     }
 
     override fun transform(context: TransformerContext?) {
-        val content = context?.`is`?.bufferedReader()?.use(BufferedReader::readText)
+        val content = context?.`is`?.bufferedReader()?.use(BufferedReader::readText)!!
 
-        val replaced = content
-            ?.replace("org.fusesource.jansi", "net.skinsrestorer.shadow.jansi")
-            ?.replace("org.mariadb.jdbc", "net.skinsrestorer.shadow.mariadb")
+        val replaced = replaceRelocation(content)
 
-        if (content?.length!! < replaced?.length!!) {
+        if (content.length < replaced.length) {
             replacedMap.put(context.path, replaced)
         }
     }
@@ -46,7 +82,7 @@ class ShadowResourceTransformer : Transformer {
 
     override fun modifyOutputStream(os: ZipOutputStream?, preserveFileTimestamps: Boolean) {
         replacedMap.forEach { (path, value) ->
-            val entry = ZipEntry(path)
+            val entry = ZipEntry(replacePackagDot(path))
             entry.time = TransformerContext.getEntryTimestamp(preserveFileTimestamps, entry.time)
             os?.putNextEntry(entry)
             IOUtil.copy(ByteArrayInputStream(value.toByteArray()), os)
@@ -67,7 +103,10 @@ tasks {
 
     shadowJar {
         exclude("META-INF/SPONGEPO.SF", "META-INF/SPONGEPO.DSA", "META-INF/SPONGEPO.RSA")
-        minimize()
+        minimize() {
+            exclude(dependency("org.mariadb.jdbc:mariadb-java-client"))
+            exclude(dependency("org.fusesource.jansi:jansi"))
+        }
         configureRelocations()
         transform(ShadowResourceTransformer())
     }
