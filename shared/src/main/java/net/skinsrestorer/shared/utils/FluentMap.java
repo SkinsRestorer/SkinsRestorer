@@ -17,10 +17,31 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.utils;
 
-public class YamlException extends Exception {
-    public YamlException(Throwable ex) {
-        super(ex);
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FluentMap {
+    private FluentMap() {
+    }
+
+    public static <K, V> Builder<K, V> builder() {
+        return new Builder<>();
+    }
+
+    public static class Builder<K, V> {
+        private final Map<K, V> map = new HashMap<>();
+
+        public Builder<K, V> put(K key, V value) {
+            map.put(key, value);
+            return this;
+        }
+
+        public Map<K, V> build() {
+            return Collections.unmodifiableMap(map);
+        }
     }
 }
+

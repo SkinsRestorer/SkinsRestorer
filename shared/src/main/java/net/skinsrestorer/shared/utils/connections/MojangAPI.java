@@ -23,7 +23,9 @@ import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
-import net.skinsrestorer.api.property.*;
+import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.PropertyRegistry;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.Platform;
@@ -284,7 +286,6 @@ public class MojangAPI implements IMojangAPI {
             return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining());
         }
     }
-
 
     @RequiredArgsConstructor
     public enum HardcodedSkins {

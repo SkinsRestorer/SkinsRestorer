@@ -105,7 +105,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         });
 
         // If the page is not empty, adding Next Page button.
-        if (inventory.firstEmpty() == -1 || inventory.getItem(26) != null && page < 999) {
+        if (inventory.firstEmpty() == -1 || inventory.getItem(24) != null && page < 999) {
             inventory.setItem(53, next);
             inventory.setItem(52, next);
             inventory.setItem(51, next);
@@ -151,7 +151,7 @@ public class SkinsGUI extends ItemStack implements Listener {
             if (event.getClickedInventory() == null || // Cancel if clicked outside inventory
                     event.getView().getTopInventory().getType() != InventoryType.CHEST || // Cancel if clicked in not inventory
                     !(event.getWhoClicked() instanceof Player) || //cancel if no player
-                    (!event.getView().getTitle().startsWith("Skins Menu - Page ") && !event.getView().getTitle().replaceAll("[0-9]", "").contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "").replaceAll("[0-9]", "")))) //cancel if title name is not same
+                    (!event.getView().getTitle().contains("Skins Menu - Page") && !event.getView().getTitle().replaceAll("§&[0-9]", "").contains(Locale.SKINSMENU_TITLE_NEW.replace("%page", "").replaceAll("§&[0-9]", "")))) //cancel if title name is not same
                 return;
         } catch (IllegalStateException ignored) {
             return;

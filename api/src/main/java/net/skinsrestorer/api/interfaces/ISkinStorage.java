@@ -80,6 +80,7 @@ public interface ISkinStorage {
 
     /**
      * Timestamp is set to current time
+     *
      * @see #setSkinData(String, IProperty, long)
      */
     void setSkinData(String skinName, IProperty textures);

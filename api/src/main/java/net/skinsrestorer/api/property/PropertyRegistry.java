@@ -22,14 +22,14 @@ package net.skinsrestorer.api.property;
 import net.skinsrestorer.api.serverinfo.Platform;
 
 public class PropertyRegistry {
-	public static Class<? extends IProperty> selectPropertyForPlatform(Platform platform) {
-		if (platform == Platform.BUKKIT) {
-			return BukkitProperty.class;
-		} else if (platform == Platform.BUNGEECORD) {
-			return BungeeProperty.class;
-		} else if (platform == Platform.VELOCITY) {
-			return VelocityProperty.class;
-		}
-		return null;
-	}
+    public static Class<? extends IProperty> selectPropertyForPlatform(Platform platform) {
+        if (platform == Platform.BUKKIT) {
+            return BukkitProperty.class;
+        } else if (platform == Platform.BUNGEECORD) {
+            return BungeeProperty.class;
+        } else if (platform == Platform.VELOCITY) {
+            return VelocityProperty.class;
+        }
+        return null;
+    }
 }

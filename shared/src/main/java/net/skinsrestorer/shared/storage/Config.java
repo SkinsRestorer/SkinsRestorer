@@ -19,102 +19,96 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import net.skinsrestorer.shared.exception.YamlException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Config {
-    public static boolean SKIN_WITHOUT_PERM = false;
-    public static int SKIN_CHANGE_COOLDOWN = 30;
-    public static int SKIN_ERROR_COOLDOWN = 5;
-    public static boolean ENABLE_CUSTOM_HELP = false;
-    public static boolean DISABLE_PREFIX = false;
-    public static boolean DEFAULT_SKINS_ENABLED = false;
-    public static boolean DEFAULT_SKINS_PREMIUM = false;
-    public static List<String> DEFAULT_SKINS = null;
-    public static boolean DISABLED_SKINS_ENABLED = false;
-    public static List<String> DISABLED_SKINS = null;
-    public static boolean CUSTOM_GUI_ENABLED = false;
-    public static boolean CUSTOM_GUI_ONLY = false;
-    public static List<String> CUSTOM_GUI_SKINS = null;
-    public static boolean PER_SKIN_PERMISSIONS = false;
-    public static int SKIN_EXPIRES_AFTER = 20;
-    public static boolean MULTI_BUNGEE_ENABLED = false;
-    public static boolean MYSQL_ENABLED = false;
-    public static String MYSQL_HOST = "localhost";
-    public static String MYSQL_PORT = "3306";
-    public static String MYSQL_DATABASE = "db";
-    public static String MYSQL_USERNAME = "root";
-    public static String MYSQL_PASSWORD = "pass";
-    public static String MYSQL_SKIN_TABLE = "Skins";
-    public static String MYSQL_PLAYER_TABLE = "Players";
-    public static String MYSQL_CONNECTION_OPTIONS = "verifyServerCertificate=false&useSSL=false&serverTimezone=UTC";
-    public static boolean NO_SKIN_IF_LOGIN_CANCELED = true;
-    public static boolean ALWAYS_APPLY_PREMIUM = false;
-    public static boolean RESTRICT_SKIN_URLS_ENABLED = false;
-    public static List<String> RESTRICT_SKIN_URLS_LIST = null;
-    public static String MINESKIN_API_KEY = "";
-    public static boolean RESOURCE_PACK_FIX = true;
-    public static boolean DISMOUNT_PLAYER_ON_UPDATE = true;
-    public static boolean REMOUNT_PLAYER_ON_UPDATE = true;
-    public static boolean DISMOUNT_PASSENGERS_ON_UPDATE = false;
-    public static boolean DISABLE_ON_JOIN_SKINS = false;
-    public static boolean DISALLOW_AUTO_UPDATE_SKIN = false;
-    public static boolean ENABLE_PROTOCOL_LISTENER = false;
-    public static boolean DEBUG = false;
+    public static boolean SKIN_WITHOUT_PERM;
+    public static int SKIN_CHANGE_COOLDOWN;
+    public static int SKIN_ERROR_COOLDOWN;
+    public static boolean ENABLE_CUSTOM_HELP;
+    public static boolean DISABLE_PREFIX;
+    public static boolean DEFAULT_SKINS_ENABLED;
+    public static boolean DEFAULT_SKINS_PREMIUM;
+    public static List<String> DEFAULT_SKINS;
+    public static boolean DISABLED_SKINS_ENABLED;
+    public static List<String> DISABLED_SKINS;
+    public static boolean CUSTOM_GUI_ENABLED;
+    public static boolean CUSTOM_GUI_ONLY;
+    public static List<String> CUSTOM_GUI_SKINS;
+    public static boolean PER_SKIN_PERMISSIONS;
+    public static int SKIN_EXPIRES_AFTER;
+    public static boolean FORWARD_TEXTURES;
+    public static boolean MYSQL_ENABLED;
+    public static String MYSQL_HOST;
+    public static int MYSQL_PORT;
+    public static String MYSQL_DATABASE;
+    public static String MYSQL_USERNAME;
+    public static String MYSQL_PASSWORD;
+    public static int MYSQL_MAX_POOL_SIZE;
+    public static String MYSQL_SKIN_TABLE;
+    public static String MYSQL_PLAYER_TABLE;
+    public static String MYSQL_CONNECTION_OPTIONS;
+    public static boolean NO_SKIN_IF_LOGIN_CANCELED;
+    public static boolean ALWAYS_APPLY_PREMIUM;
+    public static boolean RESTRICT_SKIN_URLS_ENABLED;
+    public static List<String> RESTRICT_SKIN_URLS_LIST;
+    public static String MINESKIN_API_KEY;
+    public static boolean RESOURCE_PACK_FIX;
+    public static boolean DISMOUNT_PLAYER_ON_UPDATE;
+    public static boolean REMOUNT_PLAYER_ON_UPDATE;
+    public static boolean DISMOUNT_PASSENGERS_ON_UPDATE;
+    public static boolean DISABLE_ON_JOIN_SKINS;
+    public static boolean DISALLOW_AUTO_UPDATE_SKIN;
+    public static boolean ENABLE_PROTOCOL_LISTENER;
+    public static boolean DEBUG;
 
-    // UPCOMING MULTIPLE LANGUAGE SUPPORT
-    public static String LOCALE_FILE = "english.yml";
+    public static void load(Path dataFolder, InputStream is, SRLogger logger) {
+        YamlConfig config = new YamlConfig(dataFolder.resolve("config.yml"));
+        config.loadConfig(is);
 
-    public static void load(File path, InputStream is, SRLogger logger) {
-        YamlConfig config = new YamlConfig(path, "config.yml", false, logger);
-        config.saveDefaultConfig(is);
-        try {
-            config.reload();
-        } catch (YamlException e) {
-            e.printStackTrace();
-        }
-        SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm", SKIN_WITHOUT_PERM);
-        SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown", SKIN_CHANGE_COOLDOWN);
-        SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown", SKIN_ERROR_COOLDOWN);
-        ENABLE_CUSTOM_HELP = config.getBoolean("EnableCustomHelp", ENABLE_CUSTOM_HELP);
-        DISABLE_PREFIX = config.getBoolean("DisablePrefix", DISABLE_PREFIX);
-        DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled", DEFAULT_SKINS_ENABLED);
-        DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium", DEFAULT_SKINS_PREMIUM);
+        SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm");
+        SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown");
+        SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown");
+        ENABLE_CUSTOM_HELP = config.getBoolean("EnableCustomHelp");
+        DISABLE_PREFIX = config.getBoolean("DisablePrefix");
+        DEFAULT_SKINS_ENABLED = config.getBoolean("DefaultSkins.Enabled");
+        DEFAULT_SKINS_PREMIUM = config.getBoolean("DefaultSkins.ApplyForPremium");
         DEFAULT_SKINS = config.getStringList("DefaultSkins.Names", ".skin");
-        DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled", DISABLED_SKINS_ENABLED);
+        DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
-        CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled", CUSTOM_GUI_ENABLED);
-        CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI", CUSTOM_GUI_ONLY);
+        CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled");
+        CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI");
         CUSTOM_GUI_SKINS = config.getStringList("CustomGUI.Names");
-        PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions", PER_SKIN_PERMISSIONS);
-        SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter", SKIN_EXPIRES_AFTER);
-        MULTI_BUNGEE_ENABLED = config.getBoolean("MultiBungee.Enabled", MULTI_BUNGEE_ENABLED);
-        MYSQL_ENABLED = config.getBoolean("MySQL.Enabled", MYSQL_ENABLED);
-        MYSQL_HOST = config.getString("MySQL.Host", MYSQL_HOST);
-        MYSQL_PORT = config.getString("MySQL.Port", MYSQL_PORT);
-        MYSQL_DATABASE = config.getString("MySQL.Database", MYSQL_DATABASE);
-        MYSQL_USERNAME = config.getString("MySQL.Username", MYSQL_USERNAME);
-        MYSQL_PASSWORD = config.getString("MySQL.Password", MYSQL_PASSWORD);
-        MYSQL_SKIN_TABLE = config.getString("MySQL.SkinTable", MYSQL_SKIN_TABLE);
-        MYSQL_PLAYER_TABLE = config.getString("MySQL.PlayerTable", MYSQL_PLAYER_TABLE);
-        MYSQL_CONNECTION_OPTIONS = config.getString("MySQL.ConnectionOptions", MYSQL_CONNECTION_OPTIONS);
-        NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled", NO_SKIN_IF_LOGIN_CANCELED);
-        ALWAYS_APPLY_PREMIUM = config.getBoolean("AlwaysApplyPremium", ALWAYS_APPLY_PREMIUM);
-        RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled", RESTRICT_SKIN_URLS_ENABLED);
+        PER_SKIN_PERMISSIONS = config.getBoolean("PerSkinPermissions");
+        SKIN_EXPIRES_AFTER = config.getInt("SkinExpiresAfter");
+        FORWARD_TEXTURES = config.getBoolean("ForwardTextures");
+        MYSQL_ENABLED = config.getBoolean("MySQL.Enabled");
+        MYSQL_HOST = config.getString("MySQL.Host");
+        MYSQL_PORT = config.getInt("MySQL.Port");
+        MYSQL_DATABASE = config.getString("MySQL.Database");
+        MYSQL_USERNAME = config.getString("MySQL.Username");
+        MYSQL_PASSWORD = config.getString("MySQL.Password");
+        MYSQL_MAX_POOL_SIZE = config.getInt("MySQL.MaxPoolSize");
+        MYSQL_SKIN_TABLE = config.getString("MySQL.SkinTable");
+        MYSQL_PLAYER_TABLE = config.getString("MySQL.PlayerTable");
+        MYSQL_CONNECTION_OPTIONS = config.getString("MySQL.ConnectionOptions");
+        DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins");
+        DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin"); //Note: incorrect name because of default value mistake!
+        NO_SKIN_IF_LOGIN_CANCELED = config.getBoolean("NoSkinIfLoginCanceled");
+        ALWAYS_APPLY_PREMIUM = config.getBoolean("AlwaysApplyPremium");
+        RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled");
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
-        MINESKIN_API_KEY = config.getString("MineskinAPIKey", MINESKIN_API_KEY);
-        RESOURCE_PACK_FIX = config.getBoolean("ResourcePackFix", RESOURCE_PACK_FIX);
-        DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate", DISMOUNT_PLAYER_ON_UPDATE);
-        REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate", REMOUNT_PLAYER_ON_UPDATE);
-        DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate", DISMOUNT_PASSENGERS_ON_UPDATE);
-        DISABLE_ON_JOIN_SKINS = config.getBoolean("DisableOnJoinSkins", DISABLE_ON_JOIN_SKINS);
-        DISALLOW_AUTO_UPDATE_SKIN = config.getBoolean("DisallowAutoUpdateSkin", DISALLOW_AUTO_UPDATE_SKIN); //Note: incorrect name because of default value mistake!
-        ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener", ENABLE_PROTOCOL_LISTENER);
-        DEBUG = config.getBoolean("Debug", DEBUG);
+        MINESKIN_API_KEY = config.getString("MineskinAPIKey");
+        RESOURCE_PACK_FIX = config.getBoolean("ResourcePackFix");
+        DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate");
+        REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate");
+        DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate");
+        ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener");
+        DEBUG = config.getBoolean("Debug");
 
         //__Default__Skins
         if (DEFAULT_SKINS_ENABLED && DEFAULT_SKINS.isEmpty()) {

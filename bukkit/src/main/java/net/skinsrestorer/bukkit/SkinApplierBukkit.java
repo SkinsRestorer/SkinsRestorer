@@ -40,20 +40,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    @Setter
-    private static boolean optFileChecked;
-    private static boolean disableDismountPlayer;
-    private static boolean disableRemountPlayer;
-    private static boolean enableDismountEntities;
     private final SkinsRestorer plugin;
     private final SRLogger log;
     @Getter
     private final Consumer<Player> refresh;
+    @Setter
+    private boolean optFileChecked;
+    private boolean disableDismountPlayer;
+    private boolean disableRemountPlayer;
+    private boolean enableDismountEntities;
 
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
@@ -202,16 +203,16 @@ public class SkinApplierBukkit {
     }
 
     private void checkOptFile() {
-        File fileDisableDismountPlayer = new File(plugin.getDataFolder(), "disablesdismountplayer");
-        File fileDisableRemountPlayer = new File(plugin.getDataFolder(), "disablesremountplayer");
-        File fileEnableDismountEntities = new File(plugin.getDataFolder(), "enablesdismountentities");
-        File fileTxtDisableDismountPlayer = new File(plugin.getDataFolder(), "disableDismountPlayer.txt");
-        File fileTxtDisableRemountPlayer = new File(plugin.getDataFolder(), "disableRemountPlayer.txt");
-        File fileTxtEnableDismountEntities = new File(plugin.getDataFolder(), "enableDismountEntities.txt");
+        Path fileDisableDismountPlayer = plugin.getDataFolderPath().resolve("disablesdismountplayer");
+        Path fileDisableRemountPlayer = plugin.getDataFolderPath().resolve("disablesremountplayer");
+        Path fileEnableDismountEntities = plugin.getDataFolderPath().resolve("enablesdismountentities");
+        Path fileTxtDisableDismountPlayer = plugin.getDataFolderPath().resolve("disableDismountPlayer.txt");
+        Path fileTxtDisableRemountPlayer = plugin.getDataFolderPath().resolve("disableRemountPlayer.txt");
+        Path fileTxtEnableDismountEntities = plugin.getDataFolderPath().resolve("enableDismountEntities.txt");
 
-        disableDismountPlayer = fileDisableDismountPlayer.exists() || fileTxtDisableDismountPlayer.exists();
-        disableRemountPlayer = fileDisableRemountPlayer.exists() || fileTxtDisableRemountPlayer.exists();
-        enableDismountEntities = fileEnableDismountEntities.exists() || fileTxtEnableDismountEntities.exists();
+        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer) || Files.exists(fileDisableDismountPlayer);
+        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer) || Files.exists(fileDisableRemountPlayer);
+        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities) || Files.exists(fileEnableDismountEntities);
 
         log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;

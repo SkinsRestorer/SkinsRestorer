@@ -33,7 +33,6 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
-import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import org.bukkit.command.CommandSender;
@@ -78,7 +77,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String targets) {
         onDrop(wrapCommandSender(sender), playerOrSkin, targets);
     }
 
@@ -120,7 +119,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public void reloadCustomHook() {
-        SkinApplierBukkit.setOptFileChecked(false);
+        plugin.getSkinApplierBukkit().setOptFileChecked(false);
     }
 
     @Override

@@ -12,7 +12,7 @@
 # Not working or get error?  -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Troubleshoot
 # For advanced help or other, go to our Discord: https://discord.me/SkinsRestorer/
 
-# (?) update config? -> https://raw.githubusercontent.com/SkinsRestorer/SkinsRestorerX/master/src/main/resources/config.yml
+# (?) update config? -> https://raw.githubusercontent.com/SkinsRestorer/SkinsRestorerX/stable/shared/src/main/resources/config.yml
 # (?) Step by step config guide -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 
 # (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true.  (!)
@@ -90,13 +90,6 @@ PerSkinPermissions: false
 # Time that skins are stored in the database before we request again (in minutes).
 SkinExpiresAfter: 15
 
-# Multi-Bungee support
-# Enable this if you have issues with skins in multi-proxy environments.
-# (?) If you're using bungee and you have the plugin in all spigot servers and it still does not work, turn this on.
-# (This is automatically enabled if you have RedisBungee)
-MultiBungee:
-  Enabled: false
-
 # Settings for MySQL skin storage (recommended for big BungeeCord networks)
 # [!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]
 # [!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]
@@ -107,6 +100,7 @@ MySQL:
   Database: db
   Username: root
   Password: pass
+  MaxPoolSize: 10
   SkinTable: 'Skins'
   PlayerTable: 'Players'
   ConnectionOptions: verifyServerCertificate=false&useSSL=false&serverTimezone=UTC
@@ -178,12 +172,19 @@ DisallowAutoUpdateSkin: false
 # Use with caution! This may decrease your TPS.
 EnableProtocolListener: false
 
+# <!! Warning !!>
+# When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.
+# This is optional sometimes as the backend may pick up the new one of the proxy.
+# It is recommended though to **KEEP THIS ON** because it keeps the backend data in sync.
+# This feature is required for solutions like RedisBungee and also fixes bugs in some cases.
+ForwardTextures: true
+
 # Updater Settings
 Updater:
 # # <!! Warning !!>
 # Using outdated version void's support, compatibility & stability.
 #
-# To block all types of automatic updates (which can risk keeping a exploit):
+# To block all types of automatic updates (which can risk keeping an exploit):
 # Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )
 
 ################
@@ -202,11 +203,11 @@ Debug: false
 #
 # SkinFile Generator:
 # With SkinFile Generator, you can upload your own custom skin to get a unique .skin file that you can put in your skins folder, to use with SkinsRestorer.
-# Check it out here: https://riflowth.github.io/SkinFile-Generator/
+# Check it out here: https://skinsrestorer.github.io/SkinFile-Generator/
 #
 # SkinSystem :
 # With SkinSystem, you, as a server owner, can connect AuthMe (and forum) with the SkinSystem website that you can host, to give your players the ability to upload custom skins.
-# Check it out here: https://github.com/riflowth/SkinSystem
+# Check it out here: https://github.com/SkinsRestorer/SkinSystem
 #
 # Useful Links #
 # Website: https://skinsrestorer.net/
