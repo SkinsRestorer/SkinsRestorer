@@ -58,7 +58,7 @@ dataDropped: "&2Data dihilangkan untuk %playerOrSkin %targets."
 #Success message when using /sr CreateCustom command
 skinCreateSuccess: "&2Skin %skin berhasil dibuat!"
 #Success message when using /sr ApplySkin command
-adminApplySkinSuccess: "&2Player skin has been refreshed!"
+adminApplySkinSuccess: "&2Skin pemain telah dibersihkan!"
 #/sr reload
 reload: "&2Config dan Locale telah berhasil dimuat ulang!"
 ############################
@@ -101,7 +101,7 @@ error-Updating-CustomSkin: "&4Error&8: &cSkin tidak dapat diperbarui karena itu 
 #when a player runs /skin url but does not provide a url
 error-Invalid-SkinUrl: "&4Error&8: &cTautan skin atau format yang tidak valid, \n&cCoba unggah skinmu ke imgur dan klik kanan 'copy image address' \n&cUntuk panduan lihat: &c&oskinsrestorer.net/skinurl"
 #When a player runs /sr ApplySkin but the skin could not be refreshed
-adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
+adminApplySkinError: "&4ERROR&8: &cSkin pemain TIDAK dapat dibersihkan!"
 ######################
 #SkinsMenu messages #
 ######################
