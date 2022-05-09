@@ -150,7 +150,7 @@ public class YamlConfig {
         config.load(file);
     }
 
-    private void save() throws IOException {
+    public void save() throws IOException {
         config.save(file);
     }
 

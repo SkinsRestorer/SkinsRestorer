@@ -115,16 +115,28 @@ public class Locale {
 
             String parsedPrefix = C.c(locale.getString("PREFIX", ""));
 
+            boolean changed = false;
             for (Field f : Locale.class.getFields()) {
                 if (f.getType() != String.class)
                     continue;
 
-                String parsed = C.c(locale.getString(f.getName(), (String) f.get(null)));
+                String value = locale.getString(f.getName());
+                if (value == null) {
+                    String defaultValue = (String) f.get(null);
+                    locale.set(f.getName(), defaultValue);
+                    value = defaultValue;
+                    changed = true;
+                }
+                String parsed = C.c(value);
                 if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
                     parsed = parsedPrefix + parsed;
                 }
 
                 f.set(null, parsed);
+            }
+
+            if (changed) {
+                locale.save();
             }
         } catch (Exception e) {
             logger.warning("§cCan't read messages.yml! Try removing it and restart your server.", e);
