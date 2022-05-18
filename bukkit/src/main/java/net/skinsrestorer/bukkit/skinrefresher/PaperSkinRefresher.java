@@ -86,9 +86,9 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             }
             this.triggerHealthUpdate = triggerHealthUpdate;
 
-            logger.info("Using PaperSkinRefresher");
+            logger.debug("Using PaperSkinRefresher");
         } catch (Exception e) {
-            logger.info("Failed PaperSkinRefresher");
+            logger.debug("Failed PaperSkinRefresher");
             throw new InitializeException(e);
         }
     }

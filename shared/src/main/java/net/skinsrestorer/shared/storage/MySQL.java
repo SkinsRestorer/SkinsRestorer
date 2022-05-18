@@ -56,7 +56,7 @@ public class MySQL {
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD IF NOT EXISTS `timestamp` text COLLATE utf8_unicode_ci;");
     }
 
     public void connectPool() throws SQLException {
