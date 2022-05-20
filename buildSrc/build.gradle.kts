@@ -5,7 +5,7 @@ plugins {
 repositories {
     gradlePluginPortal()
     mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/") {
+    maven("https://papermc.io/repository/maven-public/") {
         name = "PaperMC Repository"
     }
 }
