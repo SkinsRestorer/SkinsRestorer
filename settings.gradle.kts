@@ -3,7 +3,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
-        maven("https://papermc.io/repository/maven-public/") {
+        maven("https://repo.papermc.io/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         gradlePluginPortal()
@@ -30,7 +30,7 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
-        maven("https://papermc.io/repository/maven-public/") {
+        maven("https://repo.papermc.io/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         maven("https://repo.spongepowered.org/maven/") {
