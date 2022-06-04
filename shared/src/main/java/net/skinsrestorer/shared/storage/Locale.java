@@ -40,6 +40,7 @@ public class Locale {
             "SR_LINE"
     };
     public static String PREFIX = "&e[&2SkinsRestorer&e] ";
+    public static String HELP_HELP_COMMAND = " [help]";
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
