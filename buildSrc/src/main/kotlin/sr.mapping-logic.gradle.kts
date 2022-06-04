@@ -14,6 +14,7 @@ java {
 }
 
 tasks.named("remap").get().dependsOn("jar")
+tasks.named("build").get().dependsOn("remap")
 
 configurations {
     create("reobfuscated") {
