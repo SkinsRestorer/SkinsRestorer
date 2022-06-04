@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -638,5 +640,50 @@ public class SkinStorage implements ISkinStorage {
             return str;
         }
         return WHITESPACE_PATTERN.matcher(str).replaceAll("");
+    }
+
+    public int purgeOldSkins(int Days, Boolean custom) {
+        int removedSkins = 0;
+        long target = ((long) Days * 86400 * 1000);
+        if (Config.MYSQL_ENABLED) {
+            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick NOT LIKE ' %' AND timestamp <>0 AND timestamp=<?", target);
+
+
+            // delete if name not startwith " " and timestamp above n
+
+        } else {
+            List<Path> files = new ArrayList<>();
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+                stream.forEach(files::add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            files.sort(Comparator.comparing(o -> o.getFileName().toString()));
+
+
+            for (Path file : files) {
+                try {
+                    if (!Files.exists(file))
+                        continue;
+
+                    List<String> lines = Files.readAllLines(file);
+                    Long timestamp = Long.valueOf(lines.get(2));
+
+                    /*
+                    String decodedString = new String(Base64.getDecoder().decode(lines.get(0)));
+                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
+                    Long timestamp = jsonObject.get("timestamp").getAsLong();
+                    */
+
+                    if (!(timestamp.equals(0L)) && timestamp < target) {
+                        Files.deleteIfExists(file);
+                        removedSkins++;
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return removedSkins;
     }
 }
