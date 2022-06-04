@@ -57,7 +57,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     }
 
     @HelpCommand
-    @Syntax(" [help]")
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }
