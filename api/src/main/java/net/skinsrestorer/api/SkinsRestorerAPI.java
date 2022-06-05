@@ -130,7 +130,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Generates a skin using the https://mineskin.org/ api
+     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> api
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
      * @param url         pointing to a skin image url
@@ -143,9 +143,9 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Returns a https://textures.minecraft.net/id based on skin
+     * Returns a <a href="https://textures.minecraft.net/id">TexturesId</a> based on skin
      * This is useful for skull plugins like Dynmap or DiscordSRV
-     * for example https://mc-heads.net/avatar/%texture_id%/%size%.png
+     * for example <a href="https://mc-heads.net/avatar/%texture_id%/%size%.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>
      *
      * @param skinName Skin name
      * @return textures.minecraft.net url
