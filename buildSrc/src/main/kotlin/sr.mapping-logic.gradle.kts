@@ -22,8 +22,13 @@ tasks.named("build").get().dependsOn("remap")
 
 configurations {
     create("remapped") {
+        val resultFile = File(File(project.buildDir, "libs"), "${project.name}-${project.version}-remapped.jar")
+        val files = project.files(resultFile)
+        files.builtBy("remap")
+
         isCanBeResolved = false
         isCanBeConsumed = true
-        outgoing.artifact(File(File(project.buildDir, "libs"), "${project.name}-${project.version}-remapped.jar"))
+        outgoing.artifact(resultFile)
+        dependencies.add(project.dependencies.create(files))
     }
 }
