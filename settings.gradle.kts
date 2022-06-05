@@ -15,7 +15,7 @@ pluginManagement {
         id("net.kyori.indra.git") version "2.1.1"
         id("net.kyori.indra.publishing") version "2.1.1"
         id("net.kyori.blossom") version "1.3.0"
-        id("io.papermc.paperweight.userdev") version "1.3.5"
+        id("io.github.patrick.remapper") version "1.3.0"
     }
 }
 
