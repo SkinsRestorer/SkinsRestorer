@@ -61,10 +61,10 @@ public class MySQL {
         }
     }
 
-    private boolean columnExists(String mysqlSkinTable, String columnName) {
+    private boolean columnExists(String tableName, String columnName) {
         try (Connection connection = poolDataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
-            statement.setString(1, mysqlSkinTable);
+            statement.setString(1, tableName);
             statement.setString(2, columnName);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
