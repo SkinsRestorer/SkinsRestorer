@@ -118,7 +118,7 @@ public class UpdateChecker {
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
         updateAvailableMessages.add("§a    |------------------|");
         if (bungeeMode) {
-            updateAvailableMessages.add("§a    |   §eBungee Mode§a    |");
+            updateAvailableMessages.add("§a    |   §eProxy Mode§a    |");
         } else if (isBukkit()) {
             updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
         }

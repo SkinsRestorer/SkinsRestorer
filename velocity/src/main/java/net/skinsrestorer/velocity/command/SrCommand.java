@@ -49,7 +49,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
-    @Syntax(" [help]")
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }

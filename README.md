@@ -34,14 +34,14 @@ servers.
 
 ## :link: Links
 
-- [Spigot Page](https://www.spigotmc.org/resources/skinsrestorer.2124/)
-- [VelocityPowered Page](https://forums.velocitypowered.com/t/skinsrestorer-ability-to-restore-change-skins-on-servers/142)
-- [Sponge ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
-- [PaperMC](https://papermc.io/forums/t/1-8-1-14-4-skinsrestorer/1996)
-- [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
-- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/)
-- [Discord](https://discord.me/skinsrestorer)
-- [Website](https://skinsrestorer.net/)
+- [Spigot Page](https://www.spigotmc.org/resources/2124)
+- [VelocityPowered Page](https://forums.velocitypowered.com/t/142)
+- [Sponge Ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
+- [PaperMC](https://papermc.io/forums/t/1996)
+- [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki)
+- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX)
+- [Discord](https://discord.me/skinsrestorer/)
+- [Website](https://skinsrestorer.net)
 
 ## :scroll: License
 

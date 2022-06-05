@@ -164,7 +164,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             }
         }
 
-        // Check if we are running in bungee mode
+        // Check if we are running in proxy mode
         checkBungeeMode();
 
         // Check for updates
@@ -395,7 +395,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         } catch (Exception ignored) {
         }
 
-        StringBuilder sb1 = new StringBuilder("Server is in bungee mode!");
+        StringBuilder sb1 = new StringBuilder("Server is in proxy mode!");
 
         sb1.append("\nif you are NOT using bungee in your network, set spigot.yml -> bungeecord: false");
         sb1.append("\n\nInstalling Bungee:");
@@ -427,7 +427,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         if (bungeeEnabled) {
             srLogger.info("-------------------------/Warning\\-------------------------");
-            srLogger.info("This plugin is running in Bungee mode!");
+            srLogger.info("This plugin is running in PROXY mode!");
             srLogger.info("You have to do all configuration at config file");
             srLogger.info("inside your Bungeecord server.");
             srLogger.info("(Bungeecord-Server/plugins/SkinsRestorer/).");

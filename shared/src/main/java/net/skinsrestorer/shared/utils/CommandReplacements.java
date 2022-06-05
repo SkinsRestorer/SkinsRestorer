@@ -51,6 +51,7 @@ public class CommandReplacements {
             .put("srCreateCustom", () -> "skinsrestorer.admincommand.createcustom")
             .build();
     public static final Map<String, CallableString<String>> descriptions = FluentMap.<String, CallableString<String>>builder()
+            .put("%helpHelpCommand", () -> Locale.HELP_HELP_COMMAND)
             .put("%helpSkinClear", () -> Locale.HELP_SKIN_CLEAR)
             .put("%helpSkinClearOther", () -> Locale.HELP_SKIN_CLEAR_OTHER)
             .put("%helpSkinUpdate", () -> Locale.HELP_SKIN_UPDATE)

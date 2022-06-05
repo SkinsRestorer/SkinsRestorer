@@ -3,7 +3,7 @@ enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
-        maven("https://papermc.io/repo/repository/maven-public/") {
+        maven("https://repo.papermc.io/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         gradlePluginPortal()
@@ -15,12 +15,12 @@ pluginManagement {
         id("net.kyori.indra.git") version "2.1.1"
         id("net.kyori.indra.publishing") version "2.1.1"
         id("net.kyori.blossom") version "1.3.0"
-        id("io.papermc.paperweight.userdev") version "1.3.5"
+        id("io.github.patrick.remapper") version "1.3.0"
     }
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.10"
+    id("com.gradle.enterprise") version "3.10.1"
 }
 
 rootProject.name = "skinsrestorer-parent"
@@ -30,7 +30,7 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
-        maven("https://papermc.io/repo/repository/maven-public/") {
+        maven("https://repo.papermc.io/repository/maven-public/") {
             name = "PaperMC Repository"
         }
         maven("https://repo.spongepowered.org/maven/") {

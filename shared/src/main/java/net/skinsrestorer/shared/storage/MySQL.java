@@ -56,7 +56,23 @@ public class MySQL {
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD IF NOT EXISTS `timestamp` text COLLATE utf8_unicode_ci;");
+        if (!columnExists(Config.MYSQL_SKIN_TABLE, "timestamp")) {
+            execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        }
+    }
+
+    private boolean columnExists(String tableName, String columnName) {
+        try (Connection connection = poolDataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
+            statement.setString(1, tableName);
+            statement.setString(2, columnName);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1) > 0;
+        } catch (SQLException e) {
+            logger.severe("Error checking if column exists", e);
+            return false;
+        }
     }
 
     public void connectPool() throws SQLException {
