@@ -20,8 +20,10 @@
 package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
+import com.sun.beans.introspect.ClassInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -116,10 +118,11 @@ public class UpdateChecker {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        updateAvailableMessages.add("§a    |------------------|");
         if (bungeeMode) {
+            updateAvailableMessages.add("§a    |------------------|");
             updateAvailableMessages.add("§a    |   §eProxy Mode§a    |");
         } else if (isBukkit()) {
+            updateAvailableMessages.add("§a    |------------------|");
             updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
         }
         updateAvailableMessages.add("§a    +==================+");
