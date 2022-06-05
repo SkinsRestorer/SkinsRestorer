@@ -13,13 +13,17 @@ java {
     }
 }
 
+tasks.remap.get().apply {
+    archiveClassifier.set("remapped")
+}
+
 tasks.named("remap").get().dependsOn("jar")
 tasks.named("build").get().dependsOn("remap")
 
 configurations {
-    create("reobfuscated") {
+    create("remapped") {
         isCanBeResolved = false
         isCanBeConsumed = true
-        outgoing.artifact(tasks.jar.get().archiveFile)
+        outgoing.artifact(File(File(project.buildDir, "libs"), "${project.name}-${project.version}-remapped.jar"))
     }
 }

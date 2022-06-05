@@ -3,7 +3,7 @@ dependencies {
     implementation(projects.skinsrestorerShared)
     implementation(projects.mappings.shared)
     setOf("1-18", "1-18-2").forEach {
-        implementation(project(":mappings:mc-$it", "reobfuscated"))
+        implementation(project(":mappings:mc-$it", "remapped"))
     }
 
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") {
