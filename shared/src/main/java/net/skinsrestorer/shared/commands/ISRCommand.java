@@ -47,6 +47,8 @@ public interface ISRCommand {
     }
 
     default void onReload(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
         Locale.load(plugin.getDataFolderPath(), plugin.getSrLogger());
@@ -58,6 +60,8 @@ public interface ISRCommand {
     }
 
     default void onStatus(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
@@ -100,6 +104,8 @@ public interface ISRCommand {
     }
 
     default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
@@ -116,6 +122,8 @@ public interface ISRCommand {
     }
 
     default void onProps(ISRCommandSender sender, ISRPlayer target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
@@ -158,6 +166,8 @@ public interface ISRCommand {
     }
 
     default void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
@@ -176,6 +186,8 @@ public interface ISRCommand {
     }
 
     default void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
@@ -193,6 +205,8 @@ public interface ISRCommand {
     }
 
     default void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) { // Only make console perform this command

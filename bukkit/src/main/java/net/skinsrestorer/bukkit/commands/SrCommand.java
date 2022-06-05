@@ -39,6 +39,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,6 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String targets) {
         onDrop(wrapCommandSender(sender), playerOrSkin, targets);
     }
-
 
     @Subcommand("props")
     @CommandPermission("%srProps")
@@ -145,7 +145,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
             }).collect(Collectors.toList());
         } catch (ReflectionException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
     }
 }

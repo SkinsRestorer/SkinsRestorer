@@ -67,6 +67,12 @@ DisabledSkins:
     - "Steve"
     - "Owner"
 
+# Disable all SkinsRestorer commands on specific backend servers. (Only if using proxies)
+NotAllowedCommandServers:
+  Enabled: true
+  List:
+    - "auth"
+
 # Custom list for the /skins GUI.
 # ShowOnlyCustomGUI will only show CustomGUI.Names in the gui.
 CustomGUI:

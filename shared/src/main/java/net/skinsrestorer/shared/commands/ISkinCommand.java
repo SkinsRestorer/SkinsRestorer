@@ -43,23 +43,33 @@ public interface ISkinCommand {
 
     @SuppressWarnings("deprecation")
     default void onDefault(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
     default void onSkinSetShort(ISRPlayer player, String skin) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         onSkinSetOther(player, player, skin, null);
     }
 
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         if (Config.ENABLE_CUSTOM_HELP) sendHelp(sender);
         else help.showHelp();
     }
 
     default void onSkinClear(ISRPlayer player) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         onSkinClearOther(player, player);
     }
 
     default void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String sName = sender.getName();
@@ -84,10 +94,14 @@ public interface ISkinCommand {
     }
 
     default void onSkinUpdate(ISRPlayer player) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         onSkinUpdateOther(player, player);
     }
 
     default void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String sName = sender.getName();
@@ -131,6 +145,8 @@ public interface ISkinCommand {
     }
 
     default void onSkinSet(ISRPlayer player, String[] skin) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
 
@@ -138,6 +154,8 @@ public interface ISkinCommand {
     }
 
     default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
@@ -153,6 +171,8 @@ public interface ISkinCommand {
     }
 
     default void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         if (!C.validUrl(url)) {
             player.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             return;
@@ -162,6 +182,8 @@ public interface ISkinCommand {
     }
 
     default void sendHelp(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(Locale.SR_LINE);
 
@@ -169,11 +191,6 @@ public interface ISkinCommand {
 
         if (!Locale.SR_LINE.isEmpty())
             sender.sendMessage(Locale.SR_LINE);
-    }
-
-    default void rollback(String pName, String oldSkinName, boolean save) {
-        if (save)
-            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     // if save is false, we won't save the skin name
@@ -268,6 +285,11 @@ public interface ISkinCommand {
         CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
         rollback(playerName, oldSkinName.orElse(playerName), save);
         return false;
+    }
+
+    default void rollback(String pName, String oldSkinName, boolean save) {
+        if (save)
+            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     ISRPlugin getPlugin();
