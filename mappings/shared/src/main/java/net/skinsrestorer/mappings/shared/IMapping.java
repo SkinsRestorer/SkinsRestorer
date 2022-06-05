@@ -22,12 +22,12 @@ package net.skinsrestorer.mappings.shared;
 import org.bukkit.entity.Player;
 
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public interface IMapping {
     void triggerHealthUpdate(Player player);
 
-    void accept(Player player, Function<ViaPacketData, Boolean> viaFunction);
+    void accept(Player player, Predicate<ViaPacketData> viaFunction);
 
     Set<String> getSupportedVersions();
 }
