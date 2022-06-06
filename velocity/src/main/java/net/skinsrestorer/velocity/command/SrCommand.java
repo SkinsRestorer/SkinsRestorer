@@ -112,6 +112,14 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
+    @Subcommand("purgeolddata")
+    @CommandCompletion("@Skin")
+    @Description("Purge old storage data being x days old")
+    @Syntax(" <Skin / Url> [classic/slim]")
+    public void onPurgeOldData(CommandSource source, int days, @Optional Boolean ClearCustomSkins) {
+        onPurgeOldData(wrapCommandSender(source), days, ClearCustomSkins);
+    }
+
     @Override
     public String getPlatformVersion() {
         return plugin.getProxy().getVersion().getVersion();

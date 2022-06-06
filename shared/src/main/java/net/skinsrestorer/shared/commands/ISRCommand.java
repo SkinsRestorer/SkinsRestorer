@@ -226,6 +226,20 @@ public interface ISRCommand {
         });
     }
 
+    default void onPurgeOldData(ISRCommandSender sender, int days, Boolean ClearCustomSkins) {
+        ISRPlugin plugin = getPlugin();
+        plugin.runAsync(() -> {
+            if (!sender.isConsole()) { // Only make console perform this command
+                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
+                return;
+            }
+            int purgedSkinsCount = plugin.getSkinStorage().purgeOldSkins(days, ClearCustomSkins);
+            sender.sendMessage("Skins cleared: " + purgedSkinsCount);
+        });
+    }
+
+
+
     String getPlatformVersion();
 
     String getProxyMode();
