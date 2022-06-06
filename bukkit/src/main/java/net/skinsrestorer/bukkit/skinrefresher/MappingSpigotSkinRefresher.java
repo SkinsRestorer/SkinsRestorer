@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final SkinsRestorer plugin;
@@ -61,7 +61,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
 
     @Override
     public void accept(Player player) {
-        Function<ViaPacketData, Boolean> viaFunction;
+        Predicate<ViaPacketData> viaFunction;
 
         if (useViabackwards) {
             viaFunction = ViaWorkaround::sendCustomPacketVia;
