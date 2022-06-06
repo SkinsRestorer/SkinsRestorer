@@ -45,7 +45,7 @@ public class MySQL {
 
     public void createTable() {
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYER_TABLE + "` ("
-                + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
