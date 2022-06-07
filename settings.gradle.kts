@@ -27,6 +27,7 @@ rootProject.name = "skinsrestorer-parent"
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
@@ -74,7 +75,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18", "1-18-2").forEach {
+setOf("1-18", "1-18-2", "1-19").forEach {
     include("mappings:mc-$it")
 }
 
