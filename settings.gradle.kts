@@ -27,7 +27,6 @@ rootProject.name = "skinsrestorer-parent"
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
             name = "SpigotMC Repository"
         }
@@ -62,6 +61,7 @@ dependencyResolutionManagement {
             name = "Sonatype Repository"
         }
         mavenCentral()
+        mavenLocal()
     }
 }
 
