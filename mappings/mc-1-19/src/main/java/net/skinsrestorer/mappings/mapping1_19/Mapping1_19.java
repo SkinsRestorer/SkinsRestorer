@@ -63,7 +63,7 @@ public class Mapping1_19 implements IMapping {
             ClientboundRespawnPacket respawn = new ClientboundRespawnPacket(
                     world.dimensionTypeId(),
                     world.dimension(),
-                    BiomeManager.a(world.getSeed()),
+                    BiomeManager.obfuscateSeed(world.getSeed()),
                     gamemode.getGameModeForPlayer(),
                     gamemode.getPreviousGameModeForPlayer(),
                     world.isDebug(),
