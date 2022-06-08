@@ -20,7 +20,7 @@
 package net.skinsrestorer.api.property;
 
 import lombok.ToString;
-import net.md_5.bungee.connection.LoginResult.Property;
+import net.md_5.bungee.protocol.Property;
 
 @ToString
 public class BungeeProperty extends Property implements IProperty {
