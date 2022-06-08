@@ -29,6 +29,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
+import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -126,7 +127,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        LoginResult.Property[] props = ((InitialHandler) player.getWrapper().get(ProxiedPlayer.class)
+        Property[] props = ((InitialHandler) player.getWrapper().get(ProxiedPlayer.class)
                 .getPendingConnection()).getLoginProfile().getProperties();
 
         if (props == null) {

@@ -30,7 +30,7 @@ servers.
 
 - Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
-- Minecraft 1.8.0 - 1.18.2
+- Minecraft 1.8.0 - 1.19
 
 ## :link: Links
 
