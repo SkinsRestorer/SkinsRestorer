@@ -50,7 +50,7 @@ skinClearSuccess: "&2你的皮膚已重置。"
 #Success message sent to player that used /sr clear <player> command
 skinClearIssuer: "&2已為&2 %player 清除皮膚。"
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "l"
 #Success message sent to player that used /sr update <player> command
 skinUpdateIssuer: "&2Skin updated for player %player."
 #Success message when using /sr drop <player/skin> command
