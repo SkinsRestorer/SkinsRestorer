@@ -61,7 +61,6 @@ dependencyResolutionManagement {
             name = "Sonatype Repository"
         }
         mavenCentral()
-        mavenLocal()
     }
 }
 
