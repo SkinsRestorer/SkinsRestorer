@@ -2,11 +2,11 @@ dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
     implementation(projects.mappings.shared)
-    setOf("1-18", "1-18-2").forEach {
+    setOf("1-18", "1-18-2", "1-19").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
 
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
     }
 
