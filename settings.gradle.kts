@@ -20,7 +20,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.10.1"
+    id("com.gradle.enterprise") version "3.10.2"
 }
 
 rootProject.name = "skinsrestorer-parent"
@@ -74,7 +74,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18", "1-18-2").forEach {
+setOf("1-18", "1-18-2", "1-19").forEach {
     include("mappings:mc-$it")
 }
 
