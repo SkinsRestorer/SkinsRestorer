@@ -17,10 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.bukkit.utils;
 
 import com.mojang.authlib.properties.Property;
 import lombok.ToString;
+import net.skinsrestorer.api.property.IProperty;
 
 @ToString
 public class BukkitProperty extends Property implements IProperty {

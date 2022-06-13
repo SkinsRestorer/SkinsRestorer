@@ -24,10 +24,7 @@ import com.google.gson.JsonParser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.IMineSkinAPI;
-import net.skinsrestorer.api.interfaces.IMojangAPI;
-import net.skinsrestorer.api.interfaces.ISkinStorage;
-import net.skinsrestorer.api.interfaces.IWrapperFactory;
+import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,10 +42,11 @@ public abstract class SkinsRestorerAPI {
     private final IMojangAPI mojangAPI;
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
+    private final IPropertyFactory propertyFactory;
     @Getter(value = AccessLevel.PROTECTED)
     private final IWrapperFactory wrapperFactory;
 
-    protected SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory) {
+    protected SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
         if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
@@ -56,9 +54,10 @@ public abstract class SkinsRestorerAPI {
         this.mineSkinAPI = mineSkinAPI;
         this.skinStorage = skinStorage;
         this.wrapperFactory = wrapperFactory;
+        this.propertyFactory = propertyFactory;
     }
 
-    private static void setInstance(SkinsRestorerAPI api) {
+    private static synchronized void setInstance(SkinsRestorerAPI api) {
         if (SkinsRestorerAPI.api == null)
             SkinsRestorerAPI.api = api;
     }
@@ -166,7 +165,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     public IProperty createProperty(String name, String value, String signature) {
-        return mojangAPI.createProperty(name, value, signature);
+        return propertyFactory.createProperty(name, value, signature);
     }
 
     public void removeSkin(String playerName) {

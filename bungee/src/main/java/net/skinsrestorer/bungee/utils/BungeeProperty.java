@@ -17,10 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.bungee.utils;
 
 import lombok.ToString;
 import net.md_5.bungee.connection.LoginResult.Property;
+import net.skinsrestorer.api.property.IProperty;
 
 @ToString
 public class BungeeProperty extends Property implements IProperty {

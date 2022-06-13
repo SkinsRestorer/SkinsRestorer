@@ -17,10 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.velocity.utils;
 
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.ToString;
+import net.skinsrestorer.api.property.IProperty;
 
 @ToString
 public class VelocityProperty implements IProperty {
