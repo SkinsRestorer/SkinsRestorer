@@ -37,7 +37,7 @@ public class BungeePropertyNew implements IProperty {
 
     @Override
     public Object getHandle() {
-        return this;
+        return property;
     }
 
     @Override
