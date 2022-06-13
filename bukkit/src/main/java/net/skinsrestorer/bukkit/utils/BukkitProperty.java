@@ -24,13 +24,15 @@ import lombok.ToString;
 import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class BukkitProperty extends Property implements IProperty {
+public class BukkitProperty implements IProperty {
+    private final Property property;
+
     public BukkitProperty(String name, String value) {
-        super(name, value);
+        property = new Property(name, value);
     }
 
     public BukkitProperty(String name, String value, String signature) {
-        super(name, value, signature);
+        property = new Property(name, value, signature);
     }
 
     @Override
@@ -39,17 +41,17 @@ public class BukkitProperty extends Property implements IProperty {
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
+    public String getName() {
+        return property.getName();
     }
 
     @Override
-    public void setValue(String value) {
-        throw new UnsupportedOperationException();
+    public String getValue() {
+        return property.getValue();
     }
 
     @Override
-    public void setSignature(String signature) {
-        throw new UnsupportedOperationException();
+    public String getSignature() {
+        return property.getSignature();
     }
 }

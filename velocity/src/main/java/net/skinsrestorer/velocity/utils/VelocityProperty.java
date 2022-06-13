@@ -42,27 +42,12 @@ public class VelocityProperty implements IProperty {
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getValue() {
         return property.getValue();
     }
 
     @Override
-    public void setValue(String value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getSignature() {
         return property.getSignature();
-    }
-
-    @Override
-    public void setSignature(String signature) {
-        throw new UnsupportedOperationException();
     }
 }

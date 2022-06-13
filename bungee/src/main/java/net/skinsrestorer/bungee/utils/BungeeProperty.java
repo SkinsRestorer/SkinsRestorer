@@ -24,13 +24,30 @@ import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class BungeeProperty extends Property implements IProperty {
+public class BungeeProperty implements IProperty {
+    private final Property property;
+
     public BungeeProperty(String name, String value, String signature) {
-        super(name, value, signature);
+        property = new Property(name, value, signature);
     }
 
     @Override
     public Object getHandle() {
         return this;
+    }
+
+    @Override
+    public String getName() {
+        return property.getName();
+    }
+
+    @Override
+    public String getValue() {
+        return property.getValue();
+    }
+
+    @Override
+    public String getSignature() {
+        return property.getSignature();
     }
 }
