@@ -17,18 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bungee;
 
 import lombok.ToString;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class BungeeProperty implements IProperty {
+public class BungeePropertyOld implements IProperty {
     private final Property property;
 
-    public BungeeProperty(String name, String value, String signature) {
-        property = new Property(name, value, signature);
+    public BungeePropertyOld(String name, String value, String signature) {
+        this(new Property(name, value, signature));
+    }
+
+    public BungeePropertyOld(Property property) {
+        this.property = property;
     }
 
     @Override

@@ -126,13 +126,12 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        LoginResult.Property[] props = ((InitialHandler) player.getWrapper().get(ProxiedPlayer.class)
-                .getPendingConnection()).getLoginProfile().getProperties();
+        List<IProperty> props = plugin.getSkinApplierBungee().getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
             return null;
         } else {
-            return Arrays.stream(props)
+            return props.stream()
                     .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature()))
                     .collect(Collectors.toList());
         }
