@@ -30,29 +30,7 @@ public interface IProperty {
 
     String getName();
 
-    void setName(String name);
-
     String getValue();
 
-    void setValue(String value);
-
     String getSignature();
-
-    void setSignature(String signature);
-
-    default boolean valuesFromJson(JsonObject obj) {
-        if (obj.has("properties")) {
-            JsonArray properties = obj.getAsJsonArray("properties");
-            if (properties.size() > 0) {
-                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
-
-                setSignature(propertiesObject.get("signature").getAsString());
-                setValue(propertiesObject.get("value").getAsString());
-
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

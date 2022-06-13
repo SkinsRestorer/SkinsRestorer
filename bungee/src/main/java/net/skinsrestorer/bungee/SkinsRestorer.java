@@ -28,8 +28,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
@@ -74,12 +76,25 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
-    private final SkinApplierBungee skinApplierBungee = new SkinApplierBungee(this, srLogger);
+    private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
     private boolean outdated;
     private UpdateChecker updateChecker;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
     private BungeeCommandManager manager;
+    private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
+
+    /*
+     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
+     * This method will check if the new class is available and return the appropriate class that was compiled for it.
+     */
+    private static SkinApplierBungeeShared selectSkinApplier(ISRPlugin plugin, SRLogger srLogger) {
+        if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+            return new SkinApplierBungeeNew(plugin, srLogger);
+        } else {
+            return new SkinApplierBungeeOld(plugin, srLogger);
+        }
+    }
 
     @Override
     public String getVersion() {
@@ -209,9 +224,20 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactoryBungee implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+                return new BungeePropertyNew(name, value, signature);
+            } else {
+                return new BungeePropertyOld(name, value, signature);
+            }
+        }
+    }
+
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
         public SkinsRestorerBungeeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
 
         @Override

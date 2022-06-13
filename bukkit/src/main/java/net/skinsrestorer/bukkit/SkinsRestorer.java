@@ -24,6 +24,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -35,6 +36,7 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
+import net.skinsrestorer.bukkit.utils.BukkitProperty;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -477,9 +479,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactoryBukkit implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            return new BukkitProperty(name, value, signature);
+        }
+    }
+
     private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
         public SkinsRestorerBukkitAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit());
         }
 
         @Override

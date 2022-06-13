@@ -127,7 +127,7 @@ public class SkinApplierBukkit {
         try {
             GameProfile profile = getGameProfile(player);
             profile.getProperties().removeAll("textures");
-            profile.getProperties().put("textures", property);
+            profile.getProperties().put("textures", property.getHandle());
         } catch (ReflectionException e) {
             e.printStackTrace();
         }

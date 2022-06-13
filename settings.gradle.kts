@@ -78,6 +78,10 @@ setOf("1-18", "1-18-2", "1-19").forEach {
     include("mappings:mc-$it")
 }
 
+setOf("shared", "propertyold", "propertynew").forEach {
+    include("multiver:bungee:$it")
+}
+
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")
