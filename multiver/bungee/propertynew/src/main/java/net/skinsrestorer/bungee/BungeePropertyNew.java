@@ -17,22 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.bungee;
 
-import com.mojang.authlib.properties.Property;
 import lombok.ToString;
+import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class BukkitProperty implements IProperty {
+public class BungeePropertyNew implements IProperty {
     private final Property property;
 
-    public BukkitProperty(String name, String value) {
-        property = new Property(name, value);
+    public BungeePropertyNew(String name, String value, String signature) {
+        this(new Property(name, value, signature));
     }
 
-    public BukkitProperty(String name, String value, String signature) {
-        property = new Property(name, value, signature);
+    public BungeePropertyNew(Property property) {
+        this.property = property;
     }
 
     @Override
