@@ -84,6 +84,10 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private BungeeCommandManager manager;
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
 
+    /*
+     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
+     * This method will check if the new class is available and return the appropriate class that was compiled for it.
+     */
     private static SkinApplierBungeeShared selectSkinApplier(ISRPlugin plugin, SRLogger srLogger) {
         if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
             return new SkinApplierBungeeNew(plugin, srLogger);
