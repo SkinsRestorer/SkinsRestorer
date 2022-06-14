@@ -17,14 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.exception;
 
-import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
-
-import java.util.concurrent.CompletableFuture;
-
-public interface IMineSkinAPI {
-    IProperty genSkin(String url, SkinVariant skinVariant) throws SkinRequestException;
+public class TryAgainException extends Exception {
 }

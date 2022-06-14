@@ -109,7 +109,7 @@ public class SkinStorage implements ISkinStorage {
         final String skin = getDefaultSkinName(playerName);
 
         if (C.validUrl(skin)) {
-            return mineSkinAPI.genSkin(skin, null, null);
+            return mineSkinAPI.genSkin(skin, null);
         } else {
             return getSkinForPlayer(skin);
         }

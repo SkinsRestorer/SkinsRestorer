@@ -138,7 +138,7 @@ public abstract class SkinsRestorerAPI {
      * @throws SkinRequestException on error
      */
     public IProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
-        return mineSkinAPI.genSkin(url, skinVariant, null);
+        return mineSkinAPI.genSkin(url, skinVariant);
     }
 
     /**
