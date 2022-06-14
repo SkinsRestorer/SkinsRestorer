@@ -70,7 +70,7 @@ public class Mapping1_19 implements IMapping {
                     world.isFlat(),
                     true,
                     entityPlayer.getLastDeathLocation()
-                    );
+            );
 
             Location l = player.getLocation();
             ClientboundPlayerPositionPacket pos = new ClientboundPlayerPositionPacket(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>(), 0, false);

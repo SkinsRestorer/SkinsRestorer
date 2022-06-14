@@ -19,9 +19,6 @@
  */
 package net.skinsrestorer.api.property;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 /**
  * Easy way of interacting with properties across multiple platforms.
  */

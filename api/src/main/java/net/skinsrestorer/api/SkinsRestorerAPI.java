@@ -144,7 +144,8 @@ public abstract class SkinsRestorerAPI {
     /**
      * Returns a <a href="https://textures.minecraft.net/id">TexturesId</a> based on skin
      * This is useful for skull plugins like Dynmap or DiscordSRV
-     for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>     *
+     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>     *
+     *
      * @param skinName Skin name
      * @return textures.minecraft.net url
      */

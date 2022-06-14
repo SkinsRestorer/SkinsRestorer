@@ -57,6 +57,7 @@ public class MojangAPI implements IMojangAPI {
     private final SRLogger logger;
     private final Platform platform;
     private final MetricsCounter metricsCounter;
+
     public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
         this.logger = logger;
         this.platform = platform;

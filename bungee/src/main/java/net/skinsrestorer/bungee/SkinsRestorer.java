@@ -69,6 +69,7 @@ import java.util.stream.Collectors;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
+    private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final Path dataFolderPath = getDataFolder().toPath();
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
@@ -82,7 +83,6 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
     private BungeeCommandManager manager;
-    private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
