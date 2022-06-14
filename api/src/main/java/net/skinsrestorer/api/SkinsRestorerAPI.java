@@ -19,12 +19,14 @@
  */
 package net.skinsrestorer.api;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.*;
+import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +45,7 @@ public abstract class SkinsRestorerAPI {
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
     private final IPropertyFactory propertyFactory;
+    private final Gson gson = new Gson();
     @Getter(value = AccessLevel.PROTECTED)
     private final IWrapperFactory wrapperFactory;
 
@@ -155,9 +158,9 @@ public abstract class SkinsRestorerAPI {
             return null;
 
         String decodedString = new String(Base64.getDecoder().decode(skin.getValue()));
-        JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-        String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-        return decodedSkin.substring(1, decodedSkin.length() - 1);
+        MojangProfileResponse response = gson.fromJson(decodedString, MojangProfileResponse.class);
+
+        return response.getTextures().getSKIN().getUrl();
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
