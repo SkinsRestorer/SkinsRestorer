@@ -173,7 +173,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 con.setDoInput(true);
 
                 if (!Config.MINESKIN_API_KEY.isEmpty())
-                    con.setRequestProperty("Authorization", Config.MINESKIN_API_KEY);
+                    con.setRequestProperty("Authorization", "Bearer " + Config.MINESKIN_API_KEY);
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);
