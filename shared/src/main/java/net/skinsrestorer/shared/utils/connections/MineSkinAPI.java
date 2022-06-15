@@ -98,7 +98,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 switch (response.get().getLeft()) {
                     case 200:
                         MineSkinUrlResponse urlResponse = gson.fromJson(response.get().getRight(), MineSkinUrlResponse.class);
-                        return SkinsRestorerAPI.getApi().createProperty("textures",
+                        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY,
                                 urlResponse.getData().getTexture().getValue(),
                                 urlResponse.getData().getTexture().getSignature());
                     case 500:

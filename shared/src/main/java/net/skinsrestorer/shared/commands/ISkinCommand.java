@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 import static co.aikar.commands.CommandManager.getCurrentCommandManager;
 
 public interface ISkinCommand {
-    IProperty emptySkin = SkinsRestorerAPI.getApi().createProperty("textures", "", "");
+    IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY, "", "");
 
     @SuppressWarnings("deprecation")
     default void onDefault(ISRCommandSender sender) {

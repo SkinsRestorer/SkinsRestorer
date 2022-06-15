@@ -219,7 +219,7 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        return SkinsRestorerAPI.getApi().createProperty("textures", value, signature);
+        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY, value, signature);
     }
 
     @Override
@@ -398,7 +398,7 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY, crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
             } catch (SQLException ignored) {

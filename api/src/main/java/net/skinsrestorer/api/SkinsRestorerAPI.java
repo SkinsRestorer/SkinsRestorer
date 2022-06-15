@@ -165,12 +165,20 @@ public abstract class SkinsRestorerAPI {
         skinStorage.getSkinForPlayer(skinName);
     }
 
-    public IProperty createProperty(IProperty property) {
-        return createProperty(property.getName(), property.getValue(), property.getSignature());
+    public IProperty createPlatformProperty(IProperty property) {
+        return createPlatformProperty(property.getName(), property.getValue(), property.getSignature());
     }
 
-    public IProperty createProperty(String name, String value, String signature) {
+    public IProperty createPlatformProperty(String name, String value, String signature) {
         return propertyFactory.createProperty(name, value, signature);
+    }
+
+    /**
+     * @see #createPlatformProperty(String, String, String)
+     */
+    @Deprecated
+    public IProperty createProperty(String name, String value, String signature) {
+        return createPlatformProperty(name, value, signature);
     }
 
     public void removeSkin(String playerName) {
