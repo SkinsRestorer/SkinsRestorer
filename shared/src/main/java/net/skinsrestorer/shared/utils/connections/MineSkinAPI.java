@@ -49,6 +49,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -86,7 +88,7 @@ public class MineSkinAPI implements IMineSkinAPI {
         throw new SkinRequestException(Locale.MS_API_FAILED);
     }
 
-    public CompletableFuture<IProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
+    public CompletableFuture<IProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
         return CompletableFuture.supplyAsync(() -> {
             String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase() : "";
 
@@ -104,67 +106,52 @@ public class MineSkinAPI implements IMineSkinAPI {
                     case 500:
                     case 400:
                         MineSkinErrorResponse errorResponse = gson.fromJson(response.get().getRight(), MineSkinErrorResponse.class);
-                        break;
+                        String error = errorResponse.getError();
+                        switch (error) {
+                            case "Failed to generate skin data":
+                            case "Failed to change skin":
+                                logger.debug("[ERROR] MineSkin " + error + ", trying again... ");
+                                TimeUnit.SECONDS.sleep(5);
+
+                                throw new TryAgainException(); // try again
+                            case "No accounts available":
+                                logger.debug("[ERROR] MineSkin " + error + " for: " + url);
+
+                                throw new SkinRequestException(Locale.ERROR_MS_FULL);
+                            default:
+                                logger.debug("[ERROR] MineSkin Failed! Reason: " + error);
+                                throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
+                        }
                     case 429:
                         MineSkinErrorDelayResponse errorDelayResponse = gson.fromJson(response.get().getRight(), MineSkinErrorDelayResponse.class);
-                        break;
+                        // If "Too many requests"
+                        if (errorDelayResponse.getDelay() != null) {
+                            TimeUnit.SECONDS.sleep(errorDelayResponse.getDelay());
+                        } else if (errorDelayResponse.getNextRequest() != null) {
+                            Instant nextRequestInstant = Instant.ofEpochSecond( errorDelayResponse.getNextRequest() );
+                            int delay = (int) Duration.between(Instant.now(), nextRequestInstant).getSeconds();
+
+                            if (delay > 0)
+                                TimeUnit.SECONDS.sleep(delay);
+                        } else { // Should normally not happen
+                            TimeUnit.SECONDS.sleep(2);
+                        }
+
+                        throw new TryAgainException(); // try again after nextRequest
                 }
-                final JsonObject obj = JsonParser.parseString(response.get().getRight()).getAsJsonObject();
-
-                if (obj.has("data")) {
-                    final JsonObject dta = obj.get("data").getAsJsonObject();
-
-                    if (dta.has("texture")) {
-                        final JsonObject tex = dta.get("texture").getAsJsonObject();
-
-                    }
-                } else if (obj.has("error")) {
-                    final String errResp = obj.get("error").getAsString();
-
-                    // If we send to many request, go sleep and try again.
-                    switch (errResp) {
-                        case "Too many requests":
-                            // If "Too many requests"
-                            if (obj.has("delay")) {
-                                TimeUnit.SECONDS.sleep(obj.get("delay").getAsInt());
-                            } else if (obj.has("nextRequest")) {
-                                final long nextRequestMilS = (long) ((obj.get("nextRequest").getAsDouble() * 1000) - System.currentTimeMillis());
-
-                                if (nextRequestMilS > 0)
-                                    TimeUnit.MILLISECONDS.sleep(nextRequestMilS);
-                            } else {
-                                TimeUnit.SECONDS.sleep(2);
-                            }
-
-                            throw new CompletionException(new TryAgainException()); // try again after nextRequest
-                        case "Failed to generate skin data":
-                        case "Failed to change skin":
-                            logger.debug("[ERROR] MS " + errResp + ", trying again... ");
-                            TimeUnit.SECONDS.sleep(5);
-
-                            throw new CompletionException(new TryAgainException()); // try again
-                        case "No accounts available":
-                            logger.debug("[ERROR] " + errResp + " for: " + url);
-
-                            throw new SkinRequestException(Locale.ERROR_MS_FULL);
-                    }
-
-                    logger.debug("[ERROR] MS:reason: " + errResp);
-                    throw new SkinRequestException(Locale.ERROR_INVALID_URLSKIN);
-                }
-            } catch (SkinRequestException e) {
+            } catch (SkinRequestException | TryAgainException e) {
                 throw new CompletionException(e);
             } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
                 throw new CompletionException(new SkinRequestException(Locale.ERROR_MS_FULL));
             } catch (JsonSyntaxException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MS API Failure JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
+                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
             // throw exception after all tries have failed
-            logger.debug("[ERROR] MS:could not generate skin url: " + url);
+            logger.debug("[ERROR] MineSkin Failed! Could not generate skin url: " + url);
             throw new CompletionException(new SkinRequestException(Locale.MS_API_FAILED));
         }, executorService);
     }

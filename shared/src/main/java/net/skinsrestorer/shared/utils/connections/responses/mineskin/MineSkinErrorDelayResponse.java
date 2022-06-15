@@ -24,6 +24,6 @@ import lombok.Getter;
 @Getter
 public class MineSkinErrorDelayResponse {
     private String error;
-    private int nextRequest;
-    private int delay;
+    private Integer nextRequest;
+    private Integer delay;
 }
