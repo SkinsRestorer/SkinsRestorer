@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -218,7 +219,7 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        return mojangAPI.createProperty("textures", value, signature);
+        return SkinsRestorerAPI.getApi().createProperty("textures", value, signature);
     }
 
     @Override
@@ -397,7 +398,7 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), mojangAPI.createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
             } catch (SQLException ignored) {

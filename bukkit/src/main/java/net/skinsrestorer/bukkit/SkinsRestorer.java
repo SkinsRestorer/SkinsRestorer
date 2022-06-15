@@ -198,7 +198,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                skinsRestorerAPI.applySkin(new PlayerWrapper(player), mojangAPI.createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                skinsRestorerAPI.applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 
@@ -247,7 +247,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             //convert
                             Map<String, IProperty> newSkinList = new TreeMap<>();
 
-                            skinList.forEach((name, property) -> newSkinList.put(name, mojangAPI.createProperty(property.getName(), property.getValue(), property.getSignature())));
+                            skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createProperty(property.getName(), property.getValue(), property.getSignature())));
 
                             SkinsGUI skinsGUI = new SkinsGUI(this, srLogger);
                             ++page; // start counting from 1

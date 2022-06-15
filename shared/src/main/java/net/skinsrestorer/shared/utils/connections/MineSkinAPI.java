@@ -19,11 +19,14 @@
  */
 package net.skinsrestorer.shared.utils.connections;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.property.IProperty;
@@ -31,6 +34,10 @@ import net.skinsrestorer.shared.exception.TryAgainException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.Pair;
+import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinErrorDelayResponse;
+import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinErrorResponse;
+import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinUrlResponse;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -50,6 +58,7 @@ public class MineSkinAPI implements IMineSkinAPI {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MetricsCounter metricsCounter;
+    private final Gson gson = new Gson();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
         Thread t = new Thread(r);
         t.setName("SkinsRestorer-MineSkinAPI");
@@ -82,11 +91,25 @@ public class MineSkinAPI implements IMineSkinAPI {
             String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase() : "";
 
             try {
-                final String output = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
-                if (output.isEmpty()) // API time out
+                val response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+                if (!response.isPresent()) // API time out
                     throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 
-                final JsonObject obj = JsonParser.parseString(output).getAsJsonObject();
+                switch (response.get().getLeft()) {
+                    case 200:
+                        MineSkinUrlResponse urlResponse = gson.fromJson(response.get().getRight(), MineSkinUrlResponse.class);
+                        return SkinsRestorerAPI.getApi().createProperty("textures",
+                                urlResponse.getData().getTexture().getValue(),
+                                urlResponse.getData().getTexture().getSignature());
+                    case 500:
+                    case 400:
+                        MineSkinErrorResponse errorResponse = gson.fromJson(response.get().getRight(), MineSkinErrorResponse.class);
+                        break;
+                    case 429:
+                        MineSkinErrorDelayResponse errorDelayResponse = gson.fromJson(response.get().getRight(), MineSkinErrorDelayResponse.class);
+                        break;
+                }
+                final JsonObject obj = JsonParser.parseString(response.get().getRight()).getAsJsonObject();
 
                 if (obj.has("data")) {
                     final JsonObject dta = obj.get("data").getAsJsonObject();
@@ -94,7 +117,6 @@ public class MineSkinAPI implements IMineSkinAPI {
                     if (dta.has("texture")) {
                         final JsonObject tex = dta.get("texture").getAsJsonObject();
 
-                        return mojangAPI.createProperty("textures", tex.get("value").getAsString(), tex.get("signature").getAsString());
                     }
                 } else if (obj.has("error")) {
                     final String errResp = obj.get("error").getAsString();
@@ -121,7 +143,6 @@ public class MineSkinAPI implements IMineSkinAPI {
                             TimeUnit.SECONDS.sleep(5);
 
                             throw new CompletionException(new TryAgainException()); // try again
-
                         case "No accounts available":
                             logger.debug("[ERROR] " + errResp + " for: " + url);
 
@@ -148,7 +169,7 @@ public class MineSkinAPI implements IMineSkinAPI {
         }, executorService);
     }
 
-    private String queryURL(String query) throws IOException {
+    private Optional<Pair<Integer, String>> queryURL(String query) throws IOException {
         for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
             try {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
@@ -179,12 +200,12 @@ public class MineSkinAPI implements IMineSkinAPI {
                     is = con.getErrorStream();
                 }
 
-                DataInputStream input = new DataInputStream(is);
-                for (int c = input.read(); c != -1; c = input.read())
-                    outStr.append((char) c);
+                try (DataInputStream input = new DataInputStream(is)) {
+                    for (int c = input.read(); c != -1; c = input.read())
+                        outStr.append((char) c);
+                }
 
-                input.close();
-                return outStr.toString();
+                return Optional.of(new Pair<>(con.getResponseCode(), outStr.toString()));
             } catch (IOException e) {
                 if (i == 2)
                     throw e;
@@ -192,6 +213,6 @@ public class MineSkinAPI implements IMineSkinAPI {
             }
         }
 
-        return "";
+        return Optional.empty();
     }
 }

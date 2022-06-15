@@ -165,6 +165,10 @@ public abstract class SkinsRestorerAPI {
         skinStorage.getSkinForPlayer(skinName);
     }
 
+    public IProperty createProperty(IProperty property) {
+        return createProperty(property.getName(), property.getValue(), property.getSignature());
+    }
+
     public IProperty createProperty(String name, String value, String signature) {
         return propertyFactory.createProperty(name, value, signature);
     }
