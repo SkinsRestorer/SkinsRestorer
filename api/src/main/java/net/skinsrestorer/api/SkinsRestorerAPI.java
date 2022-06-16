@@ -19,12 +19,12 @@
  */
 package net.skinsrestorer.api;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.*;
+import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +43,7 @@ public abstract class SkinsRestorerAPI {
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
     private final IPropertyFactory propertyFactory;
+    private final Gson gson = new Gson();
     @Getter(value = AccessLevel.PROTECTED)
     private final IWrapperFactory wrapperFactory;
 
@@ -142,22 +143,51 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Returns a <a href="https://textures.minecraft.net/id">TexturesId</a> based on skin
-     * This is useful for skull plugins like Dynmap or DiscordSRV
-     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>     *
-     *
+     * @see #getSkinTextureUrl(IProperty)
      * @param skinName Skin name
      * @return textures.minecraft.net url
+     * @deprecated use {@link #getSkinTextureUrl(IProperty)} instead
      */
+    @Deprecated
     public String getSkinTextureUrl(String skinName) {
         IProperty skin = getSkinData(skinName);
         if (skin == null)
             return null;
 
-        String decodedString = new String(Base64.getDecoder().decode(skin.getValue()));
-        JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-        String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-        return decodedSkin.substring(1, decodedSkin.length() - 1);
+        return getSkinTextureUrl(skin);
+    }
+
+    /**
+     * Returns a <a href="https://textures.minecraft.net/id">TexturesId</a> based on skin
+     * This is useful for skull plugins like Dynmap or DiscordSRV
+     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>     *
+     *
+     * @param property Profile property
+     * @return textures.minecraft.net url
+     */
+    public String getSkinTextureUrl(IProperty property) {
+        if (property == null)
+            return null;
+
+        return getSkinProfileData(property).getTextures().getSKIN().getUrl();
+    }
+
+    /**
+     * Returns the decoded profile data from the profile property.
+     * This is useful for getting the skin data from the property and other information like cape.
+     * The user stored in this property may not be the same as the player who has the skin.
+     * APIs like MineSkin use multiple shared accounts to generate these properties.
+     *
+     * @param property Profile property
+     * @return Decoded profile data as java object
+     */
+    public MojangProfileResponse getSkinProfileData(IProperty property) {
+        if (property == null)
+            return null;
+
+        String decodedString = new String(Base64.getDecoder().decode(property.getValue()));
+
+        return gson.fromJson(decodedString, MojangProfileResponse.class);
     }
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
