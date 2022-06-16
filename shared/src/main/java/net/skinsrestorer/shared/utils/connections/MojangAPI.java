@@ -74,7 +74,7 @@ public class MojangAPI implements IMojangAPI {
     public Optional<IProperty> getSkin(String nameOrUuid) throws SkinRequestException {
         final String finalNameOrUuid = nameOrUuid.trim().toUpperCase();
         if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(finalNameOrUuid))) {
-            return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY, HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature));
+            return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature));
         }
 
         final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
@@ -214,7 +214,7 @@ public class MojangAPI implements IMojangAPI {
                 final PropertyResponse property = obj.getProperties()[0];
 
                 if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
-                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY, property.getValue(), property.getSignature()));
+                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
             }
         } catch (Exception ignored) {
         }

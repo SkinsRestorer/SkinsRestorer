@@ -20,8 +20,6 @@
 package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -100,7 +98,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 switch (response.get().getLeft()) {
                     case 200:
                         MineSkinUrlResponse urlResponse = gson.fromJson(response.get().getRight(), MineSkinUrlResponse.class);
-                        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURE_KEY,
+                        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME,
                                 urlResponse.getData().getTexture().getValue(),
                                 urlResponse.getData().getTexture().getSignature());
                     case 500:

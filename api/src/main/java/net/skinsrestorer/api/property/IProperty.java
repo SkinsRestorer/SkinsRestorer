@@ -23,7 +23,7 @@ package net.skinsrestorer.api.property;
  * Easy way of interacting with properties across multiple platforms.
  */
 public interface IProperty {
-    String TEXTURE_KEY = "textures";
+    String TEXTURES_NAME = "textures";
 
     String getName();
 

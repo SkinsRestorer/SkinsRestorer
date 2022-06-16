@@ -45,7 +45,7 @@ public class AshconResponse {
 
             @Override
             public String getName() {
-                return IProperty.TEXTURE_KEY;
+                return IProperty.TEXTURES_NAME;
             }
         }
     }
