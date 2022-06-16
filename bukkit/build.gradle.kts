@@ -10,13 +10,13 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
 
-    implementation("io.papermc:paperlib:1.0.6")
+    implementation("io.papermc:paperlib:1.0.7")
     implementation("org.bstats:bstats-bukkit:3.0.0")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("com.github.cryptomorin:XSeries:8.8.0")
 
-    compileOnly("com.viaversion:viabackwards-common:4.0.1")
-    compileOnly("com.viaversion:viaversion:4.0.0")
+    compileOnly("com.viaversion:viabackwards-common:4.3.0")
+    compileOnly("com.viaversion:viaversion:4.3.1")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
 }
