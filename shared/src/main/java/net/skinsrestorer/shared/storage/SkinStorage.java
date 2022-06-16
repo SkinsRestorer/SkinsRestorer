@@ -450,7 +450,7 @@ public class SkinStorage implements ISkinStorage {
                 do {
                     if (i >= number && foundSkins <= 25) {
                         GenericProperty prop = new GenericProperty();
-                        prop.setName("textures");
+                        prop.setName(IProperty.TEXTURES_NAME);
                         prop.setValue(crs.getString("Value"));
                         prop.setSignature(crs.getString("Signature"));
                         list.put(crs.getString("Nick"), prop);
@@ -484,7 +484,7 @@ public class SkinStorage implements ISkinStorage {
                         List<String> lines = Files.readAllLines(file);
 
                         GenericProperty prop = new GenericProperty();
-                        prop.setName("textures");
+                        prop.setName(IProperty.TEXTURES_NAME);
                         prop.setValue(lines.get(0));
                         prop.setSignature(lines.get(1));
                         list.put(skinName, prop);
