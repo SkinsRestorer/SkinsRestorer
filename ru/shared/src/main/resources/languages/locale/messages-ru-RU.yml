@@ -66,7 +66,7 @@ reload: "&2Конфиг и локализация были перезагруж�
 ############################
 #Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&2Загрузка скина, пожалуйста подождите...(Это может занять некоторое время)"
-#When a skin has been requested to many times from mojang directly.
+#When a skin has been requested to many times from Mojang directly.
 wait-a-Minute: "&4Ошибка&8: &cПожалуйста, подождите минуту перед повторным запросом этого скина"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldown: "&4Ошибка&8: &cВы сможете снова изменить скин через &e%s &cсек."
@@ -84,21 +84,21 @@ urlSkin-DomainBlocked: "&4Ошибка&8: &cЭтот домен не разре�
 ##################
 #Error messages #
 ##################
-#Thrown when no premium player was found from the mojang api
+#Thrown when no premium player was found from the Mojang API
 error-Not-Premium: "&4Ошибка&8: &cПремиум игрок с таким именем не существует."
-#When a invalid skin (example: "null") is being set
+#When an invalid skin (example: "null") is being set
 error-Invalid-Player: "&4Ошибка&8: &c Скин %p не является допустимым именем пользователя или URL-адресом."
-#When a admin does try to update the skin of another player
+#When an admin does try to update the skin of another player
 error-NoSkin: "&4Ошибка&8: &cУ этого игрока не установлен скин."
-#when a admin does run /sr props on a player that does have no skin
+#When an admin does run /sr props on a player that does have no skin
 error-NoSkin-Data: "&4Ошибка&8: &cСкин не найден! У этого игрока есть скин?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
 error-Updating-Skin: "&4Ошибка&8: &cПроизошла ошибка при обновлении скина. Пожалуйста, повторите попытку позже!"
 #When a player does try to run /skin update while wearing a skin url
 error-Updating-Url: "&4Ошибка&8: &cВы не можете обновить пользовательские скины url! \n&cЗапрос снова с помощью /skin url"
-#when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
+#When a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
 error-Updating-CustomSkin: "&4Error&8: &cSkin не может быть обновлен, потому что он пользовательский."
-#when a player runs /skin url but does not provide a url
+#When a player runs /skin url but does not provide an url
 error-Invalid-SkinUrl: "&4Ошибка&8: &cНекорректная ссылка на скин или формат, \n&cПопробуйте загрузить скин для imgur и правой кнопкой мыши «Копировать адрес изображения» \n&cДля просмотра гида: &c&oskinsrestorer.net/skinurl"
 #When a player runs /sr ApplySkin but the skin could not be refreshed
 adminApplySkinError: "&4ОШИБКА&8: &cplayer скин НЕ может быть обновлен!"
@@ -141,7 +141,7 @@ customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #When everything is working as intended :)
 status-OK: "&2Соединение с API Mojang успешно установлено!"
-#Shown when your using a outdated version of skinsrestorer
+#Shown when you're using an outdated version of SkinsRestorer
 outdated: "&4Вы используете устаревшую версию SkinsRestorer!\n&cПожалуйста, обновитесь до последней версии на Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
