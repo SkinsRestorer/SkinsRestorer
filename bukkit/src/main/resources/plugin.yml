@@ -3,7 +3,7 @@ main: net.skinsrestorer.bukkit.SkinsRestorer
 version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/
-authors: [ "Th3Tr0LLeR", "McLive", "DoNotSpamPls", "knat", "AlexProgrammerDE" ]
+authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls"]
 softdepend: [ "ViaBackwards", "ProtocolLib" ]
 api-version: 1.13
 commands:
