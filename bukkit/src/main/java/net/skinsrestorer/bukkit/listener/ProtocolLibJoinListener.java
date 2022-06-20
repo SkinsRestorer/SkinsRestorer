@@ -53,7 +53,7 @@ public class ProtocolLibJoinListener {
                     return;
 
                 List<PlayerInfoData> list = wrapper.getData();
-                if (list.size() < 1)
+                if (list.isEmpty())
                     return;
 
                 PlayerInfoData data = list.get(0);

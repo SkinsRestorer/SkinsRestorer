@@ -17,10 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.paper;
 
-public class YamlException extends Exception {
-    public YamlException(Throwable ex) {
-        super(ex);
+import org.bukkit.Server;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+public class PaperUtil {
+    public static YamlConfiguration getPaperConfig(Server server) {
+        return server.spigot().getPaperConfig();
     }
 }

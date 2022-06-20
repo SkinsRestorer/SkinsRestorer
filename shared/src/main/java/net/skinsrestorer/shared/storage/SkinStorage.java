@@ -32,14 +32,18 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.sql.RowSet;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
@@ -53,17 +57,23 @@ public class SkinStorage implements ISkinStorage {
     private final MineSkinAPI mineSkinAPI;
     @Setter
     private MySQL mysql;
-    private File skinsFolder;
-    private File playersFolder;
+    private Path skinsFolder;
+    private Path playersFolder;
 
-    public void loadFolders(File pluginFolder) {
-        skinsFolder = new File(pluginFolder, "Skins");
-        //noinspection ResultOfMethodCallIgnored
-        skinsFolder.mkdirs();
+    public void loadFolders(Path dataFolder) {
+        skinsFolder = dataFolder.resolve("Skins");
+        try {
+            Files.createDirectories(skinsFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        playersFolder = new File(pluginFolder, "Players");
-        //noinspection ResultOfMethodCallIgnored
-        playersFolder.mkdirs();
+        playersFolder = dataFolder.resolve("Players");
+        try {
+            Files.createDirectories(playersFolder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void preloadDefaultSkins() {
@@ -162,16 +172,16 @@ public class SkinStorage implements ISkinStorage {
                 }
         } else {
             playerName = removeForbiddenChars(playerName);
-            File playerFile = new File(playersFolder, playerName + ".player");
+            Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
-                if (!playerFile.exists())
+                if (!Files.exists(playerFile))
                     return Optional.empty();
 
-                List<String> lines = Files.readAllLines(playerFile.toPath());
+                List<String> lines = Files.readAllLines(playerFile);
 
                 // Maybe useless
-                if (lines.size() < 1) {
+                if (lines.isEmpty()) {
                     removeSkinOfPlayer(playerName);
                     return Optional.empty();
                 }
@@ -219,10 +229,10 @@ public class SkinStorage implements ISkinStorage {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
         } else {
             playerName = removeForbiddenChars(playerName);
-            File playerFile = new File(playersFolder, playerName + ".player");
+            Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
-                Files.deleteIfExists(playerFile.toPath());
+                Files.deleteIfExists(playerFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -238,13 +248,10 @@ public class SkinStorage implements ISkinStorage {
                     playerName, skinName, skinName);
         } else {
             playerName = removeForbiddenChars(playerName);
-            File playerFile = new File(playersFolder, playerName + ".player");
+            Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
-                if (!playerFile.exists() && !playerFile.createNewFile())
-                    throw new IOException("Could not create player file!");
-
-                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(playerFile), StandardCharsets.UTF_8)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
                     skinName = removeWhitespaces(skinName);
                     skinName = removeForbiddenChars(skinName);
 
@@ -282,13 +289,13 @@ public class SkinStorage implements ISkinStorage {
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
-            File skinFile = new File(skinsFolder, skinName + ".skin");
+            Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
-                if (!skinFile.exists())
+                if (!Files.exists(skinFile))
                     return Optional.empty();
 
-                List<String> lines = Files.readAllLines(skinFile.toPath());
+                List<String> lines = Files.readAllLines(skinFile);
 
                 String value = lines.get(0);
                 String signature = lines.get(1);
@@ -317,10 +324,10 @@ public class SkinStorage implements ISkinStorage {
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
-            File skinFile = new File(skinsFolder, skinName + ".skin");
+            Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
-                Files.deleteIfExists(skinFile.toPath());
+                Files.deleteIfExists(skinFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -346,16 +353,13 @@ public class SkinStorage implements ISkinStorage {
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
-            File skinFile = new File(skinsFolder, skinName + ".skin");
+            Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
                 if (value.isEmpty() || signature.isEmpty() || timestampString.isEmpty())
                     return;
 
-                if (!skinFile.exists() && !skinFile.createNewFile())
-                    throw new IOException("Could not create skin file!");
-
-                try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(skinFile), StandardCharsets.UTF_8)) {
+                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
                     writer.write(value + "\n" + signature + "\n" + timestamp);
                 }
             } catch (Exception e) {
@@ -399,19 +403,20 @@ public class SkinStorage implements ISkinStorage {
             } catch (SQLException ignored) {
             }
         } else { // When not using mysql
-            // Filter out non "*.skin" files.
-            FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
+            List<Path> files = new ArrayList<>();
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+                stream.forEach(files::add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            String[] fileNames = skinsFolder.list(skinFileFilter);
 
-            if (fileNames == null)
-                // TODO: should this not also be null if no skin is valid?
-                return list;
+            List<String> skinNames = files.stream().map(Path::getFileName).map(Path::toString).map(s ->
+                    s.substring(0, s.length() - 5) // remove .skin (5 characters)
+            ).sorted().collect(Collectors.toList());
 
-            Arrays.sort(fileNames);
             int i = 0;
-            for (String file : fileNames) {
-                String skinName = file.replace(".skin", "");
+            for (String skinName : skinNames) {
                 if (i >= number) {
                     if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
@@ -455,27 +460,27 @@ public class SkinStorage implements ISkinStorage {
             } catch (SQLException ignored) {
             }
         } else {
-            // filter out non "*.skin" files.
-            FilenameFilter skinFileFilter = (dir, name) -> name.endsWith(".skin");
+            List<Path> files = new ArrayList<>();
 
-            String[] fileNames = skinsFolder.list(skinFileFilter);
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+                stream.forEach(files::add);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            if (fileNames == null)
-                return list;
+            files.sort(Comparator.comparing(o -> o.getFileName().toString()));
 
-            Arrays.sort(fileNames);
             int i = 0;
             int foundSkins = 0;
-            for (String file : fileNames) {
-                String skinName = file.replace(".skin", "");
-
-                File skinFile = new File(skinsFolder, file);
+            for (Path file : files) {
+                String fileName = file.getFileName().toString();
+                String skinName = fileName.substring(0, fileName.length() - 5);
                 if (i >= number && foundSkins <= 25) {
                     try {
-                        if (!skinFile.exists())
-                            return null;
+                        if (!Files.exists(file))
+                            continue;
 
-                        List<String> lines = Files.readAllLines(skinFile.toPath());
+                        List<String> lines = Files.readAllLines(file);
 
                         GenericProperty prop = new GenericProperty();
                         prop.setName("textures");
@@ -519,11 +524,11 @@ public class SkinStorage implements ISkinStorage {
             skinName = removeWhitespaces(skinName);
             skinName = removeForbiddenChars(skinName);
 
-            File skinFile = new File(skinsFolder, skinName + ".skin");
+            Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
-                if (skinFile.exists()) {
-                    updateDisabled = Files.readAllLines(skinFile.toPath()).get(2).equals("0");
+                if (Files.exists(skinFile)) {
+                    updateDisabled = Files.readAllLines(skinFile).get(2).equals("0");
                 }
             } catch (Exception ignored) {
             }

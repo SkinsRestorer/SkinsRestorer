@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.utils;
 import com.google.common.collect.ImmutableList;
 import net.skinsrestorer.mappings.mapping1_18.Mapping1_18;
 import net.skinsrestorer.mappings.mapping1_18_2.Mapping1_18_2;
+import net.skinsrestorer.mappings.mapping1_19.Mapping1_19;
 import net.skinsrestorer.mappings.shared.IMapping;
 import org.bukkit.Bukkit;
 
@@ -34,6 +35,7 @@ public class MappingManager {
     private static final List<IMapping> mappings = ImmutableList.<IMapping>builder()
             .add(new Mapping1_18())
             .add(new Mapping1_18_2())
+            .add(new Mapping1_19())
             .build();
 
     public static Optional<IMapping> getMapping() {

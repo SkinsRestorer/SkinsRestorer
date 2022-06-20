@@ -50,7 +50,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
-    @Syntax(" [help]")
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }
@@ -74,8 +74,8 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String[] targets) {
-        onDrop(wrapCommandSender(source), playerOrSkin, targets);
+    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String target) {
+        onDrop(wrapCommandSender(source), playerOrSkin, target);
     }
 
     @Subcommand("props")

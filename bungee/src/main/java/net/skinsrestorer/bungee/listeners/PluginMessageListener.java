@@ -95,7 +95,7 @@ public class PluginMessageListener implements Listener {
                 }
 
                 // Payload may not be larger than 32767 bytes -18 from channel name
-                if(b.toByteArray().length > 32749) {
+                if (b.toByteArray().length > 32749) {
                     plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
                     break;
                 }

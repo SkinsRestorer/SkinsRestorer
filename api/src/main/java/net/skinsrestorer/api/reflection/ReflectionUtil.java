@@ -65,6 +65,15 @@ public class ReflectionUtil {
     private ReflectionUtil() {
     }
 
+    public static boolean classExists(String clazz) {
+        try {
+            Class.forName(clazz);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
     public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {
         return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION_STRING + "." + clazz);
     }

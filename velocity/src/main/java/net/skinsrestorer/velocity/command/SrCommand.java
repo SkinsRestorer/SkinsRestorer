@@ -26,6 +26,7 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
+import java.util.Collections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
@@ -49,7 +50,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
-    @Syntax(" [help]")
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
         onHelp(wrapCommandSender(source), help);
     }
@@ -73,8 +74,8 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String[] targets) {
-        onDrop(wrapCommandSender(source), playerOrSkin, targets);
+    public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String target) {
+        onDrop(wrapCommandSender(source), playerOrSkin, target);
     }
 
     @Subcommand("props")
@@ -127,7 +128,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         List<GameProfile.Property> prop = player.getWrapper().get(Player.class).getGameProfileProperties();
 
         if (prop == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return prop.stream().map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature())).collect(Collectors.toList());
