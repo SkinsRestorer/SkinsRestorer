@@ -31,7 +31,7 @@ help-SRCreateCustom: "Maak een aangepaste server brede skin."
 syntax-Defaultcommand: " <skin/link>"
 syntax-SkinSet: " <skin>"
 syntax-SkinSet-Other: " <target> <skin/link>"
-syntax-SkinUrl: " <SkinUrl> [classic/slim]"
+syntax-SkinUrl: " <SkinUrl> [klassiek/dun]"
 syntax-SkinUpdate-Other: " <doel>"
 syntax-SkinClear-Other: " <doel>"
 #Auto-completion messages that appear when typing the command
@@ -66,7 +66,7 @@ reload: "&2Configuratie en taal bestanden zijn opnieuw geladen!"
 ############################
 #Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&bUploaden skin, even geduld a.u.b...(Dit kan even duren)"
-#When a skin has been requested to many times from mojang directly.
+#When a skin has been requested to many times from Mojang directly.
 wait-a-Minute: "&4Fout&8: &cWacht alsjeblieft een minuut voordat je die skin opnieuw aanvraagt. (Rate Limited)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldown: "&4Fout&8: &cJe kan je skin opnieuw aanpassen over &e%s &cseconden."
@@ -84,21 +84,21 @@ urlSkin-DomainBlocked: "&4Fout&8: &cDit domein is niet toegestaan door de beheer
 ##################
 #Error messages #
 ##################
-#Thrown when no premium player was found from the mojang api
+#Thrown when no premium player was found from the Mojang API
 error-Not-Premium: "&4Fout:&8: &cPremium speler met die naam bestaat niet."
-#When a invalid skin (example: "null") is being set
+#When an invalid skin (example: "null") is being set
 error-Invalid-Player: "&4Fout&8: &c%player is geen geldige gebruikersnaam of URL."
-#When a admin does try to update the skin of another player
+#When an admin does try to update the skin of another player
 error-NoSkin: "&4Fout&8: Deze speler heeft geen skin ingesteld."
-#when a admin does run /sr props on a player that does have no skin
+#When an admin does run /sr props on a player that does have no skin
 error-NoSkin-Data: "&4Fout&8: &cGeen skin gegevens gevonden! Heeft deze speler een skin?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
 error-Updating-Skin: "&4Fout&8: Er is een fout opgetreden tijdens het bijwerken van je skin. Probeer het later opnieuw!"
 #When a player does try to run /skin update while wearing a skin url
 error-Updating-Url: "&4Fout&8: &cJe kunt een skin op maat (link) niet bijwerken! \n&cRequest opnieuw met behulp van /skin url"
-#when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
+#When a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
 error-Updating-CustomSkin: "&4Fout&8: &cSkin kan niet worden bijgewerkt omdat het op maak is (url)."
-#when a player runs /skin url but does not provide a url
+#When a player runs /skin url but does not provide an url
 error-Invalid-SkinUrl: "&4Fout&8: &cOngeldige skin-url of formaat, \n&cProbeer je skin te uploaden naar imgur en rechts klik op 'Afbeeldingsadres kopiëren' \n&cVoor handleiding zie: &c&oskinsrestorer.net/skinurl"
 #When a player runs /sr ApplySkin but the skin could not be refreshed
 adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
@@ -141,7 +141,7 @@ customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #When everything is working as intended :)
 status-OK: "&2Mojang API verbinding succesvol!"
-#Shown when your using a outdated version of skinsrestorer
+#Shown when you're using an outdated version of SkinsRestorer
 outdated: "&4Je gebruikt een verouderde versie van SkinsRestorer!\n&cWerk bij naar de laatste versie van Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
