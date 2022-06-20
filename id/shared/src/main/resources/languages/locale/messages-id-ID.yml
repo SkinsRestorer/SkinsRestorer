@@ -66,7 +66,7 @@ reload: "&2Config dan Locale telah berhasil dimuat ulang!"
 ############################
 #Informing the player when we did queue a custom skin.
 urlSkin-waitMinute: "&2Mengunggah skin, harap tunggu...(Ini mungkin memerlukan beberapa waktu)"
-#When a skin has been requested to many times from mojang directly.
+#When a skin has been requested to many times from Mojang directly.
 wait-a-Minute: "&4Error&8: &cHarap tunggu beberapa menit untuk menggunakan skin itu lagi. (Terbatas)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
 skinCooldown: "&4Error&8: &cKamu dapat mengganti skinmu lagi dalam &e%s &cdetik."
@@ -84,21 +84,21 @@ urlSkin-DomainBlocked: "&4Error&8: &cDomain ini tidak diperbolehkan oleh adminis
 ##################
 #Error messages #
 ##################
-#Thrown when no premium player was found from the mojang api
+#Thrown when no premium player was found from the Mojang API
 error-Not-Premium: "&4Error&8: &cPemain premium dengan nama tersebut tidak ada."
-#When a invalid skin (example: "null") is being set
+#When an invalid skin (example: "null") is being set
 error-Invalid-Player: "&4Error&8: &c%player bukan merupakan username maupun tautan yang valid."
-#When a admin does try to update the skin of another player
+#When an admin does try to update the skin of another player
 error-NoSkin: "&4Error&8: &cPemain ini tidak memiliki skin yang diatur."
-#when a admin does run /sr props on a player that does have no skin
+#When an admin does run /sr props on a player that does have no skin
 error-NoSkin-Data: "&4Error&8: &cTIdak ada data skin yang didapatkan! Apakah pemain ini memiliki skin?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
 error-Updating-Skin: "&4Error&8: &cSebuah error terjadi pada saat memperbarui skinmu. Harap coba lagi nanti!"
 #When a player does try to run /skin update while wearing a skin url
 error-Updating-Url: "&4Error&8: &cAnda tidak dapat memperbarui skin dengan url khusus! \n&cBuat permintaan lagi menggunakan /skin tautan"
-#when a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
+#When a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
 error-Updating-CustomSkin: "&4Error&8: &cSkin tidak dapat diperbarui karena itu merupakan skin khusus."
-#when a player runs /skin url but does not provide a url
+#When a player runs /skin url but does not provide an url
 error-Invalid-SkinUrl: "&4Error&8: &cTautan skin atau format yang tidak valid, \n&cCoba unggah skinmu ke imgur dan klik kanan 'copy image address' \n&cUntuk panduan lihat: &c&oskinsrestorer.net/skinurl"
 #When a player runs /sr ApplySkin but the skin could not be refreshed
 adminApplySkinError: "&4ERROR&8: &cSkin pemain TIDAK dapat dibersihkan!"
@@ -141,7 +141,7 @@ customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #When everything is working as intended :)
 status-OK: "&2Koneksi ke API Mojang berhasil!"
-#Shown when your using a outdated version of skinsrestorer
+#Shown when you're using an outdated version of SkinsRestorer
 outdated: "&4Anda menjalankan versi lama dari SkinsRestorer!\n&cHarap perbarui versi terbaru di Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
