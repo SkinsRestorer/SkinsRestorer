@@ -40,7 +40,8 @@ public class ServerVersion {
             String serverPackage = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null).getClass().getPackage().getName();
 
             return serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | NullPointerException ignored) {
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
+                 NullPointerException ignored) {
             return null;
         }
     }

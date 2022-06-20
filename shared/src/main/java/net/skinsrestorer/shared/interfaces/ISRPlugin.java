@@ -29,13 +29,13 @@ import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 
 public interface ISRPlugin {
-    File getDataFolder();
+    Path getDataFolderPath();
 
     SkinStorage getSkinStorage();
 
@@ -62,7 +62,7 @@ public interface ISRPlugin {
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(v.call().split(", "))));
 
-        CommandPropertiesManager.load(manager, getDataFolder(), getResource("command-messages.properties"), srLogger);
+        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command-messages.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
     }

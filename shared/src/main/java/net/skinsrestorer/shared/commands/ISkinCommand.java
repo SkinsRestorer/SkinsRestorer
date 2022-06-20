@@ -242,6 +242,8 @@ public interface ISkinCommand {
             }
         } else {
             // If skin is not an url, it's a username
+            // Apply cooldown to sender
+            CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
             try {
                 if (save)
                     plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);

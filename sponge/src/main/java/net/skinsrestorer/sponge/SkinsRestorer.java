@@ -25,7 +25,9 @@ import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.builddata.BuildData;
@@ -61,8 +63,8 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Random;
@@ -70,13 +72,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-    private final File dataFolder;
+    private final Path dataFolderPath;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
@@ -92,7 +94,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Inject
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
-        dataFolder = dataFolderPath.toFile();
+        this.dataFolderPath = dataFolderPath;
         srLogger = new SRLogger(new Slf4LoggerImpl(log));
         mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
@@ -102,11 +104,11 @@ public class SkinsRestorer implements ISRPlugin {
 
     @Listener
     public void onInitialize(GameInitializationEvent e) {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(dataFolder, "noupdate.txt");
+        srLogger.load(getDataFolderPath());
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         // Check for updates
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate();
 
@@ -119,8 +121,8 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), srLogger);
-        Locale.load(dataFolder, srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -156,7 +158,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolder)) return false;
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) return false;
 
         // Preload default skins
         Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
@@ -217,9 +219,16 @@ public class SkinsRestorer implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactorySponge implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            return new GenericProperty(name, value, signature);
+        }
+    }
+
     private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
         public SkinsRestorerSpongeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), new PropertyFactorySponge());
         }
 
         @Override

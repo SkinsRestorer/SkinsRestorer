@@ -12,5 +12,12 @@
     "com.viaversion:viaversion"
   ],
   "labels": [
-  "renovate"]
+    "renovate"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    }
+  ]
 }

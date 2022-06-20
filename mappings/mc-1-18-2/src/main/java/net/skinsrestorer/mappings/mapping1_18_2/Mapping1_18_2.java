@@ -37,7 +37,7 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Mapping1_18_2 implements IMapping {
     private static void sendPacket(ServerPlayer player, Packet<?> packet) {
@@ -48,7 +48,7 @@ public class Mapping1_18_2 implements IMapping {
         extractServerPlayer(player).resetSentInfo();
     }
 
-    public void accept(Player player, Function<ViaPacketData, Boolean> viaFunction) {
+    public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
         try {
             final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
 
@@ -80,7 +80,7 @@ public class Mapping1_18_2 implements IMapping {
             @SuppressWarnings("deprecation")
             int dimension = player.getWorld().getEnvironment().getId();
 
-            if (Boolean.TRUE.equals(viaFunction.apply(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
+            if (Boolean.TRUE.equals(viaFunction.test(new ViaPacketData(player, dimension, respawn.getSeed(), (short) respawn.getPlayerGameType().getId(), respawn.isFlat())))) {
                 sendPacket(entityPlayer, respawn);
             }
 

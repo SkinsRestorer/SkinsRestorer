@@ -23,12 +23,11 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
+import java.util.Collections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.connection.LoginResult;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -36,7 +35,6 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISRCommand;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
-    @Syntax(" [help]")
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSender sender, CommandHelp help) {
         onHelp(wrapCommandSender(sender), help);
     }
@@ -75,8 +73,8 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String[] targets) {
-        onDrop(wrapCommandSender(sender), playerOrSkin, targets);
+    public void onDrop(CommandSender sender, PlayerOrSkin playerOrSkin, String target) {
+        onDrop(wrapCommandSender(sender), playerOrSkin, target);
     }
 
     @Subcommand("props")
@@ -126,13 +124,12 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        LoginResult.Property[] props = ((InitialHandler) player.getWrapper().get(ProxiedPlayer.class)
-                .getPendingConnection()).getLoginProfile().getProperties();
+        List<IProperty> props = plugin.getSkinApplierBungee().getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
-            return null;
+            return Collections.emptyList();
         } else {
-            return Arrays.stream(props)
+            return props.stream()
                     .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature()))
                     .collect(Collectors.toList());
         }

@@ -7,7 +7,7 @@
 </p>
 <p align="center">
 <a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/badge/icon" alt="Build Status"></a>
-<a href="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/maven.yml"><img src="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml/badge.svg" alt="Java CI"></a>
+<a href="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml"><img src="https://github.com/SkinsRestorer/SkinsRestorerX/actions/workflows/deploy.yml/badge.svg?branch=stable" alt="Java CI"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest"><img src="https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg" alt="Current Release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors"><img src="https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg" alt="Contributors"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/commits/master"><img src="https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg" alt="Commits since last release"></a>
@@ -23,25 +23,25 @@
 
 This is the development repository for [SkinsRestorer](https://www.spigotmc.org/resources/skinsrestorer.2124/) (Minecraft plugin).
 
-Restoring offline mode skins & changing skins for Bukkit/Spigot, BungeeCord/Waterfall, Sponge, catserver and Velocity
+Restoring offline mode skins & changing skins for Bukkit/Spigot/paper, BungeeCord/Waterfall, Sponge, CatServer and Velocity
 servers.
 
 ## :telescope: Compatibility
 
 - Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
-- Minecraft 1.8.0 - 1.18.2
+- Minecraft 1.8.0 - 1.19
 
 ## :link: Links
 
-- [Spigot Page](https://www.spigotmc.org/resources/skinsrestorer.2124/)
-- [VelocityPowered Page](https://forums.velocitypowered.com/t/skinsrestorer-ability-to-restore-change-skins-on-servers/142)
-- [Sponge ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
-- [PaperMC](https://papermc.io/forums/t/1-8-1-14-4-skinsrestorer/1996)
-- [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/)
-- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX/)
-- [Discord](https://discord.me/skinsrestorer)
-- [Website](https://skinsrestorer.net/)
+- [Spigot Page](https://www.spigotmc.org/resources/2124)
+- [VelocityPowered Page](https://forums.velocitypowered.com/t/142)
+- [Sponge Ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
+- [PaperMC](https://papermc.io/forums/t/1996)
+- [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki)
+- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX)
+- [Discord](https://discord.me/skinsrestorer/)
+- [Website](https://skinsrestorer.net)
 
 ## :scroll: License
 
@@ -73,7 +73,8 @@ supported this project by contributing.
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
-    <version>14.1.15</version>
+    <version>14.2.0</version>
+    <scope>provided</scope>
 </dependency>
 ```
 

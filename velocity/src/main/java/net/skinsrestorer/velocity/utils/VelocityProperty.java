@@ -17,38 +17,37 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.velocity.utils;
 
-import com.mojang.authlib.properties.Property;
+import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.ToString;
+import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class BukkitProperty extends Property implements IProperty {
-    public BukkitProperty(String name, String value) {
-        super(name, value);
-    }
+public class VelocityProperty implements IProperty {
+    private final Property property;
 
-    public BukkitProperty(String name, String value, String signature) {
-        super(name, value, signature);
+    public VelocityProperty(String name, String value, String signature) {
+        property = new Property(name, value, signature);
     }
 
     @Override
     public Object getHandle() {
-        return this;
+        return property;
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
+    public String getName() {
+        return property.getName();
     }
 
     @Override
-    public void setValue(String value) {
-        throw new UnsupportedOperationException();
+    public String getValue() {
+        return property.getValue();
     }
 
     @Override
-    public void setSignature(String signature) {
-        throw new UnsupportedOperationException();
+    public String getSignature() {
+        return property.getSignature();
     }
 }

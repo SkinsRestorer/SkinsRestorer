@@ -20,15 +20,14 @@
 package net.skinsrestorer.bungee;
 
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
-import net.md_5.bungee.connection.LoginResult;
-import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
@@ -37,10 +36,11 @@ import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
-public class SkinApplierBungee {
-    private final SkinsRestorer plugin;
+public abstract class SkinApplierBungeeShared {
+    private final ISRPlugin plugin;
     private final SRLogger log;
 
     public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
@@ -62,14 +62,14 @@ public class SkinApplierBungee {
     private void applyEvent(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
         SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
-        plugin.getProxy().getPluginManager().callEvent(event);
+        ProxyServer.getInstance().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
 
-        applyWithProperty(player, handler, (Property) event.getProperty());
+        applyWithProperty(player, handler, event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, Property textures) throws ReflectionException {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, IProperty textures) throws ReflectionException {
         applyToHandler(handler, textures);
 
         if (player == null)
@@ -78,28 +78,11 @@ public class SkinApplierBungee {
         sendUpdateRequest(player, Config.FORWARD_TEXTURES ? textures : null);
     }
 
-    private void applyToHandler(InitialHandler handler, Property textures) throws ReflectionException {
-        LoginResult profile = handler.getLoginProfile();
-        Property[] newProps = new Property[]{textures};
+    protected abstract void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException;
 
-        if (profile == null) {
-            try {
-                // NEW BUNGEECORD (id, name, property)
-                profile = new LoginResult(null, null, newProps);
-            } catch (Exception error) {
-                // FALL BACK TO OLD (id, property)
-                profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
-                        new Class<?>[]{String.class, Property[].class},
-                        null, newProps);
-            }
-        } else {
-            profile.setProperties(newProps);
-        }
+    public abstract List<IProperty> getProperties(ProxiedPlayer player);
 
-        ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile", profile);
-    }
-
-    private void sendUpdateRequest(@NotNull ProxiedPlayer player, Property textures) {
+    private void sendUpdateRequest(@NotNull ProxiedPlayer player, IProperty textures) {
         if (player.getServer() == null)
             return;
 

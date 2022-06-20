@@ -28,8 +28,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
@@ -56,8 +58,9 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -66,19 +69,32 @@ import java.util.stream.Collectors;
 @Getter
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
-    private final File configPath = getDataFolder();
+    private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
+    private final Path dataFolderPath = getDataFolder().toPath();
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
-    private final SkinApplierBungee skinApplierBungee = new SkinApplierBungee(this, srLogger);
+    private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
     private boolean outdated;
     private UpdateChecker updateChecker;
     private PluginMessageListener pluginMessageListener;
     private SkinCommand skinCommand;
     private BungeeCommandManager manager;
+
+    /*
+     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
+     * This method will check if the new class is available and return the appropriate class that was compiled for it.
+     */
+    private static SkinApplierBungeeShared selectSkinApplier(ISRPlugin plugin, SRLogger srLogger) {
+        if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+            return new SkinApplierBungeeNew(plugin, srLogger);
+        } else {
+            return new SkinApplierBungeeOld(plugin, srLogger);
+        }
+    }
 
     @Override
     public String getVersion() {
@@ -87,8 +103,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
-        srLogger.load(getDataFolder());
-        File updaterDisabled = new File(getDataFolder(), "noupdate.txt");
+        srLogger.load(dataFolderPath);
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -96,7 +112,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        if (!updaterDisabled.exists()) {
+        if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
@@ -108,8 +124,8 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
 
         // Init config files
-        Config.load(getDataFolder(), getResource("config.yml"), srLogger);
-        Locale.load(getDataFolder(), srLogger);
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        Locale.load(dataFolderPath, srLogger);
 
         // Init storage
         if (!initStorage())
@@ -146,7 +162,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, getDataFolder())) {
+        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) {
             getProxy().getPluginManager().unregisterListeners(this);
             getProxy().getPluginManager().unregisterCommands(this);
             return false;
@@ -208,9 +224,20 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactoryBungee implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+                return new BungeePropertyNew(name, value, signature);
+            } else {
+                return new BungeePropertyOld(name, value, signature);
+            }
+        }
+    }
+
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
         public SkinsRestorerBungeeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
 
         @Override
