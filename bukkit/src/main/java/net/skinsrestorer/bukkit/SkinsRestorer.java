@@ -177,8 +177,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
 
-            int delayInt = 60 + new Random().nextInt(240 - 60 + 1);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20L * 60 * delayInt, 20L * 60 * delayInt);
+            // Delay update between 5 & 30 minutes
+            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300 );
+            // Repeat update between 1 & 4 hours
+            int periodInt = 60 + new Random().nextInt(240 + 1 - 60 );
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20L * delayInt, 20L * 60 * periodInt);
         } else {
             srLogger.info("Updater Disabled");
         }
