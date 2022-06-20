@@ -24,6 +24,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PaperUtil {
     public static YamlConfiguration getPaperConfig(Server server) {
-        return server.spigot().getPaperConfig();
+        try {
+            return (YamlConfiguration) Server.Spigot.class.getMethod("getPaperConfig").invoke(server.spigot());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
