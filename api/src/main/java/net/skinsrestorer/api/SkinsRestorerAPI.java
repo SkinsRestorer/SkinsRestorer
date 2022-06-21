@@ -130,7 +130,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> api
+     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> API
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
      * @param url         pointing to a skin image url
@@ -174,8 +174,11 @@ public abstract class SkinsRestorerAPI {
 
     /**
      * Only returns the id at the end of the url.
-     * Example: https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
-     * World return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
+     * Example:
+     * <a href="https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f">
+     *     https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
+     * </a>
+     * Would return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
      *
      * @param property Profile property
      * @return textures.minecraft.net id
@@ -193,6 +196,7 @@ public abstract class SkinsRestorerAPI {
      * This is useful for getting the skin data from the property and other information like cape.
      * The user stored in this property may not be the same as the player who has the skin.
      * APIs like MineSkin use multiple shared accounts to generate these properties.
+     * Or it could be the property of another player that the player set their skin to.
      *
      * @param property Profile property
      * @return Decoded profile data as java object

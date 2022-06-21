@@ -74,9 +74,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final SRLogger srLogger = new SRLogger(new LoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUNGEECORD, metricsCounter);
-    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI(mojangAPI, skinStorage);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
     private boolean outdated;
     private UpdateChecker updateChecker;
@@ -236,7 +236,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
     }
 
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
-        public SkinsRestorerBungeeAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+        public SkinsRestorerBungeeAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
 

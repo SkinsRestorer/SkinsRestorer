@@ -56,7 +56,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class MineSkinAPI implements IMineSkinAPI {
     private final SRLogger logger;
-    private final MojangAPI mojangAPI;
     private final MetricsCounter metricsCounter;
     private final Gson gson = new Gson();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
