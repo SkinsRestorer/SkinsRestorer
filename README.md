@@ -73,7 +73,7 @@ supported this project by contributing.
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
-    <version>14.1.14</version>
+    <version>14.2.1</version>
     <scope>provided</scope>
 </dependency>
 ```

@@ -79,6 +79,10 @@ setOf("shared", "propertyold", "propertynew").forEach {
     include("multiver:bungee:$it")
 }
 
+setOf("paper").forEach {
+    include("multiver:$it")
+}
+
 setupSRSubproject("build-data")
 setupSRSubproject("api")
 setupSRSubproject("shared")

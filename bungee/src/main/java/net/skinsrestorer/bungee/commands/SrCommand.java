@@ -23,6 +23,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
+import java.util.Collections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
@@ -126,7 +127,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         List<IProperty> props = plugin.getSkinApplierBungee().getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
-            return null;
+            return Collections.emptyList();
         } else {
             return props.stream()
                     .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature()))

@@ -39,6 +39,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -136,8 +137,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
         try {
             PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(player.getWrapper().get(Player.class)).getProperties();
-            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
-                    new Class<?>[]{Object.class}, IProperty.TEXTURES_NAME);
+            Collection<?> props = propertyMap.get(IProperty.TEXTURES_NAME);
 
             return props.stream().map(prop -> {
                 Property property = (Property) prop;
@@ -145,7 +145,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
             }).collect(Collectors.toList());
         } catch (ReflectionException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
     }
 }
