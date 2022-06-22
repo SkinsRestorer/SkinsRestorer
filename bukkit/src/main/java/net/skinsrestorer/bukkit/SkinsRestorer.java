@@ -394,11 +394,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 YamlConfiguration config = PaperUtil.getPaperConfig(getServer());
 
                 if (config != null) {
-                    if (!bungeeEnabled && config.getBoolean("settings.velocity-support.enabled")) {
-                        bungeeEnabled = true;
-                    }
-
-                    if (!bungeeEnabled && config.getBoolean("proxies.velocity.enabled")) {
+                    if (!bungeeEnabled && (config.getBoolean("settings.velocity-support.enabled")
+                            || config.getBoolean("proxies.velocity.enabled"))) {
                         bungeeEnabled = true;
                     }
                 }
