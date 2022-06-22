@@ -10,6 +10,10 @@ dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.0.1")
 }
 
+tasks.withType<Sign>().configureEach {
+    onlyIf { false }
+}
+
 indra {
     github("SkinsRestorer", "SkinsRestorerX") {
         ci(true)
