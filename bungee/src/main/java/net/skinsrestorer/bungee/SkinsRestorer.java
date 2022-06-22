@@ -162,7 +162,7 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) {
+        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) {
             getProxy().getPluginManager().unregisterListeners(this);
             getProxy().getPluginManager().unregisterCommands(this);
             return false;

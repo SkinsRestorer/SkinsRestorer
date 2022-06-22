@@ -59,7 +59,7 @@ public class SharedMethods {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean initMysql(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) {
+    public static boolean initStorage(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) {
         if (Config.MYSQL_ENABLED) {
             try {
                 MySQL mysql = new MySQL(
@@ -78,12 +78,14 @@ public class SharedMethods {
 
                 skinStorage.setMysql(mysql);
             } catch (Exception e) {
-                srLogger.info("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+                srLogger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
                 return false;
             }
         } else {
             skinStorage.loadFolders(dataFolder);
         }
+
+        skinStorage.setInitialized(true);
 
         return true;
     }

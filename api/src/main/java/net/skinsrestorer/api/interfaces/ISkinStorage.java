@@ -93,4 +93,6 @@ public interface ISkinStorage {
      * @param timestamp timestamp string in millis (null for current)
      */
     void setSkinData(String skinName, IProperty textures, long timestamp);
+
+    boolean isInitialized();
 }

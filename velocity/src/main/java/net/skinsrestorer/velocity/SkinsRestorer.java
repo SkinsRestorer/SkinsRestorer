@@ -154,7 +154,7 @@ public class SkinsRestorer implements ISRPlugin {
 
     private boolean initStorage() {
         // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) return false;
+        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) return false;
 
         // Preload default skins
         runAsync(skinStorage::preloadDefaultSkins);
