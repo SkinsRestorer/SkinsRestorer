@@ -129,7 +129,7 @@ public interface ISRCommand {
             try {
                 List<IProperty> properties = getPropertiesOfPlayer(target);
 
-                if (properties == null || properties.isEmpty()) {
+                if (properties.isEmpty()) {
                     sender.sendMessage(Locale.NO_SKIN_DATA);
                     return;
                 }

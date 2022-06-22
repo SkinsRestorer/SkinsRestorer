@@ -20,10 +20,12 @@
 package net.skinsrestorer.bukkit;
 
 import co.aikar.commands.PaperCommandManager;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
@@ -35,8 +37,10 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
+import net.skinsrestorer.bukkit.utils.BukkitProperty;
 import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -173,8 +177,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
 
-            int delayInt = 60 + new Random().nextInt(240 - 60 + 1);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20L * 60 * delayInt, 20L * 60 * delayInt);
+            // Delay update between 5 & 30 minutes
+            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300 );
+            // Repeat update between 1 & 4 hours
+            int periodInt = 60 + new Random().nextInt(240 + 1 - 60 );
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(bungeeEnabled, false), 20L * delayInt, 20L * 60 * periodInt);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -370,13 +377,26 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
-            if (!bungeeEnabled && new File("spigot.yml").exists()) {
-                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("spigot.yml")).getBoolean("settings.bungeecord");
+            File spigotFile = new File("spigot.yml");
+            if (!bungeeEnabled && spigotFile.exists()) {
+                bungeeEnabled = YamlConfiguration.loadConfiguration(spigotFile).getBoolean("settings.bungeecord");
             }
 
-            //load paper velocity-support.enabled to allow velocity compatability.
-            if (!bungeeEnabled && new File("paper.yml").exists()) {
-                bungeeEnabled = YamlConfiguration.loadConfiguration(new File("paper.yml")).getBoolean("settings.velocity-support.enabled");
+            if (PaperLib.isPaper()) {
+                //load paper velocity-support.enabled to allow velocity compatability.
+                File oldPaperFile = new File("paper.yml");
+                if (!bungeeEnabled && oldPaperFile.exists()) {
+                    bungeeEnabled = YamlConfiguration.loadConfiguration(oldPaperFile).getBoolean("settings.velocity-support.enabled");
+                }
+
+                YamlConfiguration config = PaperUtil.getPaperConfig(getServer());
+                if (!bungeeEnabled && config.getBoolean("settings.velocity-support.enabled")) {
+                    bungeeEnabled = true;
+                }
+
+                if (!bungeeEnabled && config.getBoolean("proxies.velocity.enabled")) {
+                    bungeeEnabled = true;
+                }
             }
 
             //override bungeeModeEnabled
@@ -477,9 +497,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactoryBukkit implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            return new BukkitProperty(name, value, signature);
+        }
+    }
+
     private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
         public SkinsRestorerBukkitAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit());
         }
 
         @Override

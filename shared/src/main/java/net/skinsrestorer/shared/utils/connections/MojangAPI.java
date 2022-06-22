@@ -21,13 +21,10 @@ package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.property.PropertyRegistry;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -60,13 +57,11 @@ public class MojangAPI implements IMojangAPI {
     private final SRLogger logger;
     private final Platform platform;
     private final MetricsCounter metricsCounter;
-    private final Class<? extends IProperty> propertyClass;
 
     public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
         this.logger = logger;
         this.platform = platform;
         this.metricsCounter = metricsCounter;
-        propertyClass = PropertyRegistry.selectPropertyForPlatform(platform);
     }
 
     /**
@@ -78,15 +73,7 @@ public class MojangAPI implements IMojangAPI {
      * @return A platform specific property
      */
     public IProperty createProperty(String name, String value, String signature) {
-        // use our own property class if we are on sponge
-        if (platform == Platform.SPONGE)
-            return new GenericProperty(name, value, signature);
-
-        try {
-            return (IProperty) ReflectionUtil.invokeConstructor(propertyClass, name, value, signature);
-        } catch (ReflectionException e) {
-            throw new IllegalStateException(e);
-        }
+        return SkinsRestorerAPI.getApi().createProperty(name, value, signature);
     }
 
     /**
@@ -106,7 +93,7 @@ public class MojangAPI implements IMojangAPI {
         if (skin.isPresent()) {
             return skin;
         } else {
-            if (!nameOrUuid.matches("[a-f0-9]{32}"))
+            if (!nameOrUuid.matches("[a-f\\d]{32}"))
                 nameOrUuid = getUUIDStartMojang(nameOrUuid);
 
             return getProfileStartMojang(nameOrUuid);

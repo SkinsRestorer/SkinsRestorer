@@ -33,6 +33,7 @@ import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.serverinfo.Platform;
@@ -53,6 +54,7 @@ import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
+import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
@@ -68,7 +70,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
 public class SkinsRestorer implements ISRPlugin {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
@@ -213,9 +215,16 @@ public class SkinsRestorer implements ISRPlugin {
         }
     }
 
+    private static class PropertyFactoryVelocity implements IPropertyFactory {
+        @Override
+        public IProperty createProperty(String name, String value, String signature) {
+            return new VelocityProperty(name, value, signature);
+        }
+    }
+
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
         public SkinsRestorerVelocityAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity());
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
         }
 
         @Override

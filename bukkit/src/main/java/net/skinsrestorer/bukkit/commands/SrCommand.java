@@ -136,8 +136,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
         try {
             PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(player.getWrapper().get(Player.class)).getProperties();
-            Collection<?> props = (Collection<?>) ReflectionUtil.invokeMethod(propertyMap.getClass(), propertyMap, "get",
-                    new Class<?>[]{Object.class}, "textures");
+            Collection<?> props = propertyMap.get("textures");
 
             return props.stream().map(prop -> {
                 Property property = (Property) prop;
