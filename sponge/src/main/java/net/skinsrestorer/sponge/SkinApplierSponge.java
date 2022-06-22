@@ -40,18 +40,18 @@ public class SkinApplierSponge {
     private final SkinsRestorer plugin;
 
     protected void applySkin(Player player, IProperty property) {
-        setTexture(property, player.getProfile().getPropertyMap().get("textures"));
+        setTexture(property, player.getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME));
 
         Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
     }
 
     public void updateProfileSkin(GameProfile profile, String skin) throws SkinRequestException {
-        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.getPropertyMap().get("textures"));
+        setTexture(plugin.getSkinStorage().getSkinForPlayer(skin), profile.getPropertyMap().get(IProperty.TEXTURES_NAME));
     }
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {
-        ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty("textures", property.getValue(), property.getSignature());
-        oldProperties.removeIf(property2 -> property2.getName().equals("textures"));
+        ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
+        oldProperties.removeIf(property2 -> property2.getName().equals(IProperty.TEXTURES_NAME));
         oldProperties.add(newTextures);
     }
 
