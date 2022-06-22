@@ -22,6 +22,7 @@ package net.skinsrestorer.api.bukkit;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.FieldNotFoundException;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +35,10 @@ public class BukkitHeadAPI {
     private BukkitHeadAPI() {
     }
 
+    public static void setSkull(ItemStack head, IProperty property) {
+        setSkull(head, property.getValue());
+    }
+
     @SuppressWarnings("unchecked")
     public static void setSkull(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);
@@ -43,7 +48,7 @@ public class BukkitHeadAPI {
             throw new IllegalStateException("Profile doesn't contain a property map");
         }
 
-        propertyMap.put("textures", new Property("textures", b64stringTexture));
+        propertyMap.put("textures", new Property(IProperty.TEXTURES_NAME, b64stringTexture));
 
         ItemMeta headMeta = head.getItemMeta();
         Class<?> headMetaClass = Objects.requireNonNull(headMeta).getClass();

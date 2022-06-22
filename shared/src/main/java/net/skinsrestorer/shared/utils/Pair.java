@@ -17,21 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.shared.utils;
 
-/**
- * Easy way of interacting with properties across multiple platforms.
- */
-public interface IProperty {
-    String TEXTURES_NAME = "textures";
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-    String getName();
-
-    String getValue();
-
-    String getSignature();
-
-    default Object getHandle() {
-        return this;
-    }
+@Getter
+@RequiredArgsConstructor
+public class Pair<L, R> {
+    private final L left;
+    private final R right;
 }
