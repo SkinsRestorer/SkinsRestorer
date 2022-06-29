@@ -262,7 +262,7 @@ public abstract class SkinsRestorerAPI {
 
     public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
 
-    public abstract void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException;
+    public abstract void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException;
 
-    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty props);
+    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 }
