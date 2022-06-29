@@ -25,7 +25,9 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.command.ConsoleCommandSender;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+
+import java.util.Optional;
 
 public class WrapperBungee {
     public static ISRCommandSender wrapCommandSender(CommandSender sender) {
@@ -52,8 +54,13 @@ public class WrapperBungee {
         };
     }
 
-    public static ISRPlayer wrapPlayer(ProxiedPlayer player) {
-        return new ISRPlayer() {
+    public static ISRProxyPlayer wrapPlayer(ProxiedPlayer player) {
+        return new ISRProxyPlayer() {
+            @Override
+            public Optional<String> getCurrentServer() {
+                return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());
+            }
+
             @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);

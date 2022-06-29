@@ -21,7 +21,6 @@ package net.skinsrestorer.bukkit.listener;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -31,23 +30,24 @@ import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-@RequiredArgsConstructor
 @Getter
-public class PlayerJoin extends LoginProfileListener implements Listener {
+@RequiredArgsConstructor
+public class PlayerResourcePackStatus extends LoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
-    @Setter
-    private static boolean resourcePack;
+    private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent event) {
+    public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
+        if (!Config.RESOURCE_PACK_FIX)
+            return;
+
+        PlayerJoin.setResourcePack(true);
+
         LoginProfileEvent profileEvent = wrap(event);
 
         if (handleSync(profileEvent))
-            return;
-
-        if (resourcePack && Config.RESOURCE_PACK_FIX)
             return;
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
@@ -60,7 +60,7 @@ public class PlayerJoin extends LoginProfileListener implements Listener {
                 }));
     }
 
-    private LoginProfileEvent wrap(PlayerJoinEvent event) {
+    private LoginProfileEvent wrap(PlayerResourcePackStatusEvent event) {
         return new LoginProfileEvent() {
             @Override
             public boolean isOnline() {

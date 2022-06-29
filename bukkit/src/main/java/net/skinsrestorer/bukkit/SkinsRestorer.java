@@ -35,6 +35,7 @@ import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
+import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.utils.BukkitProperty;
@@ -290,6 +291,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Init listener
         if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
             Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
         } else {
             srLogger.info("Hooking into ProtocolLib for instant skins on join!");
             new ProtocolLibJoinListener(this);
@@ -515,13 +517,13 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name));
+        public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
         }
 
         @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-            skinApplierBukkit.applySkin(playerWrapper.get(Player.class), props);
+        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+            skinApplierBukkit.applySkin(playerWrapper.get(Player.class), property);
         }
     }
 }
