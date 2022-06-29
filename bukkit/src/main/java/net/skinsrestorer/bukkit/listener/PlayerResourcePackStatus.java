@@ -19,21 +19,24 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.listeners.LoginProfileEvent;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
 
+@Getter
 @RequiredArgsConstructor
-public class PlayerResourcePackStatus implements Listener {
+public class PlayerResourcePackStatus extends LoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
     private final SRLogger log;
     private final boolean isOnlineMode = Bukkit.getOnlineMode();
@@ -45,18 +48,37 @@ public class PlayerResourcePackStatus implements Listener {
 
         PlayerJoin.setResourcePack(true);
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                final Player player = event.getPlayer();
-                final String name = player.getName();
+        LoginProfileEvent profileEvent = wrap(event);
 
-                // Skip players if: OnlineMode & enabled & no skinSet & DefaultSkins.premium false
-                if (isOnlineMode && !Config.ALWAYS_APPLY_PREMIUM && !plugin.getSkinStorage().getSkinOfPlayer(name).isPresent() && !Config.DEFAULT_SKINS_PREMIUM)
-                    return;
+        if (handleSync(profileEvent))
+            return;
 
-                plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(player), plugin.getSkinStorage().getDefaultSkinForPlayer(player.getName()));
-            } catch (SkinRequestException ignored) {
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                handleAsync(profileEvent).ifPresent(name -> {
+                    try {
+                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
+                    } catch (SkinRequestException e) {
+                        plugin.getSrLogger().debug(e);
+                    }
+                }));
+    }
+
+    private LoginProfileEvent wrap(PlayerResourcePackStatusEvent event) {
+        return new LoginProfileEvent() {
+            @Override
+            public boolean isOnline() {
+                return Bukkit.getOnlineMode();
             }
-        });
+
+            @Override
+            public String getPlayerName() {
+                return event.getPlayer().getName();
+            }
+
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+        };
     }
 }

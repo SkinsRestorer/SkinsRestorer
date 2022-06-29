@@ -42,23 +42,22 @@ public class PlayerJoin extends LoginProfileListener implements Listener {
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        if (Config.DISABLE_ON_JOIN_SKINS || (resourcePack && Config.RESOURCE_PACK_FIX))
-            return;
-
         LoginProfileEvent profileEvent = wrap(event);
 
         if (handleSync(profileEvent))
             return;
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            handleAsync(profileEvent).ifPresent(name -> {
-                try {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
-                } catch (SkinRequestException e) {
-                    plugin.getSrLogger().debug(e);
-                }
-            });
-        });
+        if (resourcePack && Config.RESOURCE_PACK_FIX)
+            return;
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                handleAsync(profileEvent).ifPresent(name -> {
+                    try {
+                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
+                    } catch (SkinRequestException e) {
+                        plugin.getSrLogger().debug(e);
+                    }
+                }));
     }
 
     private LoginProfileEvent wrap(PlayerJoinEvent event) {
