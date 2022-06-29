@@ -37,6 +37,8 @@ public class Config {
     public static boolean DISABLED_SKINS_ENABLED;
     public static List<String> DISABLED_SKINS;
     public static boolean NOT_ALLOWED_COMMAND_SERVERS_ENABLED;
+    public static boolean NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST;
+    public static boolean NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND;
     public static List<String> NOT_ALLOWED_COMMAND_SERVERS;
     public static boolean CUSTOM_GUI_ENABLED;
     public static boolean CUSTOM_GUI_ONLY;
@@ -82,6 +84,8 @@ public class Config {
         DISABLED_SKINS_ENABLED = config.getBoolean("DisabledSkins.Enabled");
         DISABLED_SKINS = config.getStringList("DisabledSkins.Names");
         NOT_ALLOWED_COMMAND_SERVERS_ENABLED = config.getBoolean("NotAllowedCommandServers.Enabled");
+        NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = config.getBoolean("NotAllowedCommandServers.AllowList");
+        NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = config.getBoolean("NotAllowedCommandServers.IfNoServerBlockCommand");
         NOT_ALLOWED_COMMAND_SERVERS = config.getStringList("NotAllowedCommandServers.List");
         CUSTOM_GUI_ENABLED = config.getBoolean("CustomGUI.Enabled");
         CUSTOM_GUI_ONLY = config.getBoolean("CustomGUI.ShowOnlyCustomGUI");

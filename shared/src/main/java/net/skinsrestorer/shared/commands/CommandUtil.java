@@ -28,16 +28,25 @@ import java.util.Optional;
 
 public class CommandUtil {
     public static boolean isAllowedToExecute(ISRCommandSender sender) {
-        if (sender instanceof ISRProxyPlayer) {
+        if (Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED && sender instanceof ISRProxyPlayer) {
             Optional<String> optional = ((ISRProxyPlayer) sender).getCurrentServer();
             if (optional.isPresent()) {
                 String server = optional.get();
-                if (Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED
-                        && Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
-                    sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE.replace("%server%", server));
-                    return false;
+
+                if (Config.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) {
+                    if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
+                        return true;
+                    } else {
+                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE.replace("%server%", server));
+                        return false;
+                    }
+                } else {
+                    if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
+                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE.replace("%server%", server));
+                        return false;
+                    }
                 }
-            }
+            } else return !Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND;
         }
 
         return true;

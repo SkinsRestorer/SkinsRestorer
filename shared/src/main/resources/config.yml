@@ -70,6 +70,10 @@ DisabledSkins:
 # Disable all SkinsRestorer commands on specific backend servers. (Only if using proxies)
 NotAllowedCommandServers:
   Enabled: true
+  # Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.
+  AllowList: false
+  # Block players from executing SkinsRestorer commands before having joined a server.
+  IfNoServerBlockCommand: true
   List:
     - "auth"
 
