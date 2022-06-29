@@ -27,18 +27,15 @@ import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-
 @Getter
 @RequiredArgsConstructor
 public class PlayerResourcePackStatus extends LoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
-    private final SRLogger log;
     private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
