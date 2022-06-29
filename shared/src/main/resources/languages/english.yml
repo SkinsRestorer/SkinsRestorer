@@ -17,13 +17,13 @@ prefix: "&e[&2SkinsRestorer&e]"
   #################
 
 # Help lines appearing in "/skin" OR "/skin help"
+help-SkinSet: "Changes your skin."
+help-Skinset-Other: "Sets the skin for a target player."
+help-SkinSet-Other-Url: "Sets the skin from a url for a target player."
 help-SkinClear: "Clears your skin."
 help-SkinClear-Other: "Clears the skin of a target player."
 help-SkinUpdate: "Updates your skin."
 help-SkinUpdate-Other: "Updates the skin of a target player."
-help-SkinSet: "Set the skin of another player."
-help-Skinset-Other: "Sets the skin for a target player"
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
 
 # Admin help lines appearing in "/sr" OR "/sr help"
 help-SRreload: "Reloads the configuration file."
