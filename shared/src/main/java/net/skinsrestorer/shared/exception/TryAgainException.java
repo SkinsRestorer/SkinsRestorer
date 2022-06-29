@@ -17,21 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.shared.exception;
 
-/**
- * Easy way of interacting with properties across multiple platforms.
- */
-public interface IProperty {
-    String TEXTURES_NAME = "textures";
-
-    String getName();
-
-    String getValue();
-
-    String getSignature();
-
-    default Object getHandle() {
-        return this;
-    }
+public class TryAgainException extends Exception {
 }

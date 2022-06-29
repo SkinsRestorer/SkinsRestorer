@@ -73,8 +73,8 @@ public class ProtocolLibJoinListener {
 
                     targetPlayer.setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(skinsRestorer, true));
 
-                    data.getProfile().getProperties().removeAll("textures");
-                    data.getProfile().getProperties().put("textures", new WrappedSignedProperty(property.getName(), property.getValue(), property.getSignature()));
+                    data.getProfile().getProperties().removeAll(IProperty.TEXTURES_NAME);
+                    data.getProfile().getProperties().put(IProperty.TEXTURES_NAME, new WrappedSignedProperty(property.getName(), property.getValue(), property.getSignature()));
                     wrapper.setData(list);
                 } catch (SkinRequestException ignored) {
                 }

@@ -120,17 +120,42 @@ public abstract class SkinsRestorerAPI {
      * @param skinName  Skin name
      * @param textures  Property object
      * @param timestamp timestamp string in millis (leave null for current)
+     * @deprecated use {@link #setSkinData(String, IProperty)} or {@link #setSkinData(String, IProperty, long)}
      */
+    @Deprecated
     public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
         if (timestamp == null) {
-            skinStorage.setSkinData(skinName, textures);
+            setSkinData(skinName, textures);
         } else {
-            skinStorage.setSkinData(skinName, textures, timestamp);
+            setSkinData(skinName, textures, timestamp);
         }
     }
 
     /**
-     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> api
+     * Set stored properties of a skin in storage.
+     * Only changes stored data, does not refresh anyone who has the skin.
+     *
+     * @param skinName  Skin name
+     * @param textures  Property object
+     */
+    public void setSkinData(String skinName, IProperty textures) {
+        skinStorage.setSkinData(skinName, textures);
+    }
+
+    /**
+     * Set stored properties of a skin in storage.
+     * Only changes stored data, does not refresh anyone who has the skin.
+     *
+     * @param skinName  Skin name
+     * @param textures  Property object
+     * @param timestamp timestamp long in millis
+     */
+    public void setSkinData(String skinName, IProperty textures, long timestamp) {
+        skinStorage.setSkinData(skinName, textures, timestamp);
+    }
+
+    /**
+     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> API
      * [WARNING] MineSkin api key might be REQUIRED in the future.
      *
      * @param url         pointing to a skin image url
@@ -139,7 +164,7 @@ public abstract class SkinsRestorerAPI {
      * @throws SkinRequestException on error
      */
     public IProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
-        return mineSkinAPI.genSkin(url, skinVariant, null);
+        return mineSkinAPI.genSkin(url, skinVariant);
     }
 
     /**
@@ -158,12 +183,12 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * Returns a <a href="https://textures.minecraft.net/id">TexturesId</a> based on skin
+     * Returns a <a href="https://textures.minecraft.net/id">Texture Url</a> based on skin
      * This is useful for skull plugins like Dynmap or DiscordSRV
-     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>     *
+     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>
      *
      * @param property Profile property
-     * @return textures.minecraft.net url
+     * @return full textures.minecraft.net url
      */
     public String getSkinTextureUrl(IProperty property) {
         if (property == null)
@@ -173,10 +198,30 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
+     * Only returns the id at the end of the url.
+     * Example:
+     * <a href="https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f">
+     *     https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
+     * </a>
+     * Would return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
+     *
+     * @param property Profile property
+     * @return textures.minecraft.net id
+     * @see #getSkinTextureUrl(IProperty)
+     */
+    public String getSkinTextureUrlStripped(IProperty property) {
+        if (property == null)
+            return null;
+
+        return getSkinProfileData(property).getTextures().getSKIN().getStrippedUrl();
+    }
+
+    /**
      * Returns the decoded profile data from the profile property.
      * This is useful for getting the skin data from the property and other information like cape.
      * The user stored in this property may not be the same as the player who has the skin.
      * APIs like MineSkin use multiple shared accounts to generate these properties.
+     * Or it could be the property of another player that the player set their skin to.
      *
      * @param property Profile property
      * @return Decoded profile data as java object
@@ -195,8 +240,20 @@ public abstract class SkinsRestorerAPI {
         skinStorage.getSkinForPlayer(skinName);
     }
 
-    public IProperty createProperty(String name, String value, String signature) {
+    public IProperty createPlatformProperty(IProperty property) {
+        return createPlatformProperty(property.getName(), property.getValue(), property.getSignature());
+    }
+
+    public IProperty createPlatformProperty(String name, String value, String signature) {
         return propertyFactory.createProperty(name, value, signature);
+    }
+
+    /**
+     * @see #createPlatformProperty(String, String, String)
+     */
+    @Deprecated
+    public IProperty createProperty(String name, String value, String signature) {
+        return createPlatformProperty(name, value, signature);
     }
 
     public void removeSkin(String playerName) {
@@ -205,7 +262,7 @@ public abstract class SkinsRestorerAPI {
 
     public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
 
-    public abstract void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException;
+    public abstract void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException;
 
-    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty props);
+    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 }

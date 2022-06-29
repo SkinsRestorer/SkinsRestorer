@@ -21,7 +21,14 @@ package net.skinsrestorer.api.model;
 
 import lombok.Data;
 
+import java.util.regex.Pattern;
+
 @Data
 public class MojangProfileTexture {
     private String url;
+    public static final Pattern URL_STRIP_PATTERN = Pattern.compile("^https?://textures\\.minecraft\\.net/texture/");
+
+    public String getStrippedUrl() {
+        return URL_STRIP_PATTERN.matcher(url).replaceAll("");
+    }
 }

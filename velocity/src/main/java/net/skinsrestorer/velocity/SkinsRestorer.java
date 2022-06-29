@@ -94,9 +94,9 @@ public class SkinsRestorer implements ISRPlugin {
         this.dataFolderPath = dataFolderPath;
         srLogger = new SRLogger(new Slf4LoggerImpl(logger));
         mojangAPI = new MojangAPI(srLogger, Platform.VELOCITY, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, mojangAPI, metricsCounter);
+        mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-        skinsRestorerAPI = new SkinsRestorerVelocityAPI(mojangAPI, skinStorage);
+        skinsRestorerAPI = new SkinsRestorerVelocityAPI();
         skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
     }
 
@@ -223,7 +223,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
-        public SkinsRestorerVelocityAPI(MojangAPI mojangAPI, SkinStorage skinStorage) {
+        public SkinsRestorerVelocityAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
         }
 
@@ -233,13 +233,13 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper playerWrapper, String name) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(name));
+        public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
+            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
         }
 
         @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty props) {
-            skinApplierVelocity.applySkin(playerWrapper.get(Player.class), props);
+        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+            skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
         }
     }
 }

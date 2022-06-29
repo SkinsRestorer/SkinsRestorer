@@ -27,6 +27,7 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -140,24 +141,22 @@ public interface ISRCommand {
                 String value = prop.getValue();
                 String signature = prop.getSignature();
 
-                byte[] decoded = Base64.getDecoder().decode(value);
-                String decodedString = new String(decoded);
-                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-                long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+                MojangProfileResponse profile = SkinsRestorerAPI.getApi().getSkinProfileData(prop);
+                String decodedSkin = profile.getTextures().getSKIN().getUrl();
+                long timestamp = profile.getTimestamp();
                 String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
 
                 sender.sendMessage("§aRequest time: §e" + requestDate);
-                sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
-                sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
+                sender.sendMessage("§aProfileId: §e" + profile.getProfileId());
+                sender.sendMessage("§aName: §e" + profile.getProfileName());
                 sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
                 plugin.getSrLogger().info("§aName: §8" + name);
-                plugin.getSrLogger().info("§aValue : §8" + value);
-                plugin.getSrLogger().info("§aSignature : §8" + signature);
-                plugin.getSrLogger().info("§aValue Decoded: §e" + Arrays.toString(decoded));
+                plugin.getSrLogger().info("§aValue: §8" + value);
+                plugin.getSrLogger().info("§aSignature: §8" + signature);
+                plugin.getSrLogger().info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage(Locale.NO_SKIN_DATA);
