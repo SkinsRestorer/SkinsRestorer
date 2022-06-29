@@ -64,6 +64,7 @@ public class Locale {
     public static String COMPLETIONS_SKIN = "<Skin>";
     public static String COMPLETIONS_SKINNAME = "<SkinName>";
     public static String COMPLETIONS_SKINURL = "<SkinUrl>";
+    public static String COMMAND_SERVER_NOT_ALLOWED_MESSAGE = "&4Error&8: &cCommands have been disabled for the server %server%.";
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";

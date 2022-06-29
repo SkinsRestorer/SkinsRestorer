@@ -82,7 +82,6 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onDrop(wrapCommandSender(sender), playerOrSkin, targets);
     }
 
-
     @Subcommand("props")
     @CommandPermission("%srProps")
     @CommandCompletion("@players")

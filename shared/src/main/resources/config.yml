@@ -67,6 +67,16 @@ DisabledSkins:
     - "steve"
     - "owner"
 
+# Disable all SkinsRestorer commands on specific backend servers. (Only if using proxies)
+NotAllowedCommandServers:
+  Enabled: true
+  # Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.
+  AllowList: false
+  # Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)
+  IfNoServerBlockCommand: false
+  List:
+    - "auth"
+
 # Custom list for the /skins GUI.
 # ShowOnlyCustomGUI will only show CustomGUI.Names in the gui.
 CustomGUI:
