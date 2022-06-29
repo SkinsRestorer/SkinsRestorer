@@ -31,7 +31,6 @@ import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISRCommand;
@@ -133,6 +132,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
         try {
             PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(player.getWrapper().get(Player.class)).getProperties();

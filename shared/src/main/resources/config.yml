@@ -145,6 +145,10 @@ MineskinAPIKey: "key"
 
 # If we break things, you can disable it here.
 
+# Disabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.
+# When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred.
+ResourcePackFix: true
+
 # Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.
 # File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt
 DismountPlayerOnSkinUpdate: true

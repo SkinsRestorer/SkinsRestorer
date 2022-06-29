@@ -170,13 +170,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getName());
-
-                if (C.validUrl(skin)) {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), SkinsRestorerAPI.getApi().genSkinUrl(skin, null));
-                } else {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
-                }
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), plugin.getSkinStorage().getDefaultSkinForPlayer(sender.getName()));
                 sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
                 sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);

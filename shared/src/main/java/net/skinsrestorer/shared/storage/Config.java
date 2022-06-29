@@ -61,6 +61,7 @@ public class Config {
     public static boolean RESTRICT_SKIN_URLS_ENABLED;
     public static List<String> RESTRICT_SKIN_URLS_LIST;
     public static String MINESKIN_API_KEY;
+    public static boolean RESOURCE_PACK_FIX;
     public static boolean DISMOUNT_PLAYER_ON_UPDATE;
     public static boolean REMOUNT_PLAYER_ON_UPDATE;
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE;
@@ -110,6 +111,7 @@ public class Config {
         RESTRICT_SKIN_URLS_ENABLED = config.getBoolean("RestrictSkinUrls.Enabled");
         RESTRICT_SKIN_URLS_LIST = config.getStringList("RestrictSkinUrls.List");
         MINESKIN_API_KEY = config.getString("MineskinAPIKey");
+        RESOURCE_PACK_FIX = config.getBoolean("ResourcePackFix");
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate");
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate");
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate");
