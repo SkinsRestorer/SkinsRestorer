@@ -17,19 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.shared.utils.connections.responses.mineskin;
 
-import lombok.ToString;
-import net.md_5.bungee.connection.LoginResult.Property;
+import lombok.Getter;
 
-@ToString
-public class BungeeProperty extends Property implements IProperty {
-    public BungeeProperty(String name, String value, String signature) {
-        super(name, value, signature);
-    }
-
-    @Override
-    public Object getHandle() {
-        return this;
-    }
+@Getter
+public class MineSkinErrorResponse {
+    private String errorCode;
+    private String error;
 }

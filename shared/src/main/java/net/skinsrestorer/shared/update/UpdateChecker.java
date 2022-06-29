@@ -116,11 +116,12 @@ public class UpdateChecker {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        updateAvailableMessages.add("§a    |------------------|");
         if (bungeeMode) {
-            updateAvailableMessages.add("§a    |   §eProxy Mode§a    |");
+            updateAvailableMessages.add("§a    |------------------|");
+            updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");
         } else if (isBukkit()) {
-            updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§a |");
+            updateAvailableMessages.add("§a    |------------------|");
+            updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§r§a |");
         }
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add(LOG_ROW);

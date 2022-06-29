@@ -57,15 +57,25 @@ DefaultSkins:
   ApplyForPremium: false
   Names:
     - "xknat"
-    - "McLive"
+    - "Pistonmaster"
 
 # Skins in this list will be disabled, so users can't set them.
 # Can be bypassed with 'skinsrestorer.bypassdisabled'.
 DisabledSkins:
   Enabled: false
   Names:
-    - "Steve"
-    - "Owner"
+    - "steve"
+    - "owner"
+
+# Disable all SkinsRestorer commands on specific backend servers. (Only if using proxies)
+NotAllowedCommandServers:
+  Enabled: true
+  # Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.
+  AllowList: false
+  # Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)
+  IfNoServerBlockCommand: false
+  List:
+    - "auth"
 
 # Custom list for the /skins GUI.
 # ShowOnlyCustomGUI will only show CustomGUI.Names in the gui.
@@ -74,7 +84,7 @@ CustomGUI:
   ShowOnlyCustomGUI: true
   Names:
     - "xknat"
-    - "McLive"
+    - "Pistonmaster"
 
 ############
 # Advanced #
@@ -83,7 +93,7 @@ CustomGUI:
 # Below Config options are OPTIONAL and are irrelevant for small servers.
 
 # Allows the usage of per-skin permission.
-# Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.McLive
+# Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster
 # with "skinsrestorer.ownskin" you can set your own playername skin.
 PerSkinPermissions: false
 

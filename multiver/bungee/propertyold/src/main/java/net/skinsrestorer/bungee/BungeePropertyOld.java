@@ -17,17 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.bungee;
 
-import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.ToString;
+import net.md_5.bungee.connection.LoginResult.Property;
+import net.skinsrestorer.api.property.IProperty;
 
 @ToString
-public class VelocityProperty implements IProperty {
+public class BungeePropertyOld implements IProperty {
     private final Property property;
 
-    public VelocityProperty(String name, String value, String signature) {
-        property = new Property(name, value, signature);
+    public BungeePropertyOld(String name, String value, String signature) {
+        this(new Property(name, value, signature));
+    }
+
+    public BungeePropertyOld(Property property) {
+        this.property = property;
     }
 
     @Override
@@ -41,27 +46,12 @@ public class VelocityProperty implements IProperty {
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getValue() {
         return property.getValue();
     }
 
     @Override
-    public void setValue(String value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getSignature() {
         return property.getSignature();
-    }
-
-    @Override
-    public void setSignature(String signature) {
-        throw new UnsupportedOperationException();
     }
 }

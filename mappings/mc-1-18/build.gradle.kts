@@ -5,6 +5,6 @@ tasks {
 }
 
 dependencies.apply {
-    compileOnly("io.papermc.paper:paper-server:1.18.1-R0.1-SNAPSHOT:mojang-mapped@jar")
-    compileOnly("org.spigotmc:spigot:1.18-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.18-R0.1-SNAPSHOT:remapped-mojang@jar")
+    compileOnly("org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT")
 }

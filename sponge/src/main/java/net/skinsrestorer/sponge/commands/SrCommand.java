@@ -125,7 +125,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get("textures");
+        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME);
         return properties.stream()
                 .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
                 .collect(Collectors.toList());

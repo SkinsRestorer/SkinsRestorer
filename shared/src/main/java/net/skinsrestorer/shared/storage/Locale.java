@@ -41,13 +41,14 @@ public class Locale {
     };
     public static String PREFIX = "&e[&2SkinsRestorer&e] ";
     public static String HELP_HELP_COMMAND = " [help]";
+    public static String HELP_SKIN_SET = "Changes your skin.";
+    public static String HELP_SKIN_SET_OTHER = "Sets the skin for a target player.";
+    public static String HELP_SKIN_SET_OTHER_URL = "Sets the skin from a url for a target player.";
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
     public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of a target player.";
-    public static String HELP_SKIN_SET = "Set the skin of another player.";
-    public static String HELP_SKIN_SET_OTHER = "Sets the skin for a target player.";
-    public static String HELP_SKIN_SET_OTHER_URL = "Set a skin by image_url.png link";
+
     public static String HELP_SR_RELOAD = "Reloads the configuration file.";
     public static String HELP_SR_STATUS = "Checks plugin needed API services.";
     public static String HELP_SR_DROP = "Removes players or skin data.";
@@ -63,6 +64,7 @@ public class Locale {
     public static String COMPLETIONS_SKIN = "<Skin>";
     public static String COMPLETIONS_SKINNAME = "<SkinName>";
     public static String COMPLETIONS_SKINURL = "<SkinUrl>";
+    public static String COMMAND_SERVER_NOT_ALLOWED_MESSAGE = "&4Error&8: &cCommands have been disabled for the server %server%.";
     public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
     public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
     public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
