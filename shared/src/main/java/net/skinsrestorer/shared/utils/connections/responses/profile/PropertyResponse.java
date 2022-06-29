@@ -20,9 +20,10 @@
 package net.skinsrestorer.shared.utils.connections.responses.profile;
 
 import lombok.Getter;
+import net.skinsrestorer.api.property.IProperty;
 
 @Getter
-public class PropertyResponse {
+public class PropertyResponse implements IProperty {
     private String name;
     private String value;
     private String signature;

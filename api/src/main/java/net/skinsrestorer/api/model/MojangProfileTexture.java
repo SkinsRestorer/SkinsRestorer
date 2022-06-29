@@ -17,19 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.property;
+package net.skinsrestorer.api.model;
 
-import net.skinsrestorer.api.serverinfo.Platform;
+import lombok.Data;
 
-public class PropertyRegistry {
-    public static Class<? extends IProperty> selectPropertyForPlatform(Platform platform) {
-        if (platform == Platform.BUKKIT) {
-            return BukkitProperty.class;
-        } else if (platform == Platform.BUNGEECORD) {
-            return BungeeProperty.class;
-        } else if (platform == Platform.VELOCITY) {
-            return VelocityProperty.class;
-        }
-        return null;
+import java.util.regex.Pattern;
+
+@Data
+public class MojangProfileTexture {
+    private String url;
+    public static final Pattern URL_STRIP_PATTERN = Pattern.compile("^https?://textures\\.minecraft\\.net/texture/");
+
+    public String getStrippedUrl() {
+        return URL_STRIP_PATTERN.matcher(url).replaceAll("");
     }
 }

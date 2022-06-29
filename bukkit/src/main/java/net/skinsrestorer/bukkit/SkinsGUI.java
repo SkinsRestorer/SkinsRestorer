@@ -135,7 +135,7 @@ public class SkinsGUI extends ItemStack implements Listener {
         is.setItemMeta(sm);
 
         try {
-            BukkitHeadAPI.setSkull(is, ((Property) property).getValue());
+            BukkitHeadAPI.setSkull(is, property);
         } catch (Exception e) {
             log.info("ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
             e.printStackTrace();

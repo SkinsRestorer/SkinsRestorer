@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.velocity.listener;
 
+import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import lombok.Getter;
@@ -33,20 +34,19 @@ import net.skinsrestorer.velocity.SkinsRestorer;
 public class GameProfileRequest extends LoginProfileListener {
     private final SkinsRestorer plugin;
 
-    // TODO: make async, add #getSkinForPlayer()
     @Subscribe
-    public void onGameProfileRequest(GameProfileRequestEvent event) {
+    public EventTask onGameProfileRequest(GameProfileRequestEvent event) {
         LoginProfileEvent wrapped = wrap(event);
         if (handleSync(wrapped))
-            return;
+            return null;
 
-        handleAsync(wrapped).ifPresent(name -> {
+        return EventTask.async(() -> handleAsync(wrapped).ifPresent(name -> {
             try {
                 event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), name));
             } catch (SkinRequestException e) {
                 plugin.getSrLogger().debug(e);
             }
-        });
+        }));
     }
 
     private LoginProfileEvent wrap(GameProfileRequestEvent event) {
