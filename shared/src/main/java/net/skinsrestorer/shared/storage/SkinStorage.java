@@ -643,9 +643,9 @@ public class SkinStorage implements ISkinStorage {
         return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
 
-    public boolean purgeOldSkins(int Days) {
+    public boolean purgeOldSkins(int days) {
         int removedSkins = 0;
-        long targetPurgeTimestamp = ((long) Days * 86400 * 1000) - System.currentTimeMillis();
+        long targetPurgeTimestamp = ((long) days * 86400 * 1000) - System.currentTimeMillis();
         if (Config.MYSQL_ENABLED) {
             // delete if name not start with " " and timestamp below targetPurgeTimestamp
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick NOT LIKE ' %' AND NOT " + Config.MYSQL_PLAYER_TABLE + ".timestamp 0 AND " + Config.MYSQL_PLAYER_TABLE + ".timestamp<=?", targetPurgeTimestamp);
