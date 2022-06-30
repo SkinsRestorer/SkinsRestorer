@@ -233,7 +233,7 @@ public interface ISRCommand {
         });
     }
 
-    default void onPurgeOldData(ISRCommandSender sender, int days, Boolean ClearCustomSkins) {
+    default void onPurgeOldData(ISRCommandSender sender, int days, boolean ClearCustomSkins) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) { // Only make console perform this command
