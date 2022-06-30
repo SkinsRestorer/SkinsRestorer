@@ -227,6 +227,7 @@ public interface ISRCommand {
                     plugin.getSkinStorage().setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
+                sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
             }
