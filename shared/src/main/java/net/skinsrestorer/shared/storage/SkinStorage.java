@@ -19,8 +19,6 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -645,7 +643,7 @@ public class SkinStorage implements ISkinStorage {
 
     public boolean purgeOldSkins(int days) {
         int removedSkins = 0;
-        long targetPurgeTimestamp = ((long) days * 86400 * 1000) - System.currentTimeMillis();
+        long targetPurgeTimestamp = System.currentTimeMillis() - ((long) days * 86400 * 1000);
         if (Config.MYSQL_ENABLED) {
             // delete if name not start with " " and timestamp below targetPurgeTimestamp
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick NOT LIKE ' %' AND NOT " + Config.MYSQL_PLAYER_TABLE + ".timestamp 0 AND " + Config.MYSQL_PLAYER_TABLE + ".timestamp<=?", targetPurgeTimestamp);
