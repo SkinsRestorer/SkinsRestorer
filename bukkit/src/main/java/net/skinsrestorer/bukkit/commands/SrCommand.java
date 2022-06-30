@@ -117,7 +117,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     }
 
     @Subcommand("purgeolddata")
-    @Description("Purge old storage data being x days old")
+    @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold> [ClearCustomSkins]")
     public void onPurgeOldData(CommandSender sender, int days) {
         onPurgeOldData(wrapCommandSender(sender), days);

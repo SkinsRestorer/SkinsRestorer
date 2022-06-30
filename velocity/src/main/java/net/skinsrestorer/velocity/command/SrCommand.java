@@ -26,7 +26,6 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
-import java.util.Collections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
@@ -36,6 +35,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,7 +114,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     }
 
     @Subcommand("purgeolddata")
-    @Description("Purge old storage data being x days old")
+    @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold> [ClearCustomSkins]")
     public void onPurgeOldData(CommandSource source, int days) {
         onPurgeOldData(wrapCommandSender(source), days);
