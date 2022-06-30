@@ -643,48 +643,39 @@ public class SkinStorage implements ISkinStorage {
         return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
 
-    public int purgeOldSkins(int Days, Boolean custom) {
+    public boolean purgeOldSkins(int Days) {
         int removedSkins = 0;
-        long target = ((long) Days * 86400 * 1000);
+        long targetPurgeTimestamp = ((long) Days * 86400 * 1000) - System.currentTimeMillis();
         if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick NOT LIKE ' %' AND timestamp <>0 AND timestamp=<?", target);
-
-
-            // delete if name not startwith " " and timestamp above n
-
+            // delete if name not start with " " and timestamp below targetPurgeTimestamp
+            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick NOT LIKE ' %' AND timestamp <>0 AND timestamp=<?", targetPurgeTimestamp);
+            return true;
         } else {
             List<Path> files = new ArrayList<>();
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
                 stream.forEach(files::add);
+
+                for (Path file : files) {
+                    try {
+                        if (!Files.exists(file))
+                            continue;
+
+                        List<String> lines = Files.readAllLines(file);
+                        Long timestamp = Long.valueOf(lines.get(2));
+
+                        if (!(timestamp.equals(0L)) && timestamp < targetPurgeTimestamp) {
+                            Files.deleteIfExists(file);
+                            removedSkins++;
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            files.sort(Comparator.comparing(o -> o.getFileName().toString()));
-
-
-            for (Path file : files) {
-                try {
-                    if (!Files.exists(file))
-                        continue;
-
-                    List<String> lines = Files.readAllLines(file);
-                    Long timestamp = Long.valueOf(lines.get(2));
-
-                    /*
-                    String decodedString = new String(Base64.getDecoder().decode(lines.get(0)));
-                    JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                    Long timestamp = jsonObject.get("timestamp").getAsLong();
-                    */
-
-                    if (!(timestamp.equals(0L)) && timestamp < target) {
-                        Files.deleteIfExists(file);
-                        removedSkins++;
-                    }
-                } catch (Exception ignored) {
-                }
-            }
         }
-        return removedSkins;
+
+        return false;
     }
 }
