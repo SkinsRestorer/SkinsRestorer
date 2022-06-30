@@ -20,8 +20,6 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -36,7 +34,9 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public interface ISRCommand {
     @SuppressWarnings("unused")
@@ -202,7 +202,7 @@ public interface ISRCommand {
 
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (!sender.isConsole()) { // Only make console perform this command
+            if (!sender.isConsole()) {
                 sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
                 return;
             }
@@ -232,6 +232,23 @@ public interface ISRCommand {
             }
         });
     }
+
+    default void onPurgeOldData(ISRCommandSender sender, int days) {
+        ISRPlugin plugin = getPlugin();
+        plugin.runAsync(() -> {
+            if (!sender.isConsole()) {
+                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
+                return;
+            }
+            if (plugin.getSkinStorage().purgeOldSkins(days)) {
+                sender.sendMessage(Locale.PREFIX + "§aSuccessfully purged old skins!");
+            } else {
+                sender.sendMessage(Locale.PREFIX + "§4A error occurred while purging old skins!");
+            }
+        });
+    }
+
+
 
     String getPlatformVersion();
 
