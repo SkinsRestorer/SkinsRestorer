@@ -13,136 +13,136 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Clears your skin."
-help-SkinClear-Other: "Clears the skin of a target player."
-help-SkinUpdate: "Updates your skin."
-help-SkinUpdate-Other: "Updates the skin of a target player."
-help-SkinSet: "Set the skin of another player."
-help-Skinset-Other: "Sets the skin for a target player"
-help-SkinSet-Other-Url: "Set a skin by image_url.png link"
+help-SkinClear: "스킨을 초기화해요."
+help-SkinClear-Other: "대상 플레이어의 스킨을 초기화해요."
+help-SkinUpdate: "스킨을 업데이트해요."
+help-SkinUpdate-Other: "대상 플레이어의 스킨을 업데이트해요."
+help-SkinSet: "다른 플레이어의 스킨을 설정해요."
+help-Skinset-Other: "대상 플레이어의 스킨을 설정해요."
+help-SkinSet-Other-Url: "사진 URL로 스킨을 설정해요."
 #Admin help lines appearing in "/sr" OR "/sr help"
-help-SRreload: "Reloads the configuration file."
-help-SRStatus: "Checks plugin needed API services."
-help-SRDrop: "Removes players or skin data."
-help-SRProps: "Displays the players current skin properties."
-help-SRApply-Skin: "Re-apply the skin for target user."
-help-SRCreateCustom: "Create a custom server wide skin."
+help-SRreload: "설정 파일을 다시 불러와요."
+help-SRStatus: "API 서비스가 필요한 플러그인을 확인해요."
+help-SRDrop: "플레이어의 스킨 데이터를 제거해요."
+help-SRProps: "플레이어의 현재 스킨 속성을 표시해요."
+help-SRApply-Skin: "대상 플레이어에게 스킨을 다시 적용시켜요."
+help-SRCreateCustom: "맞춤 서버 스킨을 생성해요."
 #Syntax messages that appear when typing the command & in help
-syntax-Defaultcommand: " <skin/url>"
-syntax-SkinSet: " <skin>"
-syntax-SkinSet-Other: " <target> <skin/url>"
+syntax-Defaultcommand: "<스킨/URL>"
+syntax-SkinSet: "<스킨>"
+syntax-SkinSet-Other: "<대상> <스킨/URL>"
 syntax-SkinUrl: " <SkinUrl> [classic/slim]"
-syntax-SkinUpdate-Other: " <target>"
-syntax-SkinClear-Other: " <target>"
+syntax-SkinUpdate-Other: "<대상>"
+syntax-SkinClear-Other: "<대상>"
 #Auto-completion messages that appear when typing the command
-completions-Skin: "<Skin>"
-completions-Skinname: "<SkinName>"
-completions-SkinUrl: "<SkinUrl>"
+completions-Skin: "<스킨>"
+completions-Skinname: "<스킨 이름>"
+completions-SkinUrl: "<스킨 URL>"
 ####################
 #Success messages #
 ####################
 #Success message sent to player whose skin was changed
-skinChangeSuccess: "&2Your skin has been changed."
+skinChangeSuccess: "&2스킨이 변경됐어요."
 #Success message displayed when using /sr set <player> <skin> command
-adminSetSkin: "&2You set %player's skin."
+adminSetSkin: "&2%player님의 스킨을 설정했어요."
 #Success message to player whose skin was cleared
-skinClearSuccess: "&2Your skin has been cleared."
+skinClearSuccess: "&2스킨이 초기화됐어요."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Skin cleared for player %player."
+skinClearIssuer: "&2%player님의 스킨이 초기화됐어요."
 #Success message to player whose skin was updated
-skinUpdateSuccess: "&2Your skin has been updated."
+skinUpdateSuccess: "&2스킨이 업데이트됐어요."
 #Success message sent to player that used /sr update <player> command
-skinUpdateIssuer: "&2Skin updated for player %player."
+skinUpdateIssuer: "&2%player님의 스킨이 업데이트됐어요."
 #Success message when using /sr drop <player/skin> command
-dataDropped: "&2Data dropped for %playerOrSkin %targets."
+dataDropped: "&2%playerOrSkin 유형의 데이터가 일치하는 대상 플레이어를 불러왔어요: %targets."
 #Success message when using /sr CreateCustom command
-skinCreateSuccess: "&2Skin %skin has been created!"
+skinCreateSuccess: "&2%skin 스킨이 생성됐어요!"
 #Success message when using /sr ApplySkin command
-adminApplySkinSuccess: "&2Player skin has been refreshed!"
+adminApplySkinSuccess: "&2플레이어의 스킨이 새로고침됐어요!"
 #/sr reload
-reload: "&2Config and Locale has been reloaded!"
+reload: "&2설정과 언어가 불러와졌어요!"
 ############################
 #Wait & Cooldown messages #
 ############################
 #Informing the player when we did queue a custom skin.
-urlSkin-waitMinute: "&2Uploading skin, please wait...(This may take up some time)"
+urlSkin-waitMinute: "&2스킨을 불러오는 중이에요, 잠시 기다려주세요... (시간이 소요될 수 있어요.)"
 #When a skin has been requested to many times from Mojang directly.
-wait-a-Minute: "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)"
+wait-a-Minute: "&4오류&8: &c스킨을 요청하기 전 1분을 기다려주세요. (속도 제한)"
 #Message sent to player that is on cooldown when using /skin command too fast without having the skinsrestorer.bypasscooldown permission
-skinCooldown: "&4Error&8: &cYou can change your skin again in &e%s &cseconds."
+skinCooldown: "&4오류&8: &e%s&c초 후 스킨을 다시 변경할 수 있어요."
 ########################
 #Permissions messages #
 ########################
 #When the player does have access to "/skin" but not "/skin url"
-noPermission-Url: "&4Error&8: &cYou don't have permission to set skins by URL."
+noPermission-Url: "&4오류&8: &cURL로 스킨을 설정할 권한이 없어요."
 #This is thrown on config.PerSkinPermissions
-noPermission-Skin: "&4Error&8: &cYou don't have permission to set this skin."
+noPermission-Skin: "&4오류&8: &c스킨을 설정할 권한이 없어요."
 #Message sent when a player wants to use a disabled skin without having the skinsrestorer.bypassdisabled permission
-skinDisabled: "&4Error&8: &cThis skin is disabled by an administrator."
+skinDisabled: "&4오류&8: &c해당 스킨은 관리자에 의해 비활성화됐어요."
 #config.RestrictSkinUrls will make this line appear.
-urlSkin-DomainBlocked: "&4Error&8: &cThis domain has not been allowed by the administrator."
+urlSkin-DomainBlocked: "&4오류&8: &c해당 도메인은 관리자에 의해 차단됐어요."
 ##################
 #Error messages #
 ##################
 #Thrown when no premium player was found from the Mojang API
-error-Not-Premium: "&4Error&8: &cPremium player with that name does not exist."
+error-Not-Premium: "&4오류&8: &c그 이름을 지닌 프리미엄 플레이어가 존재하지 않아요."
 #When an invalid skin (example: "null") is being set
-error-Invalid-Player: "&4Error&8: &c%player is not a valid username or URL."
+error-Invalid-Player: "&4오류&8: &c%player은(는) 유효한 사용자 이름이나 URL이 아니에요."
 #When an admin does try to update the skin of another player
-error-NoSkin: "&4Error&8: &cThis player has no skin set."
+error-NoSkin: "&4오류&8: &c해당 플레이어는 스킨이 지정되지 않았어요."
 #When an admin does run /sr props on a player that does have no skin
-error-NoSkin-Data: "&4Error&8: &cNo skin data acquired! Does this player have a skin?"
+error-NoSkin-Data: "&4오류&8: &c스킨 데이터를 가져오지 못했어요! 해당 플레이어가 스킨을 가지고 있나요?"
 #On updating disabled OR invalid username OR api error (this does occur when api does time out)
-error-Updating-Skin: "&4Error&8: &cAn error occurred while updating your skin. Please try again later!"
+error-Updating-Skin: "&4오류&8: &c스킨을 변경하던 도중 오류가 발생했어요. 나중에 다시 시도해주세요!"
 #When a player does try to run /skin update while wearing a skin url
-error-Updating-Url: "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url"
+error-Updating-Url: "&4오류&8: &c맞춤 URL 스킨을 업데이트할 수 없어요! \n&c/skin url 명령어로 다시 요청하세요."
 #When a player does try to run /skin update on a skin that has update disabled (skin with 3rd line "0")
-error-Updating-CustomSkin: "&4Error&8: &cSkin can't be updated because its custom."
+error-Updating-CustomSkin: "&4오류&8: &c맞춤 스킨이기 때문에 업데이트될 수 없어요."
 #When a player runs /skin url but does not provide an url
-error-Invalid-SkinUrl: "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl"
+error-Invalid-SkinUrl: "&4오류&8: &c유효하지 않은 스킨 URL 또는 형식이에요, \n&cimgur에 스킨을 올려서 사진 주소를 복사해보세요 \n&c가이드 보기: &c&oskinsrestorer.net/skinurl"
 #When a player runs /sr ApplySkin but the skin could not be refreshed
-adminApplySkinError: "&4ERROR&8: &cplayer skin could NOT be refreshed!"
+adminApplySkinError: "&4오류&8: &c플레이어의 스킨을 새로고침하지 못했어요!"
 ######################
 #SkinsMenu messages #
 ######################
 #Messages appearing when using /skins (gui)
-skinsMenu-Open: "&2Opening the skins menu..."
-skinsMenu-Title: "&9Skins Menu - Page %page"
-skinsMenu-Select-Skin: "&2Click to select this skin"
-skinsMenu-PreviousPage: "&e&l«&7 Previous Page&e&l «"
-skinsMenu-Clear-Skin: "&c&l[ &7Clear Skin&c&l ]"
-skinsMenu-NexstPage: "&a&l»&7 Next Page&a&l »"
+skinsMenu-Open: "&2스킨 메뉴를 열고 있어요..."
+skinsMenu-Title: "&9스킨 메뉴 - 페이지 %page"
+skinsMenu-Select-Skin: "&2클릭해서 해당 스킨을 선택해요"
+skinsMenu-PreviousPage: "&e&l«&7 이전 페이지&e&l «"
+skinsMenu-Clear-Skin: "&c&l[ &7스킨 초기화&c&l ]"
+skinsMenu-NexstPage: "&a&l»&7 다음 페이지&a&l »"
 #######
 #API #
 #######
 #These messages can occur because: (There was an issue between you and our required web services. OR Error throw by the web service.)
-error-SkinUrl-Timeout: "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)"
-error-Generic-error: "&4Error&8: &cAn error occurred while requesting skin data, please try again later!"
-error-MOJANG-API-OFFLINE: "&4Error&8: &cMojang API is currently offline, sadly we were not able to find your archived skin. \n&cPlease try again later..."
-error-MS-API-OFFLINE: "&4Error&8: &cMineSkin API is currently offline, sadly we can't create custom skin's at this moment. \n&cPlease try again later..."
-error-SERVER-OFFLINE: "&4Error&8: &cServer is having connection issues, please try again later..."
-alt-API-FAILED: "&4Error&8: &cSkin Data API is overloaded, please try again later!"
-ms-API-FAILED: "&4Error&8: &cMineSkin API is overloaded, please try again later!"
+error-SkinUrl-Timeout: "&4MineSkin 오류&8: &c스킨을 업로드하던 도중 API에 오류가 발생했어요. 나중에 다시 시도해주세요."
+error-Generic-error: "&4오류&8: &c스킨 데이터를 요청하던 도중 오류가 발생했어요, 나중에 다시 시도해주세요!"
+error-MOJANG-API-OFFLINE: "&4오류&8: &cMojang API가 현재 오프라인이에요, 슬프게도 이전에 저장된 스킨을 찾지 못했어요. \n&c나중에 다시 시도해주세요..."
+error-MS-API-OFFLINE: "&4오류&8: &cMineSkin API가 현재 오프라인이에요, 슬프게도 현재는 맞춤 스킨을 생성할 수 없어요. \n&c나중에 다시 시도해주세요..."
+error-SERVER-OFFLINE: "&4오류&8: &c서버가 연결 오류를 겪고 있어요, 나중에 다시 시도해주세요..."
+alt-API-FAILED: "&4오류&8: &c스킨 데이터 API가 과부화됐어요, 나중에 다시 시도해주세요!"
+ms-API-FAILED: "&4오류&8: &cMineSkin API가 과부화됐어요, 나중에 다시 시도해주세요!"
 ###############
 #CUSTOM HELP #
 ###############
 #[!WARNING!] Only works if "Skinsrestorer config.yml -> "EnableCustomHelp: true" [!WARNING!]
 customHelpIFenabled:
   - "&3[&2&lSkinsRestorer&3] &7- &f&lv%ver%"
-  - "    &2/skin <skinname> &7-&f Shortened version of \"/skin set\"."
-  - "    &2/skin set <skinname> &7-&f Changes your skin."
-  - "    &2/skin url <skinname> &7-&f Set a skin by Image_url.png"
-  - "    &2/skin clear &7-&f Clears your skin."
-  - "    &2/skin update &7-&f Updates your skin."
+  - "    &2/skin <스킨 이름> &7-&f \"/skin set\" 명령어의 축약 버전이에요."
+  - "    &2/skin set <스킨 이름> &7-&f 스킨을 변경해요."
+  - "    &2/skin url <스킨 이름> &7-&f사진 URL로 스킨을 설정해요."
+  - "    &2/skin clear &7-&f 스킨을 초기화해요."
+  - "    &2/skin update &7-&f 스킨을 업데이트해요."
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
 #################
 #Miscellaneous #
 #################
 #When everything is working as intended :)
-status-OK: "&2Mojang API connection successful!"
+status-OK: "&2Mojang API와 연결했어요!"
 #Shown when you're using an outdated version of SkinsRestorer
-outdated: "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
+outdated: "&4SkinRestorer 구버전을 사용하고 있어요!\n&cSpigot에서 최신 버전으로 업데이트해주세요:\n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 #End #
 #please do not remove below version string!
 version: '${version}'
