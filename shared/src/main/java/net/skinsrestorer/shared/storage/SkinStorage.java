@@ -646,7 +646,7 @@ public class SkinStorage implements ISkinStorage {
 
         if (Config.MYSQL_ENABLED) {
             // delete if name not start with " " and timestamp below targetPurgeTimestamp
-            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND NOT " + Config.MYSQL_SKIN_TABLE + ".timestamp 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
+            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND " + Config.MYSQL_SKIN_TABLE + ".timestamp NOT LIKE 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
             return true;
         } else {
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
