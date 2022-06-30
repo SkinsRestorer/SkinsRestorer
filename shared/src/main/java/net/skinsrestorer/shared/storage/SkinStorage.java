@@ -642,18 +642,15 @@ public class SkinStorage implements ISkinStorage {
     }
 
     public boolean purgeOldSkins(int days) {
-        int removedSkins = 0;
         long targetPurgeTimestamp = System.currentTimeMillis() - ((long) days * 86400 * 1000);
         if (Config.MYSQL_ENABLED) {
             // delete if name not start with " " and timestamp below targetPurgeTimestamp
             mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND NOT " + Config.MYSQL_SKIN_TABLE + ".timestamp 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
             return true;
         } else {
-            List<Path> files = new ArrayList<>();
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                stream.forEach(files::add);
 
-                for (Path file : files) {
+                for (Path file : stream) {
                     try {
                         if (!Files.exists(file))
                             continue;
@@ -663,7 +660,6 @@ public class SkinStorage implements ISkinStorage {
 
                         if (!(timestamp.equals(0L)) && timestamp < targetPurgeTimestamp) {
                             Files.deleteIfExists(file);
-                            removedSkins++;
                         }
                     } catch (Exception ignored) {
                     }
