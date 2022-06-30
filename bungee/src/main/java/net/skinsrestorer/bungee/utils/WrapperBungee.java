@@ -62,6 +62,11 @@ public class WrapperBungee {
             }
 
             @Override
+            public void sendDataToServer(String channel, byte[] data) {
+                player.getServer().sendData(channel, data);
+            }
+
+            @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);
             }

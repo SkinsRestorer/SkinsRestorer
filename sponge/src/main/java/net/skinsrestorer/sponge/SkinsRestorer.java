@@ -31,6 +31,7 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -87,6 +88,7 @@ public class SkinsRestorer implements ISRPlugin {
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     private SpongeCommandManager manager;
     @Inject
     private PluginContainer container;
@@ -151,7 +153,7 @@ public class SkinsRestorer implements ISRPlugin {
 
             prepareACF(manager, srLogger);
 
-            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(skinCommand);
             manager.registerCommand(new SrCommand(this));
         });
     }
@@ -204,6 +206,11 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+    }
+
+    @Override
+    public ISkinCommand getSkinCommand() {
+        return null;
     }
 
     private static class WrapperFactorySponge extends WrapperFactory {

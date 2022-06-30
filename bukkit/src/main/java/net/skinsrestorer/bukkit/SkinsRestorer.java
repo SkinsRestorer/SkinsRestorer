@@ -94,7 +94,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private boolean updateDownloaded = false;
     private UpdateChecker updateChecker;
     private UpdateDownloaderGithub updateDownloader;
-    private SkinCommand skinCommand;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     private PaperCommandManager manager;
 
     @SuppressWarnings("unchecked")
@@ -353,7 +353,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         prepareACF(manager, srLogger);
 
-        skinCommand = new SkinCommand(this);
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
