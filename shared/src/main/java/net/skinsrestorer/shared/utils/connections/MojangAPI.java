@@ -21,13 +21,10 @@ package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.property.PropertyRegistry;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -60,33 +57,11 @@ public class MojangAPI implements IMojangAPI {
     private final SRLogger logger;
     private final Platform platform;
     private final MetricsCounter metricsCounter;
-    private final Class<? extends IProperty> propertyClass;
 
     public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
         this.logger = logger;
         this.platform = platform;
         this.metricsCounter = metricsCounter;
-        propertyClass = PropertyRegistry.selectPropertyForPlatform(platform);
-    }
-
-    /**
-     * Generates a platform specific property. (or generic property if sponge)
-     *
-     * @param name      Name of the property
-     * @param value     Value of the property
-     * @param signature Signature of the property
-     * @return A platform specific property
-     */
-    public IProperty createProperty(String name, String value, String signature) {
-        // use our own property class if we are on sponge
-        if (platform == Platform.SPONGE)
-            return new GenericProperty(name, value, signature);
-
-        try {
-            return (IProperty) ReflectionUtil.invokeConstructor(propertyClass, name, value, signature);
-        } catch (ReflectionException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     /**
@@ -99,14 +74,14 @@ public class MojangAPI implements IMojangAPI {
     public Optional<IProperty> getSkin(String nameOrUuid) throws SkinRequestException {
         final String finalNameOrUuid = nameOrUuid.trim().toUpperCase();
         if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(finalNameOrUuid))) {
-            return Optional.of(createProperty("textures", HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature));
+            return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature));
         }
 
         final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
         if (skin.isPresent()) {
             return skin;
         } else {
-            if (!nameOrUuid.matches("[a-f0-9]{32}"))
+            if (!nameOrUuid.matches("[a-f\\d]{32}"))
                 nameOrUuid = getUUIDStartMojang(nameOrUuid);
 
             return getProfileStartMojang(nameOrUuid);
@@ -223,7 +198,7 @@ public class MojangAPI implements IMojangAPI {
                 final AshconResponse.Textures.Raw rawTextures = textures.getRaw();
 
                 if (!(rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()))
-                    return Optional.of(createProperty("textures", rawTextures.getValue(), rawTextures.getSignature()));
+                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(rawTextures));
             }
         } catch (Exception ignored) {
         }
@@ -239,7 +214,7 @@ public class MojangAPI implements IMojangAPI {
                 final PropertyResponse property = obj.getProperties()[0];
 
                 if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
-                    return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
+                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
             }
         } catch (Exception ignored) {
         }
@@ -260,7 +235,7 @@ public class MojangAPI implements IMojangAPI {
 
                 PropertyResponse property = raw.getProperties()[0];
                 if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
-                    return Optional.of(createProperty("textures", property.getValue(), property.getSignature()));
+                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(property));
             }
         } catch (Exception ignored) {
         }

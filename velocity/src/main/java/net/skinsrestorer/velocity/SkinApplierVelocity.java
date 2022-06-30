@@ -64,13 +64,13 @@ public class SkinApplierVelocity {
         List<Property> properties = new ArrayList<>(original);
         boolean applied = false;
 
-        for (int i = 0; i < properties.size(); i++) {
-            Property lProperty = properties.get(i);
-
-            if ("textures".equals(lProperty.getName())) {
+        int i = 0;
+        for (Property lProperty : properties) {
+            if (IProperty.TEXTURES_NAME.equals(lProperty.getName())) {
                 properties.set(i, property);
                 applied = true;
             }
+            i++;
         }
 
         if (!applied)

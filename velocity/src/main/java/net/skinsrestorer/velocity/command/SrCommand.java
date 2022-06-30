@@ -26,6 +26,7 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.util.GameProfile;
+import java.util.Collections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
@@ -134,7 +135,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         List<GameProfile.Property> prop = player.getWrapper().get(Player.class).getGameProfileProperties();
 
         if (prop == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         return prop.stream().map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature())).collect(Collectors.toList());

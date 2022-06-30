@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.GenericProperty;
@@ -111,7 +112,7 @@ public class SkinStorage implements ISkinStorage {
         final String skin = getDefaultSkinName(playerName);
 
         if (C.validUrl(skin)) {
-            return mineSkinAPI.genSkin(skin, null, null);
+            return mineSkinAPI.genSkin(skin, null);
         } else {
             return getSkinForPlayer(skin);
         }
@@ -220,7 +221,7 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        return mojangAPI.createProperty("textures", value, signature);
+        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, value, signature);
     }
 
     @Override
@@ -399,7 +400,7 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), mojangAPI.createProperty("textures", crs.getString("Value"), crs.getString("Signature")));
+                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
             } catch (SQLException ignored) {
@@ -451,7 +452,7 @@ public class SkinStorage implements ISkinStorage {
                 do {
                     if (i >= number && foundSkins <= 25) {
                         GenericProperty prop = new GenericProperty();
-                        prop.setName("textures");
+                        prop.setName(IProperty.TEXTURES_NAME);
                         prop.setValue(crs.getString("Value"));
                         prop.setSignature(crs.getString("Signature"));
                         list.put(crs.getString("Nick"), prop);
@@ -485,7 +486,7 @@ public class SkinStorage implements ISkinStorage {
                         List<String> lines = Files.readAllLines(file);
 
                         GenericProperty prop = new GenericProperty();
-                        prop.setName("textures");
+                        prop.setName(IProperty.TEXTURES_NAME);
                         prop.setValue(lines.get(0));
                         prop.setSignature(lines.get(1));
                         list.put(skinName, prop);

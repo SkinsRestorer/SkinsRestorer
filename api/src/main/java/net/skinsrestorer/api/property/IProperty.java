@@ -19,40 +19,19 @@
  */
 package net.skinsrestorer.api.property;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 /**
  * Easy way of interacting with properties across multiple platforms.
  */
 public interface IProperty {
-    Object getHandle();
+    String TEXTURES_NAME = "textures";
 
     String getName();
 
-    void setName(String name);
-
     String getValue();
-
-    void setValue(String value);
 
     String getSignature();
 
-    void setSignature(String signature);
-
-    default boolean valuesFromJson(JsonObject obj) {
-        if (obj.has("properties")) {
-            JsonArray properties = obj.getAsJsonArray("properties");
-            if (properties.size() > 0) {
-                JsonObject propertiesObject = properties.get(0).getAsJsonObject();
-
-                setSignature(propertiesObject.get("signature").getAsString());
-                setValue(propertiesObject.get("value").getAsString());
-
-                return true;
-            }
-        }
-
-        return false;
+    default Object getHandle() {
+        return this;
     }
 }
