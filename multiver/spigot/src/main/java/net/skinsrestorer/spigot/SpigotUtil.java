@@ -17,24 +17,23 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.spigot;
 
-import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.skinsrestorer.api.interfaces.ISRConsole;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
-@RequiredArgsConstructor
-public class BungeeConsoleImpl implements ISRConsole {
-    private final CommandSender commandSender;
-
-    @Override
-    public void sendMessage(String message) {
-        commandSender.sendMessage(TextComponent.fromLegacyText(message));
+public class SpigotUtil {
+    public static YamlConfiguration getSpigotConfig(Server server) {
+        return server.spigot().getConfig();
     }
 
-    @Override
-    public boolean isReady() {
-        return commandSender != null;
+    public static boolean hasPassengerMethods() {
+        try {
+            Entity.class.getMethod("getPassengers");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
     }
 }

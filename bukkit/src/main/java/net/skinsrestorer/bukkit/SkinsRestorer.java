@@ -56,6 +56,7 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.spigot.SpigotUtil;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -79,7 +80,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer().getConsoleSender());
+    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getServer().getLogger(), bukkitConsole), true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -126,6 +128,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
+        bukkitConsole.setConsoleCommandSender(getServer().getConsoleSender());
         srLogger.load(dataFolderPath);
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
@@ -278,7 +281,13 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Init listener
             if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
                 Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
-                Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
+
+                try {
+                    Class.forName("org.bukkit.event.player.PlayerResourcePackStatusEvent");
+                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
+                } catch (ClassNotFoundException e) {
+                    // ignored
+                }
             } else {
                 srLogger.info("Hooking into ProtocolLib for instant skins on join!");
                 new ProtocolLibJoinListener(this);
@@ -360,10 +369,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private void checkBungeeMode() {
         proxyMode = false;
         try {
-            try {
-                proxyMode = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
-            } catch (NoSuchMethodError ignored) {
-                srLogger.warning("It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
+            if (PaperLib.isSpigot()) {
+                proxyMode = SpigotUtil.getSpigotConfig(getServer()).getBoolean("settings.bungeecord");
             }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
@@ -425,7 +432,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the Spigot integration!");
         sb1.append("\nYou may now configure SkinsRestorer on BungeeCord (BungeeCord plugins folder /plugins/SkinsRestorer)");
 
-        Path warning = getDataFolderPath().resolve("(README) Use proxy config for settings! (README)");
+        Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
         try {
             if (proxyMode && !Files.exists(warning)) {
                 Files.createDirectories(warning.getParent());

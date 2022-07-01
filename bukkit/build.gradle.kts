@@ -2,7 +2,8 @@ dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
     implementation(projects.mappings.shared)
-    implementation(project(":multiver:paper", "multiverbuild"))
+    implementation(projects.multiver.spigot)
+    implementation(projects.multiver.paper)
     setOf("1-18", "1-18-2", "1-19").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }

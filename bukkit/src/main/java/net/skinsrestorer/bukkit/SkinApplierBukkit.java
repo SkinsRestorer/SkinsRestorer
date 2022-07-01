@@ -33,9 +33,10 @@ import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.spigot.SpigotPassengerUtil;
+import net.skinsrestorer.spigot.SpigotUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -159,28 +160,11 @@ public class SkinApplierBukkit {
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            Entity vehicle = player.getVehicle();
+            if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
+                Entity vehicle = player.getVehicle();
 
-            // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-            if ((Config.DISMOUNT_PLAYER_ON_UPDATE && !disableDismountPlayer) && vehicle != null) {
-                vehicle.removePassenger(player);
-
-                if (Config.REMOUNT_PLAYER_ON_UPDATE && !disableRemountPlayer) {
-                    // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                        // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
-                        if (vehicle.isValid()) {
-                            vehicle.addPassenger(player);
-                        }
-                    }, 1);
-                }
-            }
-
-            // Dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
-                for (Entity passenger : player.getPassengers()) {
-                    player.removePassenger(passenger);
-                }
+                SpigotPassengerUtil.refreshPassengers(plugin, player, vehicle,
+                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
             }
 
             for (Player ps : Bukkit.getOnlinePlayers()) {
