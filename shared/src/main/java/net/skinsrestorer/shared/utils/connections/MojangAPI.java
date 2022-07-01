@@ -46,6 +46,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class MojangAPI implements IMojangAPI {
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%name%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%name%";
@@ -55,14 +56,7 @@ public class MojangAPI implements IMojangAPI {
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
     private final SRLogger logger;
-    private final Platform platform;
     private final MetricsCounter metricsCounter;
-
-    public MojangAPI(SRLogger logger, Platform platform, MetricsCounter metricsCounter) {
-        this.logger = logger;
-        this.platform = platform;
-        this.metricsCounter = metricsCounter;
-    }
 
     /**
      * Get the skin property from a single request

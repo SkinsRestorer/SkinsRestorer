@@ -30,7 +30,6 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
@@ -55,7 +54,7 @@ import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.log.LoggerImpl;
+import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
@@ -83,8 +82,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(new LoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
-    private final MojangAPI mojangAPI = new MojangAPI(srLogger, Platform.BUKKIT, metricsCounter);
+    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
@@ -92,8 +91,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private SkinApplierBukkit skinApplierBukkit;
     private boolean bungeeEnabled;
     private boolean updateDownloaded = false;
-    private UpdateChecker updateChecker;
-    private UpdateDownloaderGithub updateDownloader;
+    private final UpdateChecker updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+    private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private SkinCommand skinCommand;
     private PaperCommandManager manager;
 
@@ -177,8 +176,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         // Check for updates
         if (!Files.exists(updaterDisabled)) {
-            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
-            updateDownloader = new UpdateDownloaderGithub(this);
             checkUpdate(bungeeEnabled, true);
 
             // Delay update between 5 & 30 minutes
@@ -269,36 +266,28 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                     }
                 });
             });
-
-            return;
-        }
-
-        /* ***************************************** *
-         * [!] below is skipped if bungeeEnabled [!] *
-         * ***************************************** */
-
-        // Init config files
-        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
-
-        // Init storage
-        if (!initStorage())
-            return;
-
-        // Init commands
-        initCommands();
-
-        // Init listener
-        if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
-            Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
         } else {
-            srLogger.info("Hooking into ProtocolLib for instant skins on join!");
-            new ProtocolLibJoinListener(this);
-        }
+            // Init config files
+            Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+            Locale.load(dataFolderPath, srLogger);
 
-        // Run connection check
-        if (!bungeeEnabled) {
+            // Init storage
+            if (!initStorage())
+                return;
+
+            // Init commands
+            initCommands();
+
+            // Init listener
+            if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+                Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
+                Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
+            } else {
+                srLogger.info("Hooking into ProtocolLib for instant skins on join!");
+                new ProtocolLibJoinListener(this);
+            }
+
+            // Run connection check
             Bukkit.getScheduler().runTaskAsynchronously(this, () ->
                     SharedMethods.runServiceCheck(mojangAPI, srLogger));
         }

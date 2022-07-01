@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.YamlConfig;
@@ -26,17 +27,13 @@ import net.skinsrestorer.shared.storage.YamlConfig;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@RequiredArgsConstructor
 public class SRLogger {
     private final ISRLogger logger;
     private final boolean color;
 
     public SRLogger(ISRLogger logger) {
         this(logger, false);
-    }
-
-    public SRLogger(ISRLogger logger, boolean color) {
-        this.logger = logger;
-        this.color = color;
     }
 
     public void load(Path pluginFolder) {

@@ -34,11 +34,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class UpdateDownloaderGithub extends UpdateDownloader {
-    private final SkinsRestorer plugin;
-
     public UpdateDownloaderGithub(SkinsRestorer plugin) {
         super(plugin);
-        this.plugin = plugin;
     }
 
     private static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {

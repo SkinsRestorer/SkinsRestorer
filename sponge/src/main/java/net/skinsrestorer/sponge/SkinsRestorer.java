@@ -29,7 +29,6 @@ import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.serverinfo.Platform;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -43,7 +42,7 @@ import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.shared.utils.log.Slf4LoggerImpl;
+import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
@@ -95,8 +94,8 @@ public class SkinsRestorer implements ISRPlugin {
     public SkinsRestorer(@SuppressWarnings("SpongeInjection") Metrics.Factory metricsFactory, @ConfigDir(sharedRoot = false) Path dataFolderPath, Logger log) {
         metrics = metricsFactory.make(2337);
         this.dataFolderPath = dataFolderPath;
-        srLogger = new SRLogger(new Slf4LoggerImpl(log));
-        mojangAPI = new MojangAPI(srLogger, Platform.SPONGE, metricsCounter);
+        srLogger = new SRLogger(new Slf4jLoggerImpl(log));
+        mojangAPI = new MojangAPI(srLogger, metricsCounter);
         mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
         skinsRestorerAPI = new SkinsRestorerSpongeAPI();
