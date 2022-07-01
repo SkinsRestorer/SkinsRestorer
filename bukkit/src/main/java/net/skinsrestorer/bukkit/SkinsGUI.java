@@ -20,7 +20,6 @@
 package net.skinsrestorer.bukkit;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.mojang.authlib.properties.Property;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
@@ -173,7 +172,7 @@ public class SkinsGUI extends ItemStack implements Listener {
             return;
         }
 
-        if (plugin.isBungeeEnabled()) {
+        if (plugin.isProxyMode()) {
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {

@@ -135,7 +135,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public String getProxyMode() {
-        return String.valueOf(plugin.isBungeeEnabled());
+        return String.valueOf(plugin.isProxyMode());
     }
 
     @Override

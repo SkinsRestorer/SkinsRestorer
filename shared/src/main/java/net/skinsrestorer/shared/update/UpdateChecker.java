@@ -36,7 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
+ * All credits go to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
 @RequiredArgsConstructor
 public class UpdateChecker {
@@ -72,9 +72,9 @@ public class UpdateChecker {
         }
     }
 
-    public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
+    public List<String> getUpToDateMessages(String currentVersion, boolean proxyMode) {
         List<String> upToDateMessages = new LinkedList<>();
-        fillHeader(upToDateMessages, bungeeMode);
+        fillHeader(upToDateMessages, proxyMode);
         upToDateMessages.add("§b    Current version: §a" + currentVersion);
         upToDateMessages.add("§a    This is the latest version!");
         upToDateMessages.add(LOG_ROW);
@@ -82,14 +82,14 @@ public class UpdateChecker {
         return upToDateMessages;
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode) {
-        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, bungeeMode, false, null);
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean proxyMode) {
+        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, proxyMode, false, null);
 
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean proxyMode, boolean updateDownloader, String failReason) {
         List<String> updateAvailableMessages = new LinkedList<>();
-        fillHeader(updateAvailableMessages, bungeeMode);
+        fillHeader(updateAvailableMessages, proxyMode);
 
         updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
         updateAvailableMessages.add("§b    New version: §c" + newVersion);
@@ -112,11 +112,11 @@ public class UpdateChecker {
         return updateAvailableMessages;
     }
 
-    private void fillHeader(List<String> updateAvailableMessages, boolean bungeeMode) {
+    private void fillHeader(List<String> updateAvailableMessages, boolean proxyMode) {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        if (bungeeMode) {
+        if (proxyMode) {
             updateAvailableMessages.add("§a    |------------------|");
             updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");
         } else if (isBukkit()) {
