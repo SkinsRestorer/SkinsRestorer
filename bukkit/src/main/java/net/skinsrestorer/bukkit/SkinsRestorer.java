@@ -392,8 +392,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             Path bungeeModeEnabled = dataFolderPath.resolve("enableBungeeMode"); // Legacy
             Path bungeeModeDisabled = dataFolderPath.resolve("disableBungeeMode"); // Legacy
 
-            Path proxyModeEnabled = dataFolderPath.resolve("enableProxyMode");
-            Path proxyModeDisabled = dataFolderPath.resolve("disableProxyMode");
+            Path proxyModeEnabled = dataFolderPath.resolve("enableProxyMode.txt");
+            Path proxyModeDisabled = dataFolderPath.resolve("disableProxyMode.txt");
 
             if (Files.exists(bungeeModeEnabled)) {
                 Files.move(bungeeModeEnabled, proxyModeEnabled, StandardCopyOption.REPLACE_EXISTING);
