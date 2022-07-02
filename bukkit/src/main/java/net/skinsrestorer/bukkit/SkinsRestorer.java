@@ -57,6 +57,7 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotUtil;
+import net.skinsrestorer.v1_7.BukkitLegacyProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -80,13 +81,16 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer().getConsoleSender());
-    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getServer().getLogger(), bukkitConsole), true);
+    @SuppressWarnings("ConstantConditions")
+    private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer() == null ? null : getServer().getConsoleSender());
+    @SuppressWarnings("ConstantConditions")
+    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(getServer() == null ? null : getServer().getLogger(), bukkitConsole);
+    private final SRLogger srLogger = new SRLogger(javaLogger, true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
-    private final Path dataFolderPath = getDataFolder().toPath();
+    private Path dataFolderPath;
     private SkinApplierBukkit skinApplierBukkit;
     private boolean proxyMode;
     private boolean updateDownloaded = false;
@@ -112,8 +116,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public String getVersion() {
-        return getDescription().getVersion();
+        return getDescription() == null ? null : getDescription().getVersion();
     }
 
     @Override
@@ -129,6 +134,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     @Override
     public void onEnable() {
         bukkitConsole.setConsoleCommandSender(getServer().getConsoleSender());
+        javaLogger.setLogger(getServer().getLogger());
+        dataFolderPath = getDataFolder().toPath();
+        updateChecker.setCurrentVersion(getVersion());
         srLogger.load(dataFolderPath);
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
@@ -503,7 +511,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private static class PropertyFactoryBukkit implements IPropertyFactory {
         @Override
         public IProperty createProperty(String name, String value, String signature) {
-            return new BukkitProperty(name, value, signature);
+            if (ReflectionUtil.classExists("com.mojang.authlib.properties.Property")) {
+                return new BukkitProperty(name, value, signature);
+            } else {
+                return new BukkitLegacyProperty(name, value, signature);
+            }
         }
     }
 

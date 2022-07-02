@@ -79,7 +79,7 @@ setOf("shared", "propertyold", "propertynew").forEach {
     include("multiver:bungee:$it")
 }
 
-setOf("spigot", "paper").forEach {
+setOf("v1-7", "spigot", "paper").forEach {
     include("multiver:$it")
 }
 

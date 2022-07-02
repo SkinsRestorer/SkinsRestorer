@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bukkit;
 
-import com.mojang.authlib.GameProfile;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +31,21 @@ import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
+import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
+import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -123,27 +126,20 @@ public class SkinApplierBukkit {
         });
     }
 
-    @SuppressWarnings("unchecked")
     public void applyProperty(Player player, IProperty property) {
-        try {
-            GameProfile profile = getGameProfile(player);
-            profile.getProperties().removeAll(IProperty.TEXTURES_NAME);
-            profile.getProperties().put(IProperty.TEXTURES_NAME, property.getHandle());
-        } catch (ReflectionException e) {
-            e.printStackTrace();
+        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
+            BukkitPropertyApplier.applyProperty(player, property);
+        } else {
+            BukkitLegacyPropertyApplier.applyProperty(player, property);
         }
     }
 
-    public GameProfile getGameProfile(Player player) throws ReflectionException {
-        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-        GameProfile profile;
-        try {
-            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-        } catch (Exception e) {
-            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) throws ReflectionException {
+        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
+            return BukkitPropertyApplier.getPlayerProperties(player);
+        } else {
+            return BukkitLegacyPropertyApplier.getPlayerProperties(player);
         }
-
-        return profile;
     }
 
     /**

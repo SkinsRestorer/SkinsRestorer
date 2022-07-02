@@ -19,17 +19,19 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.api.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JavaLoggerImpl implements ISRLogger {
-    private final Logger logger;
+    @Setter
+    private Logger logger;
     @Getter
     private final ISRConsole console;
 
