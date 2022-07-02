@@ -251,7 +251,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             ReflectionUtil.invokeMethod(entityPlayer, "updateAbilities");
 
-            //sendPacket(playerCon, pos);
+            sendPacket(playerCon, pos);
             sendPacket(playerCon, slot);
 
             ReflectionUtil.invokeMethod(player, "updateScaledHealth");
