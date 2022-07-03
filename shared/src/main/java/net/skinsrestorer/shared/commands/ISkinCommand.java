@@ -48,6 +48,18 @@ public interface ISkinCommand {
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
+    default void sendHelp(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
+        if (!Locale.SR_LINE.isEmpty())
+            sender.sendMessage(Locale.SR_LINE);
+
+        sender.sendMessage(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", getPlugin().getVersion()));
+
+        if (!Locale.SR_LINE.isEmpty())
+            sender.sendMessage(Locale.SR_LINE);
+    }
+
     default void onSkinSetShort(ISRPlayer player, String skin) {
         onSkinSetOther(player, player, skin, null);
     }
@@ -138,7 +150,23 @@ public interface ISkinCommand {
         });
     }
 
-    default void onSkinSet(ISRPlayer player, String[] skin) {
+    default void onSkinSkull(ISRPlayer player, String[] skin) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
+        if (skin.length == 0)
+            throw new InvalidCommandArgument(true);
+
+        onSkinSkullOther(player, player, skin[0]);
+    }
+
+    default void onSkinSkullOther(ISRCommandSender sender, ISRPlayer player, String skin) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
+
+
+    }
+
+     default void onSkinSet(ISRPlayer player, String[] skin) {
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
 
@@ -169,18 +197,6 @@ public interface ISkinCommand {
         }
 
         onSkinSetOther(player, player, url, skinVariant);
-    }
-
-    default void sendHelp(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
-
-        if (!Locale.SR_LINE.isEmpty())
-            sender.sendMessage(Locale.SR_LINE);
-
-        sender.sendMessage(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", getPlugin().getVersion()));
-
-        if (!Locale.SR_LINE.isEmpty())
-            sender.sendMessage(Locale.SR_LINE);
     }
 
     // if save is false, we won't save the skin name
