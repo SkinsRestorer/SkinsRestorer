@@ -49,8 +49,6 @@ public interface ISkinCommand {
     }
 
     default void onSkinSetShort(ISRPlayer player, String skin) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
-
         onSkinSetOther(player, player, skin, null);
     }
 
@@ -62,8 +60,6 @@ public interface ISkinCommand {
     }
 
     default void onSkinClear(ISRPlayer player) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
-
         onSkinClearOther(player, player);
     }
 
@@ -94,8 +90,6 @@ public interface ISkinCommand {
     }
 
     default void onSkinUpdate(ISRPlayer player) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
-
         onSkinUpdateOther(player, player);
     }
 
@@ -145,8 +139,6 @@ public interface ISkinCommand {
     }
 
     default void onSkinSet(ISRPlayer player, String[] skin) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
-
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
 
@@ -171,8 +163,6 @@ public interface ISkinCommand {
     }
 
     default void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
-
         if (!C.validUrl(url)) {
             player.sendMessage(Locale.ERROR_INVALID_URLSKIN);
             return;
