@@ -23,4 +23,6 @@ import java.util.Optional;
 
 public interface ISRProxyPlayer extends ISRPlayer {
     Optional<String> getCurrentServer();
+
+    void sendDataToServer(String channel, byte[] data);
 }

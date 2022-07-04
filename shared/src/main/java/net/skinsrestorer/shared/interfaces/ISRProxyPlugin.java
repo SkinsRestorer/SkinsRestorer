@@ -17,12 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 
-public interface IMineSkinAPI {
-    IProperty genSkin(String url, SkinVariant skinVariant) throws SkinRequestException;
+import java.util.Optional;
+
+public interface ISRProxyPlugin extends ISRPlugin {
+    Optional<ISRProxyPlayer> getPlayer(String playerName);
 }

@@ -83,6 +83,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinStorage skinStorage;
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
@@ -150,7 +151,7 @@ public class SkinsRestorer implements ISRPlugin {
 
             prepareACF(manager, srLogger);
 
-            manager.registerCommand(new SkinCommand(this));
+            manager.registerCommand(skinCommand);
             manager.registerCommand(new SrCommand(this));
         });
     }
