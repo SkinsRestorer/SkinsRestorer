@@ -168,12 +168,12 @@ public interface ISkinCommand {
     default void onSkinSkullOther(ISRCommandSender sender, ISRPlayer player, String skin) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
-
-
+        // TODO
     }
 
      default void onSkinSet(ISRPlayer player, String[] skin) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
+
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
 
