@@ -116,6 +116,13 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onSetSkinAll(wrapCommandSender(sender), skinUrl, skinVariant);
     }
 
+    @Subcommand("purgeolddata")
+    @Description("Purge old skin data from over x days ago")
+    @Syntax(" <targetdaysold>")
+    public void onPurgeOldData(CommandSender sender, int days) {
+        onPurgeOldData(wrapCommandSender(sender), days);
+    }
+
     @Override
     public void reloadCustomHook() {
         plugin.getSkinApplierBukkit().setOptFileChecked(false);
@@ -128,7 +135,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public String getProxyMode() {
-        return String.valueOf(plugin.isBungeeEnabled());
+        return String.valueOf(plugin.isProxyMode());
     }
 
     @Override

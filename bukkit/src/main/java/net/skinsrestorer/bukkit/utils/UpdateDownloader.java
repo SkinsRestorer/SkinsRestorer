@@ -39,7 +39,7 @@ import java.util.Properties;
  */
 @RequiredArgsConstructor
 public class UpdateDownloader {
-    private final SkinsRestorer plugin;
+    protected final SkinsRestorer plugin;
 
     @Getter
     protected DownloadFailReason failReason;

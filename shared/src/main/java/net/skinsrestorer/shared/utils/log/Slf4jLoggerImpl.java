@@ -24,7 +24,7 @@ import net.skinsrestorer.shared.interfaces.ISRLogger;
 import org.slf4j.Logger;
 
 @RequiredArgsConstructor
-public class Slf4LoggerImpl implements ISRLogger {
+public class Slf4jLoggerImpl implements ISRLogger {
     private final Logger logger;
 
     @Override

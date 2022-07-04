@@ -640,4 +640,36 @@ public class SkinStorage implements ISkinStorage {
         }
         return WHITESPACE_PATTERN.matcher(str).replaceAll("");
     }
+
+    public boolean purgeOldSkins(int days) {
+        long targetPurgeTimestamp = System.currentTimeMillis() - ((long) days * 86400 * 1000);
+
+        if (Config.MYSQL_ENABLED) {
+            // delete if name not start with " " and timestamp below targetPurgeTimestamp
+            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND " + Config.MYSQL_SKIN_TABLE + ".timestamp NOT LIKE 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
+            return true;
+        } else {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+                for (Path file : stream) {
+                    try {
+                        if (!Files.exists(file))
+                            continue;
+
+                        List<String> lines = Files.readAllLines(file);
+                        Long timestamp = Long.valueOf(lines.get(2));
+
+                        if (!(timestamp.equals(0L)) && timestamp < targetPurgeTimestamp) {
+                            Files.deleteIfExists(file);
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
 }

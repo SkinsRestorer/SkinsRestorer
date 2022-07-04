@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
-public class LoggerImpl implements ISRLogger {
+public class JavaLoggerImpl implements ISRLogger {
     private final Logger logger;
     private final ISRConsole console;
 
