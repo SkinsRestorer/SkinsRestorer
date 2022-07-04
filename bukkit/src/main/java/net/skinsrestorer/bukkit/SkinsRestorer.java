@@ -30,6 +30,7 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
@@ -56,6 +57,8 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.spigot.SpigotUtil;
+import net.skinsrestorer.v1_7.BukkitLegacyProperty;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -79,12 +82,16 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getServer().getLogger(), new BukkitConsoleImpl(getServer().getConsoleSender())), true);
+    @SuppressWarnings("ConstantConditions")
+    private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer() == null ? null : getServer().getConsoleSender());
+    @SuppressWarnings("ConstantConditions")
+    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(getServer() == null ? null : getServer().getLogger(), bukkitConsole);
+    private final SRLogger srLogger = new SRLogger(javaLogger, true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
-    private final Path dataFolderPath = getDataFolder().toPath();
+    private Path dataFolderPath;
     private SkinApplierBukkit skinApplierBukkit;
     private boolean proxyMode;
     private boolean updateDownloaded = false;
@@ -110,8 +117,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     @Override
+    @SuppressWarnings("ConstantConditions")
     public String getVersion() {
-        return getDescription().getVersion();
+        return getDescription() == null ? null : getDescription().getVersion();
     }
 
     @Override
@@ -126,6 +134,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
+        bukkitConsole.setConsoleCommandSender(getServer().getConsoleSender());
+        javaLogger.setLogger(getServer().getLogger());
+        dataFolderPath = getDataFolder().toPath();
+        updateChecker.setCurrentVersion(getVersion());
         srLogger.load(dataFolderPath);
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
@@ -143,10 +155,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
+        if (ReflectionUtil.SERVER_VERSION != null && !ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
+            srLogger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
+        }
+
         if (getServer().getPluginManager().getPlugin("ViaVersion") != null) {
-            try {
-                Class.forName("com.viaversion.viaversion.api.Via");
-            } catch (ClassNotFoundException e) {
+            if (!ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
                 getServer().getScheduler().runTaskTimerAsynchronously(this, () -> srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50, 20L * 60);
             }
         }
@@ -278,7 +292,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Init listener
             if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
                 Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
-                Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
+
+                if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
+                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
+                }
             } else {
                 srLogger.info("Hooking into ProtocolLib for instant skins on join!");
                 new ProtocolLibJoinListener(this);
@@ -360,10 +377,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private void checkBungeeMode() {
         proxyMode = false;
         try {
-            try {
-                proxyMode = getServer().spigot().getConfig().getBoolean("settings.bungeecord");
-            } catch (NoSuchMethodError ignored) {
-                srLogger.warning("It is not recommended to use non spigot implementations! Use Paper/Spigot for SkinsRestorer! ");
+            if (PaperLib.isSpigot()) {
+                proxyMode = SpigotUtil.getSpigotConfig(getServer()).getBoolean("settings.bungeecord");
             }
             // sometimes it does not get the right "bungeecord: true" setting
             // we will try it again with the old function from SR 13.3
@@ -425,7 +440,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the Spigot integration!");
         sb1.append("\nYou may now configure SkinsRestorer on BungeeCord (BungeeCord plugins folder /plugins/SkinsRestorer)");
 
-        Path warning = getDataFolderPath().resolve("(README) Use proxy config for settings! (README)");
+        Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
         try {
             if (proxyMode && !Files.exists(warning)) {
                 Files.createDirectories(warning.getParent());
@@ -496,7 +511,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private static class PropertyFactoryBukkit implements IPropertyFactory {
         @Override
         public IProperty createProperty(String name, String value, String signature) {
-            return new BukkitProperty(name, value, signature);
+            if (ReflectionUtil.classExists("com.mojang.authlib.properties.Property")) {
+                return new BukkitProperty(name, value, signature);
+            } else {
+                return new BukkitLegacyProperty(name, value, signature);
+            }
         }
     }
 

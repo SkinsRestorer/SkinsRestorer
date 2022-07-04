@@ -69,9 +69,11 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRPlugin {
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
-    private final Path dataFolderPath = getDataFolder().toPath();
+    private Path dataFolderPath;
     private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final SRLogger srLogger = new SRLogger(new JavaLoggerImpl(getProxy().getLogger(), new BungeeConsoleImpl(getProxy().getConsole())), true);
+    private final BungeeConsoleImpl bungeeConsole = new BungeeConsoleImpl(getProxy() == null ? null : getProxy().getConsole());
+    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(getProxy() == null ? null : getProxy().getLogger(), bungeeConsole);
+    private final SRLogger srLogger = new SRLogger(javaLogger, true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
@@ -102,6 +104,9 @@ public class SkinsRestorer extends Plugin implements ISRPlugin {
 
     @Override
     public void onEnable() {
+        bungeeConsole.setCommandSender(getProxy().getConsole());
+        javaLogger.setLogger(getProxy().getLogger());
+        dataFolderPath = getDataFolder().toPath();
         srLogger.load(dataFolderPath);
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 

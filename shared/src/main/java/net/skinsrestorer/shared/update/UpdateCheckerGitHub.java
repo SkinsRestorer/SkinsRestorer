@@ -31,16 +31,10 @@ import java.net.URL;
 public class UpdateCheckerGitHub extends UpdateChecker {
     private static final String RESOURCE_ID = "SkinsRestorerX";
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
-    private final SRLogger log;
-    private final String userAgent;
-    private final String currentVersion;
     private GitHubReleaseInfo releaseInfo;
 
     public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
         super(resourceId, currentVersion, log, userAgent);
-        this.log = log;
-        this.userAgent = userAgent;
-        this.currentVersion = currentVersion;
     }
 
     @Override

@@ -21,15 +21,13 @@ package net.skinsrestorer.bukkit.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
@@ -37,10 +35,7 @@ import net.skinsrestorer.shared.commands.ISRCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapCommandSender;
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
@@ -139,16 +134,10 @@ public class SrCommand extends BaseCommand implements ISRCommand {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
         try {
-            PropertyMap propertyMap = plugin.getSkinApplierBukkit().getGameProfile(player.getWrapper().get(Player.class)).getProperties();
-            Collection<?> props = propertyMap.get(IProperty.TEXTURES_NAME);
-
-            return props.stream().map(prop -> {
-                Property property = (Property) prop;
-                return new GenericProperty(property.getName(), property.getValue(), property.getSignature());
-            }).collect(Collectors.toList());
+            Map<String, Collection<IProperty>> propertyMap = plugin.getSkinApplierBukkit().getPlayerProperties(player.getWrapper().get(Player.class));
+            return new ArrayList<>(propertyMap.get(IProperty.TEXTURES_NAME));
         } catch (ReflectionException e) {
             e.printStackTrace();
             return Collections.emptyList();
