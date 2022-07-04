@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -139,11 +140,6 @@ public class UpdateChecker {
     }
 
     private boolean isBukkit() {
-        try {
-            Class.forName("org.bukkit.Bukkit");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return ReflectionUtil.classExists("org.bukkit.Bukkit");
     }
 }

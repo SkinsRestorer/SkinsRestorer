@@ -155,9 +155,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
         if (getServer().getPluginManager().getPlugin("ViaVersion") != null) {
-            try {
-                Class.forName("com.viaversion.viaversion.api.Via");
-            } catch (ClassNotFoundException e) {
+            if (!ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
                 getServer().getScheduler().runTaskTimerAsynchronously(this, () -> srLogger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50, 20L * 60);
             }
         }
@@ -290,11 +288,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
                 Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
-                try {
-                    Class.forName("org.bukkit.event.player.PlayerResourcePackStatusEvent");
+                if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
                     Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
-                } catch (ClassNotFoundException e) {
-                    // ignored
                 }
             } else {
                 srLogger.info("Hooking into ProtocolLib for instant skins on join!");
