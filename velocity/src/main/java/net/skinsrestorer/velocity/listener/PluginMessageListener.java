@@ -36,7 +36,7 @@ public class PluginMessageListener extends SharedPluginMessageListener {
     private final SkinsRestorer plugin;
 
     @Subscribe
-    public void onPluginMessage(PluginMessageEvent event) throws IOException {
+    public void onPluginMessage(PluginMessageEvent event) {
         handlePluginMessage(new SRPluginMessageEvent() {
             @Override
             public boolean isCancelled() {

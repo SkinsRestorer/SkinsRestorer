@@ -41,7 +41,7 @@ public abstract class SharedPluginMessageListener {
         return byteOut.toByteArray();
     }
 
-    public void handlePluginMessage(SRPluginMessageEvent event) throws IOException {
+    public void handlePluginMessage(SRPluginMessageEvent event) {
         ISRProxyPlugin plugin = getPlugin();
 
         if (event.isCancelled())
@@ -57,61 +57,65 @@ public abstract class SharedPluginMessageListener {
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
-        String subChannel = in.readUTF();
-        String playerName = in.readUTF();
-        Optional<ISRProxyPlayer> optional = plugin.getPlayer(playerName);
+        try {
+            String subChannel = in.readUTF();
+            String playerName = in.readUTF();
+            Optional<ISRProxyPlayer> optional = plugin.getPlayer(playerName);
 
-        if (!optional.isPresent())
-            return;
+            if (!optional.isPresent())
+                return;
 
-        ISRProxyPlayer player = optional.get();
+            ISRProxyPlayer player = optional.get();
 
-        switch (subChannel) {
-            //sr:messagechannel
-            case "getSkins":
-                int page = in.readInt();
-                if (page > 999)
-                    page = 999;
-                int skinNumber = 25 * page;
+            switch (subChannel) {
+                //sr:messagechannel
+                case "getSkins":
+                    int page = in.readInt();
+                    if (page > 999)
+                        page = 999;
+                    int skinNumber = 25 * page;
 
-                Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
+                    Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
 
-                byte[] ba = convertToByteArray(skinsList);
+                    byte[] ba = convertToByteArray(skinsList);
 
-                ByteArrayOutputStream b = new ByteArrayOutputStream();
-                DataOutputStream out = new DataOutputStream(b);
+                    ByteArrayOutputStream b = new ByteArrayOutputStream();
+                    DataOutputStream out = new DataOutputStream(b);
 
-                try {
-                    out.writeUTF("returnSkins");
-                    out.writeUTF(playerName);
-                    out.writeInt(page);
+                    try {
+                        out.writeUTF("returnSkins");
+                        out.writeUTF(playerName);
+                        out.writeInt(page);
 
-                    out.writeShort(ba.length);
-                    out.write(ba);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                        out.writeShort(ba.length);
+                        out.write(ba);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
 
-                // Payload may not be larger than 32767 bytes -18 from channel name
-                if (b.toByteArray().length > 32749) {
-                    plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
+                    // Payload may not be larger than 32767 bytes -18 from channel name
+                    if (b.toByteArray().length > 32749) {
+                        plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
+                        break;
+                    }
+
+                    player.sendDataToServer("sr:messagechannel", b.toByteArray());
                     break;
-                }
-
-                player.sendDataToServer("sr:messagechannel", b.toByteArray());
-                break;
-            case "clearSkin":
-                plugin.getSkinCommand().onSkinClearOther(player, player);
-                break;
-            case "updateSkin":
-                plugin.getSkinCommand().onSkinUpdateOther(player, player);
-                break;
-            case "setSkin":
-                String skin = in.readUTF();
-                plugin.getSkinCommand().onSkinSetOther(player, player, skin, null);
-                break;
-            default:
-                break;
+                case "clearSkin":
+                    plugin.getSkinCommand().onSkinClearOther(player, player);
+                    break;
+                case "updateSkin":
+                    plugin.getSkinCommand().onSkinUpdateOther(player, player);
+                    break;
+                case "setSkin":
+                    String skin = in.readUTF();
+                    plugin.getSkinCommand().onSkinSetOther(player, player, skin, null);
+                    break;
+                default:
+                    break;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
