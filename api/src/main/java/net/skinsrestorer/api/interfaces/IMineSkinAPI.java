@@ -23,8 +23,6 @@ import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 
-import java.util.concurrent.CompletableFuture;
-
 public interface IMineSkinAPI {
     IProperty genSkin(String url, SkinVariant skinVariant) throws SkinRequestException;
 }

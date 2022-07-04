@@ -125,7 +125,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                         if (errorDelayResponse.getDelay() != null) {
                             TimeUnit.SECONDS.sleep(errorDelayResponse.getDelay());
                         } else if (errorDelayResponse.getNextRequest() != null) {
-                            Instant nextRequestInstant = Instant.ofEpochSecond( errorDelayResponse.getNextRequest() );
+                            Instant nextRequestInstant = Instant.ofEpochSecond(errorDelayResponse.getNextRequest());
                             int delay = (int) Duration.between(Instant.now(), nextRequestInstant).getSeconds();
 
                             if (delay > 0)

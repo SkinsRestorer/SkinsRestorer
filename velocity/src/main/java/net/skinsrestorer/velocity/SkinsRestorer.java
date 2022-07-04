@@ -62,9 +62,6 @@ import org.bstats.velocity.Metrics;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,8 +84,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplierVelocity skinApplierVelocity;
-    private UpdateChecker updateChecker;
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Inject
     private PluginContainer container;
@@ -207,21 +204,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return proxy.getAllPlayers().stream().map(WrapperVelocity::wrapPlayer).collect(Collectors.toList());
-    }
-
-    @Override
-    public void sendGuiOpenRequest(ISRProxyPlayer player) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-
-        try {
-            out.writeUTF("OPENGUI");
-            out.writeUTF(player.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        player.sendDataToServer("sr:messagechannel", b.toByteArray());
     }
 
     @Override

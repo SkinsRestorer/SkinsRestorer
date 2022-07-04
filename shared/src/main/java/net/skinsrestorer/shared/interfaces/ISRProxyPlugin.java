@@ -24,7 +24,5 @@ import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 import java.util.Optional;
 
 public interface ISRProxyPlugin extends ISRPlugin {
-    void sendGuiOpenRequest(ISRProxyPlayer player);
-
     Optional<ISRProxyPlayer> getPlayer(String playerName);
 }

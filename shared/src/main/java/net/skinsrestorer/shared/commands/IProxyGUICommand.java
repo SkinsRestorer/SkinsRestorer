@@ -26,6 +26,10 @@ import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 public interface IProxyGUICommand {
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
         sender.sendMessage("SkinsRestorer Help");
@@ -39,7 +43,21 @@ public interface IProxyGUICommand {
         }
         player.sendMessage(Locale.SKINSMENU_OPEN);
 
-        getPlugin().sendGuiOpenRequest(player);
+        sendGuiOpenRequest(player);
+    }
+
+    default void sendGuiOpenRequest(ISRProxyPlayer player) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+
+        try {
+            out.writeUTF("OPENGUI");
+            out.writeUTF(player.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        player.sendDataToServer("sr:messagechannel", b.toByteArray());
     }
 
     ISRProxyPlugin getPlugin();

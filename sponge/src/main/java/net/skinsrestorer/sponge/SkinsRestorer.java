@@ -83,10 +83,10 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinStorage skinStorage;
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
-    private final SkinCommand skinCommand = new SkinCommand(this);
     private SpongeCommandManager manager;
     @Inject
     private PluginContainer container;

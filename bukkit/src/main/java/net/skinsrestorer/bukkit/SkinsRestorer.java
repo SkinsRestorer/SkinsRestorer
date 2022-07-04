@@ -85,12 +85,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
     private final Path dataFolderPath = getDataFolder().toPath();
-    private SkinApplierBukkit skinApplierBukkit;
-    private boolean proxyMode;
-    private boolean updateDownloaded = false;
     private final UpdateChecker updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
     private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private SkinApplierBukkit skinApplierBukkit;
+    private boolean proxyMode;
+    private boolean updateDownloaded = false;
     private PaperCommandManager manager;
 
     @SuppressWarnings("unchecked")

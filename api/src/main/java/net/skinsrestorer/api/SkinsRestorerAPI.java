@@ -135,8 +135,8 @@ public abstract class SkinsRestorerAPI {
      * Set stored properties of a skin in storage.
      * Only changes stored data, does not refresh anyone who has the skin.
      *
-     * @param skinName  Skin name
-     * @param textures  Property object
+     * @param skinName Skin name
+     * @param textures Property object
      */
     public void setSkinData(String skinName, IProperty textures) {
         skinStorage.setSkinData(skinName, textures);
@@ -168,9 +168,9 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     * @see #getSkinTextureUrl(IProperty)
      * @param skinName Skin name
      * @return textures.minecraft.net url
+     * @see #getSkinTextureUrl(IProperty)
      * @deprecated use {@link #getSkinTextureUrl(IProperty)} instead
      */
     @Deprecated
@@ -201,7 +201,7 @@ public abstract class SkinsRestorerAPI {
      * Only returns the id at the end of the url.
      * Example:
      * <a href="https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f">
-     *     https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
+     * https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
      * </a>
      * Would return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
      *

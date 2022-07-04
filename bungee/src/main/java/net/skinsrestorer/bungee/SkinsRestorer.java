@@ -59,9 +59,6 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -83,9 +80,9 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
+    private final SkinCommand skinCommand = new SkinCommand(this);
     private boolean outdated;
     private UpdateChecker updateChecker;
-    private final SkinCommand skinCommand = new SkinCommand(this);
     private BungeeCommandManager manager;
 
     /*
@@ -210,21 +207,6 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return getProxy().getPlayers().stream().map(WrapperBungee::wrapPlayer).collect(Collectors.toList());
-    }
-
-    @Override
-    public void sendGuiOpenRequest(ISRProxyPlayer player) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-
-        try {
-            out.writeUTF("OPENGUI");
-            out.writeUTF(player.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        player.sendDataToServer("sr:messagechannel", b.toByteArray());
     }
 
     @Override
