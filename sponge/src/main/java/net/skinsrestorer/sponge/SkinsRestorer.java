@@ -30,7 +30,6 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -205,11 +204,6 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
-    }
-
-    @Override
-    public ISkinCommand getSkinCommand() {
-        return null;
     }
 
     private static class WrapperFactorySponge extends WrapperFactory {
