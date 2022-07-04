@@ -17,12 +17,23 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.spigot;
 
-import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
-public interface IMineSkinAPI {
-    IProperty genSkin(String url, SkinVariant skinVariant) throws SkinRequestException;
+public class SpigotUtil {
+    public static YamlConfiguration getSpigotConfig(Server server) {
+        return server.spigot().getConfig();
+    }
+
+    public static boolean hasPassengerMethods() {
+        try {
+            Entity.class.getMethod("getPassengers");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
 }

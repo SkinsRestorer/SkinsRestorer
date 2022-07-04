@@ -21,7 +21,8 @@ package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -38,19 +39,26 @@ import java.util.List;
 /**
  * All credits go to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
-@RequiredArgsConstructor
 public class UpdateChecker {
     public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final int resourceId;
+    protected final SRLogger log;
     @Getter
-    private final String currentVersion;
-    private final SRLogger log;
+    protected final String userAgent;
     @Getter
-    private final String userAgent;
+    @Setter
+    protected String currentVersion;
     @Getter
     private ResourceInfo latestResourceInfo;
+
+    public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
+        this.resourceId = resourceId;
+        this.currentVersion = currentVersion;
+        this.log = log;
+        this.userAgent = userAgent;
+    }
 
     public void checkForUpdate(final UpdateCallback callback) {
         try {
@@ -132,11 +140,6 @@ public class UpdateChecker {
     }
 
     private boolean isBukkit() {
-        try {
-            Class.forName("org.bukkit.Bukkit");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return ReflectionUtil.classExists("org.bukkit.Bukkit");
     }
 }

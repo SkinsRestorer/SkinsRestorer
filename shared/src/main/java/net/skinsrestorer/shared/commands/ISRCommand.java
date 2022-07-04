@@ -250,7 +250,6 @@ public interface ISRCommand {
     }
 
 
-
     String getPlatformVersion();
 
     String getProxyMode();

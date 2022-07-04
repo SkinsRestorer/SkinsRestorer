@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bukkit;
 
-import com.mojang.authlib.GameProfile;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,16 +31,21 @@ import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
+import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.spigot.SpigotPassengerUtil;
+import net.skinsrestorer.spigot.SpigotUtil;
+import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
@@ -122,27 +126,20 @@ public class SkinApplierBukkit {
         });
     }
 
-    @SuppressWarnings("unchecked")
     public void applyProperty(Player player, IProperty property) {
-        try {
-            GameProfile profile = getGameProfile(player);
-            profile.getProperties().removeAll(IProperty.TEXTURES_NAME);
-            profile.getProperties().put(IProperty.TEXTURES_NAME, property.getHandle());
-        } catch (ReflectionException e) {
-            e.printStackTrace();
+        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
+            BukkitPropertyApplier.applyProperty(player, property);
+        } else {
+            BukkitLegacyPropertyApplier.applyProperty(player, property);
         }
     }
 
-    public GameProfile getGameProfile(Player player) throws ReflectionException {
-        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-        GameProfile profile;
-        try {
-            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-        } catch (Exception e) {
-            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
+    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) throws ReflectionException {
+        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
+            return BukkitPropertyApplier.getPlayerProperties(player);
+        } else {
+            return BukkitLegacyPropertyApplier.getPlayerProperties(player);
         }
-
-        return profile;
     }
 
     /**
@@ -159,28 +156,11 @@ public class SkinApplierBukkit {
             checkOptFile();
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            Entity vehicle = player.getVehicle();
+            if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
+                Entity vehicle = player.getVehicle();
 
-            // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-            if ((Config.DISMOUNT_PLAYER_ON_UPDATE && !disableDismountPlayer) && vehicle != null) {
-                vehicle.removePassenger(player);
-
-                if (Config.REMOUNT_PLAYER_ON_UPDATE && !disableRemountPlayer) {
-                    // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                        // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
-                        if (vehicle.isValid()) {
-                            vehicle.addPassenger(player);
-                        }
-                    }, 1);
-                }
-            }
-
-            // Dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-            if ((Config.DISMOUNT_PASSENGERS_ON_UPDATE || enableDismountEntities) && !player.isEmpty()) {
-                for (Entity passenger : player.getPassengers()) {
-                    player.removePassenger(passenger);
-                }
+                SpigotPassengerUtil.refreshPassengers(plugin, player, vehicle,
+                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
             }
 
             for (Player ps : Bukkit.getOnlinePlayers()) {

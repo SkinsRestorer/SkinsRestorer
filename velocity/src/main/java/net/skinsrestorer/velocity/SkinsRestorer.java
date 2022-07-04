@@ -35,9 +35,10 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -50,6 +51,7 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
+import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -64,13 +66,14 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
-public class SkinsRestorer implements ISRPlugin {
+public class SkinsRestorer implements ISRProxyPlugin {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
@@ -81,6 +84,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplierVelocity skinApplierVelocity;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Inject
@@ -147,8 +151,9 @@ public class SkinsRestorer implements ISRPlugin {
 
         prepareACF(manager, srLogger);
 
-        manager.registerCommand(new SkinCommand(this));
+        manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
@@ -199,6 +204,11 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return proxy.getAllPlayers().stream().map(WrapperVelocity::wrapPlayer).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ISRProxyPlayer> getPlayer(String playerName) {
+        return proxy.getPlayer(playerName).map(WrapperVelocity::wrapPlayer);
     }
 
     private static class WrapperFactoryVelocity extends WrapperFactory {

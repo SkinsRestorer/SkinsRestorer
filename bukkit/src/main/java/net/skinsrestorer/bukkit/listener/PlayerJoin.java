@@ -36,9 +36,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 @RequiredArgsConstructor
 @Getter
 public class PlayerJoin extends LoginProfileListener implements Listener {
-    private final SkinsRestorer plugin;
     @Setter
     private static boolean resourcePack;
+    private final SkinsRestorer plugin;
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {

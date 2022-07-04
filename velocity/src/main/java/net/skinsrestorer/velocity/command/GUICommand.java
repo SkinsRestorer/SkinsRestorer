@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.commands;
+package net.skinsrestorer.velocity.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
@@ -25,15 +25,15 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.commands.IProxyGUICommand;
+import net.skinsrestorer.velocity.SkinsRestorer;
 
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
+import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
+import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @Getter
 @RequiredArgsConstructor
@@ -43,13 +43,13 @@ public class GUICommand extends BaseCommand implements IProxyGUICommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
-    public void onHelp(CommandSender sender, CommandHelp help) {
+    public void onHelp(CommandSource sender, CommandHelp help) {
         onHelp(wrapCommandSender(sender), help);
     }
 
     @Default
     @CommandPermission("%skins")
-    public void onDefault(ProxiedPlayer player) {
+    public void onDefault(Player player) {
         onDefault(wrapPlayer(player));
     }
 }
