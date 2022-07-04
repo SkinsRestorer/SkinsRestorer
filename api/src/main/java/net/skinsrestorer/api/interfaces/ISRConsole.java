@@ -21,4 +21,6 @@ package net.skinsrestorer.api.interfaces;
 
 public interface ISRConsole {
     void sendMessage(String message);
+
+    boolean isReady();
 }
