@@ -34,6 +34,7 @@ import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
+import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
@@ -199,7 +200,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         // Init SkinsGUI click listener even when on bungee
-        Bukkit.getPluginManager().registerEvents(new SkinsGUI(this, srLogger), this);
+        Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
         if (proxyMode) {
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
@@ -243,8 +244,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             if (player == null)
                                 return;
 
-                            SkinsGUI.getMenus().put(player.getName(), 0);
-
                             requestSkinsFromBungeeCord(player, 0);
                         }
 
@@ -266,9 +265,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                             skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createPlatformProperty(property.getName(), property.getValue(), property.getSignature())));
 
-                            SkinsGUI skinsGUI = new SkinsGUI(this, srLogger);
                             ++page; // start counting from 1
-                            Inventory inventory = skinsGUI.getGUI(player, page, newSkinList);
+                            Inventory inventory = SkinsGUI.createGUI(this, page, newSkinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
                         }
@@ -358,7 +356,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
+        manager.registerCommand(new GUICommand(this));
     }
 
     private boolean initStorage() {
