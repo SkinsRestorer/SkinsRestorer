@@ -95,6 +95,24 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         onSkinUpdateOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
+    @Subcommand("skull")
+    @CommandPermission("%skinSkull")
+    @CommandCompletion("@skin")
+    @Description("%helpSkinSkull")
+    @Syntax("%SyntaxSkinSkull")
+    public void onSkinSkull(Player player, String[] skin) {
+        onSkinSkull(wrapPlayer(player), skin);
+    }
+
+    @Subcommand("skull")
+    @CommandPermission("%skinSkullOther")
+    @CommandCompletion("@players @skin")
+    @Description("%helpSkinSkullOther")
+    @Syntax("%SyntaxSkinSkullOther")
+    public void onSkinSkullOther(CommandSender sender, OnlinePlayer target, String skin) {
+        onSkinSkullOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin);
+    }
+
     @Subcommand("set")
     @CommandPermission("%skinSet")
     @CommandCompletion("@skin")

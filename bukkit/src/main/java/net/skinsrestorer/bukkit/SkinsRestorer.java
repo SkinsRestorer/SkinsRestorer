@@ -248,6 +248,25 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             requestSkinsFromBungeeCord(player, 0);
                         }
 
+                        if (subChannel.equalsIgnoreCase("GIVESKULL")) {
+                            Player player = Bukkit.getPlayer(in.readUTF());
+                            if (player == null)
+                                return;
+
+                            short len = in.readShort();
+                            byte[] msgBytes = new byte[len];
+                            in.readFully(msgBytes);
+
+                            Map<String, GenericProperty> skinList = convertToObject(msgBytes);
+
+                            //convert
+                            Map<String, IProperty> newSkinList = new TreeMap<>();
+
+                            skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createPlatformProperty(property.getName(), property.getValue(), property.getSignature())));
+
+
+                        }
+
                         if (subChannel.equalsIgnoreCase("returnSkins")) {
                             Player player = Bukkit.getPlayer(in.readUTF());
                             if (player == null)

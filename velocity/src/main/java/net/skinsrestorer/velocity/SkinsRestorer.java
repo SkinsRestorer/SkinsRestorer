@@ -53,6 +53,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
+import net.skinsrestorer.velocity.command.SkullCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
@@ -154,6 +155,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SkullCommand(this));
     }
 
     private boolean initStorage() {
