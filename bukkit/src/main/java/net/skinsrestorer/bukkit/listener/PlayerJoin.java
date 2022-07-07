@@ -21,11 +21,13 @@ package net.skinsrestorer.bukkit.listener;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.listeners.LoginProfileEvent;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
+import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,6 +36,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 @RequiredArgsConstructor
 @Getter
 public class PlayerJoin extends LoginProfileListener implements Listener {
+    @Setter
+    private static boolean resourcePack;
     private final SkinsRestorer plugin;
 
     @EventHandler
@@ -43,15 +47,17 @@ public class PlayerJoin extends LoginProfileListener implements Listener {
         if (handleSync(profileEvent))
             return;
 
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            handleAsync(profileEvent).ifPresent(name -> {
-                try {
-                    plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
-                } catch (SkinRequestException e) {
-                    plugin.getSrLogger().debug(e);
-                }
-            });
-        });
+        if (resourcePack && Config.RESOURCE_PACK_FIX)
+            return;
+
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () ->
+                handleAsync(profileEvent).ifPresent(name -> {
+                    try {
+                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), name);
+                    } catch (SkinRequestException e) {
+                        plugin.getSrLogger().debug(e);
+                    }
+                }));
     }
 
     private LoginProfileEvent wrap(PlayerJoinEvent event) {

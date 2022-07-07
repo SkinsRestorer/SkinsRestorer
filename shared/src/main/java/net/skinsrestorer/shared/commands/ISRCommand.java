@@ -20,13 +20,12 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
@@ -35,7 +34,9 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 public interface ISRCommand {
     @SuppressWarnings("unused")
@@ -47,6 +48,8 @@ public interface ISRCommand {
     }
 
     default void onReload(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
         Locale.load(plugin.getDataFolderPath(), plugin.getSrLogger());
@@ -58,6 +61,8 @@ public interface ISRCommand {
     }
 
     default void onStatus(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
@@ -100,6 +105,8 @@ public interface ISRCommand {
     }
 
     default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
@@ -116,6 +123,8 @@ public interface ISRCommand {
     }
 
     default void onProps(ISRCommandSender sender, ISRPlayer target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
@@ -132,24 +141,22 @@ public interface ISRCommand {
                 String value = prop.getValue();
                 String signature = prop.getSignature();
 
-                byte[] decoded = Base64.getDecoder().decode(value);
-                String decodedString = new String(decoded);
-                JsonObject jsonObject = JsonParser.parseString(decodedString).getAsJsonObject();
-                String decodedSkin = jsonObject.getAsJsonObject().get("textures").getAsJsonObject().get("SKIN").getAsJsonObject().get("url").toString();
-                long timestamp = Long.parseLong(jsonObject.getAsJsonObject().get("timestamp").toString());
+                MojangProfileResponse profile = SkinsRestorerAPI.getApi().getSkinProfileData(prop);
+                String decodedSkin = profile.getTextures().getSKIN().getUrl();
+                long timestamp = profile.getTimestamp();
                 String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
 
                 sender.sendMessage("§aRequest time: §e" + requestDate);
-                sender.sendMessage("§aProfileId: §e" + jsonObject.getAsJsonObject().get("profileId").toString());
-                sender.sendMessage("§aName: §e" + jsonObject.getAsJsonObject().get("profileName").toString());
+                sender.sendMessage("§aProfileId: §e" + profile.getProfileId());
+                sender.sendMessage("§aName: §e" + profile.getProfileName());
                 sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
                 plugin.getSrLogger().info("§aName: §8" + name);
-                plugin.getSrLogger().info("§aValue : §8" + value);
-                plugin.getSrLogger().info("§aSignature : §8" + signature);
-                plugin.getSrLogger().info("§aValue Decoded: §e" + Arrays.toString(decoded));
+                plugin.getSrLogger().info("§aValue: §8" + value);
+                plugin.getSrLogger().info("§aSignature: §8" + signature);
+                plugin.getSrLogger().info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage(Locale.NO_SKIN_DATA);
@@ -158,16 +165,12 @@ public interface ISRCommand {
     }
 
     default void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
-                final String skin = plugin.getSkinStorage().getDefaultSkinName(target.getName());
-
-                if (C.validUrl(skin)) {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), SkinsRestorerAPI.getApi().genSkinUrl(skin, null));
-                } else {
-                    SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), skin);
-                }
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), plugin.getSkinStorage().getDefaultSkinForPlayer(sender.getName()));
                 sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
                 sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);
@@ -176,6 +179,8 @@ public interface ISRCommand {
     }
 
     default void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
@@ -193,9 +198,11 @@ public interface ISRCommand {
     }
 
     default void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            if (!sender.isConsole()) { // Only make console perform this command
+            if (!sender.isConsole()) {
                 sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
                 return;
             }
@@ -220,11 +227,28 @@ public interface ISRCommand {
                     plugin.getSkinStorage().setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
+                sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
             }
         });
     }
+
+    default void onPurgeOldData(ISRCommandSender sender, int days) {
+        ISRPlugin plugin = getPlugin();
+        plugin.runAsync(() -> {
+            if (!sender.isConsole()) {
+                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
+                return;
+            }
+            if (plugin.getSkinStorage().purgeOldSkins(days)) {
+                sender.sendMessage(Locale.PREFIX + "§aSuccessfully purged old skins!");
+            } else {
+                sender.sendMessage(Locale.PREFIX + "§4A error occurred while purging old skins!");
+            }
+        });
+    }
+
 
     String getPlatformVersion();
 

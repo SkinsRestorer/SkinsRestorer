@@ -19,25 +19,37 @@
  */
 package net.skinsrestorer.shared.utils.log;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import net.skinsrestorer.api.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
-import org.slf4j.Logger;
 
-@RequiredArgsConstructor
-public class Slf4LoggerImpl implements ISRLogger {
-    private final Logger logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+@AllArgsConstructor
+public class JavaLoggerImpl implements ISRLogger {
+    @Getter
+    private final ISRConsole console;
+    @Setter
+    private Logger logger;
 
     @Override
     public void log(SRLogLevel level, String message) {
         switch (level) {
             case INFO:
-                logger.info(message);
+                if (console.isReady()) {
+                    console.sendMessage(message);
+                } else {
+                    logger.info(message);
+                }
                 break;
             case WARNING:
-                logger.warn(message);
+                logger.warning(message);
                 break;
             case SEVERE:
-                logger.error(message);
+                logger.severe(message);
                 break;
             default:
                 break;
@@ -48,13 +60,13 @@ public class Slf4LoggerImpl implements ISRLogger {
     public void log(SRLogLevel level, String message, Throwable throwable) {
         switch (level) {
             case INFO:
-                logger.info(message, throwable);
+                logger.log(Level.INFO, message, throwable);
                 break;
             case WARNING:
-                logger.warn(message, throwable);
+                logger.log(Level.WARNING, message, throwable);
                 break;
             case SEVERE:
-                logger.error(message, throwable);
+                logger.log(Level.SEVERE, message, throwable);
                 break;
             default:
                 break;

@@ -19,17 +19,24 @@
  */
 package net.skinsrestorer.bungee.utils;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.skinsrestorer.api.interfaces.ISRConsole;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class BungeeConsoleImpl implements ISRConsole {
-    private final CommandSender commandSender;
+    @Setter
+    private CommandSender commandSender;
 
     @Override
     public void sendMessage(String message) {
         commandSender.sendMessage(TextComponent.fromLegacyText(message));
+    }
+
+    @Override
+    public boolean isReady() {
+        return commandSender != null;
     }
 }

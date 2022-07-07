@@ -76,11 +76,15 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
                         addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
                     } catch (Exception e3) {
-                        Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+                        try {
+                            Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
 
-                        // 1.8 or below
-                        removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
-                        addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                            // 1.8
+                            removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
+                            addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
+                        } catch (Exception e4) {
+                            // 1.7 and below uses a boolean instead of an enum
+                        }
                     }
                 }
             }
@@ -110,14 +114,26 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     public void accept(Player player) {
         try {
             final Object entityPlayer = getHandleMethod.invoke(player);
-
-            Object removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
-            Object addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
+            Object removePlayer;
+            Object addPlayer;
+            try {
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
+            } catch (ReflectionException e) {
+                int ping = (int) ReflectionUtil.getObject(entityPlayer, "ping");
+                removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
+                addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
+            }
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet
             Object world = ReflectionUtil.invokeMethod(entityPlayer, "getWorld");
-            Object difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
+            Object difficulty;
+            try {
+                difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
+            } catch (Exception e) {
+                difficulty = ReflectionUtil.getObject(world, "difficulty");
+            }
 
             Object worldData;
             try {
@@ -196,8 +212,13 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     // 1.9-1.16.5
                     pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
                 } catch (Exception e2) {
-                    // 1.8 -
-                    pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                    try {
+                        // 1.8
+                        pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
+                    } catch (Exception e3) {
+                        // 1.7
+                        pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), false);
+                    }
                 }
             }
 

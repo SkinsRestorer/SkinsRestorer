@@ -21,7 +21,8 @@ package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -36,21 +37,28 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * All credits go to https://github.com/InventivetalentDev/SpigetUpdater
+ * All credits go to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
-@RequiredArgsConstructor
 public class UpdateChecker {
     public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private static final String LOG_ROW = "§a----------------------------------------------";
+    protected final SRLogger log;
+    @Getter
+    protected final String userAgent;
     private final int resourceId;
     @Getter
-    private final String currentVersion;
-    private final SRLogger log;
-    @Getter
-    private final String userAgent;
+    @Setter
+    protected String currentVersion;
     @Getter
     private ResourceInfo latestResourceInfo;
+
+    public UpdateChecker(int resourceId, String currentVersion, SRLogger log, String userAgent) {
+        this.resourceId = resourceId;
+        this.currentVersion = currentVersion;
+        this.log = log;
+        this.userAgent = userAgent;
+    }
 
     public void checkForUpdate(final UpdateCallback callback) {
         try {
@@ -72,9 +80,9 @@ public class UpdateChecker {
         }
     }
 
-    public List<String> getUpToDateMessages(String currentVersion, boolean bungeeMode) {
+    public List<String> getUpToDateMessages(String currentVersion, boolean proxyMode) {
         List<String> upToDateMessages = new LinkedList<>();
-        fillHeader(upToDateMessages, bungeeMode);
+        fillHeader(upToDateMessages, proxyMode);
         upToDateMessages.add("§b    Current version: §a" + currentVersion);
         upToDateMessages.add("§a    This is the latest version!");
         upToDateMessages.add(LOG_ROW);
@@ -82,14 +90,14 @@ public class UpdateChecker {
         return upToDateMessages;
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode) {
-        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, bungeeMode, false, null);
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean proxyMode) {
+        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, proxyMode, false, null);
 
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean bungeeMode, boolean updateDownloader, String failReason) {
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean proxyMode, boolean updateDownloader, String failReason) {
         List<String> updateAvailableMessages = new LinkedList<>();
-        fillHeader(updateAvailableMessages, bungeeMode);
+        fillHeader(updateAvailableMessages, proxyMode);
 
         updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
         updateAvailableMessages.add("§b    New version: §c" + newVersion);
@@ -112,11 +120,11 @@ public class UpdateChecker {
         return updateAvailableMessages;
     }
 
-    private void fillHeader(List<String> updateAvailableMessages, boolean bungeeMode) {
+    private void fillHeader(List<String> updateAvailableMessages, boolean proxyMode) {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        if (bungeeMode) {
+        if (proxyMode) {
             updateAvailableMessages.add("§a    |------------------|");
             updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");
         } else if (isBukkit()) {
@@ -132,11 +140,6 @@ public class UpdateChecker {
     }
 
     private boolean isBukkit() {
-        try {
-            Class.forName("org.bukkit.Bukkit");
-            return true;
-        } catch (ClassNotFoundException ignored) {
-            return false;
-        }
+        return ReflectionUtil.classExists("org.bukkit.Bukkit");
     }
 }

@@ -22,10 +22,13 @@ package net.skinsrestorer.velocity.utils;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+
+import java.util.Optional;
 
 public class WrapperVelocity {
     public static ISRCommandSender wrapCommandSender(CommandSource sender) {
@@ -52,8 +55,19 @@ public class WrapperVelocity {
         };
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
-        return new ISRPlayer() {
+    public static ISRProxyPlayer wrapPlayer(Player player) {
+        return new ISRProxyPlayer() {
+            @Override
+            public Optional<String> getCurrentServer() {
+                return player.getCurrentServer().map(server -> server.getServerInfo().getName());
+            }
+
+            @Override
+            public void sendDataToServer(String channel, byte[] data) {
+                player.getCurrentServer().map(server ->
+                        server.sendPluginMessage(MinecraftChannelIdentifier.from(channel), data));
+            }
+
             @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);

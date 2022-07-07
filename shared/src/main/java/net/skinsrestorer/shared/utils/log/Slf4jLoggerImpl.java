@@ -20,28 +20,24 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 
 @RequiredArgsConstructor
-public class LoggerImpl implements ISRLogger {
+public class Slf4jLoggerImpl implements ISRLogger {
     private final Logger logger;
-    private final ISRConsole console;
 
     @Override
     public void log(SRLogLevel level, String message) {
         switch (level) {
             case INFO:
-                console.sendMessage(message);
+                logger.info(message);
                 break;
             case WARNING:
-                logger.log(Level.WARNING, message);
+                logger.warn(message);
                 break;
             case SEVERE:
-                logger.severe(message);
+                logger.error(message);
                 break;
             default:
                 break;
@@ -52,13 +48,13 @@ public class LoggerImpl implements ISRLogger {
     public void log(SRLogLevel level, String message, Throwable throwable) {
         switch (level) {
             case INFO:
-                logger.log(Level.INFO, message, throwable);
+                logger.info(message, throwable);
                 break;
             case WARNING:
-                logger.log(Level.WARNING, message, throwable);
+                logger.warn(message, throwable);
                 break;
             case SEVERE:
-                logger.log(Level.SEVERE, message, throwable);
+                logger.error(message, throwable);
                 break;
             default:
                 break;

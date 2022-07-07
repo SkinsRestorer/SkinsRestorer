@@ -45,12 +45,12 @@ public class MySQL {
 
     public void createTable() {
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYER_TABLE + "` ("
-                + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
-                + "`Skin` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
         execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKIN_TABLE + "` ("
-                + "`Nick` varchar(16) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Value` text COLLATE utf8_unicode_ci,"
                 + "`Signature` text COLLATE utf8_unicode_ci,"
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
@@ -58,6 +58,18 @@ public class MySQL {
 
         if (!columnExists(Config.MYSQL_SKIN_TABLE, "timestamp")) {
             execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        }
+
+        if (columnVarCharLength(Config.MYSQL_PLAYER_TABLE, "Nick") < 17) {
+            execute("ALTER TABLE `" + Config.MYSQL_PLAYER_TABLE + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
+        }
+
+        if (columnVarCharLength(Config.MYSQL_PLAYER_TABLE, "Skin") < 19) {
+            execute("ALTER TABLE `" + Config.MYSQL_PLAYER_TABLE + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
+        }
+
+        if (columnVarCharLength(Config.MYSQL_SKIN_TABLE, "Nick") < 19) {
+            execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
         }
     }
 
@@ -72,6 +84,20 @@ public class MySQL {
         } catch (SQLException e) {
             logger.severe("Error checking if column exists", e);
             return false;
+        }
+    }
+
+    private int columnVarCharLength(String tableName, String columnName) {
+        try (Connection connection = poolDataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
+            statement.setString(1, tableName);
+            statement.setString(2, columnName);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            logger.severe("Error checking if column exists", e);
+            return -1;
         }
     }
 

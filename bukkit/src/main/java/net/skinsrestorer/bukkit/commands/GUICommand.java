@@ -40,7 +40,6 @@ import org.bukkit.inventory.Inventory;
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
     private final SkinsRestorer plugin;
-    private final SkinsGUI skinsGUI;
 
     // TODO: is help even needed for /skins?
     @HelpCommand
@@ -59,8 +58,7 @@ public class GUICommand extends BaseCommand {
             }
             player.sendMessage(Locale.SKINSMENU_OPEN);
 
-            SkinsGUI.getMenus().put(player.getName(), 0);
-            Inventory inventory = skinsGUI.getGUI(player, 0);
+            Inventory inventory = SkinsGUI.createGUI(plugin, 0);
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(inventory));
         });
     }

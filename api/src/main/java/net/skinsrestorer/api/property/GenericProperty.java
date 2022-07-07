@@ -19,11 +19,14 @@
  */
 package net.skinsrestorer.api.property;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@SuppressWarnings("unused")
 public class GenericProperty implements Serializable, IProperty {
     private static final long serialVersionUID = 8095720466547433965L;
     private String name;
@@ -33,21 +36,7 @@ public class GenericProperty implements Serializable, IProperty {
     public GenericProperty() {
     }
 
-    @SuppressWarnings("unused")
     public GenericProperty(IProperty property) {
-        name = property.getName();
-        value = property.getValue();
-        signature = property.getSignature();
-    }
-
-    public GenericProperty(String name, String value, String signature) {
-        this.name = name;
-        this.value = value;
-        this.signature = signature;
-    }
-
-    @Override
-    public Object getHandle() {
-        return this;
+        this(property.getName(), property.getValue(), property.getSignature());
     }
 }

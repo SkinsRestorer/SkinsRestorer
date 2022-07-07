@@ -113,6 +113,13 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
+    @Subcommand("purgeolddata")
+    @Description("Purge old skin data from over x days ago")
+    @Syntax(" <targetdaysold>")
+    public void onPurgeOldData(CommandSource source, int days) {
+        onPurgeOldData(wrapCommandSender(source), days);
+    }
+
     @Override
     public String getPlatformVersion() {
         return plugin.getGame().getPlatform().getMinecraftVersion().getName();
@@ -125,7 +132,7 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get("textures");
+        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME);
         return properties.stream()
                 .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
                 .collect(Collectors.toList());
