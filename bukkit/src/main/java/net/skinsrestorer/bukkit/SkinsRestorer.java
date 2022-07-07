@@ -33,6 +33,7 @@ import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
+import net.skinsrestorer.bukkit.commands.SkullCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
@@ -378,6 +379,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this, new SkinsGUI(this, srLogger)));
+        manager.registerCommand(new SkullCommand(this, new SkinSkull(this, srLogger)));
     }
 
     private boolean initStorage() {

@@ -39,8 +39,10 @@ public class SkinSkull extends ItemStack {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public void giveSkull(Player player, String name, IProperty property) {
+    public boolean giveSkull(Player player, String name, IProperty property) {
         player.getInventory().addItem(createSkull(name, property));
+        //todo: add catch for if inventory is full
+        return true;
     }
 
     private ItemStack createSkull(String name, IProperty property) {
