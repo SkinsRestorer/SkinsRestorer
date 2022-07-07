@@ -45,14 +45,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
     private final SkinsRestorer plugin;
-    private final int page;
+    private final int page; //Page number start with 0
     @Getter
     @Setter
     private Inventory inventory;
 
     public static Inventory createGUI(SkinsRestorer plugin, int page, Map<String, IProperty> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
-        Inventory inventory = Bukkit.createInventory(instance, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page)));
+        Inventory inventory = Bukkit.createInventory(instance, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page+1)));
         instance.setInventory(inventory);
 
         ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
@@ -81,14 +81,13 @@ public class SkinsGUI implements InventoryHolder {
         inventory.setItem(49, delete);
         inventory.setItem(50, delete);
 
-
         // Empty place next
         inventory.setItem(53, none);
         inventory.setItem(52, none);
         inventory.setItem(51, none);
 
-        // If page is above 1, adding Previous Page button.
-        if (page > 1) {
+        // If page is above starting page (0), add previous button
+        if (page > 0) {
             inventory.setItem(45, prev);
             inventory.setItem(46, prev);
             inventory.setItem(47, prev);
@@ -120,7 +119,6 @@ public class SkinsGUI implements InventoryHolder {
         int skinNumber = 36 * page;
 
         Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
-        ++page; // start counting from 1
         return createGUI(plugin, page, skinsList);
     }
 
@@ -145,16 +143,10 @@ public class SkinsGUI implements InventoryHolder {
     }
 
     public void onClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) // Cancel if not a player
+        if (!(event.getWhoClicked() instanceof Player) || event.getCurrentItem() == null) // Cancel if not a player or if the item is null
             return;
 
         final Player player = (Player) event.getWhoClicked();
-
-        // Cancel picking up items
-        if (event.getCurrentItem() == null) {
-            return;
-        }
-
         final ItemStack currentItem = event.getCurrentItem();
 
         // Cancel white panels
@@ -188,7 +180,6 @@ public class SkinsGUI implements InventoryHolder {
                     break;
             }
         } else {
-            // TODO: use #setSkin() function from SkinCommand.class
             switch (Objects.requireNonNull(XMaterial.matchXMaterial(currentItem))) {
                 case PLAYER_HEAD:
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
