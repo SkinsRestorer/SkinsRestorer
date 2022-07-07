@@ -29,8 +29,6 @@ import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 
-import java.io.IOException;
-
 @Getter
 @RequiredArgsConstructor
 public class PluginMessageListener extends SharedPluginMessageListener implements Listener {

@@ -85,16 +85,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     @SuppressWarnings("ConstantConditions")
     private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer() == null ? null : getServer().getConsoleSender());
     @SuppressWarnings("ConstantConditions")
-    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(getServer() == null ? null : getServer().getLogger(), bukkitConsole);
+    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(bukkitConsole, getServer() == null ? null : getServer().getLogger());
     private final SRLogger srLogger = new SRLogger(javaLogger, true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
-    private Path dataFolderPath;
     private final UpdateChecker updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Bukkit");
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
     private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private Path dataFolderPath;
     private SkinApplierBukkit skinApplierBukkit;
     private boolean proxyMode;
     private boolean updateDownloaded = false;

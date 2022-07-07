@@ -30,10 +30,10 @@ import java.util.logging.Logger;
 
 @AllArgsConstructor
 public class JavaLoggerImpl implements ISRLogger {
-    @Setter
-    private Logger logger;
     @Getter
     private final ISRConsole console;
+    @Setter
+    private Logger logger;
 
     @Override
     public void log(SRLogLevel level, String message) {

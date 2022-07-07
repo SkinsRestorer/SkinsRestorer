@@ -72,17 +72,17 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
-    private Path dataFolderPath;
     private final MetricsCounter metricsCounter = new MetricsCounter();
     private final BungeeConsoleImpl bungeeConsole = new BungeeConsoleImpl(getProxy() == null ? null : getProxy().getConsole());
-    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(getProxy() == null ? null : getProxy().getLogger(), bungeeConsole);
+    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(bungeeConsole, getProxy() == null ? null : getProxy().getLogger());
     private final SRLogger srLogger = new SRLogger(javaLogger, true);
     private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
     private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
     private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
+    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private Path dataFolderPath;
     private boolean outdated;
     private UpdateChecker updateChecker;
     private BungeeCommandManager manager;

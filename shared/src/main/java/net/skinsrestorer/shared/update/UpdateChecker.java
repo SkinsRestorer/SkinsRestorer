@@ -43,10 +43,10 @@ public class UpdateChecker {
     public static final String RESOURCE_INFO = "https://api.spiget.org/v2/resources/%s?ut=%s";
     public static final String RESOURCE_VERSION = "https://api.spiget.org/v2/resources/%s/versions/latest?ut=%s";
     private static final String LOG_ROW = "§a----------------------------------------------";
-    private final int resourceId;
     protected final SRLogger log;
     @Getter
     protected final String userAgent;
+    private final int resourceId;
     @Getter
     @Setter
     protected String currentVersion;
