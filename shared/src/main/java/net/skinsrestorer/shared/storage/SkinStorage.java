@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -60,6 +61,9 @@ public class SkinStorage implements ISkinStorage {
     private MySQL mysql;
     private Path skinsFolder;
     private Path playersFolder;
+    @Setter
+    @Getter
+    private boolean initialized = false;
 
     public void loadFolders(Path dataFolder) {
         skinsFolder = dataFolder.resolve("Skins");

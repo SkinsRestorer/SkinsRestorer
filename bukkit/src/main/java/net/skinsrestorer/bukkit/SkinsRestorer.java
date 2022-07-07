@@ -360,8 +360,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private boolean initStorage() {
-        // Initialise MySQL
-        if (!SharedMethods.initMysql(srLogger, skinStorage, dataFolderPath)) {
+        // Initialise SkinStorage
+        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) {
             Bukkit.getPluginManager().disablePlugin(this);
             return false;
         }
