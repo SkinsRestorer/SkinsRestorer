@@ -176,7 +176,7 @@ public class SkinStorage implements ISkinStorage {
                     e.printStackTrace();
                 }
         } else {
-            playerName = removeForbiddenChars(playerName);
+            playerName = replaceForbiddenChars(playerName);
             Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
@@ -233,7 +233,7 @@ public class SkinStorage implements ISkinStorage {
         if (Config.MYSQL_ENABLED) {
             mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
         } else {
-            playerName = removeForbiddenChars(playerName);
+            playerName = replaceForbiddenChars(playerName);
             Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
@@ -252,13 +252,13 @@ public class SkinStorage implements ISkinStorage {
             mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
                     playerName, skinName, skinName);
         } else {
-            playerName = removeForbiddenChars(playerName);
+            playerName = replaceForbiddenChars(playerName);
             Path playerFile = playersFolder.resolve(playerName + ".player");
 
             try {
                 try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
                     skinName = removeWhitespaces(skinName);
-                    skinName = removeForbiddenChars(skinName);
+                    skinName = replaceForbiddenChars(skinName);
 
                     writer.write(skinName);
                 }
@@ -293,7 +293,7 @@ public class SkinStorage implements ISkinStorage {
                 }
         } else {
             skinName = removeWhitespaces(skinName);
-            skinName = removeForbiddenChars(skinName);
+            skinName = replaceForbiddenChars(skinName);
             Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
@@ -328,7 +328,7 @@ public class SkinStorage implements ISkinStorage {
             mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
         } else {
             skinName = removeWhitespaces(skinName);
-            skinName = removeForbiddenChars(skinName);
+            skinName = replaceForbiddenChars(skinName);
             Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
@@ -357,7 +357,7 @@ public class SkinStorage implements ISkinStorage {
                     skinName, value, signature, timestampString, value, signature, timestampString);
         } else {
             skinName = removeWhitespaces(skinName);
-            skinName = removeForbiddenChars(skinName);
+            skinName = replaceForbiddenChars(skinName);
             Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
             try {
@@ -527,7 +527,7 @@ public class SkinStorage implements ISkinStorage {
                 }
         } else {
             skinName = removeWhitespaces(skinName);
-            skinName = removeForbiddenChars(skinName);
+            skinName = replaceForbiddenChars(skinName);
 
             Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
@@ -631,7 +631,7 @@ public class SkinStorage implements ISkinStorage {
         return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     }
 
-    private String removeForbiddenChars(String str) {
+    private String replaceForbiddenChars(String str) {
         // Escape all Windows / Linux forbidden printable ASCII characters
         return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
     }
