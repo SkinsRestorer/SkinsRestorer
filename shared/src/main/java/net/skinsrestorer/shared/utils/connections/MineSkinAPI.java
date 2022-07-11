@@ -91,6 +91,7 @@ public class MineSkinAPI implements IMineSkinAPI {
 
             try {
                 val response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+                logger.debug("MineSkinAPI: Response: " + response);
                 if (!response.isPresent()) // API time out
                     throw new SkinRequestException(Locale.ERROR_UPDATING_SKIN);
 

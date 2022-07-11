@@ -19,10 +19,14 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Getter
+@ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor
 public class Pair<L, R> {
     private final L left;
