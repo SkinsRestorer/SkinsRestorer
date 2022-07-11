@@ -75,7 +75,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 if (e.getCause() instanceof TryAgainException) {
                     failedAttempts.incrementAndGet();
                 } else if (e.getCause() instanceof SkinRequestException) {
-                    throw (SkinRequestException) e.getCause();
+                    throw new SkinRequestException(e.getCause());
                 } else {
                     throw new SkinRequestException(e.getMessage());
                 }
