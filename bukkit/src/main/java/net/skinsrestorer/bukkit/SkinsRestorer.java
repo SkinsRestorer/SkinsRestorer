@@ -422,7 +422,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 proxyMode = false;
                 return;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         StringBuilder sb1 = new StringBuilder("Server is in proxy mode!");
