@@ -127,7 +127,7 @@ public abstract class SkinsRestorerAPI {
         if (timestamp == null) {
             setSkinData(skinName, textures);
         } else {
-            setSkinData(skinName, textures, timestamp);
+            setSkinData(skinName, textures, (long) timestamp);
         }
     }
 
