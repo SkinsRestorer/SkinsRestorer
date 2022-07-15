@@ -184,7 +184,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         // Check if we are running in proxy mode
-        checkBungeeMode();
+        checkProxyMode();
 
         // Check for updates
         if (!Files.exists(updaterDisabled)) {
@@ -371,7 +371,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         return true;
     }
 
-    private void checkBungeeMode() {
+    private void checkProxyMode() {
         proxyMode = false;
         try {
             if (PaperLib.isSpigot()) {
