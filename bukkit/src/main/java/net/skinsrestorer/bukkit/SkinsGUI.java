@@ -104,7 +104,7 @@ public class SkinsGUI implements InventoryHolder {
         });
 
         // If the page is not empty, adding Next Page button.
-        if (inventory.firstEmpty() == -1 || inventory.getItem(24) != null && page < 999) {
+        if (inventory.firstEmpty() == -1 || inventory.getItem(20) != null && page < 999) {
             inventory.setItem(53, next);
             inventory.setItem(52, next);
             inventory.setItem(51, next);

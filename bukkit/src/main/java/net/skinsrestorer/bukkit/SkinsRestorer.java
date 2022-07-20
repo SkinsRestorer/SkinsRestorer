@@ -262,10 +262,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
                             //convert
                             Map<String, IProperty> newSkinList = new TreeMap<>();
-
                             skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createPlatformProperty(property.getName(), property.getValue(), property.getSignature())));
 
-                            ++page; // start counting from 1
                             Inventory inventory = SkinsGUI.createGUI(this, page, newSkinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
