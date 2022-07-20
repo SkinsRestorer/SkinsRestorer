@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
-    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
+    public static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private static final String LTRIM = "^\\\\s+";
     private static final String RTRIM = "\\\\s+$";

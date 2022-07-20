@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static co.aikar.commands.CommandManager.getCurrentCommandManager;
+import static net.skinsrestorer.shared.storage.SkinStorage.FORBIDDEN_CHARS_PATTERN;
 
 public interface ISkinCommand {
     IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
@@ -83,6 +84,9 @@ public interface ISkinCommand {
 
             // remove users defined skin from database
             plugin.getSkinStorage().removeSkinOfPlayer(pName);
+
+            if (skin.equals(pName))
+                FORBIDDEN_CHARS_PATTERN.matcher(skin).replaceAll("");
 
             if (setSkin(sender, target, skin, false, true, null)) {
                 if (sender == target)
