@@ -149,7 +149,7 @@ public interface ISRCommand {
                 sender.sendMessage("§aRequest time: §e" + requestDate);
                 sender.sendMessage("§aProfileId: §e" + profile.getProfileId());
                 sender.sendMessage("§aName: §e" + profile.getProfileName());
-                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1, decodedSkin.length() - 1));
+                sender.sendMessage("§aSkinTexture: §e" + decodedSkin.substring(1));
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
