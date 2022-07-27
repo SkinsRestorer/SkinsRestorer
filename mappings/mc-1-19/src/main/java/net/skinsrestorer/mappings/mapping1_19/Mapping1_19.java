@@ -112,7 +112,8 @@ public class Mapping1_19 implements IMapping {
     @Override
     public Set<String> getSupportedVersions() {
         return Set.of(
-                "7b9de0da1357e5b251eddde9aa762916" // 1.19
+                "7b9de0da1357e5b251eddde9aa762916", // 1.19
+                "4cc0cc97cac491651bff3af8b124a214" // 1.19.1
         );
     }
 }
