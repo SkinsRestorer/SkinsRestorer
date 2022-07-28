@@ -54,6 +54,8 @@ public class SkinStorage implements ISkinStorage {
     private static final String LTRIM = "^\\\\s+";
     private static final String RTRIM = "\\\\s+$";
     private static final Pattern TRIM_PATTERN = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
+    private static final String ALEX_SKIN_TEXTURE_URL = "http://textures.minecraft.net/texture/3b60a1f6d562f52aaebbf1434f1de147933a3affe0e764fa49ea057536623cd3";
+    private static final String STEVE_SKIN_TEXTURE_URL = "http://textures.minecraft.net/texture/1a4af718455d4aab528e7a61f86fa25e6a369d1768dcb13f7df319a713eb810b";
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -402,6 +404,7 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number)
+                        // if texture matches ALEX_SKIN_PATTERN OR STEVE_SKIN_PATTERN skip it
                         list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
                     i++;
                 } while (crs.next());
@@ -423,6 +426,7 @@ public class SkinStorage implements ISkinStorage {
             int i = 0;
             for (String skinName : skinNames) {
                 if (i >= number) {
+                    // if texture matches ALEX_SKIN_PATTERN OR STEVE_SKIN_PATTERN skip it
                     if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
                             if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
@@ -453,6 +457,8 @@ public class SkinStorage implements ISkinStorage {
             try {
                 do {
                     if (i >= number && foundSkins <= 25) {
+                        // if texture matches ALEX_SKIN_PATTERN OR STEVE_SKIN_PATTERN skip it
+
                         GenericProperty prop = new GenericProperty();
                         prop.setName(IProperty.TEXTURES_NAME);
                         prop.setValue(crs.getString("Value"));
@@ -481,6 +487,8 @@ public class SkinStorage implements ISkinStorage {
                 String fileName = file.getFileName().toString();
                 String skinName = fileName.substring(0, fileName.length() - 5);
                 if (i >= number && foundSkins <= 25) {
+                    // if texture matches ALEX_SKIN_PATTERN OR STEVE_SKIN_PATTERN skip it
+
                     try {
                         if (!Files.exists(file))
                             continue;
