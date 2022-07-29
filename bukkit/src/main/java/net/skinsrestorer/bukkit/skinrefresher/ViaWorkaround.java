@@ -44,6 +44,7 @@ public final class ViaWorkaround {
             // ViaBackwards double-sends isProtocolNewer respawn packet when its dimension ID matches the current world's.
             // In order to get around this, we send isProtocolNewer packet directly into Via's connection, bypassing the 1.16 conversion step
             // and therefore bypassing their workaround.
+            // TODO: deprecated
             PacketWrapper packet = PacketWrapper.create(ClientboundPackets1_15.RESPAWN.ordinal(), null, connection);
 
             packet.write(Type.INT, packetData.getDimension());

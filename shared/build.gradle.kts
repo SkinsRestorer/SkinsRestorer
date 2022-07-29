@@ -6,7 +6,7 @@ dependencies {
 
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.6")
-    api("com.github.InventivetalentDev.Spiget-Update:core:1.4.5-SNAPSHOT")
+    api("com.github.InventivetalentDev.Spiget-Update:core:1.4.6-SNAPSHOT")
 
     implementation("org.fusesource.jansi:jansi:2.4.0")
 
