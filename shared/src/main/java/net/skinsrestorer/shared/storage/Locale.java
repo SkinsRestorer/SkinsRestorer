@@ -46,6 +46,7 @@ public class Locale {
     public static String HELP_SKIN_SET_OTHER_URL = "Sets the skin from a url for a target player.";
     public static String HELP_SKIN_CLEAR = "Clears your skin.";
     public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
+    public static String HELP_SKIN_SEARCH = "Search up a skin that you want";
     public static String HELP_SKIN_UPDATE = "Updates your skin.";
     public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of a target player.";
 
@@ -94,6 +95,7 @@ public class Locale {
     public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
     public static String SKINSMENU_CLEAR_SKIN = "&c&l[ &7Remove Skin&c&l ]";
     public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
+    public static String SKIN_SEARCH_MESSAGE = "&2You can find skins matching \"&a%SearchString%&2\" here: \n&ahttps://namemc.com/minecraft-skins/tag/%SearchString% \n\n&2If no skins are found, you can always find some skins at https://namemc.com/minecraft-skins/tag \nYou can set the skin using the skin link:\n /skin https://namemc.com/skin/";
     public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
     public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin \"%targets\".";
     public static String ADMIN_APPLYSKIN_SUCCES = "&2Player skin has been refreshed!";

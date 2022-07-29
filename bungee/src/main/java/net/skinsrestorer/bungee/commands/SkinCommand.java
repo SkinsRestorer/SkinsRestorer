@@ -78,6 +78,13 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
         onSkinClearOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
     }
 
+    @Subcommand("search")
+    @CommandPermission("%skinSearch")
+    @Description("%helpSkinSearch")
+    public void onSkinSearch(CommandSender sender, String search) {
+        onSkinSearch(wrapCommandSender(sender), search);
+    }
+
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")

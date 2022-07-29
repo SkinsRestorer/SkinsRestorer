@@ -63,9 +63,12 @@ public class MineSkinAPI implements IMineSkinAPI {
         t.setName("SkinsRestorer-MineSkinAPI");
         return t;
     });
+    private static final String NAMEMCSKINURL = "https://namemc.com/skin/";
+    private static final String NAMEMCIMGURL = "https://s.namemc.com/i/%s.png";
 
     @Override
     public IProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
+        url = url.startsWith(NAMEMCSKINURL) ? NAMEMCIMGURL.replace("%s" ,url.substring(24)) : url; //fix NameMC skins
         AtomicInteger failedAttempts = new AtomicInteger(0);
 
         do {
