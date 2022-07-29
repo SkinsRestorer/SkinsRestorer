@@ -40,6 +40,8 @@ public class CommandReplacements {
             .put("skinClear", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.clear")
             .put("skinClearOther", () -> "skinsrestorer.command.clear.other")
 
+            .put("skinSearch", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.search")
+
             .put("skinUpdate", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.update")
             .put("skinUpdateOther", () -> "skinsrestorer.command.update.other")
 
@@ -54,6 +56,7 @@ public class CommandReplacements {
             .put("%helpHelpCommand", () -> Locale.HELP_HELP_COMMAND)
             .put("%helpSkinClear", () -> Locale.HELP_SKIN_CLEAR)
             .put("%helpSkinClearOther", () -> Locale.HELP_SKIN_CLEAR_OTHER)
+            .put("%helpSkinSearch", () -> Locale.HELP_SKIN_SEARCH)
             .put("%helpSkinUpdate", () -> Locale.HELP_SKIN_UPDATE)
             .put("%helpSkinUpdateOther", () -> Locale.HELP_SKIN_UPDATE_OTHER)
             .put("%helpSkinSet", () -> Locale.HELP_SKIN_SET)

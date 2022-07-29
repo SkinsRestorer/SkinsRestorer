@@ -93,6 +93,12 @@ public interface ISkinCommand {
         });
     }
 
+    default void onSkinSearch(ISRCommandSender sender, String searchString) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
+        sender.sendMessage(Locale.SKIN_SEARCH_MESSAGE.replace("%SearchString%", searchString));
+    }
+
     default void onSkinUpdate(ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
