@@ -18,8 +18,8 @@ dependencies {
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
     implementation("com.github.cryptomorin:XSeries:9.0.0")
 
-    compileOnly("com.viaversion:viabackwards-common:4.0.1")
-    compileOnly("com.viaversion:viaversion:4.0.0")
+    compileOnly("com.viaversion:viabackwards-common:4.4.0")
+    compileOnly("com.viaversion:viaversion:4.4.0")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("com.comphenix.protocol:ProtocolLib:4.7.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:4.8.0")
 }
