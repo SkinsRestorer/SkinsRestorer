@@ -97,6 +97,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private boolean proxyMode;
     private boolean updateDownloaded = false;
     private PaperCommandManager manager;
+    private boolean isUpdaterInitialized = false;
 
     @SuppressWarnings("unchecked")
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
@@ -137,8 +138,17 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         dataFolderPath = getDataFolder().toPath();
         updateChecker.setCurrentVersion(getVersion());
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
+        try {
+            pluginStartup();
+        } finally {
+            if (!isUpdaterInitialized) {
+                updateCheck();
+            }
+        }
+    }
+
+    public void pluginStartup() {
         Metrics metrics = new Metrics(this, 1669);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
@@ -187,18 +197,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Check if we are running in proxy mode
         checkProxyMode();
 
-        // Check for updates
-        if (!Files.exists(updaterDisabled)) {
-            checkUpdate(proxyMode, true);
-
-            // Delay update between 5 & 30 minutes
-            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300);
-            // Repeat update between 1 & 4 hours
-            int periodInt = 60 + new Random().nextInt(240 + 1 - 60);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(proxyMode, false), 20L * delayInt, 20L * 60 * periodInt);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        updateCheck();
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
@@ -301,6 +300,23 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Run connection check
             Bukkit.getScheduler().runTaskAsynchronously(this, () ->
                     SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        }
+    }
+
+    private void updateCheck() {
+        // Check for updates
+        isUpdaterInitialized = true;
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
+        if (!Files.exists(updaterDisabled)) {
+            checkUpdate(proxyMode, true);
+
+            // Delay update between 5 & 30 minutes
+            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300);
+            // Repeat update between 1 & 4 hours
+            int periodInt = 60 + new Random().nextInt(240 + 1 - 60);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(proxyMode, false), 20L * delayInt, 20L * 60 * periodInt);
+        } else {
+            srLogger.info("Updater Disabled");
         }
     }
 
