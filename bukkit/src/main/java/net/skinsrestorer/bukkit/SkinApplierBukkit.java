@@ -32,6 +32,7 @@ import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
+import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -63,7 +64,7 @@ public class SkinApplierBukkit {
     public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
         this.plugin = plugin;
         this.log = log;
-        refresh = detectRefresh();
+        this.refresh = detectRefresh();
     }
 
     private Consumer<Player> detectRefresh() throws InitializeException {
@@ -80,8 +81,9 @@ public class SkinApplierBukkit {
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
                 return new PaperSkinRefresher(log);
+            } catch (NoMappingException e) {
+                throw e;
             } catch (InitializeException e) {
-                e.printStackTrace();
                 log.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
@@ -114,12 +116,14 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
-            if (property == null)
+            IProperty eventProperty = applyEvent.getProperty();
+
+            if (eventProperty == null)
                 return;
 
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                applyProperty(player, property);
+                applyProperty(player, eventProperty);
 
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
             });
