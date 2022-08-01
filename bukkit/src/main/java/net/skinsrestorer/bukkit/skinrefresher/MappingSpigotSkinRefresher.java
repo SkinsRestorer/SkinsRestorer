@@ -21,9 +21,9 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.bukkit.utils.MappingManager;
+import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
-import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -37,12 +37,11 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final IMapping mapping;
     private boolean useViabackwards = false;
 
-    public MappingSpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws InitializeException {
+    public MappingSpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws NoMappingException {
         this.plugin = plugin;
         Optional<IMapping> mapping = MappingManager.getMapping();
         if (!mapping.isPresent()) {
-            log.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!");
-            throw new InitializeException("No mapping for this minecraft version found! (" + MappingManager.getMappingsVersion() + ")");
+            throw new NoMappingException();
         } else {
             this.mapping = mapping.get();
         }

@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.skinrefresher;
 import lombok.SneakyThrows;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bukkit.utils.MappingManager;
+import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -71,8 +72,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                 } catch (NoSuchMethodException ignored2) {
                     Optional<IMapping> mapping = MappingManager.getMapping();
                     if (!mapping.isPresent()) {
-                        logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!");
-                        throw new InitializeException("No mapping for this minecraft version found!");
+                        throw new NoMappingException();
                     } else {
                         triggerHealthUpdate = player -> {
                             try {
@@ -87,8 +87,10 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             this.triggerHealthUpdate = triggerHealthUpdate;
 
             logger.debug("Using PaperSkinRefresher");
+        } catch (NoMappingException e) {
+            throw e;
         } catch (Exception e) {
-            logger.debug("Failed PaperSkinRefresher");
+            logger.debug("Failed PaperSkinRefresher", e);
             throw new InitializeException(e);
         }
     }

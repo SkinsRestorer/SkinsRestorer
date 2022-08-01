@@ -28,7 +28,6 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
 

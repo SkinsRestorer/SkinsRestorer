@@ -26,8 +26,6 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import org.bukkit.command.CommandSender;
