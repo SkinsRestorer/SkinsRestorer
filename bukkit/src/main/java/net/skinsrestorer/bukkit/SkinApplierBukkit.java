@@ -114,12 +114,14 @@ public class SkinApplierBukkit {
             if (applyEvent.isCancelled())
                 return;
 
-            if (property == null)
+            IProperty eventProperty = applyEvent.getProperty();
+
+            if (eventProperty == null)
                 return;
 
             // delay 1 server tick so we override online-mode
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-                applyProperty(player, property);
+                applyProperty(player, eventProperty);
 
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
             });
