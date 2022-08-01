@@ -128,10 +128,4 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
-
-    @Override
-    public void clearSkin(ISRPlayer player) {
-        SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), emptySkin);
-        plugin.getSkinApplierBukkit().updateSkin(player.getWrapper().get(Player.class)); // TODO: make not platform specific
-    }
 }

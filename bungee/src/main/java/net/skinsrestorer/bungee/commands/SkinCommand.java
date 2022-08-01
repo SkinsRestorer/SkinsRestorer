@@ -127,9 +127,4 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
-
-    @Override
-    public void clearSkin(ISRPlayer player) {
-        plugin.getSkinsRestorerAPI().applySkin(player.getWrapper(), emptySkin);
-    }
 }
