@@ -139,16 +139,23 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         updateChecker.setCurrentVersion(getVersion());
         srLogger.load(dataFolderPath);
 
+        Exception startupError = null;
         try {
             pluginStartup();
+        } catch (Exception e) {
+            startupError = e;
         } finally {
             if (!isUpdaterInitialized) {
                 updateCheck();
             }
         }
+
+        if (startupError != null) {
+            srLogger.debug("An error occurred while starting the plugin.", startupError);
+        }
     }
 
-    public void pluginStartup() {
+    public void pluginStartup() throws InitializeException {
         Metrics metrics = new Metrics(this, 1669);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
@@ -159,10 +166,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
         } catch (NoMappingException e) {
             srLogger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+            throw e;
         } catch (InitializeException e) {
             srLogger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
+            throw e;
         }
 
         srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
@@ -480,7 +487,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private void checkUpdate(boolean proxyMode, boolean showUpToDate) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 if (updateDownloaded)
