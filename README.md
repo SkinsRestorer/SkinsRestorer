@@ -31,6 +31,7 @@ servers.
 - Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
 - Minecraft 1.8.0 - 1.19
+- Minecraft 1.19.1 with the latest [dev build](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/lastSuccessfulBuild/artifact/build/libs/SkinsRestorer.jar).
 
 ## :link: Links
 
