@@ -28,8 +28,8 @@
 # see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms.
 SkinWithoutPerm: true
 
-# Players cooldown when changing skins (set to 0 to disable).
-# SkinErrorCooldown when a error or invalid url occurs.
+# Players cooldown in seconds when changing skins (set to 0 to disable).
+# SkinErrorCooldown is used when an error or invalid url occurs.
 # Can be bypassed with 'skinsrestorer.bypasscooldown'.
 SkinChangeCooldown: 30
 SkinErrorCooldown: 5
@@ -44,7 +44,7 @@ SkinErrorCooldown: 5
 # This is more customizable, but at the cost of permission specific help.
 EnableCustomHelp: false
 
-#Ignore messages.yml 'PREFIX ='
+# Ignore messages.yml 'PREFIX ='
 DisablePrefix: false
 
 # Enable or disable default skins
@@ -67,7 +67,8 @@ DisabledSkins:
     - "steve"
     - "owner"
 
-# Disable all SkinsRestorer commands on specific backend servers. (Only if using proxies)
+# Disable all SkinsRestorer commands on specific backend servers.
+# [!] This only works & is relevant if you're using proxies like bungee / waterfall
 NotAllowedCommandServers:
   Enabled: true
   # Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.
@@ -94,15 +95,19 @@ CustomGUI:
 
 # Allows the usage of per-skin permission.
 # Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster
-# with "skinsrestorer.ownskin" you can set your own playername skin.
+# with "skinsrestorer.ownskin" players can run /skin set %playerusername%.
 PerSkinPermissions: false
 
 # Time that skins are stored in the database before we request again (in minutes).
+# [?] A value of 0 will disable auto updating of skins and players will need to manual run /skin update.
+# [!] Lowering this value will increase the amount of requests which could be a problem on large servers.
 SkinExpiresAfter: 15
 
 # Settings for MySQL skin storage (recommended for big BungeeCord networks)
 # [!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]
 # [!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]
+# [!] Make sure you have the correct permissions set for your MySQL user. [!]
+# [!] Make sure to fill in MySQL.ConnectionOptions if you're using certificate / ssl authentication. [!]
 MySQL:
   Enabled: false
   Host: localhost
@@ -115,13 +120,15 @@ MySQL:
   PlayerTable: 'Players'
   ConnectionOptions: verifyServerCertificate=false&useSSL=false&serverTimezone=UTC
 
-# Stop the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
+# Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
+# [?] Unsure? leave this true for better performance.
 NoSkinIfLoginCanceled: true
 
-# This will make SkinsRestorer always apply the skin even if the player joins as premium on a online mode server.
+# This will make SkinsRestorer always apply the skin even if the player joins as premium on an online mode server.
 AlwaysApplyPremium: false
 
-# When enabled, Only websites from the list below is allowed to be set using /skin url <url>
+# When enabled, only websites from the list below is allowed to be set using /skin url <url>
+# [?] this is useful if you host your own image server.
 RestrictSkinUrls:
   Enabled: false
   List:
@@ -136,7 +143,7 @@ RestrictSkinUrls:
 
 # Here you can fill in your APIKey for lower MineSkin request times.
 # Key can be requested from https://mineskin.org/apikey
-# ((?) not needed for small servers / those not using the SkinUrl api (?))
+# [?] A key is not required, but recommended.
 MineskinAPIKey: "key"
 
 #################
