@@ -55,8 +55,6 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
-            connection.setConnectTimeout(20000);
-            connection.setReadTimeout(20000);
             if (connection.getResponseCode() != 200) {
                 throw new UpdateException("Download returned status #" + connection.getResponseCode());
             }

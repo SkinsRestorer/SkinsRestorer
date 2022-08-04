@@ -63,15 +63,11 @@ public class UpdateChecker {
     public void checkForUpdate(final UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(String.format(RESOURCE_INFO, resourceId, System.currentTimeMillis()))).openConnection();
-            connection.setConnectTimeout(20000);
-            connection.setReadTimeout(20000);
             connection.setRequestProperty("User-Agent", userAgent);
 
             latestResourceInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceInfo.class);
             connection = (HttpURLConnection) new URL(String.format(RESOURCE_VERSION, resourceId, System.currentTimeMillis())).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
-            connection.setConnectTimeout(20000);
-            connection.setReadTimeout(20000);
             latestResourceInfo.latestVersion = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), ResourceVersion.class);
 
             if (isVersionNewer(currentVersion, latestResourceInfo.latestVersion.name)) {
