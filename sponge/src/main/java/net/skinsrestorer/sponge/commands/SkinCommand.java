@@ -26,7 +26,6 @@ import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.sponge.SkinsRestorer;
 import org.spongepowered.api.command.CommandSource;
@@ -126,10 +125,5 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
-    }
-
-    @Override
-    public void clearSkin(ISRPlayer player) {
-        // TODO: Maybe do something here?
     }
 }

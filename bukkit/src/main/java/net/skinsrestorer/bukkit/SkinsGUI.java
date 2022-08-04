@@ -37,10 +37,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.nio.CharBuffer;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
@@ -52,7 +50,7 @@ public class SkinsGUI implements InventoryHolder {
 
     public static Inventory createGUI(SkinsRestorer plugin, int page, Map<String, IProperty> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
-        Inventory inventory = Bukkit.createInventory(instance, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page+1)));
+        Inventory inventory = Bukkit.createInventory(instance, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
         ItemStack none = new GuiGlass(GlassType.NONE).getItemStack();
@@ -94,7 +92,7 @@ public class SkinsGUI implements InventoryHolder {
         }
 
         skinsList.forEach((name, property) -> {
-            if (name.chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
+            if (CharBuffer.wrap(name.toCharArray()).chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
                 plugin.getSrLogger().info("ERROR: skin " + name + ".skin contains a Upper case!");
                 plugin.getSrLogger().info("Please rename the file name to a lower case!.");
                 return;

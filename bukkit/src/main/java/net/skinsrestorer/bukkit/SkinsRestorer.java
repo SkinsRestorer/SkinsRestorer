@@ -38,10 +38,7 @@ import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
-import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
-import net.skinsrestorer.bukkit.utils.BukkitProperty;
-import net.skinsrestorer.bukkit.utils.UpdateDownloaderGithub;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -100,6 +97,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private boolean proxyMode;
     private boolean updateDownloaded = false;
     private PaperCommandManager manager;
+    private boolean isUpdaterInitialized = false;
 
     @SuppressWarnings("unchecked")
     private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
@@ -140,8 +138,24 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         dataFolderPath = getDataFolder().toPath();
         updateChecker.setCurrentVersion(getVersion());
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
+        Exception startupError = null;
+        try {
+            pluginStartup();
+        } catch (Exception e) {
+            startupError = e;
+        } finally {
+            if (!isUpdaterInitialized) {
+                updateCheck();
+            }
+        }
+
+        if (startupError != null) {
+            srLogger.debug("An error occurred while starting the plugin.", startupError);
+        }
+    }
+
+    public void pluginStartup() throws InitializeException {
         Metrics metrics = new Metrics(this, 1669);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
@@ -150,8 +164,12 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         try {
             skinApplierBukkit = new SkinApplierBukkit(this, srLogger);
+        } catch (NoMappingException e) {
+            srLogger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
+            throw e;
         } catch (InitializeException e) {
-            srLogger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server! ", e);
+            srLogger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
+            throw e;
         }
 
         srLogger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
@@ -186,18 +204,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Check if we are running in proxy mode
         checkProxyMode();
 
-        // Check for updates
-        if (!Files.exists(updaterDisabled)) {
-            checkUpdate(proxyMode, true);
-
-            // Delay update between 5 & 30 minutes
-            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300);
-            // Repeat update between 1 & 4 hours
-            int periodInt = 60 + new Random().nextInt(240 + 1 - 60);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(proxyMode, false), 20L * delayInt, 20L * 60 * periodInt);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        updateCheck();
 
         // Init SkinsGUI click listener even when on bungee
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
@@ -300,6 +307,23 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Run connection check
             Bukkit.getScheduler().runTaskAsynchronously(this, () ->
                     SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        }
+    }
+
+    private void updateCheck() {
+        // Check for updates
+        isUpdaterInitialized = true;
+        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
+        if (!Files.exists(updaterDisabled)) {
+            checkUpdate(proxyMode, true);
+
+            // Delay update between 5 & 30 minutes
+            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300);
+            // Repeat update between 1 & 4 hours
+            int periodInt = 60 + new Random().nextInt(240 + 1 - 60);
+            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(proxyMode, false), 20L * delayInt, 20L * 60 * periodInt);
+        } else {
+            srLogger.info("Updater Disabled");
         }
     }
 
@@ -463,7 +487,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     }
 
     private void checkUpdate(boolean proxyMode, boolean showUpToDate) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 if (updateDownloaded)

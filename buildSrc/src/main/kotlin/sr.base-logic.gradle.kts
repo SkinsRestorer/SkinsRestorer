@@ -37,5 +37,7 @@ signing {
     isRequired = false
 }
 
+java.targetCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 java.javaTarget(8)
 java.withSourcesJar()

@@ -97,9 +97,7 @@ public class SkinStorage implements ISkinStorage {
                 toRemove.add(skin);
                 logger.warning("[WARNING] DefaultSkin '" + skin + "'(.skin) could not be found or requested! Removing from list..");
 
-                logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ");
-                if (Config.DEBUG)
-                    e.printStackTrace();
+                logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ", e);
             }
         });
         Config.DEFAULT_SKINS.removeAll(toRemove);
@@ -213,8 +211,8 @@ public class SkinStorage implements ISkinStorage {
      * @return Platform specific property
      * @throws SkinRequestException throws when no API calls were successful
      */
-    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, String timestamp) throws SkinRequestException {
-        if (updateOutdated && C.validMojangUsername(playerName) && isExpired(Long.parseLong(timestamp))) {
+    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, long timestamp) throws SkinRequestException {
+        if (updateOutdated && C.validMojangUsername(playerName) && isExpired(timestamp)) {
             Optional<IProperty> skin = mojangAPI.getSkin(playerName);
 
             if (skin.isPresent()) {
@@ -280,17 +278,20 @@ public class SkinStorage implements ISkinStorage {
 
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
-            if (crs != null)
-                try {
-                    final String value = crs.getString("Value");
-                    final String signature = crs.getString("Signature");
-                    final String timestamp = crs.getString("timestamp");
 
-                    return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
-                } catch (Exception e) {
-                    removeSkinData(skinName);
-                    logger.info("Unsupported skin format.. removing (" + skinName + ").");
-                }
+            if (crs == null)
+                return Optional.empty();
+
+            try {
+                final String value = crs.getString("Value");
+                final String signature = crs.getString("Signature");
+                final String timestamp = crs.getString("timestamp");
+
+                return Optional.of(createProperty(skinName, updateOutdated, value, signature, Long.parseLong(timestamp)));
+            } catch (Exception e) {
+                logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
+                removeSkinData(skinName);
+            }
         } else {
             skinName = removeWhitespaces(skinName);
             skinName = replaceForbiddenChars(skinName);
@@ -306,10 +307,10 @@ public class SkinStorage implements ISkinStorage {
                 String signature = lines.get(1);
                 String timestamp = lines.get(2);
 
-                return Optional.of(createProperty(skinName, updateOutdated, value, signature, timestamp));
+                return Optional.of(createProperty(skinName, updateOutdated, value, signature, Long.parseLong(timestamp)));
             } catch (Exception e) {
+                logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
                 removeSkinData(skinName);
-                logger.info("Unsupported skin format.. removing (" + skinName + ").");
             }
         }
 
@@ -383,17 +384,12 @@ public class SkinStorage implements ISkinStorage {
             String filterBy = "";
             String orderBy = "Nick";
 
-            // custom gui
+            // Custom GUI
             if (Config.CUSTOM_GUI_ENABLED) {
-                StringBuilder sb = new StringBuilder();
                 if (Config.CUSTOM_GUI_ONLY) {
-                    Config.CUSTOM_GUI_SKINS.forEach(sb.append("|")::append);
-
-                    filterBy = "WHERE Nick RLIKE '" + sb.substring(1) + "'";
+                    filterBy = "WHERE Nick RLIKE '" + String.join("|", Config.CUSTOM_GUI_SKINS) + "'";
                 } else {
-                    Config.CUSTOM_GUI_SKINS.forEach(skin -> sb.append(", '").append(skin).append("'"));
-
-                    orderBy = "FIELD(Nick" + sb + ") DESC, Nick";
+                    orderBy = "FIELD(Nick, " + Config.CUSTOM_GUI_SKINS.stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";
                 }
             }
 
@@ -407,14 +403,13 @@ public class SkinStorage implements ISkinStorage {
                 } while (crs.next());
             } catch (SQLException ignored) {
             }
-        } else { // When not using mysql
+        } else {
             List<Path> files = new ArrayList<>();
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
                 stream.forEach(files::add);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
 
             List<String> skinNames = files.stream().map(Path::getFileName).map(Path::toString).map(s ->
                     s.substring(0, s.length() - 5) // remove .skin (5 characters)

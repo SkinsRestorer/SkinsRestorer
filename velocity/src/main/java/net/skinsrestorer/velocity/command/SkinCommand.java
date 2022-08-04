@@ -28,7 +28,6 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -127,10 +126,4 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
-
-    @Override
-    public void clearSkin(ISRPlayer player) {
-        plugin.getSkinsRestorerAPI().applySkin(player.getWrapper(), emptySkin);
-    }
-
 }

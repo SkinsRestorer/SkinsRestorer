@@ -279,7 +279,7 @@ public interface ISkinCommand {
                 return true;
             } catch (SkinRequestException e) {
                 if (clear) {
-                    clearSkin(player);
+                    SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), emptySkin);
 
                     return true;
                 }
@@ -299,6 +299,4 @@ public interface ISkinCommand {
     }
 
     ISRPlugin getPlugin();
-
-    void clearSkin(ISRPlayer player);
 }
