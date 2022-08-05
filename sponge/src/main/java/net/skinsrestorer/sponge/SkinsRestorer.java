@@ -83,7 +83,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinStorage skinStorage;
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
-    private final SkinCommand skinCommand = new SkinCommand(this);
+    private final SkinCommand skinCommand;
     @Inject
     protected Game game;
     private UpdateChecker updateChecker;
@@ -100,6 +100,7 @@ public class SkinsRestorer implements ISRPlugin {
         mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
         skinsRestorerAPI = new SkinsRestorerSpongeAPI();
+        skinCommand = new SkinCommand(this);
     }
 
     @Listener
