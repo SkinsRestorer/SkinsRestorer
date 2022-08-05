@@ -84,7 +84,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private final SkinsRestorerAPI skinsRestorerAPI;
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplierVelocity skinApplierVelocity;
-    private final SkinCommand skinCommand = new SkinCommand(this);
+    private final SkinCommand skinCommand;
     private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Inject
@@ -101,6 +101,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
         skinsRestorerAPI = new SkinsRestorerVelocityAPI();
         skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
+        skinCommand = new SkinCommand(this);
     }
 
     @Subscribe

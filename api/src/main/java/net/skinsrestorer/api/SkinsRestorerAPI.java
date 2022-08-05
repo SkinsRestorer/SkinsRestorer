@@ -20,13 +20,11 @@
 package net.skinsrestorer.api;
 
 import com.google.gson.Gson;
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.NonNull;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Base64;
@@ -38,14 +36,12 @@ import java.util.Base64;
  */
 @SuppressWarnings({"unused"})
 public abstract class SkinsRestorerAPI {
-    @Getter
     private static SkinsRestorerAPI api;
     private final IMojangAPI mojangAPI;
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
     private final IPropertyFactory propertyFactory;
     private final Gson gson = new Gson();
-    @Getter(value = AccessLevel.PROTECTED)
     private final IWrapperFactory wrapperFactory;
 
     protected SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
@@ -62,6 +58,13 @@ public abstract class SkinsRestorerAPI {
     private static synchronized void setInstance(SkinsRestorerAPI api) {
         if (SkinsRestorerAPI.api == null)
             SkinsRestorerAPI.api = api;
+    }
+
+    public static SkinsRestorerAPI getApi() {
+        if (SkinsRestorerAPI.api == null)
+            throw new IllegalStateException("SkinsRestorerAPI is not initialized yet!");
+
+        return SkinsRestorerAPI.api;
     }
 
     /**
@@ -191,7 +194,7 @@ public abstract class SkinsRestorerAPI {
      * @param property Profile property
      * @return full textures.minecraft.net url
      */
-    public String getSkinTextureUrl(@NotNull IProperty property) {
+    public String getSkinTextureUrl(@NonNull IProperty property) {
         return getSkinProfileData(property).getTextures().getSKIN().getUrl();
     }
 
@@ -207,7 +210,7 @@ public abstract class SkinsRestorerAPI {
      * @return textures.minecraft.net id
      * @see #getSkinTextureUrl(IProperty)
      */
-    public String getSkinTextureUrlStripped(@NotNull IProperty property) {
+    public String getSkinTextureUrlStripped(@NonNull IProperty property) {
         return getSkinProfileData(property).getTextures().getSKIN().getStrippedUrl();
     }
 
@@ -221,7 +224,7 @@ public abstract class SkinsRestorerAPI {
      * @param property Profile property
      * @return Decoded profile data as java object
      */
-    public MojangProfileResponse getSkinProfileData(@NotNull IProperty property) {
+    public MojangProfileResponse getSkinProfileData(@NonNull IProperty property) {
         String decodedString = new String(Base64.getDecoder().decode(property.getValue()));
 
         return gson.fromJson(decodedString, MojangProfileResponse.class);
@@ -263,4 +266,8 @@ public abstract class SkinsRestorerAPI {
     public abstract void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException;
 
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
+
+    protected IWrapperFactory getWrapperFactory() {
+        return this.wrapperFactory;
+    }
 }
