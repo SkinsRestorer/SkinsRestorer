@@ -75,6 +75,7 @@ public class CommandReplacements {
             .put("%SyntaxSkinSet", () -> Locale.SYNTAX_SKINSET)
             .put("%SyntaxSkinSetOther", () -> Locale.SYNTAX_SKINSET_OTHER)
             .put("%SyntaxSkinUrl", () -> Locale.SYNTAX_SKINURL)
+            .put("%SyntaxSkinSearch", () -> Locale.SYNTAX_SKINSEARCH)
             .put("%SyntaxSkinUpdateOther", () -> Locale.SYNTAX_SKINUPDATE_OTHER)
             .put("%SyntaxSkinClearOther", () -> Locale.SYNTAX_SKINCLEAR_OTHER)
             .build();
