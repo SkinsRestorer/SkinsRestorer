@@ -30,6 +30,9 @@ permissions:
   skinsrestorer.command.update:
     description: Allows access to update your skin.
     default: op
+  skinsrestorer.command.search:
+    description: Allows access to search your skin.
+    default: op
 
   skinsrestorer.admincommand:
     description: Allows access to the main "/sr" commands.

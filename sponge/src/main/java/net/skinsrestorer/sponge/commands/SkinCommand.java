@@ -80,6 +80,7 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Subcommand("search")
     @CommandPermission("%skinSearch")
     @Description("%helpSkinSearch")
+    @Syntax("%SyntaxSkinSearch")
     public void onSkinSearch(CommandSource source, String search) {
         onSkinSearch(wrapCommandSender(source), search);
     }
