@@ -66,7 +66,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -111,12 +111,10 @@ public class SkinsRestorer implements ISRPlugin {
         // Check for updates
         if (!Files.exists(updaterDisabled)) {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
-            checkUpdate();
+            checkUpdate(true);
 
-            Random rn = new Random();
-            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-            Sponge.getScheduler().createTaskBuilder().execute(() ->
-                    checkUpdate(false)).interval(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES);
+            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
+            runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -147,30 +145,15 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     private void initCommands() {
-        Sponge.getPluginManager().getPlugin("skinsrestorer").ifPresent(pluginContainer -> {
-            manager = new SpongeCommandManager(pluginContainer);
+        manager = new SpongeCommandManager(container);
 
-            prepareACF(manager, srLogger);
+        prepareACF(manager, srLogger);
 
-            manager.registerCommand(skinCommand);
-            manager.registerCommand(new SrCommand(this));
-        });
+        manager.registerCommand(skinCommand);
+        manager.registerCommand(new SrCommand(this));
     }
 
-    private boolean initStorage() {
-        // Initialise MySQL
-        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) return false;
-
-        // Preload default skins
-        Sponge.getScheduler().createAsyncExecutor(this).execute(skinStorage::preloadDefaultSkins);
-        return true;
-    }
-
-    private void checkUpdate() {
-        checkUpdate(true);
-    }
-
-    private void checkUpdate(boolean showUpToDate) {
+    public void checkUpdate(boolean showUpToDate) {
         Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -200,6 +183,11 @@ public class SkinsRestorer implements ISRPlugin {
     @Override
     public void runAsync(Runnable runnable) {
         game.getScheduler().createAsyncExecutor(this).execute(runnable);
+    }
+
+    @Override
+    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        game.getScheduler().createTaskBuilder().execute(runnable).interval(interval, timeUnit).delay(delay, timeUnit).submit(this);
     }
 
     @Override

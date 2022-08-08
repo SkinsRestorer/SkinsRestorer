@@ -72,8 +72,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
@@ -124,6 +125,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     @Override
     public void runAsync(Runnable runnable) {
         getServer().getScheduler().runTaskAsynchronously(this, runnable);
+    }
+
+    @Override
+    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        getServer().getScheduler().runTaskTimerAsynchronously(this, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
     }
 
     @Override
@@ -286,8 +292,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             Locale.load(dataFolderPath, srLogger);
 
             // Init storage
-            if (!initStorage())
+            if (!initStorage()) {
+                Bukkit.getPluginManager().disablePlugin(this);
                 return;
+            }
 
             // Init commands
             initCommands();
@@ -315,13 +323,13 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         isUpdaterInitialized = true;
         Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
         if (!Files.exists(updaterDisabled)) {
-            checkUpdate(proxyMode, true);
+            checkUpdate(true);
 
             // Delay update between 5 & 30 minutes
-            int delayInt = 300 + new Random().nextInt(1800 + 1 - 300);
+            int delayInt = 300 + ThreadLocalRandom.current().nextInt(1800 + 1 - 300);
             // Repeat update between 1 & 4 hours
-            int periodInt = 60 + new Random().nextInt(240 + 1 - 60);
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> checkUpdate(proxyMode, false), 20L * delayInt, 20L * 60 * periodInt);
+            int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
+            runRepeat(this::checkUpdate, delayInt, periodInt, TimeUnit.SECONDS);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -379,18 +387,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
-    }
-
-    private boolean initStorage() {
-        // Initialise SkinStorage
-        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) {
-            Bukkit.getPluginManager().disablePlugin(this);
-            return false;
-        }
-
-        // Preload default skins
-        Bukkit.getScheduler().runTaskAsynchronously(this, skinStorage::preloadDefaultSkins);
-        return true;
     }
 
     private void checkProxyMode() {
@@ -486,7 +482,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
-    private void checkUpdate(boolean proxyMode, boolean showUpToDate) {
+    public void checkUpdate(boolean showUpToDate) {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {

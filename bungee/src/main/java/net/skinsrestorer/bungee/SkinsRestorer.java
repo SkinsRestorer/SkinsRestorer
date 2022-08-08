@@ -22,7 +22,6 @@ package net.skinsrestorer.bungee;
 import co.aikar.commands.BungeeCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -64,7 +63,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -122,9 +121,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
-            Random rn = new Random();
-            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-            getProxy().getScheduler().schedule(this, this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
+            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
+            runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -134,8 +132,11 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         Locale.load(dataFolderPath, srLogger);
 
         // Init storage
-        if (!initStorage())
+        if (!initStorage()) {
+            getProxy().getPluginManager().unregisterListeners(this);
+            getProxy().getPluginManager().unregisterCommands(this);
             return;
+        }
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));
@@ -163,25 +164,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         manager.registerCommand(new GUICommand(this));
     }
 
-    private boolean initStorage() {
-        // Initialise MySQL
-        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) {
-            getProxy().getPluginManager().unregisterListeners(this);
-            getProxy().getPluginManager().unregisterCommands(this);
-            return false;
-        }
-
-        // Preload default skins
-        ProxyServer.getInstance().getScheduler().runAsync(this, skinStorage::preloadDefaultSkins);
-        return true;
-    }
-
-    private void checkUpdate() {
-        checkUpdate(false);
-    }
-
-    private void checkUpdate(boolean showUpToDate) {
-        ProxyServer.getInstance().getScheduler().runAsync(this, () -> updateChecker.checkForUpdate(new UpdateCallback() {
+    public void checkUpdate(boolean showUpToDate) {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
@@ -207,6 +191,11 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     @Override
     public void runAsync(Runnable runnable) {
         getProxy().getScheduler().runAsync(this, runnable);
+    }
+
+    @Override
+    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        getProxy().getScheduler().schedule(this, runnable, delay, interval, timeUnit);
     }
 
     @Override

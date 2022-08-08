@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
     Path getDataFolderPath();
@@ -49,6 +50,8 @@ public interface ISRPlugin {
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
+
+    void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
     Collection<ISRPlayer> getOnlinePlayers();
 
@@ -70,7 +73,22 @@ public interface ISRPlugin {
         SharedMethods.allowIllegalACFNames();
     }
 
+    default boolean initStorage() {
+        // Initialise MySQL
+        if (!SharedMethods.initStorage(getSrLogger(), getSkinStorage(), getDataFolderPath())) return false;
+
+        // Preload default skins
+        runAsync(getSkinStorage()::preloadDefaultSkins);
+        return true;
+    }
+
     CommandManager<?, ?, ?, ?, ?, ?> getManager();
 
     MojangAPI getMojangAPI();
+
+    default void checkUpdate() {
+        checkUpdate(false);
+    }
+
+    void checkUpdate(boolean showUpToDate);
 }

@@ -67,7 +67,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -120,9 +120,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
-            Random rn = new Random();
-            int delayInt = 60 + rn.nextInt(240 - 60 + 1);
-            proxy.getScheduler().buildTask(this, this::checkUpdate).repeat(delayInt, TimeUnit.MINUTES).delay(delayInt, TimeUnit.MINUTES).schedule();
+            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
+            runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         } else {
             srLogger.info("Updater Disabled");
         }
@@ -157,20 +156,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         manager.registerCommand(new GUICommand(this));
     }
 
-    private boolean initStorage() {
-        // Initialise MySQL
-        if (!SharedMethods.initStorage(srLogger, skinStorage, dataFolderPath)) return false;
-
-        // Preload default skins
-        runAsync(skinStorage::preloadDefaultSkins);
-        return true;
-    }
-
-    private void checkUpdate() {
-        checkUpdate(false);
-    }
-
-    private void checkUpdate(boolean showUpToDate) {
+    public void checkUpdate(boolean showUpToDate) {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
@@ -200,6 +186,11 @@ public class SkinsRestorer implements ISRProxyPlugin {
     @Override
     public void runAsync(Runnable runnable) {
         proxy.getScheduler().buildTask(this, runnable).schedule();
+    }
+
+    @Override
+    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        proxy.getScheduler().buildTask(this, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
     }
 
     @Override
