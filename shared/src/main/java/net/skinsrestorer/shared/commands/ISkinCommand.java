@@ -267,10 +267,8 @@ public interface ISkinCommand {
             // Apply cooldown to sender
             plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
             try {
-                if (save) {
+                if (save)
                     plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);
-                }
-
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
@@ -290,10 +288,13 @@ public interface ISkinCommand {
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        if (save) {
-            getPlugin().getSkinStorage().setSkinOfPlayer(playerName, oldSkinName.orElse(playerName));
-        }
+        rollback(playerName, oldSkinName.orElse(playerName), save);
         return false;
+    }
+
+    default void rollback(String pName, String oldSkinName, boolean save) {
+        if (save)
+            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     ISRPlugin getPlugin();

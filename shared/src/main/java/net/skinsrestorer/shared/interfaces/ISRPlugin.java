@@ -44,6 +44,7 @@ public interface ISRPlugin {
 
     String getVersion();
 
+    MetricsCounter getMetricsCounter();
     CooldownStorage getCooldownStorage();
 
     SRLogger getSrLogger();
