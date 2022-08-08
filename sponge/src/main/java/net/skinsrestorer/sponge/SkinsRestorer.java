@@ -32,6 +32,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
@@ -76,6 +77,7 @@ public class SkinsRestorer implements ISRPlugin {
     private static final boolean BUNGEE_ENABLED = false;
     private final Metrics metrics;
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final CooldownStorage cooldownStorage = new CooldownStorage();
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
     private final Path dataFolderPath;
     private final SRLogger srLogger;
@@ -148,6 +150,8 @@ public class SkinsRestorer implements ISRPlugin {
         manager = new SpongeCommandManager(container);
 
         prepareACF(manager, srLogger);
+
+        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));

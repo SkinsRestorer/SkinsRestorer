@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.interfaces;
 import co.aikar.commands.CommandManager;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
@@ -44,6 +45,7 @@ public interface ISRPlugin {
     String getVersion();
 
     MetricsCounter getMetricsCounter();
+    CooldownStorage getCooldownStorage();
 
     SRLogger getSrLogger();
 

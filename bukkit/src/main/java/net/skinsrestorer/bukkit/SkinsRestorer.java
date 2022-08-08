@@ -42,10 +42,7 @@ import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.storage.YamlConfig;
+import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -81,6 +78,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("Duplicates")
 public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final CooldownStorage cooldownStorage = new CooldownStorage();
     @SuppressWarnings("ConstantConditions")
     private final BukkitConsoleImpl bukkitConsole = new BukkitConsoleImpl(getServer() == null ? null : getServer().getConsoleSender());
     @SuppressWarnings("ConstantConditions")
@@ -383,6 +381,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         manager = new PaperCommandManager(this);
 
         prepareACF(manager, srLogger);
+
+        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));

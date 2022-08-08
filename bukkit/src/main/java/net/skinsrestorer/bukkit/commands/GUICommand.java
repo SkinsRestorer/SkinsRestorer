@@ -28,7 +28,6 @@ import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -52,8 +51,8 @@ public class GUICommand extends BaseCommand {
     @CommandPermission("%skins")
     public void onDefault(Player player) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            if (!player.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(player.getName())) {
-                player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", "" + CooldownStorage.getCooldown(player.getName())));
+            if (!player.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(player.getName())) {
+                player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(player.getName()))));
                 return;
             }
             player.sendMessage(Locale.SKINSMENU_OPEN);

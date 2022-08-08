@@ -40,6 +40,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
@@ -77,6 +78,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final CooldownStorage cooldownStorage = new CooldownStorage();
     private final Path dataFolderPath;
     private final SRLogger srLogger;
     private final MojangAPI mojangAPI;
@@ -150,6 +152,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
         manager = new VelocityCommandManager(proxy, this);
 
         prepareACF(manager, srLogger);
+
+        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));

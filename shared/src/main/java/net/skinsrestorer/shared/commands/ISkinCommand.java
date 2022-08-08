@@ -29,7 +29,6 @@ import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 
@@ -73,8 +72,8 @@ public interface ISkinCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String sName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sName)) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sName)));
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(sName)) {
+                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(sName)));
                 return;
             }
 
@@ -111,8 +110,8 @@ public interface ISkinCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String sName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(sName)) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, CooldownStorage.getCooldown(sName)));
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(sName)) {
+                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(sName)));
                 return;
             }
 
@@ -218,8 +217,8 @@ public interface ISkinCommand {
         }
 
         final String senderName = sender.getName();
-        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(senderName)) {
-            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(senderName))));
+        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
+            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(senderName))));
             return false;
         }
 
@@ -239,7 +238,7 @@ public interface ISkinCommand {
             }
 
             // Apply cooldown to sender
-            CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+            plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
 
             try {
                 sender.sendMessage(Locale.MS_UPDATING_SKIN);
@@ -266,7 +265,7 @@ public interface ISkinCommand {
         } else {
             // If skin is not an url, it's a username
             // Apply cooldown to sender
-            CooldownStorage.setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+            plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
             try {
                 if (save)
                     plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);
@@ -288,7 +287,7 @@ public interface ISkinCommand {
         }
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        CooldownStorage.setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
         rollback(playerName, oldSkinName.orElse(playerName), save);
         return false;
     }

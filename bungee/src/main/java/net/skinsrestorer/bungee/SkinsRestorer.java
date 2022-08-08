@@ -43,6 +43,7 @@ import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
@@ -72,6 +73,7 @@ import java.util.stream.Collectors;
 public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final MetricsCounter metricsCounter = new MetricsCounter();
+    private final CooldownStorage cooldownStorage = new CooldownStorage();
     private final BungeeConsoleImpl bungeeConsole = new BungeeConsoleImpl(getProxy() == null ? null : getProxy().getConsole());
     private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(bungeeConsole, getProxy() == null ? null : getProxy().getLogger());
     private final SRLogger srLogger = new SRLogger(javaLogger, true);
@@ -158,6 +160,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         manager = new BungeeCommandManager(this);
 
         prepareACF(manager, srLogger);
+
+        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));

@@ -37,8 +37,9 @@ public interface IProxyGUICommand {
     }
 
     default void onDefault(ISRProxyPlayer player) {
-        if (!player.hasPermission("skinsrestorer.bypasscooldown") && CooldownStorage.hasCooldown(player.getName())) {
-            player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(CooldownStorage.getCooldown(player.getName()))));
+        CooldownStorage cooldownStorage = getPlugin().getCooldownStorage();
+        if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
+            player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(cooldownStorage.getCooldownSeconds(player.getName()))));
             return;
         }
         player.sendMessage(Locale.SKINSMENU_OPEN);
