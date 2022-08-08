@@ -21,11 +21,13 @@ package net.skinsrestorer.shared.listeners;
 
 import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 
 public abstract class SharedPluginMessageListener {
     private static byte[] convertToByteArray(Map<String, GenericProperty> map) {
@@ -75,9 +77,14 @@ public abstract class SharedPluginMessageListener {
                         page = 999;
                     int skinNumber = 25 * page;
 
-                    Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
+                    Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+                    Map<String, GenericProperty> conversion = new TreeMap<>();
 
-                    byte[] ba = convertToByteArray(skinsList);
+                    for (Map.Entry<String, IProperty> entry : skinsList.entrySet()) {
+                        conversion.put(entry.getKey(), new GenericProperty(entry.getValue()));
+                    }
+
+                    byte[] ba = convertToByteArray(conversion);
 
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     DataOutputStream out = new DataOutputStream(b);
@@ -95,7 +102,7 @@ public abstract class SharedPluginMessageListener {
 
                     // Payload may not be larger than 32767 bytes -18 from channel name
                     if (b.toByteArray().length > 32749) {
-                        plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
+                        plugin.getSrLogger().warning("Too many bytes GUI... canceling GUI..");
                         break;
                     }
 

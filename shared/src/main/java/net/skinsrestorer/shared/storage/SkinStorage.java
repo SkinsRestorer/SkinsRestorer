@@ -376,8 +376,7 @@ public class SkinStorage implements ISkinStorage {
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
-    public Map<String, IProperty> getSkins(int number) {
-        //Using mysql
+    public Map<String, IProperty> getSkins(int offset) {
         Map<String, IProperty> list = new TreeMap<>();
 
         if (Config.MYSQL_ENABLED) {
@@ -393,15 +392,13 @@ public class SkinStorage implements ISkinStorage {
                 }
             }
 
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy);
-            int i = 0;
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 25");
             try {
                 do {
-                    if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
-                    i++;
+                    list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
                 } while (crs.next());
-            } catch (SQLException ignored) {
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } else {
             List<Path> files = new ArrayList<>();
@@ -417,82 +414,19 @@ public class SkinStorage implements ISkinStorage {
 
             int i = 0;
             for (String skinName : skinNames) {
-                if (i >= number) {
-                    if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
-                        for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
-                            if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
+                if (list.size() >= 25)
+                    break;
+
+                if (i >= offset) {
+                    if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
+                        for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
+                            if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
                                 getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                         }
                     } else {
                         getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                     }
                 }
-                i++;
-            }
-        }
-
-        return list;
-    }
-
-    // TODO: remove duplicated code and use existing methods....
-    // TODO: needs a lot refactoring!
-    // TODO: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
-    // TODO: That should save lots of duplicated code
-    public Map<String, GenericProperty> getSkinsRaw(int number) {
-        Map<String, GenericProperty> list = new TreeMap<>();
-
-        if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " ORDER BY `Nick`");
-            int i = 0;
-            int foundSkins = 0;
-            try {
-                do {
-                    if (i >= number && foundSkins <= 25) {
-                        GenericProperty prop = new GenericProperty();
-                        prop.setName(IProperty.TEXTURES_NAME);
-                        prop.setValue(crs.getString("Value"));
-                        prop.setSignature(crs.getString("Signature"));
-                        list.put(crs.getString("Nick"), prop);
-                        foundSkins++;
-                    }
-                    i++;
-                } while (crs.next());
-            } catch (SQLException ignored) {
-            }
-        } else {
-            List<Path> files = new ArrayList<>();
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                stream.forEach(files::add);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            files.sort(Comparator.comparing(o -> o.getFileName().toString()));
-
-            int i = 0;
-            int foundSkins = 0;
-            for (Path file : files) {
-                String fileName = file.getFileName().toString();
-                String skinName = fileName.substring(0, fileName.length() - 5);
-                if (i >= number && foundSkins <= 25) {
-                    try {
-                        if (!Files.exists(file))
-                            continue;
-
-                        List<String> lines = Files.readAllLines(file);
-
-                        GenericProperty prop = new GenericProperty();
-                        prop.setName(IProperty.TEXTURES_NAME);
-                        prop.setValue(lines.get(0));
-                        prop.setSignature(lines.get(1));
-                        list.put(skinName, prop);
-
-                        foundSkins++;
-                    } catch (Exception ignored) {
-                    }
-                }
-
                 i++;
             }
         }
