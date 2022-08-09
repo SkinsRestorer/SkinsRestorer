@@ -21,18 +21,22 @@ package net.skinsrestorer.shared.listeners;
 
 import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
+import java.util.zip.GZIPOutputStream;
 
 public abstract class SharedPluginMessageListener {
     private static byte[] convertToByteArray(Map<String, GenericProperty> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
         try {
-            ObjectOutputStream out = new ObjectOutputStream(byteOut);
+            GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut);
+            ObjectOutputStream out = new ObjectOutputStream(gzipOut);
             out.writeObject(map);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,17 +77,22 @@ public abstract class SharedPluginMessageListener {
                     int page = in.readInt();
                     if (page > 999)
                         page = 999;
-                    int skinNumber = 25 * page;
+                    int skinNumber = 36 * page;
 
-                    Map<String, GenericProperty> skinsList = plugin.getSkinStorage().getSkinsRaw(skinNumber);
+                    Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
+                    Map<String, GenericProperty> conversion = new TreeMap<>();
 
-                    byte[] ba = convertToByteArray(skinsList);
+                    for (Map.Entry<String, IProperty> entry : skinsList.entrySet()) {
+                        conversion.put(entry.getKey(), new GenericProperty(entry.getValue()));
+                    }
+
+                    byte[] ba = convertToByteArray(conversion);
 
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     DataOutputStream out = new DataOutputStream(b);
 
                     try {
-                        out.writeUTF("returnSkins");
+                        out.writeUTF("returnSkinsV2");
                         out.writeUTF(playerName);
                         out.writeInt(page);
 
@@ -93,13 +102,15 @@ public abstract class SharedPluginMessageListener {
                         e1.printStackTrace();
                     }
 
+                    byte[] data = b.toByteArray();
+                    plugin.getSrLogger().debug("Sending skins to " + playerName + " (" + data.length + " bytes)");
                     // Payload may not be larger than 32767 bytes -18 from channel name
-                    if (b.toByteArray().length > 32749) {
-                        plugin.getSrLogger().warning("Byte to long in gui... cancel gui..");
+                    if (data.length > 32749) {
+                        plugin.getSrLogger().warning("Too many bytes GUI... canceling GUI..");
                         break;
                     }
 
-                    player.sendDataToServer("sr:messagechannel", b.toByteArray());
+                    player.sendDataToServer("sr:messagechannel", data);
                     break;
                 case "clearSkin":
                     plugin.getSkinCommand().onSkinClearOther(player, player);

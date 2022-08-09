@@ -38,12 +38,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.nio.CharBuffer;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
     private final SkinsRestorer plugin;
-    private final int page; //Page number start with 0
+    private final int page; // Page number start with 0
     @Getter
     @Setter
     private Inventory inventory;

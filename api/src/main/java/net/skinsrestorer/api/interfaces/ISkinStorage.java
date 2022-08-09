@@ -37,7 +37,7 @@ public interface ISkinStorage {
      * @param playerName the players name
      * @return the custom skin name a player has set or null if not set
      */
-    Optional<String> getSkinOfPlayer(String playerName);
+    Optional<String> getSkinNameOfPlayer(String playerName);
 
     /**
      * This method seeks out a players actual skin (chosen or not) and returns

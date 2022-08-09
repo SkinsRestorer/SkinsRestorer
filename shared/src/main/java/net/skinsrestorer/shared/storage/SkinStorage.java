@@ -25,7 +25,6 @@ import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
@@ -43,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -118,8 +118,9 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
+    @Override
     public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
-        Optional<String> skin = getSkinOfPlayer(playerName);
+        Optional<String> skin = getSkinNameOfPlayer(playerName);
 
         if (!skin.isPresent()) {
             skin = Optional.of(playerName.toLowerCase());
@@ -153,26 +154,28 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public Optional<String> getSkinOfPlayer(String playerName) {
+    public Optional<String> getSkinNameOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
 
-            if (crs != null)
-                try {
-                    final String skin = crs.getString("Skin");
+            if (crs == null)
+                return Optional.empty();
 
-                    //maybe useless
-                    if (skin.isEmpty()) {
-                        removeSkinOfPlayer(playerName);
-                        return Optional.empty();
-                    }
+            try {
+                final String skin = crs.getString("Skin");
 
-                    return Optional.of(skin);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                // maybe useless
+                if (skin.isEmpty()) {
+                    removeSkinOfPlayer(playerName);
+                    return Optional.empty();
                 }
+
+                return Optional.of(skin);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             playerName = replaceForbiddenChars(playerName);
             Path playerFile = playersFolder.resolve(playerName + ".player");
@@ -376,8 +379,7 @@ public class SkinStorage implements ISkinStorage {
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
-    public Map<String, IProperty> getSkins(int number) {
-        //Using mysql
+    public Map<String, IProperty> getSkins(int offset) {
         Map<String, IProperty> list = new TreeMap<>();
 
         if (Config.MYSQL_ENABLED) {
@@ -393,15 +395,13 @@ public class SkinStorage implements ISkinStorage {
                 }
             }
 
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy);
-            int i = 0;
+            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 25");
             try {
                 do {
-                    if (i >= number)
-                        list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
-                    i++;
+                    list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
                 } while (crs.next());
-            } catch (SQLException ignored) {
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         } else {
             List<Path> files = new ArrayList<>();
@@ -417,82 +417,19 @@ public class SkinStorage implements ISkinStorage {
 
             int i = 0;
             for (String skinName : skinNames) {
-                if (i >= number) {
-                    if (Config.CUSTOM_GUI_ONLY) { //Show only Config.CUSTOM_GUI_SKINS in the gui
-                        for (String GuiSkins : Config.CUSTOM_GUI_SKINS) {
-                            if (skinName.toLowerCase().contains(GuiSkins.toLowerCase()))
+                if (list.size() >= 36)
+                    break;
+
+                if (i >= offset) {
+                    if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
+                        for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
+                            if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
                                 getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                         }
                     } else {
                         getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
                     }
                 }
-                i++;
-            }
-        }
-
-        return list;
-    }
-
-    // TODO: remove duplicated code and use existing methods....
-    // TODO: needs a lot refactoring!
-    // TODO: We should _always_ return our own Property object and cast to the platform specific one just before actually setting the skin.
-    // TODO: That should save lots of duplicated code
-    public Map<String, GenericProperty> getSkinsRaw(int number) {
-        Map<String, GenericProperty> list = new TreeMap<>();
-
-        if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " ORDER BY `Nick`");
-            int i = 0;
-            int foundSkins = 0;
-            try {
-                do {
-                    if (i >= number && foundSkins <= 25) {
-                        GenericProperty prop = new GenericProperty();
-                        prop.setName(IProperty.TEXTURES_NAME);
-                        prop.setValue(crs.getString("Value"));
-                        prop.setSignature(crs.getString("Signature"));
-                        list.put(crs.getString("Nick"), prop);
-                        foundSkins++;
-                    }
-                    i++;
-                } while (crs.next());
-            } catch (SQLException ignored) {
-            }
-        } else {
-            List<Path> files = new ArrayList<>();
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                stream.forEach(files::add);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            files.sort(Comparator.comparing(o -> o.getFileName().toString()));
-
-            int i = 0;
-            int foundSkins = 0;
-            for (Path file : files) {
-                String fileName = file.getFileName().toString();
-                String skinName = fileName.substring(0, fileName.length() - 5);
-                if (i >= number && foundSkins <= 25) {
-                    try {
-                        if (!Files.exists(file))
-                            continue;
-
-                        List<String> lines = Files.readAllLines(file);
-
-                        GenericProperty prop = new GenericProperty();
-                        prop.setName(IProperty.TEXTURES_NAME);
-                        prop.setValue(lines.get(0));
-                        prop.setSignature(lines.get(1));
-                        list.put(skinName, prop);
-
-                        foundSkins++;
-                    } catch (Exception ignored) {
-                    }
-                }
-
                 i++;
             }
         }
@@ -579,6 +516,14 @@ public class SkinStorage implements ISkinStorage {
         // Trim player name
         playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
 
+        if (!clear) {
+            Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);
+
+            if (playerSkinName.isPresent()) {
+                return playerSkinName.get();
+            }
+        }
+
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
@@ -594,22 +539,17 @@ public class SkinStorage implements ISkinStorage {
             }
 
             // return default skin name if user has no custom skin set, or we want to clear to default
-            if (!getSkinOfPlayer(playerName).isPresent() || clear) {
-                final List<String> skins = Config.DEFAULT_SKINS;
+            List<String> skins = Config.DEFAULT_SKINS;
 
-                String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0);
+            // return player name if there are no default skins set
+            if (skins.isEmpty())
+                return playerName;
 
-                // return player name if there are no default skins set
-                return randomSkin != null ? randomSkin : playerName;
-            }
+            return skins.size() > 1 ? skins.get(ThreadLocalRandom.current().nextInt(skins.size())) : skins.get(0);
         }
 
-        // return the player name if we want to clear the skin
-        if (clear)
-            return playerName;
-
         // empty if player has no custom skin, we'll return his name then
-        return getSkinOfPlayer(playerName).orElse(playerName);
+        return playerName;
     }
 
     /**

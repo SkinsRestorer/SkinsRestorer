@@ -73,6 +73,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 @Getter
 @SuppressWarnings("Duplicates")
@@ -99,11 +100,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private boolean isUpdaterInitialized = false;
 
     @SuppressWarnings("unchecked")
-    private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
+    private static Map<String, GenericProperty> convertToObject(byte[] byteArr, boolean gzip) {
         Map<String, GenericProperty> map = new TreeMap<>();
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
-            ObjectInputStream ois = new ObjectInputStream(bis);
+            ObjectInputStream ois = new ObjectInputStream(gzip ? new GZIPInputStream(bis) : bis);
 
             while (bis.available() > 0) {
                 map = (Map<String, GenericProperty>) ois.readObject();
@@ -256,9 +257,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                                 return;
 
                             requestSkinsFromBungeeCord(player, 0);
-                        }
-
-                        if (subChannel.equalsIgnoreCase("returnSkins")) {
+                        } else if (subChannel.equalsIgnoreCase("returnSkins") || subChannel.equalsIgnoreCase("returnSkinsV2")) {
                             Player player = Bukkit.getPlayer(in.readUTF());
                             if (player == null)
                                 return;
@@ -269,9 +268,9 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             byte[] msgBytes = new byte[len];
                             in.readFully(msgBytes);
 
-                            Map<String, GenericProperty> skinList = convertToObject(msgBytes);
+                            Map<String, GenericProperty> skinList = convertToObject(msgBytes, subChannel.equalsIgnoreCase("returnSkinsV2"));
 
-                            //convert
+                            // convert
                             Map<String, IProperty> newSkinList = new TreeMap<>();
                             skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createPlatformProperty(property.getName(), property.getValue(), property.getSignature())));
 

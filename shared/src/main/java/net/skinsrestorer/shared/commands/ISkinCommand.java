@@ -116,7 +116,7 @@ public interface ISkinCommand {
             }
 
             final String pName = player.getName();
-            Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(pName);
+            Optional<String> skin = plugin.getSkinStorage().getSkinNameOfPlayer(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -223,7 +223,7 @@ public interface ISkinCommand {
         }
 
         final String playerName = player.getName();
-        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinOfPlayer(playerName);
+        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinNameOfPlayer(playerName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
@@ -267,8 +267,10 @@ public interface ISkinCommand {
             // Apply cooldown to sender
             plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
             try {
-                if (save)
+                if (save) {
                     plugin.getSkinStorage().setSkinOfPlayer(playerName, skin);
+                }
+
                 // TODO: #getSkinForPlayer() is nested and on different places around bungee/sponge/velocity
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
@@ -288,13 +290,10 @@ public interface ISkinCommand {
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
-        rollback(playerName, oldSkinName.orElse(playerName), save);
+        if (save) {
+            getPlugin().getSkinStorage().setSkinOfPlayer(playerName, oldSkinName.orElse(playerName));
+        }
         return false;
-    }
-
-    default void rollback(String pName, String oldSkinName, boolean save) {
-        if (save)
-            getPlugin().getSkinStorage().setSkinOfPlayer(pName, oldSkinName);
     }
 
     ISRPlugin getPlugin();
