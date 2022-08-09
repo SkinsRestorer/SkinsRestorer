@@ -516,10 +516,12 @@ public class SkinStorage implements ISkinStorage {
         // Trim player name
         playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
 
-        Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);
+        if (!clear) {
+            Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);
 
-        if (playerSkinName.isPresent() && !clear) {
-            return playerSkinName.get();
+            if (playerSkinName.isPresent()) {
+                return playerSkinName.get();
+            }
         }
 
         if (Config.DEFAULT_SKINS_ENABLED) {
