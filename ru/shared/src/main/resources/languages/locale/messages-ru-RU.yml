@@ -13,13 +13,13 @@ prefix: "&e[&2SkinsRestorer&e]"
 #Help messages #
 #################
 #Help lines appearing in "/skin" OR "/skin help"
-help-SkinClear: "Очищает ваш скин."
-help-SkinClear-Other: "Удалить скин другому игроку."
+help-SkinClear: "Сбрасывает ваш скин."
+help-SkinClear-Other: "Сбрасывает скин другому игроку."
 help-SkinUpdate: "Обновляет ваш скин."
 help-SkinUpdate-Other: "Обновляет скин другому игроку."
 help-SkinSet: "Устанавливает скин другого игрока."
-help-Skinset-Other: "Установите скин другому игроку"
-help-SkinSet-Other-Url: "Установить скин по ссылке image_url.png"
+help-Skinset-Other: "Устанавливает скин другому игроку."
+help-SkinSet-Other-Url: "Установить скин по ссылке_изображения.png"
 #Admin help lines appearing in "/sr" OR "/sr help"
 help-SRreload: "Перезагружает файл конфигурации."
 help-SRStatus: "Проверяет плагину необходимые API сервисы."
@@ -48,7 +48,7 @@ adminSetSkin: "&2Вы установили скин игрока %p."
 #Success message to player whose skin was cleared
 skinClearSuccess: "&2Ваш скин сброшен."
 #Success message sent to player that used /sr clear <player> command
-skinClearIssuer: "&2Скин очищен для игрока %p."
+skinClearIssuer: "&2Скин сброшен для игрока %player."
 #Success message to player whose skin was updated
 skinUpdateSuccess: "&2Ваш скин обновлён."
 #Success message sent to player that used /sr update <player> command
@@ -132,7 +132,7 @@ customHelpIFenabled:
   - "    &2/skin <skinname> &7-&f Сокращение от \"/skin set\"."
   - "    &2/skin set <skinname> &7-&f Изменяет ваш скин."
   - "    &2/skin url <skinname> &7-&f Установить скин Image_url.png"
-  - "    &2/skin clear &7-&f Очищает скин."
+  - "    &2/skin clear &7-&f Сбрасывает ваш скин."
   - "    &2/skin update &7-&f обновляет скин."
 #String used as a divider (above and below customHelpIFenabled) (make it empty: "" to hide)
 customHelpIFenabled-line: "&7&m----------------------------------------"
