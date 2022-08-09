@@ -77,7 +77,7 @@ public abstract class SharedPluginMessageListener {
                     int page = in.readInt();
                     if (page > 999)
                         page = 999;
-                    int skinNumber = 25 * page;
+                    int skinNumber = 36 * page;
 
                     Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
                     Map<String, GenericProperty> conversion = new TreeMap<>();
