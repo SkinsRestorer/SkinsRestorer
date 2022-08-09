@@ -57,7 +57,7 @@ DefaultSkins:
   ApplyForPremium: false
   Names:
     - "xknat"
-    - "Pistonmaster"
+    - "pistonmaster"
 
 # Skins in this list will be disabled, so users can't set them.
 # Can be bypassed with 'skinsrestorer.bypassdisabled'.
@@ -85,7 +85,7 @@ CustomGUI:
   ShowOnlyCustomGUI: true
   Names:
     - "xknat"
-    - "Pistonmaster"
+    - "pistonmaster"
 
 ############
 # Advanced #
