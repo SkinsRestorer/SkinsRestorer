@@ -25,7 +25,6 @@ import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
@@ -43,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -118,8 +118,9 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
+    @Override
     public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
-        Optional<String> skin = getSkinOfPlayer(playerName);
+        Optional<String> skin = getSkinNameOfPlayer(playerName);
 
         if (!skin.isPresent()) {
             skin = Optional.of(playerName.toLowerCase());
@@ -153,26 +154,28 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public Optional<String> getSkinOfPlayer(String playerName) {
+    public Optional<String> getSkinNameOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
         if (Config.MYSQL_ENABLED) {
             RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
 
-            if (crs != null)
-                try {
-                    final String skin = crs.getString("Skin");
+            if (crs == null)
+                return Optional.empty();
 
-                    //maybe useless
-                    if (skin.isEmpty()) {
-                        removeSkinOfPlayer(playerName);
-                        return Optional.empty();
-                    }
+            try {
+                final String skin = crs.getString("Skin");
 
-                    return Optional.of(skin);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                // maybe useless
+                if (skin.isEmpty()) {
+                    removeSkinOfPlayer(playerName);
+                    return Optional.empty();
                 }
+
+                return Optional.of(skin);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             playerName = replaceForbiddenChars(playerName);
             Path playerFile = playersFolder.resolve(playerName + ".player");
@@ -414,7 +417,7 @@ public class SkinStorage implements ISkinStorage {
 
             int i = 0;
             for (String skinName : skinNames) {
-                if (list.size() >= 25)
+                if (list.size() >= 36)
                     break;
 
                 if (i >= offset) {
@@ -513,6 +516,12 @@ public class SkinStorage implements ISkinStorage {
         // Trim player name
         playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
 
+        Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);
+
+        if (playerSkinName.isPresent() && !clear) {
+            return playerSkinName.get();
+        }
+
         if (Config.DEFAULT_SKINS_ENABLED) {
             // don't return default skin name for premium players if enabled
             if (!Config.DEFAULT_SKINS_PREMIUM) {
@@ -528,22 +537,17 @@ public class SkinStorage implements ISkinStorage {
             }
 
             // return default skin name if user has no custom skin set, or we want to clear to default
-            if (!getSkinOfPlayer(playerName).isPresent() || clear) {
-                final List<String> skins = Config.DEFAULT_SKINS;
+            List<String> skins = Config.DEFAULT_SKINS;
 
-                String randomSkin = skins.size() > 1 ? skins.get(new Random().nextInt(skins.size())) : skins.get(0);
+            // return player name if there are no default skins set
+            if (skins.isEmpty())
+                return playerName;
 
-                // return player name if there are no default skins set
-                return randomSkin != null ? randomSkin : playerName;
-            }
+            return skins.size() > 1 ? skins.get(ThreadLocalRandom.current().nextInt(skins.size())) : skins.get(0);
         }
 
-        // return the player name if we want to clear the skin
-        if (clear)
-            return playerName;
-
         // empty if player has no custom skin, we'll return his name then
-        return getSkinOfPlayer(playerName).orElse(playerName);
+        return playerName;
     }
 
     /**

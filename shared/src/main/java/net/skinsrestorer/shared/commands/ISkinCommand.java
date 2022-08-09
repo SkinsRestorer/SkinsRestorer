@@ -116,7 +116,7 @@ public interface ISkinCommand {
             }
 
             final String pName = player.getName();
-            Optional<String> skin = plugin.getSkinStorage().getSkinOfPlayer(pName);
+            Optional<String> skin = plugin.getSkinStorage().getSkinNameOfPlayer(pName);
 
             try {
                 if (skin.isPresent()) {
@@ -223,7 +223,7 @@ public interface ISkinCommand {
         }
 
         final String playerName = player.getName();
-        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinOfPlayer(playerName);
+        final Optional<String> oldSkinName = plugin.getSkinStorage().getSkinNameOfPlayer(playerName);
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !Config.SKIN_WITHOUT_PERM
