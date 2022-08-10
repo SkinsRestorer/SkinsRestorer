@@ -68,6 +68,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -100,19 +101,28 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private boolean isUpdaterInitialized = false;
 
     @SuppressWarnings("unchecked")
-    private static Map<String, GenericProperty> convertToObject(byte[] byteArr, boolean gzip) {
-        Map<String, GenericProperty> map = new TreeMap<>();
+    private static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
         try {
             ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
-            ObjectInputStream ois = new ObjectInputStream(gzip ? new GZIPInputStream(bis) : bis);
+            ObjectInputStream ois = new ObjectInputStream(bis);
 
-            while (bis.available() > 0) {
-                map = (Map<String, GenericProperty>) ois.readObject();
-            }
+            return (Map<String, GenericProperty>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            return Collections.emptyMap();
         }
-        return map;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> convertToObjectV2(byte[] byteArr) {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new ByteArrayInputStream(byteArr)));
+
+            return (Map<String, String>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
+        }
     }
 
     @Override
@@ -268,13 +278,18 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             byte[] msgBytes = new byte[len];
                             in.readFully(msgBytes);
 
-                            Map<String, GenericProperty> skinList = convertToObject(msgBytes, subChannel.equalsIgnoreCase("returnSkinsV2"));
+                            Map<String, String> skinList;
+                            if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
+                                skinList = convertToObjectV2(msgBytes);
+                            } else { // LEGACY
+                                skinList = new TreeMap<>();
 
-                            // convert
-                            Map<String, IProperty> newSkinList = new TreeMap<>();
-                            skinList.forEach((name, property) -> newSkinList.put(name, SkinsRestorerAPI.getApi().createPlatformProperty(property.getName(), property.getValue(), property.getSignature())));
+                                convertToObject(msgBytes).forEach((key, value) -> {
+                                    skinList.put(key, value.getValue());
+                                });
+                            }
 
-                            Inventory inventory = SkinsGUI.createGUI(this, page, newSkinList);
+                            Inventory inventory = SkinsGUI.createGUI(this, page, skinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
                         }

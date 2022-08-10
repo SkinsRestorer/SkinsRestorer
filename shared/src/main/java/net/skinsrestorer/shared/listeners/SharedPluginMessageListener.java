@@ -31,13 +31,14 @@ import java.util.TreeMap;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SharedPluginMessageListener {
-    private static byte[] convertToByteArray(Map<String, GenericProperty> map) {
+    private static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
         try {
-            GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut);
-            ObjectOutputStream out = new ObjectOutputStream(gzipOut);
-            out.writeObject(map);
+            try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
+                ObjectOutputStream out = new ObjectOutputStream(gzipOut);
+                out.writeObject(map);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,14 +80,7 @@ public abstract class SharedPluginMessageListener {
                         page = 999;
                     int skinNumber = 36 * page;
 
-                    Map<String, IProperty> skinsList = plugin.getSkinStorage().getSkins(skinNumber);
-                    Map<String, GenericProperty> conversion = new TreeMap<>();
-
-                    for (Map.Entry<String, IProperty> entry : skinsList.entrySet()) {
-                        conversion.put(entry.getKey(), new GenericProperty(entry.getValue()));
-                    }
-
-                    byte[] ba = convertToByteArray(conversion);
+                    byte[] ba = convertToByteArray(plugin.getSkinStorage().getSkins(skinNumber));
 
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     DataOutputStream out = new DataOutputStream(b);

@@ -379,8 +379,8 @@ public class SkinStorage implements ISkinStorage {
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
-    public Map<String, IProperty> getSkins(int offset) {
-        Map<String, IProperty> list = new TreeMap<>();
+    public Map<String, String> getSkins(int offset) {
+        Map<String, String> list = new TreeMap<>();
 
         if (Config.MYSQL_ENABLED) {
             String filterBy = "";
@@ -398,7 +398,7 @@ public class SkinStorage implements ISkinStorage {
             RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36");
             try {
                 do {
-                    list.put(crs.getString("Nick").toLowerCase(), SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, crs.getString("Value"), crs.getString("Signature")));
+                    list.put(crs.getString("Nick").toLowerCase(), crs.getString("Value"));
                 } while (crs.next());
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -424,10 +424,10 @@ public class SkinStorage implements ISkinStorage {
                     if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
                         for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
                             if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
-                                getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
+                                getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
                         }
                     } else {
-                        getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property));
+                        getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
                     }
                 }
                 i++;
