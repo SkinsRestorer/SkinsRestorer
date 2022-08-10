@@ -469,6 +469,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         sb1.append("\nRestart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]");
         sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the Spigot integration!");
         sb1.append("\nYou may now configure SkinsRestorer on BungeeCord (BungeeCord plugins folder /plugins/SkinsRestorer)");
+        sb1.append("\n\n!== override files ==!");
+        sb1.append("\nWarning: only use override files if you wish to run commands / api on backend, you need to uninstall sr from proxy and connect all backend to same mysql");
+        sb1.append("\nHow to urn off proxy mode: create a file called disableProxyMode.txt in SkinsRestorer folder (backend server -> ./plugins/SkinsRestorer/disableProxyMode.txt)");
+        sb1.append("\nThis will force disable proxy mode on next restart");
 
         Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
         try {
