@@ -108,7 +108,7 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.runAsync(() -> {
             SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
             Bukkit.getPluginManager().callEvent(applyEvent);
@@ -125,7 +125,7 @@ public class SkinApplierBukkit {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 applyProperty(player, eventProperty);
 
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> updateSkin(player));
+                plugin.runAsync(() -> updateSkin(player));
             });
         });
     }

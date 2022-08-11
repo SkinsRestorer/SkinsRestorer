@@ -50,7 +50,7 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.runAsync(() -> {
             if (!player.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(player.getName())) {
                 player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(player.getName()))));
                 return;

@@ -230,7 +230,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 if (!channel.equals("sr:skinchange"))
                     return;
 
-                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                runAsync(() -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
@@ -255,7 +255,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 if (!channel.equals("sr:messagechannel"))
                     return;
 
-                Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                runAsync(() -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
                     try {
@@ -325,8 +325,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             }
 
             // Run connection check
-            Bukkit.getScheduler().runTaskAsynchronously(this, () ->
-                    SharedMethods.runServiceCheck(mojangAPI, srLogger));
+            runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
         }
     }
 

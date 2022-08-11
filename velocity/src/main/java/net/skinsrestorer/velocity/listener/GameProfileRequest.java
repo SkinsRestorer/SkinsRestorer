@@ -40,13 +40,14 @@ public class GameProfileRequest extends LoginProfileListener {
         if (handleSync(wrapped))
             return null;
 
-        return EventTask.async(() -> handleAsync(wrapped).ifPresent(name -> {
+        return EventTask.async(() -> {
             try {
-                event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), name));
+                handleAsync(wrapped).ifPresent(property ->
+                        event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), property)));
             } catch (SkinRequestException e) {
                 plugin.getSrLogger().debug(e);
             }
-        }));
+        });
     }
 
     private LoginProfileEvent wrap(GameProfileRequestEvent event) {

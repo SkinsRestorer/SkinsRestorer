@@ -91,6 +91,8 @@ public class SkinStorage implements ISkinStorage {
             try {
                 if (!C.validUrl(skin)) {
                     getSkinForPlayer(skin);
+                } else {
+
                 }
             } catch (SkinRequestException e) {
                 // removing skin from list
@@ -114,7 +116,7 @@ public class SkinStorage implements ISkinStorage {
         if (C.validUrl(skin)) {
             return mineSkinAPI.genSkin(skin, null);
         } else {
-            return getSkinForPlayer(skin);
+            return fetchSkinData(skin);
         }
     }
 
@@ -126,19 +128,23 @@ public class SkinStorage implements ISkinStorage {
             skin = Optional.of(playerName.toLowerCase());
         }
 
-        Optional<IProperty> textures = getSkinData(skin.get());
+        return fetchSkinData(skin.get());
+    }
+
+    private IProperty fetchSkinData(String skinName) throws SkinRequestException {
+        Optional<IProperty> textures = getSkinData(skinName);
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
-                if (!C.validMojangUsername(skin.get()))
-                    throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skin.get()));
+                if (!C.validMojangUsername(skinName))
+                    throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skinName));
 
-                textures = mojangAPI.getSkin(skin.get());
+                textures = mojangAPI.getSkin(skinName);
 
                 if (!textures.isPresent())
                     throw new SkinRequestException(Locale.ERROR_NO_SKIN);
 
-                setSkinData(skin.get(), textures.get());
+                setSkinData(skinName, textures.get());
 
                 return textures.get();
             } catch (SkinRequestException e) {
@@ -571,7 +577,7 @@ public class SkinStorage implements ISkinStorage {
         return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
     }
 
-    //todo remove all whitespace after last starting space.
+    // TODO remove all whitespace after last starting space.
     private String removeWhitespaces(String str) {
         // Remove all whitespace expect when startsWith " ".
         if (str.startsWith(" ")) {

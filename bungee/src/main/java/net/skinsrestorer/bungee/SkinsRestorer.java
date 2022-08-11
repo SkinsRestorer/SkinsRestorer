@@ -153,7 +153,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         getProxy().getPluginManager().registerListener(this, new PluginMessageListener(this));
 
         // Run connection check
-        getProxy().getScheduler().runAsync(this, () -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     private void initCommands() {

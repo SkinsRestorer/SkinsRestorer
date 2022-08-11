@@ -84,7 +84,7 @@ public class UpdateDownloader {
         }
 
         plugin.getSrLogger().info("[SpigetUpdate] Downloading update...");
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
+        plugin.runAsync(org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
                 plugin.getSrLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());

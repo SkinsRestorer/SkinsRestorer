@@ -133,7 +133,7 @@ public class SkinsRestorer implements ISRPlugin {
         initCommands();
 
         // Run connection check
-        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
     }
 
     @Listener
@@ -158,7 +158,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     public void checkUpdate(boolean showUpToDate) {
-        Sponge.getScheduler().createAsyncExecutor(this).execute(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), SkinsRestorer.BUNGEE_ENABLED).forEach(srLogger::info);

@@ -98,7 +98,7 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
         plugin.getSrLogger().info("[GitHubUpdate] Downloading update...");
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, downloadAsync(releaseInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
+        plugin.runAsync(downloadAsync(releaseInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
                 plugin.getSrLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());

@@ -32,6 +32,8 @@ import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 import org.spongepowered.api.profile.GameProfile;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Getter
 public class LoginListener extends LoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
@@ -44,14 +46,14 @@ public class LoginListener extends LoginProfileListener implements EventListener
             return;
 
         final GameProfile profile = event.getProfile();
-
-        profile.getName().flatMap(name -> handleAsync(wrapped)).ifPresent(skin -> {
+        profile.getName().flatMap(name -> {
             try {
-                plugin.getSkinApplierSponge().updateProfileSkin(profile, skin);
+                return handleAsync(wrapped);
             } catch (SkinRequestException e) {
                 plugin.getSrLogger().debug(e);
+                return Optional.empty();
             }
-        });
+        }).ifPresent(property -> plugin.getSkinApplierSponge().updateProfileSkin(profile, property));
     }
 
     private LoginProfileEvent wrap(Auth event) {

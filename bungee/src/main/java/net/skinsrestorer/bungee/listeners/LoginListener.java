@@ -44,17 +44,13 @@ public class LoginListener extends LoginProfileListener implements Listener {
 
         event.registerIntent(plugin);
 
-        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
-            handleAsync(profileEvent).ifPresent(name -> {
-                try {
-                    // TODO: add default skinurl support
-                    plugin.getSkinApplierBungee().applySkin(name, (InitialHandler) event.getConnection());
-                } catch (SkinRequestException e) {
-                    plugin.getSrLogger().debug(e);
-                } catch (Exception e2) {
-                    e2.printStackTrace();
-                }
-            });
+        plugin.runAsync(() -> {
+            try {
+                handleAsync(profileEvent).ifPresent(property ->
+                        plugin.getSkinApplierBungee().applySkin(property, (InitialHandler) event.getConnection()));
+            } catch (SkinRequestException e) {
+                plugin.getSrLogger().debug(e);
+            }
 
             event.completeIntent(plugin);
         });

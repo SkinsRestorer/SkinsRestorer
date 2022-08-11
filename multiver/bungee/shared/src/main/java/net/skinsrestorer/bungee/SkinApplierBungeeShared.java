@@ -43,9 +43,9 @@ public abstract class SkinApplierBungeeShared {
     private final ISRPlugin plugin;
     private final SRLogger log;
 
-    public void applySkin(String nick, InitialHandler handler) throws SkinRequestException {
+    public void applySkin(IProperty property, InitialHandler handler) {
         try {
-            applyEvent(null, plugin.getSkinStorage().getSkinForPlayer(nick), handler);
+            applyEvent(null, property, handler);
         } catch (ReflectionException e) {
             e.printStackTrace();
         }

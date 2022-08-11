@@ -38,7 +38,7 @@ public class ConnectListener implements Listener {
         if (event.isCancelled())
             return;
 
-        plugin.getProxy().getScheduler().runAsync(plugin, () -> {
+        plugin.runAsync(() -> {
             if (plugin.isOutdated()) {
                 final ProxiedPlayer player = event.getPlayer();
 
