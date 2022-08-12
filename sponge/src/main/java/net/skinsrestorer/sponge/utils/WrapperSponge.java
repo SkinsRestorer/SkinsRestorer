@@ -27,6 +27,8 @@ import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import java.util.UUID;
+
 public class WrapperSponge {
     public static ISRCommandSender wrapCommandSender(CommandSource sender) {
         return new ISRCommandSender() {
@@ -62,6 +64,11 @@ public class WrapperSponge {
             @Override
             public String getName() {
                 return player.getName();
+            }
+
+            @Override
+            public UUID getUniqueId() {
+                return player.getUniqueId();
             }
 
             @Override

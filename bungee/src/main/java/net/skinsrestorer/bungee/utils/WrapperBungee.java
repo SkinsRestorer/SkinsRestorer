@@ -28,6 +28,7 @@ import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class WrapperBungee {
     public static ISRCommandSender wrapCommandSender(CommandSender sender) {
@@ -74,6 +75,11 @@ public class WrapperBungee {
             @Override
             public String getName() {
                 return player.getName();
+            }
+
+            @Override
+            public UUID getUniqueId() {
+                return player.getUniqueId();
             }
 
             @Override

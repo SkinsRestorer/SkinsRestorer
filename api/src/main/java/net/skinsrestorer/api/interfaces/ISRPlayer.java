@@ -21,10 +21,14 @@ package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.PlayerWrapper;
 
+import java.util.UUID;
+
 public interface ISRPlayer extends ISRCommandSender {
     PlayerWrapper getWrapper();
 
     String getName();
+
+    UUID getUniqueId();
 
     void sendMessage(String message);
 }

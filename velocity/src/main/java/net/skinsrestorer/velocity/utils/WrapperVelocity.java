@@ -29,6 +29,7 @@ import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public class WrapperVelocity {
     public static ISRCommandSender wrapCommandSender(CommandSource sender) {
@@ -76,6 +77,11 @@ public class WrapperVelocity {
             @Override
             public String getName() {
                 return player.getUsername();
+            }
+
+            @Override
+            public UUID getUniqueId() {
+                return player.getUniqueId();
             }
 
             @Override

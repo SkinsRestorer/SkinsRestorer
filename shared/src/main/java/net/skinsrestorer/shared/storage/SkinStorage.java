@@ -91,8 +91,6 @@ public class SkinStorage implements ISkinStorage {
             try {
                 if (!C.validUrl(skin)) {
                     getSkinForPlayer(skin);
-                } else {
-
                 }
             } catch (SkinRequestException e) {
                 // removing skin from list

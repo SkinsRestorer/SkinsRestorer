@@ -21,6 +21,8 @@ package net.skinsrestorer.api;
 
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 
+import java.util.UUID;
+
 /**
  * Makes it possible to get all platforms into a single API merged.
  */
@@ -40,6 +42,10 @@ public class PlayerWrapper {
 
     public String getName() {
         return internalPlayer.getName();
+    }
+
+    public UUID getUniqueId() {
+        return internalPlayer.getUniqueId();
     }
 
     public void sendMessage(String message) {
