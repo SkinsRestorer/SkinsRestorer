@@ -241,16 +241,6 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
 
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-            applySkin(playerWrapper, playerWrapper.get(ProxiedPlayer.class).getName());
-        }
-
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
-        }
-
         @SneakyThrows
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {

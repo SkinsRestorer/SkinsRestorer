@@ -233,16 +233,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
         }
 
         @Override
-        public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-            applySkin(playerWrapper, playerWrapper.get(Player.class).getUsername());
-        }
-
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
-            applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
-        }
-
-        @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
         }

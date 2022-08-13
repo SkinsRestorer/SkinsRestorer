@@ -261,9 +261,13 @@ public abstract class SkinsRestorerAPI {
         } else throw new IllegalStateException("SkinStorage is not initialized. Is SkinsRestorer in proxy mode?");
     }
 
-    public abstract void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException;
+    public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+        applySkin(playerWrapper, playerWrapper.getName());
+    }
 
-    public abstract void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException;
+    public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
+        applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
+    }
 
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 
