@@ -115,7 +115,7 @@ public abstract class SkinsRestorerAPI {
      * @param skinName Skin name
      **/
     public IProperty getSkinData(String skinName) {
-        return getSkinStorage().getSkinData(skinName).orElse(null);
+        return getSkinStorage().getSkinData(skinName, true).orElse(null);
     }
 
     /**

@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -45,12 +44,12 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
+    private static final int HEAD_COUNT_PER_PAGE = 36;
     private final SkinsRestorer plugin;
     private final int page; // Page number start with 0
     @Getter
     @Setter
     private Inventory inventory;
-    private static final int HEAD_COUNT_PER_PAGE = 36;
 
     public static Inventory createGUI(SkinsRestorer plugin, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
@@ -150,6 +149,37 @@ public class SkinsGUI implements InventoryHolder {
         return is;
     }
 
+    private static ItemStack createGlass(GlassType type) {
+        ItemStack itemStack;
+        String text;
+        switch (type) {
+            case NONE:
+                itemStack = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
+                text = " ";
+                break;
+            case PREV:
+                itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
+                text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
+                break;
+            case NEXT:
+                itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
+                text = C.c(Locale.SKINSMENU_NEXT_PAGE);
+                break;
+            case DELETE:
+                itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
+                text = C.c(Locale.SKINSMENU_CLEAR_SKIN);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown glass type: " + type);
+        }
+
+        ItemMeta itemMeta = Objects.requireNonNull(itemStack).getItemMeta();
+        Objects.requireNonNull(itemMeta).setDisplayName(text);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
+    }
+
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player) || event.getCurrentItem() == null) // Cancel if not a player or if the item is null
             return;
@@ -227,36 +257,5 @@ public class SkinsGUI implements InventoryHolder {
 
     private enum GlassType {
         NONE, PREV, NEXT, DELETE
-    }
-
-    private static ItemStack createGlass(GlassType type) {
-        ItemStack itemStack;
-        String text;
-        switch (type) {
-            case NONE:
-                itemStack = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
-                text = " ";
-                break;
-            case PREV:
-                itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
-                break;
-            case NEXT:
-                itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_NEXT_PAGE);
-                break;
-            case DELETE:
-                itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_CLEAR_SKIN);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown glass type: " + type);
-        }
-
-        ItemMeta itemMeta = Objects.requireNonNull(itemStack).getItemMeta();
-        Objects.requireNonNull(itemMeta).setDisplayName(text);
-        itemStack.setItemMeta(itemMeta);
-
-        return itemStack;
     }
 }

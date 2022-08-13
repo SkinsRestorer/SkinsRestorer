@@ -132,7 +132,7 @@ public class SkinStorage implements ISkinStorage {
     }
 
     private IProperty fetchSkinData(String skinName) throws SkinRequestException {
-        Optional<IProperty> textures = getSkinData(skinName);
+        Optional<IProperty> textures = getSkinData(skinName, true);
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
@@ -273,11 +273,6 @@ public class SkinStorage implements ISkinStorage {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public Optional<IProperty> getSkinData(String skinName) {
-        return getSkinData(skinName, true);
     }
 
     // #getSkinData() also create while we have #getSkinForPlayer()

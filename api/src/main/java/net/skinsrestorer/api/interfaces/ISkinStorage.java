@@ -65,15 +65,10 @@ public interface ISkinStorage {
     void setSkinOfPlayer(String playerName, String skinName);
 
     /**
-     * @see #getSkinData(String, boolean)
-     */
-    Optional<IProperty> getSkinData(String skinName);
-
-    /**
      * Returns property object containing skin data of the wanted skin
      *
      * @param skinName       Skin name
-     * @param updateOutdated On true, we update the skin if expired
+     * @param updateOutdated Whether we update the skin if expired
      */
     Optional<IProperty> getSkinData(String skinName, boolean updateOutdated);
 

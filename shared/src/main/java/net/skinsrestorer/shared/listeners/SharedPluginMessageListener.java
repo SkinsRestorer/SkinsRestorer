@@ -20,14 +20,11 @@
 package net.skinsrestorer.shared.listeners;
 
 import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.api.property.GenericProperty;
-import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SharedPluginMessageListener {

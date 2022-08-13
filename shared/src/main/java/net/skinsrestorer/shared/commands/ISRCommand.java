@@ -39,8 +39,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public interface ISRCommand {
-    @SuppressWarnings("unused")
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
         help.showHelp();
     }
 
@@ -258,15 +259,8 @@ public interface ISRCommand {
 
     List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
 
-    @SuppressWarnings("unused")
     enum PlayerOrSkin {
         PLAYER,
         SKIN,
-    }
-
-    @SuppressWarnings("unused")
-    enum SkinType {
-        STEVE,
-        SLIM,
     }
 }

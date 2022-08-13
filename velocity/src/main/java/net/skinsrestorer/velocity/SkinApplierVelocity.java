@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.storage.Config;

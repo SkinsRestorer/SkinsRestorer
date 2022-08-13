@@ -21,7 +21,6 @@ package net.skinsrestorer.sponge;
 
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
