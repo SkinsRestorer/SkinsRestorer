@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.listeners;
 
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 
@@ -34,16 +35,16 @@ public abstract class LoginProfileListener {
     protected Optional<IProperty> handleAsync(LoginProfileEvent event) throws SkinRequestException {
         ISRPlugin plugin = getPlugin();
         String playerName = event.getPlayerName();
-        Optional<String> skin = plugin.getSkinStorage().getSkinNameOfPlayer(playerName);
+        Pair<IProperty, Boolean> result = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName);
 
-        // Skip players if: OnlineMode & no skin set & enabled & DefaultSkins.premium false
+        // Skip skin if: online mode, no custom skin set, always apply not enabled and default skins for premium not enabled
         if (event.isOnline()
-                && !skin.isPresent()
+                && !result.getRight()
                 && !Config.ALWAYS_APPLY_PREMIUM
                 && !Config.DEFAULT_SKINS_PREMIUM)
             return Optional.empty();
 
-        return Optional.of(plugin.getSkinStorage().getDefaultSkinForPlayer(playerName));
+        return Optional.of(result.getLeft());
     }
 
     protected abstract ISRPlugin getPlugin();

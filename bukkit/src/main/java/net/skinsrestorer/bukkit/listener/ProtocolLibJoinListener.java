@@ -29,24 +29,28 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.common.collect.ImmutableList;
+import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.bukkit.listener.protocol.WrapperPlayServerPlayerInfo;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.listeners.LoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
 
-public class ProtocolLibJoinListener {
+public class ProtocolLibJoinListener extends LoginProfileListener { // TODO: implement listener methods
+    @Getter
+    private final SkinsRestorer plugin;
+
     public ProtocolLibJoinListener(SkinsRestorer skinsRestorer) {
+        this.plugin = skinsRestorer;
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(skinsRestorer, ListenerPriority.LOWEST, ImmutableList.of(PacketType.Play.Server.PLAYER_INFO), ListenerOptions.ASYNC) {
             @Override
             public void onPacketSending(PacketEvent event) {
-                if (Config.DISABLE_ON_JOIN_SKINS)
-                    return;
-
                 WrapperPlayServerPlayerInfo wrapper = new WrapperPlayServerPlayerInfo(event.getPacket());
 
                 if (wrapper.getAction() != EnumWrappers.PlayerInfoAction.ADD_PLAYER)
@@ -58,7 +62,7 @@ public class ProtocolLibJoinListener {
 
                 PlayerInfoData data = list.get(0);
                 String targetName = data.getProfile().getName();
-                Player targetPlayer = plugin.getServer().getPlayer(targetName);
+                Player targetPlayer = skinsRestorer.getServer().getPlayer(targetName);
 
                 if (targetPlayer == null)
                     return;
@@ -67,11 +71,11 @@ public class ProtocolLibJoinListener {
                     return;
 
                 try {
-                    IProperty property = skinsRestorer.getSkinStorage().getDefaultSkinForPlayer(targetName);
+                    IProperty property = skinsRestorer.getSkinStorage().getDefaultSkinForPlayer(targetName).getLeft();
 
                     skinsRestorer.getSkinApplierBukkit().applyProperty(targetPlayer, property);
 
-                    targetPlayer.setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(skinsRestorer, true));
+                    targetPlayer.setMetadata("skinsrestorer.appliedOnJoin", new FixedMetadataValue(plugin, true));
 
                     data.getProfile().getProperties().removeAll(IProperty.TEXTURES_NAME);
                     data.getProfile().getProperties().put(IProperty.TEXTURES_NAME, new WrappedSignedProperty(property.getName(), property.getValue(), property.getSignature()));

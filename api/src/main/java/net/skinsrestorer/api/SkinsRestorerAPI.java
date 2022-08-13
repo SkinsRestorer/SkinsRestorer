@@ -232,7 +232,7 @@ public abstract class SkinsRestorerAPI {
 
     public void setSkin(String playerName, String skinName) throws SkinRequestException {
         setSkinName(playerName, skinName);
-        getSkinStorage().getSkinForPlayer(skinName);
+        getSkinStorage().fetchSkinData(skinName);
     }
 
     public IProperty createPlatformProperty(IProperty property) {
@@ -266,7 +266,7 @@ public abstract class SkinsRestorerAPI {
     }
 
     public void applySkin(PlayerWrapper playerWrapper, String playerName) throws SkinRequestException {
-        applySkin(playerWrapper, skinStorage.getSkinForPlayer(playerName));
+        applySkin(playerWrapper, skinStorage.getDefaultSkinForPlayer(playerName).getLeft());
     }
 
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);

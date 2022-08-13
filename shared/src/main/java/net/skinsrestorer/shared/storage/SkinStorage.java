@@ -28,6 +28,7 @@ import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -92,7 +93,7 @@ public class SkinStorage implements ISkinStorage {
             // TODO: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
-                    getSkinForPlayer(skin);
+                    fetchSkinData(skin);
                 }
             } catch (SkinRequestException e) {
                 // removing skin from list
@@ -110,28 +111,20 @@ public class SkinStorage implements ISkinStorage {
         }
     }
 
-    public IProperty getDefaultSkinForPlayer(final String playerName) throws SkinRequestException {
-        final String skin = getDefaultSkinName(playerName, false);
+    @Override
+    public Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException {
+        final Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
+        String skin = result.getLeft();
 
         if (C.validUrl(skin)) {
-            return mineSkinAPI.genSkin(skin, null);
+            return Pair.of(mineSkinAPI.genSkin(skin, null), result.getRight());
         } else {
-            return fetchSkinData(skin);
+            return Pair.of(fetchSkinData(skin), result.getRight());
         }
     }
 
     @Override
-    public IProperty getSkinForPlayer(final String playerName) throws SkinRequestException {
-        Optional<String> skin = getSkinNameOfPlayer(playerName);
-
-        if (!skin.isPresent()) {
-            skin = Optional.of(playerName.toLowerCase());
-        }
-
-        return fetchSkinData(skin.get());
-    }
-
-    private IProperty fetchSkinData(String skinName) throws SkinRequestException {
+    public IProperty fetchSkinData(String skinName) throws SkinRequestException {
         Optional<IProperty> textures = getSkinData(skinName, true);
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
@@ -503,10 +496,10 @@ public class SkinStorage implements ISkinStorage {
      * Else: return player
      *
      * @param playerName Player name
-     * @param clear      return player instead of his set skin
-     * @return setSkin or DefaultSkin, if player has no setSkin or default skin, we return his name
+     * @param clear      ignore custom set skin of player
+     * @return Custom skin or default skin or player name, right side indicates if it is a custom skin
      */
-    public String getDefaultSkinName(String playerName, boolean clear) {
+    public Pair<String, Boolean> getDefaultSkinName(String playerName, boolean clear) {
         // Trim player name
         playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
 
@@ -514,7 +507,7 @@ public class SkinStorage implements ISkinStorage {
             Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);
 
             if (playerSkinName.isPresent()) {
-                return playerSkinName.get();
+                return Pair.of(playerSkinName.get(), true);
             }
         }
 
@@ -525,7 +518,7 @@ public class SkinStorage implements ISkinStorage {
                 try {
                     if (C.validMojangUsername(playerName) && mojangAPI.getUUID(playerName) != null) {
                         // player is premium, return his skin name instead of default skin
-                        return playerName;
+                        return Pair.of(playerName, false);
                     }
                 } catch (SkinRequestException ignored) {
                     // Player is not premium catching exception here to continue returning a default skin name
@@ -537,13 +530,13 @@ public class SkinStorage implements ISkinStorage {
 
             // return player name if there are no default skins set
             if (skins.isEmpty())
-                return playerName;
+                return Pair.of(playerName, false);
 
-            return skins.size() > 1 ? skins.get(ThreadLocalRandom.current().nextInt(skins.size())) : skins.get(0);
+            return Pair.of(skins.size() > 1 ? skins.get(ThreadLocalRandom.current().nextInt(skins.size())) : skins.get(0), false);
         }
 
         // empty if player has no custom skin, we'll return his name then
-        return playerName;
+        return Pair.of(playerName, false);
     }
 
     /**

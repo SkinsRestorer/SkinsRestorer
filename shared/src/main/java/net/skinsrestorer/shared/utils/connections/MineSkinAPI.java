@@ -32,7 +32,7 @@ import net.skinsrestorer.shared.exception.TryAgainException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.Pair;
+import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinErrorDelayResponse;
 import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinErrorResponse;
 import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinUrlResponse;
@@ -193,7 +193,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                         outStr.append((char) c);
                 }
 
-                return Optional.of(new Pair<>(con.getResponseCode(), outStr.toString()));
+                return Optional.of(Pair.of(con.getResponseCode(), outStr.toString()));
             } catch (IOException e) {
                 if (i == 2)
                     throw e;

@@ -71,23 +71,23 @@ public interface ISkinCommand {
 
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
-            final String sName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(sName)) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(sName)));
+            final String senderName = sender.getName();
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
+                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName)));
                 return;
             }
 
-            final String pName = target.getName();
-            final String skin = getPlugin().getSkinStorage().getDefaultSkinName(pName, true);
+            final String playerName = target.getName();
+            final String skinName = getPlugin().getSkinStorage().getDefaultSkinName(playerName, true).getLeft();
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removeSkinOfPlayer(pName);
+            plugin.getSkinStorage().removeSkinOfPlayer(playerName);
 
-            if (setSkin(sender, target, skin, false, true, null)) {
+            if (setSkin(sender, target, skinName, false, true, null)) {
                 if (sender == target)
                     sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
                 else
-                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", pName));
+                    sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", playerName));
             }
         });
     }
@@ -133,7 +133,7 @@ public interface ISkinCommand {
 
                 } else {
                     // get DefaultSkin
-                    skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(pName, true));
+                    skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(pName, true).getLeft());
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());

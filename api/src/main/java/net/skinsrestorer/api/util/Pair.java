@@ -17,18 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.api.util;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Pair<L, R> {
     private final L left;
     private final R right;
+
+    public static <L, R> Pair<L, R> of(L left, R right) {
+        return new Pair<>(left, right);
+    }
 }
