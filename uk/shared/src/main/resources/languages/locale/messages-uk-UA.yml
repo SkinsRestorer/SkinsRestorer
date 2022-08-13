@@ -25,7 +25,7 @@ help-SRreload: "Перезавантажує файл конфіґурації."
 help-SRStatus: "Перевіряє плагін на необхідні API сервіси."
 help-SRDrop: "Вилучає гравців або дані скіну."
 help-SRProps: "Показує поточні властивості шкіри гравця."
-help-SRApply-Skin: "Re-apply the skin for target user."
+help-SRApply-Skin: "Повторно поставити скін для цільового гравця."
 help-SRCreateCustom: "Create a custom server wide skin."
 #Syntax messages that appear when typing the command & in help
 syntax-Defaultcommand: " <skin/url>"
