@@ -41,6 +41,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -109,7 +111,7 @@ public class SkinStorage implements ISkinStorage {
     }
 
     public IProperty getDefaultSkinForPlayer(final String playerName) throws SkinRequestException {
-        final String skin = getDefaultSkinName(playerName);
+        final String skin = getDefaultSkinName(playerName, false);
 
         if (C.validUrl(skin)) {
             return mineSkinAPI.genSkin(skin, null);
@@ -498,13 +500,6 @@ public class SkinStorage implements ISkinStorage {
     }
 
     /**
-     * @see SkinStorage#getDefaultSkinName(String, boolean)
-     */
-    public String getDefaultSkinName(String playerName) {
-        return getDefaultSkinName(playerName, false);
-    }
-
-    /**
      * Filters player name to exclude non [a-z_]
      * Checks and process default skin.
      * IF no default skin:
@@ -585,7 +580,7 @@ public class SkinStorage implements ISkinStorage {
     }
 
     public boolean purgeOldSkins(int days) {
-        long targetPurgeTimestamp = System.currentTimeMillis() - ((long) days * 86400 * 1000);
+        long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 
         if (Config.MYSQL_ENABLED) {
             // delete if name not start with " " and timestamp below targetPurgeTimestamp
@@ -599,9 +594,9 @@ public class SkinStorage implements ISkinStorage {
                             continue;
 
                         List<String> lines = Files.readAllLines(file);
-                        Long timestamp = Long.valueOf(lines.get(2));
+                        long timestamp = Long.parseLong(lines.get(2));
 
-                        if (!(timestamp.equals(0L)) && timestamp < targetPurgeTimestamp) {
+                        if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
                             Files.deleteIfExists(file);
                         }
                     } catch (Exception ignored) {

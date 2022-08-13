@@ -41,8 +41,7 @@ public interface ISkinStorage {
 
     /**
      * This method seeks out a players actual skin (chosen or not) and returns
-     * either null (if no skin data found) or the property containing all
-     * the skin data.
+     * the property containing all the skin data.
      * It also schedules a skin update to stay up to date with skin changes.
      *
      * @param playerName Player name to search skin for
