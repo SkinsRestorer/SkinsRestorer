@@ -43,6 +43,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -187,16 +188,41 @@ public class SkinApplierBukkit {
     }
 
     private void checkOptFile() {
-        Path fileDisableDismountPlayer = plugin.getDataFolderPath().resolve("disablesdismountplayer");
-        Path fileDisableRemountPlayer = plugin.getDataFolderPath().resolve("disablesremountplayer");
-        Path fileEnableDismountEntities = plugin.getDataFolderPath().resolve("enablesdismountentities");
+        Path fileDisableDismountPlayer = plugin.getDataFolderPath().resolve("disablesdismountplayer"); // legacy
+        Path fileDisableRemountPlayer = plugin.getDataFolderPath().resolve("disablesremountplayer"); // legacy
+        Path fileEnableDismountEntities = plugin.getDataFolderPath().resolve("enablesdismountentities"); // legacy
+
         Path fileTxtDisableDismountPlayer = plugin.getDataFolderPath().resolve("disableDismountPlayer.txt");
         Path fileTxtDisableRemountPlayer = plugin.getDataFolderPath().resolve("disableRemountPlayer.txt");
         Path fileTxtEnableDismountEntities = plugin.getDataFolderPath().resolve("enableDismountEntities.txt");
 
-        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer) || Files.exists(fileDisableDismountPlayer);
-        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer) || Files.exists(fileDisableRemountPlayer);
-        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities) || Files.exists(fileEnableDismountEntities);
+        if (Files.exists(fileDisableDismountPlayer)) {
+            try {
+                Files.move(fileDisableDismountPlayer, fileTxtDisableDismountPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (Files.exists(fileDisableRemountPlayer)) {
+            try {
+                Files.move(fileDisableRemountPlayer, fileTxtDisableRemountPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (Files.exists(fileEnableDismountEntities)) {
+            try {
+                Files.move(fileEnableDismountEntities, fileTxtEnableDismountEntities);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer);
+        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
+        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
 
         log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
