@@ -27,6 +27,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISRCommandSender;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -41,6 +42,8 @@ import java.util.concurrent.TimeUnit;
 import static co.aikar.commands.CommandManager.getCurrentCommandManager;
 
 public interface ISkinCommand {
+    IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
+
     @SuppressWarnings("deprecation")
     default void onDefault(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
@@ -84,7 +87,10 @@ public interface ISkinCommand {
             plugin.getSkinStorage().removeSkinOfPlayer(playerName);
 
             try {
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
+                IProperty property = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName).getLeft();
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), property);
+            } catch (NotPremiumException e) {
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), emptySkin);
             } catch (SkinRequestException e) {
                 sender.sendMessage(e.getMessage());
             }
