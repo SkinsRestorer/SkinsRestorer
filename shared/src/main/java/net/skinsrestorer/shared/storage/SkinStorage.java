@@ -26,9 +26,9 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -532,7 +532,12 @@ public class SkinStorage implements ISkinStorage {
             if (skins.isEmpty())
                 return Pair.of(playerName, false);
 
-            return Pair.of(skins.size() > 1 ? skins.get(ThreadLocalRandom.current().nextInt(skins.size())) : skins.get(0), false);
+            // makes no sense to select a random skin if there is only one
+            if (skins.size() == 1) {
+                return Pair.of(skins.get(0), false);
+            }
+
+            return Pair.of(skins.get(ThreadLocalRandom.current().nextInt(skins.size())), false);
         }
 
         // empty if player has no custom skin, we'll return his name then

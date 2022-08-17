@@ -34,9 +34,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.bukkit.listener.protocol.WrapperPlayServerPlayerInfo;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.LoginProfileListener;
-import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 
