@@ -25,6 +25,7 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
@@ -35,6 +36,7 @@ import net.skinsrestorer.shared.utils.connections.responses.uuid.MinetoolsUUIDRe
 import net.skinsrestorer.shared.utils.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -110,7 +112,7 @@ public class MojangAPI implements IMojangAPI {
      */
     protected Optional<String> getUUIDAshcon(String name) throws SkinRequestException {
         try {
-            final String output = readURL(ASHCON.replace("%uuidOrName%", name), MetricsCounter.Service.ASHCON);
+            final String output = readURL(ASHCON.replace("%uuidOrName%", name), MetricsCounter.Service.ASHCON).getRight();
             final AshconResponse obj = new Gson().fromJson(output, AshconResponse.class);
 
             if (obj.getCode() != 0) {
@@ -130,7 +132,7 @@ public class MojangAPI implements IMojangAPI {
 
     public Optional<String> getUUIDMojang(String name) throws SkinRequestException {
         try {
-            final String output = readURL(UUID_MOJANG.replace("%name%", name), MetricsCounter.Service.MOJANG);
+            final String output = readURL(UUID_MOJANG.replace("%name%", name), MetricsCounter.Service.MOJANG).getRight();
 
             //todo get http code instead of checking for isEmpty
             if (output.isEmpty())
@@ -150,7 +152,7 @@ public class MojangAPI implements IMojangAPI {
 
     protected Optional<String> getUUIDMinetools(String name) throws SkinRequestException {
         try {
-            final String output = readURL(UUID_MINETOOLS.replace("%name%", name), MetricsCounter.Service.MINE_TOOLS, 10000);
+            final String output = readURL(UUID_MINETOOLS.replace("%name%", name), MetricsCounter.Service.MINE_TOOLS, 10000).getRight();
             final MinetoolsUUIDResponse obj = new Gson().fromJson(output, MinetoolsUUIDResponse.class);
 
             if (obj.getId() != null)
@@ -183,15 +185,18 @@ public class MojangAPI implements IMojangAPI {
 
     protected Optional<IProperty> getProfileAshcon(String uuid) {
         try {
-            final String output = readURL(ASHCON.replace("%uuidOrName%", uuid), MetricsCounter.Service.ASHCON);
+            final String output = readURL(ASHCON.replace("%uuidOrName%", uuid), MetricsCounter.Service.ASHCON).getRight();
             final AshconResponse obj = new Gson().fromJson(output, AshconResponse.class);
 
             if (obj.getTextures() != null) {
                 final AshconResponse.Textures textures = obj.getTextures();
                 final AshconResponse.Textures.Raw rawTextures = textures.getRaw();
 
-                if (!(rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()))
-                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(rawTextures));
+                if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
+                    return Optional.empty();
+                }
+
+                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(rawTextures));
             }
         } catch (Exception ignored) {
         }
@@ -201,13 +206,16 @@ public class MojangAPI implements IMojangAPI {
 
     public Optional<IProperty> getProfileMojang(String uuid) {
         try {
-            final String output = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
+            final String output = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG).getRight();
             final MojangProfileResponse obj = new Gson().fromJson(output, MojangProfileResponse.class);
             if (obj.getProperties() != null) {
                 final PropertyResponse property = obj.getProperties()[0];
 
-                if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
-                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+                    return Optional.empty();
+                }
+
+                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
             }
         } catch (Exception ignored) {
         }
@@ -217,7 +225,7 @@ public class MojangAPI implements IMojangAPI {
 
     protected Optional<IProperty> getProfileMinetools(String uuid) {
         try {
-            final String output = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10000);
+            final String output = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10000).getRight();
             final MinetoolsProfileResponse obj = new Gson().fromJson(output, MinetoolsProfileResponse.class);
             if (obj.getRaw() != null) {
                 final MinetoolsProfileResponse.Raw raw = obj.getRaw();
@@ -227,8 +235,11 @@ public class MojangAPI implements IMojangAPI {
                 }
 
                 PropertyResponse property = raw.getProperties()[0];
-                if (!(property.getValue().isEmpty() || property.getSignature().isEmpty()))
-                    return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(property));
+                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+                    return Optional.empty();
+                }
+
+                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(property));
             }
         } catch (Exception ignored) {
         }
@@ -236,12 +247,12 @@ public class MojangAPI implements IMojangAPI {
         return Optional.empty();
     }
 
-    private String readURL(String url, MetricsCounter.Service service) throws IOException {
+    private Pair<Integer, String> readURL(String url, MetricsCounter.Service service) throws IOException {
         return readURL(url, service, 5000);
     }
 
-    private String readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
-        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+    private Pair<Integer, String> readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
+        HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
         metricsCounter.increment(service);
 
         con.setRequestMethod("GET");
@@ -251,7 +262,7 @@ public class MojangAPI implements IMojangAPI {
         con.setDoOutput(true);
 
         try (InputStream is = con.getInputStream()) {
-            return new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining());
+            return Pair.of(con.getResponseCode(), new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining()));
         }
     }
 
