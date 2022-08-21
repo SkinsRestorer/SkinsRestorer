@@ -77,7 +77,7 @@ public interface ISkinCommand {
         plugin.runAsync(() -> {
             String senderName = sender.getName();
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName)));
+                sender.sendMessage(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName));
                 return;
             }
 
@@ -98,7 +98,7 @@ public interface ISkinCommand {
             if (sender == target) {
                 sender.sendMessage(Locale.SKIN_CLEAR_SUCCESS);
             } else {
-                sender.sendMessage(Locale.SKIN_CLEAR_ISSUER.replace("%player", playerName));
+                sender.sendMessage(Locale.SKIN_CLEAR_ISSUER, playerName);
             }
         });
     }
@@ -106,7 +106,7 @@ public interface ISkinCommand {
     default void onSkinSearch(ISRCommandSender sender, String searchString) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        sender.sendMessage(Locale.SKIN_SEARCH_MESSAGE.replace("%SearchString%", searchString));
+        sender.sendMessage(Locale.SKIN_SEARCH_MESSAGE, searchString);
     }
 
     default void onSkinUpdate(ISRPlayer player) {
@@ -122,7 +122,7 @@ public interface ISkinCommand {
         plugin.runAsync(() -> {
             final String senderName = sender.getName();
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-                sender.sendMessage(String.format(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName)));
+                sender.sendMessage(Locale.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName));
                 return;
             }
 
@@ -155,7 +155,7 @@ public interface ISkinCommand {
                 if (sender == player)
                     sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN);
                 else
-                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER.replace("%player", playerName));
+                    sender.sendMessage(Locale.SUCCESS_UPDATING_SKIN_OTHER, playerName);
             }
         });
     }
@@ -182,7 +182,7 @@ public interface ISkinCommand {
             }
 
             if (setSkin(sender, player, skin, true, skinVariant) && !sender.equalsPlayer(player))
-                sender.sendMessage(Locale.ADMIN_SET_SKIN.replace("%player", player.getName()));
+                sender.sendMessage(Locale.ADMIN_SET_SKIN, player.getName());
         });
     }
 
@@ -200,13 +200,14 @@ public interface ISkinCommand {
     default void sendHelp(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        if (!Locale.SR_LINE.isEmpty())
-            sender.sendMessage(Locale.SR_LINE);
+        String srLine = SkinsRestorerAPI.getApi().getMessage(sender, Locale.SR_LINE);
+        if (!srLine.isEmpty())
+            sender.sendMessage(srLine);
 
-        sender.sendMessage(Locale.CUSTOM_HELP_IF_ENABLED.replace("%ver%", getPlugin().getVersion()));
+        sender.sendMessage(Locale.CUSTOM_HELP_IF_ENABLED, getPlugin().getVersion());
 
-        if (!Locale.SR_LINE.isEmpty())
-            sender.sendMessage(Locale.SR_LINE);
+        if (!srLine.isEmpty())
+            sender.sendMessage(srLine);
     }
 
     default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
@@ -215,7 +216,7 @@ public interface ISkinCommand {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
-            sender.sendMessage(Locale.INVALID_PLAYER.replace("%player", skin));
+            sender.sendMessage(Locale.INVALID_PLAYER, skin);
             return false;
         }
 
@@ -227,7 +228,7 @@ public interface ISkinCommand {
 
         String senderName = sender.getName();
         if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-            sender.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(senderName))));
+            sender.sendMessage(Locale.SKIN_COOLDOWN, String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(senderName)));
             return false;
         }
 
@@ -260,8 +261,9 @@ public interface ISkinCommand {
                 SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", "skinUrl"));
+                String success = SkinsRestorerAPI.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(SkinsRestorerAPI.getApi().getMessage(player, Locale.PREFIX)))
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS, "skinUrl");
 
                 return true;
             } catch (SkinRequestException e) {
@@ -281,8 +283,9 @@ public interface ISkinCommand {
 
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
-                if (!Locale.SKIN_CHANGE_SUCCESS.isEmpty() && !Locale.SKIN_CHANGE_SUCCESS.equals(Locale.PREFIX))
-                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS.replace("%skin", skin)); // TODO: should this not be sender? -> hidden skin set?
+                String success = SkinsRestorerAPI.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(SkinsRestorerAPI.getApi().getMessage(player, Locale.PREFIX)))
+                    player.sendMessage(Locale.SKIN_CHANGE_SUCCESS, skin); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;
             } catch (SkinRequestException e) {

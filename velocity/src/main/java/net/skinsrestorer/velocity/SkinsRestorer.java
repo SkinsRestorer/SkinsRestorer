@@ -21,6 +21,7 @@ package net.skinsrestorer.velocity;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
+import co.aikar.locales.LocaleManager;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -32,9 +33,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
@@ -44,6 +43,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.WrapperFactory;
@@ -65,6 +65,7 @@ import org.slf4j.Logger;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -88,6 +89,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private final SkinCommand skinCommand;
     private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private LocaleManager<ISRForeign> localeManager;
     @Inject
     private PluginContainer container;
 
@@ -129,7 +131,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Locale.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage())
@@ -234,6 +237,22 @@ public class SkinsRestorer implements ISRProxyPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
+        }
+
+        @Override
+        public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
+            String message = localeManager.getMessage(foreign, key.getKey());
+
+            if (message.contains("{prefix}")) {
+                message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
+            }
+
+            return C.c(new MessageFormat(message).format(args));
+        }
+
+        @Override
+        public ISRForeign getDefaultForeign() {
+            return defaultSubject;
         }
     }
 }

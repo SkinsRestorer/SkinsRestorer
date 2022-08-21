@@ -19,8 +19,14 @@
  */
 package net.skinsrestorer.api.interfaces;
 
-public interface ISRCommandSender {
+import net.skinsrestorer.api.SkinsRestorerAPI;
+
+public interface ISRCommandSender extends ISRForeign {
     void sendMessage(String message);
+
+    default void sendMessage(MessageKeyGetter key, Object... args) {
+        sendMessage(SkinsRestorerAPI.getApi().getMessage(this, key, args));
+    }
 
     String getName();
 

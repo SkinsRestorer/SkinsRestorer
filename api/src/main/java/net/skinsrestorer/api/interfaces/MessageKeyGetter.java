@@ -17,13 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage;
+package net.skinsrestorer.api.interfaces;
 
-public interface CallableString<V> {
-    /**
-     * Computes a result, or throws an exception if unable to do so.
-     *
-     * @return computed result
-     */
-    V call();
+import co.aikar.locales.MessageKey;
+
+public interface MessageKeyGetter {
+    MessageKey getKey();
 }

@@ -26,14 +26,11 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
 
 public class CommandPropertiesManager {
-    private static final String FILE = "command-messages.properties";
+    private static final String FILE = "command.properties";
 
     public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, InputStream defaultConfigStream, SRLogger logger) {
         Path outFile = dataFolder.resolve(FILE);
@@ -54,10 +51,7 @@ public class CommandPropertiesManager {
         }
 
         try (InputStream in = Files.newInputStream(outFile)) {
-            Properties props = new Properties();
-
-            props.load(new InputStreamReader(in, StandardCharsets.UTF_8));
-            props.forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
+            PropertyReader.readProperties(in).forEach((k, v) -> manager.getLocales().addMessage(Locales.ENGLISH, MessageKey.of(k.toString()), C.c(v.toString())));
         } catch (IOException e) {
             e.printStackTrace();
         }

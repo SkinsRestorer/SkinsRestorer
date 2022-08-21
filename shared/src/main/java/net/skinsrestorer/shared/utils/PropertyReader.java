@@ -17,27 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.exception;
+package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.MessageKeyGetter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
-
-    public SkinRequestException() {
-        super();
-    }
-
-    public SkinRequestException(String message) {
-        super(message);
-    }
-
-    public SkinRequestException(Throwable e) {
-        super(e);
-    }
-
-    public SkinRequestException(MessageKeyGetter key, Object... args) {
-        super(SkinsRestorerAPI.getApi().getMessage(SkinsRestorerAPI.getApi().getDefaultForeign(), key, args));
+public class PropertyReader {
+    public static Properties readProperties(InputStream in) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties;
     }
 }

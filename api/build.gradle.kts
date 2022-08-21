@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    api("com.github.aikar:locales:5f204c3afb")
+
     compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")

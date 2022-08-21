@@ -19,133 +19,153 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import co.aikar.locales.LocaleManager;
+import co.aikar.locales.MessageKey;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import net.skinsrestorer.api.interfaces.ISRForeign;
+import net.skinsrestorer.api.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.utils.LocaleParser;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-public class Locale {
-    public static final String[] IGNORE_PREFIX = {
-            "PREFIX",
-            "HELP_",
-            "SYNTAX_",
-            "COMPLETIONS_",
-            "SKINSMENU_TITLE_NEW",
-            "SKINSMENU_NEXT_PAGE",
-            "SKINSMENU_PREVIOUS_PAGE",
-            "SKINSMENU_REMOVE_SKIN",
-            "SKINSMENU_SELECT_SKIN",
-            "SR_LINE"
-    };
-    public static String PREFIX = "&e[&2SkinsRestorer&e] ";
-    public static String HELP_HELP_COMMAND = " [help]";
-    public static String HELP_SKIN_SET = "Changes your skin.";
-    public static String HELP_SKIN_SET_OTHER = "Sets the skin for a target player.";
-    public static String HELP_SKIN_SET_OTHER_URL = "Sets the skin from a url for a target player.";
-    public static String HELP_SKIN_CLEAR = "Clears your skin.";
-    public static String HELP_SKIN_CLEAR_OTHER = "Clears the skin of a target player.";
-    public static String HELP_SKIN_SEARCH = "Search up a skin that you want";
-    public static String HELP_SKIN_UPDATE = "Updates your skin.";
-    public static String HELP_SKIN_UPDATE_OTHER = "Updates the skin of a target player.";
+public enum Locale implements MessageKeyGetter {
+    PREFIX,
+    HELP_HELP_COMMAND,
+    HELP_SKIN_SET,
+    HELP_SKIN_SET_OTHER,
+    HELP_SKIN_SET_OTHER_URL,
+    HELP_SKIN_CLEAR,
+    HELP_SKIN_CLEAR_OTHER,
+    HELP_SKIN_SEARCH,
+    HELP_SKIN_UPDATE,
+    HELP_SKIN_UPDATE_OTHER,
+    HELP_SR_RELOAD,
+    HELP_SR_STATUS,
+    HELP_SR_DROP,
+    HELP_SR_PROPS,
+    HELP_SR_APPLY_SKIN,
+    HELP_SR_CREATECUSTOM,
+    SYNTAX_DEFAULTCOMMAND,
+    SYNTAX_SKINSET,
+    SYNTAX_SKINSET_OTHER,
+    SYNTAX_SKINURL,
+    SYNTAX_SKINSEARCH,
+    SYNTAX_SKINUPDATE_OTHER,
+    SYNTAX_SKINCLEAR_OTHER,
+    COMPLETIONS_SKIN,
+    COMPLETIONS_SKINNAME,
+    COMPLETIONS_SKINURL,
+    COMMAND_SERVER_NOT_ALLOWED_MESSAGE,
+    PLAYER_HAS_NO_PERMISSION_SKIN,
+    PLAYER_HAS_NO_PERMISSION_URL,
+    SKIN_DISABLED,
+    SKINURL_DISALLOWED,
+    NOT_PREMIUM,
+    INVALID_PLAYER,
+    SKIN_COOLDOWN,
+    SKIN_CHANGE_SUCCESS,
+    SKIN_CLEAR_SUCCESS,
+    SKIN_CLEAR_ISSUER,
+    MS_UPDATING_SKIN,
+    SUCCESS_CREATE_SKIN,
+    SUCCESS_UPDATING_SKIN,
+    SUCCESS_UPDATING_SKIN_OTHER,
+    ERROR_UPDATING_SKIN,
+    ERROR_UPDATING_URL,
+    ERROR_UPDATING_CUSTOMSKIN,
+    ERROR_INVALID_URLSKIN,
+    ERROR_MS_FULL,
+    ERROR_MS_GENERIC,
+    GENERIC_ERROR,
+    WAIT_A_MINUTE,
+    ERROR_NO_SKIN,
+    SKINSMENU_OPEN,
+    SKINSMENU_TITLE_NEW,
+    SKINSMENU_NEXT_PAGE,
+    SKINSMENU_PREVIOUS_PAGE,
+    SKINSMENU_CLEAR_SKIN,
+    SKINSMENU_SELECT_SKIN,
+    SKIN_SEARCH_MESSAGE,
+    ADMIN_SET_SKIN,
+    DATA_DROPPED,
+    ADMIN_APPLYSKIN_SUCCES,
+    ADMIN_APPLYSKIN_ERROR,
+    STATUS_OK,
+    ALT_API_FAILED,
+    MS_API_FAILED,
+    NO_SKIN_DATA,
+    RELOAD,
+    OUTDATED,
+    SR_LINE,
+    CUSTOM_HELP_IF_ENABLED;
 
-    public static String HELP_SR_RELOAD = "Reloads the configuration file.";
-    public static String HELP_SR_STATUS = "Checks plugin needed API services.";
-    public static String HELP_SR_DROP = "Removes players or skin data.";
-    public static String HELP_SR_PROPS = "Displays the players current skin properties.";
-    public static String HELP_SR_APPLY_SKIN = "Re-apply the skin for target user.";
-    public static String HELP_SR_CREATECUSTOM = "Create a custom server wide skin.";
-    public static String SYNTAX_DEFAULTCOMMAND = " <skin/url>";
-    public static String SYNTAX_SKINSET = " <skin>";
-    public static String SYNTAX_SKINSET_OTHER = " <target> <skin/url>";
-    public static String SYNTAX_SKINURL = " <skinurl> [classic/slim]";
-    public static String SYNTAX_SKINSEARCH = " <search>";
-    public static String SYNTAX_SKINUPDATE_OTHER = " <target>";
-    public static String SYNTAX_SKINCLEAR_OTHER = " <target>";
-    public static String COMPLETIONS_SKIN = "<Skin>";
-    public static String COMPLETIONS_SKINNAME = "<SkinName>";
-    public static String COMPLETIONS_SKINURL = "<SkinUrl>";
-    public static String COMMAND_SERVER_NOT_ALLOWED_MESSAGE = "&4Error&8: &cCommands have been disabled for the server %server%.";
-    public static String PLAYER_HAS_NO_PERMISSION_SKIN = "&4Error&8: &cYou don't have permission to set this skin.";
-    public static String PLAYER_HAS_NO_PERMISSION_URL = "&4Error&8: &cYou don't have permission to set skins by URL.";
-    public static String SKIN_DISABLED = "&4Error&8: &cThis skin is disabled by an administrator.";
-    public static String SKINURL_DISALLOWED = "&4Error&8: &cThis domain has not been allowed by the administrator.";
-    public static String NOT_PREMIUM = "&4Error&8: &cPremium player with that name does not exist.";
-    public static String INVALID_PLAYER = "&4Error&8: &c%player is not a valid username or URL.";
-    public static String SKIN_COOLDOWN = "&4Error&8: &cYou can change your skin again in &e%s &cseconds.";
-    public static String SKIN_CHANGE_SUCCESS = "&2Your skin has been changed.";
-    public static String SKIN_CLEAR_SUCCESS = "&2Your skin has been cleared.";
-    public static String SKIN_CLEAR_ISSUER = "&2Skin cleared for player %player.";
-    public static String MS_UPDATING_SKIN = "&2Uploading skin, please wait...(This may take up some time)";
-    public static String SUCCESS_CREATE_SKIN = "&2Skin %skin has been created!";
-    public static String SUCCESS_UPDATING_SKIN = "&2Your skin has been updated.";
-    public static String SUCCESS_UPDATING_SKIN_OTHER = "&2Skin updated for player %player.";
-    public static String ERROR_UPDATING_SKIN = "&4Error&8: &cAn error occurred while updating your skin. Please try again later!";
-    public static String ERROR_UPDATING_URL = "&4Error&8: &cYou can't update custom url skins! \n&cRequest again using /skin url";
-    public static String ERROR_UPDATING_CUSTOMSKIN = "&4Error&8: &cSkin can't be updated because its custom.";
-    public static String ERROR_INVALID_URLSKIN = "&4Error&8: &cInvalid skin url or format, \n&cTry uploading your skin to imgur and right click 'copy image address' \n&cFor guide see: &c&oskinsrestorer.net/skinurl";
-    public static String ERROR_MS_FULL = "&4MS Error&8: &cAPI timed out while uploading your &cskin. Please try again later. (MineSkin)";
-    public static String ERROR_MS_GENERIC = "&4MS Error&8: &c%error%";
-    public static String GENERIC_ERROR = "&4Error&8: &cAn error occurred while requesting skin data, please try again later!";
-    public static String WAIT_A_MINUTE = "&4Error&8: &cPlease wait a minute before requesting that skin again. (Rate Limited)";
-    public static String ERROR_NO_SKIN = "&4Error&8: &cThis player has no skin set.";
-    public static String SKINSMENU_OPEN = "&2Opening the skins menu...";
-    public static String SKINSMENU_TITLE_NEW = "&9Skins Menu - Page %page";
-    public static String SKINSMENU_NEXT_PAGE = "&a&l»&7 Next Page&a&l »";
-    public static String SKINSMENU_PREVIOUS_PAGE = "&e&l«&7 Previous Page&e&l «";
-    public static String SKINSMENU_CLEAR_SKIN = "&c&l[ &7Remove Skin&c&l ]";
-    public static String SKINSMENU_SELECT_SKIN = "&2Click to select this skin";
-    public static String SKIN_SEARCH_MESSAGE = "&2You can find skins matching \"&a%SearchString%&2\" here: \n&ahttps://namemc.com/minecraft-skins/tag/%SearchString% \n\n&2If no skins are found, you can always find some skins at https://namemc.com/minecraft-skins/tag \nYou can set the skin using the skin link:\n /skin https://namemc.com/skin/";
-    public static String ADMIN_SET_SKIN = "&2You set %player's skin.";
-    public static String DATA_DROPPED = "&2Data dropped for %playerOrSkin \"%targets\".";
-    public static String ADMIN_APPLYSKIN_SUCCES = "&2Player skin has been refreshed!";
-    public static String ADMIN_APPLYSKIN_ERROR = "&4ERROR&8: &cplayer skin could NOT be refreshed!";
-    public static String STATUS_OK = "&2Mojang API connection successful!";
-    public static String ALT_API_FAILED = "&4Error&8: &cSkin Data API is overloaded, please try again later!";
-    public static String MS_API_FAILED = "&4Error&8: &cMineSkin API is overloaded, please try again later!";
-    public static String NO_SKIN_DATA = "&4Error&8: &cNo skin data acquired! Does this player have a skin?";
-    public static String RELOAD = "&2Config and Locale has been reloaded!";
-    public static String OUTDATED = "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/";
-    public static String SR_LINE = "&7&m----------------------------------------";
-    public static String CUSTOM_HELP_IF_ENABLED = "  &2&lSkinsRestorer &7- &f&lv%ver%"
-            + "\n   &2/skin <skinname> &7-&f Changes your skin."
-            + "\n    &2/skin update &7-&f Updates your skin."
-            + "\n    &2/skin clear &7-&f Clears your skin.";
+    @Getter
+    private final MessageKey key = MessageKey.of("skinsrestorer." + this.name().toLowerCase());
 
-    public static void load(Path dataFolder, SRLogger logger) {
-        try {
-            YamlConfig locale = new YamlConfig(dataFolder.resolve("messages.yml"));
-            // TODO: Use a proper config loader
-            locale.loadConfig(null);
+    @SneakyThrows
+    public static void load(LocaleManager<ISRForeign> manager, Path dataFolder, ISRPlugin plugin) {
+        Path languagesFolder = dataFolder.resolve("languages");
+        Files.createDirectories(languagesFolder);
+        CodeSource src = Locale.class.getProtectionDomain().getCodeSource();
+        if (src != null) {
+            URL jar = src.getLocation();
+            ZipInputStream zip = new ZipInputStream(jar.openStream());
+            List<java.util.Locale> locales = new ArrayList<>();
+            while (true) {
+                ZipEntry e = zip.getNextEntry();
+                if (e == null)
+                    break;
 
-            String parsedPrefix = C.c(locale.getString("PREFIX", ""));
-
-            boolean changed = false;
-            for (Field f : Locale.class.getFields()) {
-                if (f.getType() != String.class)
-                    continue;
-
-                String value = locale.getString(f.getName());
-                if (value == null) {
-                    String defaultValue = (String) f.get(null);
-                    locale.set(f.getName(), defaultValue);
-                    value = defaultValue;
-                    changed = true;
+                String name = e.getName();
+                if (name.startsWith("languages/language") && name.endsWith(".properties")) {
+                    String fileName = name.replace("languages/", "");
+                    if (fileName.startsWith("language_")) {
+                        locales.add(LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", "")));
+                    }
+                    if (!Files.exists(languagesFolder.resolve(fileName))) {
+                        try (InputStream is = plugin.getResource(name)) {
+                            Files.copy(is, languagesFolder.resolve(fileName));
+                        }
+                    }
                 }
-                String parsed = C.c(value);
-                if (!Config.DISABLE_PREFIX && Arrays.stream(IGNORE_PREFIX).noneMatch(f.getName()::contains)) {
-                    parsed = parsedPrefix + parsed;
-                }
-
-                f.set(null, parsed);
             }
 
-            if (changed) {
-                locale.save();
+            manager.addMessageBundle("languages.language", locales.toArray(new java.util.Locale[0]));
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
+                for (Path path : stream) {
+                    String fileName = path.getFileName().toString();
+                    if (fileName.equals("language.properties")) {
+                        try (InputStream in = Files.newInputStream(path)) {
+                            PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
+                            manager.addResourceBundle(bundle, manager.getDefaultLocale());
+                        }
+                    } else if (fileName.startsWith("language_") && fileName.endsWith(".properties")) {
+                        java.util.Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
+                        try (InputStream in = Files.newInputStream(path)) {
+                            PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
+                            manager.addResourceBundle(bundle, locale);
+                        }
+                    }
+                }
             }
-        } catch (Exception e) {
-            logger.warning("§cCan't read messages.yml! Try removing it and restart your server.", e);
+        } else {
+            throw new IOException("Could not find default language files");
         }
     }
 }

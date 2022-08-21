@@ -37,12 +37,12 @@ public class CommandUtil {
                     if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
                         return true;
                     } else {
-                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE.replace("%server%", server));
+                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 } else {
                     if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
-                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE.replace("%server%", server));
+                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 }

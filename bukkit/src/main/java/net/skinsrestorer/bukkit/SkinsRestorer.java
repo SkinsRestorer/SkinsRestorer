@@ -20,12 +20,15 @@
 package net.skinsrestorer.bukkit;
 
 import co.aikar.commands.PaperCommandManager;
+import co.aikar.locales.LocaleManager;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.ISRForeign;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.MessageKeyGetter;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
@@ -44,6 +47,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.WrapperFactory;
@@ -66,6 +70,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -74,6 +79,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
+
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @Getter
 @SuppressWarnings("Duplicates")
@@ -92,6 +99,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBukkitAPI();
     private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private LocaleManager<ISRForeign> localeManager;
     private Path dataFolderPath;
     private SkinApplierBukkit skinApplierBukkit;
     private boolean proxyMode;
@@ -288,7 +296,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                                 });
                             }
 
-                            Inventory inventory = SkinsGUI.createGUI(this, page, skinList);
+                            Inventory inventory = SkinsGUI.createGUI(this, wrapPlayer(player), page, skinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
                         }
@@ -300,7 +308,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         } else {
             // Init config files
             Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-            Locale.load(dataFolderPath, srLogger);
+            localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+            Locale.load(localeManager, dataFolderPath, this);
 
             // Init storage
             if (!initStorage()) {
@@ -559,6 +568,22 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierBukkit.applySkin(playerWrapper.get(Player.class), property);
+        }
+
+        @Override
+        public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
+            String message = localeManager.getMessage(foreign, key.getKey());
+
+            if (message.contains("{prefix}")) {
+                message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
+            }
+
+            return C.c(new MessageFormat(message).format(args));
+        }
+
+        @Override
+        public ISRForeign getDefaultForeign() {
+            return defaultSubject;
         }
     }
 }

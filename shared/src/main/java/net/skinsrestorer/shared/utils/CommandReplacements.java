@@ -19,14 +19,14 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.storage.CallableString;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 
 import java.util.Map;
 
 public class CommandReplacements {
-    public static final Map<String, CallableString<String>> permissions = FluentMap.<String, CallableString<String>>builder()
+    public static final Map<String, CallableValue<String>> permissions = FluentMap.<String, CallableValue<String>>builder()
             .put("skin", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command")
             .put("sr", () -> "skinsrestorer.admincommand")
 
@@ -52,7 +52,7 @@ public class CommandReplacements {
             .put("srApplySkin", () -> "skinsrestorer.admincommand.applyskin")
             .put("srCreateCustom", () -> "skinsrestorer.admincommand.createcustom")
             .build();
-    public static final Map<String, CallableString<String>> descriptions = FluentMap.<String, CallableString<String>>builder()
+    public static final Map<String, CallableValue<Locale>> descriptions = FluentMap.<String, CallableValue<Locale>>builder()
             .put("%helpHelpCommand", () -> Locale.HELP_HELP_COMMAND)
             .put("%helpSkinClear", () -> Locale.HELP_SKIN_CLEAR)
             .put("%helpSkinClearOther", () -> Locale.HELP_SKIN_CLEAR_OTHER)
@@ -70,7 +70,7 @@ public class CommandReplacements {
             .put("%helpSrApplySkin", () -> Locale.HELP_SR_APPLY_SKIN)
             .put("%helpSrCreateCustom", () -> Locale.HELP_SR_CREATECUSTOM)
             .build();
-    public static final Map<String, CallableString<String>> syntax = FluentMap.<String, CallableString<String>>builder()
+    public static final Map<String, CallableValue<Locale>> syntax = FluentMap.<String, CallableValue<Locale>>builder()
             .put("%SyntaxDefaultCommand", () -> Locale.SYNTAX_DEFAULTCOMMAND)
             .put("%SyntaxSkinSet", () -> Locale.SYNTAX_SKINSET)
             .put("%SyntaxSkinSetOther", () -> Locale.SYNTAX_SKINSET_OTHER)
@@ -80,7 +80,7 @@ public class CommandReplacements {
             .put("%SyntaxSkinClearOther", () -> Locale.SYNTAX_SKINCLEAR_OTHER)
             .build();
 
-    public static final Map<String, CallableString<String>> completions = FluentMap.<String, CallableString<String>>builder()
+    public static final Map<String, CallableValue<Locale>> completions = FluentMap.<String, CallableValue<Locale>>builder()
             .put("skin", () -> Locale.COMPLETIONS_SKIN)
             .put("skinName", () -> Locale.COMPLETIONS_SKINNAME)
             .put("skinUrl", () -> Locale.COMPLETIONS_SKINURL)

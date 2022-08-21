@@ -53,7 +53,7 @@ public interface ISRCommand {
 
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
-        Locale.load(plugin.getDataFolderPath(), plugin.getSrLogger());
+        Locale.load(plugin.getLocaleManager(), plugin.getDataFolderPath(), plugin);
         Config.load(plugin.getDataFolderPath(), plugin.getResource("config.yml"), plugin.getSrLogger());
 
         plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
@@ -119,7 +119,7 @@ public interface ISRCommand {
                     break;
             }
 
-            sender.sendMessage(Locale.DATA_DROPPED.replace("%playerOrSkin", playerOrSkin.toString()).replace("%targets", target));
+            sender.sendMessage(Locale.DATA_DROPPED, playerOrSkin.toString(), target);
         });
     }
 
@@ -188,7 +188,7 @@ public interface ISRCommand {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN.replace("%skin", name));
+                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN, name);
                 } else {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }

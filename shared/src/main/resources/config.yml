@@ -19,6 +19,14 @@
 # (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord).              (!)
 
 ##########
+# Locale #
+##########
+
+# A language code for the language you want to use by default for messages and commands.
+# Has to a string separated by an underscore.
+Language: en_US
+
+##########
 # Basics #
 ##########
 
@@ -43,9 +51,6 @@ SkinErrorCooldown: 5
 # True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.
 # This is more customizable, but at the cost of permission specific help.
 EnableCustomHelp: false
-
-# Ignore messages.yml 'PREFIX ='
-DisablePrefix: false
 
 # Enable or disable default skins
 # ApplyForPremium: false will only put a skin on skinless/steve players.

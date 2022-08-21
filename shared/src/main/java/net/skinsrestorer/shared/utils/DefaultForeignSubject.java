@@ -17,27 +17,16 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.exception;
+package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.MessageKeyGetter;
+import net.skinsrestorer.api.interfaces.ISRForeign;
+import net.skinsrestorer.shared.storage.Config;
 
-public class SkinRequestException extends Exception {
-    private static final long serialVersionUID = -246848643846947966L;
+import java.util.Locale;
 
-    public SkinRequestException() {
-        super();
-    }
-
-    public SkinRequestException(String message) {
-        super(message);
-    }
-
-    public SkinRequestException(Throwable e) {
-        super(e);
-    }
-
-    public SkinRequestException(MessageKeyGetter key, Object... args) {
-        super(SkinsRestorerAPI.getApi().getMessage(SkinsRestorerAPI.getApi().getDefaultForeign(), key, args));
+public class DefaultForeignSubject implements ISRForeign {
+    @Override
+    public Locale getLocale() {
+        return Config.LANGUAGE;
     }
 }

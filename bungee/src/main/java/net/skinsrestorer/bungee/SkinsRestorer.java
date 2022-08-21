@@ -20,15 +20,14 @@
 package net.skinsrestorer.bungee;
 
 import co.aikar.commands.BungeeCommandManager;
+import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
@@ -47,6 +46,7 @@ import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.WrapperFactory;
@@ -61,6 +61,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -82,6 +83,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private LocaleManager<ISRForeign> localeManager;
     private Path dataFolderPath;
     private boolean outdated;
     private UpdateChecker updateChecker;
@@ -130,7 +132,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Locale.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage()) {
@@ -244,6 +247,22 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), property);
+        }
+
+        @Override
+        public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
+            String message = localeManager.getMessage(foreign, key.getKey());
+
+            if (message.contains("{prefix}")) {
+                message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
+            }
+
+            return C.c(new MessageFormat(message).format(args));
+        }
+
+        @Override
+        public ISRForeign getDefaultForeign() {
+            return defaultSubject;
         }
     }
 }

@@ -20,12 +20,15 @@
 package net.skinsrestorer.shared.interfaces;
 
 import co.aikar.commands.CommandManager;
+import co.aikar.locales.LocaleManager;
+import net.skinsrestorer.api.interfaces.ISRForeign;
 import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
+import net.skinsrestorer.shared.utils.DefaultForeignSubject;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -37,6 +40,8 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
+    DefaultForeignSubject defaultSubject = new DefaultForeignSubject();
+
     Path getDataFolderPath();
 
     SkinStorage getSkinStorage();
@@ -57,18 +62,21 @@ public interface ISRPlugin {
 
     ISkinCommand getSkinCommand();
 
+    LocaleManager<ISRForeign> getLocaleManager();
+
     @SuppressWarnings({"deprecation"})
     default void prepareACF(CommandManager<?, ?, ?, ?, ?, ?> manager, SRLogger srLogger) {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
+        LocaleManager<ISRForeign> localeManager = getLocaleManager();
 
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(defaultSubject, v.call().getKey())));
+        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(defaultSubject, v.call().getKey())));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.call().split(", "))));
+                Arrays.asList(localeManager.getMessage(defaultSubject, v.call().getKey()).split(", "))));
 
-        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command-messages.properties"), srLogger);
+        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
     }

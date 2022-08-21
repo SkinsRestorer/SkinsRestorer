@@ -130,7 +130,7 @@ public class SkinStorage implements ISkinStorage {
             // No cached skin found, get from MojangAPI, save and return
             try {
                 if (!C.validMojangUsername(skinName))
-                    throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skinName));
+                    throw new SkinRequestException(Locale.INVALID_PLAYER, skinName);
 
                 textures = mojangAPI.getSkin(skinName);
 
