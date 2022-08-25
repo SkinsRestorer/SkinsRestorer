@@ -33,6 +33,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -90,7 +91,7 @@ public interface ISkinCommand {
             } catch (NotPremiumException e) {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), emptySkin);
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
 
             if (sender == target) {
@@ -145,7 +146,7 @@ public interface ISkinCommand {
                     skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(playerName, true).getLeft());
                 }
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
                 return;
             }
 
@@ -263,7 +264,7 @@ public interface ISkinCommand {
 
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
                 plugin.getSrLogger().debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
@@ -284,7 +285,7 @@ public interface ISkinCommand {
 
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
         }
 
