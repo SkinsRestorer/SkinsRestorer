@@ -34,9 +34,8 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -93,7 +92,7 @@ public interface ISkinCommand {
             } catch (NotPremiumException e) {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), emptySkin);
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
 
             if (sender == target) {
@@ -148,7 +147,7 @@ public interface ISkinCommand {
                     skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(playerName, true).getLeft());
                 }
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
                 return;
             }
 
@@ -258,7 +257,7 @@ public interface ISkinCommand {
 
                 IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 SkinsRestorerAPI.getApi().setSkinData(skinName, generatedSkin,
-                        Instant.now().plus(100, ChronoUnit.YEARS).toEpochMilli()); // "generate" and save skin for 100 years
+                        System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                 SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
@@ -268,7 +267,7 @@ public interface ISkinCommand {
 
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
                 plugin.getSrLogger().debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
                 sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
@@ -290,7 +289,7 @@ public interface ISkinCommand {
 
                 return true;
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
         }
 

@@ -89,4 +89,11 @@ public class SharedMethods {
 
         return true;
     }
+
+    public static Throwable getRootCause(Throwable throwable) {
+        if (throwable.getCause() != null)
+            return getRootCause(throwable.getCause());
+
+        return throwable;
+    }
 }

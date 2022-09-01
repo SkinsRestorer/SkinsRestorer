@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
+import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -193,7 +194,7 @@ public interface ISRCommand {
                     sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
                 }
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
         });
     }
@@ -230,7 +231,7 @@ public interface ISRCommand {
                 }
                 sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
             } catch (SkinRequestException e) {
-                sender.sendMessage(e.getMessage());
+                sender.sendMessage(getRootCause(e).getMessage());
             }
         });
     }
