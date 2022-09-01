@@ -144,7 +144,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                                     logger.severe("SkinsRestorer's agent \"SkinsRestorer\" is not on the apikey allowed agents list!");
                                     break;
                             }
-                            throw new SkinRequestException("Invalid Mineskin API key!, nag the server owner about this!");
+                            throw new SkinRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
                         }
                     case 429:
                         MineSkinErrorDelayResponse errorDelayResponse = gson.fromJson(response.get().getRight(), MineSkinErrorDelayResponse.class);
