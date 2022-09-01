@@ -27,6 +27,7 @@ import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
+import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MinetoolsProfileResponse;
@@ -41,7 +42,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
@@ -231,7 +231,7 @@ public class MojangAPI implements IMojangAPI {
                 final MinetoolsProfileResponse.Raw raw = obj.getRaw();
                 // Break on ERR
                 if (raw.getStatus() != null && raw.getStatus().equalsIgnoreCase("ERR")) {
-                    throw new SkinRequestException();
+                    throw new SkinRequestExceptionShared();
                 }
 
                 PropertyResponse property = raw.getProperties()[0];

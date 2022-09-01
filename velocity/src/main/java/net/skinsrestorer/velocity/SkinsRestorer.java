@@ -33,10 +33,12 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.*;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -46,7 +48,6 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -209,13 +210,13 @@ public class SkinsRestorer implements ISRProxyPlugin {
         return proxy.getPlayer(playerName).map(WrapperVelocity::wrapPlayer);
     }
 
-    private static class WrapperFactoryVelocity extends WrapperFactory {
+    private static class WrapperFactoryVelocity implements IWrapperFactory {
         @Override
-        public ISRPlayer wrapPlayer(Object playerInstance) {
+        public String getPlayerName(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return WrapperVelocity.wrapPlayer(player);
+                return player.getUsername();
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
@@ -229,7 +230,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         }
     }
 
-    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
+    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerVelocityAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
         }
@@ -248,11 +249,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
             }
 
             return C.c(new MessageFormat(message).format(args));
-        }
-
-        @Override
-        public ISRForeign getDefaultForeign() {
-            return defaultSubject;
         }
     }
 }

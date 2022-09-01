@@ -17,12 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import java.util.Optional;
+import net.skinsrestorer.api.PlayerWrapper;
 
-public interface ISRProxyPlayer extends ISRPlayer {
-    Optional<String> getCurrentServer();
+import java.util.UUID;
 
-    void sendDataToServer(String channel, byte[] data);
+public interface ISRPlayer extends ISRCommandSender {
+    PlayerWrapper getWrapper();
+
+    String getName();
+
+    UUID getUniqueId();
+
+    void sendMessage(String message);
 }

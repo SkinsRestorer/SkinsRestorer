@@ -271,10 +271,6 @@ public abstract class SkinsRestorerAPI {
 
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 
-    public abstract String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args);
-
-    public abstract ISRForeign getDefaultForeign();
-
     protected IWrapperFactory getWrapperFactory() {
         return this.wrapperFactory;
     }

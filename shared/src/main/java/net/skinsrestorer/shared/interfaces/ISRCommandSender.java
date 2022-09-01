@@ -17,18 +17,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 
-import java.util.UUID;
+public interface ISRCommandSender extends ISRForeign {
+    void sendMessage(String message);
 
-public interface ISRPlayer extends ISRCommandSender {
-    PlayerWrapper getWrapper();
+    default void sendMessage(MessageKeyGetter key, Object... args) {
+        sendMessage(SkinsRestorerAPIShared.getApi().getMessage(this, key, args));
+    }
 
     String getName();
 
-    UUID getUniqueId();
+    boolean hasPermission(String permission);
 
-    void sendMessage(String message);
+    default boolean isConsole() {
+        return false;
+    }
+
+    default boolean equalsPlayer(ISRPlayer player) {
+        return getName().equals(player.getName());
+    }
 }

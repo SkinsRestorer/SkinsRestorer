@@ -24,10 +24,11 @@ import co.aikar.commands.InvalidCommandArgument;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.NotPremiumException;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Locale;
@@ -200,7 +201,7 @@ public interface ISkinCommand {
     default void sendHelp(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        String srLine = SkinsRestorerAPI.getApi().getMessage(sender, Locale.SR_LINE);
+        String srLine = SkinsRestorerAPIShared.getApi().getMessage(sender, Locale.SR_LINE);
         if (!srLine.isEmpty())
             sender.sendMessage(srLine);
 
@@ -261,8 +262,8 @@ public interface ISkinCommand {
                 SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
-                String success = SkinsRestorerAPI.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
-                if (!success.isEmpty() && !success.equals(SkinsRestorerAPI.getApi().getMessage(player, Locale.PREFIX)))
+                String success = SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(SkinsRestorerAPIShared.getApi().getMessage(player, Locale.PREFIX)))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS, "skinUrl");
 
                 return true;
@@ -283,8 +284,8 @@ public interface ISkinCommand {
 
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
-                String success = SkinsRestorerAPI.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
-                if (!success.isEmpty() && !success.equals(SkinsRestorerAPI.getApi().getMessage(player, Locale.PREFIX)))
+                String success = SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(SkinsRestorerAPIShared.getApi().getMessage(player, Locale.PREFIX)))
                     player.sendMessage(Locale.SKIN_CHANGE_SUCCESS, skin); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;

@@ -23,9 +23,9 @@ import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.skinsrestorer.api.interfaces.ISRForeign;
-import net.skinsrestorer.api.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.utils.LocaleParser;
 
 import java.io.IOException;

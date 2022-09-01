@@ -17,10 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import java.util.Locale;
+import co.aikar.locales.MessageKey;
 
-public interface ISRForeign {
-    Locale getLocale();
+public interface MessageKeyGetter {
+    MessageKey getKey();
 }

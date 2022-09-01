@@ -20,8 +20,8 @@
 package net.skinsrestorer.bukkit.utils;
 
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.command.CommandSender;

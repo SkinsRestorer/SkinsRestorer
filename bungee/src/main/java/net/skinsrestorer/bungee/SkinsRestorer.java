@@ -27,7 +27,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.*;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
@@ -38,8 +39,8 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -49,7 +50,6 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -214,13 +214,13 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         return Optional.ofNullable(getProxy().getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
     }
 
-    private static class WrapperFactoryBungee extends WrapperFactory {
+    private static class WrapperFactoryBungee implements IWrapperFactory {
         @Override
-        public ISRPlayer wrapPlayer(Object playerInstance) {
+        public String getPlayerName(Object playerInstance) {
             if (playerInstance instanceof ProxiedPlayer) {
                 ProxiedPlayer player = (ProxiedPlayer) playerInstance;
 
-                return WrapperBungee.wrapPlayer(player);
+                return player.getName();
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
@@ -238,7 +238,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         }
     }
 
-    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
+    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerBungeeAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
@@ -258,11 +258,6 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             }
 
             return C.c(new MessageFormat(message).format(args));
-        }
-
-        @Override
-        public ISRForeign getDefaultForeign() {
-            return defaultSubject;
         }
     }
 }

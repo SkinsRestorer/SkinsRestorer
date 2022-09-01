@@ -17,10 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import co.aikar.locales.MessageKey;
+import java.util.Optional;
 
-public interface MessageKeyGetter {
-    MessageKey getKey();
+public interface ISRProxyPlayer extends ISRPlayer {
+    Optional<String> getCurrentServer();
+
+    void sendDataToServer(String channel, byte[] data);
 }

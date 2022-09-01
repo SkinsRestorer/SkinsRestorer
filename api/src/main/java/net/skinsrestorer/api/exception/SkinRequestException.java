@@ -19,25 +19,17 @@
  */
 package net.skinsrestorer.api.exception;
 
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.MessageKeyGetter;
-
 public class SkinRequestException extends Exception {
     private static final long serialVersionUID = -246848643846947966L;
 
-    public SkinRequestException() {
-        super();
+    protected SkinRequestException() {
     }
 
-    public SkinRequestException(String message) {
+    protected SkinRequestException(String message) {
         super(message);
     }
 
-    public SkinRequestException(Throwable e) {
-        super(e);
-    }
-
-    public SkinRequestException(MessageKeyGetter key, Object... args) {
-        super(SkinsRestorerAPI.getApi().getMessage(SkinsRestorerAPI.getApi().getDefaultForeign(), key, args));
+    protected SkinRequestException(Throwable cause) {
+        super(cause);
     }
 }
