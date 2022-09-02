@@ -237,14 +237,8 @@ public class SkinsRestorer implements ISRPlugin {
         }
 
         @Override
-        public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
-            String message = localeManager.getMessage(foreign, key.getKey());
-
-            if (message.contains("{prefix}")) {
-                message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
-            }
-
-            return C.c(new MessageFormat(message).format(args));
+        protected LocaleManager<ISRForeign> getLocaleManager() {
+            return localeManager;
         }
     }
 }

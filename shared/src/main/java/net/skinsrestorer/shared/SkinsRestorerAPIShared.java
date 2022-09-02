@@ -19,11 +19,16 @@
  */
 package net.skinsrestorer.shared;
 
+import co.aikar.locales.LocaleManager;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.DefaultForeignSubject;
+
+import java.text.MessageFormat;
 
 public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
     private final DefaultForeignSubject defaultSubject = new DefaultForeignSubject();
@@ -36,7 +41,18 @@ public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
         return (SkinsRestorerAPIShared) SkinsRestorerAPI.getApi();
     }
 
-    public abstract String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args);
+    public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
+        LocaleManager<ISRForeign> localeManager = getLocaleManager();
+        String message = localeManager.getMessage(foreign, key.getKey());
+
+        if (message.contains("{prefix}")) {
+            message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
+        }
+
+        return C.c(new MessageFormat(message).format(args));
+    }
+
+    protected abstract LocaleManager<ISRForeign> getLocaleManager();
 
     public ISRForeign getDefaultForeign() {
         return defaultSubject;
