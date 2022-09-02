@@ -1,3 +1,3 @@
 files:
-  - source: /src/main/resources/languages/english.yml
-    translation: /src/main/resources/languages/%locale%.yml
+  - source: /shared/src/main/resources/languages/language.properties
+    translation: /shared/src/main/resources/languages/language_%osx_locale%.properties
