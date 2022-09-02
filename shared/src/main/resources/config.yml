@@ -52,6 +52,9 @@ SkinErrorCooldown: 5
 # This is more customizable, but at the cost of permission specific help.
 EnableCustomHelp: false
 
+# Disable message prefix in SkinsRestorer messages.
+DisablePrefix: false
+
 # Enable or disable default skins
 # ApplyForPremium: false will only put a skin on skinless/steve players.
 # If there is more than one, the plugin will choose a random one.
