@@ -34,18 +34,28 @@ SkinWithoutPerm: true
 SkinChangeCooldown: 30
 SkinErrorCooldown: 5
 
-#################
-# Customization #
-#################
+##########
+# Locale #
+##########
 
-# Here you can design the plugin the way you want it.
+# Translation & message options here
+
+# A language code for the language you want to use by default for messages and commands.
+# Has to a string separated by an underscore.
+Language: en_US
 
 # True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.
 # This is more customizable, but at the cost of permission specific help.
 EnableCustomHelp: false
 
-# Ignore messages.yml 'PREFIX ='
+# Disable message prefix in SkinsRestorer messages.
 DisablePrefix: false
+
+#################
+# Customization #
+#################
+
+# Here you can design the plugin the way you want it.
 
 # Enable or disable default skins
 # ApplyForPremium: false will only put a skin on skinless/steve players.

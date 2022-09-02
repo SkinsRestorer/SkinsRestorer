@@ -20,7 +20,8 @@
 package net.skinsrestorer.shared.interfaces;
 
 import co.aikar.commands.CommandManager;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import co.aikar.locales.LocaleManager;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -57,18 +58,23 @@ public interface ISRPlugin {
 
     ISkinCommand getSkinCommand();
 
+    LocaleManager<ISRForeign> getLocaleManager();
+
     @SuppressWarnings({"deprecation"})
     default void prepareACF(CommandManager<?, ?, ?, ?, ?, ?> manager, SRLogger srLogger) {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
+        LocaleManager<ISRForeign> localeManager = getLocaleManager();
+
+        SkinsRestorerAPIShared api = SkinsRestorerAPIShared.getApi();
 
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(api.getDefaultForeign(), v.call().getKey())));
+        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(api.getDefaultForeign(), v.call().getKey())));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(v.call().split(", "))));
+                Arrays.asList(localeManager.getMessage(api.getDefaultForeign(), v.call().getKey()).split(", "))));
 
-        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command-messages.properties"), srLogger);
+        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
     }

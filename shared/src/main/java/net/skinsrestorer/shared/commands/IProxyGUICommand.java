@@ -20,8 +20,8 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
@@ -39,7 +39,7 @@ public interface IProxyGUICommand {
     default void onDefault(ISRProxyPlayer player) {
         CooldownStorage cooldownStorage = getPlugin().getCooldownStorage();
         if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
-            player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(cooldownStorage.getCooldownSeconds(player.getName()))));
+            player.sendMessage(Locale.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(player.getName())));
             return;
         }
         player.sendMessage(Locale.SKINSMENU_OPEN);

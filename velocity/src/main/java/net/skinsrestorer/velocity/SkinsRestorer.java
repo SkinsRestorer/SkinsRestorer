@@ -21,6 +21,7 @@ package net.skinsrestorer.velocity;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
+import co.aikar.locales.LocaleManager;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -33,20 +34,20 @@ import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -65,6 +66,7 @@ import org.slf4j.Logger;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -88,6 +90,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private final SkinCommand skinCommand;
     private UpdateChecker updateChecker;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private LocaleManager<ISRForeign> localeManager;
     @Inject
     private PluginContainer container;
 
@@ -129,7 +132,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Locale.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage())
@@ -206,13 +210,13 @@ public class SkinsRestorer implements ISRProxyPlugin {
         return proxy.getPlayer(playerName).map(WrapperVelocity::wrapPlayer);
     }
 
-    private static class WrapperFactoryVelocity extends WrapperFactory {
+    private static class WrapperFactoryVelocity implements IWrapperFactory {
         @Override
-        public ISRPlayer wrapPlayer(Object playerInstance) {
+        public String getPlayerName(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return WrapperVelocity.wrapPlayer(player);
+                return player.getUsername();
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
@@ -226,7 +230,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         }
     }
 
-    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
+    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerVelocityAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
         }
@@ -234,6 +238,11 @@ public class SkinsRestorer implements ISRProxyPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
+        }
+
+        @Override
+        protected LocaleManager<ISRForeign> getLocaleManager() {
+            return localeManager;
         }
     }
 }

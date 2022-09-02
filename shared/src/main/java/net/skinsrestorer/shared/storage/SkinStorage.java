@@ -28,6 +28,7 @@ import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
+import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
@@ -130,12 +131,12 @@ public class SkinStorage implements ISkinStorage {
             // No cached skin found, get from MojangAPI, save and return
             try {
                 if (!C.validMojangUsername(skinName))
-                    throw new SkinRequestException(Locale.INVALID_PLAYER.replace("%player", skinName));
+                    throw new SkinRequestExceptionShared(Locale.INVALID_PLAYER, skinName);
 
                 textures = mojangAPI.getSkin(skinName);
 
                 if (!textures.isPresent())
-                    throw new SkinRequestException(Locale.ERROR_NO_SKIN);
+                    throw new SkinRequestExceptionShared(Locale.ERROR_NO_SKIN);
 
                 setSkinData(skinName, textures.get());
 
@@ -145,7 +146,7 @@ public class SkinStorage implements ISkinStorage {
             } catch (Exception e) {
                 e.printStackTrace();
 
-                throw new SkinRequestException(Locale.WAIT_A_MINUTE);
+                throw new SkinRequestExceptionShared(Locale.WAIT_A_MINUTE);
             }
         } else {
             return textures.get();
@@ -440,7 +441,7 @@ public class SkinStorage implements ISkinStorage {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean updateSkinData(String skinName) throws SkinRequestException {
         if (!C.validMojangUsername(skinName))
-            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Check if updating is disabled for skin (by timestamp = 0)
         boolean updateDisabled = false;
@@ -466,7 +467,7 @@ public class SkinStorage implements ISkinStorage {
         }
 
         if (updateDisabled)
-            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
         try {
@@ -481,7 +482,7 @@ public class SkinStorage implements ISkinStorage {
                 }
             }
         } catch (NotPremiumException e) {
-            throw new SkinRequestException(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
         }
 
         return false;

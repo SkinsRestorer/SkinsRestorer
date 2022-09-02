@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import java.io.*;

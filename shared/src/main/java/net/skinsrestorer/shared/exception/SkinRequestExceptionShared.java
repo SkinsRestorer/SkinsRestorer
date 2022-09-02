@@ -17,23 +17,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api;
+package net.skinsrestorer.shared.exception;
 
-/**
- * Makes it possible to get all platforms into a single API merged.
- */
-public class PlayerWrapper {
-    private final Object playerInstance;
+import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 
-    public PlayerWrapper(Object playerInstance) {
-        this.playerInstance = playerInstance;
+public class SkinRequestExceptionShared extends SkinRequestException {
+    public SkinRequestExceptionShared() {
+        super();
     }
 
-    public <A> A get(Class<A> playerClass) {
-        return playerClass.cast(playerInstance);
+    public SkinRequestExceptionShared(String message) {
+        super(message);
     }
 
-    public String getName() {
-        return SkinsRestorerAPI.getApi().getWrapperFactory().getPlayerName(playerInstance);
+    public SkinRequestExceptionShared(Throwable e) {
+        super(e);
+    }
+
+    public SkinRequestExceptionShared(MessageKeyGetter key, Object... args) {
+        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getApi().getDefaultForeign(), key, args));
     }
 }

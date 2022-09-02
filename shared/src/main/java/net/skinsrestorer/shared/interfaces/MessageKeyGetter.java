@@ -17,18 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.PlayerWrapper;
+import co.aikar.locales.MessageKey;
 
-import java.util.UUID;
-
-public interface ISRPlayer extends ISRCommandSender {
-    PlayerWrapper getWrapper();
-
-    String getName();
-
-    UUID getUniqueId();
-
-    void sendMessage(String message);
+public interface MessageKeyGetter {
+    MessageKey getKey();
 }

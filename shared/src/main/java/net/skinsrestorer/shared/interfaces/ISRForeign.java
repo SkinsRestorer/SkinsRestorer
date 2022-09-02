@@ -17,11 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.IWrapperFactory;
+import java.util.Locale;
 
-public abstract class WrapperFactory implements IWrapperFactory {
-    public abstract ISRPlayer wrapPlayer(Object playerInstance);
+public interface ISRForeign {
+    Locale getLocale();
 }

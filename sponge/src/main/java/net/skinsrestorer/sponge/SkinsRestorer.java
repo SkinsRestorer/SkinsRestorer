@@ -20,25 +20,30 @@
 package net.skinsrestorer.sponge;
 
 import co.aikar.commands.SpongeCommandManager;
+import co.aikar.locales.LocaleManager;
 import com.google.inject.Inject;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Locale;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -65,6 +70,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -87,6 +93,7 @@ public class SkinsRestorer implements ISRPlugin {
     private final SkinCommand skinCommand;
     @Inject
     protected Game game;
+    private LocaleManager<ISRForeign> localeManager;
     private UpdateChecker updateChecker;
     private SpongeCommandManager manager;
     @Inject
@@ -122,7 +129,8 @@ public class SkinsRestorer implements ISRPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Locale.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage())
@@ -198,13 +206,13 @@ public class SkinsRestorer implements ISRPlugin {
         return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
     }
 
-    private static class WrapperFactorySponge extends WrapperFactory {
+    private static class WrapperFactorySponge implements IWrapperFactory {
         @Override
-        public ISRPlayer wrapPlayer(Object playerInstance) {
+        public String getPlayerName(Object playerInstance) {
             if (playerInstance instanceof Player) {
                 Player player = (Player) playerInstance;
 
-                return WrapperSponge.wrapPlayer(player);
+                return player.getName();
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
@@ -218,7 +226,7 @@ public class SkinsRestorer implements ISRPlugin {
         }
     }
 
-    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
+    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerSpongeAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), new PropertyFactorySponge());
         }
@@ -226,6 +234,11 @@ public class SkinsRestorer implements ISRPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierSponge.applySkin(playerWrapper.get(Player.class), property);
+        }
+
+        @Override
+        protected LocaleManager<ISRForeign> getLocaleManager() {
+            return localeManager;
         }
     }
 }

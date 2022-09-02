@@ -20,14 +20,16 @@
 package net.skinsrestorer.bungee.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.Locale;
+
+import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
 @RequiredArgsConstructor
 public class ConnectListener implements Listener {
@@ -40,10 +42,11 @@ public class ConnectListener implements Listener {
 
         plugin.runAsync(() -> {
             if (plugin.isOutdated()) {
-                final ProxiedPlayer player = event.getPlayer();
+                ProxiedPlayer player = event.getPlayer();
+                ISRProxyPlayer proxyPlayer = wrapPlayer(player);
 
                 if (player.hasPermission("skinsrestorer.admincommand"))
-                    player.sendMessage(TextComponent.fromLegacyText(Locale.OUTDATED));
+                    proxyPlayer.sendMessage(Locale.OUTDATED);
             }
         });
     }

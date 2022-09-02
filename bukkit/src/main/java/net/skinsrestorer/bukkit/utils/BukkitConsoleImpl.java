@@ -21,7 +21,7 @@ package net.skinsrestorer.bukkit.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.interfaces.ISRConsole;
+import net.skinsrestorer.shared.interfaces.ISRConsole;
 import org.bukkit.command.ConsoleCommandSender;
 
 @AllArgsConstructor

@@ -29,10 +29,10 @@ import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 import java.util.Collections;

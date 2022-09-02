@@ -19,8 +19,6 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
-
 import java.util.Optional;
 
 public interface ISRProxyPlugin extends ISRPlugin {

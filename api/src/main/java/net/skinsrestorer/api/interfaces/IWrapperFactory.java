@@ -20,5 +20,5 @@
 package net.skinsrestorer.api.interfaces;
 
 public interface IWrapperFactory {
-    ISRPlayer wrapPlayer(Object playerInstance);
+    String getPlayerName(Object playerInstance);
 }

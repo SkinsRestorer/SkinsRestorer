@@ -19,10 +19,9 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.storage.Locale;
 
-public class NotPremiumException extends SkinRequestException {
+public class NotPremiumException extends SkinRequestExceptionShared {
     public NotPremiumException() {
         super(Locale.NOT_PREMIUM);
     }
