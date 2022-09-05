@@ -26,7 +26,7 @@ import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -57,7 +57,7 @@ public class SkinsGUI implements InventoryHolder {
 
     public static Inventory createGUI(SkinsRestorer plugin, ISRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
-        Inventory inventory = Bukkit.createInventory(instance, 54, SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
+        Inventory inventory = Bukkit.createInventory(instance, 54, SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player);
@@ -138,7 +138,7 @@ public class SkinsGUI implements InventoryHolder {
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
         List<String> lore = new ArrayList<>();
-        lore.add(C.c(SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKINSMENU_SELECT_SKIN)));
+        lore.add(C.c(SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
         Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
@@ -163,15 +163,15 @@ public class SkinsGUI implements InventoryHolder {
                 break;
             case PREV:
                 itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKINSMENU_PREVIOUS_PAGE);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_PREVIOUS_PAGE);
                 break;
             case NEXT:
                 itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKINSMENU_NEXT_PAGE);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_NEXT_PAGE);
                 break;
             case DELETE:
                 itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Locale.SKINSMENU_CLEAR_SKIN);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_CLEAR_SKIN);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown glass type: " + type);

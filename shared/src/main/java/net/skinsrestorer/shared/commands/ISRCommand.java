@@ -29,7 +29,7 @@ import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
@@ -54,12 +54,12 @@ public interface ISRCommand {
 
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
-        Locale.load(plugin.getLocaleManager(), plugin.getDataFolderPath(), plugin);
+        Message.load(plugin.getLocaleManager(), plugin.getDataFolderPath(), plugin);
         Config.load(plugin.getDataFolderPath(), plugin.getResource("config.yml"), plugin.getSrLogger());
 
         plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
 
-        sender.sendMessage(Locale.RELOAD);
+        sender.sendMessage(Message.RELOAD);
     }
 
     default void onStatus(ISRCommandSender sender) {
@@ -120,7 +120,7 @@ public interface ISRCommand {
                     break;
             }
 
-            sender.sendMessage(Locale.DATA_DROPPED, playerOrSkin.toString(), target);
+            sender.sendMessage(Message.DATA_DROPPED, playerOrSkin.toString(), target);
         });
     }
 
@@ -133,7 +133,7 @@ public interface ISRCommand {
                 List<IProperty> properties = getPropertiesOfPlayer(target);
 
                 if (properties.isEmpty()) {
-                    sender.sendMessage(Locale.NO_SKIN_DATA);
+                    sender.sendMessage(Message.NO_SKIN_DATA);
                     return;
                 }
 
@@ -161,7 +161,7 @@ public interface ISRCommand {
                 plugin.getSrLogger().info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();
-                sender.sendMessage(Locale.NO_SKIN_DATA);
+                sender.sendMessage(Message.NO_SKIN_DATA);
             }
         });
     }
@@ -173,9 +173,9 @@ public interface ISRCommand {
         plugin.runAsync(() -> {
             try {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
-                sender.sendMessage(Locale.ADMIN_APPLYSKIN_SUCCES);
+                sender.sendMessage(Message.ADMIN_APPLYSKIN_SUCCES);
             } catch (Exception ignored) {
-                sender.sendMessage(Locale.ADMIN_APPLYSKIN_ERROR);
+                sender.sendMessage(Message.ADMIN_APPLYSKIN_ERROR);
             }
         });
     }
@@ -189,9 +189,9 @@ public interface ISRCommand {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                    sender.sendMessage(Locale.SUCCESS_CREATE_SKIN, name);
+                    sender.sendMessage(Message.SUCCESS_CREATE_SKIN, name);
                 } else {
-                    sender.sendMessage(Locale.ERROR_INVALID_URLSKIN);
+                    sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
@@ -205,7 +205,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
-                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
+                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
                 return;
             }
 
@@ -218,7 +218,7 @@ public interface ISRCommand {
                     skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
                 }
                 if (skinProps == null) {
-                    sender.sendMessage(Locale.PREFIX + "§4no skin found....");
+                    sender.sendMessage(Message.PREFIX + "§4no skin found....");
                     return;
                 }
 
@@ -240,13 +240,13 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
-                sender.sendMessage(Locale.PREFIX + "§4Only console may execute this command!");
+                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
                 return;
             }
             if (plugin.getSkinStorage().purgeOldSkins(days)) {
-                sender.sendMessage(Locale.PREFIX + "§aSuccessfully purged old skins!");
+                sender.sendMessage(Message.PREFIX + "§aSuccessfully purged old skins!");
             } else {
-                sender.sendMessage(Locale.PREFIX + "§4A error occurred while purging old skins!");
+                sender.sendMessage(Message.PREFIX + "§4A error occurred while purging old skins!");
             }
         });
     }

@@ -19,10 +19,10 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 
 public class NotPremiumException extends SkinRequestExceptionShared {
     public NotPremiumException() {
-        super(Locale.NOT_PREMIUM);
+        super(Message.NOT_PREMIUM);
     }
 }

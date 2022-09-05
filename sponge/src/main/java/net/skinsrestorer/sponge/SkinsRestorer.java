@@ -34,14 +34,12 @@ import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -70,7 +68,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -130,7 +127,7 @@ public class SkinsRestorer implements ISRPlugin {
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
         localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-        Locale.load(localeManager, dataFolderPath, this);
+        Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage())

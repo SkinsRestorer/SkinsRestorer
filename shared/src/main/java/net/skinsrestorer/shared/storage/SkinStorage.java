@@ -131,12 +131,12 @@ public class SkinStorage implements ISkinStorage {
             // No cached skin found, get from MojangAPI, save and return
             try {
                 if (!C.validMojangUsername(skinName))
-                    throw new SkinRequestExceptionShared(Locale.INVALID_PLAYER, skinName);
+                    throw new SkinRequestExceptionShared(Message.INVALID_PLAYER, skinName);
 
                 textures = mojangAPI.getSkin(skinName);
 
                 if (!textures.isPresent())
-                    throw new SkinRequestExceptionShared(Locale.ERROR_NO_SKIN);
+                    throw new SkinRequestExceptionShared(Message.ERROR_NO_SKIN);
 
                 setSkinData(skinName, textures.get());
 
@@ -146,7 +146,7 @@ public class SkinStorage implements ISkinStorage {
             } catch (Exception e) {
                 e.printStackTrace();
 
-                throw new SkinRequestExceptionShared(Locale.WAIT_A_MINUTE);
+                throw new SkinRequestExceptionShared(Message.WAIT_A_MINUTE);
             }
         } else {
             return textures.get();
@@ -441,7 +441,7 @@ public class SkinStorage implements ISkinStorage {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean updateSkinData(String skinName) throws SkinRequestException {
         if (!C.validMojangUsername(skinName))
-            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_CUSTOMSKIN);
 
         // Check if updating is disabled for skin (by timestamp = 0)
         boolean updateDisabled = false;
@@ -467,7 +467,7 @@ public class SkinStorage implements ISkinStorage {
         }
 
         if (updateDisabled)
-            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_CUSTOMSKIN);
 
         // Update Skin
         try {
@@ -482,7 +482,7 @@ public class SkinStorage implements ISkinStorage {
                 }
             }
         } catch (NotPremiumException e) {
-            throw new SkinRequestExceptionShared(Locale.ERROR_UPDATING_CUSTOMSKIN);
+            throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_CUSTOMSKIN);
         }
 
         return false;

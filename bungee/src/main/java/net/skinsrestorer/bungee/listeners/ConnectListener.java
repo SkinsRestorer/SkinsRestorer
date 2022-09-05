@@ -27,7 +27,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.bungee.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
@@ -46,7 +46,7 @@ public class ConnectListener implements Listener {
                 ISRProxyPlayer proxyPlayer = wrapPlayer(player);
 
                 if (player.hasPermission("skinsrestorer.admincommand"))
-                    proxyPlayer.sendMessage(Locale.OUTDATED);
+                    proxyPlayer.sendMessage(Message.OUTDATED);
             }
         });
     }

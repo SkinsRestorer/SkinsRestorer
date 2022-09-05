@@ -45,11 +45,9 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -71,7 +69,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -310,7 +307,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Init config files
             Config.load(dataFolderPath, getResource("config.yml"), srLogger);
             localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-            Locale.load(localeManager, dataFolderPath, this);
+            Message.load(localeManager, dataFolderPath, this);
 
             // Init storage
             if (!initStorage()) {

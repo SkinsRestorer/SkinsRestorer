@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.commands;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 
 import java.util.Optional;
 
@@ -37,12 +37,12 @@ public class CommandUtil {
                     if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
                         return true;
                     } else {
-                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
+                        sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 } else {
                     if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
-                        sender.sendMessage(Locale.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
+                        sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 }
