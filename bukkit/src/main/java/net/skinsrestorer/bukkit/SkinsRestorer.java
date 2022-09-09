@@ -463,36 +463,27 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             e.printStackTrace();
         }
 
-        StringBuilder sb1 = new StringBuilder("Server is in proxy mode!");
-
-        sb1.append("\nif you are NOT using BungeeCord in your network, set spigot.yml -> bungeecord: false");
-        sb1.append("\n\nInstallation for BungeeCord:");
-        sb1.append("\nDownload the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/");
-        sb1.append("\nPlace the SkinsRestorer.jar in ./plugins/ folders of every Spigot server.");
-        sb1.append("\nPlace the plugin in ./plugins/ folder of every BungeeCord server.");
-        sb1.append("\nCheck & set on every Spigot server spigot.yml -> bungeecord: true");
-        sb1.append("\nRestart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]");
-        sb1.append("\n\nBungeeCord now has SkinsRestorer installed with the Spigot integration!");
-        sb1.append("\nYou may now configure SkinsRestorer on BungeeCord (BungeeCord plugins folder /plugins/SkinsRestorer)");
-        sb1.append("\n\n!== override files ==!");
-        sb1.append("\nWarning: only use override files if you wish to run commands / api on backend, you need to uninstall sr from proxy and connect all backend to same mysql");
-        sb1.append("\nHow to urn off proxy mode: create a file called disableProxyMode.txt in SkinsRestorer folder (backend server -> ./plugins/SkinsRestorer/disableProxyMode.txt)");
-        sb1.append("\nThis will force disable proxy mode on next restart");
-
-        Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
         try {
-            if (proxyMode && !Files.exists(warning)) {
-                Files.createDirectories(warning.getParent());
+            Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
+            if (proxyMode) {
+                if (!Files.exists(warning)) {
+                    Files.createDirectories(warning.getParent());
 
-                Files.write(warning,
-                        String.valueOf(sb1).getBytes(StandardCharsets.UTF_8),
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.TRUNCATE_EXISTING);
-            }
+                    try (InputStream in = getResource("proxy_warning.txt")) {
+                        if (in == null) {
+                            throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
+                        }
 
-            if (!proxyMode)
+                        Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            } else {
                 Files.deleteIfExists(warning);
-        } catch (Exception ignored) {
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         if (proxyMode) {
