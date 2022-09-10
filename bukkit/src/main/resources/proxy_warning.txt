@@ -1,15 +1,16 @@
 Server is in proxy mode!
-If you are NOT using BungeeCord in your network, set spigot.yml -> bungeecord: false
+If you are NOT using a proxy (Bungeecord, waterfall or velocity) in your network, set spigot.yml -> bungeecord: false
 
-Installation for BungeeCord:
+Are you using a proxy?
+It's recommended to have the proxy handle SkinsRestorer's command's, API, permission, database and config using below seps:
 Download the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/
 Place the SkinsRestorer.jar in ./plugins/ folders of every Spigot server.
-Place the plugin in ./plugins/ folder of every BungeeCord server.
-Check & set on every Spigot server spigot.yml -> bungeecord: true
+Place the plugin in ./plugins/ folder of every proxy server.
+Check & set on every backend server spigot.yml -> bungeecord: true
 Restart (/restart or /stop) all servers [Plugman or /reload are NOT supported, use /stop or /end]
 
-BungeeCord now has SkinsRestorer installed with the Spigot integration!
-You may now configure SkinsRestorer on BungeeCord (BungeeCord plugins folder /plugins/SkinsRestorer)
+Your proxy will now tell all your backend servers what to do!
+You may now configure SkinsRestorer on your proxy (<proxy>/plugins/SkinsRestorer)
 
 !== override files ==!
 Warning: only use override files if you wish to run commands / API on backend, you need to uninstall sr from proxy and connect all backend to same mysql

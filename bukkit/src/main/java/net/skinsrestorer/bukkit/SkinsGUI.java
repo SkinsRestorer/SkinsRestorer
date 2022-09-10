@@ -204,22 +204,22 @@ public class SkinsGUI implements InventoryHolder {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
                         String skin = itemMeta.getDisplayName();
-                        plugin.requestSkinSetFromBungeeCord(player, skin);
+                        plugin.requestSkinSetFromProxy(player, skin);
                     });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinClearFromBungeeCord(player));
+                            plugin.requestSkinClearFromProxy(player));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromBungeeCord(player, page + 1));
+                            plugin.requestSkinsFromProxy(player, page + 1));
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromBungeeCord(player, page - 1));
+                            plugin.requestSkinsFromProxy(player, page - 1));
                     break;
                 default:
                     break;
