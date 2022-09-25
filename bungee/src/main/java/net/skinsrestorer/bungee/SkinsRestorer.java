@@ -33,6 +33,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
+import net.skinsrestorer.bungee.commands.SkullCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
@@ -166,6 +167,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SkullCommand(this));
     }
 
     public void checkUpdate(boolean showUpToDate) {

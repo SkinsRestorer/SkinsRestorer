@@ -35,10 +35,6 @@ public class BukkitHeadAPI {
     private BukkitHeadAPI() {
     }
 
-    public static void setSkull(ItemStack head, IProperty property) {
-        setSkull(head, property.getValue());
-    }
-
     @SuppressWarnings("unchecked")
     public static void setSkull(ItemStack head, String b64stringTexture) {
         GameProfile profile = new GameProfile(UUID.randomUUID(), null);

@@ -25,10 +25,19 @@ package net.skinsrestorer.api.property;
 public interface IProperty {
     String TEXTURES_NAME = "textures";
 
+    /**
+     * @return The name of the skin (not skin / texture owner).
+     */
     String getName();
 
+    /**
+     * @return The b64stringTexture value of the property.
+     */
     String getValue();
 
+    /**
+     * @return The signature of the property which is needed when applying the skin .
+     */
     String getSignature();
 
     default Object getHandle() {

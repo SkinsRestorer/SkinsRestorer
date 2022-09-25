@@ -33,6 +33,7 @@ import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
+import net.skinsrestorer.bukkit.commands.SkullCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
@@ -299,6 +300,15 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             Inventory inventory = SkinsGUI.createGUI(this, wrapPlayer(player), page, skinList);
 
                             Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> player.openInventory(inventory));
+                        } else if (subChannel.equalsIgnoreCase("GiveSkull")) {
+                            Player targetPlayer = Bukkit.getPlayer(in.readUTF());
+                            if (targetPlayer == null)
+                                return;
+
+                            String name = "wipskull"; // todo: get name from proxy
+                            String b64stringTexture = in.readUTF();
+
+                            SkinSkull.giveSkull(this, targetPlayer, name, b64stringTexture);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -405,9 +415,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
-        manager.registerCommand(skinCommand);
+        manager.registerCommand(skinCommand); // fixme
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SkullCommand(this, new SkinSkull(this, srLogger)));
     }
 
     private void checkProxyMode() {

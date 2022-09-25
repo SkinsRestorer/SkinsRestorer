@@ -28,29 +28,26 @@ import java.util.Map;
 public class CommandReplacements {
     public static final Map<String, CallableValue<String>> permissions = FluentMap.<String, CallableValue<String>>builder()
             .put("skin", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command")
-            .put("sr", () -> "skinsrestorer.admincommand")
-
-            .put("skins", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.gui")
-
             .put("skinSet", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.set")
             .put("skinSetOther", () -> "skinsrestorer.command.set.other")
-
             .put("skinSetUrl", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.set.url")
-
             .put("skinClear", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.clear")
             .put("skinClearOther", () -> "skinsrestorer.command.clear.other")
-
             .put("skinSearch", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.search")
-
             .put("skinUpdate", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.update")
             .put("skinUpdateOther", () -> "skinsrestorer.command.update.other")
 
+            .put("sr", () -> "skinsrestorer.admincommand")
             .put("srReload", () -> "skinsrestorer.admincommand.reload")
             .put("srStatus", () -> "skinsrestorer.admincommand.status")
             .put("srDrop", () -> "skinsrestorer.admincommand.drop")
             .put("srProps", () -> "skinsrestorer.admincommand.props")
             .put("srApplySkin", () -> "skinsrestorer.admincommand.applyskin")
             .put("srCreateCustom", () -> "skinsrestorer.admincommand.createcustom")
+
+            .put("skins", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.gui")
+
+            .put("skull", () -> "skinsrestorer.skullcommand")
             .build();
     public static final Map<String, CallableValue<Message>> descriptions = FluentMap.<String, CallableValue<Message>>builder()
             .put("%helpHelpCommand", () -> Message.HELP_HELP_COMMAND)
