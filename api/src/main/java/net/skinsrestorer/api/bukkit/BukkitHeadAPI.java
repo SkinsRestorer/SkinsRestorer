@@ -62,12 +62,12 @@ public class BukkitHeadAPI {
     }
 
     @Nullable
-    public static PlayerProfile getSkullProfile (ItemStack head) {
+    public static PropertyMap getSkullProperty (ItemStack head) {
         try {
             SkullMeta skull = (SkullMeta) head.getItemMeta();
-            return skull.getOwnerProfile();
+            GameProfile profile = (GameProfile) skull.getOwnerProfile();
+            return profile.getProperties();
         } catch (Exception ignored) {
-
         }
         return null;
     }
