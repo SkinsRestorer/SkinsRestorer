@@ -28,11 +28,14 @@ import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.storage.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("skins")
@@ -50,14 +53,15 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player player) {
+        ISRPlayer srPlayer = wrapPlayer(player);
         plugin.runAsync(() -> {
             if (!player.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(player.getName())) {
-                player.sendMessage(Locale.SKIN_COOLDOWN.replace("%s", String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(player.getName()))));
+                srPlayer.sendMessage(Message.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(player.getName()));
                 return;
             }
-            player.sendMessage(Locale.SKINSMENU_OPEN);
+            srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(plugin, 0);
+            Inventory inventory = SkinsGUI.createGUI(plugin, srPlayer, 0);
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(inventory));
         });
     }

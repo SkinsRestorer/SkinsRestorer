@@ -19,21 +19,14 @@
  */
 package net.skinsrestorer.api;
 
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-
-import java.util.UUID;
-
 /**
  * Makes it possible to get all platforms into a single API merged.
  */
 public class PlayerWrapper {
     private final Object playerInstance;
-    private final ISRPlayer internalPlayer;
 
     public PlayerWrapper(Object playerInstance) {
         this.playerInstance = playerInstance;
-
-        this.internalPlayer = SkinsRestorerAPI.getApi().getWrapperFactory().wrapPlayer(playerInstance);
     }
 
     public <A> A get(Class<A> playerClass) {
@@ -41,14 +34,6 @@ public class PlayerWrapper {
     }
 
     public String getName() {
-        return internalPlayer.getName();
-    }
-
-    public UUID getUniqueId() {
-        return internalPlayer.getUniqueId();
-    }
-
-    public void sendMessage(String message) {
-        internalPlayer.sendMessage(message);
+        return SkinsRestorerAPI.getApi().getWrapperFactory().getPlayerName(playerInstance);
     }
 }

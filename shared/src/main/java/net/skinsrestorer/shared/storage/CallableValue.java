@@ -17,12 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.storage;
 
-import java.util.Optional;
-
-public interface ISRProxyPlayer extends ISRPlayer {
-    Optional<String> getCurrentServer();
-
-    void sendDataToServer(String channel, byte[] data);
+public interface CallableValue<V> {
+    /**
+     * Computes a result, or throws an exception if unable to do so.
+     *
+     * @return computed result
+     */
+    V call();
 }

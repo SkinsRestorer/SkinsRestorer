@@ -22,15 +22,14 @@ package net.skinsrestorer.api.exception;
 public class SkinRequestException extends Exception {
     private static final long serialVersionUID = -246848643846947966L;
 
-    public SkinRequestException() {
-        super();
+    protected SkinRequestException() {
     }
 
-    public SkinRequestException(String message) {
+    protected SkinRequestException(String message) {
         super(message);
     }
 
-    public SkinRequestException(Throwable e) {
-        super(e);
+    protected SkinRequestException(Throwable cause) {
+        super(cause);
     }
 }

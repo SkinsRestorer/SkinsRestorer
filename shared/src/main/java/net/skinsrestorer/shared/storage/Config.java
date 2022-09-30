@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.InputStream;
@@ -26,6 +27,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class Config {
+    public static java.util.Locale LANGUAGE;
     public static boolean SKIN_WITHOUT_PERM;
     public static int SKIN_CHANGE_COOLDOWN;
     public static int SKIN_ERROR_COOLDOWN;
@@ -74,6 +76,7 @@ public class Config {
         YamlConfig config = new YamlConfig(dataFolder.resolve("config.yml"));
         config.loadConfig(is);
 
+        LANGUAGE = LocaleParser.parseLocale(config.getString("Language"));
         SKIN_WITHOUT_PERM = config.getBoolean("SkinWithoutPerm");
         SKIN_CHANGE_COOLDOWN = config.getInt("SkinChangeCooldown");
         SKIN_ERROR_COOLDOWN = config.getInt("SkinErrorCooldown");
