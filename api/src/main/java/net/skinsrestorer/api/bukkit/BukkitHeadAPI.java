@@ -27,6 +27,9 @@ import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.FieldNotFoundException;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -56,5 +59,16 @@ public class BukkitHeadAPI {
         }
 
         head.setItemMeta(headMeta);
+    }
+
+    @Nullable
+    public static PlayerProfile getSkullProfile (ItemStack head) {
+        try {
+            SkullMeta skull = (SkullMeta) head.getItemMeta();
+            return skull.getOwnerProfile();
+        } catch (Exception ignored) {
+
+        }
+        return null;
     }
 }
