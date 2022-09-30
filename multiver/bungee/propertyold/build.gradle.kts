@@ -7,6 +7,7 @@ dependencies {
     implementation(projects.skinsrestorerShared)
     implementation(projects.multiver.bungee.shared)
 
-    compileOnly("net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT")
-    compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT") // keep this version for SkinApplierBungeeOld
+    // Keep immport's on older version for SkinApplierBungeeOld
+    compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
+    compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
 }
