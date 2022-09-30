@@ -25,15 +25,22 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.storage.Config;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
 public class WrapperVelocity {
     public static ISRCommandSender wrapCommandSender(CommandSource sender) {
         return new ISRCommandSender() {
+            @Override
+            public Locale getLocale() {
+                return Config.LANGUAGE;
+            }
+
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
@@ -58,6 +65,11 @@ public class WrapperVelocity {
 
     public static ISRProxyPlayer wrapPlayer(Player player) {
         return new ISRProxyPlayer() {
+            @Override
+            public Locale getLocale() {
+                return player.getEffectiveLocale();
+            }
+
             @Override
             public Optional<String> getCurrentServer() {
                 return player.getCurrentServer().map(server -> server.getServerInfo().getName());

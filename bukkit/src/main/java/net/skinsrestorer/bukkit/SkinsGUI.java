@@ -24,7 +24,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -42,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
+
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
     private static final int HEAD_COUNT_PER_PAGE = 36;
@@ -51,15 +55,15 @@ public class SkinsGUI implements InventoryHolder {
     @Setter
     private Inventory inventory;
 
-    public static Inventory createGUI(SkinsRestorer plugin, int page, Map<String, String> skinsList) {
+    public static Inventory createGUI(SkinsRestorer plugin, ISRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
-        Inventory inventory = Bukkit.createInventory(instance, 54, C.c(Locale.SKINSMENU_TITLE_NEW).replace("%page", String.valueOf(page + 1)));
+        Inventory inventory = Bukkit.createInventory(instance, 54, SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
-        ItemStack none = createGlass(GlassType.NONE);
-        ItemStack delete = createGlass(GlassType.DELETE);
-        ItemStack prev = createGlass(GlassType.PREV);
-        ItemStack next = createGlass(GlassType.NEXT);
+        ItemStack none = createGlass(GlassType.NONE, player);
+        ItemStack delete = createGlass(GlassType.DELETE, player);
+        ItemStack prev = createGlass(GlassType.PREV, player);
+        ItemStack next = createGlass(GlassType.NEXT, player);
 
         int skinCount = 0;
         for (Map.Entry<String, String> entry : skinsList.entrySet()) {
@@ -74,7 +78,7 @@ public class SkinsGUI implements InventoryHolder {
                 continue;
             }
 
-            inventory.addItem(createSkull(plugin.getSrLogger(), entry.getKey(), entry.getValue()));
+            inventory.addItem(createSkull(plugin.getSrLogger(), player, entry.getKey(), entry.getValue()));
             skinCount++;
         }
 
@@ -121,20 +125,20 @@ public class SkinsGUI implements InventoryHolder {
         return inventory;
     }
 
-    public static Inventory createGUI(SkinsRestorer plugin, int page) {
+    public static Inventory createGUI(SkinsRestorer plugin, ISRForeign player, int page) {
         if (page > 999)
             page = 999;
         int skinNumber = HEAD_COUNT_PER_PAGE * page;
 
-        return createGUI(plugin, page, plugin.getSkinStorage().getSkins(skinNumber));
+        return createGUI(plugin, player, page, plugin.getSkinStorage().getSkins(skinNumber));
     }
 
-    private static ItemStack createSkull(SRLogger log, String name, String property) {
+    private static ItemStack createSkull(SRLogger log, ISRForeign player, String name, String property) {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
         List<String> lore = new ArrayList<>();
-        lore.add(C.c(Locale.SKINSMENU_SELECT_SKIN));
+        lore.add(C.c(SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
         Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
@@ -149,7 +153,7 @@ public class SkinsGUI implements InventoryHolder {
         return is;
     }
 
-    private static ItemStack createGlass(GlassType type) {
+    private static ItemStack createGlass(GlassType type, ISRForeign player) {
         ItemStack itemStack;
         String text;
         switch (type) {
@@ -159,15 +163,15 @@ public class SkinsGUI implements InventoryHolder {
                 break;
             case PREV:
                 itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_PREVIOUS_PAGE);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_PREVIOUS_PAGE);
                 break;
             case NEXT:
                 itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_NEXT_PAGE);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_NEXT_PAGE);
                 break;
             case DELETE:
                 itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                text = C.c(Locale.SKINSMENU_CLEAR_SKIN);
+                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_CLEAR_SKIN);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown glass type: " + type);
@@ -200,22 +204,22 @@ public class SkinsGUI implements InventoryHolder {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
                         String skin = itemMeta.getDisplayName();
-                        plugin.requestSkinSetFromBungeeCord(player, skin);
+                        plugin.requestSkinSetFromProxy(player, skin);
                     });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinClearFromBungeeCord(player));
+                            plugin.requestSkinClearFromProxy(player));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromBungeeCord(player, page + 1));
+                            plugin.requestSkinsFromProxy(player, page + 1));
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromBungeeCord(player, page - 1));
+                            plugin.requestSkinsFromProxy(player, page - 1));
                     break;
                 default:
                     break;
@@ -235,7 +239,7 @@ public class SkinsGUI implements InventoryHolder {
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(plugin, page + 1);
+                        Inventory newInventory = createGUI(plugin, wrapPlayer(player), page + 1);
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                                 player.openInventory(newInventory));
@@ -243,7 +247,7 @@ public class SkinsGUI implements InventoryHolder {
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(plugin, page - 1);
+                        Inventory newInventory = createGUI(plugin, wrapPlayer(player), page - 1);
 
                         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () ->
                                 player.openInventory(newInventory));

@@ -24,15 +24,22 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.command.ConsoleCommandSender;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.storage.Config;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
 public class WrapperBungee {
     public static ISRCommandSender wrapCommandSender(CommandSender sender) {
         return new ISRCommandSender() {
+            @Override
+            public Locale getLocale() {
+                return Config.LANGUAGE;
+            }
+
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(TextComponent.fromLegacyText(message));
@@ -57,6 +64,11 @@ public class WrapperBungee {
 
     public static ISRProxyPlayer wrapPlayer(ProxiedPlayer player) {
         return new ISRProxyPlayer() {
+            @Override
+            public Locale getLocale() {
+                return player.getLocale();
+            }
+
             @Override
             public Optional<String> getCurrentServer() {
                 return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());

@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.utils.log;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.api.interfaces.ISRConsole;
+import net.skinsrestorer.shared.interfaces.ISRConsole;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 
 import java.util.logging.Level;

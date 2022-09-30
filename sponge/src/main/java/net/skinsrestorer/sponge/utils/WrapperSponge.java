@@ -20,18 +20,25 @@
 package net.skinsrestorer.sponge.utils;
 
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.ISRCommandSender;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.storage.Config;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class WrapperSponge {
     public static ISRCommandSender wrapCommandSender(CommandSource sender) {
         return new ISRCommandSender() {
+            @Override
+            public Locale getLocale() {
+                return Config.LANGUAGE;
+            }
+
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(Text.builder(message).build());
@@ -56,6 +63,11 @@ public class WrapperSponge {
 
     public static ISRPlayer wrapPlayer(Player player) {
         return new ISRPlayer() {
+            @Override
+            public Locale getLocale() {
+                return player.getLocale();
+            }
+
             @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);

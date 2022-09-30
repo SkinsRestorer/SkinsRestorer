@@ -20,6 +20,7 @@
 package net.skinsrestorer.bungee;
 
 import co.aikar.commands.BungeeCommandManager;
+import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -27,8 +28,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
-import net.skinsrestorer.api.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
@@ -39,17 +39,16 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.WrapperFactory;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -82,6 +81,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
     private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
     private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
     private final SkinCommand skinCommand = new SkinCommand(this);
+    private LocaleManager<ISRForeign> localeManager;
     private Path dataFolderPath;
     private boolean outdated;
     private UpdateChecker updateChecker;
@@ -130,7 +130,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        Locale.load(dataFolderPath, srLogger);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
         if (!initStorage()) {
@@ -211,13 +212,13 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         return Optional.ofNullable(getProxy().getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
     }
 
-    private static class WrapperFactoryBungee extends WrapperFactory {
+    private static class WrapperFactoryBungee implements IWrapperFactory {
         @Override
-        public ISRPlayer wrapPlayer(Object playerInstance) {
+        public String getPlayerName(Object playerInstance) {
             if (playerInstance instanceof ProxiedPlayer) {
                 ProxiedPlayer player = (ProxiedPlayer) playerInstance;
 
-                return WrapperBungee.wrapPlayer(player);
+                return player.getName();
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
@@ -235,7 +236,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         }
     }
 
-    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
+    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerBungeeAPI() {
             super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
@@ -244,6 +245,11 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), property);
+        }
+
+        @Override
+        protected LocaleManager<ISRForeign> getLocaleManager() {
+            return localeManager;
         }
     }
 }

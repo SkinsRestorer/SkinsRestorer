@@ -17,20 +17,16 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.shared.utils;
 
-public interface ISRCommandSender {
-    void sendMessage(String message);
+import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.storage.Config;
 
-    String getName();
+import java.util.Locale;
 
-    boolean hasPermission(String permission);
-
-    default boolean isConsole() {
-        return false;
-    }
-
-    default boolean equalsPlayer(ISRPlayer player) {
-        return getName().equals(player.getName());
+public class DefaultForeignSubject implements ISRForeign {
+    @Override
+    public Locale getLocale() {
+        return Config.LANGUAGE;
     }
 }

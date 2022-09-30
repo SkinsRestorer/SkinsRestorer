@@ -17,13 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage;
+package net.skinsrestorer.shared.utils;
 
-public interface CallableString<V> {
-    /**
-     * Computes a result, or throws an exception if unable to do so.
-     *
-     * @return computed result
-     */
-    V call();
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+public class PropertyReader {
+    public static Properties readProperties(InputStream in) {
+        Properties properties = new Properties();
+        try {
+            properties.load(new InputStreamReader(in, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return properties;
+    }
 }

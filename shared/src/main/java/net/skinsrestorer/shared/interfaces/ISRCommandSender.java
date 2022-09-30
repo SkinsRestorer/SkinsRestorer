@@ -17,12 +17,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 
-public class NotPremiumException extends SkinRequestExceptionShared {
-    public NotPremiumException() {
-        super(Message.NOT_PREMIUM);
+public interface ISRCommandSender extends ISRForeign {
+    void sendMessage(String message);
+
+    default void sendMessage(MessageKeyGetter key, Object... args) {
+        sendMessage(SkinsRestorerAPIShared.getApi().getMessage(this, key, args));
+    }
+
+    String getName();
+
+    boolean hasPermission(String permission);
+
+    default boolean isConsole() {
+        return false;
+    }
+
+    default boolean equalsPlayer(ISRPlayer player) {
+        return getName().equals(player.getName());
     }
 }

@@ -27,11 +27,11 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.interfaces.ISRPlayer;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
