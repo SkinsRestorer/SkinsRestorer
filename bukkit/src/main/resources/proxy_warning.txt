@@ -1,8 +1,13 @@
-Server is in proxy mode!
+SkinsRestorer is running in "Proxy Mode"
 If you are NOT using a proxy (Bungeecord, waterfall or velocity) in your network, set spigot.yml -> bungeecord: false
 
-Are you using a proxy?
-It's recommended to have the proxy handle SkinsRestorer's command's, API, permission, database and config using below seps:
+Using a proxy? --> you MUST use proxy installation! (or use override files)
+
+What is "Proxy mode"
+The proxy will handle SkinsRestorer's command's, API, permission, database and config in a "Centralised" manner.
+This way, each backend does not need to apply the skin when switching servers.
+
+How to install on proxy?
 Download the latest version from https://www.spigotmc.org/resources/skinsrestorer.2124/
 Place the SkinsRestorer.jar in ./plugins/ folders of every Spigot server.
 Place the plugin in ./plugins/ folder of every proxy server.
@@ -13,6 +18,6 @@ Your proxy will now tell all your backend servers what to do!
 You may now configure SkinsRestorer on your proxy (<proxy>/plugins/SkinsRestorer)
 
 !== override files ==!
-Warning: only use override files if you wish to run commands / API on backend, you need to uninstall sr from proxy and connect all backend to same mysql
+Warning: only use override files if you wish to run commands / API on backend, you need to uninstall SkinsRestorer from proxy and connect all backend to same mysql
 How to urn off proxy mode: create a file called disableProxyMode.txt in SkinsRestorer folder (backend server -> ./plugins/SkinsRestorer/disableProxyMode.txt)
 This will force disable proxy mode on next restart.
