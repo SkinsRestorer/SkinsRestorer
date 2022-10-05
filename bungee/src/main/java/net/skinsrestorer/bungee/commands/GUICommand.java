@@ -37,7 +37,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
 @Getter
 @RequiredArgsConstructor
-@CommandAlias("skins")
+@CommandAlias("skinsb|skinsbungee")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand implements IProxyGUICommand {
     private final SkinsRestorer plugin;

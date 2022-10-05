@@ -37,7 +37,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @Getter
 @RequiredArgsConstructor
-@CommandAlias("skins")
+@CommandAlias("skinsv|skinsvelocity")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand implements IProxyGUICommand {
     private final SkinsRestorer plugin;

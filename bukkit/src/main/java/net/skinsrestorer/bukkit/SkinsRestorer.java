@@ -38,8 +38,8 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
-import net.skinsrestorer.bukkit.listener.ProtocolLibJoinListener;
 import net.skinsrestorer.bukkit.utils.*;
+import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -229,6 +229,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         updateCheck();
 
+        // Init locale
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Message.load(localeManager, dataFolderPath, this);
+
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
@@ -318,8 +322,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         } else {
             // Init config files
             Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-            localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-            Message.load(localeManager, dataFolderPath, this);
 
             // Init storage
             if (!initStorage()) {
@@ -331,15 +333,16 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             initCommands();
 
             // Init listener
-            if (!Config.ENABLE_PROTOCOL_LISTENER || Bukkit.getPluginManager().getPlugin("ProtocolLib") == null) {
+            if (Config.ENABLE_PAPER_JOIN_LISTENER
+                    && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
+                srLogger.info("Using paper join listener!");
+                Bukkit.getPluginManager().registerEvents(new PaperPlayerJoinEvent(this), this);
+            } else {
                 Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), this);
 
                 if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
                     Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), this);
                 }
-            } else {
-                srLogger.info("Hooking into ProtocolLib for instant skins on join!");
-                new ProtocolLibJoinListener(this);
             }
 
             // Run connection check

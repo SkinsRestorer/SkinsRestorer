@@ -69,7 +69,7 @@ public class Config {
     public static boolean DISMOUNT_PASSENGERS_ON_UPDATE;
     public static boolean DISABLE_ON_JOIN_SKINS;
     public static boolean DISALLOW_AUTO_UPDATE_SKIN;
-    public static boolean ENABLE_PROTOCOL_LISTENER;
+    public static boolean ENABLE_PAPER_JOIN_LISTENER;
     public static boolean DEBUG;
 
     public static void load(Path dataFolder, InputStream is, SRLogger logger) {
@@ -118,7 +118,7 @@ public class Config {
         DISMOUNT_PLAYER_ON_UPDATE = config.getBoolean("DismountPlayerOnSkinUpdate");
         REMOUNT_PLAYER_ON_UPDATE = config.getBoolean("RemountPlayerOnSkinUpdate");
         DISMOUNT_PASSENGERS_ON_UPDATE = config.getBoolean("DismountPassengersOnSkinUpdate");
-        ENABLE_PROTOCOL_LISTENER = config.getBoolean("EnableProtocolListener");
+        ENABLE_PAPER_JOIN_LISTENER = config.getBoolean("EnablePaperJoinListener");
         DEBUG = config.getBoolean("Debug");
 
         //__Default__Skins

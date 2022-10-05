@@ -194,9 +194,11 @@ DisableOnJoinSkins: false
 DisallowAutoUpdateSkin: false
 
 # <!! Warning Experimental !!>
-# This enables the experimental ProtocolLib integration that allows instant skins on join.
-# Use with caution! This may decrease your TPS.
-EnableProtocolListener: false
+# This enables the experimental PaperMC join event integration that allows instant skins on join.
+# It is not as tested as the default implementation, but it is smoother and should not lag the server.
+# It also fixes all resource pack skin apply issues.
+# If your players are experiencing extremely long loading screens, try disabling this.
+EnablePaperJoinListener: true
 
 # <!! Warning !!>
 # When enabled if a skin gets applied on the proxy, the new texture will be forwarded to the backend as well.
@@ -206,7 +208,6 @@ EnableProtocolListener: false
 ForwardTextures: true
 
 # Updater Settings
-Updater:
 # # <!! Warning !!>
 # Using outdated version void's support, compatibility & stability.
 #

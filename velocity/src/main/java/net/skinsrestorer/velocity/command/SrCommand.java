@@ -43,7 +43,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @RequiredArgsConstructor
-@CommandAlias("sr|skinsrestorer")
+@CommandAlias("srv|skinsrestorervelocity")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand implements ISRCommand {
     @Getter
