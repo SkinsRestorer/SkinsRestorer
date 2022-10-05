@@ -11,9 +11,9 @@ pluginManagement {
     plugins {
         id("com.github.johnrengelman.shadow") version "7.1.2"
         id("org.cadixdev.licenser") version "0.6.1"
-        id("net.kyori.indra") version "2.1.1"
-        id("net.kyori.indra.git") version "2.1.1"
-        id("net.kyori.indra.publishing") version "2.1.1"
+        id("net.kyori.indra") version "3.0.0"
+        id("net.kyori.indra.git") version "3.0.0"
+        id("net.kyori.indra.publishing") version "2.2.0"
         id("net.kyori.blossom") version "1.3.1"
         id("io.github.patrick.remapper") version "1.3.0"
     }

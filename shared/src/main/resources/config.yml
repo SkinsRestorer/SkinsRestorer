@@ -15,8 +15,8 @@
 # (?) update config? -> https://raw.githubusercontent.com/SkinsRestorer/SkinsRestorerX/stable/shared/src/main/resources/config.yml
 # (?) Step by step config guide -> https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Configuration
 
-# (!) IF YOU USE BUNGEE, Check & set on every Spigot server spigot.yml -> bungeecord: true.  (!)
-# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Spigot & Bungeecord).              (!)
+# (!) IF YOU ARE USING A PROXY (Bungee, Waterfall or Velocity), Check & set on every BACKEND server spigot.yml -> bungeecord: true.  (!)
+# (!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Backend & Proxy).                      (!)
 
 ##########
 # Basics #

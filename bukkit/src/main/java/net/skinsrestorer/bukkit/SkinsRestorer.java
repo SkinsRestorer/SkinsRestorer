@@ -67,7 +67,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -225,7 +228,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         updateCheck();
 
-        // Init SkinsGUI click listener even when on bungee
+        // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
         if (proxyMode) {
@@ -270,7 +273,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             if (player == null)
                                 return;
 
-                            requestSkinsFromBungeeCord(player, 0);
+                            requestSkinsFromProxy(player, 0);
                         } else if (subChannel.equalsIgnoreCase("returnSkins") || subChannel.equalsIgnoreCase("returnSkinsV2")) {
                             Player player = Bukkit.getPlayer(in.readUTF());
                             if (player == null)
@@ -352,7 +355,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
-    public void requestSkinsFromBungeeCord(Player player, int page) {
+    public void requestSkinsFromProxy(Player player, int page) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
@@ -367,7 +370,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
-    public void requestSkinClearFromBungeeCord(Player player) {
+    public void requestSkinClearFromProxy(Player player) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
@@ -381,7 +384,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
-    public void requestSkinSetFromBungeeCord(Player player, String skin) {
+    public void requestSkinSetFromProxy(Player player, String skin) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
@@ -491,7 +494,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             srLogger.info("This plugin is running in PROXY mode!");
             srLogger.info("You have to do all configuration at config file");
             srLogger.info("inside your BungeeCord/Velocity server.");
-            srLogger.info("(BungeeCord-Server/plugins/SkinsRestorer/)");
+            srLogger.info("(<proxy>/plugins/SkinsRestorer/)");
             srLogger.info("-------------------------\\Warning/-------------------------");
         }
     }
