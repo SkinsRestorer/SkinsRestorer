@@ -228,6 +228,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
 
         updateCheck();
 
+        // Init locale
+        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        Message.load(localeManager, dataFolderPath, this);
+
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
@@ -308,8 +312,6 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         } else {
             // Init config files
             Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-            localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-            Message.load(localeManager, dataFolderPath, this);
 
             // Init storage
             if (!initStorage()) {
