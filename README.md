@@ -34,7 +34,7 @@ servers.
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
 - Minecraft 1.8.0 - 1.19.2
 
-implementation:
+Implementation:
 - proxy: Bungee (waterfall) & Velocity
 - Backend: Bukkit (spigot, paper purpur etc) & SpongeVanilla
 
@@ -49,6 +49,7 @@ implementation:
 - [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX)
 - [Discord](https://discord.me/skinsrestorer/)
 - [Website](https://skinsrestorer.net)
+- [Crowdin](https://translate.skinsrestorer.net)
 
 ## :scroll: License
 
