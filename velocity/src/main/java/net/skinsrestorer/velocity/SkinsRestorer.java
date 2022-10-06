@@ -30,6 +30,9 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -146,10 +149,14 @@ public class SkinsRestorer implements ISRProxyPlugin {
         // Init listener
         proxy.getEventManager().register(this, new ConnectListener(this));
         proxy.getEventManager().register(this, new GameProfileRequest(this));
-        proxy.getEventManager().register(this, new PluginMessageListener(this));
 
         // Init commands
         initCommands();
+
+        // Init message channel
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
+        proxy.getEventManager().register(this, new PluginMessageListener(this));
 
         srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
