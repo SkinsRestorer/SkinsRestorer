@@ -21,14 +21,14 @@ package net.skinsrestorer.velocity.command;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.HelpCommand;
+import co.aikar.commands.annotation.*;
+import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.SkullSource;
 import net.skinsrestorer.shared.commands.IProxySkullCommand;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
@@ -51,5 +51,14 @@ public class SkullCommand extends BaseCommand implements IProxySkullCommand {
     @CommandPermission("%skull")
     public void onDefault(Player player) {
         onDefault(wrapPlayer(player));
+    }
+
+    @Subcommand("give")
+    @CommandPermission("%skullGive")
+    @CommandCompletion("@players")
+    @Description("%helpSkullGive")
+    @Syntax("%SyntaxSkullGive")
+    public void onGive(CommandSource sender, OnlinePlayer target, SkullSource skullSource, String value, @Optional SkinVariant[] skinVariant) {
+        onGive(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skullSource, value, skinVariant);
     }
 }

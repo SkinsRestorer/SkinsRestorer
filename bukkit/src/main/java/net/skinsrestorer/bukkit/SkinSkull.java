@@ -59,7 +59,7 @@ public class SkinSkull extends ItemStack {
 
         //Objects.requireNonNull(sm).setDisplayName(name);
 
-        List<String> lore = new ArrayList<>(); //todo: improve
+        List<String> lore = new ArrayList<>();
         lore.add(C.c(String.valueOf(name + "'s Head")));
         sm.setLore(lore);
 

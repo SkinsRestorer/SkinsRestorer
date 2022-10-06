@@ -20,6 +20,10 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.CommandHelp;
+import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.SkullSource;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -48,7 +52,6 @@ public interface IProxySkullCommand {
             return;
         }
 
-
         Optional<String> skinName = plugin.getSkinStorage().getSkinNameOfPlayer(player.getName());
         if (skinName.isPresent()) {
             Optional<IProperty> skinData = plugin.getSkinStorage().getSkinData(skinName.get(), false);
@@ -62,6 +65,35 @@ public interface IProxySkullCommand {
         }
     }
 
+    default void onGive(ISRCommandSender sender, ISRProxyPlayer player, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+        String base64value;
+        switch (skullSource) {
+            case MOJANGPLAYER:
+                base64value = SkinsRestorerAPI.getApi().getProfile(value).getValue();
+                break;
+            case PLAYER:
+                base64value = SkinsRestorerAPI.getApi().getSkinData(SkinsRestorerAPI.getApi().getSkinName(value)).getValue();
+                break;
+            case SKIN:
+                base64value = SkinsRestorerAPI.getApi().getSkinData(value).getValue();
+                break;
+            case SKINURL:
+                try {
+                    base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, SkinVariant.valueOf(String.valueOf(skinVariant))).getValue(); //todo: exception handling
+                } catch (SkinRequestException e) {
+                    sender.sendMessage(e.getCause().getMessage());
+                    return;
+                }
+                break;
+            case TEXTUREVALUE:
+                base64value = value;
+                break;
+            default:
+                sender.sendMessage("Invalid skull source");
+                return;
+        }
+        sendGiveSkullRequest(player, base64value);
+    }
 
     default void sendGiveSkullRequest(ISRProxyPlayer player, String b64stringTexture) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
