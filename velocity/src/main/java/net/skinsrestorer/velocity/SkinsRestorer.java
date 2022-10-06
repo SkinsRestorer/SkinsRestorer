@@ -54,7 +54,9 @@ import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
+import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
+import net.skinsrestorer.velocity.listener.PluginMessageListener;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.charts.SingleLineChart;
@@ -91,6 +93,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private LocaleManager<ISRForeign> localeManager;
     @Inject
     private PluginContainer container;
+    private boolean outdated;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
@@ -138,7 +141,9 @@ public class SkinsRestorer implements ISRProxyPlugin {
             return;
 
         // Init listener
+        proxy.getEventManager().register(this, new ConnectListener(this));
         proxy.getEventManager().register(this, new GameProfileRequest(this));
+        proxy.getEventManager().register(this, new PluginMessageListener(this));
 
         // Init commands
         initCommands();
@@ -165,6 +170,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                outdated = true;
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
                         .forEach(srLogger::info);
             }

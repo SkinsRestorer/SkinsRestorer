@@ -28,17 +28,17 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.listeners.LoginProfileEvent;
-import net.skinsrestorer.shared.listeners.LoginProfileListener;
+import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 
 @RequiredArgsConstructor
 @Getter
-public class LoginListener extends LoginProfileListener implements Listener {
+public class LoginListener extends SharedLoginProfileListener implements Listener {
     private final SkinsRestorer plugin;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
-        LoginProfileEvent profileEvent = wrap(event);
+        SRLoginProfileEvent profileEvent = wrap(event);
         if (handleSync(profileEvent))
             return;
 
@@ -56,8 +56,8 @@ public class LoginListener extends LoginProfileListener implements Listener {
         });
     }
 
-    private LoginProfileEvent wrap(LoginEvent event) {
-        return new LoginProfileEvent() {
+    private SRLoginProfileEvent wrap(LoginEvent event) {
+        return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
                 return event.getConnection().isOnlineMode();

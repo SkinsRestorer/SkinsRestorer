@@ -25,8 +25,8 @@ import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.bukkit.SkinsRestorer;
-import net.skinsrestorer.shared.listeners.LoginProfileEvent;
-import net.skinsrestorer.shared.listeners.LoginProfileListener;
+import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -35,14 +35,14 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 @RequiredArgsConstructor
 @Getter
-public class PlayerJoin extends LoginProfileListener implements Listener {
+public class PlayerJoin extends SharedLoginProfileListener implements Listener {
     @Setter
     private static boolean resourcePack;
     private final SkinsRestorer plugin;
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
-        LoginProfileEvent profileEvent = wrap(event);
+        SRLoginProfileEvent profileEvent = wrap(event);
 
         if (handleSync(profileEvent))
             return;
@@ -60,8 +60,8 @@ public class PlayerJoin extends LoginProfileListener implements Listener {
         });
     }
 
-    private LoginProfileEvent wrap(PlayerJoinEvent event) {
-        return new LoginProfileEvent() {
+    private SRLoginProfileEvent wrap(PlayerJoinEvent event) {
+        return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
                 return Bukkit.getOnlineMode();
