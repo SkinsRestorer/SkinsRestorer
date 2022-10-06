@@ -173,8 +173,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
-
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(srLogger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
+                        .forEach(srLogger::info);
             }
 
             @Override

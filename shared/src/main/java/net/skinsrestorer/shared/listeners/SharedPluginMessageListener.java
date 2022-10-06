@@ -44,6 +44,36 @@ public abstract class SharedPluginMessageListener {
         return byteOut.toByteArray();
     }
 
+    public static void sendPage(int page, ISRPlugin plugin, ISRProxyPlayer player) {
+        int skinNumber = 36 * page;
+
+        byte[] ba = convertToByteArray(plugin.getSkinStorage().getSkins(skinNumber));
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+
+        try {
+            out.writeUTF("returnSkinsV2");
+            out.writeUTF(player.getName());
+            out.writeInt(page);
+
+            out.writeShort(ba.length);
+            out.write(ba);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        byte[] data = b.toByteArray();
+        plugin.getSrLogger().debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
+        // Payload may not be larger than 32767 bytes -18 from channel name
+        if (data.length > 32749) {
+            plugin.getSrLogger().warning("Too many bytes GUI... canceling GUI..");
+            return;
+        }
+
+        player.sendDataToServer("sr:messagechannel", data);
+    }
+
     public void handlePluginMessage(SRPluginMessageEvent event) {
         ISRProxyPlugin plugin = getPlugin();
 
@@ -93,36 +123,6 @@ public abstract class SharedPluginMessageListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void sendPage(int page, ISRPlugin plugin, ISRProxyPlayer player) {
-        int skinNumber = 36 * page;
-
-        byte[] ba = convertToByteArray(plugin.getSkinStorage().getSkins(skinNumber));
-
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-
-        try {
-            out.writeUTF("returnSkinsV2");
-            out.writeUTF(player.getName());
-            out.writeInt(page);
-
-            out.writeShort(ba.length);
-            out.write(ba);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        byte[] data = b.toByteArray();
-        plugin.getSrLogger().debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
-        // Payload may not be larger than 32767 bytes -18 from channel name
-        if (data.length > 32749) {
-            plugin.getSrLogger().warning("Too many bytes GUI... canceling GUI..");
-            return;
-        }
-
-        player.sendDataToServer("sr:messagechannel", data);
     }
 
     protected abstract ISRProxyPlugin getPlugin();

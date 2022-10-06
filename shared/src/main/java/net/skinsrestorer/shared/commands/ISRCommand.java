@@ -32,12 +32,13 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
-import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 public interface ISRCommand {
     default void onHelp(ISRCommandSender sender, CommandHelp help) {

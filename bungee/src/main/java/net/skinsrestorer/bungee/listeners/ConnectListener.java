@@ -25,8 +25,7 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.bungee.SkinsRestorer;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 
@@ -35,7 +34,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @Getter
 @RequiredArgsConstructor
 public class ConnectListener extends SharedConnectListener implements Listener {
-    private final SkinsRestorer plugin;
+    private final ISRProxyPlugin plugin;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerConnect(final ServerConnectedEvent event) {

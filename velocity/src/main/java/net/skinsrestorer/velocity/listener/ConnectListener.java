@@ -24,7 +24,7 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 
@@ -33,7 +33,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @Getter
 @RequiredArgsConstructor
 public class ConnectListener extends SharedConnectListener {
-    private final ISRPlugin plugin;
+    private final ISRProxyPlugin plugin;
 
     @Subscribe(order = PostOrder.LAST)
     public void onServerConnect(final ServerConnectedEvent event) {

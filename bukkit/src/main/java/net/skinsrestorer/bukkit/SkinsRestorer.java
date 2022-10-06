@@ -272,7 +272,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                     try {
                         String subChannel = in.readUTF();
 
-                        if (subChannel.equalsIgnoreCase("OPENGUI")) {
+                        if (subChannel.equalsIgnoreCase("OPENGUI")) { // LEGACY
                             Player player = Bukkit.getPlayer(in.readUTF());
                             if (player == null)
                                 return;

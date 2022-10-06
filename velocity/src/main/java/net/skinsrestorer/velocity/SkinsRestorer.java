@@ -38,7 +38,10 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.interfaces.*;
+import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
@@ -177,9 +180,11 @@ public class SkinsRestorer implements ISRProxyPlugin {
 
             @Override
             public void upToDate() {
-                if (showUpToDate)
-                    updateChecker.getUpToDateMessages(getVersion(), false)
-                            .forEach(srLogger::info);
+                if (!showUpToDate)
+                    return;
+
+                updateChecker.getUpToDateMessages(getVersion(), false)
+                        .forEach(srLogger::info);
             }
         }));
     }
