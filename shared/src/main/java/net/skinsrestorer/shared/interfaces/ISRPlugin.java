@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,4 +98,13 @@ public interface ISRPlugin {
     }
 
     void checkUpdate(boolean showUpToDate);
+
+    default void checkUpdateInit(Runnable check) {
+        Path updaterDisabled = getDataFolderPath().resolve("noupdate.txt");
+        if (Files.exists(updaterDisabled)) {
+            getSrLogger().info("Updater Disabled");
+        } else {
+            check.run();
+        }
+    }
 }

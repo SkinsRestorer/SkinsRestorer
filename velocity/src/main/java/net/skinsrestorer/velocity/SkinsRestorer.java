@@ -30,8 +30,6 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
-import com.velocitypowered.api.proxy.messages.LegacyChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -71,7 +69,6 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
@@ -118,7 +115,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -126,16 +122,13 @@ public class SkinsRestorer implements ISRProxyPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        // Check for updates
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
             runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
@@ -157,8 +150,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
         proxy.getEventManager().register(this, new PluginMessageListener(this));
-
-        srLogger.info("Enabled SkinsRestorer v" + getVersion());
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));

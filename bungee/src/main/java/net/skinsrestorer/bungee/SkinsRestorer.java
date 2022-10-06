@@ -58,7 +58,6 @@ import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
@@ -110,7 +109,6 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         javaLogger.setLogger(getProxy().getLogger());
         dataFolderPath = getDataFolder().toPath();
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -118,15 +116,13 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
             runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
@@ -134,11 +130,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage()) {
-            getProxy().getPluginManager().unregisterListeners(this);
-            getProxy().getPluginManager().unregisterCommands(this);
+        if (!initStorage())
             return;
-        }
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));

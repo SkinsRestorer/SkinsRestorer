@@ -343,8 +343,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private void updateCheck() {
         // Check for updates
         isUpdaterInitialized = true;
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             checkUpdate(true);
 
             // Delay update between 5 & 30 minutes
@@ -352,9 +351,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Repeat update between 1 & 4 hours
             int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
             runRepeat(this::checkUpdate, delayInt, periodInt, TimeUnit.SECONDS);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
     }
 
     public void requestSkinsFromProxy(Player player, int page) {
