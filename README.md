@@ -35,9 +35,8 @@ servers.
 - Minecraft 1.8.0 - 1.19.2
 
 Implementation:
-- proxy: Bungee (waterfall) & Velocity
-- Backend: Bukkit (spigot, paper purpur etc) & SpongeVanilla
-
+- Proxy: BungeeCord (Waterfall) & Velocity
+- Backend: Bukkit (Spigot, Paper, Purpur, etc.) & SpongeVanilla
 
 ## :link: Links
 
