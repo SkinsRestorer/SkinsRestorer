@@ -37,7 +37,7 @@ public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
         super(plugin, log);
     }
 
-    protected void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException {
+    protected void applyToHandler(InitialHandler handler, IProperty textures) {
         LoginResult profile = handler.getLoginProfile();
         Property[] newProps = new Property[]{(Property) textures.getHandle()};
 
