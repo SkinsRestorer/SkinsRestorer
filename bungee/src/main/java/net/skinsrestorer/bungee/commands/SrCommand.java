@@ -42,7 +42,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
 @RequiredArgsConstructor
-@CommandAlias("srb|skinsrestorerbungee")
+@CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand implements ISRCommand {
     @Getter

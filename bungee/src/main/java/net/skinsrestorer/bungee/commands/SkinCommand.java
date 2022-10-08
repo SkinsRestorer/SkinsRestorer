@@ -35,7 +35,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
 @RequiredArgsConstructor
-@CommandAlias("skinb|skinbungee")
+@CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
