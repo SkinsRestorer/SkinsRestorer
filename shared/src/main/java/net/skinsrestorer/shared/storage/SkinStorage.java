@@ -29,6 +29,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
@@ -53,8 +54,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
-    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|\\.]");
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private static final String LTRIM = "^\\\\s+";
     private static final String RTRIM = "\\\\s+$";
     private static final Pattern TRIM_PATTERN = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
@@ -62,28 +61,7 @@ public class SkinStorage implements ISkinStorage {
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
     @Setter
-    private MySQL mysql;
-    private Path skinsFolder;
-    private Path playersFolder;
-    @Setter
-    @Getter
-    private boolean initialized = false;
-
-    public void loadFolders(Path dataFolder) {
-        skinsFolder = dataFolder.resolve("Skins");
-        try {
-            Files.createDirectories(skinsFolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        playersFolder = dataFolder.resolve("Players");
-        try {
-            Files.createDirectories(playersFolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private StorageAdapter storageAdapter;
 
     public void preloadDefaultSkins() {
         if (!Config.DEFAULT_SKINS_ENABLED)
@@ -157,50 +135,9 @@ public class SkinStorage implements ISkinStorage {
     public Optional<String> getSkinNameOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
-        if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
+        Optional<String> optional = storageAdapter.getStoredSkinNameOfPlayer(playerName);
 
-            if (crs == null)
-                return Optional.empty();
-
-            try {
-                final String skin = crs.getString("Skin");
-
-                // maybe useless
-                if (skin.isEmpty()) {
-                    removeSkinOfPlayer(playerName);
-                    return Optional.empty();
-                }
-
-                return Optional.of(skin);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            playerName = replaceForbiddenChars(playerName);
-            Path playerFile = playersFolder.resolve(playerName + ".player");
-
-            try {
-                if (!Files.exists(playerFile))
-                    return Optional.empty();
-
-                List<String> lines = Files.readAllLines(playerFile);
-
-                // Maybe useless
-                if (lines.isEmpty()) {
-                    removeSkinOfPlayer(playerName);
-                    return Optional.empty();
-                }
-
-                return Optional.of(lines.get(0));
-            } catch (MalformedInputException e) {
-                removeSkinOfPlayer(playerName);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return Optional.empty();
+        return optional.isPresent() && !optional.get().isEmpty() ? optional : Optional.empty();
     }
 
     /**
@@ -231,42 +168,14 @@ public class SkinStorage implements ISkinStorage {
     public void removeSkinOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
-        } else {
-            playerName = replaceForbiddenChars(playerName);
-            Path playerFile = playersFolder.resolve(playerName + ".player");
-
-            try {
-                Files.deleteIfExists(playerFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        storageAdapter.removeStoredSkinNameOfPlayer(playerName);
     }
 
     @Override
     public void setSkinOfPlayer(String playerName, String skinName) {
         playerName = playerName.toLowerCase();
 
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
-                    playerName, skinName, skinName);
-        } else {
-            playerName = replaceForbiddenChars(playerName);
-            Path playerFile = playersFolder.resolve(playerName + ".player");
-
-            try {
-                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
-                    skinName = removeWhitespaces(skinName);
-                    skinName = replaceForbiddenChars(skinName);
-
-                    writer.write(skinName);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        storageAdapter.setStoredSkinNameOfPlayer(playerName, skinName);
     }
 
     // #getSkinData() also create while we have #getSkinForPlayer()
@@ -274,45 +183,19 @@ public class SkinStorage implements ISkinStorage {
     public Optional<IProperty> getSkinData(String skinName, boolean updateOutdated) {
         skinName = skinName.toLowerCase();
 
-        if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
+        try {
+            Optional<StorageAdapter.StoredProperty> property = storageAdapter.getStoredSkinData(skinName);
 
-            if (crs == null)
+            if (!property.isPresent()) {
                 return Optional.empty();
-
-            try {
-                final String value = crs.getString("Value");
-                final String signature = crs.getString("Signature");
-                final String timestamp = crs.getString("timestamp");
-
-                return Optional.of(createProperty(skinName, updateOutdated, value, signature, Long.parseLong(timestamp)));
-            } catch (Exception e) {
-                logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
-                removeSkinData(skinName);
             }
-        } else {
-            skinName = removeWhitespaces(skinName);
-            skinName = replaceForbiddenChars(skinName);
-            Path skinFile = skinsFolder.resolve(skinName + ".skin");
 
-            try {
-                if (!Files.exists(skinFile))
-                    return Optional.empty();
-
-                List<String> lines = Files.readAllLines(skinFile);
-
-                String value = lines.get(0);
-                String signature = lines.get(1);
-                String timestamp = lines.get(2);
-
-                return Optional.of(createProperty(skinName, updateOutdated, value, signature, Long.parseLong(timestamp)));
-            } catch (Exception e) {
-                logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
-                removeSkinData(skinName);
-            }
+            return Optional.of(createProperty(skinName, updateOutdated, property.get().getValue(), property.get().getSignature(), property.get().getTimestamp()));
+        } catch (StorageAdapter.StorageException | SkinRequestException e) {
+            logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
+            removeSkinData(skinName);
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     /**
@@ -323,19 +206,7 @@ public class SkinStorage implements ISkinStorage {
     public void removeSkinData(String skinName) {
         skinName = skinName.toLowerCase();
 
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
-        } else {
-            skinName = removeWhitespaces(skinName);
-            skinName = replaceForbiddenChars(skinName);
-            Path skinFile = skinsFolder.resolve(skinName + ".skin");
-
-            try {
-                Files.deleteIfExists(skinFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        storageAdapter.removeStoredSkinData(skinName);
     }
 
     @Override
@@ -349,87 +220,21 @@ public class SkinStorage implements ISkinStorage {
         String value = textures.getValue();
         String signature = textures.getSignature();
 
-        String timestampString = Long.toString(timestamp);
+        if (value.isEmpty() || signature.isEmpty())
+            return;
 
-        if (Config.MYSQL_ENABLED) {
-            mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                    skinName, value, signature, timestampString, value, signature, timestampString);
-        } else {
-            skinName = removeWhitespaces(skinName);
-            skinName = replaceForbiddenChars(skinName);
-            Path skinFile = skinsFolder.resolve(skinName + ".skin");
+        storageAdapter.setStoredSkinData(skinName, new StorageAdapter.StoredProperty(value, signature, timestamp));
+    }
 
-            try {
-                if (value.isEmpty() || signature.isEmpty() || timestampString.isEmpty())
-                    return;
-
-                try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
-                    writer.write(value + "\n" + signature + "\n" + timestamp);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    @Override
+    public boolean isInitialized() {
+        return storageAdapter != null;
     }
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
     public Map<String, String> getSkins(int offset) {
-        Map<String, String> list = new TreeMap<>();
-
-        if (Config.MYSQL_ENABLED) {
-            String filterBy = "";
-            String orderBy = "Nick";
-
-            // Custom GUI
-            if (Config.CUSTOM_GUI_ENABLED) {
-                if (Config.CUSTOM_GUI_ONLY) {
-                    filterBy = "WHERE Nick RLIKE '" + String.join("|", Config.CUSTOM_GUI_SKINS) + "'";
-                } else {
-                    orderBy = "FIELD(Nick, " + Config.CUSTOM_GUI_SKINS.stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";
-                }
-            }
-
-            RowSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36");
-            try {
-                do {
-                    list.put(crs.getString("Nick").toLowerCase(), crs.getString("Value"));
-                } while (crs.next());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            List<Path> files = new ArrayList<>();
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                stream.forEach(files::add);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            List<String> skinNames = files.stream().map(Path::getFileName).map(Path::toString).map(s ->
-                    s.substring(0, s.length() - 5) // remove .skin (5 characters)
-            ).sorted().collect(Collectors.toList());
-
-            int i = 0;
-            for (String skinName : skinNames) {
-                if (list.size() >= 36)
-                    break;
-
-                if (i >= offset) {
-                    if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
-                        for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
-                            if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
-                                getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                        }
-                    } else {
-                        getSkinData(skinName, false).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                    }
-                }
-                i++;
-            }
-        }
-
-        return list;
+        return storageAdapter.getStoredSkins(offset);
     }
 
     /**
@@ -444,27 +249,7 @@ public class SkinStorage implements ISkinStorage {
             throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_CUSTOMSKIN);
 
         // Check if updating is disabled for skin (by timestamp = 0)
-        boolean updateDisabled = false;
-        if (Config.MYSQL_ENABLED) {
-            RowSet crs = mysql.query("SELECT timestamp FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
-            if (crs != null)
-                try {
-                    updateDisabled = crs.getString("timestamp").equals("0");
-                } catch (Exception ignored) {
-                }
-        } else {
-            skinName = removeWhitespaces(skinName);
-            skinName = replaceForbiddenChars(skinName);
-
-            Path skinFile = skinsFolder.resolve(skinName + ".skin");
-
-            try {
-                if (Files.exists(skinFile)) {
-                    updateDisabled = Files.readAllLines(skinFile).get(2).equals("0");
-                }
-            } catch (Exception ignored) {
-            }
-        }
+        boolean updateDisabled = storageAdapter.getStoredTimestamp(skinName).map(timestamp -> timestamp == 0).orElse(false);
 
         if (updateDisabled)
             throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_CUSTOMSKIN);
@@ -559,49 +344,15 @@ public class SkinStorage implements ISkinStorage {
         return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
     }
 
-    private String replaceForbiddenChars(String str) {
-        // Escape all Windows / Linux forbidden printable ASCII characters
-        return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
-    }
-
-    // TODO remove all whitespace after last starting space.
-    private String removeWhitespaces(String str) {
-        // Remove all whitespace expect when startsWith " ".
-        if (str.startsWith(" ")) {
-            return str;
-        }
-        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
-    }
-
     public boolean purgeOldSkins(int days) {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 
-        if (Config.MYSQL_ENABLED) {
-            // delete if name not start with " " and timestamp below targetPurgeTimestamp
-            mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND " + Config.MYSQL_SKIN_TABLE + ".timestamp NOT LIKE 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
-            return true;
-        } else {
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
-                for (Path file : stream) {
-                    try {
-                        if (!Files.exists(file))
-                            continue;
-
-                        List<String> lines = Files.readAllLines(file);
-                        long timestamp = Long.parseLong(lines.get(2));
-
-                        if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
-                            Files.deleteIfExists(file);
-                        }
-                    } catch (Exception ignored) {
-                    }
-                }
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+             storageAdapter.purgeStoredOldSkins(targetPurgeTimestamp);
+             return true; // TODO: Do better than true/false return
+        } catch (StorageAdapter.StorageException e) {
+            e.printStackTrace();
+            return false;
         }
-
-        return false;
     }
 }
