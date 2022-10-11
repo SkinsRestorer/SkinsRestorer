@@ -229,7 +229,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         updateCheck();
 
         // Init locale
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
         Message.load(localeManager, dataFolderPath, this);
 
         // Init SkinsGUI click listener even when in ProxyMode
@@ -239,7 +239,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             if (Files.exists(dataFolderPath.resolve("enableSkinStorageAPI.txt"))) {
                 initConfigAndStorage();
             }
-            
+
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
                 if (!channel.equals("sr:skinchange"))
@@ -336,7 +336,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
         }
     }
-    
+
     private void initConfigAndStorage() throws InitializeException {
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);

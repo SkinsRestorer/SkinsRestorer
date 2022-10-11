@@ -127,7 +127,7 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
         Message.load(localeManager, dataFolderPath, this);
 
         // Init storage

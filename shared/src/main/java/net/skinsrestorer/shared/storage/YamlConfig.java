@@ -54,24 +54,15 @@ public class YamlConfig {
                 e.printStackTrace();
             }
 
-            if (is != null) {
-                try {
-                    defaultConfig.load(is);
-
-                    String beforeMerge = config.saveToString();
-                    config.merge(defaultConfig, true, true, false);
-
-                    if (!beforeMerge.equals(config.saveToString())) {
-                        config.save(file);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else if (is == null) {
-            // create empty file if we got no InputStream with default config
             try {
-                Files.createFile(file);
+                defaultConfig.load(is);
+
+                String beforeMerge = config.saveToString();
+                config.merge(defaultConfig, true, true, false);
+
+                if (!beforeMerge.equals(config.saveToString())) {
+                    config.save(file);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
