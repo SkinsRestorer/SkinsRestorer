@@ -24,8 +24,6 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetProvider;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -129,24 +127,19 @@ public class MySQL {
         }
     }
 
-    public CachedRowSet query(@Language("sql") final String query, final Object... vars) {
+    public ResultSet query(@Language("sql") final String query, final Object... vars) throws SQLException {
         try (Connection connection = poolDataSource.getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
-                try (ResultSet rs = ps.executeQuery()) {
-                    CachedRowSet crs = RowSetProvider.newFactory().createCachedRowSet();
-                    crs.populate(rs);
-
-                    if (crs.next())
-                        return crs;
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    return rs;
+                } else {
+                    return null;
                 }
             }
-        } catch (SQLException e) {
-            logger.warning("MySQL error: " + e.getMessage());
         }
-
-        return null;
     }
 
     private void fillPreparedStatement(PreparedStatement ps, Object... vars) throws SQLException {
