@@ -38,7 +38,7 @@ public interface StorageAdapter {
 
     void setStoredSkinData(String skinName, StoredProperty storedProperty);
 
-    Map<String, String> getStoredSkins(int offset); // TODO: Rework this to be more abstracted from the actual logic using it
+    Map<String, String> getStoredSkins(int offset);
 
     Optional<Long> getStoredTimestamp(String skinName);
 
