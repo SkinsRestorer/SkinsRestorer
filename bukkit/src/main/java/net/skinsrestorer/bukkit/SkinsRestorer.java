@@ -471,20 +471,18 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         try {
-            Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
+            Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
-                if (!Files.exists(warning)) {
-                    Files.createDirectories(warning.getParent());
+                Files.createDirectories(warning.getParent());
 
-                    try (InputStream in = getResource("proxy_warning.txt")) {
-                        if (in == null) {
-                            throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
-                        }
-
-                        Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                try (InputStream in = getResource("proxy_warning.txt")) {
+                    if (in == null) {
+                        throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
                     }
+                    // Always replace the file to make sure it's up-to-date.
+                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 Files.deleteIfExists(warning);
