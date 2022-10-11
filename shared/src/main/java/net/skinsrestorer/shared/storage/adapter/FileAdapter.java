@@ -56,8 +56,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        playerName = replaceForbiddenChars(playerName);
-        Path playerFile = playersFolder.resolve(playerName + ".player");
+        Path playerFile = resolvePlayerFile(playerName);
 
         try {
             if (!Files.exists(playerFile))
@@ -81,8 +80,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void removeStoredSkinNameOfPlayer(String playerName) {
-        playerName = replaceForbiddenChars(playerName);
-        Path playerFile = playersFolder.resolve(playerName + ".player");
+        Path playerFile = resolvePlayerFile(playerName);
 
         try {
             Files.deleteIfExists(playerFile);
@@ -93,8 +91,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void setStoredSkinNameOfPlayer(String playerName, String skinName) {
-        playerName = replaceForbiddenChars(playerName);
-        Path playerFile = playersFolder.resolve(playerName + ".player");
+        Path playerFile = resolvePlayerFile(playerName);
 
         try {
             try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
@@ -110,9 +107,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<StoredProperty> getStoredSkinData(String skinName) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-        Path skinFile = skinsFolder.resolve(skinName + ".skin");
+        Path skinFile = resolveSkinFile(skinName);
 
         try {
             if (!Files.exists(skinFile))
@@ -133,9 +128,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void removeStoredSkinData(String skinName) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-        Path skinFile = skinsFolder.resolve(skinName + ".skin");
+        Path skinFile = resolveSkinFile(skinName);
 
         try {
             Files.deleteIfExists(skinFile);
@@ -146,9 +139,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-        Path skinFile = skinsFolder.resolve(skinName + ".skin");
+        Path skinFile = resolveSkinFile(skinName);
 
         try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
             writer.write(storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp());
@@ -193,10 +184,7 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<Long> getStoredTimestamp(String skinName) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-
-        Path skinFile = skinsFolder.resolve(skinName + ".skin");
+        Path skinFile = resolveSkinFile(skinName);
 
         try {
             if (!Files.exists(skinFile)) {
@@ -236,6 +224,17 @@ public class FileAdapter implements StorageAdapter {
             e.printStackTrace();
             throw new StorageException(e);
         }
+    }
+
+    private Path resolveSkinFile(String skinName) {
+        skinName = removeWhitespaces(skinName);
+        skinName = replaceForbiddenChars(skinName);
+        return skinsFolder.resolve(skinName + ".skin");
+    }
+
+    private Path resolvePlayerFile(String playerName) {
+        playerName = replaceForbiddenChars(playerName);
+        return playersFolder.resolve(playerName + ".player");
     }
 
     private String replaceForbiddenChars(String str) {
