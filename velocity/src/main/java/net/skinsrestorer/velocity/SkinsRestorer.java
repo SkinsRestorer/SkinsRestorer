@@ -39,6 +39,7 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
@@ -136,8 +137,12 @@ public class SkinsRestorer implements ISRProxyPlugin {
         Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage())
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
+        }
 
         // Init listener
         proxy.getEventManager().register(this, new ConnectListener(this));

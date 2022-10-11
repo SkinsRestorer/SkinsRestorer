@@ -40,6 +40,7 @@ import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -130,8 +131,12 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage())
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
+        }
 
         // Init listener
         getProxy().getPluginManager().registerListener(this, new LoginListener(this));

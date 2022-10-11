@@ -236,6 +236,10 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
         if (proxyMode) {
+            if (Files.exists(dataFolderPath.resolve("enableSkinStorageAPI.txt"))) {
+                initConfigAndStorage();
+            }
+            
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
                 if (!channel.equals("sr:skinchange"))
@@ -310,14 +314,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 });
             });
         } else {
-            // Init config files
-            Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-
-            // Init storage
-            if (!initStorage()) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+            initConfigAndStorage();
 
             // Init commands
             initCommands();
@@ -338,6 +335,14 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Run connection check
             runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
         }
+    }
+    
+    private void initConfigAndStorage() throws InitializeException {
+        // Init config files
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+
+        // Init storage
+        initStorage();
     }
 
     private void updateCheck() {

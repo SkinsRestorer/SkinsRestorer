@@ -31,6 +31,7 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -108,7 +109,7 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     @Listener
-    public void onInitialize(GameInitializationEvent e) {
+    public void onInitialize(GameInitializationEvent event) {
         srLogger.load(getDataFolderPath());
 
         checkUpdateInit(() -> {
@@ -125,8 +126,12 @@ public class SkinsRestorer implements ISRPlugin {
         Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage())
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
+        }
 
         // Init commands
         initCommands();

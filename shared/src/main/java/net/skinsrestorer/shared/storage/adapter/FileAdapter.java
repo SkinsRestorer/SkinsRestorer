@@ -38,20 +38,12 @@ public class FileAdapter implements StorageAdapter {
     private final Path skinsFolder;
     private final Path playersFolder;
 
-    public FileAdapter(Path dataFolder) {
+    public FileAdapter(Path dataFolder) throws IOException {
         skinsFolder = dataFolder.resolve("Skins");
-        try {
-            Files.createDirectories(skinsFolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Files.createDirectories(skinsFolder);
 
         playersFolder = dataFolder.resolve("Players");
-        try {
-            Files.createDirectories(playersFolder);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Files.createDirectories(playersFolder);
     }
 
     @Override

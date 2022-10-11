@@ -23,6 +23,7 @@ import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.commands.ISkinCommand;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
@@ -80,13 +81,12 @@ public interface ISRPlugin {
         SharedMethods.allowIllegalACFNames();
     }
 
-    default boolean initStorage() {
-        // Initialise MySQL
-        if (!SharedMethods.initStorage(getSrLogger(), getSkinStorage(), getDataFolderPath())) return false;
+    default void initStorage() throws InitializeException {
+        // Initialise SkinStorage
+        SharedMethods.initStorage(getSrLogger(), getSkinStorage(), getDataFolderPath());
 
         // Preload default skins
         runAsync(getSkinStorage()::preloadDefaultSkins);
-        return true;
     }
 
     CommandManager<?, ?, ?, ?, ?, ?> getManager();
