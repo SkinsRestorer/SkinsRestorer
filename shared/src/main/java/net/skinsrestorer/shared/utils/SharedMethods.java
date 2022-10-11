@@ -23,6 +23,8 @@ import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.adapter.FileAdapter;
+import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -76,16 +78,14 @@ public class SharedMethods {
                 mysql.connectPool();
                 mysql.createTable();
 
-                skinStorage.setMysql(mysql);
+                skinStorage.setStorageAdapter(new MySQLAdapter(mysql));
             } catch (Exception e) {
                 srLogger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
                 return false;
             }
         } else {
-            skinStorage.loadFolders(dataFolder);
+            skinStorage.setStorageAdapter(new FileAdapter(dataFolder));
         }
-
-        skinStorage.setInitialized(true);
 
         return true;
     }
