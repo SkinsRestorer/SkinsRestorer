@@ -36,7 +36,7 @@ public class WrapperBukkit {
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return Config.LANGUAGE;
+                return LocaleParser.getDefaultLocale();
             }
 
             @Override

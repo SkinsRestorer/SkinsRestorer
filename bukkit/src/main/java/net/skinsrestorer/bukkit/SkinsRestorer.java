@@ -340,6 +340,8 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
     private void initConfigAndStorage() throws InitializeException {
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        // Set new default locale because we initialized localeManager early
+        localeManager.setDefaultLocale(Config.LANGUAGE);
 
         // Init storage
         initStorage();
