@@ -48,6 +48,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -341,7 +342,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
         // Set new default locale because we initialized localeManager early
-        localeManager.setDefaultLocale(Config.LANGUAGE);
+        localeManager.setDefaultLocale(LocaleParser.getDefaultLocale());
 
         // Init storage
         initStorage();
