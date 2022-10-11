@@ -127,7 +127,7 @@ MySQL:
   MaxPoolSize: 10
   SkinTable: 'Skins'
   PlayerTable: 'Players'
-  ConnectionOptions: verifyServerCertificate=false&useSSL=false&serverTimezone=UTC
+  ConnectionOptions: sslMode=trust&serverTimezone=UTC
 
 # Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.
 # [?] Unsure? leave this true for better performance.
