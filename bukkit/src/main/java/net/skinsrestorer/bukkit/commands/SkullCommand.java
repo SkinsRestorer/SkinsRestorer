@@ -72,7 +72,7 @@ public class SkullCommand extends BaseCommand {
 
                 if (skinData.isPresent()) {
                     srPlayer.sendMessage("Here you go, your skull!");
-                    SkinsSkull.giveSkull(plugin, player, srPlayer.getName(), skinData.get().getValue());
+                    SkinsSkull.giveSkull(plugin, srPlayer.getName(), player, skinData.get().getValue());
                 } else {
                     srPlayer.sendMessage(Message.NO_SKIN_DATA);
                 }

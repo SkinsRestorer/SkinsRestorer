@@ -317,7 +317,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             String name = "wipskull"; // todo: get name from proxy
                             String b64stringTexture = in.readUTF();
 
-                            SkinSkull.giveSkull(this, targetPlayer, name, b64stringTexture);
+                            SkinSkull.giveSkull(this, name, targetPlayer, b64stringTexture);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
