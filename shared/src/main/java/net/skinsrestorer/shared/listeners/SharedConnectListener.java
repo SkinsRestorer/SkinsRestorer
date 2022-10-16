@@ -17,12 +17,26 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.listeners;
 
-import java.util.Optional;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.storage.Message;
 
-public interface ISRProxyPlugin extends ISRPlugin {
-    Optional<ISRProxyPlayer> getPlayer(String playerName);
+public abstract class SharedConnectListener {
+    protected void handleConnect(SRServerConnectedEvent event) {
+        ISRProxyPlugin plugin = getPlugin();
 
-    boolean isOutdated();
+        plugin.runAsync(() -> {
+            if (plugin.isOutdated()) {
+                ISRPlayer player = event.getPlayer();
+
+                if (player.hasPermission("skinsrestorer.admincommand")) {
+                    player.sendMessage(Message.OUTDATED);
+                }
+            }
+        });
+    }
+
+    protected abstract ISRProxyPlugin getPlugin();
 }

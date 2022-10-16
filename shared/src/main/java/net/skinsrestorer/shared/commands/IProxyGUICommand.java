@@ -23,12 +23,9 @@ import co.aikar.commands.CommandHelp;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 public interface IProxyGUICommand {
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
@@ -44,21 +41,7 @@ public interface IProxyGUICommand {
         }
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        sendGuiOpenRequest(player);
-    }
-
-    default void sendGuiOpenRequest(ISRProxyPlayer player) {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-
-        try {
-            out.writeUTF("OPENGUI");
-            out.writeUTF(player.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        player.sendDataToServer("sr:messagechannel", b.toByteArray());
+        SharedPluginMessageListener.sendPage(0, getPlugin(), player);
     }
 
     ISRProxyPlugin getPlugin();

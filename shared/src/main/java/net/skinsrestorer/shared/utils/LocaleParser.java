@@ -26,7 +26,7 @@ import java.util.Locale;
 public class LocaleParser {
     public static Locale parseLocale(String locale) {
         if (locale == null) {
-            return Config.LANGUAGE;
+            return getDefaultLocale();
         }
         String[] split = locale.split("_");
         if (split.length == 1) {
@@ -34,7 +34,7 @@ public class LocaleParser {
         } else if (split.length == 2) {
             return new Locale(split[0], split[1]);
         } else {
-            return Config.LANGUAGE;
+            return getDefaultLocale();
         }
     }
 
@@ -46,5 +46,19 @@ public class LocaleParser {
             return new Locale(split[0], split[1]);
         }
         throw new IllegalArgumentException("Invalid locale: " + locale);
+    }
+
+    public static Locale getDefaultLocale() {
+        Locale locale = Config.LANGUAGE;
+
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+
+        if (locale == null) {
+            locale = Locale.ENGLISH;
+        }
+
+        return locale;
     }
 }

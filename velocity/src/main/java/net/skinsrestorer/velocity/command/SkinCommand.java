@@ -35,7 +35,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @RequiredArgsConstructor
-@CommandAlias("skinv|skinvelocity")
+@CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {

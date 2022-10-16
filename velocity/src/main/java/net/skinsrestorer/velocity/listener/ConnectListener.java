@@ -17,26 +17,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.listeners;
+package net.skinsrestorer.velocity.listener;
 
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.event.ServerConnectedEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
-import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
+import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @Getter
 @RequiredArgsConstructor
-public class ConnectListener extends SharedConnectListener implements Listener {
+public class ConnectListener extends SharedConnectListener {
     private final ISRProxyPlugin plugin;
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @Subscribe(order = PostOrder.LAST)
     public void onServerConnect(final ServerConnectedEvent event) {
         handleConnect(wrap(event));
     }

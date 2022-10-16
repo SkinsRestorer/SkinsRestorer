@@ -27,12 +27,12 @@ import net.skinsrestorer.shared.storage.Config;
 
 import java.util.Optional;
 
-public abstract class LoginProfileListener {
-    protected boolean handleSync(LoginProfileEvent event) {
+public abstract class SharedLoginProfileListener {
+    protected boolean handleSync(SRLoginProfileEvent event) {
         return Config.DISABLE_ON_JOIN_SKINS || (Config.NO_SKIN_IF_LOGIN_CANCELED && event.isCancelled());
     }
 
-    protected Optional<IProperty> handleAsync(LoginProfileEvent event) throws SkinRequestException {
+    protected Optional<IProperty> handleAsync(SRLoginProfileEvent event) throws SkinRequestException {
         ISRPlugin plugin = getPlugin();
         String playerName = event.getPlayerName();
         Pair<IProperty, Boolean> result = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName);

@@ -27,6 +27,6 @@ import java.util.Locale;
 public class DefaultForeignSubject implements ISRForeign {
     @Override
     public Locale getLocale() {
-        return Config.LANGUAGE;
+        return LocaleParser.getDefaultLocale();
     }
 }

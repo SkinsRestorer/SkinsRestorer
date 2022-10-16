@@ -24,8 +24,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.listeners.LoginProfileEvent;
-import net.skinsrestorer.shared.listeners.LoginProfileListener;
+import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -35,12 +35,12 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Getter
-public class PaperPlayerJoinEvent extends LoginProfileListener implements Listener {
+public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements Listener {
     private final ISRPlugin plugin;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
-        LoginProfileEvent profileEvent = wrap(event);
+        SRLoginProfileEvent profileEvent = wrap(event);
 
         if (handleSync(profileEvent))
             return;
@@ -53,8 +53,8 @@ public class PaperPlayerJoinEvent extends LoginProfileListener implements Listen
         }
     }
 
-    private LoginProfileEvent wrap(AsyncPlayerPreLoginEvent event) {
-        return new LoginProfileEvent() {
+    private SRLoginProfileEvent wrap(AsyncPlayerPreLoginEvent event) {
+        return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
                 return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + getPlayerName()).getBytes(StandardCharsets.UTF_8)).equals(event.getPlayerProfile().getId());

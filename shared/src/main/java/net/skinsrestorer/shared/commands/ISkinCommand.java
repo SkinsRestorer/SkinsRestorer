@@ -34,12 +34,12 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static co.aikar.commands.CommandManager.getCurrentCommandManager;
+import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 public interface ISkinCommand {
     IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");

@@ -49,6 +49,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
+import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -230,13 +231,17 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         updateCheck();
 
         // Init locale
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
         Message.load(localeManager, dataFolderPath, this);
 
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), this);
 
         if (proxyMode) {
+            if (Files.exists(dataFolderPath.resolve("enableSkinStorageAPI.txt"))) {
+                initConfigAndStorage();
+            }
+
             Bukkit.getMessenger().registerOutgoingPluginChannel(this, "sr:skinchange");
             Bukkit.getMessenger().registerIncomingPluginChannel(this, "sr:skinchange", (channel, player, message) -> {
                 if (!channel.equals("sr:skinchange"))
@@ -273,7 +278,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                     try {
                         String subChannel = in.readUTF();
 
-                        if (subChannel.equalsIgnoreCase("OPENGUI")) {
+                        if (subChannel.equalsIgnoreCase("OPENGUI")) { // LEGACY
                             Player player = Bukkit.getPlayer(in.readUTF());
                             if (player == null)
                                 return;
@@ -320,14 +325,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                 });
             });
         } else {
-            // Init config files
-            Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-
-            // Init storage
-            if (!initStorage()) {
-                Bukkit.getPluginManager().disablePlugin(this);
-                return;
-            }
+            initConfigAndStorage();
 
             // Init commands
             initCommands();
@@ -350,11 +348,20 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
     }
 
+    private void initConfigAndStorage() throws InitializeException {
+        // Init config files
+        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
+        // Set new default locale because we initialized localeManager early
+        localeManager.setDefaultLocale(LocaleParser.getDefaultLocale());
+
+        // Init storage
+        initStorage();
+    }
+
     private void updateCheck() {
         // Check for updates
         isUpdaterInitialized = true;
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             checkUpdate(true);
 
             // Delay update between 5 & 30 minutes
@@ -362,9 +369,7 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
             // Repeat update between 1 & 4 hours
             int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
             runRepeat(this::checkUpdate, delayInt, periodInt, TimeUnit.SECONDS);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
     }
 
     public void requestSkinsFromProxy(Player player, int page) {
@@ -480,20 +485,18 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
         }
 
         try {
-            Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README)");
+            Path warning = dataFolderPath.resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
-                if (!Files.exists(warning)) {
-                    Files.createDirectories(warning.getParent());
+                Files.createDirectories(warning.getParent());
 
-                    try (InputStream in = getResource("proxy_warning.txt")) {
-                        if (in == null) {
-                            throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
-                        }
-
-                        Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                try (InputStream in = getResource("proxy_warning.txt")) {
+                    if (in == null) {
+                        throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
                     }
+                    // Always replace the file to make sure it's up-to-date.
+                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             } else {
                 Files.deleteIfExists(warning);

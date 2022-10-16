@@ -20,14 +20,19 @@
 package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.adapter.FileAdapter;
+import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.sql.SQLException;
 import java.util.regex.Pattern;
 
 public class SharedMethods {
@@ -59,9 +64,9 @@ public class SharedMethods {
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean initStorage(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) {
-        if (Config.MYSQL_ENABLED) {
-            try {
+    public static void initStorage(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) throws InitializeException {
+        try {
+            if (Config.MYSQL_ENABLED) {
                 MySQL mysql = new MySQL(
                         srLogger,
                         Config.MYSQL_HOST,
@@ -76,18 +81,17 @@ public class SharedMethods {
                 mysql.connectPool();
                 mysql.createTable();
 
-                skinStorage.setMysql(mysql);
-            } catch (Exception e) {
-                srLogger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
-                return false;
+                skinStorage.setStorageAdapter(new MySQLAdapter(mysql));
+            } else {
+                skinStorage.setStorageAdapter(new FileAdapter(dataFolder));
             }
-        } else {
-            skinStorage.loadFolders(dataFolder);
+        } catch (SQLException e) {
+            srLogger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
+            throw new InitializeException(e);
+        } catch (IOException e) {
+            srLogger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
+            throw new InitializeException(e);
         }
-
-        skinStorage.setInitialized(true);
-
-        return true;
     }
 
     public static Throwable getRootCause(Throwable throwable) {
