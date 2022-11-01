@@ -144,14 +144,6 @@ public interface IProxySkullCommand {
     default void onProps(ISRProxyPlayer targetPlayer) {
         if (!CommandUtil.isAllowedToExecute(targetPlayer)) return;
 
-        // todo: add seperate cooldown storage
-        ISRPlugin plugin = getPlugin();
-        CooldownStorage cooldownStorage = plugin.getCooldownStorage();
-        if (!targetPlayer.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(targetPlayer.getName())) {
-            targetPlayer.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(targetPlayer.getName())));
-            return;
-        }
-
 
         targetPlayer.sendMessage("This is still WIP"); // TODO: WIP
     }
