@@ -48,9 +48,15 @@ public class CommandReplacements {
             .put("skins", () -> Config.SKIN_WITHOUT_PERM ? "" : "skinsrestorer.command.gui")
 
             .put("skull", () -> "skinsrestorer.skullcommand")
+            .put("skullGet", () -> "skinsrestorer.skullcommand.get")
+            .put("skullGive", () -> "skinsrestorer.skull.give")
+            .put("skullUpdate", () -> "skinsrestorer.skull.update")
+            .put("skullProps", () -> "skinsrestorer.skull.props")
             .build();
+
     public static final Map<String, CallableValue<Message>> descriptions = FluentMap.<String, CallableValue<Message>>builder()
             .put("%helpHelpCommand", () -> Message.HELP_HELP_COMMAND)
+
             .put("%helpSkinClear", () -> Message.HELP_SKIN_CLEAR)
             .put("%helpSkinClearOther", () -> Message.HELP_SKIN_CLEAR_OTHER)
             .put("%helpSkinSearch", () -> Message.HELP_SKIN_SEARCH)
@@ -66,7 +72,13 @@ public class CommandReplacements {
             .put("%helpSrProps", () -> Message.HELP_SR_PROPS)
             .put("%helpSrApplySkin", () -> Message.HELP_SR_APPLY_SKIN)
             .put("%helpSrCreateCustom", () -> Message.HELP_SR_CREATECUSTOM)
+
+            .put("%helpSkullGet", () -> Message.HELP_SKULL_GET)
+            .put("%helpSkullGive", () -> Message.HELP_SKULL_GIVE)
+            .put("%helpSkullUpdate", () -> Message.HELP_SKULL_UPDATE)
+            .put("%helpSkullProps", () -> Message.HELP_SKULL_PROPS)
             .build();
+
     public static final Map<String, CallableValue<Message>> syntax = FluentMap.<String, CallableValue<Message>>builder()
             .put("%SyntaxDefaultCommand", () -> Message.SYNTAX_DEFAULTCOMMAND)
             .put("%SyntaxSkinSet", () -> Message.SYNTAX_SKINSET)

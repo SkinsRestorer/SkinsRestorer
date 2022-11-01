@@ -43,14 +43,23 @@ public class SkullCommand extends BaseCommand implements IProxySkullCommand {
     private final SkinsRestorer plugin;
 
     @HelpCommand
+    @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource sender, CommandHelp help) {
         onHelp(wrapCommandSender(sender), help);
     }
 
     @Default
-    @CommandPermission("%skull")
+    @CommandPermission("%skullGet")
     public void onDefault(Player player) {
         onDefault(wrapPlayer(player));
+    }
+
+    @Subcommand("get")
+    @CommandPermission("%skullGet")
+    @Description("%helpSkullGet")
+    @Syntax("%SyntaxSkullGet")
+    public void onGet(Player player, SkullSource skullSource, String value, @Optional SkinVariant[] skinVariant) {
+        onGet(wrapPlayer(player), skullSource, value, skinVariant);
     }
 
     @Subcommand("give")
@@ -60,5 +69,19 @@ public class SkullCommand extends BaseCommand implements IProxySkullCommand {
     @Syntax("%SyntaxSkullGive")
     public void onGive(CommandSource sender, OnlinePlayer target, SkullSource skullSource, String value, @Optional SkinVariant[] skinVariant) {
         onGive(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skullSource, value, skinVariant);
+    }
+
+    @Subcommand("update")
+    @CommandPermission("%skullUpdate")
+    @Description("%helpSkullUpdate")
+    public void onUpdate(Player player) {
+        onUpdate(wrapPlayer(player));
+    }
+
+    @Subcommand("props")
+    @CommandPermission("%skullProps")
+    @Description("%helpSkullProps")
+    public void onProps(Player player) {
+        onProps(wrapPlayer(player));
     }
 }

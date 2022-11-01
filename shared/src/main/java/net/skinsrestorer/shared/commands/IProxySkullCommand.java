@@ -39,11 +39,12 @@ import java.util.Optional;
 
 public interface IProxySkullCommand {
     default void onHelp(ISRCommandSender sender, CommandHelp help) {
-        sender.sendMessage("SkinsRestorer Help");
         help.showHelp();
     }
 
     default void onDefault(ISRProxyPlayer player) {
+        if (!CommandUtil.isAllowedToExecute(player)) return;
+
         // todo: add seperate cooldown storage
         ISRPlugin plugin = getPlugin();
         CooldownStorage cooldownStorage = plugin.getCooldownStorage();
@@ -65,7 +66,37 @@ public interface IProxySkullCommand {
         }
     }
 
-    default void onGive(ISRCommandSender sender, ISRProxyPlayer player, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+    default void onGet(ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+        giveSkull(targetPlayer, targetPlayer, skullSource, value, skinVariant);
+    }
+
+    default void onGive(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+        giveSkull(sender, targetPlayer, skullSource, value, skinVariant);
+    }
+
+    default boolean giveSkull(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return false;
+
+        // todo: add seperate cooldown storage
+        ISRPlugin plugin = getPlugin();
+        CooldownStorage cooldownStorage = plugin.getCooldownStorage();
+        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(sender.getName())) {
+            sender.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(sender.getName())));
+            return false;
+        }
+
+        // perms
+        if ((skullSource == SkullSource.PLAYER || skullSource == SkullSource.MOJANGPLAYER || skullSource == SkullSource.SKIN) && !sender.hasPermission("skinsrestorer.skull.get.other") || value.equals(sender.getName())) {
+            sender.sendMessage("no perms to get custom skull!"); //TODO: custom NoPerms message
+            return false;
+        }
+
+        if ((skullSource == SkullSource.SKINURL || skullSource == SkullSource.TEXTUREVALUE) && !sender.hasPermission("skinsrestorer.skull.get.url")) {
+            sender.sendMessage("no perms to get custom skull!"); //TODO: custom NoPerms message
+            return false;
+        }
+
+        // converting skull source to base64 skin value
         String base64value;
         switch (skullSource) {
             case MOJANGPLAYER:
@@ -82,7 +113,7 @@ public interface IProxySkullCommand {
                     base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, SkinVariant.valueOf(String.valueOf(skinVariant))).getValue(); //todo: exception handling
                 } catch (SkinRequestException e) {
                     sender.sendMessage(e.getCause().getMessage());
-                    return;
+                    return false;
                 }
                 break;
             case TEXTUREVALUE:
@@ -90,10 +121,41 @@ public interface IProxySkullCommand {
                 break;
             default:
                 sender.sendMessage("Invalid skull source");
-                return;
+                return false;
         }
-        sendGiveSkullRequest(player, base64value);
+        sendGiveSkullRequest(targetPlayer, base64value);
+        return true;
     }
+
+    default void onUpdate(ISRProxyPlayer targetPlayer) {
+        if (!CommandUtil.isAllowedToExecute(targetPlayer)) return;
+
+        // todo: add seperate cooldown storage
+        ISRPlugin plugin = getPlugin();
+        CooldownStorage cooldownStorage = plugin.getCooldownStorage();
+        if (!targetPlayer.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(targetPlayer.getName())) {
+            targetPlayer.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(targetPlayer.getName())));
+            return;
+        }
+
+        targetPlayer.sendMessage("This is still WIP"); // TODO: WIP
+    }
+
+    default void onProps(ISRProxyPlayer targetPlayer) {
+        if (!CommandUtil.isAllowedToExecute(targetPlayer)) return;
+
+        // todo: add seperate cooldown storage
+        ISRPlugin plugin = getPlugin();
+        CooldownStorage cooldownStorage = plugin.getCooldownStorage();
+        if (!targetPlayer.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(targetPlayer.getName())) {
+            targetPlayer.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(targetPlayer.getName())));
+            return;
+        }
+
+
+        targetPlayer.sendMessage("This is still WIP"); // TODO: WIP
+    }
+
 
     default void sendGiveSkullRequest(ISRProxyPlayer player, String b64stringTexture) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();

@@ -47,10 +47,8 @@ public class SkullCommand extends BaseCommand {
     private final SkinsRestorer plugin;
     private final SkinSkull SkinsSkull;
 
-    // TODO: is help even needed for /skins?
     @HelpCommand
     public static void onHelp(CommandSender sender, CommandHelp help) {
-        sender.sendMessage("SkinsRestorer Help");
         help.showHelp();
     }
 
@@ -72,12 +70,13 @@ public class SkullCommand extends BaseCommand {
 
                 if (skinData.isPresent()) {
                     srPlayer.sendMessage("Here you go, your skull!");
-                    SkinsSkull.giveSkull(plugin, srPlayer.getName(), player, skinData.get().getValue());
+                    SkinSkull.giveSkull(plugin, srPlayer.getName(), player, skinData.get().getValue());
                 } else {
                     srPlayer.sendMessage(Message.NO_SKIN_DATA);
                 }
             }
         });
     }
+
 
 }
