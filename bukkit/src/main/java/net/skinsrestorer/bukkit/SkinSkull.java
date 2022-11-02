@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -39,13 +40,9 @@ public class SkinSkull extends ItemStack {
     private final SkinsRestorer plugin;
     private final SRLogger log;
 
-    public static boolean giveSkull(SkinsRestorer plugin, String skullOwnerName, Player targetPlayer, @Nullable String b64stringTexture) {
+    public static boolean giveSkull(SkinsRestorer plugin, Player targetPlayer, @Nullable String lore, @Nullable OfflinePlayer skullOwner, @Nullable String b64stringTexture) {
         try {
-            ItemStack skull = createSkull(plugin, skullOwnerName, targetPlayer, b64stringTexture);
-            SkullMeta sm = (SkullMeta) Objects.requireNonNull(skull).getItemMeta();
-            sm.setOwningPlayer(targetPlayer);
-            skull.setItemMeta(sm);
-
+            ItemStack skull = createSkull(plugin, lore, skullOwner, b64stringTexture);
             HashMap<Integer, ItemStack> fullInventory = targetPlayer.getInventory().addItem(skull);
             if (fullInventory.isEmpty()) {
                 targetPlayer.sendMessage("Skull given"); //todo: add to lang
@@ -59,8 +56,28 @@ public class SkinSkull extends ItemStack {
         return false;
     }
 
-    private static ItemStack createSkull(SkinsRestorer plugin, String skullOwnerName, @Nullable Player SkullOwner, @Nullable String b64stringTexture) {
-        if (SkullOwner == null && b64stringTexture == null) {
+    public static boolean updateSkull(SkinsRestorer plugin, Player targetPlayer, String lore, @Nullable OfflinePlayer SkullOwner, @Nullable String b64stringTexture) {
+        try {
+            ItemStack skull = targetPlayer.getInventory().getItemInMainHand();
+            if (skull.getType() != XMaterial.PLAYER_HEAD.parseMaterial()) {
+                targetPlayer.sendMessage("You must be holding a skull in your main hand"); //todo: add to lang
+                return false;
+            }
+
+            SkullMeta sm = (SkullMeta) skull.getItemMeta();
+            sm.setOwningPlayer(SkullOwner);
+            skull.setItemMeta(sm);
+
+            targetPlayer.getInventory().setItemInMainHand(skull);
+            return true;
+        } catch (Exception e) {
+            plugin.getSrLogger().warning("Error while updating skull of " + targetPlayer.getName() + ": " + e.getMessage());
+        }
+        return false;
+    }
+
+    private static ItemStack createSkull(SkinsRestorer plugin, String lore, @Nullable OfflinePlayer skullOwner, @Nullable String b64stringTexture) {
+        if (skullOwner == null && b64stringTexture == null) {
             return null;
         }
 
@@ -68,24 +85,26 @@ public class SkinSkull extends ItemStack {
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
         // Set skull owner if player is premium
-        if (SkullOwner != null && sm != null) {
-            sm.setOwningPlayer(SkullOwner);
+        if (skullOwner != null && sm != null) {
+            sm.setOwningPlayer(skullOwner);
         }
 
-        List<String> lore = new ArrayList<>();
-        lore.add(C.c(" " + skullOwnerName + " Head")); // todo make customizable locale
-        sm.setLore(lore);
+        if (skullOwner != null && lore != null) {
+            List<String> itemLore = new ArrayList<>();
+            itemLore.add(C.c(" " + lore + " Head")); // todo make customizable locale
+            sm.setLore(itemLore);
 
-        is.setItemMeta(sm);
-
-        try {
-            BukkitHeadAPI.setSkull(is, b64stringTexture);
-
-        } catch (Exception e) {
-            plugin.getSrLogger().warning("ERROR: could not add skin data to skull, skin might be corrupted or invalid!");
-            e.printStackTrace();
+            is.setItemMeta(sm);
         }
 
+        if (b64stringTexture != null) {
+            try {
+                BukkitHeadAPI.setSkull(is, b64stringTexture);
+            } catch (Exception e) {
+                plugin.getSrLogger().warning("ERROR: could not add skin data to skull, skin might be corrupted or invalid!");
+                e.printStackTrace();
+            }
+        }
         return is;
     }
 }

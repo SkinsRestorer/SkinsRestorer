@@ -62,6 +62,7 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -314,10 +315,11 @@ public class SkinsRestorer extends JavaPlugin implements ISRPlugin {
                             if (targetPlayer == null)
                                 return;
 
-                            String name = "wipskull"; // todo: get name from proxy
+                            String lore = in.readUTF();
+                            OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(in.readUTF()); // todo fix depricated
                             String b64stringTexture = in.readUTF();
 
-                            SkinSkull.giveSkull(this, name, targetPlayer, b64stringTexture);
+                            SkinSkull.giveSkull(this, targetPlayer, lore, skullOwner, b64stringTexture);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

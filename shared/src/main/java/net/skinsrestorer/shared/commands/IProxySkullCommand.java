@@ -62,27 +62,27 @@ public interface IProxySkullCommand {
             Optional<IProperty> skinData = plugin.getSkinStorage().getSkinData(skinName.get(), false);
             if (skinData.isPresent()) {
                 player.sendMessage("Here you go, your skull!");
-                sendGiveSkullRequest(player, null, skinData.get().getValue());
+                sendGiveSkullRequest(player, null, null, skinData.get().getValue());
             }
         } else {
             try {
                 if (C.validMojangUsername(pName) && plugin.getMojangAPI().getUUID(pName) != null) {
-                    sendGiveSkullRequest(player, player, null);
+                    sendGiveSkullRequest(player, null, pName, null);
                 }
             } catch (SkinRequestException ignored) {
             }
         }
     }
 
-    default void onGet(ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+    default void onGet(ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant skinVariant) {
         giveSkull(targetPlayer, targetPlayer, skullSource, value, skinVariant);
     }
 
-    default void onGive(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+    default void onGive(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant skinVariant) {
         giveSkull(sender, targetPlayer, skullSource, value, skinVariant);
     }
 
-    default boolean giveSkull(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+    default boolean giveSkull(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant skinVariant) {
         //todo async
 
         if (!CommandUtil.isAllowedToExecute(sender)) return false;
@@ -96,8 +96,8 @@ public interface IProxySkullCommand {
         }
 
         // perms
-        if ((skullSource == SkullSource.PLAYER || skullSource == SkullSource.MOJANGPLAYER || skullSource == SkullSource.SKIN) && !sender.hasPermission("skinsrestorer.skull.get.other") || value.equals(sender.getName())) {
-            sender.sendMessage("no perms to get custom skull!"); //TODO: custom NoPerms message
+        if ((skullSource == SkullSource.PLAYER || skullSource == SkullSource.MOJANGPLAYER || skullSource == SkullSource.SKIN) && (!value.equals(sender.getName())) && !sender.hasPermission("skinsrestorer.skull.get.other")) {
+            sender.sendMessage("no perms to get other player skull!"); //TODO: custom NoPerms message
             return false;
         }
 
@@ -107,20 +107,27 @@ public interface IProxySkullCommand {
         }
 
         // converting skull source to base64 skin value
-        String base64value;
+        String base64value = null;
+        String skullOwner = null;
         switch (skullSource) {
             case MOJANGPLAYER:
-                base64value = SkinsRestorerAPI.getApi().getProfile(value).getValue();
+                skullOwner = value; //todo fix depricated
                 break;
             case PLAYER:
-                base64value = SkinsRestorerAPI.getApi().getSkinData(SkinsRestorerAPI.getApi().getSkinName(value)).getValue();
+                String skin = SkinsRestorerAPI.getApi().getSkinName(value);
+                if (skin != null) {
+                    base64value = SkinsRestorerAPI.getApi().getSkinData(skin).getValue();
+                } else {
+                    sender.sendMessage("player " + value + " has no skin set!"); //TODO: custom NoSkin message
+                    return false;
+                }
                 break;
             case SKIN:
                 base64value = SkinsRestorerAPI.getApi().getSkinData(value).getValue();
                 break;
             case SKINURL:
                 try {
-                    base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, SkinVariant.valueOf(String.valueOf(skinVariant))).getValue(); //todo: exception handling
+                    base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, skinVariant).getValue(); //todo: exception handling
                 } catch (SkinRequestException e) {
                     sender.sendMessage(e.getCause().getMessage());
                     return false;
@@ -133,7 +140,11 @@ public interface IProxySkullCommand {
                 sender.sendMessage("Invalid skull source");
                 return false;
         }
-        sendGiveSkullRequest(targetPlayer, null, base64value);
+        if (skullOwner == null && base64value == null) {
+            sender.sendMessage("No skin could be found for " + value);
+            return false;
+        }
+        sendGiveSkullRequest(targetPlayer, null, skullOwner, base64value);
         return true;
     }
 
@@ -163,15 +174,26 @@ public interface IProxySkullCommand {
     }
 
 
-    default void sendGiveSkullRequest(ISRProxyPlayer target, @Nullable ISRProxyPlayer skullOwner, @Nullable String b64stringTexture) {
+    default void sendGiveSkullRequest(ISRProxyPlayer target, String lore, @Nullable String skullOwner, @Nullable String b64stringTexture) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
 
         try {
             out.writeUTF("GiveSkull");
             out.writeUTF(target.getName());
-            out.writeUTF(skullOwner.getName());
-            out.writeUTF(b64stringTexture);
+            out.writeUTF(lore);
+
+            if (skullOwner != null) {
+                out.writeUTF(skullOwner);
+            } else {
+                out.writeUTF("");
+            }
+
+            if (b64stringTexture != null) {
+                out.writeUTF(b64stringTexture);
+            } else {
+                out.writeUTF("");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

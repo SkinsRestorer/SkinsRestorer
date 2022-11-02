@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -33,9 +34,12 @@ import net.skinsrestorer.bukkit.SkinsRestorer;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.utils.C;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -72,10 +76,18 @@ public class SkullCommand extends BaseCommand {
 
                 if (skinData.isPresent()) {
                     srPlayer.sendMessage("Here you go, your skull!");
-                    SkinSkull.giveSkull(plugin, srPlayer.getName(), player, skinData.get().getValue());
+                    SkinSkull.giveSkull(plugin, player, "lore here", null, skinData.get().getValue());
+                    return;
                 } else {
-                    srPlayer.sendMessage(Message.NO_SKIN_DATA);
+                    try {
+                        if (C.validMojangUsername(srPlayer.getName()) && plugin.getMojangAPI().getUUID(skinName.get()) != null) {
+                            SkinSkull.giveSkull(plugin, player, "lore here", player, null);
+                            return;
+                        }
+                    } catch (SkinRequestException ignored) {
+                    }
                 }
+                srPlayer.sendMessage(Message.NO_SKIN_DATA);
             }
         });
     }
@@ -84,7 +96,7 @@ public class SkullCommand extends BaseCommand {
     @CommandPermission("%skullGet")
     @Description("%helpSkullGet")
     @Syntax("%SyntaxSkullGet")
-    public void onGet(CommandSender sender, SkullSource skullsource, String value, @co.aikar.commands.annotation.Optional SkinVariant[] skinVariant) {
+    public void onGet(CommandSender sender, SkullSource skullsource, String value, @co.aikar.commands.annotation.Optional SkinVariant skinVariant) {
         giveSkull((Player) sender, (Player) sender, sender.getName(), skullsource, value, skinVariant);
     }
 
@@ -93,7 +105,7 @@ public class SkullCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSkullGive")
     @Syntax("%SyntaxSkullGive")
-    public void onGive(CommandSender sender, Player player, SkullSource skullsource, String value, @co.aikar.commands.annotation.Optional SkinVariant[] skinVariant) {
+    public void onGive(CommandSender sender, Player player, SkullSource skullsource, String value, @co.aikar.commands.annotation.Optional SkinVariant skinVariant) {
         giveSkull((Player) sender, player, player.getName(), skullsource, value, skinVariant);
     }
 
@@ -121,7 +133,7 @@ public class SkullCommand extends BaseCommand {
 
     }
 
-    boolean giveSkull(Player sender, Player targetPlayer, String skullOwner, SkullSource skullsource, String value, SkinVariant[] skinVariant) {
+    boolean giveSkull(Player sender, Player targetPlayer, @Nullable String lore, SkullSource skullsource, @NonNull String value, @Nullable SkinVariant skinVariant) {
         //todo async
 
         // todo: add seperate cooldown storage
@@ -132,8 +144,8 @@ public class SkullCommand extends BaseCommand {
         }
 
         // perms
-        if ((skullsource == SkullSource.PLAYER || skullsource == SkullSource.MOJANGPLAYER || skullsource == SkullSource.SKIN) && !sender.hasPermission("skinsrestorer.skull.get.other") || value.equals(sender.getName())) {
-            sender.sendMessage("no perms to get custom skull!"); //TODO: custom NoPerms message
+        if ((skullsource == SkullSource.PLAYER || skullsource == SkullSource.MOJANGPLAYER || skullsource == SkullSource.SKIN) && (!value.equals(sender.getName())) && !sender.hasPermission("skinsrestorer.skull.get.other")) {
+            sender.sendMessage("no perms to get other player skull!"); //TODO: custom NoPerms message
             return false;
         }
 
@@ -143,20 +155,27 @@ public class SkullCommand extends BaseCommand {
         }
 
         // converting skull source to base64 skin value
-        String base64value;
+        String base64value = null;
+        OfflinePlayer skullOwner = null;
         switch (skullsource) {
             case MOJANGPLAYER:
-                base64value = SkinsRestorerAPI.getApi().getProfile(value).getValue();
+                skullOwner = Bukkit.getOfflinePlayer(value); //todo fix depricated
                 break;
             case PLAYER:
-                base64value = SkinsRestorerAPI.getApi().getSkinData(SkinsRestorerAPI.getApi().getSkinName(value)).getValue();
+                String skin = SkinsRestorerAPI.getApi().getSkinName(value);
+                if (skin != null) {
+                    base64value = SkinsRestorerAPI.getApi().getSkinData(skin).getValue();
+                } else {
+                    sender.sendMessage("player " + value + " has no skin set!"); //TODO: custom NoSkin message
+                    return false;
+                }
                 break;
             case SKIN:
                 base64value = SkinsRestorerAPI.getApi().getSkinData(value).getValue();
                 break;
             case SKINURL:
                 try {
-                    base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, SkinVariant.valueOf(String.valueOf(skinVariant))).getValue(); //todo: exception handling
+                    base64value = SkinsRestorerAPI.getApi().genSkinUrl(value, skinVariant).getValue(); //todo: exception handling
                 } catch (SkinRequestException e) {
                     sender.sendMessage(e.getCause().getMessage());
                     return false;
@@ -169,8 +188,18 @@ public class SkullCommand extends BaseCommand {
                 sender.sendMessage("Invalid skull source");
                 return false;
         }
-        SkinSkull.giveSkull(plugin, targetPlayer.getName(), targetPlayer, base64value);
+        if (skullOwner == null && base64value == null) {
+            sender.sendMessage("No skin could be found for " + value); //todo add custom lang
+            return false;
+        }
+
+        if (lore == null) {
+            lore = "lore here";
+        }
+
+        SkinSkull.giveSkull(plugin, targetPlayer, lore, skullOwner, base64value);
         return true;
     }
+
 
 }

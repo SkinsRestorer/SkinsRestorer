@@ -57,7 +57,7 @@ public class SkullCommand extends BaseCommand implements IProxySkullCommand {
     @CommandPermission("%skullGet")
     @Description("%helpSkullGet")
     @Syntax("%SyntaxSkullGet")
-    public void onGet(ProxiedPlayer player, SkullSource skullSource, String value, @Optional SkinVariant[] skinVariant) {
+    public void onGet(ProxiedPlayer player, SkullSource skullSource, String value, @Optional SkinVariant skinVariant) {
         onGet(wrapPlayer(player), skullSource, value, skinVariant);
     }
 
@@ -66,7 +66,7 @@ public class SkullCommand extends BaseCommand implements IProxySkullCommand {
     @CommandCompletion("@players")
     @Description("%helpSkullGive")
     @Syntax("%SyntaxSkullGive")
-    public void onGive(CommandSender sender, ProxiedPlayer player, SkullSource skullSource, String value, @Optional SkinVariant[] skinVariant) {
+    public void onGive(CommandSender sender, ProxiedPlayer player, SkullSource skullSource, String value, @Optional SkinVariant skinVariant) {
         onGive(wrapCommandSender(sender), wrapPlayer(player), skullSource, value, skinVariant);
     }
 
