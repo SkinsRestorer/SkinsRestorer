@@ -81,12 +81,16 @@ public class CommandReplacements {
 
     public static final Map<String, CallableValue<Message>> syntax = FluentMap.<String, CallableValue<Message>>builder()
             .put("%SyntaxDefaultCommand", () -> Message.SYNTAX_DEFAULTCOMMAND)
+
             .put("%SyntaxSkinSet", () -> Message.SYNTAX_SKINSET)
             .put("%SyntaxSkinSetOther", () -> Message.SYNTAX_SKINSET_OTHER)
             .put("%SyntaxSkinUrl", () -> Message.SYNTAX_SKINURL)
             .put("%SyntaxSkinSearch", () -> Message.SYNTAX_SKINSEARCH)
             .put("%SyntaxSkinUpdateOther", () -> Message.SYNTAX_SKINUPDATE_OTHER)
             .put("%SyntaxSkinClearOther", () -> Message.SYNTAX_SKINCLEAR_OTHER)
+
+            .put("%SyntaxSkullGet", () -> Message.SYNTAX_SKULL_GET)
+            .put("%SyntaxSkullGive", () -> Message.SYNTAX_SKULL_GIVE)
             .build();
 
     public static final Map<String, CallableValue<Message>> completions = FluentMap.<String, CallableValue<Message>>builder()

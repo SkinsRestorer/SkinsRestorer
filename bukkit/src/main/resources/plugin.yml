@@ -66,6 +66,28 @@ permissions:
     description: Allows access to create a custom skin by url.
     default: op
 
+  skinsrestorer.skullcommand:
+    description: Allows access to the main "/sr" commands.
+    default: op
+  skinsrestorer.skullcommand.get:
+    description: Allows access to get a skull.
+    default: op
+  skinsrestorer.skull.get.other:
+    description: Allows access to get a skull of another player.
+    default: op
+  skinsrestorer.skull.get.url:
+    description: Allows access to get a skull by url or values.
+    default: op
+  skinsrestorer.skull.give:
+    description: Allows access to give a skull.
+    default: op
+  skinsrestorer.skull.update:
+    description: Allows access to update a skull.
+    default: op
+  skinsrestorer.skull.props:
+    description: Allows access to get the skinProps of a skull.
+    default: op
+
   skinsrestorer.bypasscooldown:
     description: Bypasses any set cooldowns in the config.
     default: op
@@ -88,7 +110,6 @@ permissions:
   skinsrestorer.admincommand.*:
     description: Wildcard permission for admins
     children:
-      skinsrestorer.command.*: true
       skinsrestorer.admincommand: true
       skinsrestorer.command.set.other: true
       skinsrestorer.command.clear.other: true
@@ -100,3 +121,14 @@ permissions:
       skinsrestorer.admincommand.createcustom: true
       skinsrestorer.bypasscooldown: true
       skinsrestorer.bypassdisabled: true
+
+  skinsrestorer.skull.*:
+    description: Wildcard permission for admins
+    children:
+      skinsrestorer.skullcommand: true
+      skinsrestorer.skullcommand.get: true
+      skinsrestorer.skull.get.other: true
+      skinsrestorer.skull.get.url: true
+      skinsrestorer.skull.give: true
+      skinsrestorer.skull.update: true
+      skinsrestorer.skull.props: true
