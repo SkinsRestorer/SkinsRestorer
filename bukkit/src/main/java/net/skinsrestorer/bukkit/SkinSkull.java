@@ -73,7 +73,7 @@ public class SkinSkull extends ItemStack {
         }
 
         List<String> lore = new ArrayList<>();
-        lore.add(C.c(skullOwnerName + "'s Head"));
+        lore.add(C.c(" " + skullOwnerName + " Head")); // todo make customizable locale
         sm.setLore(lore);
 
         is.setItemMeta(sm);

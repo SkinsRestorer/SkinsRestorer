@@ -31,6 +31,8 @@ import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.utils.C;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -43,25 +45,31 @@ public interface IProxySkullCommand {
     }
 
     default void onDefault(ISRProxyPlayer player) {
+        //todo async
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         // todo: add seperate cooldown storage
         ISRPlugin plugin = getPlugin();
+        final String pName = player.getName();
         CooldownStorage cooldownStorage = plugin.getCooldownStorage();
-        if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
-            player.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(player.getName())));
+        if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(pName)) {
+            player.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(pName)));
             return;
         }
 
-        Optional<String> skinName = plugin.getSkinStorage().getSkinNameOfPlayer(player.getName());
+        Optional<String> skinName = plugin.getSkinStorage().getSkinNameOfPlayer(pName);
         if (skinName.isPresent()) {
             Optional<IProperty> skinData = plugin.getSkinStorage().getSkinData(skinName.get(), false);
-
             if (skinData.isPresent()) {
                 player.sendMessage("Here you go, your skull!");
-                sendGiveSkullRequest(player, skinData.get().getValue());
-            } else {
-                player.sendMessage(Message.NO_SKIN_DATA);
+                sendGiveSkullRequest(player, null, skinData.get().getValue());
+            }
+        } else {
+            try {
+                if (C.validMojangUsername(pName) && plugin.getMojangAPI().getUUID(pName) != null) {
+                    sendGiveSkullRequest(player, player, null);
+                }
+            } catch (SkinRequestException ignored) {
             }
         }
     }
@@ -75,6 +83,8 @@ public interface IProxySkullCommand {
     }
 
     default boolean giveSkull(ISRCommandSender sender, ISRProxyPlayer targetPlayer, SkullSource skullSource, String value, SkinVariant[] skinVariant) {
+        //todo async
+
         if (!CommandUtil.isAllowedToExecute(sender)) return false;
 
         // todo: add seperate cooldown storage
@@ -123,11 +133,13 @@ public interface IProxySkullCommand {
                 sender.sendMessage("Invalid skull source");
                 return false;
         }
-        sendGiveSkullRequest(targetPlayer, base64value);
+        sendGiveSkullRequest(targetPlayer, null, base64value);
         return true;
     }
 
     default void onUpdate(ISRProxyPlayer targetPlayer) {
+        //todo async
+
         if (!CommandUtil.isAllowedToExecute(targetPlayer)) return;
 
         // todo: add seperate cooldown storage
@@ -142,6 +154,8 @@ public interface IProxySkullCommand {
     }
 
     default void onProps(ISRProxyPlayer targetPlayer) {
+        //todo async
+
         if (!CommandUtil.isAllowedToExecute(targetPlayer)) return;
 
 
@@ -149,19 +163,20 @@ public interface IProxySkullCommand {
     }
 
 
-    default void sendGiveSkullRequest(ISRProxyPlayer player, String b64stringTexture) {
+    default void sendGiveSkullRequest(ISRProxyPlayer target, @Nullable ISRProxyPlayer skullOwner, @Nullable String b64stringTexture) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
 
         try {
             out.writeUTF("GiveSkull");
-            out.writeUTF(player.getName());
+            out.writeUTF(target.getName());
+            out.writeUTF(skullOwner.getName());
             out.writeUTF(b64stringTexture);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        player.sendDataToServer("sr:messagechannel", b.toByteArray());
+        target.sendDataToServer("sr:messagechannel", b.toByteArray());
     }
 
     ISRProxyPlugin getPlugin();
