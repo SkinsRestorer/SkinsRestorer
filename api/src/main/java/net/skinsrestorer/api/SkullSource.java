@@ -18,12 +18,35 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
 package net.skinsrestorer.api;
-
+/**
+ * Data source that can be used for skulls
+ * <p>
+ * {@link #MOJANGPLAYER}
+ * {@link #PLAYER}
+ * {@link #SKIN}
+ * {@link #SKINURL}
+ * {@link #TEXTUREVALUE}
+ */
 public enum SkullSource {
+    /**
+     * The username of a premium (mojang registred) player
+     */
     MOJANGPLAYER,
+    /**
+     * An in game player that can have a custom skin
+     */
     PLAYER,
+    /**
+     * The name of a skin in the SkinsRestorer database
+     */
     SKIN,
+    /**
+     * A url to a skin image (png)
+     */
     SKINURL,
+    /**
+     * Base64 encoded texture value (without signature)
+     */
     TEXTUREVALUE
 
 }
