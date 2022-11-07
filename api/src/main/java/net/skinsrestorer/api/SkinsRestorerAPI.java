@@ -72,8 +72,9 @@ public abstract class SkinsRestorerAPI {
      * You can get the wrapped object using {@link IProperty#getHandle()}
      *
      * @param uuid The players uuid
-     * @return The players skin property
+     * @return The players skin property, null if not found
      **/
+    @Nullable
     public IProperty getProfile(String uuid) {
         return mojangAPI.getProfile(uuid).orElse(null);
     }
@@ -83,8 +84,9 @@ public abstract class SkinsRestorerAPI {
      * Returns null if player has no custom skin set.
      *
      * @param playerName The players name
-     * @return The players custom skin name if set or null if not set
+     * @return The players custom skin name, or null if player has no skin set.
      */
+    @Nullable
     public String getSkinName(String playerName) {
         return getSkinStorage().getSkinNameOfPlayer(playerName).orElse(null);
     }
@@ -113,7 +115,9 @@ public abstract class SkinsRestorerAPI {
      * Returns property object containing skin data of the wanted skin
      *
      * @param skinName Skin name
+     * @return Property object containing skin data, or null if skin not found.
      **/
+    @Nullable
     public IProperty getSkinData(String skinName) {
         return getSkinStorage().getSkinData(skinName, true).orElse(null);
     }
