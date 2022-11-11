@@ -168,7 +168,7 @@ public class SkinApplierBukkit {
                         disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
             }
 
-            for (Player ps : Bukkit.getOnlinePlayers()) {
+            for (Player ps : getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
                     ps.hidePlayer(plugin, player);
@@ -247,6 +247,14 @@ public class SkinApplierBukkit {
             return true;
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             return false;
+        }
+    }
+
+    private Collection<? extends Player> getOnlinePlayers() {
+        try {
+            return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
+        } catch (UnsupportedClassVersionError e) {
+            return Bukkit.getOnlinePlayers();
         }
     }
 }
