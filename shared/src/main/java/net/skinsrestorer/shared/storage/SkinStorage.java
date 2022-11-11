@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.storage;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -35,22 +34,15 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import javax.sql.RowSet;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.MalformedInputException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
@@ -108,9 +100,6 @@ public class SkinStorage implements ISkinStorage {
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
-                if (!C.validMojangUsername(skinName))
-                    throw new SkinRequestExceptionShared(Message.INVALID_PLAYER, skinName);
-
                 textures = mojangAPI.getSkin(skinName);
 
                 if (!textures.isPresent())
@@ -119,6 +108,8 @@ public class SkinStorage implements ISkinStorage {
                 setSkinData(skinName, textures.get());
 
                 return textures.get();
+            } catch (NotPremiumException e) {
+                throw new SkinRequestExceptionShared(Message.INVALID_PLAYER, skinName);
             } catch (SkinRequestException e) {
                 throw e;
             } catch (Exception e) {
@@ -302,7 +293,7 @@ public class SkinStorage implements ISkinStorage {
             if (!Config.DEFAULT_SKINS_PREMIUM) {
                 // check if player is premium
                 try {
-                    if (C.validMojangUsername(playerName) && mojangAPI.getUUID(playerName) != null) {
+                    if (mojangAPI.getUUID(playerName) != null) {
                         // player is premium, return his skin name instead of default skin
                         return Pair.of(playerName, false);
                     }
