@@ -39,11 +39,12 @@ import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public enum Locale implements MessageKeyGetter {
+public enum Message implements MessageKeyGetter {
     PREFIX,
     HELP_HELP_COMMAND,
     HELP_SKIN_SET,
@@ -121,11 +122,11 @@ public enum Locale implements MessageKeyGetter {
     public static void load(LocaleManager<ISRForeign> manager, Path dataFolder, ISRPlugin plugin) {
         Path languagesFolder = dataFolder.resolve("languages");
         Files.createDirectories(languagesFolder);
-        CodeSource src = Locale.class.getProtectionDomain().getCodeSource();
+        CodeSource src = Message.class.getProtectionDomain().getCodeSource();
         if (src != null) {
             URL jar = src.getLocation();
             ZipInputStream zip = new ZipInputStream(jar.openStream());
-            List<java.util.Locale> locales = new ArrayList<>();
+            List<Locale> locales = new ArrayList<>();
             while (true) {
                 ZipEntry e = zip.getNextEntry();
                 if (e == null)
@@ -145,7 +146,7 @@ public enum Locale implements MessageKeyGetter {
                 }
             }
 
-            manager.addMessageBundle("languages.language", locales.toArray(new java.util.Locale[0]));
+            manager.addMessageBundle("languages.language", locales.toArray(new Locale[0]));
 
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
                 for (Path path : stream) {
@@ -156,7 +157,7 @@ public enum Locale implements MessageKeyGetter {
                             manager.addResourceBundle(bundle, manager.getDefaultLocale());
                         }
                     } else if (fileName.startsWith("language_") && fileName.endsWith(".properties")) {
-                        java.util.Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
+                        Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
                         try (InputStream in = Files.newInputStream(path)) {
                             PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
                             manager.addResourceBundle(bundle, locale);

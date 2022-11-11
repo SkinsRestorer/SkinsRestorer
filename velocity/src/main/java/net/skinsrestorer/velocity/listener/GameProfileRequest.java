@@ -25,18 +25,18 @@ import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.listeners.LoginProfileEvent;
-import net.skinsrestorer.shared.listeners.LoginProfileListener;
+import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.velocity.SkinsRestorer;
 
 @RequiredArgsConstructor
 @Getter
-public class GameProfileRequest extends LoginProfileListener {
+public class GameProfileRequest extends SharedLoginProfileListener {
     private final SkinsRestorer plugin;
 
     @Subscribe
     public EventTask onGameProfileRequest(GameProfileRequestEvent event) {
-        LoginProfileEvent wrapped = wrap(event);
+        SRLoginProfileEvent wrapped = wrap(event);
         if (handleSync(wrapped))
             return null;
 
@@ -50,8 +50,8 @@ public class GameProfileRequest extends LoginProfileListener {
         });
     }
 
-    private LoginProfileEvent wrap(GameProfileRequestEvent event) {
-        return new LoginProfileEvent() {
+    private SRLoginProfileEvent wrap(GameProfileRequestEvent event) {
+        return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
                 return event.isOnlineMode();

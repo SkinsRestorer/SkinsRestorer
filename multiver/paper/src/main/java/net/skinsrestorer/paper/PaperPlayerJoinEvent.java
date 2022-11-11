@@ -17,59 +17,52 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.listener;
+package net.skinsrestorer.paper;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.Config;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-@Getter
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+
 @RequiredArgsConstructor
-public class PlayerResourcePackStatus extends SharedLoginProfileListener implements Listener {
-    private final SkinsRestorer plugin;
-    private final boolean isOnlineMode = Bukkit.getOnlineMode();
+@Getter
+public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements Listener {
+    private final ISRPlugin plugin;
 
     @EventHandler
-    public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
-        if (!Config.RESOURCE_PACK_FIX)
-            return;
-
-        PlayerJoin.setResourcePack(true);
-
+    public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
         SRLoginProfileEvent profileEvent = wrap(event);
 
         if (handleSync(profileEvent))
             return;
 
-        plugin.runAsync(() -> {
-            try {
-                handleAsync(profileEvent).ifPresent(property ->
-                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), property));
-            } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
-            }
-        });
+        try {
+            handleAsync(profileEvent).ifPresent(property ->
+                    event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature())));
+        } catch (SkinRequestException e) {
+            plugin.getSrLogger().debug(e);
+        }
     }
 
-    private SRLoginProfileEvent wrap(PlayerResourcePackStatusEvent event) {
+    private SRLoginProfileEvent wrap(AsyncPlayerPreLoginEvent event) {
         return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Bukkit.getOnlineMode();
+                return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + getPlayerName()).getBytes(StandardCharsets.UTF_8)).equals(event.getPlayerProfile().getId());
             }
 
             @Override
             public String getPlayerName() {
-                return event.getPlayer().getName();
+                return event.getPlayerProfile().getName();
             }
 
             @Override

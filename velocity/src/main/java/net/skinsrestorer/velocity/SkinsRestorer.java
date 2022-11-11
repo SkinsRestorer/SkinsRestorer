@@ -30,6 +30,7 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -38,14 +39,17 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.interfaces.*;
+import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -55,7 +59,9 @@ import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
 import net.skinsrestorer.velocity.command.SrCommand;
+import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
+import net.skinsrestorer.velocity.listener.PluginMessageListener;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.charts.SingleLineChart;
@@ -64,9 +70,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -93,6 +97,7 @@ public class SkinsRestorer implements ISRProxyPlugin {
     private LocaleManager<ISRForeign> localeManager;
     @Inject
     private PluginContainer container;
+    private boolean outdated;
 
     @Inject
     public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
@@ -111,7 +116,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -119,33 +123,38 @@ public class SkinsRestorer implements ISRProxyPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        // Check for updates
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
             runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-        Locale.load(localeManager, dataFolderPath, this);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
+        Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage())
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
+        }
 
         // Init listener
+        proxy.getEventManager().register(this, new ConnectListener(this));
         proxy.getEventManager().register(this, new GameProfileRequest(this));
 
         // Init commands
         initCommands();
 
-        srLogger.info("Enabled SkinsRestorer v" + getVersion());
+        // Init message channel
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
+        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
+        proxy.getEventManager().register(this, new PluginMessageListener(this));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
@@ -167,15 +176,18 @@ public class SkinsRestorer implements ISRProxyPlugin {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                outdated = true;
                 updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
                         .forEach(srLogger::info);
             }
 
             @Override
             public void upToDate() {
-                if (showUpToDate)
-                    updateChecker.getUpToDateMessages(getVersion(), false)
-                            .forEach(srLogger::info);
+                if (!showUpToDate)
+                    return;
+
+                updateChecker.getUpToDateMessages(getVersion(), false)
+                        .forEach(srLogger::info);
             }
         }));
     }

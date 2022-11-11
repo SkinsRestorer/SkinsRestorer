@@ -136,4 +136,6 @@ fun ShadowJar.configureRelocations() {
     relocate("org.yaml.snakeyaml", "net.skinsrestorer.shadow.snakeyaml")
     relocate("org.apache.commons.lang3", "net.skinsrestorer.shadow.commons.lang3")
     relocate("net.skinsrestorer.axiom", "net.skinsrestorer.shadow.axiom")
+
+    relocate("com.github.puregero.multilib", "net.skinsrestorer.shadow.multilib")
 }

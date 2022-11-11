@@ -23,6 +23,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.LocaleParser;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -36,7 +37,7 @@ public class WrapperSponge {
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return Config.LANGUAGE;
+                return LocaleParser.getDefaultLocale();
             }
 
             @Override

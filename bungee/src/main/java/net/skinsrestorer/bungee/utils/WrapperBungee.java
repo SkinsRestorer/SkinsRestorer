@@ -27,6 +27,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.LocaleParser;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class WrapperBungee {
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return Config.LANGUAGE;
+                return LocaleParser.getDefaultLocale();
             }
 
             @Override

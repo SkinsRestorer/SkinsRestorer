@@ -17,12 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.listeners;
 
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 
-public class NotPremiumException extends SkinRequestExceptionShared {
-    public NotPremiumException() {
-        super(Message.NOT_PREMIUM);
-    }
+public interface SRServerConnectedEvent {
+    ISRPlayer getPlayer();
 }

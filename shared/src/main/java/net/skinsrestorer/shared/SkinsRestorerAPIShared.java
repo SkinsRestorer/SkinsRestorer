@@ -25,7 +25,7 @@ import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.DefaultForeignSubject;
 
@@ -51,7 +51,7 @@ public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
                 // Extra space in pattern to remove space from start of message
                 message = message.replace("{prefix} ", "");
             } else {
-                message = message.replace("{prefix}", localeManager.getMessage(foreign, Locale.PREFIX.getKey()));
+                message = message.replace("{prefix}", localeManager.getMessage(foreign, Message.PREFIX.getKey()));
             }
         }
 

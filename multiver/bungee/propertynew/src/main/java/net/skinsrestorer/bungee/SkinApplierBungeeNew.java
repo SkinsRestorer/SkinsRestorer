@@ -25,7 +25,6 @@ import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -38,7 +37,7 @@ public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
         super(plugin, log);
     }
 
-    protected void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException {
+    protected void applyToHandler(InitialHandler handler, IProperty textures) {
         LoginResult profile = handler.getLoginProfile();
         Property[] newProps = new Property[]{(Property) textures.getHandle()};
 

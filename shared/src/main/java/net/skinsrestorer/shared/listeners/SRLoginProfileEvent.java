@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-public interface LoginProfileEvent {
+public interface SRLoginProfileEvent {
     boolean isOnline();
 
     String getPlayerName();

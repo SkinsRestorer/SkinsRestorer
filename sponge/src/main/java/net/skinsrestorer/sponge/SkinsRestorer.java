@@ -31,17 +31,16 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -68,9 +67,7 @@ import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -112,29 +109,29 @@ public class SkinsRestorer implements ISRPlugin {
     }
 
     @Listener
-    public void onInitialize(GameInitializationEvent e) {
+    public void onInitialize(GameInitializationEvent event) {
         srLogger.load(getDataFolderPath());
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
-        // Check for updates
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Sponge");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
             runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-        Locale.load(localeManager, dataFolderPath, this);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
+        Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage())
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
+        }
 
         // Init commands
         initCommands();

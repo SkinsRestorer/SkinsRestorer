@@ -40,14 +40,14 @@ import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
@@ -59,9 +59,7 @@ import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -112,7 +110,6 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         javaLogger.setLogger(getProxy().getLogger());
         dataFolderPath = getDataFolder().toPath();
         srLogger.load(dataFolderPath);
-        Path updaterDisabled = dataFolderPath.resolve("noupdate.txt");
 
         Metrics metrics = new Metrics(this, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -120,25 +117,24 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
-        if (!Files.exists(updaterDisabled)) {
+        checkUpdateInit(() -> {
             updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
             runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        } else {
-            srLogger.info("Updater Disabled");
-        }
+        });
 
         // Init config files
         Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, Config.LANGUAGE);
-        Locale.load(localeManager, dataFolderPath, this);
+        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
+        Message.load(localeManager, dataFolderPath, this);
 
         // Init storage
-        if (!initStorage()) {
-            getProxy().getPluginManager().unregisterListeners(this);
-            getProxy().getPluginManager().unregisterCommands(this);
+        try {
+            initStorage();
+        } catch (InitializeException e) {
+            e.printStackTrace();
             return;
         }
 
@@ -175,8 +171,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
-
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false).forEach(srLogger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
+                        .forEach(srLogger::info);
             }
 
             @Override

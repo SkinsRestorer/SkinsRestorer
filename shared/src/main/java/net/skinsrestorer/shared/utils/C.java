@@ -21,13 +21,7 @@ package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.storage.Config;
 
-import java.util.regex.Pattern;
-
 public class C {
-    // Note: Players who bought the game early in its development can have "-" in usernames.
-    private static final Pattern namePattern = Pattern.compile("^[a-zA-Z0-9_\\-]+$");
-    private static final Pattern urlPattern = Pattern.compile("^https?://.*");
-
     private C() {
     }
 
@@ -45,15 +39,22 @@ public class C {
     }
 
     public static boolean validMojangUsername(String username) {
+        int len = username.length();
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
-        if (username.length() > 16)
-            return false;
+        if (len > 16) return false;
 
-        return namePattern.matcher(username).matches();
+        // For some reasons Apache's Lists.charactersOf is faster than character indexing for small strings.
+        for (int i = 0; i < len; i++) {
+            char c = username.charAt(i);
+            // Note: Players who bought the game early in its development can have "-" in usernames.
+            if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-')
+                return false;
+        }
+        return true;
     }
 
     public static boolean validUrl(String url) {
-        return urlPattern.matcher(url).matches();
+        return url.startsWith("http://") || url.startsWith("https://");
     }
 
     public static boolean allowedSkinUrl(String url) {

@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Locale;
+import net.skinsrestorer.shared.storage.Message;
 
 import java.util.Map;
 
@@ -52,38 +52,38 @@ public class CommandReplacements {
             .put("srApplySkin", () -> "skinsrestorer.admincommand.applyskin")
             .put("srCreateCustom", () -> "skinsrestorer.admincommand.createcustom")
             .build();
-    public static final Map<String, CallableValue<Locale>> descriptions = FluentMap.<String, CallableValue<Locale>>builder()
-            .put("%helpHelpCommand", () -> Locale.HELP_HELP_COMMAND)
-            .put("%helpSkinClear", () -> Locale.HELP_SKIN_CLEAR)
-            .put("%helpSkinClearOther", () -> Locale.HELP_SKIN_CLEAR_OTHER)
-            .put("%helpSkinSearch", () -> Locale.HELP_SKIN_SEARCH)
-            .put("%helpSkinUpdate", () -> Locale.HELP_SKIN_UPDATE)
-            .put("%helpSkinUpdateOther", () -> Locale.HELP_SKIN_UPDATE_OTHER)
-            .put("%helpSkinSet", () -> Locale.HELP_SKIN_SET)
-            .put("%helpSkinSetOther", () -> Locale.HELP_SKIN_SET_OTHER)
-            .put("%helpSkinSetUrl", () -> Locale.HELP_SKIN_SET_OTHER_URL)
+    public static final Map<String, CallableValue<Message>> descriptions = FluentMap.<String, CallableValue<Message>>builder()
+            .put("%helpHelpCommand", () -> Message.HELP_HELP_COMMAND)
+            .put("%helpSkinClear", () -> Message.HELP_SKIN_CLEAR)
+            .put("%helpSkinClearOther", () -> Message.HELP_SKIN_CLEAR_OTHER)
+            .put("%helpSkinSearch", () -> Message.HELP_SKIN_SEARCH)
+            .put("%helpSkinUpdate", () -> Message.HELP_SKIN_UPDATE)
+            .put("%helpSkinUpdateOther", () -> Message.HELP_SKIN_UPDATE_OTHER)
+            .put("%helpSkinSet", () -> Message.HELP_SKIN_SET)
+            .put("%helpSkinSetOther", () -> Message.HELP_SKIN_SET_OTHER)
+            .put("%helpSkinSetUrl", () -> Message.HELP_SKIN_SET_OTHER_URL)
 
-            .put("%helpSrReload", () -> Locale.HELP_SR_RELOAD)
-            .put("%helpSrStatus", () -> Locale.HELP_SR_STATUS)
-            .put("%helpSrDrop", () -> Locale.HELP_SR_DROP)
-            .put("%helpSrProps", () -> Locale.HELP_SR_PROPS)
-            .put("%helpSrApplySkin", () -> Locale.HELP_SR_APPLY_SKIN)
-            .put("%helpSrCreateCustom", () -> Locale.HELP_SR_CREATECUSTOM)
+            .put("%helpSrReload", () -> Message.HELP_SR_RELOAD)
+            .put("%helpSrStatus", () -> Message.HELP_SR_STATUS)
+            .put("%helpSrDrop", () -> Message.HELP_SR_DROP)
+            .put("%helpSrProps", () -> Message.HELP_SR_PROPS)
+            .put("%helpSrApplySkin", () -> Message.HELP_SR_APPLY_SKIN)
+            .put("%helpSrCreateCustom", () -> Message.HELP_SR_CREATECUSTOM)
             .build();
-    public static final Map<String, CallableValue<Locale>> syntax = FluentMap.<String, CallableValue<Locale>>builder()
-            .put("%SyntaxDefaultCommand", () -> Locale.SYNTAX_DEFAULTCOMMAND)
-            .put("%SyntaxSkinSet", () -> Locale.SYNTAX_SKINSET)
-            .put("%SyntaxSkinSetOther", () -> Locale.SYNTAX_SKINSET_OTHER)
-            .put("%SyntaxSkinUrl", () -> Locale.SYNTAX_SKINURL)
-            .put("%SyntaxSkinSearch", () -> Locale.SYNTAX_SKINSEARCH)
-            .put("%SyntaxSkinUpdateOther", () -> Locale.SYNTAX_SKINUPDATE_OTHER)
-            .put("%SyntaxSkinClearOther", () -> Locale.SYNTAX_SKINCLEAR_OTHER)
+    public static final Map<String, CallableValue<Message>> syntax = FluentMap.<String, CallableValue<Message>>builder()
+            .put("%SyntaxDefaultCommand", () -> Message.SYNTAX_DEFAULTCOMMAND)
+            .put("%SyntaxSkinSet", () -> Message.SYNTAX_SKINSET)
+            .put("%SyntaxSkinSetOther", () -> Message.SYNTAX_SKINSET_OTHER)
+            .put("%SyntaxSkinUrl", () -> Message.SYNTAX_SKINURL)
+            .put("%SyntaxSkinSearch", () -> Message.SYNTAX_SKINSEARCH)
+            .put("%SyntaxSkinUpdateOther", () -> Message.SYNTAX_SKINUPDATE_OTHER)
+            .put("%SyntaxSkinClearOther", () -> Message.SYNTAX_SKINCLEAR_OTHER)
             .build();
 
-    public static final Map<String, CallableValue<Locale>> completions = FluentMap.<String, CallableValue<Locale>>builder()
-            .put("skin", () -> Locale.COMPLETIONS_SKIN)
-            .put("skinName", () -> Locale.COMPLETIONS_SKINNAME)
-            .put("skinUrl", () -> Locale.COMPLETIONS_SKINURL)
+    public static final Map<String, CallableValue<Message>> completions = FluentMap.<String, CallableValue<Message>>builder()
+            .put("skin", () -> Message.COMPLETIONS_SKIN)
+            .put("skinName", () -> Message.COMPLETIONS_SKINNAME)
+            .put("skinUrl", () -> Message.COMPLETIONS_SKINURL)
             .build();
 
     private CommandReplacements() {
