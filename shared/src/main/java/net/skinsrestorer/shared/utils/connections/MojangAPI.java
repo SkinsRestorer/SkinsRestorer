@@ -74,7 +74,7 @@ public class MojangAPI implements IMojangAPI {
             return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, HardcodedSkins.valueOf(upperCaseNameOrUuid).value, HardcodedSkins.valueOf(upperCaseNameOrUuid).signature));
         }
 
-        if (!(nameOrUuid.length() >= 32 || C.validMojangUsername(nameOrUuid))) {
+        if (!(nameOrUuid.length() < 32 && C.validMojangUsername(nameOrUuid))) {
             throw new NotPremiumException();
         }
 

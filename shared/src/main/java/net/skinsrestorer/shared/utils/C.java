@@ -54,7 +54,7 @@ public class C {
     }
 
     public static boolean validUrl(String url) {
-        return (url.startsWith("http://") || url.startsWith("https://"));
+        return url.startsWith("http://") || url.startsWith("https://");
     }
 
     public static boolean allowedSkinUrl(String url) {
