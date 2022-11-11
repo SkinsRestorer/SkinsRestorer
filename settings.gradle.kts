@@ -57,6 +57,9 @@ dependencyResolutionManagement {
         maven("https://oss.sonatype.org/content/repositories/snapshots/") {
             name = "Sonatype Repository"
         }
+        maven("https://repo.clojars.org/") {
+            name = "Clojars Repository"
+        }
         mavenCentral()
     }
 }
