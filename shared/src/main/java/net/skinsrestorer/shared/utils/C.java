@@ -40,7 +40,8 @@ public class C {
 
     public static boolean validMojangUsername(String username) {
         int len = username.length();
-        if (len < 3 || len > 16) return false;
+        // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
+        if (len > 16) return false;
 
         // For some reasons Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (int i = 0; i < len; i++) {
