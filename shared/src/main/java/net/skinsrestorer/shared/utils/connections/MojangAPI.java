@@ -28,6 +28,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumException;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MinetoolsProfileResponse;
@@ -64,26 +65,46 @@ public class MojangAPI implements IMojangAPI {
      *
      * @param nameOrUuid name or trimmed (without dashes) uuid
      * @return IProperty skin
-     * @throws SkinRequestException on not premium or error
+     * @throws NotPremiumException  if the player is not premium
+     * @throws SkinRequestException or error
      */
     public Optional<IProperty> getSkin(String nameOrUuid) throws SkinRequestException {
-        final String finalNameOrUuid = nameOrUuid.trim().toUpperCase();
-        if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(finalNameOrUuid))) {
-            return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, HardcodedSkins.valueOf(finalNameOrUuid).value, HardcodedSkins.valueOf(finalNameOrUuid).signature));
+        final String upperCaseNameOrUuid = nameOrUuid.trim().toUpperCase();
+        if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(upperCaseNameOrUuid))) {
+            HardcodedSkins hardcodedSkin = HardcodedSkins.valueOf(upperCaseNameOrUuid);
+            return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, hardcodedSkin.value, hardcodedSkin.signature));
+        }
+
+        boolean isUuid = nameOrUuid.matches("[a-f\\d]{32}");
+        if (!isUuid && !C.validMojangUsername(nameOrUuid)) {
+            throw new NotPremiumException();
         }
 
         final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
         if (skin.isPresent()) {
             return skin;
         } else {
-            if (!nameOrUuid.matches("[a-f\\d]{32}"))
+            if (!isUuid) {
                 nameOrUuid = getUUIDStartMojang(nameOrUuid);
+            }
 
             return getProfileStartMojang(nameOrUuid);
         }
     }
 
+    /**
+     * Get the uuid from a player name
+     *
+     * @param name name of the player
+     * @return String uuid trimmed (without dashes)
+     * @throws NotPremiumException  if the player is not premium
+     * @throws SkinRequestException or error
+     */
     public String getUUID(String name) throws SkinRequestException {
+        if (C.validMojangUsername(name)) {
+            throw new NotPremiumException();
+        }
+
         Optional<String> ashcon = getUUIDAshcon(name);
 
         if (ashcon.isPresent()) {
