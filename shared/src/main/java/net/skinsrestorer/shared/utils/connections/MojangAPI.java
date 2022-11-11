@@ -75,7 +75,8 @@ public class MojangAPI implements IMojangAPI {
             return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, hardcodedSkin.value, hardcodedSkin.signature));
         }
 
-        if (nameOrUuid.length() < 32 && !C.validMojangUsername(nameOrUuid)) {
+        boolean isUuid = nameOrUuid.matches("[a-f\\d]{32}");
+        if (!isUuid && !C.validMojangUsername(nameOrUuid)) {
             throw new NotPremiumException();
         }
 
@@ -83,8 +84,9 @@ public class MojangAPI implements IMojangAPI {
         if (skin.isPresent()) {
             return skin;
         } else {
-            if (!nameOrUuid.matches("[a-f\\d]{32}"))
+            if (!isUuid) {
                 nameOrUuid = getUUIDStartMojang(nameOrUuid);
+            }
 
             return getProfileStartMojang(nameOrUuid);
         }
