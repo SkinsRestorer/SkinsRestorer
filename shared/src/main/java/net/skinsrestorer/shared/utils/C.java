@@ -45,6 +45,7 @@ public class C {
         // For some reasons Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (int i = 0; i < len; i++) {
             char c = username.charAt(i);
+            // Note: Players who bought the game early in its development can have "-" in usernames.
             if (!(c >= 'a' && c <= 'z') && !(c >= '0' && c <= '9') && !(c >= 'A' && c <= 'Z') && c != '_' && c != '-')
                 return false;
         }
