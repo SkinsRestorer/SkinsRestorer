@@ -17,11 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage.adapter;
+package net.skinsrestorer.shared.storage.adapter.mysql;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

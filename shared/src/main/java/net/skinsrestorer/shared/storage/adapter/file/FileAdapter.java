@@ -17,9 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage.adapter;
+package net.skinsrestorer.shared.storage.adapter.file;
 
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -33,41 +34,20 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FileAdapter implements StorageAdapter {
-    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|.]");
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+    public static final Pattern SAFE_PATH_PATTERN = Pattern.compile("[A-za-z0-9._-]");
     private final Path skinsFolder;
     private final Path playersFolder;
 
     public FileAdapter(Path dataFolder) throws IOException {
         skinsFolder = dataFolder.resolve("Skins");
-        Files.createDirectories(skinsFolder);
-
         playersFolder = dataFolder.resolve("Players");
-        Files.createDirectories(playersFolder);
     }
 
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        Path playerFile = resolvePlayerFile(playerName);
+        Optional<PlayerStorageType> data = getPlayerStorageData(playerName);
 
-        try {
-            if (!Files.exists(playerFile))
-                return Optional.empty();
-
-            List<String> lines = Files.readAllLines(playerFile);
-
-            if (lines.isEmpty()) {
-                removeStoredSkinNameOfPlayer(playerName);
-                return Optional.empty();
-            }
-
-            return Optional.of(lines.get(0));
-        } catch (MalformedInputException e) {
-            removeStoredSkinNameOfPlayer(playerName);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
+        return data.map(PlayerStorageType::getSkinName);
     }
 
     @Override
@@ -87,8 +67,8 @@ public class FileAdapter implements StorageAdapter {
 
         try {
             try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
-                skinName = removeWhitespaces(skinName);
-                skinName = replaceForbiddenChars(skinName);
+                skinName = LegacyFileHelper.removeWhitespaces(skinName); // TODO: Remove after legacy migration is done
+                skinName = LegacyFileHelper.replaceForbiddenChars(skinName); // TODO: Remove after legacy migration is done
 
                 writer.write(skinName);
             }
@@ -176,23 +156,9 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public Optional<Long> getStoredTimestamp(String skinName) {
-        Path skinFile = resolveSkinFile(skinName);
+        Optional<SkinStorageType> data = getSkinStorageData(skinName);
 
-        try {
-            if (!Files.exists(skinFile)) {
-                return Optional.empty();
-            }
-
-            List<String> lines = Files.readAllLines(skinFile);
-
-            if (lines.size() < 3)
-                return Optional.empty();
-
-            return Optional.of(Long.parseLong(lines.get(2)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
+        return data.map(SkinStorageType::getTimestamp);
     }
 
     @Override
@@ -200,16 +166,15 @@ public class FileAdapter implements StorageAdapter {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
             for (Path file : stream) {
                 try {
-                    if (!Files.exists(file))
+                    Optional<SkinStorageType> data = getSkinStorageData(file);
+                    if (!data.isPresent())
                         continue;
 
-                    List<String> lines = Files.readAllLines(file);
-                    long timestamp = Long.parseLong(lines.get(2));
-
-                    if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
+                    if (data.get().getTimestamp() < targetPurgeTimestamp) {
                         Files.deleteIfExists(file);
                     }
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
@@ -218,28 +183,23 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
-    private Path resolveSkinFile(String skinName) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-        return skinsFolder.resolve(skinName + ".skin");
+    private Optional<PlayerStorageType> getPlayerStorageData(String playerName) {
+        return LegacyFileHelper.readLegacyPlayerFile(LegacyFileHelper.resolveLegacyPlayerFile(playersFolder, playerName));
+    }
+
+    private Optional<SkinStorageType> getSkinStorageData(String skinName) {
+        return getSkinStorageData(LegacyFileHelper.resolveLegacySkinFile(skinsFolder, skinName));
+    }
+
+    private Optional<SkinStorageType> getSkinStorageData(Path file) {
+        return LegacyFileHelper.readLegacySkinFile(file);
     }
 
     private Path resolvePlayerFile(String playerName) {
-        playerName = replaceForbiddenChars(playerName);
-        return playersFolder.resolve(playerName + ".player");
+        return LegacyFileHelper.resolveLegacyPlayerFile(playersFolder, playerName);
     }
 
-    private String replaceForbiddenChars(String str) {
-        // Escape all Windows / Linux forbidden printable ASCII characters
-        return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
-    }
-
-    // TODO remove all whitespace after last starting space.
-    private String removeWhitespaces(String str) {
-        // Remove all whitespace expect when startsWith " ".
-        if (str.startsWith(" ")) {
-            return str;
-        }
-        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
+    private Path resolveSkinFile(String skinName) {
+        return LegacyFileHelper.resolveLegacySkinFile(skinsFolder, skinName);
     }
 }
