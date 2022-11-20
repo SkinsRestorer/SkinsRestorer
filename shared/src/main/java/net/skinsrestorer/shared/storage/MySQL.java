@@ -100,15 +100,14 @@ public class MySQL {
     }
 
     public void connectPool() throws SQLException {
-        poolDataSource = new MariaDbPoolDataSource(
-                "jdbc:mysql://" + host + ":" + port + "/" + database +
-                        "?user=" + username +
-                        "&password=" + password +
-                        "&permitMysqlScheme" +
-                        "&maxPoolSize=" + maxPoolSize +
-                        "&" + options);
-
-        logger.info("Connected to MySQL!");
+        poolDataSource = new MariaDbPoolDataSource();
+        poolDataSource.setUser(username);
+        poolDataSource.setPassword(password);
+        poolDataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + database +
+                "?permitMysqlScheme" +
+                "&maxPoolSize=" + maxPoolSize +
+                "&" + options
+        );
     }
 
     public void execute(@Language("sql") final String query, final Object... vars) {
