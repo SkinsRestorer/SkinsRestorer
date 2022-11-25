@@ -19,10 +19,13 @@
  */
 package net.skinsrestorer.api.interfaces;
 
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 
 import java.util.Optional;
 
 public interface IMojangAPI {
+    String getUUID(String playerName) throws SkinRequestException;
+
     Optional<IProperty> getProfile(String uuid);
 }
