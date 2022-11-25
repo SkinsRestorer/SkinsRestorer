@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PlayerStorageType {
+    private String playerName;
     private String skinName;
 
     public boolean isInvalid() {

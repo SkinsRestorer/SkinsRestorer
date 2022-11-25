@@ -19,12 +19,12 @@
  */
 package net.skinsrestorer.shared.storage.adapter.file;
 
+import com.google.gson.Gson;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -37,10 +37,18 @@ public class FileAdapter implements StorageAdapter {
     public static final Pattern SAFE_PATH_PATTERN = Pattern.compile("[A-za-z0-9._-]");
     private final Path skinsFolder;
     private final Path playersFolder;
+    private final Gson gson = new Gson();
 
     public FileAdapter(Path dataFolder) throws IOException {
-        skinsFolder = dataFolder.resolve("Skins");
-        playersFolder = dataFolder.resolve("Players");
+        skinsFolder = dataFolder.resolve("skins");
+        playersFolder = dataFolder.resolve("players");
+        Files.createDirectories(skinsFolder);
+        Files.createDirectories(playersFolder);
+        Path legacySkinFolder = dataFolder.resolve("Skins");
+        Path legacyPlayersFolder = dataFolder.resolve("Players");
+        if (Files.exists(legacySkinFolder) || Files.exists(legacyPlayersFolder)) {
+            LegacyFileHelper.migrateLegacyFiles(legacySkinFolder, legacyPlayersFolder, skinsFolder, playersFolder);
+        }
     }
 
     @Override
@@ -67,10 +75,7 @@ public class FileAdapter implements StorageAdapter {
 
         try {
             try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
-                skinName = LegacyFileHelper.removeWhitespaces(skinName); // TODO: Remove after legacy migration is done
-                skinName = LegacyFileHelper.replaceForbiddenChars(skinName); // TODO: Remove after legacy migration is done
-
-                writer.write(skinName);
+                writer.write(gson.toJson(new PlayerStorageType(playerName, skinName)));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,7 +119,12 @@ public class FileAdapter implements StorageAdapter {
         Path skinFile = resolveSkinFile(skinName);
 
         try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
-            writer.write(storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp());
+            writer.write(gson.toJson(new SkinStorageType(
+                    skinName,
+                    storedProperty.getValue(),
+                    storedProperty.getSignature(),
+                    storedProperty.getTimestamp()
+            )));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -124,7 +134,7 @@ public class FileAdapter implements StorageAdapter {
     public Map<String, String> getStoredSkins(int offset) {
         Map<String, String> list = new TreeMap<>();
         List<Path> files = new ArrayList<>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.json")) {
             stream.forEach(files::add);
         } catch (IOException e) {
             e.printStackTrace();
