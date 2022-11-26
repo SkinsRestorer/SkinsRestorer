@@ -81,6 +81,7 @@ public class SharedMethods {
                 mysql.connectPool();
                 mysql.createTable();
 
+                srLogger.info("Connected to MySQL!");
                 skinStorage.setStorageAdapter(new MySQLAdapter(mysql));
             } else {
                 skinStorage.setStorageAdapter(new FileAdapter(dataFolder));
