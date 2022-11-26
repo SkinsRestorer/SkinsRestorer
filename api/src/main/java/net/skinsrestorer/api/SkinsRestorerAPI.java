@@ -67,6 +67,20 @@ public abstract class SkinsRestorerAPI {
         return SkinsRestorerAPI.api;
     }
 
+    @SuppressWarnings("JavadocReference")
+    /**
+     *  Get the trimmed uuid from a player playerName
+     *
+     * @param playerName Mojang username of the player
+     * @return String uuid trimmed (without dashes)
+     * @throws NotPremiumException if the player is not premium
+     * @throws SkinRequestException or error
+     */
+
+    public String getUUID(@NonNull String playerName) throws SkinRequestException {
+        return this.mojangAPI.getUUID(playerName);
+    }
+
     /**
      * Returned property contains all skin data.
      * You can get the wrapped object using {@link IProperty#getHandle()}
@@ -75,7 +89,7 @@ public abstract class SkinsRestorerAPI {
      * @return The players skin property, null if not found
      **/
     @Nullable
-    public IProperty getProfile(String uuid) {
+    public IProperty getProfile(@NonNull String uuid) {
         return mojangAPI.getProfile(uuid).orElse(null);
     }
 
