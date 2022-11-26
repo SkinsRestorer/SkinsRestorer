@@ -69,11 +69,12 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     *  Get the trimmed uuid from a player playerName
+     * Get the trimmed uuid from a player playerName
+     * Example: dea9e2115395408b8cae5d93c6e16e56
      *
      * @param playerName Mojang username of the player
      * @return String uuid trimmed (without dashes)
-     * @throws NotPremiumException if the player is not premium
+     * @throws NotPremiumException  if the player is not premium
      * @throws SkinRequestException or error
      */
     public String getUUID(@NonNull String playerName) throws SkinRequestException {
@@ -117,7 +118,7 @@ public abstract class SkinsRestorerAPI {
     /**
      * Saves custom player's skin name to database
      *
-     * @param playerName Players name
+     * @param playerName The players name
      * @param skinName   Skin name
      **/
     public void setSkinName(String playerName, String skinName) {
@@ -268,6 +269,12 @@ public abstract class SkinsRestorerAPI {
         return createPlatformProperty(name, value, signature);
     }
 
+    /**
+     * Removes the player selected skin
+     * This will remove the player table/file and NOT the skin.
+     *
+     * @param playerName - The players name
+     */
     public void removeSkin(String playerName) {
         getSkinStorage().removeSkinOfPlayer(playerName);
     }
@@ -278,14 +285,37 @@ public abstract class SkinsRestorerAPI {
         } else throw new IllegalStateException("SkinStorage is not initialized. Is SkinsRestorer in proxy mode?");
     }
 
+    /**
+     * Applies the player selected skin from the player table/file.
+     * This is useful in combination with setSkinName.
+     *
+     * @param playerWrapper
+     * @throws SkinRequestException
+     */
     public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-        applySkin(playerWrapper, playerWrapper.getName());
+        String playerName = playerWrapper.getName();
+        applySkin(playerWrapper, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
     }
 
+    /**
+     * Only Apply the skinName from the skin table/file.
+     * This will not keep the skin on rejoin / applySkin(playerWrapper).
+     *
+     * @param playerWrapper
+     * @param skinName
+     * @throws SkinRequestException
+     */
     public void applySkin(PlayerWrapper playerWrapper, String skinName) throws SkinRequestException {
         applySkin(playerWrapper, skinStorage.fetchSkinData(skinName));
     }
 
+    /**
+     * Applies the skin from the property object.
+     * This can be a custom skin that is not in the skin table/file.
+     *
+     * @param playerWrapper
+     * @param property
+     */
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 
     protected IWrapperFactory getWrapperFactory() {
