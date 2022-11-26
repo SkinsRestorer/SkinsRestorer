@@ -296,9 +296,13 @@ public abstract class SkinsRestorerAPI {
         String playerName = playerWrapper.getName();
         String skinName = getSkinName(playerName);
         if (skinName == null) {
-            IProperty defaultSkin = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
-            if (defaultSkin != null) {
-                applySkin(playerWrapper, defaultSkin);
+            try {
+                IProperty defaultSkin = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
+                if (defaultSkin != null) {
+                    applySkin(playerWrapper, defaultSkin);
+                }
+            } catch (SkinRequestException e) {
+                applySkin(playerWrapper, createPlatformProperty(IProperty.TEXTURES_NAME, "", ""));
             }
         }
         applySkin(playerWrapper, skinName);
