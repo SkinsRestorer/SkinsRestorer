@@ -26,7 +26,8 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
-import net.skinsrestorer.shared.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.shared.exception.NotPremiumExceptionShared;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -77,7 +78,7 @@ public class MojangAPI implements IMojangAPI {
 
         boolean isUuid = nameOrUuid.matches("[a-f\\d]{32}");
         if (!isUuid && !C.validMojangUsername(nameOrUuid)) {
-            throw new NotPremiumException();
+            throw new NotPremiumExceptionShared();
         }
 
         final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
@@ -102,7 +103,7 @@ public class MojangAPI implements IMojangAPI {
      */
     public String getUUID(String playerName) throws SkinRequestException {
         if (C.validMojangUsername(playerName)) {
-            throw new NotPremiumException();
+            throw new NotPremiumExceptionShared();
         }
 
         Optional<String> ashcon = getUUIDAshcon(playerName);
@@ -138,7 +139,7 @@ public class MojangAPI implements IMojangAPI {
 
             if (obj.getCode() != 0) {
                 if (obj.getCode() == 404) {
-                    throw new NotPremiumException();
+                    throw new NotPremiumExceptionShared();
                 }
                 //throw new SkinRequestException(Locale.ALT_API_FAILED); <- WIP (might not be good when there is a 202 mojang down error)
             }
@@ -157,7 +158,7 @@ public class MojangAPI implements IMojangAPI {
 
             //todo get http code instead of checking for isEmpty
             if (output.isEmpty())
-                throw new NotPremiumException();
+                throw new NotPremiumExceptionShared();
 
             final MojangUUIDResponse obj = new Gson().fromJson(output, MojangUUIDResponse.class);
             if (obj.getError() != null) {

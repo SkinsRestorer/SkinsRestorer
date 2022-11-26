@@ -21,6 +21,7 @@ package net.skinsrestorer.api;
 
 import com.google.gson.Gson;
 import lombok.NonNull;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.model.MojangProfileResponse;
@@ -67,7 +68,6 @@ public abstract class SkinsRestorerAPI {
         return SkinsRestorerAPI.api;
     }
 
-    @SuppressWarnings("JavadocReference")
     /**
      *  Get the trimmed uuid from a player playerName
      *
@@ -76,8 +76,12 @@ public abstract class SkinsRestorerAPI {
      * @throws NotPremiumException if the player is not premium
      * @throws SkinRequestException or error
      */
-
     public String getUUID(@NonNull String playerName) throws SkinRequestException {
+        try {
+            return mojangAPI.getUUID(playerName);
+        } catch (NotPremiumException e) {
+
+        }
         return this.mojangAPI.getUUID(playerName);
     }
 
