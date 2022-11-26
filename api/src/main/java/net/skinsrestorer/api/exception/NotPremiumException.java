@@ -17,15 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api.exception;
 
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+public class NotPremiumException extends SkinRequestException {
+    private static final long serialVersionUID = 1905633222660120414L;
 
-import java.util.Optional;
+    protected NotPremiumException() {
+    }
 
-public interface IMojangAPI {
-    String getUUID(String playerName) throws SkinRequestException;
+    protected NotPremiumException(String message) {
+        super(message);
+    }
 
-    Optional<IProperty> getProfile(String uuid);
+    protected NotPremiumException(Throwable cause) {
+        super(cause);
+    }
 }
