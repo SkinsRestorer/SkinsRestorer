@@ -77,11 +77,6 @@ public abstract class SkinsRestorerAPI {
      * @throws SkinRequestException or error
      */
     public String getUUID(@NonNull String playerName) throws SkinRequestException {
-        try {
-            return mojangAPI.getUUID(playerName);
-        } catch (NotPremiumException e) {
-
-        }
         return this.mojangAPI.getUUID(playerName);
     }
 
