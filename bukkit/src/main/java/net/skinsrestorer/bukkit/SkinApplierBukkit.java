@@ -35,7 +35,6 @@ import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
@@ -52,8 +51,7 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    private final SkinsRestorer plugin;
-    private final SRLogger log;
+    private final SkinsRestorerBukkit plugin;
     @Getter
     private final Consumer<Player> refresh;
     @Setter
@@ -62,9 +60,8 @@ public class SkinApplierBukkit {
     private boolean disableRemountPlayer;
     private boolean enableDismountEntities;
 
-    public SkinApplierBukkit(SkinsRestorer plugin, SRLogger log) throws InitializeException {
+    public SkinApplierBukkit(SkinsRestorerBukkit plugin) throws InitializeException {
         this.plugin = plugin;
-        this.log = log;
         this.refresh = detectRefresh();
     }
 
@@ -72,20 +69,20 @@ public class SkinApplierBukkit {
         if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
-            boolean viaVersionExists = plugin.getServer().getPluginManager().getPlugin("ViaVersion") != null;
-            boolean protocolSupportExists = plugin.getServer().getPluginManager().getPlugin("ProtocolSupport") != null;
+            boolean viaVersionExists = plugin.isPluginEnabled("ViaVersion");
+            boolean protocolSupportExists = plugin.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
-                log.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                plugin.getLogger().debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(log);
+                return new PaperSkinRefresher(plugin);
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
-                log.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
+                plugin.getLogger().severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
 
@@ -94,8 +91,8 @@ public class SkinApplierBukkit {
 
     private Consumer<Player> selectSpigotRefresher() throws InitializeException {
         if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(plugin, log);
-        } else return new SpigotSkinRefresher(plugin, log);
+            return new MappingSpigotSkinRefresher(plugin);
+        } else return new SpigotSkinRefresher(plugin);
     }
 
     /**
@@ -123,7 +120,7 @@ public class SkinApplierBukkit {
                 return;
 
             // delay 1 server tick so we override online-mode
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            plugin.runSync(() -> {
                 applyProperty(player, eventProperty);
 
                 plugin.runAsync(() -> updateSkin(player));
@@ -160,24 +157,24 @@ public class SkinApplierBukkit {
         if (!optFileChecked)
             checkOptFile();
 
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        plugin.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
                 Entity vehicle = player.getVehicle();
 
-                SpigotPassengerUtil.refreshPassengers(plugin, player, vehicle,
+                SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
                         disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
             }
 
             for (Player ps : getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
-                    ps.hidePlayer(plugin, player);
+                    ps.hidePlayer(plugin.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
 
                 try {
-                    ps.showPlayer(plugin, player);
+                    ps.showPlayer(plugin.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }
@@ -188,13 +185,13 @@ public class SkinApplierBukkit {
     }
 
     private void checkOptFile() {
-        Path fileDisableDismountPlayer = plugin.getDataFolderPath().resolve("disablesdismountplayer"); // legacy
-        Path fileDisableRemountPlayer = plugin.getDataFolderPath().resolve("disablesremountplayer"); // legacy
-        Path fileEnableDismountEntities = plugin.getDataFolderPath().resolve("enablesdismountentities"); // legacy
+        Path fileDisableDismountPlayer = plugin.getDataFolder().resolve("disablesdismountplayer"); // legacy
+        Path fileDisableRemountPlayer = plugin.getDataFolder().resolve("disablesremountplayer"); // legacy
+        Path fileEnableDismountEntities = plugin.getDataFolder().resolve("enablesdismountentities"); // legacy
 
-        Path fileTxtDisableDismountPlayer = plugin.getDataFolderPath().resolve("disableDismountPlayer.txt");
-        Path fileTxtDisableRemountPlayer = plugin.getDataFolderPath().resolve("disableRemountPlayer.txt");
-        Path fileTxtEnableDismountEntities = plugin.getDataFolderPath().resolve("enableDismountEntities.txt");
+        Path fileTxtDisableDismountPlayer = plugin.getDataFolder().resolve("disableDismountPlayer.txt");
+        Path fileTxtDisableRemountPlayer = plugin.getDataFolder().resolve("disableRemountPlayer.txt");
+        Path fileTxtEnableDismountEntities = plugin.getDataFolder().resolve("enableDismountEntities.txt");
 
         if (Files.exists(fileDisableDismountPlayer)) {
             try {
@@ -224,7 +221,7 @@ public class SkinApplierBukkit {
         disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
         enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
 
-        log.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
+        plugin.getLogger().debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
     }
 
@@ -233,7 +230,7 @@ public class SkinApplierBukkit {
             if (hasPaperMethods()) {
                 return true;
             } else {
-                log.debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                plugin.getLogger().debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
                 return false;
             }
         } else {

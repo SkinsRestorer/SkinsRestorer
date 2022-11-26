@@ -17,26 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.plugin;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
-public class NotPremiumExceptionShared extends NotPremiumException {
-    public NotPremiumExceptionShared() {
-        super();
-    }
+import java.nio.file.Path;
 
-    public NotPremiumExceptionShared(String message) {
-        super(message);
-    }
-
-    public NotPremiumExceptionShared(Throwable e) {
-        super(e);
-    }
-
-    public NotPremiumExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getApi().getDefaultForeign(), key, args));
+public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements ISRProxyPlugin {
+    protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
+        super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
     }
 }

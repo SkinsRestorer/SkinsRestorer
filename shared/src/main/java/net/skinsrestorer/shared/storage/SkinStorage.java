@@ -22,11 +22,11 @@ package net.skinsrestorer.shared.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
-import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
@@ -36,7 +36,10 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -336,8 +339,8 @@ public class SkinStorage implements ISkinStorage {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 
         try {
-             storageAdapter.purgeStoredOldSkins(targetPurgeTimestamp);
-             return true; // TODO: Do better than true/false return
+            storageAdapter.purgeStoredOldSkins(targetPurgeTimestamp);
+            return true; // TODO: Do better than true/false return
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
             return false;

@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -38,13 +37,13 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class SkinApplierVelocity {
-    private final SkinsRestorer plugin;
-    private final SRLogger log;
+    private final SkinsRestorerVelocity plugin;
 
     protected void applySkin(Player player, IProperty property) {
         plugin.getProxy().getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
             if (event.getResult() != ResultedEvent.GenericResult.allowed())
                 return;
+
             player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
             sendUpdateRequest(player, Config.FORWARD_TEXTURES ? (Property) property.getHandle() : null);
         });
@@ -78,7 +77,7 @@ public class SkinApplierVelocity {
 
     private void sendUpdateRequest(Player player, Property textures) {
         player.getCurrentServer().ifPresent(serverConnection -> {
-            log.debug("Sending skin update request for " + player.getUsername());
+            plugin.getLogger().debug("Sending skin update request for " + player.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

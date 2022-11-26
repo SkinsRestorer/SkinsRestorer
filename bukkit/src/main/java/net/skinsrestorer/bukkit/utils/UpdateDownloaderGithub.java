@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
@@ -34,7 +34,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class UpdateDownloaderGithub extends UpdateDownloader {
-    public UpdateDownloaderGithub(SkinsRestorer plugin) {
+    public UpdateDownloaderGithub(SkinsRestorerBukkit plugin) {
         super(plugin);
     }
 
@@ -97,16 +97,16 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         }
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
-        plugin.getSrLogger().info("[GitHubUpdate] Downloading update...");
+        plugin.getLogger().info("[GitHubUpdate] Downloading update...");
         plugin.runAsync(downloadAsync(releaseInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getSrLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());
+                plugin.getLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getSrLogger().warning("[GitHubUpdate] Could not download update", exception);
+                plugin.getLogger().warning("[GitHubUpdate] Could not download update", exception);
             }
         }));
 

@@ -30,7 +30,7 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.sponge.SkinsRestorer;
+import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -47,7 +47,7 @@ import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand implements ISRCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerSponge plugin;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.interfaces.ISRForeign;
-import net.skinsrestorer.shared.storage.Config;
 
 import java.util.Locale;
 

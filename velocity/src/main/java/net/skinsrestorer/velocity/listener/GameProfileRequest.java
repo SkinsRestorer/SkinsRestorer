@@ -27,12 +27,12 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 @RequiredArgsConstructor
 @Getter
 public class GameProfileRequest extends SharedLoginProfileListener {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerVelocity plugin;
 
     @Subscribe
     public EventTask onGameProfileRequest(GameProfileRequestEvent event) {
@@ -45,7 +45,7 @@ public class GameProfileRequest extends SharedLoginProfileListener {
                 handleAsync(wrapped).ifPresent(property ->
                         event.setGameProfile(plugin.getSkinApplierVelocity().updateProfileSkin(event.getGameProfile(), property)));
             } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
+                plugin.getLogger().debug(e);
             }
         });
     }

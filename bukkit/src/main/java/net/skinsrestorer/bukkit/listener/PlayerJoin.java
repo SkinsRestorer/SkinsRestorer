@@ -23,8 +23,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
@@ -38,7 +39,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class PlayerJoin extends SharedLoginProfileListener implements Listener {
     @Setter
     private static boolean resourcePack;
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBukkit plugin;
 
     @EventHandler
     public void onJoin(final PlayerJoinEvent event) {
@@ -53,9 +54,9 @@ public class PlayerJoin extends SharedLoginProfileListener implements Listener {
         plugin.runAsync(() -> {
             try {
                 handleAsync(profileEvent).ifPresent(property ->
-                        plugin.getSkinsRestorerAPI().applySkin(new PlayerWrapper(event.getPlayer()), property));
+                        SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property));
             } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
+                plugin.getLogger().debug(e);
             }
         });
     }

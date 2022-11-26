@@ -27,14 +27,14 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 
 @RequiredArgsConstructor
 @Getter
 public class LoginListener extends SharedLoginProfileListener implements Listener {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBungee plugin;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
@@ -42,17 +42,17 @@ public class LoginListener extends SharedLoginProfileListener implements Listene
         if (handleSync(profileEvent))
             return;
 
-        event.registerIntent(plugin);
+        event.registerIntent(plugin.getPluginInstance());
 
         plugin.runAsync(() -> {
             try {
                 handleAsync(profileEvent).ifPresent(property ->
                         plugin.getSkinApplierBungee().applySkin(property, (InitialHandler) event.getConnection()));
             } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
+                plugin.getLogger().debug(e);
             }
 
-            event.completeIntent(plugin);
+            event.completeIntent(plugin.getPluginInstance());
         });
     }
 

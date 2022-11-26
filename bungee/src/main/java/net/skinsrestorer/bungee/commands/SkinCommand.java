@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
@@ -40,7 +40,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBungee plugin;
 
     @Default
     public void onDefault(CommandSender sender) {

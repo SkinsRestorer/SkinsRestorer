@@ -26,7 +26,7 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBukkit plugin;
 
     @Default
     public void onDefault(CommandSender sender) {

@@ -55,10 +55,10 @@ public interface ISRCommand {
 
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
-        Message.load(plugin.getLocaleManager(), plugin.getDataFolderPath(), plugin);
-        Config.load(plugin.getDataFolderPath(), plugin.getResource("config.yml"), plugin.getSrLogger());
+        Message.load(plugin.getLocaleManager(), plugin.getDataFolder(), plugin);
+        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), plugin.getLogger());
 
-        plugin.prepareACF(plugin.getManager(), plugin.getSrLogger());
+        plugin.prepareACF(plugin.getManager(), plugin.getLogger());
 
         sender.sendMessage(Message.RELOAD);
     }
@@ -156,10 +156,10 @@ public interface ISRCommand {
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
-                plugin.getSrLogger().info("§aName: §8" + name);
-                plugin.getSrLogger().info("§aValue: §8" + value);
-                plugin.getSrLogger().info("§aSignature: §8" + signature);
-                plugin.getSrLogger().info("§aValue Decoded: §e" + profile);
+                plugin.getLogger().info("§aName: §8" + name);
+                plugin.getLogger().info("§aValue: §8" + value);
+                plugin.getLogger().info("§aSignature: §8" + signature);
+                plugin.getLogger().info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage(Message.NO_SKIN_DATA);

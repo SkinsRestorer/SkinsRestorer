@@ -26,12 +26,12 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 @Getter
 @RequiredArgsConstructor
 public class PluginMessageListener extends SharedPluginMessageListener {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerVelocity plugin;
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {

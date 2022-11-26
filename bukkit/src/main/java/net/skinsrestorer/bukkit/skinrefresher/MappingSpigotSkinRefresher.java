@@ -19,13 +19,11 @@
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -33,11 +31,11 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBukkit plugin;
     private final IMapping mapping;
     private boolean useViabackwards = false;
 
-    public MappingSpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws NoMappingException {
+    public MappingSpigotSkinRefresher(SkinsRestorerBukkit plugin) throws NoMappingException {
         this.plugin = plugin;
         Optional<IMapping> mapping = MappingManager.getMapping();
         if (!mapping.isPresent()) {
@@ -46,16 +44,16 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
             this.mapping = mapping.get();
         }
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        plugin.runSync(() -> {
             // Wait to run task in order for ViaVersion to determine server protocol
-            if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
+            if (plugin.isPluginEnabled("ViaBackwards")
                     && ViaWorkaround.isProtocolNewer()) {
                 useViabackwards = true;
-                log.debug("Activating ViaBackwards workaround.");
+                plugin.getLogger().debug("Activating ViaBackwards workaround.");
             }
         });
 
-        log.debug("Using MappingSpigotSkinRefresher");
+        plugin.getLogger().debug("Using MappingSpigotSkinRefresher");
     }
 
     @Override
@@ -71,7 +69,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         mapping.accept(player, viaFunction);
 
         if (player.isOp()) {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.runSync(() -> {
                 // Workaround..
                 player.setOp(false);
                 player.setOp(true);

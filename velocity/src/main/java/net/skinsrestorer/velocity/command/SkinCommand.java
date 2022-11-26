@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
@@ -40,7 +40,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerVelocity plugin;
 
     @Default
     public void onDefault(CommandSource source) {

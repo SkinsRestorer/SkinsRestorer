@@ -30,7 +30,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 
@@ -46,7 +46,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand implements ISRCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBungee plugin;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

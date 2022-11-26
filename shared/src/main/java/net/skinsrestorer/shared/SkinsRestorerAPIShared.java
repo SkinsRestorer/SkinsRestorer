@@ -20,10 +20,13 @@
 package net.skinsrestorer.shared;
 
 import co.aikar.locales.LocaleManager;
+import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.*;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
@@ -31,11 +34,15 @@ import net.skinsrestorer.shared.utils.DefaultForeignSubject;
 
 import java.text.MessageFormat;
 
+@Getter
 public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
-    private final DefaultForeignSubject defaultSubject = new DefaultForeignSubject();
+    @Getter
+    private static final DefaultForeignSubject defaultForeign = new DefaultForeignSubject();
+    private final LocaleManager<ISRForeign> localeManager;
 
-    protected SkinsRestorerAPIShared(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
-        super(mojangAPI, mineSkinAPI, skinStorage, wrapperFactory, propertyFactory);
+    protected SkinsRestorerAPIShared(SkinsRestorerShared plugin, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
+        super(plugin.getMojangAPI(), plugin.getMineSkinAPI(), plugin.getSkinStorage(), wrapperFactory, propertyFactory);
+        this.localeManager = plugin.getLocaleManager();
     }
 
     public static SkinsRestorerAPIShared getApi() {
@@ -43,7 +50,6 @@ public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
     }
 
     public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
-        LocaleManager<ISRForeign> localeManager = getLocaleManager();
         String message = localeManager.getMessage(foreign, key.getKey());
 
         if (message.contains("{prefix}")) {
@@ -56,11 +62,5 @@ public abstract class SkinsRestorerAPIShared extends SkinsRestorerAPI {
         }
 
         return C.c(new MessageFormat(message).format(args));
-    }
-
-    protected abstract LocaleManager<ISRForeign> getLocaleManager();
-
-    public ISRForeign getDefaultForeign() {
-        return defaultSubject;
     }
 }

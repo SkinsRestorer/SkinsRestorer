@@ -27,7 +27,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.sponge.SkinsRestorer;
+import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -40,7 +40,7 @@ import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerSponge plugin;
 
     @Default
     public void onDefault(CommandSource source) {

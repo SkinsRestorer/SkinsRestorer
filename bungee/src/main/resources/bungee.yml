@@ -1,4 +1,4 @@
 name: SkinsRestorer
-main: net.skinsrestorer.bungee.SkinsRestorer
+main: net.skinsrestorer.bungee.SkinsRestorerBootstrap
 version: ${version}
 author: knat, AlexProgrammerDE, Th3Tr0LLeR, McLive, DoNotSpamPls

@@ -21,7 +21,7 @@ package net.skinsrestorer.bukkit.utils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -39,7 +39,7 @@ import java.util.Properties;
  */
 @RequiredArgsConstructor
 public class UpdateDownloader {
-    protected final SkinsRestorer plugin;
+    protected final SkinsRestorerBukkit plugin;
 
     @Getter
     protected DownloadFailReason failReason;
@@ -83,16 +83,16 @@ public class UpdateDownloader {
             return false;
         }
 
-        plugin.getSrLogger().info("[SpigetUpdate] Downloading update...");
+        plugin.getLogger().info("[SpigetUpdate] Downloading update...");
         plugin.runAsync(org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getSrLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());
+                plugin.getLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getSrLogger().warning("[SpigetUpdate] Could not download update", exception);
+                plugin.getLogger().warning("[SpigetUpdate] Could not download update", exception);
             }
         }));
 

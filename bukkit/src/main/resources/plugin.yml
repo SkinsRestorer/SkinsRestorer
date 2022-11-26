@@ -1,5 +1,5 @@
 name: SkinsRestorer
-main: net.skinsrestorer.bukkit.SkinsRestorer
+main: net.skinsrestorer.bukkit.SkinsRestorerBootstrap
 version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/

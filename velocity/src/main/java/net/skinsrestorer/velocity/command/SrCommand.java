@@ -33,7 +33,7 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +47,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @CommandPermission("%sr")
 public class SrCommand extends BaseCommand implements ISRCommand {
     @Getter
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerVelocity plugin;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

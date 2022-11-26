@@ -36,12 +36,12 @@ import java.util.Collection;
 
 @RequiredArgsConstructor
 public class SkinApplierSponge {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerSponge plugin;
 
     protected void applySkin(Player player, IProperty property) {
         setTexture(property, player.getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME));
 
-        Sponge.getScheduler().createSyncExecutor(plugin).execute(() -> sendUpdate(player));
+        plugin.runSync(() -> sendUpdate(player));
     }
 
     public void updateProfileSkin(GameProfile profile, IProperty skin) {
@@ -79,6 +79,6 @@ public class SkinApplierSponge {
         }
 
         receiver.offer(Keys.VANISH, true);
-        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin);
+        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin.getPluginInstance());
     }
 }

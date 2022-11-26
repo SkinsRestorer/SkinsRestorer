@@ -20,13 +20,12 @@
 package net.skinsrestorer.bungee;
 
 import co.aikar.commands.BungeeCommandManager;
-import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
@@ -41,17 +40,13 @@ import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.*;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.update.UpdateChecker;
-import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
@@ -59,7 +54,6 @@ import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -67,25 +61,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
-@SuppressWarnings("Duplicates")
-public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
+public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
-    private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final CooldownStorage cooldownStorage = new CooldownStorage();
-    private final BungeeConsoleImpl bungeeConsole = new BungeeConsoleImpl(getProxy() == null ? null : getProxy().getConsole());
-    private final JavaLoggerImpl javaLogger = new JavaLoggerImpl(bungeeConsole, getProxy() == null ? null : getProxy().getLogger());
-    private final SRLogger srLogger = new SRLogger(javaLogger, true);
-    private final MojangAPI mojangAPI = new MojangAPI(srLogger, metricsCounter);
-    private final MineSkinAPI mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
-    private final SkinStorage skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-    private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, srLogger);
-    private final SkinsRestorerAPI skinsRestorerAPI = new SkinsRestorerBungeeAPI();
+    private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, logger);
     private final SkinCommand skinCommand = new SkinCommand(this);
-    private LocaleManager<ISRForeign> localeManager;
-    private Path dataFolderPath;
+    private final ProxyServer proxy;
+    private final Plugin pluginInstance; // Only for platform API use
     private boolean outdated;
-    private UpdateChecker updateChecker;
     private BungeeCommandManager manager;
+
+    public SkinsRestorerBungee(Plugin plugin) {
+        super(
+                new JavaLoggerImpl(new BungeeConsoleImpl(plugin.getProxy().getConsole()), plugin.getProxy().getLogger()),
+                true,
+                plugin.getDescription().getVersion(),
+                "SkinsRestorer/BungeeCord",
+                plugin.getDataFolder().toPath()
+        );
+        this.proxy = plugin.getProxy();
+        this.pluginInstance = plugin;
+        new SkinsRestorerBungeeAPI(); // Register API
+    }
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
@@ -99,26 +95,14 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         }
     }
 
-    @Override
-    public String getVersion() {
-        return getDescription().getVersion();
-    }
-
-    @Override
-    public void onEnable() {
-        bungeeConsole.setCommandSender(getProxy().getConsole());
-        javaLogger.setLogger(getProxy().getLogger());
-        dataFolderPath = getDataFolder().toPath();
-        srLogger.load(dataFolderPath);
-
-        Metrics metrics = new Metrics(this, 1686);
+    public void pluginStartup() {
+        Metrics metrics = new Metrics(pluginInstance, 1686);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         checkUpdateInit(() -> {
-            updateChecker = new UpdateCheckerGitHub(2124, getDescription().getVersion(), srLogger, "SkinsRestorerUpdater/BungeeCord");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
@@ -126,9 +110,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         });
 
         // Init config files
-        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
-        Message.load(localeManager, dataFolderPath, this);
+        Config.load(dataFolder, getResource("config.yml"), logger);
+        Message.load(localeManager, dataFolder, this);
 
         // Init storage
         try {
@@ -139,25 +122,25 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
         }
 
         // Init listener
-        getProxy().getPluginManager().registerListener(this, new LoginListener(this));
-        getProxy().getPluginManager().registerListener(this, new ConnectListener(this));
+        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(this));
+        proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this));
 
         // Init commands
         initCommands();
 
         // Init message channel
-        getProxy().registerChannel("sr:skinchange");
-        getProxy().registerChannel("sr:messagechannel");
-        getProxy().getPluginManager().registerListener(this, new PluginMessageListener(this));
+        proxy.registerChannel("sr:skinchange");
+        proxy.registerChannel("sr:messagechannel");
+        proxy.getPluginManager().registerListener(pluginInstance, new PluginMessageListener(this));
 
         // Run connection check
-        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
     }
 
     private void initCommands() {
-        manager = new BungeeCommandManager(this);
+        manager = new BungeeCommandManager(pluginInstance);
 
-        prepareACF(manager, srLogger);
+        prepareACF(manager, logger);
 
         runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
@@ -171,8 +154,8 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
-                        .forEach(srLogger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, false)
+                        .forEach(logger::info);
             }
 
             @Override
@@ -180,9 +163,14 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), false).forEach(srLogger::info);
+                updateChecker.getUpToDateMessages(version, false).forEach(logger::info);
             }
         }));
+    }
+
+    @Override
+    public boolean isPluginEnabled(String pluginName) {
+        return proxy.getPluginManager().getPlugin(pluginName) != null;
     }
 
     @Override
@@ -192,22 +180,27 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
 
     @Override
     public void runAsync(Runnable runnable) {
-        getProxy().getScheduler().runAsync(this, runnable);
+        proxy.getScheduler().runAsync(pluginInstance, runnable);
+    }
+
+    @Override
+    public void runSync(Runnable runnable) {
+        runAsync(runnable);
     }
 
     @Override
     public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        getProxy().getScheduler().schedule(this, runnable, delay, interval, timeUnit);
+        proxy.getScheduler().schedule(pluginInstance, runnable, delay, interval, timeUnit);
     }
 
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
-        return getProxy().getPlayers().stream().map(WrapperBungee::wrapPlayer).collect(Collectors.toList());
+        return proxy.getPlayers().stream().map(WrapperBungee::wrapPlayer).collect(Collectors.toList());
     }
 
     @Override
     public Optional<ISRProxyPlayer> getPlayer(String playerName) {
-        return Optional.ofNullable(getProxy().getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
+        return Optional.ofNullable(proxy.getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
     }
 
     private static class WrapperFactoryBungee implements IWrapperFactory {
@@ -236,18 +229,13 @@ public class SkinsRestorer extends Plugin implements ISRProxyPlugin {
 
     private class SkinsRestorerBungeeAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerBungeeAPI() {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
+            super(SkinsRestorerBungee.this, new WrapperFactoryBungee(), new PropertyFactoryBungee());
         }
 
         @SneakyThrows
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), property);
-        }
-
-        @Override
-        protected LocaleManager<ISRForeign> getLocaleManager() {
-            return localeManager;
         }
     }
 }

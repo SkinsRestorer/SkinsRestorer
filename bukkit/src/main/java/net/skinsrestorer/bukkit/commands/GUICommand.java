@@ -27,10 +27,9 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -41,7 +40,7 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBukkit plugin;
 
     // TODO: is help even needed for /skins?
     @HelpCommand
@@ -62,7 +61,7 @@ public class GUICommand extends BaseCommand {
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
             Inventory inventory = SkinsGUI.createGUI(plugin, srPlayer, 0);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.openInventory(inventory));
+            plugin.runSync(() -> player.openInventory(inventory));
         });
     }
 }

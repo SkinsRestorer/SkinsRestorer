@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.sponge.SkinsRestorer;
+import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Getter
 public class LoginListener extends SharedLoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerSponge plugin;
 
     @Override
     public void handle(@NotNull Auth event) {
@@ -50,7 +50,7 @@ public class LoginListener extends SharedLoginProfileListener implements EventLi
             try {
                 return handleAsync(wrapped);
             } catch (SkinRequestException e) {
-                plugin.getSrLogger().debug(e);
+                plugin.getLogger().debug(e);
                 return Optional.empty();
             }
         }).ifPresent(property -> plugin.getSkinApplierSponge().updateProfileSkin(profile, property));

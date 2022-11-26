@@ -29,7 +29,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.IProxyGUICommand;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
@@ -40,7 +40,7 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand implements IProxyGUICommand {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBungee plugin;
 
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {

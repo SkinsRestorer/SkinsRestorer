@@ -23,10 +23,10 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -269,7 +269,7 @@ public interface ISkinCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
-                plugin.getSrLogger().debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
+                plugin.getLogger().debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {

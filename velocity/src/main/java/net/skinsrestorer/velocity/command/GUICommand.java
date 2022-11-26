@@ -30,7 +30,7 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.IProxyGUICommand;
-import net.skinsrestorer.velocity.SkinsRestorer;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
@@ -40,7 +40,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 public class GUICommand extends BaseCommand implements IProxyGUICommand {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerVelocity plugin;
 
     @HelpCommand
     public void onHelp(CommandSource sender, CommandHelp help) {

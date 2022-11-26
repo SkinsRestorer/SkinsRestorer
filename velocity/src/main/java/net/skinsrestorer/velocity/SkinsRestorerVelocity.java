@@ -21,40 +21,23 @@ package net.skinsrestorer.velocity;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
-import co.aikar.locales.LocaleManager;
-import com.google.inject.Inject;
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
-import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
-import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.update.UpdateChecker;
-import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
@@ -78,44 +61,32 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
-public class SkinsRestorer implements ISRProxyPlugin {
+public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
+    private final Object pluginInstance; // Only for platform API use
     private final ProxyServer proxy;
-    private final Metrics.Factory metricsFactory;
-    private final MetricsCounter metricsCounter = new MetricsCounter();
-    private final CooldownStorage cooldownStorage = new CooldownStorage();
-    private final Path dataFolderPath;
-    private final SRLogger srLogger;
-    private final MojangAPI mojangAPI;
-    private final SkinStorage skinStorage;
-    private final SkinsRestorerAPI skinsRestorerAPI;
-    private final MineSkinAPI mineSkinAPI;
     private final SkinApplierVelocity skinApplierVelocity;
-    private final SkinCommand skinCommand;
-    private UpdateChecker updateChecker;
+    private final Metrics.Factory metricsFactory;
+    private final SkinCommand skinCommand = new SkinCommand(this);
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
-    private LocaleManager<ISRForeign> localeManager;
-    @Inject
-    private PluginContainer container;
     private boolean outdated;
 
-    @Inject
-    public SkinsRestorer(ProxyServer proxy, Metrics.Factory metricsFactory, @DataDirectory Path dataFolderPath, Logger logger) {
+    public SkinsRestorerVelocity(Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory, Path dataFolder, Logger logger, PluginContainer container) {
+        super(
+                new Slf4jLoggerImpl(logger),
+                false,
+                container.getDescription().getVersion().orElse("Unknown"),
+                "SkinsRestorerUpdater/Velocity",
+                dataFolder
+        );
+        this.pluginInstance = pluginInstance;
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
-        this.dataFolderPath = dataFolderPath;
-        srLogger = new SRLogger(new Slf4jLoggerImpl(logger));
-        mojangAPI = new MojangAPI(srLogger, metricsCounter);
-        mineSkinAPI = new MineSkinAPI(srLogger, metricsCounter);
-        skinStorage = new SkinStorage(srLogger, mojangAPI, mineSkinAPI);
-        skinsRestorerAPI = new SkinsRestorerVelocityAPI();
-        skinApplierVelocity = new SkinApplierVelocity(this, srLogger);
-        skinCommand = new SkinCommand(this);
+        this.skinApplierVelocity = new SkinApplierVelocity(this);
+        new SkinsRestorerVelocityAPI(); // Register API
     }
 
-    @Subscribe
-    public void onProxyInitialize(ProxyInitializeEvent event) {
-        srLogger.load(dataFolderPath);
+    public void pluginStartup() {
+        logger.load(dataFolder);
 
         Metrics metrics = metricsFactory.make(this, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
@@ -124,7 +95,6 @@ public class SkinsRestorer implements ISRProxyPlugin {
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         checkUpdateInit(() -> {
-            updateChecker = new UpdateCheckerGitHub(2124, getVersion(), srLogger, "SkinsRestorerUpdater/Velocity");
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
@@ -132,9 +102,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
         });
 
         // Init config files
-        Config.load(dataFolderPath, getResource("config.yml"), srLogger);
-        localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getApi().getDefaultForeign().getLocale());
-        Message.load(localeManager, dataFolderPath, this);
+        Config.load(dataFolder, getResource("config.yml"), logger);
+        Message.load(localeManager, dataFolder, this);
 
         // Init storage
         try {
@@ -145,8 +114,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
         }
 
         // Init listener
-        proxy.getEventManager().register(this, new ConnectListener(this));
-        proxy.getEventManager().register(this, new GameProfileRequest(this));
+        proxy.getEventManager().register(pluginInstance, new ConnectListener(this));
+        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(this));
 
         // Init commands
         initCommands();
@@ -154,16 +123,16 @@ public class SkinsRestorer implements ISRProxyPlugin {
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(this, new PluginMessageListener(this));
+        proxy.getEventManager().register(pluginInstance, new PluginMessageListener(this));
 
         // Run connection check
-        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, srLogger));
+        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
     }
 
     private void initCommands() {
-        manager = new VelocityCommandManager(proxy, this);
+        manager = new VelocityCommandManager(proxy, pluginInstance);
 
-        prepareACF(manager, srLogger);
+        prepareACF(manager, logger);
 
         runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
@@ -177,8 +146,8 @@ public class SkinsRestorer implements ISRProxyPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, getVersion(), false)
-                        .forEach(srLogger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, false)
+                        .forEach(logger::info);
             }
 
             @Override
@@ -186,15 +155,15 @@ public class SkinsRestorer implements ISRProxyPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(getVersion(), false)
-                        .forEach(srLogger::info);
+                updateChecker.getUpToDateMessages(version, false)
+                        .forEach(logger::info);
             }
         }));
     }
 
     @Override
-    public String getVersion() {
-        return container.getDescription().getVersion().orElse("Unknown");
+    public boolean isPluginEnabled(String pluginName) {
+        return proxy.getPluginManager().getPlugin(pluginName).isPresent();
     }
 
     @Override
@@ -204,12 +173,17 @@ public class SkinsRestorer implements ISRProxyPlugin {
 
     @Override
     public void runAsync(Runnable runnable) {
-        proxy.getScheduler().buildTask(this, runnable).schedule();
+        proxy.getScheduler().buildTask(pluginInstance, runnable).schedule();
+    }
+
+    @Override
+    public void runSync(Runnable runnable) {
+        runAsync(runnable);
     }
 
     @Override
     public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        proxy.getScheduler().buildTask(this, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
+        proxy.getScheduler().buildTask(pluginInstance, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
     }
 
     @Override
@@ -244,17 +218,12 @@ public class SkinsRestorer implements ISRProxyPlugin {
 
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerVelocityAPI() {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
+            super(SkinsRestorerVelocity.this, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
         }
 
         @Override
         public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
             skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
-        }
-
-        @Override
-        protected LocaleManager<ISRForeign> getLocaleManager() {
-            return localeManager;
         }
     }
 }

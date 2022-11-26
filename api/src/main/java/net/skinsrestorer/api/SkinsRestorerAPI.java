@@ -69,11 +69,11 @@ public abstract class SkinsRestorerAPI {
     }
 
     /**
-     *  Get the trimmed uuid from a player playerName
+     * Get the trimmed uuid from a player playerName
      *
      * @param playerName Mojang username of the player
      * @return String uuid trimmed (without dashes)
-     * @throws NotPremiumException if the player is not premium
+     * @throws NotPremiumException  if the player is not premium
      * @throws SkinRequestException or error
      */
     public String getUUID(@NonNull String playerName) throws SkinRequestException {

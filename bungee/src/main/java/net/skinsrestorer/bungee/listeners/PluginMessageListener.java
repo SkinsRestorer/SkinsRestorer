@@ -25,14 +25,14 @@ import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.skinsrestorer.bungee.SkinsRestorer;
+import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 
 @Getter
 @RequiredArgsConstructor
 public class PluginMessageListener extends SharedPluginMessageListener implements Listener {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBungee plugin;
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {

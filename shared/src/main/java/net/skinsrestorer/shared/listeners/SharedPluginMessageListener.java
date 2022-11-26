@@ -64,10 +64,10 @@ public abstract class SharedPluginMessageListener {
         }
 
         byte[] data = b.toByteArray();
-        plugin.getSrLogger().debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
+        plugin.getLogger().debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
         // Payload may not be larger than 32767 bytes -18 from channel name
         if (data.length > 32749) {
-            plugin.getSrLogger().warning("Too many bytes GUI... canceling GUI..");
+            plugin.getLogger().warning("Too many bytes GUI... canceling GUI..");
             return;
         }
 

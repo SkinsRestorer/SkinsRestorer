@@ -23,11 +23,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
-import net.skinsrestorer.bukkit.SkinsRestorer;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -39,7 +37,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SkinsRestorer plugin;
+    private final SkinsRestorerBukkit plugin;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -50,7 +48,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SkinsRestorer plugin, SRLogger log) throws InitializeException {
+    public SpigotSkinRefresher(SkinsRestorerBukkit plugin) throws InitializeException {
         this.plugin = plugin;
 
         try {
@@ -91,16 +89,16 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.runSync(() -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
-                if (plugin.getServer().getPluginManager().isPluginEnabled("ViaBackwards")
+                if (plugin.isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    log.debug("Activating ViaBackwards workaround.");
+                    plugin.getLogger().debug("Activating ViaBackwards workaround.");
                 }
             });
 
-            log.debug("Using SpigotSkinRefresher");
+            plugin.getLogger().debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }
@@ -259,7 +257,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.runSync(() -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);

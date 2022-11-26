@@ -40,7 +40,7 @@ import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
-    Path getDataFolderPath();
+    Path getDataFolder();
 
     SkinStorage getSkinStorage();
 
@@ -48,11 +48,13 @@ public interface ISRPlugin {
 
     CooldownStorage getCooldownStorage();
 
-    SRLogger getSrLogger();
+    SRLogger getLogger();
 
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
+
+    void runSync(Runnable runnable);
 
     void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
@@ -68,22 +70,20 @@ public interface ISRPlugin {
         manager.enableUnstableAPI("help");
         LocaleManager<ISRForeign> localeManager = getLocaleManager();
 
-        SkinsRestorerAPIShared api = SkinsRestorerAPIShared.getApi();
-
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(api.getDefaultForeign(), v.call().getKey())));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(api.getDefaultForeign(), v.call().getKey())));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
+        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(localeManager.getMessage(api.getDefaultForeign(), v.call().getKey()).split(", "))));
+                Arrays.asList(localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey()).split(", "))));
 
-        CommandPropertiesManager.load(manager, getDataFolderPath(), getResource("command.properties"), srLogger);
+        CommandPropertiesManager.load(manager, getDataFolder(), getResource("command.properties"), srLogger);
 
         SharedMethods.allowIllegalACFNames();
     }
 
     default void initStorage() throws InitializeException {
         // Initialise SkinStorage
-        SharedMethods.initStorage(getSrLogger(), getSkinStorage(), getDataFolderPath());
+        SharedMethods.initStorage(getLogger(), getSkinStorage(), getDataFolder());
 
         // Preload default skins
         runAsync(getSkinStorage()::preloadDefaultSkins);
@@ -100,11 +100,13 @@ public interface ISRPlugin {
     void checkUpdate(boolean showUpToDate);
 
     default void checkUpdateInit(Runnable check) {
-        Path updaterDisabled = getDataFolderPath().resolve("noupdate.txt");
+        Path updaterDisabled = getDataFolder().resolve("noupdate.txt");
         if (Files.exists(updaterDisabled)) {
-            getSrLogger().info("Updater Disabled");
+            getLogger().info("Updater Disabled");
         } else {
             check.run();
         }
     }
+
+    boolean isPluginEnabled(String pluginName);
 }

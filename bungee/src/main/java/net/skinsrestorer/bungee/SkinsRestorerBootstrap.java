@@ -17,26 +17,16 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.bungee;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import lombok.Getter;
+import net.md_5.bungee.api.plugin.Plugin;
 
-public class NotPremiumExceptionShared extends NotPremiumException {
-    public NotPremiumExceptionShared() {
-        super();
-    }
-
-    public NotPremiumExceptionShared(String message) {
-        super(message);
-    }
-
-    public NotPremiumExceptionShared(Throwable e) {
-        super(e);
-    }
-
-    public NotPremiumExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getApi().getDefaultForeign(), key, args));
+@Getter
+@SuppressWarnings("Duplicates")
+public class SkinsRestorerBootstrap extends Plugin {
+    @Override
+    public void onEnable() {
+        new SkinsRestorerBungee(this).pluginStartup();
     }
 }

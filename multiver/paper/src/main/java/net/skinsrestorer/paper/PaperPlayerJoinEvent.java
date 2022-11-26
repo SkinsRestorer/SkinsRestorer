@@ -49,7 +49,7 @@ public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements 
             handleAsync(profileEvent).ifPresent(property ->
                     event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature())));
         } catch (SkinRequestException e) {
-            plugin.getSrLogger().debug(e);
+            plugin.getLogger().debug(e);
         }
     }
 
