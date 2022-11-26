@@ -294,7 +294,16 @@ public abstract class SkinsRestorerAPI {
      */
     public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
         String playerName = playerWrapper.getName();
-        applySkin(playerWrapper, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
+        String skinName = getSkinName(playerName);
+        if (skinName == null) {
+            IProperty defaultSkin = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
+            if (defaultSkin != null) {
+                applySkin(playerWrapper, defaultSkin);
+            }
+        } else {
+            skinName = playerName;
+        }
+        applySkin(playerWrapper, skinName);
     }
 
     /**
