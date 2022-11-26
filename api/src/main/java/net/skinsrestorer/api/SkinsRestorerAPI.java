@@ -76,7 +76,7 @@ public abstract class SkinsRestorerAPI {
      * @throws NotPremiumException  if the player is not premium
      * @throws SkinRequestException or error
      */
-    public String getUUID(@NonNull String playerName) throws SkinRequestException {
+    public String getMojangUniqueId(@NonNull String playerName) throws SkinRequestException {
         return this.mojangAPI.getUUID(playerName);
     }
 
@@ -268,6 +268,12 @@ public abstract class SkinsRestorerAPI {
         return createPlatformProperty(name, value, signature);
     }
 
+    /**
+     * Removes the player selected skin
+     * This will remove the player table/file and NOT the skin data.
+     *
+     * @param playerName - The players name
+     */
     public void removeSkin(String playerName) {
         getSkinStorage().removeSkinOfPlayer(playerName);
     }
@@ -278,14 +284,37 @@ public abstract class SkinsRestorerAPI {
         } else throw new IllegalStateException("SkinStorage is not initialized. Is SkinsRestorer in proxy mode?");
     }
 
+    /**
+     * Applies the player selected skin from the player table/file.
+     * This is useful in combination with setSkinName.
+     *
+     * @param playerWrapper
+     * @throws SkinRequestException
+     */
     public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
-        applySkin(playerWrapper, playerWrapper.getName());
+        String playerName = playerWrapper.getName();
+        applySkin(playerWrapper, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
     }
 
+    /**
+     * Only Apply the skinName from the skin table/file.
+     * This will not keep the skin on rejoin / applySkin(playerWrapper).
+     *
+     * @param playerWrapper
+     * @param skinName
+     * @throws SkinRequestException
+     */
     public void applySkin(PlayerWrapper playerWrapper, String skinName) throws SkinRequestException {
         applySkin(playerWrapper, skinStorage.fetchSkinData(skinName));
     }
 
+    /**
+     * Applies the skin from the property object.
+     * This can be a custom skin that is not in the skin table/file.
+     *
+     * @param playerWrapper
+     * @param property
+     */
     public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
 
     protected IWrapperFactory getWrapperFactory() {
