@@ -300,8 +300,6 @@ public abstract class SkinsRestorerAPI {
             if (defaultSkin != null) {
                 applySkin(playerWrapper, defaultSkin);
             }
-        } else {
-            skinName = playerName;
         }
         applySkin(playerWrapper, skinName);
     }
