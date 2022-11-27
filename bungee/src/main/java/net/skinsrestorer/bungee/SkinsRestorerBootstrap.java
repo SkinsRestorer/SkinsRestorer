@@ -19,11 +19,8 @@
  */
 package net.skinsrestorer.bungee;
 
-import lombok.Getter;
 import net.md_5.bungee.api.plugin.Plugin;
 
-@Getter
-@SuppressWarnings("Duplicates")
 public class SkinsRestorerBootstrap extends Plugin {
     @Override
     public void onEnable() {

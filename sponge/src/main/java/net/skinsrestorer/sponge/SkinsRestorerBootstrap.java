@@ -20,11 +20,9 @@
 package net.skinsrestorer.sponge;
 
 import com.google.inject.Inject;
-import lombok.Getter;
 import net.skinsrestorer.builddata.BuildData;
 import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
-import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -34,11 +32,8 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import java.nio.file.Path;
 
-@Getter
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
 public class SkinsRestorerBootstrap {
-    @Inject
-    protected Game game;
     @Inject
     private PluginContainer container;
     @ConfigDir(sharedRoot = false)
@@ -53,7 +48,7 @@ public class SkinsRestorerBootstrap {
 
     @Listener
     public void onInitialize(GameInitializationEvent event) {
-        this.plugin = new SkinsRestorerSponge(this, metricsFactory, dataFolder, logger, container, game);
+        this.plugin = new SkinsRestorerSponge(this, metricsFactory, dataFolder, logger, container);
         this.plugin.onInitialize();
     }
 

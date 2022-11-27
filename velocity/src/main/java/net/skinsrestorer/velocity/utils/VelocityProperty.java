@@ -19,16 +19,20 @@
  */
 package net.skinsrestorer.velocity.utils;
 
-import com.velocitypowered.api.util.GameProfile.Property;
+import com.velocitypowered.api.util.GameProfile;
 import lombok.ToString;
 import net.skinsrestorer.api.property.IProperty;
 
 @ToString
 public class VelocityProperty implements IProperty {
-    private final Property property;
+    private final GameProfile.Property property;
 
     public VelocityProperty(String name, String value, String signature) {
-        property = new Property(name, value, signature);
+        this(new GameProfile.Property(name, value, signature));
+    }
+
+    public VelocityProperty(GameProfile.Property property) {
+        this.property = property;
     }
 
     @Override

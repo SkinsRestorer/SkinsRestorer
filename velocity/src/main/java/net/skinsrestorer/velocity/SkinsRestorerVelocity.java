@@ -80,7 +80,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
         this.skinApplierVelocity = new SkinApplierVelocity(this);
-        new SkinsRestorerVelocityAPI(); // Register API
+        registerAPI();
     }
 
     public void pluginStartup() {
@@ -188,6 +188,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
         return new VelocityCommandManager(proxy, pluginInstance);
+    }
+
+    @Override
+    protected void registerAPI() {
+        new SkinsRestorerVelocityAPI();
     }
 
     private static class WrapperFactoryVelocity implements IWrapperFactory {

@@ -29,11 +29,11 @@ import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.velocity.SkinsRestorerVelocity;
+import net.skinsrestorer.velocity.utils.VelocityProperty;
 
 import java.util.Collections;
 import java.util.List;
@@ -138,6 +138,6 @@ public class SrCommand extends BaseCommand implements ISRCommand {
             return Collections.emptyList();
         }
 
-        return prop.stream().map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature())).collect(Collectors.toList());
+        return prop.stream().map(VelocityProperty::new).collect(Collectors.toList());
     }
 }

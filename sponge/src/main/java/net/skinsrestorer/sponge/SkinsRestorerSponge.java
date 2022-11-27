@@ -65,7 +65,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     private final PluginContainer pluginContainer;
     protected Game game;
 
-    public SkinsRestorerSponge(Object pluginInstance, Metrics.Factory metricsFactory, Path dataFolder, Logger log, PluginContainer container, Game game) {
+    public SkinsRestorerSponge(Object pluginInstance, Metrics.Factory metricsFactory, Path dataFolder, Logger log, PluginContainer container) {
         super(
                 new Slf4jLoggerImpl(log),
                 false,
@@ -77,7 +77,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         this.metrics = metricsFactory.make(2337);
         this.skinCommand = new SkinCommand(this);
         this.pluginContainer = container;
-        new SkinsRestorerSpongeAPI(); // Register API
+        registerAPI();
     }
 
     public void onInitialize() {
@@ -176,6 +176,11 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
         return new SpongeCommandManager(pluginContainer);
+    }
+
+    @Override
+    protected void registerAPI() {
+        new SkinsRestorerSpongeAPI();
     }
 
     private static class WrapperFactorySponge implements IWrapperFactory {

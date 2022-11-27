@@ -42,6 +42,7 @@ public abstract class SkinsRestorerServerShared extends SkinsRestorerShared impl
 
     /**
      * Legacy method of converting SkinGUI plugin message data to a map.
+     *
      * @deprecated Use {@link #convertToObjectV2(byte[])} instead. Will be removed in 15.0.0
      */
     @SuppressWarnings("unchecked")

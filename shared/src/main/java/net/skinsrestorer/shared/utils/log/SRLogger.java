@@ -50,7 +50,8 @@ public class SRLogger {
                     Config.DEBUG = true;
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

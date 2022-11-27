@@ -56,8 +56,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 public class MineSkinAPI implements IMineSkinAPI {
-    private static final String NAMEMCSKINURL = "https://namemc.com/skin/";
-    private static final String NAMEMCIMGURL = "https://s.namemc.com/i/%s.png";
+    private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
+    private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
     private final Gson gson = new Gson();
@@ -69,7 +69,7 @@ public class MineSkinAPI implements IMineSkinAPI {
 
     @Override
     public IProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
-        url = url.startsWith(NAMEMCSKINURL) ? NAMEMCIMGURL.replace("%s", url.substring(24)) : url; //fix NameMC skins
+        url = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
         AtomicInteger failedAttempts = new AtomicInteger(0);
 
         do {

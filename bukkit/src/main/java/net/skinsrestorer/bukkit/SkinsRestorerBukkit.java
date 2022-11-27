@@ -96,32 +96,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         );
         this.server = plugin.getServer();
         this.pluginInstance = plugin;
-        new SkinsRestorerBukkitAPI(); // Register API
-    }
-
-    @Override
-    public InputStream getResource(String resource) {
-        return pluginInstance.getResource(resource);
-    }
-
-    @Override
-    public void runAsync(Runnable runnable) {
-        server.getScheduler().runTaskAsynchronously(pluginInstance, runnable);
-    }
-
-    @Override
-    public void runSync(Runnable runnable) {
-        server.getScheduler().runTask(pluginInstance, runnable);
-    }
-
-    @Override
-    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
-    }
-
-    @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
-        return server.getOnlinePlayers().stream().map(WrapperBukkit::wrapPlayer).collect(Collectors.toList());
+        registerAPI();
     }
 
     public void pluginStartup() throws InitializeException {
@@ -254,7 +229,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
                             Inventory inventory = SkinsGUI.createGUI(this, wrapPlayer(player), page, skinList);
 
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(pluginInstance, () -> player.openInventory(inventory));
+                            runSync(() -> player.openInventory(inventory));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -483,8 +458,38 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
+    public InputStream getResource(String resource) {
+        return pluginInstance.getResource(resource);
+    }
+
+    @Override
+    public void runAsync(Runnable runnable) {
+        server.getScheduler().runTaskAsynchronously(pluginInstance, runnable);
+    }
+
+    @Override
+    public void runSync(Runnable runnable) {
+        server.getScheduler().runTask(pluginInstance, runnable);
+    }
+
+    @Override
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+        server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        return server.getOnlinePlayers().stream().map(WrapperBukkit::wrapPlayer).collect(Collectors.toList());
+    }
+
+    @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
         return new PaperCommandManager(pluginInstance);
+    }
+
+    @Override
+    protected void registerAPI() {
+        new SkinsRestorerBukkitAPI();
     }
 
     private static class WrapperFactoryBukkit implements IWrapperFactory {

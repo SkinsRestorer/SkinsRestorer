@@ -19,15 +19,13 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRConsole;
 import org.bukkit.command.ConsoleCommandSender;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BukkitConsoleImpl implements ISRConsole {
-    @Setter
-    private ConsoleCommandSender consoleCommandSender;
+    private final ConsoleCommandSender consoleCommandSender;
 
     @Override
     public void sendMessage(String message) {

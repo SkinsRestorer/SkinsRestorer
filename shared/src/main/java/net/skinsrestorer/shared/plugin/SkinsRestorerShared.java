@@ -72,4 +72,6 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     protected abstract CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
+
+    protected abstract void registerAPI();
 }

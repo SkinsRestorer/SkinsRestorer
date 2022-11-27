@@ -31,4 +31,9 @@ public interface ISRPlayer extends ISRCommandSender {
     UUID getUniqueId();
 
     void sendMessage(String message);
+
+    @Override
+    default boolean isConsole() {
+        return false;
+    }
 }

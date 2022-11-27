@@ -25,8 +25,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * Helper class to get all information off a class.
- * Can be useful when needing to analyze nms without being able to use a decompiler.
+ * Helper class to get all information of a class.
+ * Can be useful when needing to analyze NMS without being able to use a decompiler.
  */
 public class ClassDump {
     /**

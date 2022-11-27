@@ -42,13 +42,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
-    private static final String LTRIM = "^\\\\s+";
-    private static final String RTRIM = "\\\\s+$";
-    private static final Pattern TRIM_PATTERN = Pattern.compile("(" + LTRIM + "|" + RTRIM + ")");
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
@@ -278,7 +274,7 @@ public class SkinStorage implements ISkinStorage {
      */
     public Pair<String, Boolean> getDefaultSkinName(String playerName, boolean clear) {
         // Trim player name
-        playerName = TRIM_PATTERN.matcher(playerName).replaceAll("");
+        playerName = playerName.trim();
 
         if (!clear) {
             Optional<String> playerSkinName = getSkinNameOfPlayer(playerName);

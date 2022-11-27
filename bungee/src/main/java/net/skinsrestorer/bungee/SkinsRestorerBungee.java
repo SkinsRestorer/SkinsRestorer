@@ -80,7 +80,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         );
         this.proxy = plugin.getProxy();
         this.pluginInstance = plugin;
-        new SkinsRestorerBungeeAPI(); // Register API
+        registerAPI();
     }
 
     /*
@@ -199,6 +199,11 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
         return new BungeeCommandManager(pluginInstance);
+    }
+
+    @Override
+    protected void registerAPI() {
+        new SkinsRestorerBungeeAPI();
     }
 
     private static class WrapperFactoryBungee implements IWrapperFactory {

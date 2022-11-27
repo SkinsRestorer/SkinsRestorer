@@ -19,11 +19,8 @@
  */
 package net.skinsrestorer.bukkit;
 
-import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
-@Getter
-@SuppressWarnings("Duplicates")
 public class SkinsRestorerBootstrap extends JavaPlugin {
     @Override
     public void onEnable() {
