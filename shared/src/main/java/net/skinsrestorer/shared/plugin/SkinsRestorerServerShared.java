@@ -40,6 +40,10 @@ public abstract class SkinsRestorerServerShared extends SkinsRestorerShared impl
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
     }
 
+    /**
+     * Legacy method of converting SkinGUI plugin message data to a map.
+     * @deprecated Use {@link #convertToObjectV2(byte[])} instead. Will be removed in 15.0.0
+     */
     @SuppressWarnings("unchecked")
     protected static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
         try {
@@ -64,5 +68,4 @@ public abstract class SkinsRestorerServerShared extends SkinsRestorerShared impl
             return Collections.emptyMap();
         }
     }
-
 }
