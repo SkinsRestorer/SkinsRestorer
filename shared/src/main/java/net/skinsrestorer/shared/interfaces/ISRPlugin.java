@@ -54,9 +54,7 @@ public interface ISRPlugin {
 
     void runAsync(Runnable runnable);
 
-    void runSync(Runnable runnable);
-
-    void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
+    void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
     Collection<ISRPlayer> getOnlinePlayers();
 

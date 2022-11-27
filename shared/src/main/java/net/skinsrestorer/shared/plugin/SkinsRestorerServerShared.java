@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.plugin;
 import lombok.Getter;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 @Getter
-public abstract class SkinsRestorerServerShared extends SkinsRestorerShared {
+public abstract class SkinsRestorerServerShared extends SkinsRestorerShared implements ISRServerPlugin {
     protected boolean proxyMode;
 
     protected SkinsRestorerServerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {

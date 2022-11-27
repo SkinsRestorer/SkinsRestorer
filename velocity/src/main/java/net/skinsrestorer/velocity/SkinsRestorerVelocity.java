@@ -88,7 +88,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     public void pluginStartup() {
         logger.load(dataFolder);
 
-        Metrics metrics = metricsFactory.make(this, 10606);
+        Metrics metrics = metricsFactory.make(pluginInstance, 10606);
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
@@ -98,7 +98,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-            runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
+            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         });
 
         // Init config files
@@ -134,7 +134,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         prepareACF(manager, logger);
 
-        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -177,12 +177,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public void runSync(Runnable runnable) {
-        runAsync(runnable);
-    }
-
-    @Override
-    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         proxy.getScheduler().buildTask(pluginInstance, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
     }
 
@@ -209,16 +204,9 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         }
     }
 
-    private static class PropertyFactoryVelocity implements IPropertyFactory {
-        @Override
-        public IProperty createProperty(String name, String value, String signature) {
-            return new VelocityProperty(name, value, signature);
-        }
-    }
-
     private class SkinsRestorerVelocityAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerVelocityAPI() {
-            super(SkinsRestorerVelocity.this, new WrapperFactoryVelocity(), new PropertyFactoryVelocity());
+            super(SkinsRestorerVelocity.this, new WrapperFactoryVelocity(), VelocityProperty::new);
         }
 
         @Override

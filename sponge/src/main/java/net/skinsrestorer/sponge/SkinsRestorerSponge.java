@@ -88,7 +88,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
             checkUpdate(true);
 
             int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-            runRepeat(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
+            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
         });
 
         // Init config files
@@ -125,7 +125,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         prepareACF(manager, logger);
 
-        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -169,7 +169,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     @Override
-    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         game.getScheduler().createTaskBuilder().execute(runnable).interval(interval, timeUnit).delay(delay, timeUnit).submit(pluginInstance);
     }
 
@@ -191,16 +191,9 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         }
     }
 
-    private static class PropertyFactorySponge implements IPropertyFactory {
-        @Override
-        public IProperty createProperty(String name, String value, String signature) {
-            return new GenericProperty(name, value, signature);
-        }
-    }
-
     private class SkinsRestorerSpongeAPI extends SkinsRestorerAPIShared {
         public SkinsRestorerSpongeAPI() {
-            super(SkinsRestorerSponge.this, new WrapperFactorySponge(), new PropertyFactorySponge());
+            super(SkinsRestorerSponge.this, new WrapperFactorySponge(), GenericProperty::new);
         }
 
         @Override

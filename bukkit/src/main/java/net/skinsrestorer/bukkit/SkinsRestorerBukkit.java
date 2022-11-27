@@ -115,7 +115,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
-    public void runRepeat(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
+    public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
     }
 
@@ -305,7 +305,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             int delayInt = 300 + ThreadLocalRandom.current().nextInt(1800 + 1 - 300);
             // Repeat update between 1 & 4 hours
             int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
-            runRepeat(this::checkUpdate, delayInt, periodInt, TimeUnit.SECONDS);
+            runRepeatAsync(this::checkUpdate, delayInt, periodInt, TimeUnit.SECONDS);
         });
     }
 
@@ -358,7 +358,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         prepareACF(manager, logger);
 
-        runRepeat(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
