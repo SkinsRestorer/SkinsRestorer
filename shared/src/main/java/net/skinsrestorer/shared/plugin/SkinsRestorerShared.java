@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +52,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final Path dataFolder;
     protected final String version;
     protected CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private boolean outdated = false;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);
@@ -74,4 +76,25 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected abstract CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 
     protected abstract void registerAPI();
+
+    protected abstract boolean isProxyMode();
+
+    public void checkUpdate(boolean showUpToDate) {
+        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
+            @Override
+            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+                outdated = true;
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, isProxyMode())
+                        .forEach(logger::info);
+            }
+
+            @Override
+            public void upToDate() {
+                if (!showUpToDate)
+                    return;
+
+                updateChecker.getUpToDateMessages(version, isProxyMode()).forEach(logger::info);
+            }
+        }));
+    }
 }

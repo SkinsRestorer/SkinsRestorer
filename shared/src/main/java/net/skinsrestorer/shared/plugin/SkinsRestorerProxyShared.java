@@ -28,4 +28,9 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
     protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
     }
+
+    @Override
+    protected boolean isProxyMode() {
+        return false;
+    }
 }

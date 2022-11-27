@@ -68,7 +68,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private final SkinCommand skinCommand = new SkinCommand(this);
     private final ProxyServer proxy;
     private final Plugin pluginInstance; // Only for platform API use
-    private boolean outdated;
 
     public SkinsRestorerBungee(Plugin plugin) {
         super(
@@ -145,25 +144,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
         manager.registerCommand(new GUICommand(this));
-    }
-
-    public void checkUpdate(boolean showUpToDate) {
-        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
-            @Override
-            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                outdated = true;
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, false)
-                        .forEach(logger::info);
-            }
-
-            @Override
-            public void upToDate() {
-                if (!showUpToDate)
-                    return;
-
-                updateChecker.getUpToDateMessages(version, false).forEach(logger::info);
-            }
-        }));
     }
 
     @Override

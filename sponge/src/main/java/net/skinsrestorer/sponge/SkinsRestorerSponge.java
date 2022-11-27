@@ -40,7 +40,6 @@ import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
@@ -57,7 +56,6 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SkinsRestorerSponge extends SkinsRestorerServerShared {
-    private static final boolean BUNGEE_ENABLED = false;
     private final Object pluginInstance; // Only for platform API use
     private final Metrics metrics;
     private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
@@ -92,7 +90,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), logger);
-
         Message.load(localeManager, dataFolder, this);
 
         // Init storage
@@ -124,23 +121,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
-    }
-
-    public void checkUpdate(boolean showUpToDate) {
-        runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
-            @Override
-            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, SkinsRestorerSponge.BUNGEE_ENABLED).forEach(logger::info);
-            }
-
-            @Override
-            public void upToDate() {
-                if (!showUpToDate)
-                    return;
-
-                updateChecker.getUpToDateMessages(version, SkinsRestorerSponge.BUNGEE_ENABLED).forEach(logger::info);
-            }
-        }));
     }
 
     @Override

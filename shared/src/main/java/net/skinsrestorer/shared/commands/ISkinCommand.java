@@ -141,7 +141,6 @@ public interface ISkinCommand {
                         sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                         return;
                     }
-
                 } else {
                     // get DefaultSkin
                     skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(playerName, true).getLeft());
