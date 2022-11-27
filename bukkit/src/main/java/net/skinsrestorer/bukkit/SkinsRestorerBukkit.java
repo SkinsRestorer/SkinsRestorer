@@ -427,8 +427,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                if (updateDownloaded)
+                outdated = true;
+
+                if (updateDownloaded) {
                     return;
+                }
 
                 String failReason = null;
                 if (hasDirectDownload) {

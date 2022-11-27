@@ -3,7 +3,7 @@ main: net.skinsrestorer.bukkit.SkinsRestorerBootstrap
 version: ${version}
 description: ${description}
 website: https://skinsrestorer.net/
-authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls"]
+authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
 softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK" ]
 api-version: 1.13
 commands:

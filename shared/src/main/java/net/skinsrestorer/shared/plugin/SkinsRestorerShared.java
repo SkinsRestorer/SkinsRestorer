@@ -52,7 +52,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final Path dataFolder;
     protected final String version;
     protected CommandManager<?, ?, ?, ?, ?, ?> manager;
-    private boolean outdated = false;
+    protected boolean outdated = false;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);

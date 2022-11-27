@@ -52,7 +52,6 @@ import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
-import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.InputStream;
 import java.util.Collection;

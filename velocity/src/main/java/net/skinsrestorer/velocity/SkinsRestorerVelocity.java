@@ -48,7 +48,6 @@ import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import org.slf4j.Logger;
 
 import java.io.InputStream;
