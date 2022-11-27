@@ -37,6 +37,6 @@ public class SkinRequestExceptionShared extends SkinRequestException {
     }
 
     public SkinRequestExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getApi().getDefaultForeign(), key, args));
+        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getDefaultForeign(), key, args));
     }
 }

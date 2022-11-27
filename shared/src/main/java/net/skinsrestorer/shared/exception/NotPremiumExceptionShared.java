@@ -37,6 +37,6 @@ public class NotPremiumExceptionShared extends NotPremiumException {
     }
 
     public NotPremiumExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getApi().getDefaultForeign(), key, args));
+        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getDefaultForeign(), key, args));
     }
 }

@@ -22,7 +22,6 @@ package net.skinsrestorer.sponge;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
