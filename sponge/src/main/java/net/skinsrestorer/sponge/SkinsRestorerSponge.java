@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.sponge;
 
+import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
@@ -63,7 +64,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     private final SkinCommand skinCommand;
     private final PluginContainer pluginContainer;
     protected Game game;
-    private SpongeCommandManager manager;
 
     public SkinsRestorerSponge(Object pluginInstance, Metrics.Factory metricsFactory, Path dataFolder, Logger log, PluginContainer container, Game game) {
         super(
@@ -120,11 +120,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     private void initCommands() {
-        manager = new SpongeCommandManager(pluginContainer);
-
-        prepareACF(manager, logger);
-
-        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        sharedInitCommands();
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -159,7 +155,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
     @Override
     public void runAsync(Runnable runnable) {
-        game.getScheduler().createAsyncExecutor(this).execute(runnable);
+        game.getScheduler().createAsyncExecutor(pluginInstance).execute(runnable);
     }
 
     @Override
@@ -175,6 +171,11 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     @Override
     public Collection<ISRPlayer> getOnlinePlayers() {
         return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
+    }
+
+    @Override
+    protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
+        return new SpongeCommandManager(pluginContainer);
     }
 
     private static class WrapperFactorySponge implements IWrapperFactory {

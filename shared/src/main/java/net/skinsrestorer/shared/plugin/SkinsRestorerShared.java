@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
@@ -35,6 +36,7 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.nio.file.Path;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public abstract class SkinsRestorerShared implements ISRPlugin {
@@ -48,6 +50,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final UpdateChecker updateChecker;
     protected final Path dataFolder;
     protected final String version;
+    protected CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);
@@ -59,4 +62,14 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
         this.dataFolder = dataFolder;
     }
+
+    protected void sharedInitCommands() {
+        manager = createCommandManager();
+
+        prepareACF(manager, logger);
+
+        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+    }
+
+    protected abstract CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 }

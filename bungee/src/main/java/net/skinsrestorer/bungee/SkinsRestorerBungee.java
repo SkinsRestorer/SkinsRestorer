@@ -20,6 +20,7 @@
 package net.skinsrestorer.bungee;
 
 import co.aikar.commands.BungeeCommandManager;
+import co.aikar.commands.CommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
@@ -68,7 +69,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private final ProxyServer proxy;
     private final Plugin pluginInstance; // Only for platform API use
     private boolean outdated;
-    private BungeeCommandManager manager;
 
     public SkinsRestorerBungee(Plugin plugin) {
         super(
@@ -140,11 +140,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     private void initCommands() {
-        manager = new BungeeCommandManager(pluginInstance);
-
-        prepareACF(manager, logger);
-
-        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        sharedInitCommands();
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -198,6 +194,11 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     @Override
     public Optional<ISRProxyPlayer> getPlayer(String playerName) {
         return Optional.ofNullable(proxy.getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
+    }
+
+    @Override
+    protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
+        return new BungeeCommandManager(pluginInstance);
     }
 
     private static class WrapperFactoryBungee implements IWrapperFactory {

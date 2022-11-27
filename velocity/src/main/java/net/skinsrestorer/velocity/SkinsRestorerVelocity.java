@@ -66,7 +66,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     private final SkinApplierVelocity skinApplierVelocity;
     private final Metrics.Factory metricsFactory;
     private final SkinCommand skinCommand = new SkinCommand(this);
-    private CommandManager<?, ?, ?, ?, ?, ?> manager;
     private boolean outdated;
 
     public SkinsRestorerVelocity(Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory, Path dataFolder, Logger logger, PluginContainer container) {
@@ -129,11 +128,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     private void initCommands() {
-        manager = new VelocityCommandManager(proxy, pluginInstance);
-
-        prepareACF(manager, logger);
-
-        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        sharedInitCommands();
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -188,6 +183,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     @Override
     public Optional<ISRProxyPlayer> getPlayer(String playerName) {
         return proxy.getPlayer(playerName).map(WrapperVelocity::wrapPlayer);
+    }
+
+    @Override
+    protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
+        return new VelocityCommandManager(proxy, pluginInstance);
     }
 
     private static class WrapperFactoryVelocity implements IWrapperFactory {

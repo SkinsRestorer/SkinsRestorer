@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import co.aikar.commands.CommandManager;
 import co.aikar.commands.PaperCommandManager;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
@@ -81,7 +82,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private final JavaPlugin pluginInstance; // Only for platform API use
     private final SkinCommand skinCommand = new SkinCommand(this);
     private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
-    private PaperCommandManager manager;
     private boolean isUpdaterInitialized = false;
     private SkinApplierBukkit skinApplierBukkit;
     private boolean updateDownloaded = false;
@@ -354,11 +354,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     private void initCommands() {
-        manager = new PaperCommandManager(pluginInstance);
-
-        prepareACF(manager, logger);
-
-        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        sharedInitCommands();
 
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this));
@@ -484,6 +480,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     @Override
     public boolean isPluginEnabled(String pluginName) {
         return server.getPluginManager().getPlugin(pluginName) != null;
+    }
+
+    @Override
+    protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
+        return new PaperCommandManager(pluginInstance);
     }
 
     private static class WrapperFactoryBukkit implements IWrapperFactory {
