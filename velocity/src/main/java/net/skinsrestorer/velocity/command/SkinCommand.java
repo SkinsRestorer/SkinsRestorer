@@ -19,28 +19,25 @@
  */
 package net.skinsrestorer.velocity.command;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.velocity.SkinsRestorerVelocity;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
-public class SkinCommand extends BaseCommand implements ISkinCommand {
-    @Getter
-    private final SkinsRestorerVelocity plugin;
+public class SkinCommand extends SharedSkinCommand {
+    public SkinCommand(ISRPlugin plugin) {
+        super(plugin);
+    }
 
     @Default
     public void onDefault(CommandSource source) {

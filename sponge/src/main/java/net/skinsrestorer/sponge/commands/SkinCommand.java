@@ -19,28 +19,25 @@
  */
 package net.skinsrestorer.sponge.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.shared.commands.ISkinCommand;
-import net.skinsrestorer.sponge.SkinsRestorerSponge;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
-public class SkinCommand extends BaseCommand implements ISkinCommand {
-    @Getter
-    private final SkinsRestorerSponge plugin;
+public class SkinCommand extends SharedSkinCommand {
+    public SkinCommand(ISRPlugin plugin) {
+        super(plugin);
+    }
 
     @Default
     public void onDefault(CommandSource source) {

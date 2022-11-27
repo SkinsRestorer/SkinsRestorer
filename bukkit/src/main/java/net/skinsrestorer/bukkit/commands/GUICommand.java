@@ -39,6 +39,7 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
+@SuppressWarnings({"unused"})
 public class GUICommand extends BaseCommand {
     private final SkinsRestorerBukkit plugin;
 

@@ -19,19 +19,19 @@
  */
 package net.skinsrestorer.velocity.command;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 
@@ -42,12 +42,16 @@ import java.util.stream.Collectors;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISRCommand {
-    @Getter
+@SuppressWarnings({"unused"})
+public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerVelocity plugin;
+
+    public SrCommand(SkinsRestorerVelocity plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

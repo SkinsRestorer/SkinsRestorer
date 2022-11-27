@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -40,33 +42,34 @@ import java.util.List;
 
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
-public interface ISRCommand {
-    default void onHelp(ISRCommandSender sender, CommandHelp help) {
+@RequiredArgsConstructor
+public abstract class SharedSRCommand extends BaseCommand {
+    protected final ISRPlugin plugin;
+
+    protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         help.showHelp();
     }
 
-    default void reloadCustomHook() {
+    protected void reloadCustomHook() {
     }
 
-    default void onReload(ISRCommandSender sender) {
+    protected void onReload(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         reloadCustomHook();
         Message.load(plugin.getLocaleManager(), plugin.getDataFolder(), plugin);
-        Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), plugin.getLogger());
+        plugin.loadConfig();
 
         plugin.prepareACF(plugin.getManager(), plugin.getLogger());
 
         sender.sendMessage(Message.RELOAD);
     }
 
-    default void onStatus(ISRCommandSender sender) {
+    protected void onStatus(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
 
@@ -96,7 +99,7 @@ public interface ISRCommand {
             if (workingUUIDCount != 0 && workingProfileCount != 0)
                 statusMessages.add("§aThe plugin currently is in a working state.");
             else
-                statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See http://skinsrestorer.net/firewall for more info");
+                statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See https://skinsrestorer.net/firewall for more info");
             statusMessages.add(breakLine);
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
             statusMessages.add("§7Server: §6" + getPlatformVersion());
@@ -107,10 +110,9 @@ public interface ISRCommand {
         });
     }
 
-    default void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
+    protected void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
@@ -125,10 +127,9 @@ public interface ISRCommand {
         });
     }
 
-    default void onProps(ISRCommandSender sender, ISRPlayer target) {
+    protected void onProps(ISRCommandSender sender, ISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
                 List<IProperty> properties = getPropertiesOfPlayer(target);
@@ -167,10 +168,9 @@ public interface ISRCommand {
         });
     }
 
-    default void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
+    protected void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
@@ -181,10 +181,9 @@ public interface ISRCommand {
         });
     }
 
-    default void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
+    protected void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
@@ -200,10 +199,9 @@ public interface ISRCommand {
         });
     }
 
-    default void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
+    protected void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
                 sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
@@ -237,8 +235,7 @@ public interface ISRCommand {
         });
     }
 
-    default void onPurgeOldData(ISRCommandSender sender, int days) {
-        ISRPlugin plugin = getPlugin();
+    protected void onPurgeOldData(ISRCommandSender sender, int days) {
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
                 sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
@@ -252,16 +249,13 @@ public interface ISRCommand {
         });
     }
 
+    protected abstract String getPlatformVersion();
 
-    String getPlatformVersion();
+    protected abstract String getProxyMode();
 
-    String getProxyMode();
+    protected abstract List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
 
-    ISRPlugin getPlugin();
-
-    List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
-
-    enum PlayerOrSkin {
+    protected enum PlayerOrSkin {
         PLAYER,
         SKIN,
     }

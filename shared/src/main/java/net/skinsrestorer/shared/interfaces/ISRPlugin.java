@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.interfaces;
 import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.commands.ISkinCommand;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -58,7 +58,7 @@ public interface ISRPlugin {
 
     Collection<ISRPlayer> getOnlinePlayers();
 
-    ISkinCommand getSkinCommand();
+    SharedSkinCommand getSkinCommand();
 
     LocaleManager<ISRForeign> getLocaleManager();
 
@@ -107,4 +107,6 @@ public interface ISRPlugin {
     }
 
     boolean isPluginEnabled(String pluginName);
+
+    void loadConfig();
 }

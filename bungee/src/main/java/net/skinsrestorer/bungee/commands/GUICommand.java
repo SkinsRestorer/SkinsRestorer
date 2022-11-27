@@ -19,28 +19,26 @@
  */
 package net.skinsrestorer.bungee.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.bungee.SkinsRestorerBungee;
-import net.skinsrestorer.shared.commands.IProxyGUICommand;
+import net.skinsrestorer.shared.commands.ShredProxyGUICommand;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
-@Getter
-@RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
-public class GUICommand extends BaseCommand implements IProxyGUICommand {
-    private final SkinsRestorerBungee plugin;
+@SuppressWarnings({"unused"})
+public class GUICommand extends ShredProxyGUICommand {
+    public GUICommand(ISRProxyPlugin plugin) {
+        super(plugin);
+    }
 
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {

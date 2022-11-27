@@ -19,19 +19,17 @@
  */
 package net.skinsrestorer.bukkit.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
-import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -40,12 +38,16 @@ import java.util.*;
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapCommandSender;
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISRCommand {
-    @Getter
+@SuppressWarnings({"unused"})
+public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBukkit plugin;
+
+    public SrCommand(SkinsRestorerBukkit plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

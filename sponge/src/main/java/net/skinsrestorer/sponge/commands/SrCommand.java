@@ -19,18 +19,17 @@
  */
 package net.skinsrestorer.sponge.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -42,12 +41,16 @@ import java.util.stream.Collectors;
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
 import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISRCommand {
-    @Getter
+@SuppressWarnings({"unused"})
+public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerSponge plugin;
+
+    public SrCommand(SkinsRestorerSponge plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

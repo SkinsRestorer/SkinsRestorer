@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.shared.plugin;
 
+import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.SettingsManagerBuilder;
 import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
@@ -26,6 +28,7 @@ import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.update.UpdateChecker;
@@ -53,6 +56,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final String version;
     protected CommandManager<?, ?, ?, ?, ?, ?> manager;
     protected boolean outdated = false;
+    protected SettingsManager settings;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);
@@ -96,5 +100,45 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
                 updateChecker.getUpToDateMessages(version, isProxyMode()).forEach(logger::info);
             }
         }));
+    }
+
+    public void loadConfig() {
+        if (settings == null) {
+            settings = SettingsManagerBuilder
+                    .withYamlFile(dataFolder.resolve("config.yml"))
+                    .configurationData(Config.class)
+                    .useDefaultMigrationService()
+                    .create();
+        } else {
+            settings.reload();
+        }
+
+        //__Default__Skins
+        if (settings.getProperty(Config.DEFAULT_SKINS_ENABLED) && settings.getProperty(Config.DEFAULT_SKINS).isEmpty()) {
+            logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
+            settings.setProperty(Config.DEFAULT_SKINS_ENABLED, false);
+        }
+
+        //__Disabled__Skins
+        if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && settings.getProperty(Config.DISABLED_SKINS).isEmpty()) {
+            logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
+            settings.setProperty(Config.DISABLED_SKINS_ENABLED, false);
+        }
+
+        if (settings.getProperty(Config.RESTRICT_SKIN_URLS_ENABLED) && settings.getProperty(Config.RESTRICT_SKIN_URLS_LIST).isEmpty()) {
+            logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
+            settings.setProperty(Config.RESTRICT_SKIN_URLS_ENABLED, false);
+        }
+
+        if (!settings.getProperty(Config.CUSTOM_GUI_ENABLED))
+            settings.setProperty(Config.CUSTOM_GUI_ONLY, false);
+
+        if (!settings.getProperty(Config.DISMOUNT_PLAYER_ON_UPDATE)) {
+            settings.setProperty(Config.REMOUNT_PLAYER_ON_UPDATE, false);
+        }
+
+        if (settings.getProperty(Config.MINESKIN_API_KEY).equals("key")) {
+            settings.setProperty(Config.MINESKIN_API_KEY, "");
+        }
     }
 }

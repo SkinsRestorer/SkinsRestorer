@@ -19,20 +19,18 @@
  */
 package net.skinsrestorer.bungee.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
-import net.skinsrestorer.shared.commands.ISRCommand;
+import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,12 +39,16 @@ import java.util.stream.Collectors;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-public class SrCommand extends BaseCommand implements ISRCommand {
-    @Getter
+@SuppressWarnings({"unused"})
+public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBungee plugin;
+
+    public SrCommand(SkinsRestorerBungee plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

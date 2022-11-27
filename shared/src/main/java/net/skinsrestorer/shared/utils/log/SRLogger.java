@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.utils.log;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.YamlConfig;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,27 +30,18 @@ import java.nio.file.Path;
 public class SRLogger {
     private final ISRLogger logger;
     private final boolean color;
+    private boolean debug = false;
 
     public SRLogger(ISRLogger logger) {
         this(logger, false);
     }
 
     public void load(Path pluginFolder) {
-        try {
-            // Manual check config value
-            Path pluginConfigFile = pluginFolder.resolve("config.yml");
+        // Manual check config value
+        Path pluginDebugFile = pluginFolder.resolve("debug.txt");
 
-            if (Files.exists(pluginConfigFile)) {
-                YamlConfig pluginConfig = new YamlConfig(pluginConfigFile);
-
-                pluginConfig.load();
-
-                if (pluginConfig.getBoolean("Debug")) {
-                    Config.DEBUG = true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (Files.exists(pluginDebugFile)) {
+            debug = true;
         }
     }
 
@@ -68,14 +58,14 @@ public class SRLogger {
     }
 
     public void debug(SRLogLevel level, String message) {
-        if (!Config.DEBUG)
+        if (!Config.DEBUG || debug)
             return;
 
         log(level, message);
     }
 
     public void debug(SRLogLevel level, String message, Throwable thrown) {
-        if (!Config.DEBUG)
+        if (!Config.DEBUG || debug)
             return;
 
         log(level, message, thrown);

@@ -10,7 +10,7 @@ dependencies {
 
     implementation("org.fusesource.jansi:jansi:2.4.0")
 
-    implementation("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
+    api("com.github.SkinsRestorer:ConfigMe:78f32231b5")
     implementation("com.github.aikar:locales:5f204c3afb")
 
     compileOnly("co.aikar:acf-core:0.5.1-SNAPSHOT")

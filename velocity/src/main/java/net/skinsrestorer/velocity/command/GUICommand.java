@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.velocity.command;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
@@ -28,19 +27,20 @@ import co.aikar.commands.annotation.HelpCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.IProxyGUICommand;
-import net.skinsrestorer.velocity.SkinsRestorerVelocity;
+import net.skinsrestorer.shared.commands.ShredProxyGUICommand;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 
 @Getter
-@RequiredArgsConstructor
 @CommandAlias("skins")
 @CommandPermission("%skins")
-public class GUICommand extends BaseCommand implements IProxyGUICommand {
-    private final SkinsRestorerVelocity plugin;
+@SuppressWarnings({"unused"})
+public class GUICommand extends ShredProxyGUICommand {
+    public GUICommand(ISRProxyPlugin plugin) {
+        super(plugin);
+    }
 
     @HelpCommand
     public void onHelp(CommandSource sender, CommandHelp help) {

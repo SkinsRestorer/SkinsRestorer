@@ -19,28 +19,25 @@
  */
 package net.skinsrestorer.bungee.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.bungee.SkinsRestorerBungee;
-import net.skinsrestorer.shared.commands.ISkinCommand;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
-public class SkinCommand extends BaseCommand implements ISkinCommand {
-    @Getter
-    private final SkinsRestorerBungee plugin;
+public class SkinCommand extends SharedSkinCommand {
+    public SkinCommand(ISRPlugin plugin) {
+        super(plugin);
+    }
 
     @Default
     public void onDefault(CommandSender sender) {

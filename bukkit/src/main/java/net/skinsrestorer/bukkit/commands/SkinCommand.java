@@ -19,28 +19,25 @@
  */
 package net.skinsrestorer.bukkit.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
-import net.skinsrestorer.shared.commands.ISkinCommand;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapCommandSender;
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
-@RequiredArgsConstructor
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
-public class SkinCommand extends BaseCommand implements ISkinCommand {
-    @Getter
-    private final SkinsRestorerBukkit plugin;
+public class SkinCommand extends SharedSkinCommand {
+    public SkinCommand(SkinsRestorerBukkit plugin) {
+        super(plugin);
+    }
 
     @Default
     public void onDefault(CommandSender sender) {

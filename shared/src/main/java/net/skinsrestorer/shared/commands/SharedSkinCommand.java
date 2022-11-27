@@ -19,8 +19,10 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
@@ -38,42 +40,42 @@ import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static co.aikar.commands.CommandManager.getCurrentCommandManager;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
-public interface ISkinCommand {
-    IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
+@RequiredArgsConstructor
+public abstract class SharedSkinCommand extends BaseCommand {
+    protected final ISRPlugin plugin;
+    private final IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
 
     @SuppressWarnings("deprecation")
-    default void onDefault(ISRCommandSender sender) {
+    protected void onDefault(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
-    default void onSkinSetShort(ISRPlayer player, String skin) {
+    protected void onSkinSetShort(ISRPlayer player, String skin) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         onSkinSetOther(player, player, skin, null);
     }
 
-    default void onHelp(ISRCommandSender sender, CommandHelp help) {
+    protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         if (Config.ENABLE_CUSTOM_HELP) sendHelp(sender);
         else help.showHelp();
     }
 
-    default void onSkinClear(ISRPlayer player) {
+    protected void onSkinClear(ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         onSkinClearOther(player, player);
     }
 
-    default void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
+    protected void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             String senderName = sender.getName();
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
@@ -103,22 +105,21 @@ public interface ISkinCommand {
         });
     }
 
-    default void onSkinSearch(ISRCommandSender sender, String searchString) {
+    protected void onSkinSearch(ISRCommandSender sender, String searchString) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
 
-    default void onSkinUpdate(ISRPlayer player) {
+    protected void onSkinUpdate(ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         onSkinUpdateOther(player, player);
     }
 
-    default void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
+    protected void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             final String senderName = sender.getName();
             if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
@@ -159,7 +160,7 @@ public interface ISkinCommand {
         });
     }
 
-    default void onSkinSet(ISRPlayer player, String[] skin) {
+    protected void onSkinSet(ISRPlayer player, String[] skin) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         if (skin.length == 0)
@@ -168,10 +169,9 @@ public interface ISkinCommand {
         onSkinSetOther(player, player, skin[0], null);
     }
 
-    default void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
+    protected void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sender.getName()))) {
@@ -185,7 +185,7 @@ public interface ISkinCommand {
         });
     }
 
-    default void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
+    protected void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(player)) return;
 
         if (!C.validUrl(url)) {
@@ -196,22 +196,20 @@ public interface ISkinCommand {
         onSkinSetOther(player, player, url, skinVariant);
     }
 
-    default void sendHelp(ISRCommandSender sender) {
+    protected void sendHelp(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         String srLine = SkinsRestorerAPIShared.getApi().getMessage(sender, Message.SR_LINE);
         if (!srLine.isEmpty())
             sender.sendMessage(srLine);
 
-        sender.sendMessage(Message.CUSTOM_HELP_IF_ENABLED, getPlugin().getVersion());
+        sender.sendMessage(Message.CUSTOM_HELP_IF_ENABLED, plugin.getVersion());
 
         if (!srLine.isEmpty())
             sender.sendMessage(srLine);
     }
 
-    default boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
-        ISRPlugin plugin = getPlugin();
-
+    protected boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
@@ -299,6 +297,4 @@ public interface ISkinCommand {
         }
         return false;
     }
-
-    ISRPlugin getPlugin();
 }
