@@ -42,8 +42,6 @@ import static co.aikar.commands.CommandManager.getCurrentCommandManager;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 public interface ISkinCommand {
-    IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
-
     @SuppressWarnings("deprecation")
     default void onDefault(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
@@ -90,7 +88,8 @@ public interface ISkinCommand {
                 IProperty property = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName).getLeft();
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), property);
             } catch (NotPremiumException e) {
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), emptySkin);
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(),
+                        SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", ""));
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
