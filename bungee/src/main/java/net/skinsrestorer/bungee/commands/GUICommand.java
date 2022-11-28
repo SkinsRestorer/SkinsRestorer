@@ -26,8 +26,9 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.shared.commands.ShredProxyGUICommand;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
+import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
 import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
@@ -35,9 +36,9 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
-public class GUICommand extends ShredProxyGUICommand {
-    public GUICommand(ISRProxyPlugin plugin) {
-        super(plugin);
+public class GUICommand extends SharedProxyGUICommand {
+    public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener) {
+        super(cooldownStorage, pluginMessageListener);
     }
 
     @HelpCommand

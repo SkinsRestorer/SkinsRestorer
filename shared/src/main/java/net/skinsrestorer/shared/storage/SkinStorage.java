@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -48,15 +49,17 @@ public class SkinStorage implements ISkinStorage {
     private final SRLogger logger;
     private final MojangAPI mojangAPI;
     private final MineSkinAPI mineSkinAPI;
+    private final SettingsManager settings;
     @Setter
     private StorageAdapter storageAdapter;
 
     public void preloadDefaultSkins() {
-        if (!Config.DEFAULT_SKINS_ENABLED)
+        if (!settings.getProperty(Config.DEFAULT_SKINS_ENABLED))
             return;
 
         List<String> toRemove = new ArrayList<>();
-        Config.DEFAULT_SKINS.forEach(skin -> {
+        List<String> defaultSkins = new ArrayList<>(settings.getProperty(Config.DEFAULT_SKINS));
+        defaultSkins.forEach(skin -> {
             // TODO: add try for skinUrl
             try {
                 if (!C.validUrl(skin)) {
@@ -70,11 +73,14 @@ public class SkinStorage implements ISkinStorage {
                 logger.debug("[DEBUG] DefaultSkin '" + skin + "' error: ", e);
             }
         });
-        Config.DEFAULT_SKINS.removeAll(toRemove);
+        if (!toRemove.isEmpty()) {
+            defaultSkins.removeAll(toRemove);
+            settings.setProperty(Config.DEFAULT_SKINS, defaultSkins);
+        }
 
-        if (Config.DEFAULT_SKINS.isEmpty()) {
+        if (defaultSkins.isEmpty()) {
             logger.warning("[WARNING] No more working DefaultSkin left... disabling feature");
-            Config.DEFAULT_SKINS_ENABLED = false;
+            settings.setProperty(Config.DEFAULT_SKINS_ENABLED, false);
         }
     }
 
@@ -284,9 +290,9 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        if (Config.DEFAULT_SKINS_ENABLED) {
+        if (settings.getProperty(Config.DEFAULT_SKINS_ENABLED)) {
             // don't return default skin name for premium players if enabled
-            if (!Config.DEFAULT_SKINS_PREMIUM) {
+            if (!settings.getProperty(Config.DEFAULT_SKINS_PREMIUM)) {
                 // check if player is premium
                 try {
                     if (mojangAPI.getUUID(playerName) != null) {
@@ -299,7 +305,7 @@ public class SkinStorage implements ISkinStorage {
             }
 
             // return default skin name if user has no custom skin set, or we want to clear to default
-            List<String> skins = Config.DEFAULT_SKINS;
+            List<String> skins = settings.getProperty(Config.DEFAULT_SKINS);
 
             // return player name if there are no default skins set
             if (skins.isEmpty())
@@ -325,10 +331,10 @@ public class SkinStorage implements ISkinStorage {
      */
     private boolean isExpired(long timestamp) {
         // Don't update if timestamp is not 0 or update is disabled.
-        if (timestamp == 0 || Config.DISALLOW_AUTO_UPDATE_SKIN)
+        if (timestamp == 0 || settings.getProperty(Config.DISALLOW_AUTO_UPDATE_SKIN))
             return false;
 
-        return timestamp + TimeUnit.MINUTES.toMillis(Config.SKIN_EXPIRES_AFTER) <= System.currentTimeMillis();
+        return timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(Config.SKIN_EXPIRES_AFTER)) <= System.currentTimeMillis();
     }
 
     public boolean purgeOldSkins(int days) {

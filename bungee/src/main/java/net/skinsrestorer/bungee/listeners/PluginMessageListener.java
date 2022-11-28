@@ -26,13 +26,17 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
-@Getter
-@RequiredArgsConstructor
 public class PluginMessageListener extends SharedPluginMessageListener implements Listener {
-    private final SkinsRestorerBungee plugin;
+    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, ISRProxyPlugin plugin, SharedSkinCommand skinCommand) {
+        super(logger, skinStorage, plugin, skinCommand);
+    }
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {

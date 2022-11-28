@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.sponge.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
@@ -35,8 +36,8 @@ import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
-    public SkinCommand(ISRPlugin plugin) {
-        super(plugin);
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings) {
+        super(plugin, settings);
     }
 
     @Default

@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.PaperCommandManager;
 import io.papermc.lib.PaperLib;
@@ -39,13 +40,10 @@ import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.YamlConfig;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -61,6 +59,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -80,10 +79,8 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private final Server server;
     private final JavaPlugin pluginInstance; // Only for platform API use
-    private final SkinCommand skinCommand = new SkinCommand(this);
     private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private boolean isUpdaterInitialized = false;
-    private SkinApplierBukkit skinApplierBukkit;
     private boolean updateDownloaded = false;
 
     public SkinsRestorerBukkit(JavaPlugin plugin) {
@@ -96,7 +93,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         );
         this.server = plugin.getServer();
         this.pluginInstance = plugin;
-        registerAPI();
     }
 
     public void pluginStartup() throws InitializeException {
@@ -108,6 +104,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
+        SkinApplierBukkit skinApplierBukkit;
         try {
             skinApplierBukkit = new SkinApplierBukkit(this);
         } catch (NoMappingException e) {
@@ -117,6 +114,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             logger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
             throw e;
         }
+        new SkinsRestorerBukkitAPI(skinApplierBukkit);
 
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
@@ -133,15 +131,18 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         // Detect MundoSK
         if (server.getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                YamlConfig mundoConfig = new YamlConfig(dataFolder.getParent().resolve("MundoSK").resolve("config.yml"));
-                mundoConfig.load();
-                if (mundoConfig.getBoolean("enable_custom_skin_and_tablist")) {
-                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                    logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
-                    logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
-                    logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
-                    logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
-                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                Yaml yaml = new Yaml();
+                try (BufferedReader reader = Files.newBufferedReader(dataFolder.getParent().resolve("MundoSK").resolve("config.yml"))) {
+                    MundoConfig mundoConfig = yaml.loadAs(reader, MundoConfig.class);
+
+                    if (mundoConfig.enable_custom_skin_and_tablist) {
+                        logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                        logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
+                        logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
+                        logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
+                        logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
+                        logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                    }
                 }
             } catch (Exception ignored) {
             }
@@ -153,7 +154,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         updateCheck();
 
         // Init locale
-        Message.load(localeManager, dataFolder, this);
+        loadLocales();
 
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), pluginInstance);
@@ -176,7 +177,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                SkinsRestorerAPIShared.getApi().applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 
@@ -237,21 +238,25 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 });
             });
         } else {
-            initConfigAndStorage();
+            SettingsManager settings = initConfigAndStorage();
 
             // Init commands
-            initCommands();
+            CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+
+            manager.registerCommand( new SkinCommand(this, settings));
+            manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+            manager.registerCommand(new GUICommand(this));
 
             // Init listener
-            if (Config.ENABLE_PAPER_JOIN_LISTENER
+            if (settings.getProperty(Config.ENABLE_PAPER_JOIN_LISTENER)
                     && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
                 logger.info("Using paper join listener!");
-                Bukkit.getPluginManager().registerEvents(new PaperPlayerJoinEvent(this), pluginInstance);
+                Bukkit.getPluginManager().registerEvents(new PaperPlayerJoinEvent(skinStorage, settings, this), pluginInstance);
             } else {
-                Bukkit.getPluginManager().registerEvents(new PlayerJoin(this), pluginInstance);
+                Bukkit.getPluginManager().registerEvents(new PlayerJoin(settings, skinStorage, this), pluginInstance);
 
                 if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
-                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(this), pluginInstance);
+                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(skinStorage, settings, this), pluginInstance);
                 }
             }
 
@@ -260,14 +265,15 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         }
     }
 
-    private void initConfigAndStorage() throws InitializeException {
+    private SettingsManager initConfigAndStorage() throws InitializeException {
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), logger);
+        SettingsManager manager = loadConfig();
         // Set new default locale because we initialized localeManager early
         localeManager.setDefaultLocale(LocaleParser.getDefaultLocale());
 
         // Init storage
         initStorage();
+        return manager;
     }
 
     protected void updateCheck() {
@@ -326,14 +332,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void initCommands() {
-        sharedInitCommands();
-
-        manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this));
     }
 
     private void checkProxyMode() {
@@ -427,8 +425,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-                outdated = true;
-
+                setOutdated();
                 if (updateDownloaded) {
                     return;
                 }
@@ -490,11 +487,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         return new PaperCommandManager(pluginInstance);
     }
 
-    @Override
-    protected void registerAPI() {
-        new SkinsRestorerBukkitAPI();
-    }
-
     private static class WrapperFactoryBukkit implements IWrapperFactory {
         @Override
         public String getPlayerName(Object playerInstance) {
@@ -519,9 +511,16 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         }
     }
 
-    private class SkinsRestorerBukkitAPI extends SkinsRestorerAPIShared {
-        private SkinsRestorerBukkitAPI() {
-            super(SkinsRestorerBukkit.this, new WrapperFactoryBukkit(), new PropertyFactoryBukkit());
+    private static class MundoConfig {
+        private boolean enable_custom_skin_and_tablist;
+    }
+
+    private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
+        private final SkinApplierBukkit skinApplierBukkit;
+
+        private SkinsRestorerBukkitAPI(SkinApplierBukkit skinApplierBukkit) {
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit());
+            this.skinApplierBukkit = skinApplierBukkit;
         }
 
         @Override

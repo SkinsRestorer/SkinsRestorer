@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bungee;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.CommandManager;
 import lombok.Getter;
@@ -27,6 +28,7 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
@@ -39,14 +41,11 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -63,8 +62,6 @@ import java.util.stream.Collectors;
 @Getter
 public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
-    private final SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, logger);
-    private final SkinCommand skinCommand = new SkinCommand(this);
     private final ProxyServer proxy;
     private final Plugin pluginInstance; // Only for platform API use
 
@@ -78,7 +75,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         );
         this.proxy = plugin.getProxy();
         this.pluginInstance = plugin;
-        registerAPI();
     }
 
     /*
@@ -110,8 +106,8 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         });
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        SettingsManager settings = loadConfig();
+        loadLocales();
 
         // Init storage
         try {
@@ -121,28 +117,31 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
             return;
         }
 
+        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, logger);
+        new SkinsRestorerBungeeAPI(skinApplierBungee);
+
         // Init listener
-        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(this));
+        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this));
         proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this));
 
         // Init commands
-        initCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+
+        SkinCommand skinCommand = new SkinCommand(this, settings);
+        manager.registerCommand(skinCommand);
+
+        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, this, skinCommand);
+        proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
+
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener));
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");
         proxy.registerChannel("sr:messagechannel");
-        proxy.getPluginManager().registerListener(pluginInstance, new PluginMessageListener(this));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
-    }
-
-    private void initCommands() {
-        sharedInitCommands();
-
-        manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this));
     }
 
     @Override
@@ -180,11 +179,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         return new BungeeCommandManager(pluginInstance);
     }
 
-    @Override
-    protected void registerAPI() {
-        new SkinsRestorerBungeeAPI();
-    }
-
     private static class WrapperFactoryBungee implements IWrapperFactory {
         @Override
         public String getPlayerName(Object playerInstance) {
@@ -209,9 +203,12 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         }
     }
 
-    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPIShared {
-        public SkinsRestorerBungeeAPI() {
-            super(SkinsRestorerBungee.this, new WrapperFactoryBungee(), new PropertyFactoryBungee());
+    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
+        private final SkinApplierBungeeShared skinApplierBungee;
+
+        public SkinsRestorerBungeeAPI(SkinApplierBungeeShared skinApplierBungee) {
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
+            this.skinApplierBungee = skinApplierBungee;
         }
 
         @SneakyThrows

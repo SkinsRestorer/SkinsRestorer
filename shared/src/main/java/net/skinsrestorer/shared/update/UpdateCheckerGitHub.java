@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
@@ -55,9 +54,8 @@ public class UpdateCheckerGitHub extends UpdateChecker {
                 }
             });
         } catch (Exception e) {
-            log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
-            if (Config.DEBUG)
-                e.printStackTrace();
+            log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
+            log.debug(e);
         }
     }
 

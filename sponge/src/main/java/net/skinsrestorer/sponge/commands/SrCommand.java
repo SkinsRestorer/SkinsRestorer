@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.sponge.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
@@ -27,9 +28,11 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -47,8 +50,8 @@ import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerSponge plugin;
 
-    public SrCommand(SkinsRestorerSponge plugin) {
-        super(plugin);
+    public SrCommand(SkinsRestorerSponge plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+        super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
     }
 

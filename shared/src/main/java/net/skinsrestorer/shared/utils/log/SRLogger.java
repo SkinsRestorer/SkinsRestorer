@@ -20,9 +20,13 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -30,18 +34,24 @@ import java.nio.file.Path;
 public class SRLogger {
     private final ISRLogger logger;
     private final boolean color;
+    @Setter
     private boolean debug = false;
 
     public SRLogger(ISRLogger logger) {
         this(logger, false);
     }
 
-    public void load(Path pluginFolder) {
-        // Manual check config value
-        Path pluginDebugFile = pluginFolder.resolve("debug.txt");
+    public void load(Path dataFolder) {
+        Path configFile = dataFolder.resolve("config.yml");
 
-        if (Files.exists(pluginDebugFile)) {
-            debug = true;
+        if (Files.exists(configFile)) {
+            Yaml yaml = new Yaml();
+            try (InputStream inputStream = Files.newInputStream(configFile)) {
+                SimpleConfig config = yaml.loadAs(inputStream, SimpleConfig.class);
+                debug = config.Debug;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -108,5 +118,9 @@ public class SRLogger {
         message += "§r";
         message = ANSIConverter.convertToAnsi(message);
         return message;
+    }
+
+    private static class SimpleConfig {
+        private boolean Debug = false;
     }
 }

@@ -19,19 +19,18 @@
  */
 package net.skinsrestorer.sponge;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
@@ -58,8 +57,6 @@ import java.util.stream.Collectors;
 public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     private final Object pluginInstance; // Only for platform API use
     private final Metrics metrics;
-    private final SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-    private final SkinCommand skinCommand;
     private final PluginContainer pluginContainer;
     protected Game game;
 
@@ -73,9 +70,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         );
         this.pluginInstance = pluginInstance;
         this.metrics = metricsFactory.make(2337);
-        this.skinCommand = new SkinCommand(this);
         this.pluginContainer = container;
-        registerAPI();
     }
 
     public void onInitialize() {
@@ -89,8 +84,8 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         });
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        SettingsManager settings = loadConfig();
+        loadLocales();
 
         // Init storage
         try {
@@ -100,27 +95,26 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
             return;
         }
 
+        SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
+        new SkinsRestorerSpongeAPI(skinApplierSponge);
+
+        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this));
+
         // Init commands
-        initCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+
+        manager.registerCommand(new SkinCommand(this, settings));
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
     }
 
     public void onServerStarted() {
-        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(this));
-
         metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
         metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
-    }
-
-    private void initCommands() {
-        sharedInitCommands();
-
-        manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
     }
 
     @Override
@@ -158,11 +152,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         return new SpongeCommandManager(pluginContainer);
     }
 
-    @Override
-    protected void registerAPI() {
-        new SkinsRestorerSpongeAPI();
-    }
-
     private static class WrapperFactorySponge implements IWrapperFactory {
         @Override
         public String getPlayerName(Object playerInstance) {
@@ -176,9 +165,12 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         }
     }
 
-    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPIShared {
-        public SkinsRestorerSpongeAPI() {
-            super(SkinsRestorerSponge.this, new WrapperFactorySponge(), GenericProperty::new);
+    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
+        private final SkinApplierSponge skinApplierSponge;
+
+        public SkinsRestorerSpongeAPI(SkinApplierSponge skinApplierSponge) {
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), GenericProperty::new);
+            this.skinApplierSponge = skinApplierSponge;
         }
 
         @Override

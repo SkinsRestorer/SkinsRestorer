@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.storage.adapter;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -34,10 +35,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MySQLAdapter implements StorageAdapter {
     private final MySQL mysql;
+    private final SettingsManager settings;
 
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName)) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(Config.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName)) {
             if (crs == null)
                 return Optional.empty();
 
@@ -52,18 +54,18 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeStoredSkinNameOfPlayer(String playerName) {
-        mysql.execute("DELETE FROM " + Config.MYSQL_PLAYER_TABLE + " WHERE Nick=?", playerName);
+        mysql.execute("DELETE FROM " + settings.getProperty(Config.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName);
     }
 
     @Override
     public void setStoredSkinNameOfPlayer(String playerName, String skinName) {
-        mysql.execute("INSERT INTO " + Config.MYSQL_PLAYER_TABLE + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
+        mysql.execute("INSERT INTO " + settings.getProperty(Config.MYSQL_PLAYER_TABLE) + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
                 playerName, skinName, skinName);
     }
 
     @Override
     public Optional<StoredProperty> getStoredSkinData(String skinName) {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName)) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
             if (crs == null)
                 return Optional.empty();
 
@@ -80,12 +82,12 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removeStoredSkinData(String skinName) {
-        mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName);
+        mysql.execute("DELETE FROM " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName);
     }
 
     @Override
     public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
-        mysql.execute("INSERT INTO " + Config.MYSQL_SKIN_TABLE + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
+        mysql.execute("INSERT INTO " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
                 skinName, storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()),
                 storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()));
     }
@@ -97,15 +99,15 @@ public class MySQLAdapter implements StorageAdapter {
         String orderBy = "Nick";
 
         // Custom GUI
-        if (Config.CUSTOM_GUI_ENABLED) {
-            if (Config.CUSTOM_GUI_ONLY) {
-                filterBy = "WHERE Nick RLIKE '" + String.join("|", Config.CUSTOM_GUI_SKINS) + "'";
+        if (settings.getProperty(Config.CUSTOM_GUI_ENABLED)) {
+            if (settings.getProperty(Config.CUSTOM_GUI_ONLY)) {
+                filterBy = "WHERE Nick RLIKE '" + String.join("|", settings.getProperty(Config.CUSTOM_GUI_SKINS)) + "'";
             } else {
-                orderBy = "FIELD(Nick, " + Config.CUSTOM_GUI_SKINS.stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";
+                orderBy = "FIELD(Nick, " + settings.getProperty(Config.CUSTOM_GUI_SKINS).stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";
             }
         }
 
-        try (ResultSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + Config.MYSQL_SKIN_TABLE + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36")) {
+        try (ResultSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36")) {
             if (crs == null)
                 return Collections.emptyMap();
 
@@ -120,7 +122,7 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public Optional<Long> getStoredTimestamp(String skinName) {
-        try (ResultSet crs = mysql.query("SELECT timestamp FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName)) {
+        try (ResultSet crs = mysql.query("SELECT timestamp FROM " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
             if (crs == null)
                 return Optional.empty();
 
@@ -139,6 +141,6 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public void purgeStoredOldSkins(long targetPurgeTimestamp) {
         // delete if name not start with " " and timestamp below targetPurgeTimestamp
-        mysql.execute("DELETE FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick NOT LIKE ' %' AND " + Config.MYSQL_SKIN_TABLE + ".timestamp NOT LIKE 0 AND " + Config.MYSQL_SKIN_TABLE + ".timestamp<=?", targetPurgeTimestamp);
+        mysql.execute("DELETE FROM " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + " WHERE Nick NOT LIKE ' %' AND " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + ".timestamp NOT LIKE 0 AND " + settings.getProperty(Config.MYSQL_SKIN_TABLE) + ".timestamp<=?", targetPurgeTimestamp);
     }
 }

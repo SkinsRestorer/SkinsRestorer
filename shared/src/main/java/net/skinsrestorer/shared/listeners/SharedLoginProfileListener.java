@@ -19,33 +19,51 @@
  */
 package net.skinsrestorer.shared.listeners;
 
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.SkinStorage;
 
 import java.util.Optional;
 
-public abstract class SharedLoginProfileListener {
-    protected boolean handleSync(SRLoginProfileEvent event) {
-        return Config.DISABLE_ON_JOIN_SKINS || (Config.NO_SKIN_IF_LOGIN_CANCELED && event.isCancelled());
+@RequiredArgsConstructor
+public abstract class SharedLoginProfileListener<R> {
+    protected final SettingsManager settings;
+    private final SkinStorage skinStorage;
+    private final ISRPlugin plugin;
+
+    protected R handleLogin(SRLoginProfileEvent<R> event) {
+        if (handleSync(event))
+            return null;
+
+        return event.runAsync(() -> {
+            try {
+                handleAsync(event).ifPresent(event::setResultProperty);
+            } catch (SkinRequestException e) {
+                plugin.getLogger().debug(e);
+            }
+        });
     }
 
-    protected Optional<IProperty> handleAsync(SRLoginProfileEvent event) throws SkinRequestException {
-        ISRPlugin plugin = getPlugin();
+    private boolean handleSync(SRLoginProfileEvent<R> event) {
+        return settings.getProperty(Config.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(Config.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
+    }
+
+    private Optional<IProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException {
         String playerName = event.getPlayerName();
-        Pair<IProperty, Boolean> result = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName);
+        Pair<IProperty, Boolean> result = skinStorage.getDefaultSkinForPlayer(playerName);
 
         // Skip skin if: online mode, no custom skin set, always apply not enabled and default skins for premium not enabled
         if (event.isOnline()
                 && !result.getRight()
-                && !Config.ALWAYS_APPLY_PREMIUM
-                && !Config.DEFAULT_SKINS_PREMIUM)
+                && !settings.getProperty(Config.ALWAYS_APPLY_PREMIUM)
+                && !settings.getProperty(Config.DEFAULT_SKINS_PREMIUM))
             return Optional.empty();
 
         return Optional.of(result.getLeft());
     }
-
-    protected abstract ISRPlugin getPlugin();
 }

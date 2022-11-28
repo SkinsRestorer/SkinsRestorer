@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.utils.connections;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
@@ -32,16 +33,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServiceChecker {
     private static final String XKNAT_NAME = "xknat";
     private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
-    @Getter
-    private final ServiceCheckResponse response;
-    @Setter
-    private MojangAPI mojangAPI;
 
-    public ServiceChecker() {
-        response = new ServiceCheckResponse();
-    }
+    public static ServiceCheckResponse checkServices(MojangAPI mojangAPI) {
+        ServiceCheckResponse response = new ServiceCheckResponse();
 
-    public void checkServices() {
         // ##### UUID requests #####
         try {
             Optional<String> uuid = mojangAPI.getUUIDAshcon(XKNAT_NAME);
@@ -94,6 +89,11 @@ public class ServiceChecker {
             response.addResult("Minetools Profile §a✔ xknat Profile: §b" + minetools);
             response.incrementWorkingProfile();
         } else response.addResult("Minetools Profile §c✘ Error getting Profile: null");
+
+        return response;
+    }
+
+    private ServiceChecker() {
     }
 
     @Getter

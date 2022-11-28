@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.*;
@@ -29,7 +30,10 @@ import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -44,8 +48,8 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBukkit plugin;
 
-    public SrCommand(SkinsRestorerBukkit plugin) {
-        super(plugin);
+    public SrCommand(SkinsRestorerBukkit plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+        super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
     }
 

@@ -58,6 +58,10 @@ public class Config implements SettingsHolder {
     public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newProperty("SkinChangeCooldown", 30);
     public static final Property<Integer> SKIN_ERROR_COOLDOWN = newProperty("SkinErrorCooldown", 5);
     @Comment({
+            "True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.",
+            "This is more customizable, but at the cost of permission specific help."
+    })
+    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);    @Comment({
             "\n##########",
             "\n# Locale #",
             "\n##########",
@@ -78,11 +82,6 @@ public class Config implements SettingsHolder {
             return value.toString();
         }
     });
-    @Comment({
-            "True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.",
-            "This is more customizable, but at the cost of permission specific help."
-    })
-    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
     public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
@@ -238,7 +237,6 @@ public class Config implements SettingsHolder {
             "# Enable to start receiving debug messages about api requests & more."
     })
     public static final Property<Boolean> DEBUG = newProperty("Debug", false);
-
     private Config() {
     }
 
@@ -323,4 +321,6 @@ public class Config implements SettingsHolder {
                 "Discord: https://discord.me/SkinsRestorer/"
         );
     }
+
+
 }

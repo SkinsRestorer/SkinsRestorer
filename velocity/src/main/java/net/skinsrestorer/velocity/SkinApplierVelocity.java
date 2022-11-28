@@ -19,8 +19,10 @@
  */
 package net.skinsrestorer.velocity;
 
+import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
+import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -37,15 +40,17 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class SkinApplierVelocity {
-    private final SkinsRestorerVelocity plugin;
+    private final ProxyServer proxy;
+    private final SettingsManager settings;
+    private final SRLogger logger;
 
     protected void applySkin(Player player, IProperty property) {
-        plugin.getProxy().getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
+        proxy.getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
             if (event.getResult() != ResultedEvent.GenericResult.allowed())
                 return;
 
             player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
-            sendUpdateRequest(player, Config.FORWARD_TEXTURES ? (Property) property.getHandle() : null);
+            sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? (Property) property.getHandle() : null);
         });
     }
 
@@ -77,7 +82,7 @@ public class SkinApplierVelocity {
 
     private void sendUpdateRequest(Player player, Property textures) {
         player.getCurrentServer().ifPresent(serverConnection -> {
-            plugin.getLogger().debug("Sending skin update request for " + player.getUsername());
+            logger.debug("Sending skin update request for " + player.getUsername());
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(b);

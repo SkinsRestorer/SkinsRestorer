@@ -19,14 +19,16 @@
  */
 package net.skinsrestorer.shared.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 
+@RequiredArgsConstructor
 public abstract class SharedConnectListener {
-    protected void handleConnect(SRServerConnectedEvent event) {
-        ISRProxyPlugin plugin = getPlugin();
+    private final ISRProxyPlugin plugin;
 
+    protected void handleConnect(SRServerConnectedEvent event) {
         plugin.runAsync(() -> {
             if (plugin.isOutdated()) {
                 ISRPlayer player = event.getPlayer();
@@ -37,6 +39,4 @@ public abstract class SharedConnectListener {
             }
         });
     }
-
-    protected abstract ISRProxyPlugin getPlugin();
 }

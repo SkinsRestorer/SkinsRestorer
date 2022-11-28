@@ -19,13 +19,13 @@
  */
 package net.skinsrestorer.paper;
 
+import ch.jalu.configme.SettingsManager;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -33,28 +33,21 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-@Getter
-public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements Listener {
+public class PaperPlayerJoinEvent extends SharedLoginProfileListener<Void> implements Listener {
     private final ISRPlugin plugin;
+
+    public PaperPlayerJoinEvent(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin) {
+        super(skinStorage, settings, plugin);
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
-        SRLoginProfileEvent profileEvent = wrap(event);
-
-        if (handleSync(profileEvent))
-            return;
-
-        try {
-            handleAsync(profileEvent).ifPresent(property ->
-                    event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature())));
-        } catch (SkinRequestException e) {
-            plugin.getLogger().debug(e);
-        }
+        handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(AsyncPlayerPreLoginEvent event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
                 return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + getPlayerName()).getBytes(StandardCharsets.UTF_8)).equals(event.getPlayerProfile().getId());
@@ -68,6 +61,17 @@ public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements 
             @Override
             public boolean isCancelled() {
                 return false;
+            }
+
+            @Override
+            public void setResultProperty(IProperty property) {
+                event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature()));
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                runnable.run();
+                return null;
             }
         };
     }

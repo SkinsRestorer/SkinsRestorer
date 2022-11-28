@@ -19,45 +19,35 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
-import org.spongepowered.api.profile.GameProfile;
 
-import java.util.Optional;
-
-@RequiredArgsConstructor
 @Getter
-public class LoginListener extends SharedLoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
+public class LoginListener extends SharedLoginProfileListener<Void> implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorerSponge plugin;
+
+    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerSponge plugin) {
+        super(settings, skinStorage, plugin);
+        this.plugin = plugin;
+    }
 
     @Override
     public void handle(@NotNull Auth event) {
-        SRLoginProfileEvent wrapped = wrap(event);
-        if (handleSync(wrapped))
-            return;
-
-        final GameProfile profile = event.getProfile();
-        profile.getName().flatMap(name -> {
-            try {
-                return handleAsync(wrapped);
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-                return Optional.empty();
-            }
-        }).ifPresent(property -> plugin.getSkinApplierSponge().updateProfileSkin(profile, property));
+        handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(Auth event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(Auth event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
                 return Sponge.getServer().getOnlineMode();
@@ -71,6 +61,16 @@ public class LoginListener extends SharedLoginProfileListener implements EventLi
             @Override
             public boolean isCancelled() {
                 return event.isCancelled();
+            }
+
+            @Override
+            public void setResultProperty(IProperty property) {
+                plugin.getSkinApplierSponge().updateProfileSkin(event.getProfile(), property);
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                return null;
             }
         };
     }

@@ -26,6 +26,7 @@ import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
@@ -36,7 +37,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
-    public PaperSkinRefresher(ISRPlugin plugin) throws InitializeException {
+    public PaperSkinRefresher(SRLogger logger) throws InitializeException {
         try {
             refreshPlayerMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
@@ -86,11 +87,11 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             }
             this.triggerHealthUpdate = triggerHealthUpdate;
 
-            plugin.getLogger().debug("Using PaperSkinRefresher");
+            logger.debug("Using PaperSkinRefresher");
         } catch (NoMappingException e) {
             throw e;
         } catch (Exception e) {
-            plugin.getLogger().debug("Failed PaperSkinRefresher", e);
+            logger.debug("Failed PaperSkinRefresher", e);
             throw new InitializeException(e);
         }
     }

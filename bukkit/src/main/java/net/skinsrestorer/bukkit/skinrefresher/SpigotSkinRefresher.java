@@ -26,6 +26,8 @@ import net.skinsrestorer.api.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -37,7 +39,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SkinsRestorerBukkit plugin;
+    private final ISRPlugin plugin;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -48,7 +50,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SkinsRestorerBukkit plugin) throws InitializeException {
+    public SpigotSkinRefresher(ISRPlugin plugin, SRLogger logger) throws InitializeException {
         this.plugin = plugin;
 
         try {
@@ -94,11 +96,11 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 if (plugin.isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    plugin.getLogger().debug("Activating ViaBackwards workaround.");
+                    logger.debug("Activating ViaBackwards workaround.");
                 }
             });
 
-            plugin.getLogger().debug("Using SpigotSkinRefresher");
+            logger.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }

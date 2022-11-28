@@ -35,6 +35,7 @@ import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
@@ -51,7 +52,7 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinApplierBukkit {
-    private final SkinsRestorerBukkit plugin;
+    private final SRLogger logger;
     @Getter
     private final Consumer<Player> refresh;
     @Setter
@@ -60,8 +61,8 @@ public class SkinApplierBukkit {
     private boolean disableRemountPlayer;
     private boolean enableDismountEntities;
 
-    public SkinApplierBukkit(SkinsRestorerBukkit plugin) throws InitializeException {
-        this.plugin = plugin;
+    public SkinApplierBukkit(SRLogger logger) throws InitializeException {
+        this.logger = logger;
         this.refresh = detectRefresh();
     }
 
@@ -78,7 +79,7 @@ public class SkinApplierBukkit {
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(plugin);
+                return new PaperSkinRefresher();
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {

@@ -24,14 +24,18 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
-@Getter
-@RequiredArgsConstructor
 public class PluginMessageListener extends SharedPluginMessageListener {
-    private final SkinsRestorerVelocity plugin;
+    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, ISRProxyPlugin plugin, SharedSkinCommand skinCommand) {
+        super(logger, skinStorage, plugin, skinCommand);
+    }
 
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {

@@ -19,11 +19,13 @@
  */
 package net.skinsrestorer.shared.storage;
 
-public interface CallableValue<V> {
+import ch.jalu.configme.SettingsManager;
+
+public interface CallableSetting<V> {
     /**
      * Computes a result, or throws an exception if unable to do so.
      *
      * @return computed result
      */
-    V call();
+    V call(SettingsManager manager);
 }

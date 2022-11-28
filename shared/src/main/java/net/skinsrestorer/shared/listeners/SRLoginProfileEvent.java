@@ -19,10 +19,16 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-public interface SRLoginProfileEvent {
+import net.skinsrestorer.api.property.IProperty;
+
+public interface SRLoginProfileEvent<R> {
     boolean isOnline();
 
     String getPlayerName();
 
     boolean isCancelled();
+
+    void setResultProperty(IProperty property);
+
+    R runAsync(Runnable runnable);
 }

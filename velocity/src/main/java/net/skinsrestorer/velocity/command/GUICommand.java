@@ -27,7 +27,7 @@ import co.aikar.commands.annotation.HelpCommand;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
-import net.skinsrestorer.shared.commands.ShredProxyGUICommand;
+import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
@@ -37,7 +37,7 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
-public class GUICommand extends ShredProxyGUICommand {
+public class GUICommand extends SharedProxyGUICommand {
     public GUICommand(ISRProxyPlugin plugin) {
         super(plugin);
     }

@@ -19,19 +19,21 @@
  */
 package net.skinsrestorer.velocity.command;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 
@@ -48,10 +50,11 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerVelocity plugin;
 
-    public SrCommand(SkinsRestorerVelocity plugin) {
-        super(plugin);
+    public SrCommand(SkinsRestorerVelocity plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+        super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
     }
+
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

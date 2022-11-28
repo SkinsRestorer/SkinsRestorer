@@ -20,10 +20,12 @@
 package net.skinsrestorer.bukkit;
 
 import com.cryptomorin.xseries.XMaterial;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
+import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.storage.Message;
@@ -52,7 +54,7 @@ public class SkinsGUI implements InventoryHolder {
     private final SkinsRestorerBukkit plugin;
     private final int page; // Page number start with 0
     @Getter
-    @Setter
+    @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
     public static Inventory createGUI(SkinsRestorerBukkit plugin, ISRForeign player, int page, Map<String, String> skinsList) {
@@ -225,16 +227,18 @@ public class SkinsGUI implements InventoryHolder {
                     break;
             }
         } else {
+            SkinCommand skinCommand = (SkinCommand) plugin.getSkinCommand(); // TODO: properly make API calls instead of using commands
+
             switch (XMaterial.matchXMaterial(currentItem)) {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
                         final String skinName = itemMeta.getDisplayName();
-                        plugin.getSkinCommand().onSkinSetShort(player, skinName);
+                        skinCommand.onSkinSetShort(player, skinName);
                     });
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    plugin.getSkinCommand().onSkinClear(player);
+                    skinCommand.onSkinClear(player);
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:

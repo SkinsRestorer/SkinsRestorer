@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bungee.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
@@ -30,7 +31,10 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +49,8 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBungee plugin;
 
-    public SrCommand(SkinsRestorerBungee plugin) {
-        super(plugin);
+    public SrCommand(SkinsRestorerBungee plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+        super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
     }
 

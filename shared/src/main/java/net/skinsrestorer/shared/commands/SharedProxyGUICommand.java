@@ -24,14 +24,14 @@ import co.aikar.commands.CommandHelp;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 
 @RequiredArgsConstructor
-public abstract class ShredProxyGUICommand extends BaseCommand {
-    private final ISRProxyPlugin plugin;
+public abstract class SharedProxyGUICommand extends BaseCommand {
+    private final CooldownStorage cooldownStorage;
+    private final SharedPluginMessageListener pluginMessageListener;
 
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         sender.sendMessage("SkinsRestorer Help");
@@ -39,13 +39,12 @@ public abstract class ShredProxyGUICommand extends BaseCommand {
     }
 
     protected void onDefault(ISRProxyPlayer player) {
-        CooldownStorage cooldownStorage = plugin.getCooldownStorage();
         if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
             player.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(player.getName())));
             return;
         }
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        SharedPluginMessageListener.sendPage(0, plugin, player);
+        pluginMessageListener.sendPage(0, player);
     }
 }

@@ -19,12 +19,13 @@
  */
 package net.skinsrestorer.bukkit.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,8 +36,8 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
-    public SkinCommand(SkinsRestorerBukkit plugin) {
-        super(plugin);
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings) {
+        super(plugin, settings);
     }
 
     @Default

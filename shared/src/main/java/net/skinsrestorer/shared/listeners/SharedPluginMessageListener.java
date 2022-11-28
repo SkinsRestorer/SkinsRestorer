@@ -19,16 +19,26 @@
  */
 package net.skinsrestorer.shared.listeners;
 
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
 
+@RequiredArgsConstructor
 public abstract class SharedPluginMessageListener {
+    private final SRLogger logger;
+    private final SkinStorage skinStorage;
+    private final ISRProxyPlugin plugin;
+    private final SharedSkinCommand skinCommand;
+
     private static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
@@ -44,10 +54,10 @@ public abstract class SharedPluginMessageListener {
         return byteOut.toByteArray();
     }
 
-    public static void sendPage(int page, ISRPlugin plugin, ISRProxyPlayer player) {
+    public void sendPage(int page, ISRProxyPlayer player) {
         int skinNumber = 36 * page;
 
-        byte[] ba = convertToByteArray(plugin.getSkinStorage().getSkins(skinNumber));
+        byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
@@ -64,10 +74,10 @@ public abstract class SharedPluginMessageListener {
         }
 
         byte[] data = b.toByteArray();
-        plugin.getLogger().debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
+        logger.debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
         // Payload may not be larger than 32767 bytes -18 from channel name
         if (data.length > 32749) {
-            plugin.getLogger().warning("Too many bytes GUI... canceling GUI..");
+            logger.warning("Too many bytes GUI... canceling GUI..");
             return;
         }
 
@@ -75,8 +85,6 @@ public abstract class SharedPluginMessageListener {
     }
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
-        ISRProxyPlugin plugin = getPlugin();
-
         if (event.isCancelled())
             return;
 
@@ -105,17 +113,17 @@ public abstract class SharedPluginMessageListener {
                     int page = in.readInt();
                     if (page > 999)
                         page = 999;
-                    sendPage(page, plugin, player);
+                    sendPage(page, player);
                     break;
                 case "clearSkin":
-                    plugin.getSkinCommand().onSkinClearOther(player, player);
+                    skinCommand.onSkinClearOther(player, player);
                     break;
                 case "updateSkin":
-                    plugin.getSkinCommand().onSkinUpdateOther(player, player);
+                    skinCommand.onSkinUpdateOther(player, player);
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
-                    plugin.getSkinCommand().onSkinSetOther(player, player, skin, null);
+                    skinCommand.onSkinSetOther(player, player, skin, null);
                     break;
                 default:
                     break;
@@ -124,6 +132,4 @@ public abstract class SharedPluginMessageListener {
             e.printStackTrace();
         }
     }
-
-    protected abstract ISRProxyPlugin getPlugin();
 }

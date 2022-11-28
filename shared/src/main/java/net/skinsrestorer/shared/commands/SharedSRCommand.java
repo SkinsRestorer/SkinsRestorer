@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import lombok.RequiredArgsConstructor;
@@ -29,11 +30,14 @@ import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -44,7 +48,11 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @RequiredArgsConstructor
 public abstract class SharedSRCommand extends BaseCommand {
-    protected final ISRPlugin plugin;
+    protected final SkinsRestorerShared plugin;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
+    private final SettingsManager settings;
+    private final SRLogger logger;
 
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
@@ -59,10 +67,10 @@ public abstract class SharedSRCommand extends BaseCommand {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         reloadCustomHook();
-        Message.load(plugin.getLocaleManager(), plugin.getDataFolder(), plugin);
+        plugin.loadLocales();
         plugin.loadConfig();
 
-        plugin.prepareACF(plugin.getManager(), plugin.getLogger());
+        plugin.prepareACF();
 
         sender.sendMessage(Message.RELOAD);
     }
@@ -77,21 +85,20 @@ public abstract class SharedSRCommand extends BaseCommand {
             String breakLine = "§3----------------------------------------------";
             statusMessages.add(breakLine);
 
-            ServiceChecker checker = new ServiceChecker();
-            checker.setMojangAPI(plugin.getMojangAPI());
-            checker.checkServices();
-
-            ServiceChecker.ServiceCheckResponse response = checker.getResponse();
+            ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
             List<String> results = response.getResults();
 
             final int workingUUIDCount = response.getWorkingUUID().get();
             final int workingProfileCount = response.getWorkingProfile().get();
 
             // only print per API results if in a not working state
-            if (Config.DEBUG || workingUUIDCount == 0 || workingProfileCount == 0)
-                for (String result : results)
-                    if (Config.DEBUG || result.contains("✘"))
+            if (settings.getProperty(Config.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
+                for (String result : results) {
+                    if (settings.getProperty(Config.DEBUG) || result.contains("✘")) {
                         statusMessages.add(result);
+                    }
+                }
+            }
 
             statusMessages.add("§7Working UUID API count: §6" + workingUUIDCount);
             statusMessages.add("§7Working Profile API count: §6" + workingProfileCount);
@@ -116,10 +123,10 @@ public abstract class SharedSRCommand extends BaseCommand {
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
-                    plugin.getSkinStorage().removeSkinOfPlayer(target);
+                    skinStorage.removeSkinOfPlayer(target);
                     break;
                 case SKIN:
-                    plugin.getSkinStorage().removeSkinData(target);
+                    skinStorage.removeSkinData(target);
                     break;
             }
 
@@ -157,10 +164,10 @@ public abstract class SharedSRCommand extends BaseCommand {
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
-                plugin.getLogger().info("§aName: §8" + name);
-                plugin.getLogger().info("§aValue: §8" + value);
-                plugin.getLogger().info("§aSignature: §8" + signature);
-                plugin.getLogger().info("§aValue Decoded: §e" + profile);
+                logger.info("§aName: §8" + name);
+                logger.info("§aValue: §8" + value);
+                logger.info("§aSignature: §8" + signature);
+                logger.info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();
                 sender.sendMessage(Message.NO_SKIN_DATA);
@@ -187,7 +194,7 @@ public abstract class SharedSRCommand extends BaseCommand {
         plugin.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
+                    skinStorage.setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     sender.sendMessage(Message.SUCCESS_CREATE_SKIN, name);
                 } else {
@@ -214,18 +221,18 @@ public abstract class SharedSRCommand extends BaseCommand {
                 if (C.validUrl(skin)) {
                     skinProps = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
                 } else {
-                    skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
+                    skinProps = mojangAPI.getSkin(skin).orElse(null);
                 }
                 if (skinProps == null) {
                     sender.sendMessage(Message.PREFIX + "§4no skin found....");
                     return;
                 }
 
-                plugin.getSkinStorage().setSkinData(skinName, skinProps);
+                skinStorage.setSkinData(skinName, skinProps);
 
                 for (ISRPlayer player : plugin.getOnlinePlayers()) {
                     final String pName = player.getName();
-                    plugin.getSkinStorage().setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
+                    skinStorage.setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
                 sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
@@ -241,7 +248,7 @@ public abstract class SharedSRCommand extends BaseCommand {
                 sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
                 return;
             }
-            if (plugin.getSkinStorage().purgeOldSkins(days)) {
+            if (skinStorage.purgeOldSkins(days)) {
                 sender.sendMessage(Message.PREFIX + "§aSuccessfully purged old skins!");
             } else {
                 sender.sendMessage(Message.PREFIX + "§4A error occurred while purging old skins!");

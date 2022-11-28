@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.velocity;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
 import com.velocitypowered.api.plugin.PluginContainer;
@@ -27,15 +28,13 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
@@ -62,10 +61,7 @@ import java.util.stream.Collectors;
 public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     private final Object pluginInstance; // Only for platform API use
     private final ProxyServer proxy;
-    private final SkinApplierVelocity skinApplierVelocity;
     private final Metrics.Factory metricsFactory;
-    private final SkinCommand skinCommand = new SkinCommand(this);
-    private boolean outdated;
 
     public SkinsRestorerVelocity(Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory, Path dataFolder, Logger logger, PluginContainer container) {
         super(
@@ -78,8 +74,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         this.pluginInstance = pluginInstance;
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
-        this.skinApplierVelocity = new SkinApplierVelocity(this);
-        registerAPI();
     }
 
     public void pluginStartup() {
@@ -99,8 +93,8 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         });
 
         // Init config files
-        Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        SettingsManager settings = loadConfig();
+        loadLocales();
 
         // Init storage
         try {
@@ -110,28 +104,30 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
             return;
         }
 
+        SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(proxy, settings, this.logger);
+
+        // Init API
+        new SkinsRestorerVelocityAPI(skinApplierVelocity);
+
         // Init listener
         proxy.getEventManager().register(pluginInstance, new ConnectListener(this));
-        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(this));
+        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, this, skinApplierVelocity));
 
         // Init commands
-        initCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+
+        SkinCommand skinCommand = new SkinCommand(this, settings);
+        manager.registerCommand(skinCommand);
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+        manager.registerCommand(new GUICommand(this));
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(pluginInstance, new PluginMessageListener(this));
+        proxy.getEventManager().register(pluginInstance, new PluginMessageListener(logger, skinStorage, this, skinCommand));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
-    }
-
-    private void initCommands() {
-        sharedInitCommands();
-
-        manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this));
-        manager.registerCommand(new GUICommand(this));
     }
 
     @Override
@@ -169,11 +165,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         return new VelocityCommandManager(proxy, pluginInstance);
     }
 
-    @Override
-    protected void registerAPI() {
-        new SkinsRestorerVelocityAPI();
-    }
-
     private static class WrapperFactoryVelocity implements IWrapperFactory {
         @Override
         public String getPlayerName(Object playerInstance) {
@@ -187,9 +178,12 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         }
     }
 
-    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPIShared {
-        public SkinsRestorerVelocityAPI() {
-            super(SkinsRestorerVelocity.this, new WrapperFactoryVelocity(), VelocityProperty::new);
+    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
+        private final SkinApplierVelocity skinApplierVelocity;
+
+        public SkinsRestorerVelocityAPI(SkinApplierVelocity skinApplierVelocity) {
+            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), VelocityProperty::new);
+            this.skinApplierVelocity = skinApplierVelocity;
         }
 
         @Override

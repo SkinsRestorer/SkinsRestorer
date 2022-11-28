@@ -19,36 +19,17 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import co.aikar.commands.CommandManager;
-import co.aikar.locales.LocaleManager;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.CommandPropertiesManager;
-import net.skinsrestorer.shared.utils.CommandReplacements;
-import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import ch.jalu.configme.SettingsManager;
 
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
     Path getDataFolder();
 
-    SkinStorage getSkinStorage();
-
     String getVersion();
-
-    CooldownStorage getCooldownStorage();
-
-    SRLogger getLogger();
 
     InputStream getResource(String resource);
 
@@ -58,55 +39,15 @@ public interface ISRPlugin {
 
     Collection<ISRPlayer> getOnlinePlayers();
 
-    SharedSkinCommand getSkinCommand();
-
-    LocaleManager<ISRForeign> getLocaleManager();
-
-    @SuppressWarnings({"deprecation"})
-    default void prepareACF(CommandManager<?, ?, ?, ?, ?, ?> manager, SRLogger srLogger) {
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
-        LocaleManager<ISRForeign> localeManager = getLocaleManager();
-
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey()).split(", "))));
-
-        CommandPropertiesManager.load(manager, getDataFolder(), getResource("command.properties"), srLogger);
-
-        SharedMethods.allowIllegalACFNames();
-    }
-
-    default void initStorage() throws InitializeException {
-        // Initialise SkinStorage
-        SharedMethods.initStorage(getLogger(), getSkinStorage(), getDataFolder());
-
-        // Preload default skins
-        runAsync(getSkinStorage()::preloadDefaultSkins);
-    }
-
-    CommandManager<?, ?, ?, ?, ?, ?> getManager();
-
-    MojangAPI getMojangAPI();
-
     default void checkUpdate() {
         checkUpdate(false);
     }
 
     void checkUpdate(boolean showUpToDate);
 
-    default void checkUpdateInit(Runnable check) {
-        Path updaterDisabled = getDataFolder().resolve("noupdate.txt");
-        if (Files.exists(updaterDisabled)) {
-            getLogger().info("Updater Disabled");
-        } else {
-            check.run();
-        }
-    }
-
     boolean isPluginEnabled(String pluginName);
 
-    void loadConfig();
+    SettingsManager loadConfig();
+
+    void loadLocales();
 }

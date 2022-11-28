@@ -19,50 +19,40 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-@Getter
-@RequiredArgsConstructor
-public class PlayerResourcePackStatus extends SharedLoginProfileListener implements Listener {
-    private final SkinsRestorerBukkit plugin;
-    private final boolean isOnlineMode = Bukkit.getOnlineMode();
+public class PlayerResourcePackStatus extends SharedLoginProfileListener<Void> implements Listener {
+    private final ISRPlugin plugin;
+
+    public PlayerResourcePackStatus(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin) {
+        super(settings, skinStorage, plugin);
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
-        if (!Config.RESOURCE_PACK_FIX)
+        if (!settings.getProperty(Config.RESOURCE_PACK_FIX))
             return;
 
         PlayerJoin.setResourcePack(true);
 
-        SRLoginProfileEvent profileEvent = wrap(event);
-
-        if (handleSync(profileEvent))
-            return;
-
-        plugin.runAsync(() -> {
-            try {
-                handleAsync(profileEvent).ifPresent(property ->
-                        SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property));
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-            }
-        });
+        handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(PlayerResourcePackStatusEvent event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(PlayerResourcePackStatusEvent event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
                 return Bukkit.getOnlineMode();
@@ -76,6 +66,17 @@ public class PlayerResourcePackStatus extends SharedLoginProfileListener impleme
             @Override
             public boolean isCancelled() {
                 return false;
+            }
+
+            @Override
+            public void setResultProperty(IProperty property) {
+                SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property);
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                plugin.runAsync(runnable);
+                return null;
             }
         };
     }

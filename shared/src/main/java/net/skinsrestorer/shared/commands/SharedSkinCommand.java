@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
@@ -28,7 +29,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -45,6 +45,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @RequiredArgsConstructor
 public abstract class SharedSkinCommand extends BaseCommand {
     protected final ISRPlugin plugin;
+    protected final SettingsManager settings;
     private final IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
 
     @SuppressWarnings("deprecation")
@@ -63,8 +64,11 @@ public abstract class SharedSkinCommand extends BaseCommand {
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        if (Config.ENABLE_CUSTOM_HELP) sendHelp(sender);
-        else help.showHelp();
+        if (settings.getProperty(Config.ENABLE_CUSTOM_HELP)) {
+            sendHelp(sender);
+        } else {
+            help.showHelp();
+        }
     }
 
     protected void onSkinClear(ISRPlayer player) {
@@ -73,7 +77,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         onSkinClearOther(player, player);
     }
 
-    protected void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
+    public void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         plugin.runAsync(() -> {
@@ -117,7 +121,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         onSkinUpdateOther(player, player);
     }
 
-    protected void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
+    public void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         plugin.runAsync(() -> {
@@ -169,11 +173,11 @@ public abstract class SharedSkinCommand extends BaseCommand {
         onSkinSetOther(player, player, skin[0], null);
     }
 
-    protected void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
+    public void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
         plugin.runAsync(() -> {
-            if (Config.PER_SKIN_PERMISSIONS && !sender.hasPermission("skinsrestorer.skin." + skin)) {
+            if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
@@ -217,8 +221,8 @@ public abstract class SharedSkinCommand extends BaseCommand {
             return false;
         }
 
-        if (Config.DISABLED_SKINS_ENABLED && !sender.hasPermission("skinsrestorer.bypassdisabled")
-                && Config.DISABLED_SKINS.stream().anyMatch(skin::equalsIgnoreCase)) {
+        if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
+                && settings.getProperty(Config.DISABLED_SKINS).stream().anyMatch(skin::equalsIgnoreCase)) {
             sender.sendMessage(Message.SKIN_DISABLED);
             return false;
         }
@@ -233,7 +237,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         String oldSkinName = restoreOnFailure ? plugin.getSkinStorage().getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
-                    && !Config.SKIN_WITHOUT_PERM) { // Ignore /skin clear when defaultSkin = url
+                    && !settings.getProperty(Config.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
@@ -244,7 +248,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             // Apply cooldown to sender
-            plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+            plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
@@ -272,7 +276,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         } else {
             // If skin is not an url, it's a username
             // Apply cooldown to sender
-            plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_CHANGE_COOLDOWN, TimeUnit.SECONDS);
+            plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
             try {
                 if (restoreOnFailure) {
                     SkinsRestorerAPI.getApi().setSkinName(playerName, skin);
@@ -291,7 +295,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         }
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        plugin.getCooldownStorage().setCooldown(senderName, Config.SKIN_ERROR_COOLDOWN, TimeUnit.SECONDS);
+        plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_ERROR_COOLDOWN), TimeUnit.SECONDS);
         if (restoreOnFailure) {
             SkinsRestorerAPI.getApi().setSkinName(playerName, oldSkinName);
         }
