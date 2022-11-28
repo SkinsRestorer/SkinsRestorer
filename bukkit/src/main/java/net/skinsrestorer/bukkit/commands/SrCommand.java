@@ -27,10 +27,10 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -47,10 +47,12 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBukkit plugin;
+    private final SkinApplierBukkit skinApplier;
 
-    public SrCommand(SkinsRestorerBukkit plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+    public SrCommand(SkinsRestorerBukkit plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, SkinApplierBukkit skinApplier) {
         super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
+        this.skinApplier = skinApplier;
     }
 
     @HelpCommand
@@ -126,7 +128,7 @@ public class SrCommand extends SharedSRCommand {
 
     @Override
     public void reloadCustomHook() {
-        plugin.getSkinApplierBukkit().setOptFileChecked(false);
+        skinApplier.setOptFileChecked(false);
     }
 
     @Override
@@ -142,7 +144,7 @@ public class SrCommand extends SharedSRCommand {
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
         try {
-            Map<String, Collection<IProperty>> propertyMap = plugin.getSkinApplierBukkit().getPlayerProperties(player.getWrapper().get(Player.class));
+            Map<String, Collection<IProperty>> propertyMap = skinApplier.getPlayerProperties(player.getWrapper().get(Player.class));
             return new ArrayList<>(propertyMap.get(IProperty.TEXTURES_NAME));
         } catch (ReflectionException e) {
             e.printStackTrace();

@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bungee;
 
+import ch.jalu.configme.SettingsManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
@@ -26,7 +27,6 @@ import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Arrays;
@@ -34,8 +34,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SkinApplierBungeeOld extends SkinApplierBungeeShared {
-    public SkinApplierBungeeOld(ISRPlugin plugin, SRLogger log) {
-        super(plugin, log);
+    public SkinApplierBungeeOld(SettingsManager settings, SRLogger log) {
+        super(settings, log);
     }
 
     protected void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException {

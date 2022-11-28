@@ -61,7 +61,10 @@ public class Config implements SettingsHolder {
             "True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.",
             "This is more customizable, but at the cost of permission specific help."
     })
-    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);    @Comment({
+    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);
+    @Comment("Disable message prefix in SkinsRestorer messages.")
+    public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
+    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);    @Comment({
             "\n##########",
             "\n# Locale #",
             "\n##########",
@@ -82,9 +85,6 @@ public class Config implements SettingsHolder {
             return value.toString();
         }
     });
-    @Comment("Disable message prefix in SkinsRestorer messages.")
-    public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
-    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
     public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);
     public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("DefaultSkins.Names", new PropertyType<String>() {
         @Override
@@ -321,6 +321,8 @@ public class Config implements SettingsHolder {
                 "Discord: https://discord.me/SkinsRestorer/"
         );
     }
+
+
 
 
 }

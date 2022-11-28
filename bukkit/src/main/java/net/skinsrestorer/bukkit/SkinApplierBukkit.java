@@ -23,7 +23,9 @@ import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
+import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
@@ -51,7 +53,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-public class SkinApplierBukkit {
+public class SkinApplierBukkit implements ISkinApplier {
+    private final SkinsRestorerBukkit plugin;
     private final SRLogger logger;
     @Getter
     private final Consumer<Player> refresh;
@@ -61,7 +64,8 @@ public class SkinApplierBukkit {
     private boolean disableRemountPlayer;
     private boolean enableDismountEntities;
 
-    public SkinApplierBukkit(SRLogger logger) throws InitializeException {
+    public SkinApplierBukkit(SkinsRestorerBukkit plugin, SRLogger logger) throws InitializeException {
+        this.plugin = plugin;
         this.logger = logger;
         this.refresh = detectRefresh();
     }
@@ -73,17 +77,17 @@ public class SkinApplierBukkit {
             boolean viaVersionExists = plugin.isPluginEnabled("ViaVersion");
             boolean protocolSupportExists = plugin.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
-                plugin.getLogger().debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return selectSpigotRefresher();
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher();
+                return new PaperSkinRefresher(logger);
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
-                plugin.getLogger().severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
+                logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
 
@@ -92,8 +96,13 @@ public class SkinApplierBukkit {
 
     private Consumer<Player> selectSpigotRefresher() throws InitializeException {
         if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(plugin);
-        } else return new SpigotSkinRefresher(plugin);
+            return new MappingSpigotSkinRefresher(plugin, logger);
+        } else return new SpigotSkinRefresher(plugin, logger);
+    }
+
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+        applySkin(playerWrapper.get(Player.class), property);
     }
 
     /**
@@ -222,7 +231,7 @@ public class SkinApplierBukkit {
         disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
         enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
 
-        plugin.getLogger().debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
+        logger.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
         optFileChecked = true;
     }
 
@@ -231,7 +240,7 @@ public class SkinApplierBukkit {
             if (hasPaperMethods()) {
                 return true;
             } else {
-                plugin.getLogger().debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                logger.debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
                 return false;
             }
         } else {

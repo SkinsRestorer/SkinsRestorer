@@ -23,11 +23,9 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.CommandManager;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
@@ -43,9 +41,9 @@ import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -81,11 +79,11 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
      * This method will check if the new class is available and return the appropriate class that was compiled for it.
      */
-    private static SkinApplierBungeeShared selectSkinApplier(ISRPlugin plugin, SRLogger srLogger) {
+    private static SkinApplierBungeeShared selectSkinApplier(SettingsManager settings, SRLogger srLogger) {
         if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
-            return new SkinApplierBungeeNew(plugin, srLogger);
+            return new SkinApplierBungeeNew(settings, srLogger);
         } else {
-            return new SkinApplierBungeeOld(plugin, srLogger);
+            return new SkinApplierBungeeOld(settings, srLogger);
         }
     }
 
@@ -110,18 +108,19 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         loadLocales();
 
         // Init storage
+        SkinStorage skinStorage;
         try {
-            initStorage();
+            skinStorage = initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
         }
 
-        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(this, logger);
-        new SkinsRestorerBungeeAPI(skinApplierBungee);
+        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(settings, logger);
+        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee(), skinApplierBungee);
 
         // Init listener
-        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this));
+        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this, skinApplierBungee));
         proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this));
 
         // Init commands
@@ -133,7 +132,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, this, skinCommand);
         proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
 
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBungee));
         manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener));
 
         // Init message channel
@@ -200,21 +199,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
             } else {
                 return new BungeePropertyOld(name, value, signature);
             }
-        }
-    }
-
-    private class SkinsRestorerBungeeAPI extends SkinsRestorerAPI {
-        private final SkinApplierBungeeShared skinApplierBungee;
-
-        public SkinsRestorerBungeeAPI(SkinApplierBungeeShared skinApplierBungee) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee());
-            this.skinApplierBungee = skinApplierBungee;
-        }
-
-        @SneakyThrows
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-            skinApplierBungee.applySkin(playerWrapper.get(ProxiedPlayer.class), property);
         }
     }
 }

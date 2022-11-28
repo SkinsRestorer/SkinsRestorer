@@ -20,13 +20,10 @@
 package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import java.nio.file.Path;
 import java.util.regex.Pattern;
 
 public class SharedMethods {

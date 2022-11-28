@@ -27,6 +27,8 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.storage.Config;
@@ -39,10 +41,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class SkinApplierVelocity {
+public class SkinApplierVelocity implements ISkinApplier {
     private final ProxyServer proxy;
     private final SettingsManager settings;
     private final SRLogger logger;
+
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+        applySkin(playerWrapper.get(Player.class), property);
+    }
 
     protected void applySkin(Player player, IProperty property) {
         proxy.getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {

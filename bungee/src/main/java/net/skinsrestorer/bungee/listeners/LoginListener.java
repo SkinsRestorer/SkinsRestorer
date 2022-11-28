@@ -27,6 +27,7 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bungee.SkinApplierBungeeShared;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
@@ -35,10 +36,12 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 @Getter
 public class LoginListener extends SharedLoginProfileListener<Void> implements Listener {
     private final SkinsRestorerBungee plugin;
+    private final SkinApplierBungeeShared skinApplier;
 
-    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin) {
-        super(skinStorage, settings, plugin);
+    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin, SkinApplierBungeeShared skinApplier) {
+        super(settings, skinStorage, plugin);
         this.plugin = plugin;
+        this.skinApplier = skinApplier;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -65,7 +68,7 @@ public class LoginListener extends SharedLoginProfileListener<Void> implements L
 
             @Override
             public void setResultProperty(IProperty property) {
-                plugin.getSkinApplierBungee().applySkin(property, (InitialHandler) event.getConnection());
+                skinApplier.applySkin(property, (InitialHandler) event.getConnection());
             }
 
             @Override

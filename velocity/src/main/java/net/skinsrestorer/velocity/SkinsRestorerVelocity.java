@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
@@ -97,8 +98,9 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         loadLocales();
 
         // Init storage
+        SkinStorage skinStorage;
         try {
-            initStorage();
+            skinStorage = initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -116,7 +118,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        SkinCommand skinCommand = new SkinCommand(this, settings);
+        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger);
         manager.registerCommand(skinCommand);
         manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
         manager.registerCommand(new GUICommand(this));

@@ -19,14 +19,16 @@
  */
 package net.skinsrestorer.bungee;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
+import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
+import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +40,14 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
-public abstract class SkinApplierBungeeShared {
-    private final ISRPlugin plugin;
+public abstract class SkinApplierBungeeShared implements ISkinApplier {
+    private final SettingsManager settings;
     private final SRLogger log;
+
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+        applySkin(playerWrapper.get(ProxiedPlayer.class), property);
+    }
 
     public void applySkin(IProperty property, InitialHandler handler) {
         try {
@@ -74,7 +81,7 @@ public abstract class SkinApplierBungeeShared {
         if (player == null)
             return;
 
-        sendUpdateRequest(player, Config.FORWARD_TEXTURES ? textures : null);
+        sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
     }
 
     protected abstract void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException;

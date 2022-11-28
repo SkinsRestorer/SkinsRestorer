@@ -21,6 +21,8 @@ package net.skinsrestorer.sponge;
 
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
@@ -35,8 +37,13 @@ import org.spongepowered.api.world.storage.WorldProperties;
 import java.util.Collection;
 
 @RequiredArgsConstructor
-public class SkinApplierSponge {
+public class SkinApplierSponge implements ISkinApplier {
     private final SkinsRestorerSponge plugin;
+
+    @Override
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+        applySkin(playerWrapper.get(Player.class), property);
+    }
 
     protected void applySkin(Player player, IProperty property) {
         setTexture(property, player.getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME));

@@ -44,6 +44,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -106,7 +107,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         SkinApplierBukkit skinApplierBukkit;
         try {
-            skinApplierBukkit = new SkinApplierBukkit(this);
+            skinApplierBukkit = new SkinApplierBukkit(this, logger);
         } catch (NoMappingException e) {
             logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
             throw e;
@@ -114,7 +115,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             logger.severe(ChatColor.RED + ChatColor.UNDERLINE.toString() + "Could not initialize SkinApplier! Please report this on our discord server!");
             throw e;
         }
-        new SkinsRestorerBukkitAPI(skinApplierBukkit);
 
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
@@ -161,7 +161,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         if (proxyMode) {
             if (Files.exists(dataFolder.resolve("enableSkinStorageAPI.txt"))) {
-                initConfigAndStorage();
+                // Init config files
+                loadConfig();
+
+                SkinStorage skinStorage = initStorage();
+                new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
             }
 
             Bukkit.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:skinchange");
@@ -238,13 +242,16 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 });
             });
         } else {
-            SettingsManager settings = initConfigAndStorage();
+            // Init config files
+            SettingsManager settings = loadConfig();
+            SkinStorage skinStorage = initStorage();
+            new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
 
             // Init commands
             CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-            manager.registerCommand( new SkinCommand(this, settings));
-            manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+            manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger));
+            manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBukkit));
             manager.registerCommand(new GUICommand(this));
 
             // Init listener
@@ -263,17 +270,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             // Run connection check
             runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
         }
-    }
-
-    private SettingsManager initConfigAndStorage() throws InitializeException {
-        // Init config files
-        SettingsManager manager = loadConfig();
-        // Set new default locale because we initialized localeManager early
-        localeManager.setDefaultLocale(LocaleParser.getDefaultLocale());
-
-        // Init storage
-        initStorage();
-        return manager;
     }
 
     protected void updateCheck() {
@@ -513,19 +509,5 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     private static class MundoConfig {
         private boolean enable_custom_skin_and_tablist;
-    }
-
-    private class SkinsRestorerBukkitAPI extends SkinsRestorerAPI {
-        private final SkinApplierBukkit skinApplierBukkit;
-
-        private SkinsRestorerBukkitAPI(SkinApplierBukkit skinApplierBukkit) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit());
-            this.skinApplierBukkit = skinApplierBukkit;
-        }
-
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-            skinApplierBukkit.applySkin(playerWrapper.get(Player.class), property);
-        }
     }
 }

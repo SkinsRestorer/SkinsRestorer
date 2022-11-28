@@ -28,7 +28,6 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;

@@ -36,16 +36,17 @@ import java.util.Base64;
  * Advanced help or getting problems? join our discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
-public abstract class SkinsRestorerAPI {
+public class SkinsRestorerAPI {
     private static SkinsRestorerAPI api;
     private final IMojangAPI mojangAPI;
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
-    private final IPropertyFactory propertyFactory;
-    private final Gson gson = new Gson();
     private final IWrapperFactory wrapperFactory;
+    private final IPropertyFactory propertyFactory;
+    private final ISkinApplier skinApplier;
+    private final Gson gson = new Gson();
 
-    protected SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
+    public SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, ISkinApplier skinApplier) {
         if (SkinsRestorerAPI.api == null)
             setInstance(this);
 
@@ -54,6 +55,7 @@ public abstract class SkinsRestorerAPI {
         this.skinStorage = skinStorage;
         this.wrapperFactory = wrapperFactory;
         this.propertyFactory = propertyFactory;
+        this.skinApplier = skinApplier;
     }
 
     private static synchronized void setInstance(SkinsRestorerAPI api) {
@@ -315,7 +317,9 @@ public abstract class SkinsRestorerAPI {
      * @param playerWrapper
      * @param property
      */
-    public abstract void applySkin(PlayerWrapper playerWrapper, IProperty property);
+    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
+        skinApplier.applySkin(playerWrapper, property);
+    }
 
     protected IWrapperFactory getWrapperFactory() {
         return this.wrapperFactory;

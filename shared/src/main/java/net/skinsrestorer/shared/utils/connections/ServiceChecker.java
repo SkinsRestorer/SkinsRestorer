@@ -20,8 +20,6 @@
 package net.skinsrestorer.shared.utils.connections;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 
@@ -33,6 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ServiceChecker {
     private static final String XKNAT_NAME = "xknat";
     private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
+
+    private ServiceChecker() {
+    }
 
     public static ServiceCheckResponse checkServices(MojangAPI mojangAPI) {
         ServiceCheckResponse response = new ServiceCheckResponse();
@@ -91,9 +92,6 @@ public class ServiceChecker {
         } else response.addResult("Minetools Profile §c✘ Error getting Profile: null");
 
         return response;
-    }
-
-    private ServiceChecker() {
     }
 
     @Getter

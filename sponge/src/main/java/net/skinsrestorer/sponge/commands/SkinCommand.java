@@ -24,8 +24,12 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -36,8 +40,9 @@ import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
-    public SkinCommand(ISRPlugin plugin, SettingsManager settings) {
-        super(plugin, settings);
+
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger) {
+        super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
     }
 
     @Default

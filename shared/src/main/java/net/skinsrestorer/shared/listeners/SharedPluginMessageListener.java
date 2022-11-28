@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;

@@ -19,13 +19,10 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;

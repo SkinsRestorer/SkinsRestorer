@@ -28,10 +28,10 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bungee.SkinApplierBungeeShared;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -48,10 +48,12 @@ import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerBungee plugin;
+    private final SkinApplierBungeeShared skinApplier;
 
-    public SrCommand(SkinsRestorerBungee plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
+    public SrCommand(SkinsRestorerBungee plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, SkinApplierBungeeShared skinApplier) {
         super(plugin, mojangAPI, skinStorage, settings, logger);
         this.plugin = plugin;
+        this.skinApplier = skinApplier;
     }
 
     @HelpCommand
@@ -137,7 +139,7 @@ public class SrCommand extends SharedSRCommand {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        List<IProperty> props = plugin.getSkinApplierBungee().getProperties(player.getWrapper().get(ProxiedPlayer.class));
+        List<IProperty> props = skinApplier.getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
             return Collections.emptyList();

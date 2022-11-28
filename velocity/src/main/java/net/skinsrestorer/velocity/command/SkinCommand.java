@@ -26,8 +26,12 @@ import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
 import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
@@ -37,8 +41,8 @@ import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
 
-    public SkinCommand(ISRPlugin plugin, SettingsManager settings) {
-        super(plugin, settings);
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger) {
+        super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
     }
 
     @Default

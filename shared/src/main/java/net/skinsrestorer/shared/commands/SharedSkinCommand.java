@@ -29,13 +29,17 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -45,7 +49,11 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @RequiredArgsConstructor
 public abstract class SharedSkinCommand extends BaseCommand {
     protected final ISRPlugin plugin;
-    protected final SettingsManager settings;
+    private final SettingsManager settings;
+    private final CooldownStorage cooldownStorage;
+    private final SkinStorage skinStorage;
+    private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
 
     @SuppressWarnings("deprecation")
     protected void onDefault(ISRCommandSender sender) {
@@ -81,18 +89,18 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
         plugin.runAsync(() -> {
             String senderName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-                sender.sendMessage(Message.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName));
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
+                sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderName));
                 return;
             }
 
             String playerName = target.getName();
 
             // remove users defined skin from database
-            plugin.getSkinStorage().removeSkinOfPlayer(playerName);
+            skinStorage.removeSkinOfPlayer(playerName);
 
             try {
-                IProperty property = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName).getLeft();
+                IProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), property);
             } catch (NotPremiumException e) {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(),
@@ -126,13 +134,13 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
         plugin.runAsync(() -> {
             final String senderName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-                sender.sendMessage(Message.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(senderName));
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
+                sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderName));
                 return;
             }
 
             final String playerName = player.getName();
-            Optional<String> skin = plugin.getSkinStorage().getSkinNameOfPlayer(playerName);
+            Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
 
             try {
                 if (skin.isPresent()) {
@@ -142,13 +150,13 @@ public abstract class SharedSkinCommand extends BaseCommand {
                         return;
                     }
 
-                    if (!plugin.getSkinStorage().updateSkinData(skin.get())) {
+                    if (!skinStorage.updateSkinData(skin.get())) {
                         sender.sendMessage(Message.ERROR_UPDATING_SKIN);
                         return;
                     }
                 } else {
                     // get DefaultSkin
-                    skin = Optional.of(plugin.getSkinStorage().getDefaultSkinName(playerName, true).getLeft());
+                    skin = Optional.of(skinStorage.getDefaultSkinName(playerName, true).getLeft());
                 }
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
@@ -203,7 +211,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
     protected void sendHelp(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender)) return;
 
-        String srLine = SkinsRestorerAPIShared.getApi().getMessage(sender, Message.SR_LINE);
+        String srLine = locale.getMessage(sender, Message.SR_LINE);
         if (!srLine.isEmpty())
             sender.sendMessage(srLine);
 
@@ -228,13 +236,13 @@ public abstract class SharedSkinCommand extends BaseCommand {
         }
 
         String senderName = sender.getName();
-        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(senderName)) {
-            sender.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(plugin.getCooldownStorage().getCooldownSeconds(senderName)));
+        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
+            sender.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(senderName)));
             return false;
         }
 
         String playerName = player.getName();
-        String oldSkinName = restoreOnFailure ? plugin.getSkinStorage().getSkinNameOfPlayer(playerName).orElse(playerName) : null;
+        String oldSkinName = restoreOnFailure ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skin)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !settings.getProperty(Config.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
@@ -248,7 +256,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             // Apply cooldown to sender
-            plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
+            cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
@@ -262,21 +270,21 @@ public abstract class SharedSkinCommand extends BaseCommand {
                 SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
-                String success = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKIN_CHANGE_SUCCESS);
-                if (!success.isEmpty() && !success.equals(SkinsRestorerAPIShared.getApi().getMessage(player, Message.PREFIX)))
+                String success = locale.getMessage(player, Message.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
                     player.sendMessage(Message.SKIN_CHANGE_SUCCESS, "skinUrl");
 
                 return true;
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
-                plugin.getLogger().debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
+                logger.debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {
             // If skin is not an url, it's a username
             // Apply cooldown to sender
-            plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
+            cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
             try {
                 if (restoreOnFailure) {
                     SkinsRestorerAPI.getApi().setSkinName(playerName, skin);
@@ -284,8 +292,8 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
-                String success = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKIN_CHANGE_SUCCESS);
-                if (!success.isEmpty() && !success.equals(SkinsRestorerAPIShared.getApi().getMessage(player, Message.PREFIX)))
+                String success = locale.getMessage(player, Message.SKIN_CHANGE_SUCCESS);
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
                     player.sendMessage(Message.SKIN_CHANGE_SUCCESS, skin); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;
@@ -295,7 +303,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
         }
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        plugin.getCooldownStorage().setCooldown(senderName, settings.getProperty(Config.SKIN_ERROR_COOLDOWN), TimeUnit.SECONDS);
+        cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_ERROR_COOLDOWN), TimeUnit.SECONDS);
         if (restoreOnFailure) {
             SkinsRestorerAPI.getApi().setSkinName(playerName, oldSkinName);
         }

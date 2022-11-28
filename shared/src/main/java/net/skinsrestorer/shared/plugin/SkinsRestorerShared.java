@@ -24,7 +24,6 @@ import ch.jalu.configme.SettingsManagerBuilder;
 import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
@@ -57,7 +56,6 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final SRLogger logger;
     protected final MojangAPI mojangAPI;
     protected final MineSkinAPI mineSkinAPI;
-    protected final SkinStorage skinStorage;
     protected final LocaleManager<ISRForeign> localeManager;
     protected final UpdateChecker updateChecker;
     @Getter
@@ -74,7 +72,6 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         this.logger = new SRLogger(isrLogger, loggerColor);
         this.mojangAPI = new MojangAPI(metricsCounter);
         this.mineSkinAPI = new MineSkinAPI(logger, metricsCounter);
-        this.skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI);
         this.localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerLocale.getDefaultForeign().getLocale());
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
@@ -154,6 +151,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         }
 
         logger.setDebug(settings.getProperty(Config.DEBUG));
+        localeManager.setDefaultLocale(settings.getProperty(Config.LANGUAGE));
 
         return settings;
     }
@@ -162,8 +160,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         Message.load(localeManager, dataFolder, this);
     }
 
-    public void initStorage() throws InitializeException {
+    public SkinStorage initStorage() throws InitializeException {
         // Initialise SkinStorage
+        SkinStorage skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI, settings);
         try {
             if (settings.getProperty(Config.MYSQL_ENABLED)) {
                 MySQL mysql = new MySQL(
@@ -195,6 +194,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
             logger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
             throw new InitializeException(e);
         }
+        return skinStorage;
     }
 
     @SuppressWarnings({"deprecation"})
