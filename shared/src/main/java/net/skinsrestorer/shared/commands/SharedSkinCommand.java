@@ -46,7 +46,6 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 public abstract class SharedSkinCommand extends BaseCommand {
     protected final ISRPlugin plugin;
     protected final SettingsManager settings;
-    private final IProperty emptySkin = SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", "");
 
     @SuppressWarnings("deprecation")
     protected void onDefault(ISRCommandSender sender) {
@@ -96,7 +95,8 @@ public abstract class SharedSkinCommand extends BaseCommand {
                 IProperty property = plugin.getSkinStorage().getDefaultSkinForPlayer(playerName).getLeft();
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), property);
             } catch (NotPremiumException e) {
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), emptySkin);
+                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(),
+                        SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", ""));
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
