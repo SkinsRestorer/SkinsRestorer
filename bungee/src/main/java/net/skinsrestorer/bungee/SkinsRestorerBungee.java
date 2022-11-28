@@ -39,6 +39,7 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
@@ -105,7 +106,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Init config files
         SettingsManager settings = loadConfig();
-        loadLocales();
+        SkinsRestorerLocale locale = loadLocales(settings);
 
         // Init storage
         SkinStorage skinStorage;
@@ -117,16 +118,18 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         }
 
         SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(settings, logger);
+
+        // Init API
         new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee(), skinApplierBungee);
 
         // Init listener
-        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this, skinApplierBungee));
+        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this, skinApplierBungee, logger));
         proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        SkinCommand skinCommand = new SkinCommand(this, settings);
+        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger);
         manager.registerCommand(skinCommand);
 
         PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, this, skinCommand);

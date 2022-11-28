@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,8 +37,8 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 public class PlayerResourcePackStatus extends SharedLoginProfileListener<Void> implements Listener {
     private final ISRPlugin plugin;
 
-    public PlayerResourcePackStatus(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin) {
-        super(settings, skinStorage, plugin);
+    public PlayerResourcePackStatus(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin, SRLogger logger) {
+        super(settings, skinStorage, logger);
         this.plugin = plugin;
     }
 

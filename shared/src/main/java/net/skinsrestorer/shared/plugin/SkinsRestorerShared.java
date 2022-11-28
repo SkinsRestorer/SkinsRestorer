@@ -48,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
@@ -56,7 +57,6 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final SRLogger logger;
     protected final MojangAPI mojangAPI;
     protected final MineSkinAPI mineSkinAPI;
-    protected final LocaleManager<ISRForeign> localeManager;
     protected final UpdateChecker updateChecker;
     @Getter
     protected final Path dataFolder;
@@ -67,12 +67,12 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     @Getter
     private boolean outdated = false;
     private SettingsManager settings;
+    private SkinsRestorerLocale locale;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);
         this.mojangAPI = new MojangAPI(metricsCounter);
         this.mineSkinAPI = new MineSkinAPI(logger, metricsCounter);
-        this.localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerLocale.getDefaultForeign().getLocale());
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
         this.dataFolder = dataFolder;
@@ -151,13 +151,18 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         }
 
         logger.setDebug(settings.getProperty(Config.DEBUG));
-        localeManager.setDefaultLocale(settings.getProperty(Config.LANGUAGE));
+        if (locale != null) {
+            locale.getLocaleManager().setDefaultLocale(settings.getProperty(Config.LANGUAGE));
+        }
 
         return settings;
     }
 
-    public void loadLocales() {
+    public SkinsRestorerLocale loadLocales(SettingsManager settings) {
+        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, settings.getProperty(Config.LANGUAGE));
         Message.load(localeManager, dataFolder, this);
+        locale = new SkinsRestorerLocale(localeManager, settings);
+        return locale;
     }
 
     public SkinStorage initStorage() throws InitializeException {

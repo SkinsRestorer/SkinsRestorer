@@ -28,13 +28,14 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
 
 public class GameProfileRequest extends SharedLoginProfileListener<EventTask> {
     private final SkinApplierVelocity skinApplier;
 
-    public GameProfileRequest(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin, SkinApplierVelocity skinApplier) {
-        super(settings, skinStorage, plugin);
+    public GameProfileRequest(SkinStorage skinStorage, SettingsManager settings, SkinApplierVelocity skinApplier, SRLogger logger) {
+        super(settings, skinStorage, logger);
         this.skinApplier = skinApplier;
     }
 

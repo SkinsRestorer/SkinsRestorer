@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.interfaces;
 
 import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -49,5 +50,5 @@ public interface ISRPlugin {
 
     SettingsManager loadConfig();
 
-    void loadLocales();
+    SkinsRestorerLocale loadLocales(SettingsManager settings);
 }

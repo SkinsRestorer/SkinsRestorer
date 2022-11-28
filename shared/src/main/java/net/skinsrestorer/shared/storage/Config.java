@@ -64,7 +64,8 @@ public class Config implements SettingsHolder {
     public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
-    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);    @Comment({
+    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
+    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);    @Comment({
             "\n##########",
             "\n# Locale #",
             "\n##########",
@@ -85,7 +86,6 @@ public class Config implements SettingsHolder {
             return value.toString();
         }
     });
-    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);
     public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("DefaultSkins.Names", new PropertyType<String>() {
         @Override
         public @Nullable String convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {

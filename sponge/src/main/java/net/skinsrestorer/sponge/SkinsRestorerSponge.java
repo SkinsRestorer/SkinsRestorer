@@ -23,14 +23,14 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
@@ -85,25 +85,28 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         // Init config files
         SettingsManager settings = loadConfig();
-        loadLocales();
+        SkinsRestorerLocale locale = loadLocales(settings);
 
         // Init storage
+        SkinStorage skinStorage;
         try {
-            initStorage();
+            skinStorage = initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
         }
 
         SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
-        new SkinsRestorerSpongeAPI(skinApplierSponge);
 
-        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this));
+        // Init API
+        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
+
+        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this, logger));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        manager.registerCommand(new SkinCommand(this, settings));
+        manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger));
         manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
 
         // Run connection check
@@ -162,20 +165,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
-        }
-    }
-
-    private class SkinsRestorerSpongeAPI extends SkinsRestorerAPI {
-        private final SkinApplierSponge skinApplierSponge;
-
-        public SkinsRestorerSpongeAPI(SkinApplierSponge skinApplierSponge) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), GenericProperty::new);
-            this.skinApplierSponge = skinApplierSponge;
-        }
-
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-            skinApplierSponge.applySkin(playerWrapper.get(Player.class), property);
         }
     }
 }

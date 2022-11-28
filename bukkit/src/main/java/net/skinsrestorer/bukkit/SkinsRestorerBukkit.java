@@ -40,12 +40,12 @@ import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.spigot.SpigotUtil;
@@ -80,7 +80,6 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private final Server server;
     private final JavaPlugin pluginInstance; // Only for platform API use
-    private final UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this);
     private boolean isUpdaterInitialized = false;
     private boolean updateDownloaded = false;
 
@@ -153,8 +152,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         updateCheck();
 
+        // Init config files // TODO: Split config files
+        SettingsManager settings = loadConfig();
+
         // Init locale
-        loadLocales();
+        SkinsRestorerLocale locale = loadLocales(settings);
 
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), pluginInstance);
@@ -232,7 +234,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                                 });
                             }
 
-                            Inventory inventory = SkinsGUI.createGUI(this, wrapPlayer(player), page, skinList);
+                            Inventory inventory = SkinsGUI.createGUI(this, locale, logger, wrapPlayer(player), page, skinList);
 
                             runSync(() -> player.openInventory(inventory));
                         }
@@ -242,9 +244,9 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 });
             });
         } else {
-            // Init config files
-            SettingsManager settings = loadConfig();
             SkinStorage skinStorage = initStorage();
+
+            // Init API
             new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
 
             // Init commands
@@ -252,18 +254,18 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
             manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger));
             manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBukkit));
-            manager.registerCommand(new GUICommand(this));
+            manager.registerCommand(new GUICommand(this, cooldownStorage));
 
             // Init listener
             if (settings.getProperty(Config.ENABLE_PAPER_JOIN_LISTENER)
                     && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
                 logger.info("Using paper join listener!");
-                Bukkit.getPluginManager().registerEvents(new PaperPlayerJoinEvent(skinStorage, settings, this), pluginInstance);
+                Bukkit.getPluginManager().registerEvents(new PaperPlayerJoinEvent(settings, skinStorage, logger), pluginInstance);
             } else {
-                Bukkit.getPluginManager().registerEvents(new PlayerJoin(settings, skinStorage, this), pluginInstance);
+                Bukkit.getPluginManager().registerEvents(new PlayerJoin(settings, skinStorage, this, logger), pluginInstance);
 
                 if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
-                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(skinStorage, settings, this), pluginInstance);
+                    Bukkit.getPluginManager().registerEvents(new PlayerResourcePackStatus(skinStorage, settings, this, logger), pluginInstance);
                 }
             }
 
@@ -418,6 +420,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     @Override
     public void checkUpdate(boolean showUpToDate) {
+        UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this, updateChecker, logger);
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {

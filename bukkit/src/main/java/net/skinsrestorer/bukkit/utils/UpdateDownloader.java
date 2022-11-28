@@ -22,6 +22,8 @@ package net.skinsrestorer.bukkit.utils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
+import net.skinsrestorer.shared.update.UpdateChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;
@@ -40,19 +42,21 @@ import java.util.Properties;
 @RequiredArgsConstructor
 public class UpdateDownloader {
     protected final SkinsRestorerBukkit plugin;
+    protected final UpdateChecker updateChecker;
+    protected final SRLogger logger;
 
     @Getter
     protected DownloadFailReason failReason;
 
     public boolean downloadUpdate() {
-        ResourceInfo latestResourceInfo = plugin.getUpdateChecker().getLatestResourceInfo();
+        ResourceInfo latestResourceInfo = updateChecker.getLatestResourceInfo();
 
         if (latestResourceInfo == null) {
             failReason = DownloadFailReason.NOT_CHECKED;
             return false;// Update not yet checked
         }
 
-        if (!plugin.getUpdateChecker().isVersionNewer(plugin.getUpdateChecker().getCurrentVersion(), latestResourceInfo.latestVersion.name)) {
+        if (!updateChecker.isVersionNewer(updateChecker.getCurrentVersion(), latestResourceInfo.latestVersion.name)) {
             failReason = DownloadFailReason.NO_UPDATE;
             return false;// Version is no update
         }
@@ -83,16 +87,16 @@ public class UpdateDownloader {
             return false;
         }
 
-        plugin.getLogger().info("[SpigetUpdate] Downloading update...");
-        plugin.runAsync(org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
+        logger.info("[SpigetUpdate] Downloading update...");
+        plugin.runAsync(org.inventivetalent.update.spiget.download.UpdateDownloader.downloadAsync(latestResourceInfo, updateFile, updateChecker.getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getLogger().info("[SpigetUpdate] Update saved as " + updateFile.getPath());
+                logger.info("[SpigetUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getLogger().warning("[SpigetUpdate] Could not download update", exception);
+                logger.warning("[SpigetUpdate] Could not download update", exception);
             }
         }));
 

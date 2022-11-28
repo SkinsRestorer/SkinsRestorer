@@ -25,6 +25,7 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -36,8 +37,8 @@ import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 public class LoginListener extends SharedLoginProfileListener<Void> implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorerSponge plugin;
 
-    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerSponge plugin) {
-        super(settings, skinStorage, plugin);
+    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerSponge plugin, SRLogger logger) {
+        super(settings, skinStorage, logger);
         this.plugin = plugin;
     }
 

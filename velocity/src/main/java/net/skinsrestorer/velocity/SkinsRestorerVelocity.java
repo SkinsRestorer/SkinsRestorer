@@ -27,10 +27,9 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
@@ -95,7 +94,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Init config files
         SettingsManager settings = loadConfig();
-        loadLocales();
+        SkinsRestorerLocale locale = loadLocales(settings);
 
         // Init storage
         SkinStorage skinStorage;
@@ -109,11 +108,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(proxy, settings, this.logger);
 
         // Init API
-        new SkinsRestorerVelocityAPI(skinApplierVelocity);
+        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
 
         // Init listener
         proxy.getEventManager().register(pluginInstance, new ConnectListener(this));
-        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, this, skinApplierVelocity));
+        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, skinApplierVelocity, logger));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
@@ -177,20 +176,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
             } else {
                 throw new IllegalArgumentException("Player instance is not valid!");
             }
-        }
-    }
-
-    private class SkinsRestorerVelocityAPI extends SkinsRestorerAPI {
-        private final SkinApplierVelocity skinApplierVelocity;
-
-        public SkinsRestorerVelocityAPI(SkinApplierVelocity skinApplierVelocity) {
-            super(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), VelocityProperty::new);
-            this.skinApplierVelocity = skinApplierVelocity;
-        }
-
-        @Override
-        public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-            skinApplierVelocity.applySkin(playerWrapper.get(Player.class), property);
         }
     }
 }

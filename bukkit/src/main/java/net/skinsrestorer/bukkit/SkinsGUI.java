@@ -27,8 +27,10 @@ import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
@@ -57,9 +59,9 @@ public class SkinsGUI implements InventoryHolder {
     @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
-    public static Inventory createGUI(SkinsRestorerBukkit plugin, ISRForeign player, int page, Map<String, String> skinsList) {
+    public static Inventory createGUI(SkinsRestorerBukkit plugin, SkinsRestorerLocale locale, SRLogger logger, ISRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(plugin, page);
-        Inventory inventory = Bukkit.createInventory(instance, 54, SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
+        Inventory inventory = Bukkit.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player);
@@ -70,17 +72,17 @@ public class SkinsGUI implements InventoryHolder {
         int skinCount = 0;
         for (Map.Entry<String, String> entry : skinsList.entrySet()) {
             if (skinCount >= HEAD_COUNT_PER_PAGE) {
-                plugin.getLogger().warning("SkinsGUI: Skin count is more than 36, skipping...");
+                logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
             }
 
             if (CharBuffer.wrap(entry.getKey().toCharArray()).chars().anyMatch(i -> Character.isLetter(i) && Character.isUpperCase(i))) {
-                plugin.getLogger().info("ERROR: skin " + entry.getKey() + ".skin contains a Upper case!");
-                plugin.getLogger().info("Please rename the file name to a lower case!.");
+                logger.info("ERROR: skin " + entry.getKey() + ".skin contains a Upper case!");
+                logger.info("Please rename the file name to a lower case!.");
                 continue;
             }
 
-            inventory.addItem(createSkull(plugin.getLogger(), player, entry.getKey(), entry.getValue()));
+            inventory.addItem(createSkull(logger, player, entry.getKey(), entry.getValue()));
             skinCount++;
         }
 
@@ -127,12 +129,12 @@ public class SkinsGUI implements InventoryHolder {
         return inventory;
     }
 
-    public static Inventory createGUI(SkinsRestorerBukkit plugin, ISRForeign player, int page) {
+    public static Inventory createGUI(SkinsRestorerBukkit plugin, SkinsRestorerLocale locale, SRLogger logger, SkinStorage skinStorage, ISRForeign player, int page) {
         if (page > 999)
             page = 999;
         int skinNumber = HEAD_COUNT_PER_PAGE * page;
 
-        return createGUI(plugin, player, page, plugin.getSkinStorage().getSkins(skinNumber));
+        return createGUI(plugin, locale, logger, player, page, skinStorage.getSkins(skinNumber));
     }
 
     private static ItemStack createSkull(SRLogger log, ISRForeign player, String name, String property) {

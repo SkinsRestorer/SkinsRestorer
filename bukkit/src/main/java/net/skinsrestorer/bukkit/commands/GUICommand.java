@@ -28,8 +28,12 @@ import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -42,6 +46,10 @@ import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 @SuppressWarnings({"unused"})
 public class GUICommand extends BaseCommand {
     private final SkinsRestorerBukkit plugin;
+    private final CooldownStorage cooldownStorage;
+    private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
+    private final SkinStorage skinStorage;
 
     // TODO: is help even needed for /skins?
     @HelpCommand
@@ -55,13 +63,13 @@ public class GUICommand extends BaseCommand {
     public void onDefault(Player player) {
         ISRPlayer srPlayer = wrapPlayer(player);
         plugin.runAsync(() -> {
-            if (!player.hasPermission("skinsrestorer.bypasscooldown") && plugin.getCooldownStorage().hasCooldown(player.getName())) {
-                srPlayer.sendMessage(Message.SKIN_COOLDOWN, plugin.getCooldownStorage().getCooldownSeconds(player.getName()));
+            if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
+                srPlayer.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(player.getName()));
                 return;
             }
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(plugin, srPlayer, 0);
+            Inventory inventory = SkinsGUI.createGUI(plugin, locale, logger, skinStorage, srPlayer, 0);
             plugin.runSync(() -> player.openInventory(inventory));
         });
     }

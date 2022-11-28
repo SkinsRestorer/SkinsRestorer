@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,8 +40,8 @@ public class PlayerJoin extends SharedLoginProfileListener<Void> implements List
     private static boolean resourcePack;
     private final ISRPlugin plugin;
 
-    public PlayerJoin(SettingsManager settings, SkinStorage skinStorage, ISRPlugin plugin) {
-        super(settings, skinStorage, plugin);
+    public PlayerJoin(SettingsManager settings, SkinStorage skinStorage, ISRPlugin plugin, SRLogger logger) {
+        super(settings, skinStorage, logger);
         this.plugin = plugin;
     }
 

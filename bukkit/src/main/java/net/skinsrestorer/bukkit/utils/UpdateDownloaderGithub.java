@@ -23,6 +23,8 @@ import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
+import net.skinsrestorer.shared.update.UpdateChecker;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Bukkit;
 
 import java.io.File;
@@ -34,8 +36,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class UpdateDownloaderGithub extends UpdateDownloader {
-    public UpdateDownloaderGithub(SkinsRestorerBukkit plugin) {
-        super(plugin);
+    public UpdateDownloaderGithub(SkinsRestorerBukkit plugin, UpdateChecker updateChecker, SRLogger logger) {
+        super(plugin, updateChecker, logger);
     }
 
     private static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {
@@ -74,13 +76,13 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
 
     @Override
     public boolean downloadUpdate() {
-        GitHubReleaseInfo releaseInfo = (GitHubReleaseInfo) plugin.getUpdateChecker().getLatestResourceInfo();
+        GitHubReleaseInfo releaseInfo = (GitHubReleaseInfo) updateChecker.getLatestResourceInfo();
 
         if (releaseInfo == null) {
             failReason = DownloadFailReason.NOT_CHECKED;
             return false;// Update not yet checked
         }
-        if (!plugin.getUpdateChecker().isVersionNewer(plugin.getUpdateChecker().getCurrentVersion(), releaseInfo.tag_name)) {
+        if (!updateChecker.isVersionNewer(updateChecker.getCurrentVersion(), releaseInfo.tag_name)) {
             failReason = DownloadFailReason.NO_UPDATE;
             return false;// Version is no update
         }
@@ -97,16 +99,16 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
         }
         final File updateFile = new File(updateFolder, pluginFile.getName());
 
-        plugin.getLogger().info("[GitHubUpdate] Downloading update...");
-        plugin.runAsync(downloadAsync(releaseInfo, updateFile, plugin.getUpdateChecker().getUserAgent(), new DownloadCallback() {
+        logger.info("[GitHubUpdate] Downloading update...");
+        plugin.runAsync(downloadAsync(releaseInfo, updateFile, updateChecker.getUserAgent(), new DownloadCallback() {
             @Override
             public void finished() {
-                plugin.getLogger().info("[GitHubUpdate] Update saved as " + updateFile.getPath());
+                logger.info("[GitHubUpdate] Update saved as " + updateFile.getPath());
             }
 
             @Override
             public void error(Exception exception) {
-                plugin.getLogger().warning("[GitHubUpdate] Could not download update", exception);
+                logger.warning("[GitHubUpdate] Could not download update", exception);
             }
         }));
 

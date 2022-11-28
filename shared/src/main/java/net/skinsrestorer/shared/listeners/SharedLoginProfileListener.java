@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.util.Optional;
 
@@ -34,7 +34,7 @@ import java.util.Optional;
 public abstract class SharedLoginProfileListener<R> {
     protected final SettingsManager settings;
     private final SkinStorage skinStorage;
-    private final ISRPlugin plugin;
+    private final SRLogger logger;
 
     protected R handleLogin(SRLoginProfileEvent<R> event) {
         if (handleSync(event))
@@ -44,7 +44,7 @@ public abstract class SharedLoginProfileListener<R> {
             try {
                 handleAsync(event).ifPresent(event::setResultProperty);
             } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
+                logger.debug(e);
             }
         });
     }

@@ -32,14 +32,15 @@ import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 @Getter
 public class LoginListener extends SharedLoginProfileListener<Void> implements Listener {
     private final SkinsRestorerBungee plugin;
     private final SkinApplierBungeeShared skinApplier;
 
-    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin, SkinApplierBungeeShared skinApplier) {
-        super(settings, skinStorage, plugin);
+    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin, SkinApplierBungeeShared skinApplier, SRLogger logger) {
+        super(settings, skinStorage, logger);
         this.plugin = plugin;
         this.skinApplier = skinApplier;
     }
