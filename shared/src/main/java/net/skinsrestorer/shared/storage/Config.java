@@ -162,9 +162,9 @@ public class Config implements SettingsHolder {
     })
     public static final Property<String> MINESKIN_API_KEY = newProperty("MineskinAPIKey", "key");
     @Comment({
-            "#################",
-            "# Compatibility #",
-            "#################",
+            "\n#################",
+            "\n# Compatibility #",
+            "\n#################",
             "\n",
             "If we break things, you can disable it here.",
             "\n",
@@ -226,16 +226,16 @@ public class Config implements SettingsHolder {
             "<!! Warning !!>",
             "Using outdated version void's support, compatibility & stability.",
             "\n",
-            "# To block all types of automatic updates (which can risk keeping an exploit):",
-            "# Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )",
+            "To block all types of automatic updates (which can risk keeping an exploit):",
+            "Create a file called 'noupdate.txt' in the plugin directory (./plugins/SkinsRestorer/ )",
             "\n",
-            "################",
-            "# DEV's corner #",
-            "################",
+            "\n################",
+            "\n# DEV's corner #",
+            "\n################",
             "\n",
-            "# Enable these on the dev's request",
+            "Enable these on the dev's request",
             "\n",
-            "# Enable to start receiving debug messages about api requests & more."
+            "Enable to start receiving debug messages about api requests & more."
     })
     public static final Property<Boolean> DEBUG = newProperty("Debug", false);
 

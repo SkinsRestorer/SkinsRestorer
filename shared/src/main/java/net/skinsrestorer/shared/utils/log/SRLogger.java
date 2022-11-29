@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.storage.Config;
 import org.yaml.snakeyaml.Yaml;
@@ -45,10 +46,10 @@ public class SRLogger {
         Path configFile = dataFolder.resolve("config.yml");
 
         if (Files.exists(configFile)) {
-            Yaml yaml = new Yaml();
             try (InputStream inputStream = Files.newInputStream(configFile)) {
-                SimpleConfig config = yaml.loadAs(inputStream, SimpleConfig.class);
-                debug = config.Debug;
+                AxiomConfiguration config = new AxiomConfiguration();
+                config.load(inputStream);
+                debug = config.getBoolean("Debug");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -118,9 +119,5 @@ public class SRLogger {
         message += "§r";
         message = ANSIConverter.convertToAnsi(message);
         return message;
-    }
-
-    private static class SimpleConfig {
-        private boolean Debug = false;
     }
 }

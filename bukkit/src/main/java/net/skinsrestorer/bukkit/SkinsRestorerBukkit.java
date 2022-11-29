@@ -31,6 +31,7 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.commands.SrCommand;
@@ -61,6 +62,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.nodes.MappingNode;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -130,11 +132,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         // Detect MundoSK
         if (server.getPluginManager().getPlugin("MundoSK") != null) {
             try {
-                Yaml yaml = new Yaml();
                 try (BufferedReader reader = Files.newBufferedReader(dataFolder.getParent().resolve("MundoSK").resolve("config.yml"))) {
-                    MundoConfig mundoConfig = yaml.loadAs(reader, MundoConfig.class);
+                    AxiomConfiguration config = new AxiomConfiguration();
+                    config.load(reader);
 
-                    if (mundoConfig.enable_custom_skin_and_tablist) {
+                    if (config.getBoolean("enable_custom_skin_and_tablist")) {
                         logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
                         logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
                         logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
@@ -506,9 +508,5 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 return new BukkitLegacyProperty(name, value, signature);
             }
         }
-    }
-
-    private static class MundoConfig {
-        private boolean enable_custom_skin_and_tablist;
     }
 }
