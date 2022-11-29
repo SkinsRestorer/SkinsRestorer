@@ -41,18 +41,16 @@ import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -108,10 +106,13 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         SettingsManager settings = loadConfig();
         SkinsRestorerLocale locale = loadLocales(settings);
 
+        WrapperBungee wrapper = new WrapperBungee(settings, locale);
+        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+
         // Init storage
         SkinStorage skinStorage;
         try {
-            skinStorage = initStorage();
+            skinStorage = initStorage(mineSkinAPI, settings, locale);
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -124,23 +125,25 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Init listener
         proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this, skinApplierBungee, logger));
-        proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this));
+        proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this, wrapper));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
 
-        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger);
+        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
         manager.registerCommand(skinCommand);
 
-        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, this, skinCommand);
-        proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
+        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, skinCommand,
+                name -> Optional.ofNullable(proxy.getPlayer(name)).map(wrapper::player));
 
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBungee));
-        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener));
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBungee, wrapper,
+                () -> proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList())));
+        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener, wrapper));
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");
         proxy.registerChannel("sr:messagechannel");
+        proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
@@ -164,16 +167,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         proxy.getScheduler().schedule(pluginInstance, runnable, delay, interval, timeUnit);
-    }
-
-    @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
-        return proxy.getPlayers().stream().map(WrapperBungee::wrapPlayer).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<ISRProxyPlayer> getPlayer(String playerName) {
-        return Optional.ofNullable(proxy.getPlayer(playerName)).map(WrapperBungee::wrapPlayer);
     }
 
     @Override

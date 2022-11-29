@@ -26,6 +26,7 @@ import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -33,21 +34,20 @@ import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
-
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
+    private final WrapperBungee wrapper;
 
-    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger) {
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger, WrapperBungee wrapper) {
         super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
+        this.wrapper = wrapper;
     }
 
     @Default
     public void onDefault(CommandSender sender) {
-        onDefault(wrapCommandSender(sender));
+        onDefault(wrapper.commandSender(sender));
     }
 
     @Default
@@ -61,14 +61,14 @@ public class SkinCommand extends SharedSkinCommand {
     @HelpCommand
     @Syntax("%helpHelpCommand")
     public void onHelp(CommandSender sender, CommandHelp help) {
-        onHelp(wrapCommandSender(sender), help);
+        onHelp(wrapper.commandSender(sender), help);
     }
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     public void onSkinClear(ProxiedPlayer player) {
-        onSkinClear(wrapPlayer(player));
+        onSkinClear(wrapper.player(player));
     }
 
     @Subcommand("clear")
@@ -77,7 +77,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSender sender, @Single OnlinePlayer target) {
-        onSkinClearOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
+        onSkinClearOther(wrapper.commandSender(sender), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("search")
@@ -85,14 +85,14 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSearch")
     @Syntax("%SyntaxSkinSearch")
     public void onSkinSearch(CommandSender sender, String search) {
-        onSkinSearch(wrapCommandSender(sender), search);
+        onSkinSearch(wrapper.commandSender(sender), search);
     }
 
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     public void onSkinUpdate(ProxiedPlayer player) {
-        onSkinUpdate(wrapPlayer(player));
+        onSkinUpdate(wrapper.player(player));
     }
 
     @Subcommand("update")
@@ -101,7 +101,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSender sender, @Single OnlinePlayer target) {
-        onSkinUpdateOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()));
+        onSkinUpdateOther(wrapper.commandSender(sender), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("set")
@@ -110,7 +110,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(ProxiedPlayer player, String[] skin) {
-        onSkinSet(wrapPlayer(player), skin);
+        onSkinSet(wrapper.player(player), skin);
     }
 
     @Subcommand("set")
@@ -119,7 +119,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSender sender, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
-        onSkinSetOther(wrapCommandSender(sender), wrapPlayer(target.getPlayer()), skin, skinVariant);
+        onSkinSetOther(wrapper.commandSender(sender), wrapper.player(target.getPlayer()), skin, skinVariant);
     }
 
     @Subcommand("url")
@@ -128,6 +128,6 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinVariant skinVariant) {
-        onSkinSetUrl(wrapPlayer(player), url, skinVariant);
+        onSkinSetUrl(wrapper.player(player), url, skinVariant);
     }
 }

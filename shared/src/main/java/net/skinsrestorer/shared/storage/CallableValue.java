@@ -17,9 +17,8 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.exception;
+package net.skinsrestorer.shared.storage;
 
-import net.skinsrestorer.api.exception.SkinRequestException;
-
-public class MojangDownException extends SkinRequestException {
+public interface CallableValue<V> {
+    V call();
 }

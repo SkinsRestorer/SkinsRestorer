@@ -23,15 +23,17 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
-
 public class ConnectListener extends SharedConnectListener implements Listener {
-    public ConnectListener(ISRProxyPlugin plugin) {
+    private final WrapperBungee wrapper;
+
+    public ConnectListener(ISRProxyPlugin plugin, WrapperBungee wrapper) {
         super(plugin);
+        this.wrapper = wrapper;
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -40,6 +42,6 @@ public class ConnectListener extends SharedConnectListener implements Listener {
     }
 
     private SRServerConnectedEvent wrap(ServerConnectedEvent event) {
-        return () -> wrapPlayer(event.getPlayer());
+        return () -> wrapper.player(event.getPlayer());
     }
 }

@@ -38,12 +38,8 @@ public class SkinsRestorerBootstrap extends JavaPlugin {
         }
 
         if (startupError != null) {
-            if (skinsRestorerBukkit != null && skinsRestorerBukkit.getLogger() != null) {
-                skinsRestorerBukkit.getLogger().debug("An error occurred while starting the plugin.", startupError);
-            } else {
-                getLogger().warning("An error occurred while starting the plugin.");
-                startupError.printStackTrace();
-            }
+            getLogger().warning("An unexpected error occurred while starting the plugin.");
+            startupError.printStackTrace();
         }
     }
 }

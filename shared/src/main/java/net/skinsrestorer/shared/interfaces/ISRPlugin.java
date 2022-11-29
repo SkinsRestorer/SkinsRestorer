@@ -24,7 +24,6 @@ import net.skinsrestorer.shared.SkinsRestorerLocale;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
@@ -38,8 +37,6 @@ public interface ISRPlugin {
 
     void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
-    Collection<ISRPlayer> getOnlinePlayers();
-
     default void checkUpdate() {
         checkUpdate(false);
     }
@@ -51,4 +48,6 @@ public interface ISRPlugin {
     SettingsManager loadConfig();
 
     SkinsRestorerLocale loadLocales(SettingsManager settings);
+
+    boolean isOutdated();
 }

@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.commands;
 
+import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.Config;
@@ -27,26 +28,26 @@ import net.skinsrestorer.shared.storage.Message;
 import java.util.Optional;
 
 public class CommandUtil {
-    public static boolean isAllowedToExecute(ISRCommandSender sender) {
-        if (Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED && sender instanceof ISRProxyPlayer) {
+    public static boolean isAllowedToExecute(ISRCommandSender sender, SettingsManager settings) {
+        if (settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED) && sender instanceof ISRProxyPlayer) {
             Optional<String> optional = ((ISRProxyPlayer) sender).getCurrentServer();
             if (optional.isPresent()) {
                 String server = optional.get();
 
-                if (Config.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) {
-                    if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
+                if (settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST)) {
+                    if (settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS).contains(server)) {
                         return true;
                     } else {
                         sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 } else {
-                    if (Config.NOT_ALLOWED_COMMAND_SERVERS.contains(server)) {
+                    if (settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS).contains(server)) {
                         sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                         return false;
                     }
                 }
-            } else return !Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND;
+            } else return !settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND);
         }
 
         return true;

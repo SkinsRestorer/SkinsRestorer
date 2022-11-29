@@ -65,7 +65,8 @@ public class Config implements SettingsHolder {
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
     public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
-    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);    @Comment({
+    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);
+    @Comment({
             "\n##########",
             "\n# Locale #",
             "\n##########",
@@ -78,7 +79,7 @@ public class Config implements SettingsHolder {
     public static final Property<Locale> LANGUAGE = new TypeBasedProperty<>("Language", Locale.ENGLISH, new PropertyType<Locale>() {
         @Override
         public @Nullable Locale convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
-            return LocaleParser.parseLocale(object == null ? null : object.toString());
+            return LocaleParser.parseLocale(object == null ? null : object.toString()).orElse(null);
         }
 
         @Override
@@ -237,6 +238,7 @@ public class Config implements SettingsHolder {
             "# Enable to start receiving debug messages about api requests & more."
     })
     public static final Property<Boolean> DEBUG = newProperty("Debug", false);
+
     private Config() {
     }
 
@@ -321,8 +323,6 @@ public class Config implements SettingsHolder {
                 "Discord: https://discord.me/SkinsRestorer/"
         );
     }
-
-
 
 
 }

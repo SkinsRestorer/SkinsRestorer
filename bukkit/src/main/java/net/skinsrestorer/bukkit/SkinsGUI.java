@@ -26,9 +26,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
@@ -47,27 +48,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class SkinsGUI implements InventoryHolder {
     private static final int HEAD_COUNT_PER_PAGE = 36;
-    private final SkinsRestorerBukkit plugin;
     private final int page; // Page number start with 0
+    private final Consumer<EventInfo> callback;
     @Getter
     @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
-    public static Inventory createGUI(SkinsRestorerBukkit plugin, SkinsRestorerLocale locale, SRLogger logger, ISRForeign player, int page, Map<String, String> skinsList) {
-        SkinsGUI instance = new SkinsGUI(plugin, page);
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, SkinStorage skinStorage, ISRForeign player, int page) {
+        if (page > 999) {
+            page = 999;
+        }
+
+        int skinNumber = HEAD_COUNT_PER_PAGE * page;
+
+        return createGUI(callback, locale, logger, player, page, skinStorage.getSkins(skinNumber));
+    }
+
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, ISRForeign player, int page, Map<String, String> skinsList) {
+        SkinsGUI instance = new SkinsGUI(page, callback);
         Inventory inventory = Bukkit.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
-        ItemStack none = createGlass(GlassType.NONE, player);
-        ItemStack delete = createGlass(GlassType.DELETE, player);
-        ItemStack prev = createGlass(GlassType.PREV, player);
-        ItemStack next = createGlass(GlassType.NEXT, player);
+        ItemStack none = createGlass(GlassType.NONE, player, locale);
+        ItemStack delete = createGlass(GlassType.DELETE, player, locale);
+        ItemStack prev = createGlass(GlassType.PREV, player, locale);
+        ItemStack next = createGlass(GlassType.NEXT, player, locale);
 
         int skinCount = 0;
         for (Map.Entry<String, String> entry : skinsList.entrySet()) {
@@ -82,7 +92,7 @@ public class SkinsGUI implements InventoryHolder {
                 continue;
             }
 
-            inventory.addItem(createSkull(logger, player, entry.getKey(), entry.getValue()));
+            inventory.addItem(createSkull(logger, locale, player, entry.getKey(), entry.getValue()));
             skinCount++;
         }
 
@@ -129,20 +139,12 @@ public class SkinsGUI implements InventoryHolder {
         return inventory;
     }
 
-    public static Inventory createGUI(SkinsRestorerBukkit plugin, SkinsRestorerLocale locale, SRLogger logger, SkinStorage skinStorage, ISRForeign player, int page) {
-        if (page > 999)
-            page = 999;
-        int skinNumber = HEAD_COUNT_PER_PAGE * page;
-
-        return createGUI(plugin, locale, logger, player, page, skinStorage.getSkins(skinNumber));
-    }
-
-    private static ItemStack createSkull(SRLogger log, ISRForeign player, String name, String property) {
+    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, ISRForeign player, String name, String property) {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
         List<String> lore = new ArrayList<>();
-        lore.add(C.c(SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
+        lore.add(C.c(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
         Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
         is.setItemMeta(sm);
@@ -157,7 +159,7 @@ public class SkinsGUI implements InventoryHolder {
         return is;
     }
 
-    private static ItemStack createGlass(GlassType type, ISRForeign player) {
+    private static ItemStack createGlass(GlassType type, ISRForeign player, SkinsRestorerLocale locale) {
         ItemStack itemStack;
         String text;
         switch (type) {
@@ -167,15 +169,15 @@ public class SkinsGUI implements InventoryHolder {
                 break;
             case PREV:
                 itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_PREVIOUS_PAGE);
+                text = locale.getMessage(player, Message.SKINSMENU_PREVIOUS_PAGE);
                 break;
             case NEXT:
                 itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_NEXT_PAGE);
+                text = locale.getMessage(player, Message.SKINSMENU_NEXT_PAGE);
                 break;
             case DELETE:
                 itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                text = SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_CLEAR_SKIN);
+                text = locale.getMessage(player, Message.SKINSMENU_CLEAR_SKIN);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown glass type: " + type);
@@ -203,60 +205,50 @@ public class SkinsGUI implements InventoryHolder {
         ItemMeta itemMeta = currentItem.getItemMeta();
         assert itemMeta != null;
 
-        if (plugin.isProxyMode()) {
-            switch (XMaterial.matchXMaterial(currentItem)) {
-                case PLAYER_HEAD:
-                    plugin.runAsync(() -> {
-                        String skin = itemMeta.getDisplayName();
-                        plugin.requestSkinSetFromProxy(player, skin);
-                    });
-                    player.closeInventory();
-                    break;
-                case RED_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinClearFromProxy(player));
-                    player.closeInventory();
-                    break;
-                case GREEN_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(player, page + 1));
-                    break;
-                case YELLOW_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(player, page - 1));
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            SkinCommand skinCommand = (SkinCommand) plugin.getSkinCommand(); // TODO: properly make API calls instead of using commands
+        callback.accept(new EventInfo(XMaterial.matchXMaterial(currentItem), itemMeta, player, page));
+    }
 
-            switch (XMaterial.matchXMaterial(currentItem)) {
+    private enum GlassType {
+        NONE, PREV, NEXT, DELETE
+    }
+
+    @RequiredArgsConstructor
+    public static class ServerGUIActions implements Consumer<EventInfo> {
+        private final ISRServerPlugin plugin;
+        private final SkinCommand skinCommand;
+        private final SkinsRestorerLocale locale;
+        private final SRLogger logger;
+        private final SkinStorage skinStorage;
+        private final WrapperBukkit wrapper;
+
+        @Override
+        public void accept(EventInfo event) {
+            switch (event.getMaterial()) {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
-                        final String skinName = itemMeta.getDisplayName();
-                        skinCommand.onSkinSetShort(player, skinName);
+                        String skin = event.getItemMeta().getDisplayName();
+                        skinCommand.onSkinSetShort(event.getPlayer(), skin);
                     });
-                    player.closeInventory();
+                    event.getPlayer().closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    skinCommand.onSkinClear(player);
-                    player.closeInventory();
+                    skinCommand.onSkinClear(event.getPlayer());
+                    event.getPlayer().closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(plugin, wrapPlayer(player), page + 1);
+                        Inventory newInventory = createGUI(this, locale, logger, skinStorage, wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
 
                         plugin.runSync(() ->
-                                player.openInventory(newInventory));
+                                event.getPlayer().openInventory(newInventory));
                     });
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(plugin, wrapPlayer(player), page - 1);
+                        Inventory newInventory = createGUI(this, locale, logger, skinStorage, wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
 
                         plugin.runSync(() ->
-                                player.openInventory(newInventory));
+                                event.getPlayer().openInventory(newInventory));
                     });
                     break;
                 default:
@@ -265,7 +257,45 @@ public class SkinsGUI implements InventoryHolder {
         }
     }
 
-    private enum GlassType {
-        NONE, PREV, NEXT, DELETE
+    @RequiredArgsConstructor
+    public static class ProxyGUIActions implements Consumer<EventInfo> {
+        private final SkinsRestorerBukkit plugin;
+
+        @Override
+        public void accept(EventInfo event) {
+            switch (event.getMaterial()) {
+                case PLAYER_HEAD:
+                    plugin.runAsync(() -> {
+                        String skin = event.getItemMeta().getDisplayName();
+                        plugin.requestSkinSetFromProxy(event.getPlayer(), skin);
+                    });
+                    event.getPlayer().closeInventory();
+                    break;
+                case RED_STAINED_GLASS_PANE:
+                    plugin.runAsync(() ->
+                            plugin.requestSkinClearFromProxy(event.getPlayer()));
+                    event.getPlayer().closeInventory();
+                    break;
+                case GREEN_STAINED_GLASS_PANE:
+                    plugin.runAsync(() ->
+                            plugin.requestSkinsFromProxy(event.getPlayer(), event.getCurrentPage() + 1));
+                    break;
+                case YELLOW_STAINED_GLASS_PANE:
+                    plugin.runAsync(() ->
+                            plugin.requestSkinsFromProxy(event.getPlayer(), event.getCurrentPage() - 1));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    private static class EventInfo {
+        private final XMaterial material;
+        private final ItemMeta itemMeta;
+        private final Player player;
+        private final int currentPage;
     }
 }

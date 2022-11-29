@@ -24,12 +24,4 @@ public class NotPremiumException extends SkinRequestException {
 
     protected NotPremiumException() {
     }
-
-    protected NotPremiumException(String message) {
-        super(message);
-    }
-
-    protected NotPremiumException(Throwable cause) {
-        super(cause);
-    }
 }

@@ -19,31 +19,52 @@
  */
 package net.skinsrestorer.velocity.utils;
 
+import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Config;
 
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class WrapperVelocity {
-    public static ISRCommandSender wrapCommandSender(CommandSource sender) {
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
+
+    private static String getSenderName(CommandSource source) {
+        return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
+    }
+
+    public ISRCommandSender commandSender(CommandSource sender) {
+        if (sender instanceof Player) {
+            return player((Player) sender);
+        }
+
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
+                return settings.getProperty(Config.LANGUAGE);
             }
 
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override
@@ -63,7 +84,7 @@ public class WrapperVelocity {
         };
     }
 
-    public static ISRProxyPlayer wrapPlayer(Player player) {
+    public ISRProxyPlayer player(Player player) {
         return new ISRProxyPlayer() {
             @Override
             public Locale getLocale() {
@@ -102,13 +123,14 @@ public class WrapperVelocity {
             }
 
             @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
+            }
+
+            @Override
             public boolean hasPermission(String permission) {
                 return player.hasPermission(permission);
             }
         };
-    }
-
-    private static String getSenderName(CommandSource source) {
-        return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
     }
 }

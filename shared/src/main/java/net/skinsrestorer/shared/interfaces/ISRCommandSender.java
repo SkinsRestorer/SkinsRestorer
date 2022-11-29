@@ -19,14 +19,10 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-
 public interface ISRCommandSender extends ISRForeign {
     void sendMessage(String message);
 
-    default void sendMessage(MessageKeyGetter key, Object... args) {
-        sendMessage(SkinsRestorerAPIShared.getApi().getMessage(this, key, args));
-    }
+    void sendMessage(MessageKeyGetter key, Object... args);
 
     String getName();
 

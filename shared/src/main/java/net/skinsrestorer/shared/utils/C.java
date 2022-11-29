@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.storage.Config;
 
 public class C {
@@ -57,9 +58,9 @@ public class C {
         return url.startsWith("http://") || url.startsWith("https://");
     }
 
-    public static boolean allowedSkinUrl(String url) {
-        if (Config.RESTRICT_SKIN_URLS_ENABLED) {
-            for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
+    public static boolean allowedSkinUrl(SettingsManager settings, String url) {
+        if (settings.getProperty(Config.RESTRICT_SKIN_URLS_ENABLED)) {
+            for (String possiblyAllowedUrl : settings.getProperty(Config.RESTRICT_SKIN_URLS_LIST)) {
                 if (url.startsWith(possiblyAllowedUrl)) {
                     return true;
                 }

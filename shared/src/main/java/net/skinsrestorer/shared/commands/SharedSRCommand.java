@@ -28,9 +28,11 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -40,6 +42,7 @@ import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,9 +56,10 @@ public abstract class SharedSRCommand extends BaseCommand {
     private final SkinStorage skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
+    private final CallableValue<Collection<ISRPlayer>> onlinePlayersFunction;
 
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         help.showHelp();
     }
@@ -64,19 +68,18 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onReload(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         reloadCustomHook();
-        plugin.loadLocales();
-        plugin.loadConfig();
-
-        plugin.prepareACF();
+        SettingsManager settings = plugin.loadConfig();
+        SkinsRestorerLocale locale = plugin.loadLocales(settings);
+        plugin.prepareACF(locale);
 
         sender.sendMessage(Message.RELOAD);
     }
 
     protected void onStatus(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
@@ -118,7 +121,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
@@ -135,7 +138,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onProps(ISRCommandSender sender, ISRPlayer target) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             try {
@@ -176,7 +179,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             try {
@@ -189,7 +192,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             try {
@@ -207,7 +210,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
@@ -230,7 +233,7 @@ public abstract class SharedSRCommand extends BaseCommand {
 
                 skinStorage.setSkinData(skinName, skinProps);
 
-                for (ISRPlayer player : plugin.getOnlinePlayers()) {
+                for (ISRPlayer player : onlinePlayersFunction.call()) {
                     final String pName = player.getName();
                     skinStorage.setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);

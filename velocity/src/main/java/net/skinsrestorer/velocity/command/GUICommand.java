@@ -28,28 +28,30 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
-
-import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
-import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
+import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 @Getter
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
 public class GUICommand extends SharedProxyGUICommand {
-    public GUICommand(ISRProxyPlugin plugin) {
-        super(plugin);
+    private final WrapperVelocity wrapper;
+
+    public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener, WrapperVelocity wrapper) {
+        super(cooldownStorage, pluginMessageListener);
+        this.wrapper = wrapper;
     }
 
     @HelpCommand
     public void onHelp(CommandSource sender, CommandHelp help) {
-        onHelp(wrapCommandSender(sender), help);
+        onHelp(wrapper.commandSender(sender), help);
     }
 
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player player) {
-        onDefault(wrapPlayer(player));
+        onDefault(wrapper.player(player));
     }
 }

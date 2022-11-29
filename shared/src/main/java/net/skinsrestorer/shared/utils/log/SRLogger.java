@@ -68,14 +68,14 @@ public class SRLogger {
     }
 
     public void debug(SRLogLevel level, String message) {
-        if (!Config.DEBUG || debug)
+        if (debug)
             return;
 
         log(level, message);
     }
 
     public void debug(SRLogLevel level, String message, Throwable thrown) {
-        if (!Config.DEBUG || debug)
+        if (debug)
             return;
 
         log(level, message, thrown);

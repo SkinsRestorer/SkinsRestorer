@@ -28,6 +28,7 @@ import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
+import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
@@ -37,8 +38,6 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-
-import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @RequiredArgsConstructor
 @CommandAlias("skins")
@@ -50,6 +49,8 @@ public class GUICommand extends BaseCommand {
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SkinStorage skinStorage;
+    private final SkinCommand skinCommand;
+    private final WrapperBukkit wrapper;
 
     // TODO: is help even needed for /skins?
     @HelpCommand
@@ -61,7 +62,7 @@ public class GUICommand extends BaseCommand {
     @Default
     @CommandPermission("%skins")
     public void onDefault(Player player) {
-        ISRPlayer srPlayer = wrapPlayer(player);
+        ISRPlayer srPlayer = wrapper.player(player);
         plugin.runAsync(() -> {
             if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
                 srPlayer.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(player.getName()));
@@ -69,7 +70,7 @@ public class GUICommand extends BaseCommand {
             }
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(plugin, locale, logger, skinStorage, srPlayer, 0);
+            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ServerGUIActions(plugin, skinCommand, locale, logger, skinStorage, wrapper), locale, logger, skinStorage, srPlayer, 0);
             plugin.runSync(() -> player.openInventory(inventory));
         });
     }

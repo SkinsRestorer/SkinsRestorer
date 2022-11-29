@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 
 public class SkinRequestExceptionShared extends SkinRequestException {
@@ -36,7 +36,7 @@ public class SkinRequestExceptionShared extends SkinRequestException {
         super(e);
     }
 
-    public SkinRequestExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getDefaultForeign(), key, args));
+    public SkinRequestExceptionShared(SkinsRestorerLocale locale, MessageKeyGetter key, Object... args) {
+        this(locale.getMessage(locale.getDefaultForeign(), key, args));
     }
 }

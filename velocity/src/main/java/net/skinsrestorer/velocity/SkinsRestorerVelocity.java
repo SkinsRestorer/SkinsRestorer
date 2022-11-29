@@ -31,11 +31,10 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
@@ -51,8 +50,6 @@ import org.slf4j.Logger;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -96,10 +93,13 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         SettingsManager settings = loadConfig();
         SkinsRestorerLocale locale = loadLocales(settings);
 
+        WrapperVelocity wrapper = new WrapperVelocity(settings, locale);
+        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+
         // Init storage
         SkinStorage skinStorage;
         try {
-            skinStorage = initStorage();
+            skinStorage = initStorage(mineSkinAPI, settings, locale);
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -111,21 +111,25 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
 
         // Init listener
-        proxy.getEventManager().register(pluginInstance, new ConnectListener(this));
+        proxy.getEventManager().register(pluginInstance, new ConnectListener(this, wrapper));
         proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, skinApplierVelocity, logger));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
 
-        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger);
+        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
+        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, skinCommand,
+                name -> proxy.getPlayer(name).map(wrapper::player));
+
         manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
-        manager.registerCommand(new GUICommand(this));
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, wrapper,
+                () -> proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList())));
+        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener, wrapper));
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(pluginInstance, new PluginMessageListener(logger, skinStorage, this, skinCommand));
+        proxy.getEventManager().register(pluginInstance, pluginMessageListener);
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
@@ -149,16 +153,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         proxy.getScheduler().buildTask(pluginInstance, runnable).delay(delay, timeUnit).repeat(interval, timeUnit).schedule();
-    }
-
-    @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
-        return proxy.getAllPlayers().stream().map(WrapperVelocity::wrapPlayer).collect(Collectors.toList());
-    }
-
-    @Override
-    public Optional<ISRProxyPlayer> getPlayer(String playerName) {
-        return proxy.getPlayer(playerName).map(WrapperVelocity::wrapPlayer);
     }
 
     @Override

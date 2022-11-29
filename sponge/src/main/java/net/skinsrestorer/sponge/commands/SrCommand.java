@@ -28,10 +28,12 @@ import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
+import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -40,38 +42,37 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapCommandSender;
-import static net.skinsrestorer.sponge.utils.WrapperSponge.wrapPlayer;
-
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 @SuppressWarnings({"unused"})
 public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerSponge plugin;
+    private final WrapperSponge wrapper;
 
-    public SrCommand(SkinsRestorerSponge plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger) {
-        super(plugin, mojangAPI, skinStorage, settings, logger);
+    public SrCommand(SkinsRestorerSponge plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, WrapperSponge wrapper, CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
+        super(plugin, mojangAPI, skinStorage, settings, logger, onlinePlayersFunction);
         this.plugin = plugin;
+        this.wrapper = wrapper;
     }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
-        onHelp(wrapCommandSender(source), help);
+        onHelp(wrapper.commandSender(source), help);
     }
 
     @Subcommand("reload")
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     public void onReload(CommandSource source) {
-        onReload(wrapCommandSender(source));
+        onReload(wrapper.commandSender(source));
     }
 
     @Subcommand("status")
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     public void onStatus(CommandSource source) {
-        onStatus(wrapCommandSender(source));
+        onStatus(wrapper.commandSender(source));
     }
 
     @Subcommand("drop|remove")
@@ -80,7 +81,7 @@ public class SrCommand extends SharedSRCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     public void onDrop(CommandSource source, PlayerOrSkin playerOrSkin, String target) {
-        onDrop(wrapCommandSender(source), playerOrSkin, target);
+        onDrop(wrapper.commandSender(source), playerOrSkin, target);
     }
 
     @Subcommand("props")
@@ -89,7 +90,7 @@ public class SrCommand extends SharedSRCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     public void onProps(CommandSource source, @Single OnlinePlayer target) {
-        onProps(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
+        onProps(wrapper.commandSender(source), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("applyskin")
@@ -98,7 +99,7 @@ public class SrCommand extends SharedSRCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     public void onApplySkin(CommandSource source, @Single OnlinePlayer target) {
-        onApplySkin(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
+        onApplySkin(wrapper.commandSender(source), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("createcustom")
@@ -107,7 +108,7 @@ public class SrCommand extends SharedSRCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [classic/slim]")
     public void onCreateCustom(CommandSource source, String name, String skinUrl, @Optional SkinVariant skinVariant) {
-        onCreateCustom(wrapCommandSender(source), name, skinUrl, skinVariant);
+        onCreateCustom(wrapper.commandSender(source), name, skinUrl, skinVariant);
     }
 
     @Subcommand("setskinall")
@@ -115,14 +116,14 @@ public class SrCommand extends SharedSRCommand {
     @Description("Set the skin to evey player")
     @Syntax(" <Skin / Url> [classic/slim]")
     public void onSetSkinAll(CommandSource source, String skin, @Optional SkinVariant skinVariant) {
-        onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
+        onSetSkinAll(wrapper.commandSender(source), skin, skinVariant);
     }
 
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold>")
     public void onPurgeOldData(CommandSource source, int days) {
-        onPurgeOldData(wrapCommandSender(source), days);
+        onPurgeOldData(wrapper.commandSender(source), days);
     }
 
     @Override

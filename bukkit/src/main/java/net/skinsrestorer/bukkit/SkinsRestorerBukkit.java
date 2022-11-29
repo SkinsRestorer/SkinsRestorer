@@ -42,11 +42,11 @@ import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyProperty;
@@ -67,14 +67,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
 @Getter
 public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
@@ -104,9 +101,12 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
         metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
+        // Init config files // TODO: Split config files
+        SettingsManager settings = loadConfig();
+
         SkinApplierBukkit skinApplierBukkit;
         try {
-            skinApplierBukkit = new SkinApplierBukkit(this, logger);
+            skinApplierBukkit = new SkinApplierBukkit(this, logger, settings);
         } catch (NoMappingException e) {
             logger.severe("Your Minecraft version is not supported by this version of SkinsRestorer! Is there a newer version available? If not, join our discord server!", e);
             throw e;
@@ -152,11 +152,10 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         updateCheck();
 
-        // Init config files // TODO: Split config files
-        SettingsManager settings = loadConfig();
-
         // Init locale
         SkinsRestorerLocale locale = loadLocales(settings);
+
+        WrapperBukkit wrapper = new WrapperBukkit(settings, locale);
 
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), pluginInstance);
@@ -166,7 +165,8 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 // Init config files
                 loadConfig();
 
-                SkinStorage skinStorage = initStorage();
+                MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+                SkinStorage skinStorage = initStorage(mineSkinAPI, settings, locale);
                 new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
             }
 
@@ -234,7 +234,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                                 });
                             }
 
-                            Inventory inventory = SkinsGUI.createGUI(this, locale, logger, wrapPlayer(player), page, skinList);
+                            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ProxyGUIActions(this), locale, logger, wrapper.player(player), page, skinList);
 
                             runSync(() -> player.openInventory(inventory));
                         }
@@ -244,17 +244,20 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 });
             });
         } else {
-            SkinStorage skinStorage = initStorage();
+            MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+            SkinStorage skinStorage = initStorage(mineSkinAPI, settings, locale);
 
             // Init API
             new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
 
             // Init commands
-            CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+            CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
 
-            manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger));
-            manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBukkit));
-            manager.registerCommand(new GUICommand(this, cooldownStorage));
+            SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
+            manager.registerCommand(skinCommand);
+            manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBukkit, wrapper,
+                    () -> server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList())));
+            manager.registerCommand(new GUICommand(this, cooldownStorage, locale, logger, skinStorage, skinCommand, wrapper));
 
             // Init listener
             if (settings.getProperty(Config.ENABLE_PAPER_JOIN_LISTENER)
@@ -474,11 +477,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
-    }
-
-    @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
-        return server.getOnlinePlayers().stream().map(WrapperBukkit::wrapPlayer).collect(Collectors.toList());
     }
 
     @Override

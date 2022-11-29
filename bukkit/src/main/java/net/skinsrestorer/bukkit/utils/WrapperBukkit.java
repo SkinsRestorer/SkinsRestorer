@@ -19,9 +19,14 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -30,17 +35,30 @@ import org.bukkit.entity.Player;
 import java.util.Locale;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class WrapperBukkit {
-    public static ISRCommandSender wrapCommandSender(CommandSender sender) {
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
+
+    public ISRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof Player) {
+            return player((Player) sender);
+        }
+
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
+                return settings.getProperty(Config.LANGUAGE);
             }
 
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(message);
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override
@@ -60,11 +78,11 @@ public class WrapperBukkit {
         };
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
+    public ISRPlayer player(Player player) {
         return new ISRPlayer() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.parseLocale(player.getLocale());
+                return LocaleParser.parseLocale(player.getLocale()).orElseGet(() -> settings.getProperty(Config.LANGUAGE));
             }
 
             @Override
@@ -90,6 +108,11 @@ public class WrapperBukkit {
             @Override
             public void sendMessage(String message) {
                 player.sendMessage(message);
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
         };
     }

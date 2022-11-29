@@ -26,29 +26,30 @@ import co.aikar.commands.annotation.Default;
 import co.aikar.commands.annotation.HelpCommand;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapCommandSender;
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
 
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
 public class GUICommand extends SharedProxyGUICommand {
-    public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener) {
+    private final WrapperBungee wrapper;
+
+    public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener, WrapperBungee wrapper) {
         super(cooldownStorage, pluginMessageListener);
+        this.wrapper = wrapper;
     }
 
     @HelpCommand
     public void onHelp(CommandSender sender, CommandHelp help) {
-        onHelp(wrapCommandSender(sender), help);
+        onHelp(wrapper.commandSender(sender), help);
     }
 
     @Default
     @CommandPermission("%skins")
     public void onDefault(ProxiedPlayer player) {
-        onDefault(wrapPlayer(player));
+        onDefault(wrapper.player(player));
     }
 }

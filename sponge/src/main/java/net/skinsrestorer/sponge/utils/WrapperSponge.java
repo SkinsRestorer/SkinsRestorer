@@ -19,10 +19,14 @@
  */
 package net.skinsrestorer.sponge.utils;
 
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Config;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.source.ConsoleSource;
 import org.spongepowered.api.entity.living.player.Player;
@@ -31,17 +35,30 @@ import org.spongepowered.api.text.Text;
 import java.util.Locale;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class WrapperSponge {
-    public static ISRCommandSender wrapCommandSender(CommandSource sender) {
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
+
+    public ISRCommandSender commandSender(CommandSource sender) {
+        if (sender instanceof Player) {
+            return player((Player) sender);
+        }
+
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
+                return settings.getProperty(Config.LANGUAGE);
             }
 
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(Text.builder(message).build());
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override
@@ -61,7 +78,7 @@ public class WrapperSponge {
         };
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
+    public ISRPlayer player(Player player) {
         return new ISRPlayer() {
             @Override
             public Locale getLocale() {
@@ -86,6 +103,11 @@ public class WrapperSponge {
             @Override
             public void sendMessage(String message) {
                 player.sendMessage(Text.builder(message).build());
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override

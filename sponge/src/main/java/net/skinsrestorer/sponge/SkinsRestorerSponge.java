@@ -28,10 +28,10 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
@@ -48,7 +48,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -87,10 +86,13 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         SettingsManager settings = loadConfig();
         SkinsRestorerLocale locale = loadLocales(settings);
 
+        WrapperSponge wrapper = new WrapperSponge(settings, locale);
+        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+
         // Init storage
         SkinStorage skinStorage;
         try {
-            skinStorage = initStorage();
+            skinStorage = initStorage(mineSkinAPI, settings, locale);
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -101,13 +103,14 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         // Init API
         new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
 
-        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this, logger));
+        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this, logger, skinApplierSponge));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
 
-        manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger));
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger));
+        manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper));
+        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, wrapper,
+                () -> game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList())));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
@@ -143,11 +146,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         game.getScheduler().createTaskBuilder().execute(runnable).interval(interval, timeUnit).delay(delay, timeUnit).submit(pluginInstance);
-    }
-
-    @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
-        return game.getServer().getOnlinePlayers().stream().map(WrapperSponge::wrapPlayer).collect(Collectors.toList());
     }
 
     @Override

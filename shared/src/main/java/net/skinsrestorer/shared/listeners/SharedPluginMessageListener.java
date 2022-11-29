@@ -22,21 +22,21 @@ package net.skinsrestorer.shared.listeners;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor
 public abstract class SharedPluginMessageListener {
     private final SRLogger logger;
     private final SkinStorage skinStorage;
-    private final ISRProxyPlugin plugin;
     private final SharedSkinCommand skinCommand;
+    private final Function<String, Optional<ISRProxyPlayer>> playerGetter;
 
     private static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -99,7 +99,7 @@ public abstract class SharedPluginMessageListener {
 
         try {
             String subChannel = in.readUTF();
-            Optional<ISRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
+            Optional<ISRProxyPlayer> optional = playerGetter.apply(in.readUTF());
 
             if (!optional.isPresent())
                 return;

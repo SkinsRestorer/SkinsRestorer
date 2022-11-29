@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.utils.connections;
 
+import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.exception.TryAgainException;
 import net.skinsrestorer.shared.storage.Config;
@@ -60,6 +62,8 @@ public class MineSkinAPI implements IMineSkinAPI {
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final SRLogger logger;
     private final MetricsCounter metricsCounter;
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
     private final Gson gson = new Gson();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
         Thread t = new Thread(r);
@@ -86,7 +90,7 @@ public class MineSkinAPI implements IMineSkinAPI {
             }
         } while (failedAttempts.get() < 5);
 
-        throw new SkinRequestExceptionShared(Message.MS_API_FAILED);
+        throw new SkinRequestExceptionShared(locale, Message.MS_API_FAILED);
     }
 
     public CompletableFuture<IProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
@@ -97,7 +101,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 val response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
                 logger.debug("MineSkinAPI: Response: " + response);
                 if (!response.isPresent()) // API time out
-                    throw new SkinRequestExceptionShared(Message.ERROR_UPDATING_SKIN);
+                    throw new SkinRequestExceptionShared(locale, Message.ERROR_UPDATING_SKIN);
 
                 switch (response.get().getLeft()) {
                     case 200:
@@ -119,10 +123,10 @@ public class MineSkinAPI implements IMineSkinAPI {
                             case "No accounts available":
                                 logger.debug("[ERROR] MineSkin " + error + " for: " + url);
 
-                                throw new SkinRequestExceptionShared(Message.ERROR_MS_FULL);
+                                throw new SkinRequestExceptionShared(locale, Message.ERROR_MS_FULL);
                             default:
                                 logger.debug("[ERROR] MineSkin Failed! Reason: " + error);
-                                throw new SkinRequestExceptionShared(Message.ERROR_INVALID_URLSKIN);
+                                throw new SkinRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
                         }
                     case 403:
                         MineSkinErrorResponse errorResponse2 = gson.fromJson(response.get().getRight(), MineSkinErrorResponse.class);
@@ -167,7 +171,7 @@ public class MineSkinAPI implements IMineSkinAPI {
                 throw new CompletionException(e);
             } catch (IOException e) {
                 logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
-                throw new CompletionException(new SkinRequestExceptionShared(Message.ERROR_MS_FULL));
+                throw new CompletionException(new SkinRequestExceptionShared(locale, Message.ERROR_MS_FULL));
             } catch (JsonSyntaxException e) {
                 logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
             } catch (InterruptedException e) {
@@ -176,7 +180,7 @@ public class MineSkinAPI implements IMineSkinAPI {
 
             // throw exception after all tries have failed
             logger.debug("[ERROR] MineSkin Failed! Could not generate skin url: " + url);
-            throw new CompletionException(new SkinRequestExceptionShared(Message.MS_API_FAILED));
+            throw new CompletionException(new SkinRequestExceptionShared(locale, Message.MS_API_FAILED));
         }, executorService);
     }
 
@@ -196,8 +200,8 @@ public class MineSkinAPI implements IMineSkinAPI {
                 con.setDoOutput(true);
                 con.setDoInput(true);
 
-                if (!Config.MINESKIN_API_KEY.isEmpty())
-                    con.setRequestProperty("Authorization", "Bearer " + Config.MINESKIN_API_KEY);
+                if (!settings.getProperty(Config.MINESKIN_API_KEY).isEmpty())
+                    con.setRequestProperty("Authorization", "Bearer " + settings.getProperty(Config.MINESKIN_API_KEY));
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);

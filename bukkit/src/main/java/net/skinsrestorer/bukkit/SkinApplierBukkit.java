@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import ch.jalu.configme.SettingsManager;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,10 +53,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@RequiredArgsConstructor
 public class SkinApplierBukkit implements ISkinApplier {
     private final SkinsRestorerBukkit plugin;
     private final SRLogger logger;
+    private final SettingsManager settings;
     @Getter
     private final Consumer<Player> refresh;
     @Setter
@@ -64,9 +65,10 @@ public class SkinApplierBukkit implements ISkinApplier {
     private boolean disableRemountPlayer;
     private boolean enableDismountEntities;
 
-    public SkinApplierBukkit(SkinsRestorerBukkit plugin, SRLogger logger) throws InitializeException {
+    public SkinApplierBukkit(SkinsRestorerBukkit plugin, SRLogger logger, SettingsManager settings) throws InitializeException {
         this.plugin = plugin;
         this.logger = logger;
+        this.settings = settings;
         this.refresh = detectRefresh();
     }
 
@@ -172,7 +174,7 @@ public class SkinApplierBukkit implements ISkinApplier {
                 Entity vehicle = player.getVehicle();
 
                 SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
-                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
+                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities, settings);
             }
 
             for (Player ps : getOnlinePlayers()) {

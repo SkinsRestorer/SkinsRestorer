@@ -20,23 +20,9 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.shared.SkinsRestorerAPIShared;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 
 public class NotPremiumExceptionShared extends NotPremiumException {
     public NotPremiumExceptionShared() {
         super();
-    }
-
-    public NotPremiumExceptionShared(String message) {
-        super(message);
-    }
-
-    public NotPremiumExceptionShared(Throwable e) {
-        super(e);
-    }
-
-    public NotPremiumExceptionShared(MessageKeyGetter key, Object... args) {
-        this(SkinsRestorerAPIShared.getApi().getMessage(SkinsRestorerAPIShared.getDefaultForeign(), key, args));
     }
 }

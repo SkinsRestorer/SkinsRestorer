@@ -57,19 +57,19 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
     @SuppressWarnings("deprecation")
     protected void onDefault(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
     protected void onSkinSetShort(ISRPlayer player, String skin) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
+        if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         onSkinSetOther(player, player, skin, null);
     }
 
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         if (settings.getProperty(Config.ENABLE_CUSTOM_HELP)) {
             sendHelp(sender);
@@ -79,13 +79,13 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     protected void onSkinClear(ISRPlayer player) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
+        if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         onSkinClearOther(player, player);
     }
 
     public void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             String senderName = sender.getName();
@@ -118,19 +118,19 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     protected void onSkinSearch(ISRCommandSender sender, String searchString) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
 
     protected void onSkinUpdate(ISRPlayer player) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
+        if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         onSkinUpdateOther(player, player);
     }
 
     public void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             final String senderName = sender.getName();
@@ -173,7 +173,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     protected void onSkinSet(ISRPlayer player, String[] skin) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
+        if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
@@ -182,7 +182,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     public void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
@@ -198,7 +198,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     protected void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(player)) return;
+        if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         if (!C.validUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -209,7 +209,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
     }
 
     protected void sendHelp(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         String srLine = locale.getMessage(sender, Message.SR_LINE);
         if (!srLine.isEmpty())
@@ -250,7 +250,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
                 return false;
             }
 
-            if (!C.allowedSkinUrl(skin)) {
+            if (!C.allowedSkinUrl(settings, skin)) {
                 sender.sendMessage(Message.SKINURL_DISALLOWED);
                 return false;
             }

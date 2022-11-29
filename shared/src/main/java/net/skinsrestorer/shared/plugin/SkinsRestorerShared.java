@@ -48,7 +48,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
@@ -56,32 +55,30 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final CooldownStorage cooldownStorage = new CooldownStorage();
     protected final SRLogger logger;
     protected final MojangAPI mojangAPI;
-    protected final MineSkinAPI mineSkinAPI;
     protected final UpdateChecker updateChecker;
     @Getter
     protected final Path dataFolder;
     @Getter
     protected final String version;
-    @Getter
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Getter
     private boolean outdated = false;
     private SettingsManager settings;
     private SkinsRestorerLocale locale;
+    private MineSkinAPI mineSkinAPI;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         this.logger = new SRLogger(isrLogger, loggerColor);
         this.mojangAPI = new MojangAPI(metricsCounter);
-        this.mineSkinAPI = new MineSkinAPI(logger, metricsCounter);
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
         this.dataFolder = dataFolder;
     }
 
-    protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands() {
+    protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands(SkinsRestorerLocale locale) {
         this.manager = createCommandManager();
 
-        prepareACF();
+        prepareACF(locale);
 
         runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
 
@@ -165,9 +162,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         return locale;
     }
 
-    public SkinStorage initStorage() throws InitializeException {
+    protected SkinStorage initStorage(MineSkinAPI mineSkinAPI, SettingsManager settings, SkinsRestorerLocale locale) throws InitializeException {
         // Initialise SkinStorage
-        SkinStorage skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI, settings);
+        SkinStorage skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI, settings, locale);
         try {
             if (settings.getProperty(Config.MYSQL_ENABLED)) {
                 MySQL mysql = new MySQL(
@@ -182,7 +179,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
                 );
 
                 mysql.connectPool();
-                mysql.createTable();
+                mysql.createTable(settings);
 
                 logger.info("Connected to MySQL!");
                 skinStorage.setStorageAdapter(new MySQLAdapter(mysql, settings));
@@ -203,14 +200,14 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     @SuppressWarnings({"deprecation"})
-    public void prepareACF() {
+    public void prepareACF(SkinsRestorerLocale locale) {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerLocale.getDefaultForeign(), v.getKey())));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerLocale.getDefaultForeign(), v.getKey())));
+        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, locale.getMessage(locale.getDefaultForeign(), v)));
+        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, locale.getMessage(locale.getDefaultForeign(), v)));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(localeManager.getMessage(SkinsRestorerLocale.getDefaultForeign(), v.getKey()).split(", "))));
+                Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
         CommandPropertiesManager.load(manager, dataFolder, getResource("command.properties"), logger);
 
@@ -228,5 +225,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
 
     protected void setOutdated() {
         outdated = true;
+    }
+
+    protected MineSkinAPI initMineSkinAPI(SettingsManager settings, SkinsRestorerLocale locale) {
+        return new MineSkinAPI(logger, metricsCounter, settings, locale);
     }
 }

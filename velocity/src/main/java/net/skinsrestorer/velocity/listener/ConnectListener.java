@@ -25,12 +25,14 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
-
-import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
+import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 public class ConnectListener extends SharedConnectListener {
-    public ConnectListener(ISRProxyPlugin plugin) {
+    private final WrapperVelocity wrapper;
+
+    public ConnectListener(ISRProxyPlugin plugin, WrapperVelocity wrapper) {
         super(plugin);
+        this.wrapper = wrapper;
     }
 
     @Subscribe(order = PostOrder.LAST)
@@ -39,6 +41,6 @@ public class ConnectListener extends SharedConnectListener {
     }
 
     private SRServerConnectedEvent wrap(ServerConnectedEvent event) {
-        return () -> wrapPlayer(event.getPlayer());
+        return () -> wrapper.player(event.getPlayer());
     }
 }

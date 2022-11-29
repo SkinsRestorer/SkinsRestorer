@@ -19,30 +19,47 @@
  */
 package net.skinsrestorer.bungee.utils;
 
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.command.ConsoleCommandSender;
 import net.skinsrestorer.api.PlayerWrapper;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Config;
 
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 public class WrapperBungee {
-    public static ISRCommandSender wrapCommandSender(CommandSender sender) {
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
+
+    public ISRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer) {
+            return player((ProxiedPlayer) sender);
+        }
+
         return new ISRCommandSender() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
+                return settings.getProperty(Config.LANGUAGE);
             }
 
             @Override
             public void sendMessage(String message) {
                 sender.sendMessage(TextComponent.fromLegacyText(message));
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override
@@ -62,7 +79,7 @@ public class WrapperBungee {
         };
     }
 
-    public static ISRProxyPlayer wrapPlayer(ProxiedPlayer player) {
+    public ISRProxyPlayer player(ProxiedPlayer player) {
         return new ISRProxyPlayer() {
             @Override
             public Locale getLocale() {
@@ -97,6 +114,11 @@ public class WrapperBungee {
             @Override
             public void sendMessage(String message) {
                 player.sendMessage(TextComponent.fromLegacyText(message));
+            }
+
+            @Override
+            public void sendMessage(MessageKeyGetter key, Object... args) {
+                sendMessage(locale.getMessage(this, key, args));
             }
 
             @Override

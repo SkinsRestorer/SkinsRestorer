@@ -32,22 +32,22 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-
-import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapCommandSender;
-import static net.skinsrestorer.velocity.utils.WrapperVelocity.wrapPlayer;
+import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
+    private final WrapperVelocity wrapper;
 
-    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger) {
+    public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger, WrapperVelocity wrapper) {
         super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
+        this.wrapper = wrapper;
     }
 
     @Default
     public void onDefault(CommandSource source) {
-        onDefault(wrapCommandSender(source));
+        onDefault(wrapper.commandSender(source));
     }
 
     @Default
@@ -55,20 +55,20 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     public void onSkinSetShort(Player player, @Single String skin) {
-        onSkinSetShort(wrapPlayer(player), skin);
+        onSkinSetShort(wrapper.player(player), skin);
     }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
     public void onHelp(CommandSource source, CommandHelp help) {
-        onHelp(wrapCommandSender(source), help);
+        onHelp(wrapper.commandSender(source), help);
     }
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     public void onSkinClear(Player player) {
-        onSkinClear(wrapPlayer(player));
+        onSkinClear(wrapper.player(player));
     }
 
     @Subcommand("clear")
@@ -77,7 +77,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     public void onSkinClearOther(CommandSource source, @Single OnlinePlayer target) {
-        onSkinClearOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
+        onSkinClearOther(wrapper.commandSender(source), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("search")
@@ -85,14 +85,14 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSearch")
     @Syntax("%SyntaxSkinSearch")
     public void onSkinSearch(CommandSource source, String search) {
-        onSkinSearch(wrapCommandSender(source), search);
+        onSkinSearch(wrapper.commandSender(source), search);
     }
 
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     public void onSkinUpdate(Player player) {
-        onSkinUpdate(wrapPlayer(player));
+        onSkinUpdate(wrapper.player(player));
     }
 
     @Subcommand("update")
@@ -101,7 +101,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     public void onSkinUpdateOther(CommandSource source, @Single OnlinePlayer target) {
-        onSkinUpdateOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()));
+        onSkinUpdateOther(wrapper.commandSender(source), wrapper.player(target.getPlayer()));
     }
 
     @Subcommand("set")
@@ -110,7 +110,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     public void onSkinSet(Player player, String[] skin) {
-        onSkinSet(wrapPlayer(player), skin);
+        onSkinSet(wrapper.player(player), skin);
     }
 
     @Subcommand("set")
@@ -119,7 +119,7 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     public void onSkinSetOther(CommandSource source, OnlinePlayer target, String skin, @Optional SkinVariant skinVariant) {
-        onSkinSetOther(wrapCommandSender(source), wrapPlayer(target.getPlayer()), skin, skinVariant);
+        onSkinSetOther(wrapper.commandSender(source), wrapper.player(target.getPlayer()), skin, skinVariant);
     }
 
     @Subcommand("url")
@@ -128,6 +128,6 @@ public class SkinCommand extends SharedSkinCommand {
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
-        onSkinSetUrl(wrapPlayer(player), url, skinVariant);
+        onSkinSetUrl(wrapper.player(player), url, skinVariant);
     }
 }
