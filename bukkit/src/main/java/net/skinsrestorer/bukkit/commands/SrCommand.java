@@ -31,6 +31,7 @@ import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
+import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -39,6 +40,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.util.*;
 
 @CommandAlias("sr|skinsrestorer")
@@ -49,7 +51,9 @@ public class SrCommand extends SharedSRCommand {
     private final SkinApplierBukkit skinApplier;
     private final WrapperBukkit wrapper;
 
-    public SrCommand(SkinsRestorerBukkit plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, SkinApplierBukkit skinApplier, WrapperBukkit wrapperBukkit, CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
+    @Inject
+    public SrCommand(SkinsRestorerBukkit plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, SkinApplierBukkit skinApplier, WrapperBukkit wrapperBukkit,
+                     @OnlinePlayersMethod CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
         super(plugin, mojangAPI, skinStorage, settings, logger, onlinePlayersFunction);
         this.plugin = plugin;
         this.skinApplier = skinApplier;

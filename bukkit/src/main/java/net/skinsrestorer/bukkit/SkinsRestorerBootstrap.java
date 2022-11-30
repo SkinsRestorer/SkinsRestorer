@@ -27,7 +27,7 @@ public class SkinsRestorerBootstrap extends JavaPlugin {
         Exception startupError = null;
         SkinsRestorerBukkit skinsRestorerBukkit = null;
         try {
-            skinsRestorerBukkit = new SkinsRestorerBukkit(this);
+            skinsRestorerBukkit = new SkinsRestorerBukkit(getServer(), getDescription().getVersion(), getDataFolder().toPath(), this, false);
             skinsRestorerBukkit.pluginStartup();
         } catch (Exception e) {
             startupError = e;
@@ -38,8 +38,9 @@ public class SkinsRestorerBootstrap extends JavaPlugin {
         }
 
         if (startupError != null) {
-            getLogger().warning("An unexpected error occurred while starting the plugin.");
+            getLogger().severe("An unexpected error occurred while starting the plugin.");
             startupError.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
         }
     }
 }

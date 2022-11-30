@@ -21,9 +21,15 @@ package net.skinsrestorer.shared.plugin;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
+import ch.jalu.injector.Injector;
+import ch.jalu.injector.InjectorBuilder;
 import co.aikar.commands.CommandManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
+import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.ISkinApplier;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
@@ -51,36 +57,38 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
-    protected final MetricsCounter metricsCounter = new MetricsCounter();
-    protected final CooldownStorage cooldownStorage = new CooldownStorage();
     protected final SRLogger logger;
-    protected final MojangAPI mojangAPI;
+    protected final MetricsCounter metricsCounter;
     protected final UpdateChecker updateChecker;
     @Getter
     protected final Path dataFolder;
     @Getter
     protected final String version;
+    protected final Injector injector;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Getter
     private boolean outdated = false;
-    private SettingsManager settings;
-    private SkinsRestorerLocale locale;
-    private MineSkinAPI mineSkinAPI;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
-        this.logger = new SRLogger(isrLogger, loggerColor);
-        this.mojangAPI = new MojangAPI(metricsCounter);
+        this.injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
+
+        injector.register(ISRPlugin.class, this);
+
+        injector.register(MetricsCounter.class, (metricsCounter = new MetricsCounter()));
+        injector.register(CooldownStorage.class, new CooldownStorage());
+        injector.register(SRLogger.class, (logger = new SRLogger(isrLogger, loggerColor)));
+
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
         this.dataFolder = dataFolder;
     }
 
-    protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands(SkinsRestorerLocale locale) {
+    protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands() {
         this.manager = createCommandManager();
 
-        prepareACF(locale);
+        prepareACF();
 
-        runRepeatAsync(cooldownStorage::cleanup, 60, 60, TimeUnit.SECONDS);
+        runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
         return manager;
     }
@@ -108,13 +116,15 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         }));
     }
 
-    public SettingsManager loadConfig() {
+    public void loadConfig() {
+        SettingsManager settings = injector.getIfAvailable(SettingsManager.class);
         if (settings == null) {
             settings = SettingsManagerBuilder
                     .withYamlFile(dataFolder.resolve("config.yml"))
                     .configurationData(Config.class)
                     .useDefaultMigrationService()
                     .create();
+            injector.register(SettingsManager.class, settings);
         } else {
             settings.reload();
         }
@@ -148,23 +158,23 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         }
 
         logger.setDebug(settings.getProperty(Config.DEBUG));
+        SkinsRestorerLocale locale = injector.getIfAvailable(SkinsRestorerLocale.class);
         if (locale != null) {
-            locale.getLocaleManager().setDefaultLocale(settings.getProperty(Config.LANGUAGE));
+            locale.setDefaultLocale(settings.getProperty(Config.LANGUAGE));
         }
-
-        return settings;
     }
 
-    public SkinsRestorerLocale loadLocales(SettingsManager settings) {
-        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, settings.getProperty(Config.LANGUAGE));
+    public void loadLocales() {
+        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, injector.getSingleton(SettingsManager.class).getProperty(Config.LANGUAGE));
+        injector.register(LocaleManager.class, localeManager);
         Message.load(localeManager, dataFolder, this);
-        locale = new SkinsRestorerLocale(localeManager, settings);
-        return locale;
+        injector.getSingleton(SkinsRestorerLocale.class);
     }
 
-    protected SkinStorage initStorage(MineSkinAPI mineSkinAPI, SettingsManager settings, SkinsRestorerLocale locale) throws InitializeException {
+    protected void initStorage() throws InitializeException {
         // Initialise SkinStorage
-        SkinStorage skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI, settings, locale);
+        SkinStorage skinStorage = injector.getSingleton(SkinStorage.class);
+        SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
             if (settings.getProperty(Config.MYSQL_ENABLED)) {
                 MySQL mysql = new MySQL(
@@ -196,11 +206,12 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
             logger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
             throw new InitializeException(e);
         }
-        return skinStorage;
     }
 
     @SuppressWarnings({"deprecation"})
-    public void prepareACF(SkinsRestorerLocale locale) {
+    public void prepareACF() {
+        SettingsManager settings = injector.getSingleton(SettingsManager.class);
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
@@ -227,7 +238,18 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         outdated = true;
     }
 
-    protected MineSkinAPI initMineSkinAPI(SettingsManager settings, SkinsRestorerLocale locale) {
-        return new MineSkinAPI(logger, metricsCounter, settings, locale);
+    protected void initMineSkinAPI() {
+        injector.getSingleton(MineSkinAPI.class);
     }
+
+    protected void registerAPI(IWrapperFactory wrapperFactory,
+                               IPropertyFactory propertyFactory,
+                               ISkinApplier skinApplier) {
+        injector.register(SkinsRestorerAPI.class, new SkinsRestorerAPI(
+                injector.getSingleton(MojangAPI.class),
+                injector.getSingleton(MineSkinAPI.class),
+                injector.getSingleton(SkinStorage.class), wrapperFactory, propertyFactory, skinApplier));
+    }
+
+    protected abstract void pluginStartup() throws InitializeException;
 }

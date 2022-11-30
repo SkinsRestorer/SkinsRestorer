@@ -34,11 +34,13 @@ import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
-@Getter
+import javax.inject.Inject;
+
 public class LoginListener extends SharedLoginProfileListener<Void> implements Listener {
     private final SkinsRestorerBungee plugin;
     private final SkinApplierBungeeShared skinApplier;
 
+    @Inject
     public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin, SkinApplierBungeeShared skinApplier, SRLogger logger) {
         super(settings, skinStorage, logger);
         this.plugin = plugin;

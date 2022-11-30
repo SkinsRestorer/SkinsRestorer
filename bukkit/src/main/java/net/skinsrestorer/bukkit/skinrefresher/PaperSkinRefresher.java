@@ -26,6 +26,7 @@ import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
@@ -36,7 +37,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
-    public PaperSkinRefresher(SRLogger logger) throws InitializeException {
+    public PaperSkinRefresher(SRLogger logger, Server server) throws InitializeException {
         try {
             refreshPlayerMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
@@ -70,9 +71,9 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                         }
                     };
                 } catch (NoSuchMethodException ignored2) {
-                    Optional<IMapping> mapping = MappingManager.getMapping();
+                    Optional<IMapping> mapping = MappingManager.getMapping(server);
                     if (!mapping.isPresent()) {
-                        throw new NoMappingException();
+                        throw new NoMappingException(server);
                     } else {
                         triggerHealthUpdate = player -> {
                             try {

@@ -30,9 +30,12 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
 
+import javax.inject.Inject;
+
 public class GameProfileRequest extends SharedLoginProfileListener<EventTask> {
     private final SkinApplierVelocity skinApplier;
 
+    @Inject
     public GameProfileRequest(SkinStorage skinStorage, SettingsManager settings, SkinApplierVelocity skinApplier, SRLogger logger) {
         super(settings, skinStorage, logger);
         this.skinApplier = skinApplier;

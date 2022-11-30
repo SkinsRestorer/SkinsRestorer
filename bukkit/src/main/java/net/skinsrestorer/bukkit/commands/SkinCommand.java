@@ -34,12 +34,15 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
+
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
     private final WrapperBukkit wrapper;
 
+    @Inject
     public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger, WrapperBukkit wrapper) {
         super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
         this.wrapper = wrapper;

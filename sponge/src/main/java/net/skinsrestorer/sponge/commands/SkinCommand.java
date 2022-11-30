@@ -34,12 +34,15 @@ import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
+import javax.inject.Inject;
+
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
     private final WrapperSponge wrapper;
 
+    @Inject
     public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger, WrapperSponge wrapper) {
         super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
         this.wrapper = wrapper;

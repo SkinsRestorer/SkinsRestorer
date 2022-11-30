@@ -36,6 +36,11 @@ public class ServerVersion {
 
     @Nullable
     public static String getNMSVersion() {
+        String propertyVersion = System.getProperty("nms.version");
+        if (propertyVersion != null) {
+            return propertyVersion;
+        }
+
         try {
             String serverPackage = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null).getClass().getPackage().getName();
 

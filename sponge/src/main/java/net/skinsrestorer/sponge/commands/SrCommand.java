@@ -38,6 +38,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.profile.property.ProfileProperty;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,7 @@ public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerSponge plugin;
     private final WrapperSponge wrapper;
 
+    @Inject
     public SrCommand(SkinsRestorerSponge plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, WrapperSponge wrapper, CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
         super(plugin, mojangAPI, skinStorage, settings, logger, onlinePlayersFunction);
         this.plugin = plugin;

@@ -39,18 +39,26 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-@RequiredArgsConstructor
+import javax.inject.Inject;
+
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
 public class GUICommand extends BaseCommand {
-    private final SkinsRestorerBukkit plugin;
-    private final CooldownStorage cooldownStorage;
-    private final SkinsRestorerLocale locale;
-    private final SRLogger logger;
-    private final SkinStorage skinStorage;
-    private final SkinCommand skinCommand;
-    private final WrapperBukkit wrapper;
+    @Inject
+    private SkinsRestorerBukkit plugin;
+    @Inject
+    private CooldownStorage cooldownStorage;
+    @Inject
+    private SkinsRestorerLocale locale;
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private SkinStorage skinStorage;
+    @Inject
+    private SkinCommand skinCommand;
+    @Inject
+    private WrapperBukkit wrapper;
 
     // TODO: is help even needed for /skins?
     @HelpCommand
@@ -70,7 +78,8 @@ public class GUICommand extends BaseCommand {
             }
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ServerGUIActions(plugin, skinCommand, locale, logger, skinStorage, wrapper), locale, logger, skinStorage, srPlayer, 0);
+            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ServerGUIActions(plugin, skinCommand, locale, logger, plugin.getServer(), skinStorage, wrapper),
+                    locale, logger, plugin.getServer(), skinStorage, srPlayer, 0);
             plugin.runSync(() -> player.openInventory(inventory));
         });
     }

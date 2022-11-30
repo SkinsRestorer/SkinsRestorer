@@ -32,6 +32,8 @@ import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
+import javax.inject.Inject;
+
 @Getter
 @CommandAlias("skins")
 @CommandPermission("%skins")
@@ -39,6 +41,7 @@ import net.skinsrestorer.velocity.utils.WrapperVelocity;
 public class GUICommand extends SharedProxyGUICommand {
     private final WrapperVelocity wrapper;
 
+    @Inject
     public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener, WrapperVelocity wrapper) {
         super(cooldownStorage, pluginMessageListener);
         this.wrapper = wrapper;

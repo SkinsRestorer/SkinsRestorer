@@ -38,6 +38,7 @@ public abstract class SkinsRestorerServerShared extends SkinsRestorerShared impl
 
     protected SkinsRestorerServerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
+        injector.register(ISRServerPlugin.class, this);
     }
 
     /**

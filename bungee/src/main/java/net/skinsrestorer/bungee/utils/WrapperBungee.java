@@ -32,14 +32,17 @@ import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Config;
 
+import javax.inject.Inject;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor()
 public class WrapperBungee {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private SkinsRestorerLocale locale;
 
     public ISRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof ProxiedPlayer) {

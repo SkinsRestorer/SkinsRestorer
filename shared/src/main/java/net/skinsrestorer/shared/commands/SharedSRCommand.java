@@ -28,7 +28,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerShared;
@@ -71,9 +70,9 @@ public abstract class SharedSRCommand extends BaseCommand {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         reloadCustomHook();
-        SettingsManager settings = plugin.loadConfig();
-        SkinsRestorerLocale locale = plugin.loadLocales(settings);
-        plugin.prepareACF(locale);
+        plugin.loadConfig();
+        plugin.loadLocales();
+        plugin.prepareACF();
 
         sender.sendMessage(Message.RELOAD);
     }

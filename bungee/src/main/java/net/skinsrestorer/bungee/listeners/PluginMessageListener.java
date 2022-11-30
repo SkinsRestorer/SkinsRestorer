@@ -24,17 +24,21 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.injector.GetPlayerMethod;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class PluginMessageListener extends SharedPluginMessageListener implements Listener {
-    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, SharedSkinCommand skinCommand, Function<String, Optional<ISRProxyPlayer>> playerGetter) {
+    @Inject
+    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, SharedSkinCommand skinCommand,
+                                 @GetPlayerMethod Function<String, Optional<ISRProxyPlayer>> playerGetter) {
         super(logger, skinStorage, skinCommand, playerGetter);
     }
 

@@ -36,6 +36,7 @@ import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -45,13 +46,17 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-@RequiredArgsConstructor
 public class SkinStorage implements ISkinStorage {
-    private final SRLogger logger;
-    private final MojangAPI mojangAPI;
-    private final MineSkinAPI mineSkinAPI;
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private MojangAPI mojangAPI;
+    @Inject
+    private MineSkinAPI mineSkinAPI;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private SkinsRestorerLocale locale;
     @Setter
     private StorageAdapter storageAdapter;
 

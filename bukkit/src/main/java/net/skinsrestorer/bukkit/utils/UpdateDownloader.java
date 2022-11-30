@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.inventivetalent.update.spiget.ResourceInfo;
 import org.inventivetalent.update.spiget.download.DownloadCallback;
@@ -44,6 +44,7 @@ public class UpdateDownloader {
     protected final SkinsRestorerBukkit plugin;
     protected final UpdateChecker updateChecker;
     protected final SRLogger logger;
+    protected final Server server;
 
     @Getter
     protected DownloadFailReason failReason;
@@ -72,7 +73,7 @@ public class UpdateDownloader {
             return false;
         }
 
-        File updateFolder = Bukkit.getUpdateFolderFile();
+        File updateFolder = server.getUpdateFolderFile();
         if (!updateFolder.exists() && !updateFolder.mkdirs()) {
             failReason = DownloadFailReason.NO_UPDATE_FOLDER;
             return false;
@@ -104,7 +105,7 @@ public class UpdateDownloader {
     }
 
     public Properties getUpdaterProperties() {
-        File file = new File(Bukkit.getUpdateFolderFile(), "spiget.properties");
+        File file = new File(server.getUpdateFolderFile(), "spiget.properties");
         Properties properties = new Properties();
         if (!file.exists()) {
 

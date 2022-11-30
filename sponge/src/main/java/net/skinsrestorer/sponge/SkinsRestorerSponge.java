@@ -19,19 +19,18 @@
  */
 package net.skinsrestorer.sponge;
 
-import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
@@ -48,6 +47,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -72,8 +72,14 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         this.pluginContainer = container;
     }
 
-    public void onInitialize() {
+    @Override
+    protected void pluginStartup() {
         logger.load(dataFolder);
+
+        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
+        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
+        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
+        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
 
         checkUpdateInit(() -> {
             checkUpdate(true);
@@ -83,16 +89,19 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         });
 
         // Init config files
-        SettingsManager settings = loadConfig();
-        SkinsRestorerLocale locale = loadLocales(settings);
+        loadConfig();
+        loadLocales();
 
-        WrapperSponge wrapper = new WrapperSponge(settings, locale);
-        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
+
+        injector.provide(OnlinePlayersMethod.class,
+                (CallableValue<Collection<ISRPlayer>>) () -> game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList()));
+
+        initMineSkinAPI();
 
         // Init storage
-        SkinStorage skinStorage;
         try {
-            skinStorage = initStorage(mineSkinAPI, settings, locale);
+            initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -101,26 +110,18 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
 
         // Init API
-        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
+        registerAPI(new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
 
         Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this, logger, skinApplierSponge));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
 
-        manager.registerCommand(new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper));
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, wrapper,
-                () -> game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList())));
+        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        manager.registerCommand(injector.newInstance(SrCommand.class));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
-    }
-
-    public void onServerStarted() {
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
     }
 
     @Override

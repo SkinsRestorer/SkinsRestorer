@@ -26,7 +26,6 @@ import lombok.Getter;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
@@ -39,21 +38,26 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.injector.GetPlayerMethod;
+import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -103,42 +107,44 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         });
 
         // Init config files
-        SettingsManager settings = loadConfig();
-        SkinsRestorerLocale locale = loadLocales(settings);
+        loadConfig();
+        loadLocales();
 
-        WrapperBungee wrapper = new WrapperBungee(settings, locale);
-        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
+        injector.provide(GetPlayerMethod.class, (Function<String, Optional<ISRProxyPlayer>>)
+                name -> Optional.ofNullable(proxy.getPlayer(name)).map(wrapper::player));
+        injector.provide(OnlinePlayersMethod.class, (CallableValue<Collection<ISRPlayer>>)
+                () -> proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList()));
+
+        initMineSkinAPI();
 
         // Init storage
-        SkinStorage skinStorage;
         try {
-            skinStorage = initStorage(mineSkinAPI, settings, locale);
+            initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
         }
 
-        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(settings, logger);
+        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(injector.getSingleton(SettingsManager.class), logger);
+        injector.register(SkinApplierBungeeShared.class, skinApplierBungee);
 
         // Init API
-        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryBungee(), new PropertyFactoryBungee(), skinApplierBungee);
+        registerAPI(new WrapperFactoryBungee(), new PropertyFactoryBungee(), skinApplierBungee);
 
         // Init listener
-        proxy.getPluginManager().registerListener(pluginInstance, new LoginListener(skinStorage, settings, this, skinApplierBungee, logger));
-        proxy.getPluginManager().registerListener(pluginInstance, new ConnectListener(this, wrapper));
+        proxy.getPluginManager().registerListener(pluginInstance, injector.newInstance(LoginListener.class));
+        proxy.getPluginManager().registerListener(pluginInstance, injector.newInstance(ConnectListener.class));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
-        manager.registerCommand(skinCommand);
+        manager.registerCommand(injector.getSingleton(SkinCommand.class));
 
-        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, skinCommand,
-                name -> Optional.ofNullable(proxy.getPlayer(name)).map(wrapper::player));
+        PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
 
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, skinApplierBungee, wrapper,
-                () -> proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList())));
-        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener, wrapper));
+        manager.registerCommand(injector.newInstance(SrCommand.class));
+        manager.registerCommand(injector.newInstance(GUICommand.class));
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");
@@ -146,7 +152,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
 
         // Run connection check
-        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
+        runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
     }
 
     @Override

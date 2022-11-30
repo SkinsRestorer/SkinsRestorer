@@ -34,12 +34,15 @@ import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
+
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings({"unused"})
 public class SkinCommand extends SharedSkinCommand {
     private final WrapperBungee wrapper;
 
+    @Inject
     public SkinCommand(ISRPlugin plugin, SettingsManager settings, CooldownStorage cooldownStorage, SkinStorage skinStorage, SkinsRestorerLocale locale, SRLogger logger, WrapperBungee wrapper) {
         super(plugin, settings, cooldownStorage, skinStorage, locale, logger);
         this.wrapper = wrapper;

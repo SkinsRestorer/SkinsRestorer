@@ -24,23 +24,26 @@ import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import javax.inject.Inject;
+
 public class PlayerJoin extends SharedLoginProfileListener<Void> implements Listener {
     @Setter
     private static boolean resourcePack;
-    private final ISRPlugin plugin;
+    private final SkinsRestorerBukkit plugin;
 
-    public PlayerJoin(SettingsManager settings, SkinStorage skinStorage, ISRPlugin plugin, SRLogger logger) {
+    @Inject
+    public PlayerJoin(SettingsManager settings, SkinStorage skinStorage, SkinsRestorerBukkit plugin, SRLogger logger) {
         super(settings, skinStorage, logger);
         this.plugin = plugin;
     }
@@ -57,7 +60,7 @@ public class PlayerJoin extends SharedLoginProfileListener<Void> implements List
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return Bukkit.getOnlineMode();
+                return plugin.getServer().getOnlineMode();
             }
 
             @Override

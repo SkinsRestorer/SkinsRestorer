@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -60,10 +61,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MineSkinAPI implements IMineSkinAPI {
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
-    private final SRLogger logger;
-    private final MetricsCounter metricsCounter;
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private MetricsCounter metricsCounter;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private SkinsRestorerLocale locale;
     private final Gson gson = new Gson();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
         Thread t = new Thread(r);

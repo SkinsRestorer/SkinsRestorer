@@ -21,8 +21,8 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.configme.SettingsManager;
 import io.papermc.lib.PaperLib;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
@@ -42,10 +42,11 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,25 +55,22 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public class SkinApplierBukkit implements ISkinApplier {
-    private final SkinsRestorerBukkit plugin;
-    private final SRLogger logger;
-    private final SettingsManager settings;
+    @Inject
+    private SkinsRestorerBukkit plugin;
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private SettingsManager settings;
     @Getter
-    private final Consumer<Player> refresh;
+    @Setter(value = AccessLevel.PROTECTED)
+    private Consumer<Player> refresh;
     @Setter
     private boolean optFileChecked;
     private boolean disableDismountPlayer;
     private boolean disableRemountPlayer;
     private boolean enableDismountEntities;
 
-    public SkinApplierBukkit(SkinsRestorerBukkit plugin, SRLogger logger, SettingsManager settings) throws InitializeException {
-        this.plugin = plugin;
-        this.logger = logger;
-        this.settings = settings;
-        this.refresh = detectRefresh();
-    }
-
-    private Consumer<Player> detectRefresh() throws InitializeException {
+    protected Consumer<Player> detectRefresh(Server server) throws InitializeException {
         if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
@@ -80,12 +78,12 @@ public class SkinApplierBukkit implements ISkinApplier {
             boolean protocolSupportExists = plugin.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
                 logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return selectSpigotRefresher();
+                return selectSpigotRefresher(server);
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(logger);
+                return new PaperSkinRefresher(logger, server);
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
@@ -93,18 +91,18 @@ public class SkinApplierBukkit implements ISkinApplier {
             }
         }
 
-        return selectSpigotRefresher();
+        return selectSpigotRefresher(server);
     }
 
-    private Consumer<Player> selectSpigotRefresher() throws InitializeException {
+    private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
         if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(plugin, logger);
+            return new MappingSpigotSkinRefresher(plugin, logger, server);
         } else return new SpigotSkinRefresher(plugin, logger);
     }
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        applySkin(playerWrapper.get(Player.class), property);
+        applySkin(playerWrapper.get(Player.class), property, plugin.getServer());
     }
 
     /**
@@ -114,14 +112,14 @@ public class SkinApplierBukkit implements ISkinApplier {
      * @param player   Player
      * @param property Property Object
      */
-    protected void applySkin(Player player, IProperty property) {
+    protected void applySkin(Player player, IProperty property, Server server) {
         if (!player.isOnline())
             return;
 
         plugin.runAsync(() -> {
             SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
-            Bukkit.getPluginManager().callEvent(applyEvent);
+            server.getPluginManager().callEvent(applyEvent);
 
             if (applyEvent.isCancelled())
                 return;
@@ -263,7 +261,7 @@ public class SkinApplierBukkit implements ISkinApplier {
         try {
             return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
         } catch (UnsupportedClassVersionError e) {
-            return Bukkit.getOnlinePlayers();
+            return plugin.getServer().getOnlinePlayers();
         }
     }
 }

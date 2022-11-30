@@ -25,6 +25,7 @@ import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
@@ -36,11 +37,11 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
     private final IMapping mapping;
     private boolean useViabackwards = false;
 
-    public MappingSpigotSkinRefresher(ISRServerPlugin plugin, SRLogger logger) throws NoMappingException {
+    public MappingSpigotSkinRefresher(ISRServerPlugin plugin, SRLogger logger, Server server) throws NoMappingException {
         this.plugin = plugin;
-        Optional<IMapping> mapping = MappingManager.getMapping();
+        Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
-            throw new NoMappingException();
+            throw new NoMappingException(server);
         } else {
             this.mapping = mapping.get();
         }

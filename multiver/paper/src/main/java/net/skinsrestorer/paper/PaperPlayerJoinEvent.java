@@ -30,10 +30,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
+import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class PaperPlayerJoinEvent extends SharedLoginProfileListener<Void> implements Listener {
+    @Inject
     public PaperPlayerJoinEvent(SettingsManager settings, SkinStorage skinStorage, SRLogger logger) {
         super(settings, skinStorage, logger);
     }

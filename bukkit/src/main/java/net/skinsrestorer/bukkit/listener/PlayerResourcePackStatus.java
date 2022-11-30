@@ -23,21 +23,24 @@ import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
-public class PlayerResourcePackStatus extends SharedLoginProfileListener<Void> implements Listener {
-    private final ISRPlugin plugin;
+import javax.inject.Inject;
 
-    public PlayerResourcePackStatus(SkinStorage skinStorage, SettingsManager settings, ISRPlugin plugin, SRLogger logger) {
+public class PlayerResourcePackStatus extends SharedLoginProfileListener<Void> implements Listener {
+    private final SkinsRestorerBukkit plugin;
+
+    @Inject
+    public PlayerResourcePackStatus(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBukkit plugin, SRLogger logger) {
         super(settings, skinStorage, logger);
         this.plugin = plugin;
     }
@@ -56,7 +59,7 @@ public class PlayerResourcePackStatus extends SharedLoginProfileListener<Void> i
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return Bukkit.getOnlineMode();
+                return plugin.getServer().getOnlineMode();
             }
 
             @Override

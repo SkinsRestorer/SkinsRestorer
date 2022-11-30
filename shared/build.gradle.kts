@@ -12,6 +12,7 @@ dependencies {
 
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
     api("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
+    api("ch.jalu:injector:1.0")
     implementation("com.github.aikar:locales:5f204c3afb")
 
     compileOnly("co.aikar:acf-core:0.5.1-SNAPSHOT")

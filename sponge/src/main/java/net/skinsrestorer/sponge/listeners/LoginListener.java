@@ -34,11 +34,14 @@ import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 
+import javax.inject.Inject;
+
 @Getter
 public class LoginListener extends SharedLoginProfileListener<Void> implements EventListener<ClientConnectionEvent.Auth> {
     private final SkinsRestorerSponge plugin;
     private final SkinApplierSponge skinApplier;
 
+    @Inject
     public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerSponge plugin, SRLogger logger, SkinApplierSponge skinApplier) {
         super(settings, skinStorage, logger);
         this.plugin = plugin;

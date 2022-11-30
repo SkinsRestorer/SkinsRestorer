@@ -21,12 +21,14 @@ package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 
 import java.nio.file.Path;
 
 public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements ISRProxyPlugin {
     protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
+        injector.register(ISRProxyPlugin.class, this);
     }
 
     @Override

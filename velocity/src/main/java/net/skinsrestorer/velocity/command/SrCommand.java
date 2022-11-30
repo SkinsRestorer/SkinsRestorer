@@ -29,6 +29,7 @@ import com.velocitypowered.api.util.GameProfile;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.SharedSRCommand;
+import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -38,6 +39,7 @@ import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +52,9 @@ public class SrCommand extends SharedSRCommand {
     private final SkinsRestorerVelocity plugin;
     private final WrapperVelocity wrapper;
 
-    public SrCommand(SkinsRestorerVelocity plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, WrapperVelocity wrapper, CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
+    @Inject
+    public SrCommand(SkinsRestorerVelocity plugin, MojangAPI mojangAPI, SkinStorage skinStorage, SettingsManager settings, SRLogger logger, WrapperVelocity wrapper,
+                     @OnlinePlayersMethod CallableValue<Collection<ISRPlayer>> onlinePlayersFunction) {
         super(plugin, mojangAPI, skinStorage, settings, logger, onlinePlayersFunction);
         this.plugin = plugin;
         this.wrapper = wrapper;

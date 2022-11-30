@@ -27,9 +27,12 @@ import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
+import javax.inject.Inject;
+
 public class ConnectListener extends SharedConnectListener {
     private final WrapperVelocity wrapper;
 
+    @Inject
     public ConnectListener(ISRProxyPlugin plugin, WrapperVelocity wrapper) {
         super(plugin);
         this.wrapper = wrapper;

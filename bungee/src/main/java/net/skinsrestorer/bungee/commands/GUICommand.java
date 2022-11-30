@@ -31,12 +31,15 @@ import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 
+import javax.inject.Inject;
+
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @SuppressWarnings({"unused"})
 public class GUICommand extends SharedProxyGUICommand {
     private final WrapperBungee wrapper;
 
+    @Inject
     public GUICommand(CooldownStorage cooldownStorage, SharedPluginMessageListener pluginMessageListener, WrapperBungee wrapper) {
         super(cooldownStorage, pluginMessageListener);
         this.wrapper = wrapper;

@@ -49,7 +49,7 @@ public class SkinsRestorerBootstrap {
     @Listener
     public void onInitialize(GameInitializationEvent event) {
         this.plugin = new SkinsRestorerSponge(this, metricsFactory, dataFolder, logger, container);
-        this.plugin.onInitialize();
+        this.plugin.pluginStartup();
     }
 
     @Listener

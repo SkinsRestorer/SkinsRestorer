@@ -25,7 +25,7 @@ import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
 import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,8 +36,8 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 public class UpdateDownloaderGithub extends UpdateDownloader {
-    public UpdateDownloaderGithub(SkinsRestorerBukkit plugin, UpdateChecker updateChecker, SRLogger logger) {
-        super(plugin, updateChecker, logger);
+    public UpdateDownloaderGithub(SkinsRestorerBukkit plugin, UpdateChecker updateChecker, SRLogger logger, Server server) {
+        super(plugin, updateChecker, logger, server);
     }
 
     private static Runnable downloadAsync(final GitHubReleaseInfo releaseInfo, final File file, final String userAgent, final DownloadCallback callback) {
@@ -92,7 +92,7 @@ public class UpdateDownloaderGithub extends UpdateDownloader {
             failReason = DownloadFailReason.NO_PLUGIN_FILE;
             return false;
         }
-        File updateFolder = Bukkit.getUpdateFolderFile();
+        File updateFolder = server.getUpdateFolderFile();
         if (!updateFolder.exists() && !updateFolder.mkdirs()) {
             failReason = DownloadFailReason.NO_UPDATE_FOLDER;
             return false;

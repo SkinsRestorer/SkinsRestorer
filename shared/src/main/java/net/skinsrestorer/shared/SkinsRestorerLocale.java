@@ -28,20 +28,17 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 
+import javax.inject.Inject;
 import java.text.MessageFormat;
+import java.util.Locale;
 
 public class SkinsRestorerLocale {
+    @Inject
+    private LocaleManager<ISRForeign> localeManager;
+    @Inject
+    private SettingsManager settings;
     @Getter
-    private final ISRForeign defaultForeign;
-    @Getter
-    private final LocaleManager<ISRForeign> localeManager;
-    private final SettingsManager settings;
-
-    public SkinsRestorerLocale(LocaleManager<ISRForeign> localeManager, SettingsManager settings) {
-        this.localeManager = localeManager;
-        this.settings = settings;
-        this.defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
-    }
+    private final ISRForeign defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
 
     public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
         String message = localeManager.getMessage(foreign, key.getKey());
@@ -56,5 +53,9 @@ public class SkinsRestorerLocale {
         }
 
         return C.c(new MessageFormat(message).format(args));
+    }
+
+    public void setDefaultLocale(Locale locale) {
+        localeManager.setDefaultLocale(locale);
     }
 }

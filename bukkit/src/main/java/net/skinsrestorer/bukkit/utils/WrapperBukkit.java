@@ -32,13 +32,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+import javax.inject.Inject;
 import java.util.Locale;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 public class WrapperBukkit {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private SkinsRestorerLocale locale;
 
     public ISRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof Player) {

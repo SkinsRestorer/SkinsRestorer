@@ -45,9 +45,9 @@ public interface ISRPlugin {
 
     boolean isPluginEnabled(String pluginName);
 
-    SettingsManager loadConfig();
+    void loadConfig();
 
-    SkinsRestorerLocale loadLocales(SettingsManager settings);
+    void loadLocales();
 
     boolean isOutdated();
 }

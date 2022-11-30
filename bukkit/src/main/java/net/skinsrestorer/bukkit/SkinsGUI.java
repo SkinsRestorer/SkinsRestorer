@@ -34,7 +34,7 @@ import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -59,19 +59,19 @@ public class SkinsGUI implements InventoryHolder {
     @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, SkinStorage skinStorage, ISRForeign player, int page) {
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorage skinStorage, ISRForeign player, int page) {
         if (page > 999) {
             page = 999;
         }
 
         int skinNumber = HEAD_COUNT_PER_PAGE * page;
 
-        return createGUI(callback, locale, logger, player, page, skinStorage.getSkins(skinNumber));
+        return createGUI(callback, locale, logger, server, player, page, skinStorage.getSkins(skinNumber));
     }
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, ISRForeign player, int page, Map<String, String> skinsList) {
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, ISRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(page, callback);
-        Inventory inventory = Bukkit.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
+        Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
         ItemStack none = createGlass(GlassType.NONE, player, locale);
@@ -218,6 +218,7 @@ public class SkinsGUI implements InventoryHolder {
         private final SkinCommand skinCommand;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
+        private final Server server;
         private final SkinStorage skinStorage;
         private final WrapperBukkit wrapper;
 
@@ -237,7 +238,8 @@ public class SkinsGUI implements InventoryHolder {
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(this, locale, logger, skinStorage, wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
+                        Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
+                                wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
 
                         plugin.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));
@@ -245,7 +247,8 @@ public class SkinsGUI implements InventoryHolder {
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() -> {
-                        Inventory newInventory = createGUI(this, locale, logger, skinStorage, wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
+                        Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
+                                wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
 
                         plugin.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));

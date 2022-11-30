@@ -38,6 +38,7 @@ import net.skinsrestorer.shared.utils.connections.responses.profile.PropertyResp
 import net.skinsrestorer.shared.utils.connections.responses.uuid.MinetoolsUUIDResponse;
 import net.skinsrestorer.shared.utils.connections.responses.uuid.MojangUUIDResponse;
 
+import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,7 +49,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class MojangAPI implements IMojangAPI {
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";
@@ -57,7 +57,8 @@ public class MojangAPI implements IMojangAPI {
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
-    private final MetricsCounter metricsCounter;
+    @Inject
+    private MetricsCounter metricsCounter;
 
     /**
      * Get the skin property from a single request

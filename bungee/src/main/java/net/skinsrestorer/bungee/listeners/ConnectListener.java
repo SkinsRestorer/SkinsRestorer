@@ -28,9 +28,12 @@ import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.SharedConnectListener;
 
+import javax.inject.Inject;
+
 public class ConnectListener extends SharedConnectListener implements Listener {
     private final WrapperBungee wrapper;
 
+    @Inject
     public ConnectListener(ISRProxyPlugin plugin, WrapperBungee wrapper) {
         super(plugin);
         this.wrapper = wrapper;

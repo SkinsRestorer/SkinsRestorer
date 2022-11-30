@@ -35,6 +35,7 @@ import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
 import net.skinsrestorer.velocity.command.SkinCommand;
@@ -90,16 +91,15 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         });
 
         // Init config files
-        SettingsManager settings = loadConfig();
-        SkinsRestorerLocale locale = loadLocales(settings);
+         loadConfig();
+         loadLocales(settings);
 
         WrapperVelocity wrapper = new WrapperVelocity(settings, locale);
-        MineSkinAPI mineSkinAPI = initMineSkinAPI(settings, locale);
+         initMineSkinAPI();
 
         // Init storage
-        SkinStorage skinStorage;
         try {
-            skinStorage = initStorage(mineSkinAPI, settings, locale);
+            initStorage();
         } catch (InitializeException e) {
             e.printStackTrace();
             return;
@@ -108,14 +108,14 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(proxy, settings, this.logger);
 
         // Init API
-        new SkinsRestorerAPI(mojangAPI, mineSkinAPI, skinStorage, new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
+        registerAPI(new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
 
         // Init listener
         proxy.getEventManager().register(pluginInstance, new ConnectListener(this, wrapper));
         proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, skinApplierVelocity, logger));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
         SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
         PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, skinCommand,
@@ -132,7 +132,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         proxy.getEventManager().register(pluginInstance, pluginMessageListener);
 
         // Run connection check
-        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
+        runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
     }
 
     @Override

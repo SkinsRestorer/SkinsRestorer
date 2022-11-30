@@ -23,17 +23,21 @@ import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.injector.GetPlayerMethod;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.util.Optional;
 import java.util.function.Function;
 
 public class PluginMessageListener extends SharedPluginMessageListener {
-    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, SharedSkinCommand skinCommand, Function<String, Optional<ISRProxyPlayer>> playerGetter) {
+    @Inject
+    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage, SharedSkinCommand skinCommand,
+                                 @GetPlayerMethod Function<String, Optional<ISRProxyPlayer>> playerGetter) {
         super(logger, skinStorage, skinCommand, playerGetter);
     }
 
