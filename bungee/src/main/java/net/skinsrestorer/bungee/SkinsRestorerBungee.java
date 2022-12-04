@@ -38,11 +38,13 @@ import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.injector.GetPlayerMethod;
 import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -75,6 +77,8 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
                 "SkinsRestorer/BungeeCord",
                 dataFolder
         );
+        injector.register(SkinsRestorerBungee.class, this);
+        injector.register(ProxyServer.class, proxy);
         this.proxy = proxy;
         this.pluginInstance = pluginInstance;
     }
@@ -140,9 +144,12 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        SkinCommand skinCommand = injector.getSingleton(SkinCommand.class);
+        injector.register(SharedSkinCommand.class, skinCommand);
+        manager.registerCommand(skinCommand);
 
         PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
+        injector.register(SharedPluginMessageListener.class, pluginMessageListener);
 
         manager.registerCommand(injector.newInstance(SrCommand.class));
         manager.registerCommand(injector.newInstance(GUICommand.class));

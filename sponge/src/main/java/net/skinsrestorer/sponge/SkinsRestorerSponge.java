@@ -67,6 +67,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
                 "SkinsRestorerUpdater/Sponge",
                 dataFolder
         );
+        injector.register(SkinsRestorerSponge.class, this);
         this.pluginInstance = pluginInstance;
         this.metrics = metricsFactory.make(2337);
         this.pluginContainer = container;

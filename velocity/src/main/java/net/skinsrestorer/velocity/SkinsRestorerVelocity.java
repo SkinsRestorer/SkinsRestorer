@@ -27,11 +27,13 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.injector.GetPlayerMethod;
 import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -72,6 +74,8 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
                 "SkinsRestorerUpdater/Velocity",
                 dataFolder
         );
+        injector.register(SkinsRestorerVelocity.class, this);
+        injector.register(ProxyServer.class, proxy);
         this.pluginInstance = pluginInstance;
         this.proxy = proxy;
         this.metricsFactory = metricsFactory;
@@ -125,8 +129,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        SkinCommand skinCommand = injector.getSingleton(SkinCommand.class);
+        injector.register(SharedSkinCommand.class, skinCommand);
+        manager.registerCommand(skinCommand);
         PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
+        injector.register(SharedPluginMessageListener.class, pluginMessageListener);
         manager.registerCommand(injector.newInstance(SrCommand.class));
         manager.registerCommand(injector.newInstance(GUICommand.class));
 

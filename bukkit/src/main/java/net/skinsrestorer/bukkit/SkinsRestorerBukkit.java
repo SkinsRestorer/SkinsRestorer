@@ -93,6 +93,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 dataFolder
         );
         injector.register(SkinsRestorerBukkit.class, this);
+        injector.register(Server.class, server);
         this.server = server;
         this.pluginInstance = pluginInstance;
         this.unitTest = unitTest;
