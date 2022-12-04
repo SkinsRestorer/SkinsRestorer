@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.velocity;
 
-import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
 import com.velocitypowered.api.plugin.PluginContainer;
@@ -27,14 +26,15 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.Getter;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.injector.GetPlayerMethod;
+import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.velocity.command.GUICommand;
@@ -51,8 +51,11 @@ import org.slf4j.Logger;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -61,11 +64,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
 
-    public SkinsRestorerVelocity(Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory, Path dataFolder, Logger logger, PluginContainer container) {
+    public SkinsRestorerVelocity(Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory, Path dataFolder, Logger logger, String version) {
         super(
                 new Slf4jLoggerImpl(logger),
                 false,
-                container.getDescription().getVersion().orElse("Unknown"),
+                version,
                 "SkinsRestorerUpdater/Velocity",
                 dataFolder
         );
@@ -91,11 +94,16 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         });
 
         // Init config files
-         loadConfig();
-         loadLocales();
+        loadConfig();
+        loadLocales();
 
-        WrapperVelocity wrapper = new WrapperVelocity(settings, locale);
-         initMineSkinAPI();
+        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
+        injector.provide(GetPlayerMethod.class, (Function<String, Optional<ISRProxyPlayer>>)
+                name -> proxy.getPlayer(name).map(wrapper::player));
+        injector.provide(OnlinePlayersMethod.class, (CallableValue<Collection<ISRPlayer>>)
+                () -> proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList()));
+
+        initMineSkinAPI();
 
         // Init storage
         try {
@@ -105,26 +113,22 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
             return;
         }
 
-        SkinApplierVelocity skinApplierVelocity = new SkinApplierVelocity(proxy, settings, this.logger);
+        SkinApplierVelocity skinApplierVelocity = injector.getSingleton(SkinApplierVelocity.class);
 
         // Init API
         registerAPI(new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
 
         // Init listener
-        proxy.getEventManager().register(pluginInstance, new ConnectListener(this, wrapper));
-        proxy.getEventManager().register(pluginInstance, new GameProfileRequest(skinStorage, settings, skinApplierVelocity, logger));
+        proxy.getEventManager().register(pluginInstance, injector.newInstance(ConnectListener.class));
+        proxy.getEventManager().register(pluginInstance, injector.newInstance(GameProfileRequest.class));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        SkinCommand skinCommand = new SkinCommand(this, settings, cooldownStorage, skinStorage, locale, logger, wrapper);
-        PluginMessageListener pluginMessageListener = new PluginMessageListener(logger, skinStorage, skinCommand,
-                name -> proxy.getPlayer(name).map(wrapper::player));
-
-        manager.registerCommand(skinCommand);
-        manager.registerCommand(new SrCommand(this, mojangAPI, skinStorage, settings, logger, wrapper,
-                () -> proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList())));
-        manager.registerCommand(new GUICommand(cooldownStorage, pluginMessageListener, wrapper));
+        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
+        manager.registerCommand(injector.newInstance(SrCommand.class));
+        manager.registerCommand(injector.newInstance(GUICommand.class));
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));

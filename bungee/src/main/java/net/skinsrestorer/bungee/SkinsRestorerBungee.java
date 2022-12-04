@@ -71,7 +71,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         super(
                 new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
-                plugin.getDescription().getVersion(),
+                version,
                 "SkinsRestorer/BungeeCord",
                 dataFolder
         );

@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -44,18 +43,9 @@ public class SkinsRestorerBootstrap {
     private Metrics.Factory metricsFactory;
     @Inject
     private Logger logger;
-    private SkinsRestorerSponge plugin;
 
     @Listener
     public void onInitialize(GameInitializationEvent event) {
-        this.plugin = new SkinsRestorerSponge(this, metricsFactory, dataFolder, logger, container);
-        this.plugin.pluginStartup();
-    }
-
-    @Listener
-    public void onServerStarted(GameStartedServerEvent event) {
-        if (this.plugin != null) {
-            this.plugin.onServerStarted();
-        }
+        new SkinsRestorerSponge(this, metricsFactory, dataFolder, logger, container).pluginStartup();
     }
 }

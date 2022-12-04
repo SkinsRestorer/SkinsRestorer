@@ -48,6 +48,7 @@ public class SkinsRestorerBootstrap {
 
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
-        new SkinsRestorerVelocity(this, proxy, metricsFactory, dataFolderPath, logger, container).pluginStartup();
+        new SkinsRestorerVelocity(this, proxy, metricsFactory, dataFolderPath, logger,
+                container.getDescription().getVersion().orElse("Unknown")).pluginStartup();
     }
 }

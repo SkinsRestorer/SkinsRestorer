@@ -24,6 +24,11 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class SkinsRestorerBootstrap extends Plugin {
     @Override
     public void onEnable() {
-        new SkinsRestorerBungee(this).pluginStartup();
+        new SkinsRestorerBungee(
+                this,
+                getProxy(),
+                getDataFolder().toPath(),
+                getDescription().getVersion()
+        ).pluginStartup();
     }
 }

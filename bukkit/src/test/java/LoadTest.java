@@ -18,6 +18,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
@@ -26,7 +27,9 @@ import static org.mockito.Mockito.*;
 public class LoadTest {
     @Test
     public void testLoad() throws InitializeException {
-        Path baseDir = Paths.get("build/testrun");
+        UUID runId = UUID.randomUUID();
+        Path baseDir = Paths.get("build/testrun/" + runId);
+        System.out.println("Running test with runId " + runId);
         Path configDir = baseDir.resolve("config");
 
         Queue<Runnable> runQueue = new ConcurrentLinkedQueue<>();

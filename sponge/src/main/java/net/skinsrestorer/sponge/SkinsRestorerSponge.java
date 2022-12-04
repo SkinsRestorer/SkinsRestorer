@@ -22,7 +22,6 @@ package net.skinsrestorer.sponge;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
 import lombok.Getter;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -31,6 +30,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
+import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
 import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
@@ -93,7 +93,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         loadLocales();
 
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
-
         injector.provide(OnlinePlayersMethod.class,
                 (CallableValue<Collection<ISRPlayer>>) () -> game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList()));
 
@@ -107,21 +106,21 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
             return;
         }
 
-        SkinApplierSponge skinApplierSponge = new SkinApplierSponge(this);
+        SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
 
         // Init API
         registerAPI(new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
 
-        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, new LoginListener(skinStorage, settings, this, logger, skinApplierSponge));
+        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands(locale);
+        CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
         manager.registerCommand(injector.getSingleton(SkinCommand.class));
         manager.registerCommand(injector.newInstance(SrCommand.class));
 
         // Run connection check
-        runAsync(() -> SharedMethods.runServiceCheck(mojangAPI, logger));
+        runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
     }
 
     @Override

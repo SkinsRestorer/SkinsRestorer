@@ -34,13 +34,14 @@ import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierVelocity implements ISkinApplier {
     private final ProxyServer proxy;
     private final SettingsManager settings;
