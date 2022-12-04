@@ -92,7 +92,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Init config files
          loadConfig();
-         loadLocales(settings);
+         loadLocales();
 
         WrapperVelocity wrapper = new WrapperVelocity(settings, locale);
          initMineSkinAPI();

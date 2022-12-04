@@ -11,14 +11,14 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
 import static org.mockito.Mockito.*;
@@ -26,24 +26,39 @@ import static org.mockito.Mockito.*;
 public class LoadTest {
     @Test
     public void testLoad() throws InitializeException {
+        Path baseDir = Paths.get("build/testrun");
+        Path configDir = baseDir.resolve("config");
+
+        Queue<Runnable> runQueue = new ConcurrentLinkedQueue<>();
         System.setProperty("nms.version", "1_19_R2");
         ServerMock server = mock(ServerMock.class);
         Logger logger = Logger.getLogger("TestSkinsRestorer");
         ConsoleCommandSender sender =  mock(ConsoleCommandSender.class);
         doAnswer(invocation -> {
             Object arg0 = invocation.getArgument(0);
-            logger.info(String.valueOf(arg0));
+            System.out.println(arg0);
             return null;
         }).when(sender).sendMessage(anyString());
 
-        Path test = Paths.get("test");
         when(server.getLogger()).thenReturn(logger);
         when(server.getConsoleSender()).thenReturn(sender);
         when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
-        when(server.getScheduler()).thenReturn(mock(BukkitScheduler.class));
+        BukkitScheduler scheduler = mock(BukkitScheduler.class);
+
+        doAnswer(invocation -> {
+            runQueue.add(invocation.getArgument(1));
+            return null;
+        }).when(scheduler).runTaskAsynchronously(any(), any(Runnable.class));
+
+        doAnswer(invocation -> {
+            runQueue.add(invocation.getArgument(1));
+            return null;
+        }).when(scheduler).runTask(any(), any(Runnable.class));
+
+        when(server.getScheduler()).thenReturn(scheduler);
         when(server.getServicesManager()).thenReturn(mock(ServicesManager.class));
         when(server.getPluginCommand(anyString())).thenReturn(mock(PluginCommand.class));
-        when(server.getUpdateFolderFile()).thenReturn(test.toFile());
+        when(server.getUpdateFolderFile()).thenReturn(baseDir.resolve("update").toFile());
         when(server.getUpdateFolder()).thenReturn("test");
         when(server.getBukkitVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
@@ -54,22 +69,36 @@ public class LoadTest {
             when(Bukkit.getServer()).thenReturn(server);
             when(Bukkit.getHelpMap()).thenReturn(mock(HelpMap.class));
             when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
-            when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
+            when(Bukkit.getScheduler()).thenReturn(scheduler);
 
-            JavaPlugin plugin = mock(JavaPlugin.class);
-            when(plugin.getDataFolder()).thenReturn(test.toFile());
+            JavaPluginMock plugin = mock(JavaPluginMock.class);
+            when(plugin.getDataFolder()).thenReturn(configDir.toFile());
             when(plugin.getServer()).thenReturn(server);
             when(plugin.getLogger()).thenReturn(logger);
             when(plugin.getName()).thenReturn("SkinsRestorer");
             when(plugin.getDescription()).thenReturn(mock(PluginDescriptionFile.class));
             when(plugin.isEnabled()).thenReturn(true);
             when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
+            when(plugin.getFile()).thenReturn(null);
 
-            new SkinsRestorerBukkit(server, "1.0.0", Paths.get("testrun"), plugin, true).pluginStartup();
+            new SkinsRestorerBukkit(server, "UnitTest", configDir, plugin, true).pluginStartup();
+
+            while (!runQueue.isEmpty()) {
+                try {
+                    runQueue.poll().run();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw e;
+                }
+            }
         }
     }
 
     public abstract static class ServerMock implements Server {
         abstract CommandMap getCommandMap();
+    }
+
+    public abstract static class JavaPluginMock extends JavaPlugin {
+        public abstract File getFile();
     }
 }
