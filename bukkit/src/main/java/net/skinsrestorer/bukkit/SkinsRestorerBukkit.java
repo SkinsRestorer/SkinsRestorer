@@ -38,6 +38,7 @@ import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
+import net.skinsrestorer.bukkit.skinrefresher.NOOPRefresher;
 import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
@@ -115,7 +116,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
             if (unitTest) {
-                skinApplierBukkit.setRefresh(player -> {}); // NOOP
+                skinApplierBukkit.setRefresh(new NOOPRefresher());
             } else {
                 skinApplierBukkit.setRefresh(skinApplierBukkit.detectRefresh(server));
             }
@@ -427,6 +428,13 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     @Override
     public void checkUpdate(boolean showUpToDate) {
+        if (unitTest) {
+            if (showUpToDate) {
+                updateChecker.getUpToDateMessages(version, proxyMode).forEach(logger::info);
+            }
+            return;
+        }
+
         UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this, updateChecker, logger, server);
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override

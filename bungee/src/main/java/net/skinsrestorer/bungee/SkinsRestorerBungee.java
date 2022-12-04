@@ -53,6 +53,7 @@ import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -66,16 +67,16 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private final ProxyServer proxy;
     private final Plugin pluginInstance; // Only for platform API use
 
-    public SkinsRestorerBungee(Plugin plugin) {
+    public SkinsRestorerBungee(Plugin pluginInstance, ProxyServer proxy, Path dataFolder, String version) {
         super(
-                new JavaLoggerImpl(new BungeeConsoleImpl(plugin.getProxy().getConsole()), plugin.getProxy().getLogger()),
+                new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
                 plugin.getDescription().getVersion(),
                 "SkinsRestorer/BungeeCord",
-                plugin.getDataFolder().toPath()
+                dataFolder
         );
-        this.proxy = plugin.getProxy();
-        this.pluginInstance = plugin;
+        this.proxy = proxy;
+        this.pluginInstance = pluginInstance;
     }
 
     /*
