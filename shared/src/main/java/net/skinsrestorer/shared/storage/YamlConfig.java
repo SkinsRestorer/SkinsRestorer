@@ -93,17 +93,22 @@ public class YamlConfig {
     }
 
     public Integer getInt(String path) {
-        Integer value = config.getInt(path);
-
-        if (value == null) {
-            return defaultConfig.getInt(path); // Nullable
-        } else {
-            return value;
+        Integer value = null;
+        try {
+            value = config.getInt(path);
+        } catch (NumberFormatException ignored) {
+            // todo: add logger
         }
+        return value == null ? defaultConfig.getInt(path) : value;
     }
 
     public Integer getInt(String path, Integer defValue) {
-        Integer value = config.getInt(path);
+        Integer value = null;
+        try {
+            value = config.getInt(path);
+        } catch (NumberFormatException ignored) {
+            // todo: add logger
+        }
         return value == null ? defValue : value;
     }
 
