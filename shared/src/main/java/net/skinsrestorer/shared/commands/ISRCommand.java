@@ -237,6 +237,27 @@ public interface ISRCommand {
         });
     }
 
+    default void onApplySkinAll(ISRCommandSender sender) {
+        if (!CommandUtil.isAllowedToExecute(sender)) return;
+
+        ISRPlugin plugin = getPlugin();
+        plugin.runAsync(() -> {
+            if (!sender.isConsole()) {
+                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
+                return;
+            }
+
+            for (ISRPlayer player : plugin.getOnlinePlayers()) {
+                try {
+                    SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
+                } catch (SkinRequestException ignored) {
+                    sender.sendMessage(Message.PREFIX + "§cFailed to apply skin to " + player.getName());
+                }
+            }
+            sender.sendMessage(Message.PREFIX + "§aRe-applied skin of all online players");
+        });
+    }
+
     default void onPurgeOldData(ISRCommandSender sender, int days) {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {

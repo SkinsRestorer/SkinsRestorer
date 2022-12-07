@@ -113,6 +113,12 @@ public class SrCommand extends BaseCommand implements ISRCommand {
         onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
+    @Subcommand("Applyskinall")
+    @Description("Re-apply the skin for evey player")
+    public void onApplySkinAll(CommandSource source) {
+        onApplySkinAll(wrapCommandSender(source));
+    }
+
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold>")
