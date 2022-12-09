@@ -19,7 +19,7 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:9.1.0")
     implementation("com.github.puregero:multilib:1.1.8")
 
-    compileOnly("com.viaversion:viabackwards-common:4.4.2")
+    compileOnly("com.viaversion:viabackwards-common:4.5.0")
     compileOnly("com.viaversion:viaversion:4.4.1")
     compileOnly("com.mojang:authlib:1.11")
 }
