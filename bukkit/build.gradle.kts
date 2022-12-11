@@ -9,7 +9,7 @@ dependencies {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
 
-    compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
     }
 
