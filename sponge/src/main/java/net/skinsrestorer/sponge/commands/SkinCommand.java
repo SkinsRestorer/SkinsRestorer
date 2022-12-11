@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.sponge.SkinsRestorerSponge;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 
@@ -126,5 +127,15 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
+    }
+
+    /*
+     * Shortcut commands
+     */
+    @Private
+    @Subcommand("menu|gui")
+    @CommandPermission("%skins")
+    public void onMenu(Player player) {
+        Sponge.getCommandManager().process(player, "skinsrestorer:skins");
     }
 }

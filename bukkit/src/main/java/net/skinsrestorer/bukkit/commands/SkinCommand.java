@@ -127,4 +127,14 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
     }
+
+    /*
+    * Shortcut commands
+     */
+    @Private
+    @Subcommand("menu|gui")
+    @CommandPermission("%skins")
+    public void onMenu(Player player) {
+        player.performCommand("skinsrestorer:skins");
+    }
 }

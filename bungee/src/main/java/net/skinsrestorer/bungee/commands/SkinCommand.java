@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.command.ConsoleCommandSender;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
 import net.skinsrestorer.shared.commands.ISkinCommand;
@@ -126,5 +127,15 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(ProxiedPlayer player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
+    }
+
+    /*
+     * Shortcut commands
+     */
+    @Private
+    @Subcommand("menu|gui")
+    @CommandPermission("%skins")
+    public void onMenu(ProxiedPlayer player) {
+        plugin.getProxy().getPluginManager().dispatchCommand(player, "skinsrestorer:skins");
     }
 }

@@ -24,6 +24,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.ConsoleCommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -126,5 +127,15 @@ public class SkinCommand extends BaseCommand implements ISkinCommand {
     @Syntax("%SyntaxSkinUrl")
     public void onSkinSetUrl(Player player, String url, @Optional SkinVariant skinVariant) {
         onSkinSetUrl(wrapPlayer(player), url, skinVariant);
+    }
+
+    /*
+     * Shortcut commands
+     */
+    @Private
+    @Subcommand("menu|gui")
+    @CommandPermission("%skins")
+    public void onMenu(Player player) {
+        plugin.getProxy().getCommandManager().executeAsync(player, "skinsrestorer:skins");
     }
 }
