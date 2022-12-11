@@ -4,6 +4,7 @@
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest/download/SkinsRestorer.jar"><img src="https://img.shields.io/github/downloads/SkinsRestorer/SkinsRestorerX/latest/total.svg" alt="Downloads"></a>
 <a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/downloads/2124?label=Spigot%20downloads" alt="Spigot downloads"></a>
 <a href="https://www.spigotmc.org/resources/2124/"><img src="https://img.shields.io/spiget/rating/2124?label=Spigot%20rating" alt="Spigot rating"></a>
+<a title="Crowdin" target="_blank" href="https://crowdin.com/project/SkinsRestorer"><img src="https://badges.crowdin.net/SkinsRestorer/localized.svg"></a>
 </p>
 <p align="center">
 <a href="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/"><img src="https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/badge/icon" alt="Build Status"></a>
