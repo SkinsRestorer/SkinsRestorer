@@ -5,7 +5,7 @@ dependencies {
     implementation(projects.multiver.spigot)
     implementation(projects.multiver.paper)
     implementation(projects.multiver.v17)
-    setOf("1-18", "1-18-2", "1-19").forEach {
+    setOf("1-18", "1-18-2", "1-19", "1-19-3").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
 
