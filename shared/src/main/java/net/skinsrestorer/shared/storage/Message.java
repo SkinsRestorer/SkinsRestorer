@@ -120,53 +120,76 @@ public enum Message implements MessageKeyGetter {
 
     @SneakyThrows
     public static void load(LocaleManager<ISRForeign> manager, Path dataFolder, ISRPlugin plugin) {
+        migrateOldFiles(dataFolder);
+
         Path languagesFolder = dataFolder.resolve("languages");
         Files.createDirectories(languagesFolder);
         CodeSource src = Message.class.getProtectionDomain().getCodeSource();
-        if (src != null) {
-            URL jar = src.getLocation();
-            ZipInputStream zip = new ZipInputStream(jar.openStream());
-            List<Locale> locales = new ArrayList<>();
-            while (true) {
-                ZipEntry e = zip.getNextEntry();
-                if (e == null)
-                    break;
-
-                String name = e.getName();
-                if (name.startsWith("languages/language") && name.endsWith(".properties")) {
-                    String fileName = name.replace("languages/", "");
-                    if (fileName.startsWith("language_")) {
-                        locales.add(LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", "")));
-                    }
-                    if (!Files.exists(languagesFolder.resolve(fileName))) {
-                        try (InputStream is = plugin.getResource(name)) {
-                            Files.copy(is, languagesFolder.resolve(fileName));
-                        }
-                    }
-                }
-            }
-
-            manager.addMessageBundle("languages.language", locales.toArray(new Locale[0]));
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
-                for (Path path : stream) {
-                    String fileName = path.getFileName().toString();
-                    if (fileName.equals("language.properties")) {
-                        try (InputStream in = Files.newInputStream(path)) {
-                            PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
-                            manager.addResourceBundle(bundle, manager.getDefaultLocale());
-                        }
-                    } else if (fileName.startsWith("language_") && fileName.endsWith(".properties")) {
-                        Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
-                        try (InputStream in = Files.newInputStream(path)) {
-                            PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
-                            manager.addResourceBundle(bundle, locale);
-                        }
-                    }
-                }
-            }
-        } else {
+        if (src == null) {
             throw new IOException("Could not find default language files");
+
+        }
+
+        URL jar = src.getLocation();
+        ZipInputStream zip = new ZipInputStream(jar.openStream());
+        List<Locale> locales = new ArrayList<>();
+        while (true) {
+            ZipEntry e = zip.getNextEntry();
+            if (e == null)
+                break;
+
+            String name = e.getName();
+            if (name.startsWith("languages/language") && name.endsWith(".properties")) {
+                String fileName = name.replace("languages/", "");
+                if (fileName.startsWith("language_")) {
+                    locales.add(LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", "")));
+                }
+                if (!Files.exists(languagesFolder.resolve(fileName))) {
+                    try (InputStream is = plugin.getResource(name)) {
+                        Files.copy(is, languagesFolder.resolve(fileName));
+                    }
+                }
+            }
+        }
+
+        manager.addMessageBundle("languages.language", locales.toArray(new Locale[0]));
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
+            for (Path path : stream) {
+                String fileName = path.getFileName().toString();
+                if (fileName.equals("language.properties")) {
+                    try (InputStream in = Files.newInputStream(path)) {
+                        PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
+                        manager.addResourceBundle(bundle, manager.getDefaultLocale());
+                    }
+                } else if (fileName.startsWith("language_") && fileName.endsWith(".properties")) {
+                    Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
+                    try (InputStream in = Files.newInputStream(path)) {
+                        PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
+                        manager.addResourceBundle(bundle, locale);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void migrateOldFiles(Path dataFolder) {
+        Path oldMessagesFile = dataFolder.resolve("messages.yml");
+        if (Files.exists(oldMessagesFile)) {
+            try {
+                Files.move(oldMessagesFile, dataFolder.resolve("messages.yml.old"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Path oldAcf = dataFolder.resolve("command-messages.properties");
+        if (Files.exists(oldAcf)) {
+            try {
+                Files.move(oldAcf, dataFolder.resolve("command-messages.properties.old"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
