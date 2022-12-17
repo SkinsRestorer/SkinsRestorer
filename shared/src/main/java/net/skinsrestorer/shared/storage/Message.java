@@ -180,7 +180,8 @@ public enum Message implements MessageKeyGetter {
         if (Files.exists(oldMessagesFile)) {
             try {
                 Files.createDirectories(archive);
-                Files.move(oldMessagesFile, archive.resolve("old-v14.2.3-messages.yml"));
+                String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
+                Files.move(oldMessagesFile, archive.resolve(newName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -190,7 +191,8 @@ public enum Message implements MessageKeyGetter {
         if (Files.exists(oldAcf)) {
             try {
                 Files.createDirectories(archive);
-                Files.move(oldAcf, archive.resolve("old-v14.2.3-command-messages.properties"));
+                String newName = "old-command-messages-" + System.currentTimeMillis() / 1000 + ".properties";
+                Files.move(oldAcf, archive.resolve(newName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
