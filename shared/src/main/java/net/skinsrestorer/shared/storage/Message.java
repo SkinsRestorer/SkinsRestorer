@@ -174,10 +174,13 @@ public enum Message implements MessageKeyGetter {
     }
 
     private static void migrateOldFiles(Path dataFolder) {
+        Path archive = dataFolder.resolve("Archive");
+
         Path oldMessagesFile = dataFolder.resolve("messages.yml");
         if (Files.exists(oldMessagesFile)) {
             try {
-                Files.move(oldMessagesFile, dataFolder.resolve("messages.yml.old"));
+                Files.createDirectories(archive);
+                Files.move(oldMessagesFile, archive.resolve("old-v14.2.3-messages.yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -186,7 +189,8 @@ public enum Message implements MessageKeyGetter {
         Path oldAcf = dataFolder.resolve("command-messages.properties");
         if (Files.exists(oldAcf)) {
             try {
-                Files.move(oldAcf, dataFolder.resolve("command-messages.properties.old"));
+                Files.createDirectories(archive);
+                Files.move(oldAcf, archive.resolve("old-v14.2.3-command-messages.properties"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
