@@ -20,7 +20,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.11.4"
+    id("com.gradle.enterprise") version "3.12"
 }
 
 rootProject.name = "skinsrestorer-parent"
@@ -35,6 +35,9 @@ dependencyResolutionManagement {
         }
         maven("https://repo.spongepowered.org/maven/") {
             name = "SpongePowered Repository"
+        }
+        maven("https://nexus.velocitypowered.com/repository/velocity-artifacts-release/") {
+            name = "Velocitypowered Repository"
         }
         maven("https://repo.codemc.org/repository/maven-public/") {
             name = "CodeMC Repository"
@@ -74,7 +77,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18", "1-18-2", "1-19").forEach {
+setOf("1-18", "1-18-2", "1-19", "1-19-3").forEach {
     include("mappings:mc-$it")
 }
 

@@ -115,10 +115,16 @@ public class SrCommand extends SharedSRCommand {
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
-    @Description("Set the skin to evey player")
+    @Description("Set the skin to every player")
     @Syntax(" <Skin / Url> [classic/slim]")
     public void onSetSkinAll(CommandSource source, String skin, @Optional SkinVariant skinVariant) {
         onSetSkinAll(wrapper.commandSender(source), skin, skinVariant);
+    }
+
+    @Subcommand("Applyskinall")
+    @Description("Re-apply the skin for every player")
+    public void onApplySkinAll(CommandSource source) {
+        onApplySkinAll(wrapCommandSender(source));
     }
 
     @Subcommand("purgeolddata")

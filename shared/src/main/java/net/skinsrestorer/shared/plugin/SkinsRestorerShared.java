@@ -52,6 +52,7 @@ import org.inventivetalent.update.spiget.UpdateCallback;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -165,7 +166,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     public void loadLocales() {
-        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, injector.getSingleton(SettingsManager.class).getProperty(Config.LANGUAGE));
+        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, Locale.ENGLISH);
         injector.register(LocaleManager.class, localeManager);
         Message.load(localeManager, dataFolder, this);
         injector.getSingleton(SkinsRestorerLocale.class);
