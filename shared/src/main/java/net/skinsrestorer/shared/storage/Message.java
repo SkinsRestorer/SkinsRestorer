@@ -186,7 +186,7 @@ public enum Message implements MessageKeyGetter {
         Path oldAcf = dataFolder.resolve("command-messages.properties");
         if (Files.exists(oldAcf)) {
             try {
-                Files.move(oldAcf, dataFolder.resolve("command-messages.properties.old"));
+                Files.move(oldAcf, dataFolder.resolve("command.properties"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
