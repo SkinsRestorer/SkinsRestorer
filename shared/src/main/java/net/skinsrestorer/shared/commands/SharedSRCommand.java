@@ -245,7 +245,7 @@ public abstract class SharedSRCommand extends BaseCommand {
     }
 
     protected void onApplySkinAll(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender)) return;
+        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
@@ -253,7 +253,7 @@ public abstract class SharedSRCommand extends BaseCommand {
                 return;
             }
 
-            for (ISRPlayer player : plugin.getOnlinePlayers()) {
+            for (ISRPlayer player : onlinePlayersFunction.call()) {
                 try {
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
                 } catch (SkinRequestException ignored) {

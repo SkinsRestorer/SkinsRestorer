@@ -129,7 +129,7 @@ public class SrCommand extends SharedSRCommand {
     @Subcommand("applyskinall")
     @Description("Re-apply the skin for every player")
     public void onApplySkinAll(CommandSender sender) {
-        onApplySkinAll(wrapCommandSender(sender));
+        onApplySkinAll(wrapper.commandSender(sender));
     }
 
     @Subcommand("purgeolddata")
