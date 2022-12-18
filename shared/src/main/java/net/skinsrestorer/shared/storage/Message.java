@@ -26,21 +26,18 @@ import lombok.SneakyThrows;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.utils.PropertyReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.PropertyResourceBundle;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -132,17 +129,19 @@ public enum Message implements MessageKeyGetter {
 
         URL jar = src.getLocation();
         ZipInputStream zip = new ZipInputStream(jar.openStream());
-        List<Locale> locales = new ArrayList<>();
-        while (true) {
-            ZipEntry e = zip.getNextEntry();
-            if (e == null)
-                break;
+        ZipEntry entry;
+        while ((entry = zip.getNextEntry()) != null) {
+            String name = entry.getName();
 
-            String name = e.getName();
             if (name.startsWith("languages/language") && name.endsWith(".properties")) {
                 String fileName = name.replace("languages/", "");
-                if (fileName.startsWith("language_")) {
-                    locales.add(LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", "")));
+                Locale locale = fileName.startsWith("language_") ?
+                        LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
+                        : Locale.ENGLISH;
+
+                try (InputStream is = plugin.getResource(name)) {
+                    PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
+                            MessageKey.of(k.toString()), C.c(v.toString())));
                 }
                 if (!Files.exists(languagesFolder.resolve(fileName))) {
                     try (InputStream is = plugin.getResource(name)) {
@@ -152,22 +151,16 @@ public enum Message implements MessageKeyGetter {
             }
         }
 
-        manager.addMessageBundle("languages.language", locales.toArray(new Locale[0]));
-
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
             for (Path path : stream) {
                 String fileName = path.getFileName().toString();
-                if (fileName.equals("language.properties")) {
-                    try (InputStream in = Files.newInputStream(path)) {
-                        PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
-                        manager.addResourceBundle(bundle, manager.getDefaultLocale());
-                    }
-                } else if (fileName.startsWith("language_") && fileName.endsWith(".properties")) {
-                    Locale locale = LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""));
-                    try (InputStream in = Files.newInputStream(path)) {
-                        PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(in, StandardCharsets.UTF_8));
-                        manager.addResourceBundle(bundle, locale);
-                    }
+                Locale locale = fileName.startsWith("language_") ?
+                        LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
+                        : Locale.ENGLISH;
+
+                try (InputStream is = Files.newInputStream(path)) {
+                    PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
+                            MessageKey.of(k.toString()), C.c(v.toString())));
                 }
             }
         }
