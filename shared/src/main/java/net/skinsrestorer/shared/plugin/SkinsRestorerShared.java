@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 @Getter
@@ -59,7 +60,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         this.mojangAPI = new MojangAPI(metricsCounter);
         this.mineSkinAPI = new MineSkinAPI(logger, metricsCounter);
         this.skinStorage = new SkinStorage(logger, mojangAPI, mineSkinAPI);
-        this.localeManager = LocaleManager.create(ISRForeign::getLocale, SkinsRestorerAPIShared.getDefaultForeign().getLocale());
+        this.localeManager = LocaleManager.create(ISRForeign::getLocale, Locale.ENGLISH);
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
         this.dataFolder = dataFolder;

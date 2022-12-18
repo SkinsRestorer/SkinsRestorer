@@ -124,7 +124,6 @@ public enum Message implements MessageKeyGetter {
         CodeSource src = Message.class.getProtectionDomain().getCodeSource();
         if (src == null) {
             throw new IOException("Could not find default language files");
-
         }
 
         URL jar = src.getLocation();
