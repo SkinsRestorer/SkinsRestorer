@@ -107,14 +107,14 @@ public class SrCommand extends BaseCommand implements ISRCommand {
 
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
-    @Description("Set the skin to evey player")
+    @Description("Set the skin to every player")
     @Syntax(" <Skin / Url> [classic/slim]")
     public void onSetSkinAll(CommandSource source, String skin, @Optional SkinVariant skinVariant) {
         onSetSkinAll(wrapCommandSender(source), skin, skinVariant);
     }
 
     @Subcommand("applyskinall")
-    @Description("Re-apply the skin for evey player")
+    @Description("Re-apply the skin for every player")
     public void onApplySkinAll(CommandSource source) {
         onApplySkinAll(wrapCommandSender(source));
     }
