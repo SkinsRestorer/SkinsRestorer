@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FileAdapter implements StorageAdapter {
-    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*?\"<>|.]");
+    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*\"<>|.\\?]");
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private final Path skinsFolder;
     private final Path playersFolder;

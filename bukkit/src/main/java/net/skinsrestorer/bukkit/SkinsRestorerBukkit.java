@@ -263,8 +263,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private void initConfigAndStorage() throws InitializeException {
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), logger);
-        // Set new default locale because we initialized localeManager early
-        localeManager.setDefaultLocale(LocaleParser.getDefaultLocale());
 
         // Init storage
         initStorage();
