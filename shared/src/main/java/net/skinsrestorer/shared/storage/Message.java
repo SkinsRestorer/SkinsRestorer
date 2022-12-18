@@ -174,17 +174,16 @@ public enum Message implements MessageKeyGetter {
                 Files.createDirectories(archive);
                 String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
                 Files.move(oldMessagesFile, archive.resolve(newName));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
         Path oldAcf = dataFolder.resolve("command-messages.properties");
         if (Files.exists(oldAcf)) {
             try {
-                Files.move(oldAcf, dataFolder.resolve("command.properties"));
-            } catch (IOException e) {
-                e.printStackTrace();
+                Files.createDirectories(archive);
+                Files.move(oldAcf, archive.resolve("command-messages.properties"));
+            } catch (Exception ignored) {
             }
         }
     }
