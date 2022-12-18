@@ -174,10 +174,14 @@ public enum Message implements MessageKeyGetter {
     }
 
     private static void migrateOldFiles(Path dataFolder) {
+        Path archive = dataFolder.resolve("Archive");
+
         Path oldMessagesFile = dataFolder.resolve("messages.yml");
         if (Files.exists(oldMessagesFile)) {
             try {
-                Files.move(oldMessagesFile, dataFolder.resolve("messages.yml.old"));
+                Files.createDirectories(archive);
+                String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
+                Files.move(oldMessagesFile, archive.resolve(newName));
             } catch (IOException e) {
                 e.printStackTrace();
             }
