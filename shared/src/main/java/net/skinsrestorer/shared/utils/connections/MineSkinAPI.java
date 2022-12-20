@@ -86,7 +86,7 @@ public class MineSkinAPI implements IMineSkinAPI {
             }
         } while (failedAttempts.get() < 5);
 
-        throw new SkinRequestExceptionShared(Message.MS_API_FAILED);
+        throw new SkinRequestExceptionShared(Message.ERROR_MS_API_FAILED);
     }
 
     public CompletableFuture<IProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
@@ -176,7 +176,7 @@ public class MineSkinAPI implements IMineSkinAPI {
 
             // throw exception after all tries have failed
             logger.debug("[ERROR] MineSkin Failed! Could not generate skin url: " + url);
-            throw new CompletionException(new SkinRequestExceptionShared(Message.MS_API_FAILED));
+            throw new CompletionException(new SkinRequestExceptionShared(Message.ERROR_MS_API_FAILED));
         }, executorService);
     }
 

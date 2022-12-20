@@ -60,7 +60,7 @@ public interface ISRCommand {
 
         plugin.prepareACF(plugin.getManager(), plugin.getLogger());
 
-        sender.sendMessage(Message.RELOAD);
+        sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
     }
 
     default void onStatus(ISRCommandSender sender) {
@@ -121,7 +121,7 @@ public interface ISRCommand {
                     break;
             }
 
-            sender.sendMessage(Message.DATA_DROPPED, playerOrSkin.toString(), target);
+            sender.sendMessage(Message.SUCCESS_ADMIN_DROP, playerOrSkin.toString(), target);
         });
     }
 
@@ -174,9 +174,9 @@ public interface ISRCommand {
         plugin.runAsync(() -> {
             try {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
-                sender.sendMessage(Message.ADMIN_APPLYSKIN_SUCCES);
+                sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
             } catch (Exception ignored) {
-                sender.sendMessage(Message.ADMIN_APPLYSKIN_ERROR);
+                sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
             }
         });
     }
@@ -190,7 +190,7 @@ public interface ISRCommand {
                 if (C.validUrl(skinUrl)) {
                     plugin.getSkinStorage().setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                    sender.sendMessage(Message.SUCCESS_CREATE_SKIN, name);
+                    sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
                 } else {
                     sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
                 }
@@ -206,7 +206,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
-                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
+                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
                 return;
             }
 
@@ -219,7 +219,7 @@ public interface ISRCommand {
                     skinProps = plugin.getMojangAPI().getSkin(skin).orElse(null);
                 }
                 if (skinProps == null) {
-                    sender.sendMessage(Message.PREFIX + "§4no skin found....");
+                    sender.sendMessage("§e[§2SkinsRestorer§e] §4no skin found....");
                     return;
                 }
 
@@ -243,7 +243,7 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
-                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
+                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
                 return;
             }
 
@@ -251,10 +251,10 @@ public interface ISRCommand {
                 try {
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
                 } catch (SkinRequestException ignored) {
-                    sender.sendMessage(Message.PREFIX + "§cFailed to apply skin to " + player.getName());
+                    sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
                 }
             }
-            sender.sendMessage(Message.PREFIX + "§aRe-applied skin of all online players");
+            sender.sendMessage("§e[§2SkinsRestorer§e] §aRe-applied skin of all online players");
         });
     }
 
@@ -262,13 +262,13 @@ public interface ISRCommand {
         ISRPlugin plugin = getPlugin();
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
-                sender.sendMessage(Message.PREFIX + "§4Only console may execute this command!");
+                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
                 return;
             }
             if (plugin.getSkinStorage().purgeOldSkins(days)) {
-                sender.sendMessage(Message.PREFIX + "§aSuccessfully purged old skins!");
+                sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
             } else {
-                sender.sendMessage(Message.PREFIX + "§4A error occurred while purging old skins!");
+                sender.sendMessage("§e[§2SkinsRestorer§e] §4A error occurred while purging old skins!");
             }
         });
     }
