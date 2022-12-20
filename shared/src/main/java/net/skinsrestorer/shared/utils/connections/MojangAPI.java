@@ -100,7 +100,7 @@ public class MojangAPI implements IMojangAPI {
      * @throws SkinRequestException or error
      */
     public String getUUID(String playerName) throws SkinRequestException {
-        if (C.validMojangUsername(playerName)) {
+        if (!C.validMojangUsername(playerName)) {
             throw new NotPremiumExceptionShared();
         }
 
