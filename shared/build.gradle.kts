@@ -14,6 +14,7 @@ dependencies {
     api("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
     api("ch.jalu:injector:1.0")
     implementation("com.github.aikar:locales:5f204c3afb")
+    implementation("org.bstats:bstats-base:3.0.0")
 
     compileOnly("co.aikar:acf-core:0.5.1-SNAPSHOT")
     compileOnly("org.slf4j:slf4j-api:2.0.6")

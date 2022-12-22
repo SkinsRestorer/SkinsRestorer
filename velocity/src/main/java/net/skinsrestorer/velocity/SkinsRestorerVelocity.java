@@ -21,7 +21,6 @@ package net.skinsrestorer.velocity;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
-import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
@@ -47,7 +46,6 @@ import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.PluginMessageListener;
 import net.skinsrestorer.velocity.utils.VelocityProperty;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
-import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
@@ -72,7 +70,9 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
                 false,
                 version,
                 "SkinsRestorerUpdater/Velocity",
-                dataFolder
+                dataFolder,
+                new WrapperFactoryVelocity(),
+                VelocityProperty::new
         );
         injector.register(SkinsRestorerVelocity.class, this);
         injector.register(ProxyServer.class, proxy);
@@ -84,11 +84,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     public void pluginStartup() {
         logger.load(dataFolder);
 
-        Metrics metrics = metricsFactory.make(pluginInstance, 10606);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
+        registerMetrics(metricsFactory.make(pluginInstance, 10606));
 
         checkUpdateInit(() -> {
             checkUpdate(true);
@@ -120,7 +116,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         SkinApplierVelocity skinApplierVelocity = injector.getSingleton(SkinApplierVelocity.class);
 
         // Init API
-        registerAPI(new WrapperFactoryVelocity(), VelocityProperty::new, skinApplierVelocity);
+        registerAPI(skinApplierVelocity);
 
         // Init listener
         proxy.getEventManager().register(pluginInstance, injector.newInstance(ConnectListener.class));

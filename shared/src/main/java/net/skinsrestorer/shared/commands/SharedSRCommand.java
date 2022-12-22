@@ -90,8 +90,8 @@ public abstract class SharedSRCommand extends BaseCommand {
             ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
             List<String> results = response.getResults();
 
-            final int workingUUIDCount = response.getWorkingUUID().get();
-            final int workingProfileCount = response.getWorkingProfile().get();
+            int workingUUIDCount = response.getWorkingUUID();
+            int workingProfileCount = response.getWorkingProfile();
 
             // only print per API results if in a not working state
             if (settings.getProperty(Config.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {

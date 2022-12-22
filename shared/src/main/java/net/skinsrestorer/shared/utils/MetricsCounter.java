@@ -38,22 +38,6 @@ public class MetricsCounter {
         return map.get(service).getAndSet(0);
     }
 
-    public int collectMineskinCalls() {
-        return collect(Service.MINE_SKIN);
-    }
-
-    public int collectMinetoolsCalls() {
-        return collect(Service.MINE_TOOLS);
-    }
-
-    public int collectMojangCalls() {
-        return collect(Service.MOJANG);
-    }
-
-    public int collectAshconCalls() {
-        return collect(Service.ASHCON);
-    }
-
     public enum Service {
         MINE_SKIN,
         MINE_TOOLS,

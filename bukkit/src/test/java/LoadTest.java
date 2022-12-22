@@ -1,9 +1,11 @@
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.exception.InitializeException;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.command.*;
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.PluginCommand;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.help.HelpMap;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
@@ -11,6 +13,7 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
@@ -25,6 +28,11 @@ import java.util.logging.Logger;
 import static org.mockito.Mockito.*;
 
 public class LoadTest {
+    @BeforeAll
+    public static void setup() {
+        System.setProperty("sr.unit.test", "true");
+    }
+
     @Test
     public void testLoad() throws InitializeException {
         UUID runId = UUID.randomUUID();
@@ -36,7 +44,7 @@ public class LoadTest {
         System.setProperty("nms.version", "1_19_R2");
         ServerMock server = mock(ServerMock.class);
         Logger logger = Logger.getLogger("TestSkinsRestorer");
-        ConsoleCommandSender sender =  mock(ConsoleCommandSender.class);
+        ConsoleCommandSender sender = mock(ConsoleCommandSender.class);
         doAnswer(invocation -> {
             Object arg0 = invocation.getArgument(0);
             System.out.println(arg0);

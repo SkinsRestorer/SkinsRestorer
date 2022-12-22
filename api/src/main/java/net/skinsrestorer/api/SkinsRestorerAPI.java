@@ -79,7 +79,7 @@ public class SkinsRestorerAPI {
      * @throws SkinRequestException or error
      */
     public String getMojangUniqueId(@NonNull String playerName) throws SkinRequestException {
-        return this.mojangAPI.getUUID(playerName);
+        return this.mojangAPI.getUUID(playerName).orElse(null);
     }
 
     /**

@@ -52,7 +52,6 @@ import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
-import org.bstats.charts.SingleLineChart;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -75,7 +74,9 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
                 true,
                 version,
                 "SkinsRestorer/BungeeCord",
-                dataFolder
+                dataFolder,
+                new WrapperFactoryBungee(),
+                new PropertyFactoryBungee()
         );
         injector.register(SkinsRestorerBungee.class, this);
         injector.register(ProxyServer.class, proxy);
@@ -98,11 +99,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     public void pluginStartup() {
         logger.load(dataFolder);
 
-        Metrics metrics = new Metrics(pluginInstance, 1686);
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
+        registerMetrics(new Metrics(pluginInstance, 1686));
 
         checkUpdateInit(() -> {
             checkUpdate(true);
@@ -135,7 +132,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         injector.register(SkinApplierBungeeShared.class, skinApplierBungee);
 
         // Init API
-        registerAPI(new WrapperFactoryBungee(), new PropertyFactoryBungee(), skinApplierBungee);
+        registerAPI(skinApplierBungee);
 
         // Init listener
         proxy.getPluginManager().registerListener(pluginInstance, injector.newInstance(LoginListener.class));

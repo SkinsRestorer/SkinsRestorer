@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.utils.connections.responses;
 
 import lombok.Getter;
-import net.skinsrestorer.api.property.IProperty;
 
 @Getter
 public class AshconResponse {
@@ -39,14 +38,9 @@ public class AshconResponse {
         private Raw raw;
 
         @Getter
-        public static class Raw implements IProperty {
+        public static class Raw {
             private String value;
             private String signature;
-
-            @Override
-            public String getName() {
-                return IProperty.TEXTURES_NAME;
-            }
         }
     }
 }

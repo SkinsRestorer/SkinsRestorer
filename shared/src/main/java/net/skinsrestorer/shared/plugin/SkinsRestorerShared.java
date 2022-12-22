@@ -47,14 +47,17 @@ import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bstats.MetricsBase;
+import org.bstats.charts.SingleLineChart;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Locale;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
@@ -70,7 +73,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     @Getter
     private boolean outdated = false;
 
-    protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
+    protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor,
+                                  String version, String updateCheckerAgent, Path dataFolder,
+                                  IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
         this.injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
         injector.register(ISRPlugin.class, this);
@@ -78,6 +83,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         injector.register(MetricsCounter.class, (metricsCounter = new MetricsCounter()));
         injector.register(CooldownStorage.class, new CooldownStorage());
         injector.register(SRLogger.class, (logger = new SRLogger(isrLogger, loggerColor)));
+
+        injector.register(IWrapperFactory.class, wrapperFactory);
+        injector.register(IPropertyFactory.class, propertyFactory);
 
         this.version = version;
         this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
@@ -243,13 +251,28 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         injector.getSingleton(MineSkinAPI.class);
     }
 
-    protected void registerAPI(IWrapperFactory wrapperFactory,
-                               IPropertyFactory propertyFactory,
-                               ISkinApplier skinApplier) {
+    protected void registerAPI(ISkinApplier skinApplier) {
         injector.register(SkinsRestorerAPI.class, new SkinsRestorerAPI(
                 injector.getSingleton(MojangAPI.class),
                 injector.getSingleton(MineSkinAPI.class),
-                injector.getSingleton(SkinStorage.class), wrapperFactory, propertyFactory, skinApplier));
+                injector.getSingleton(SkinStorage.class),
+                injector.getSingleton(IWrapperFactory.class),
+                injector.getSingleton(IPropertyFactory.class), skinApplier));
+    }
+
+    protected void registerMetrics(Object metricsParent) {
+        try {
+            Field field = metricsParent.getClass().getDeclaredField("metricsBase");
+            field.setAccessible(true);
+            MetricsBase metrics = (MetricsBase) field.get(metricsParent);
+
+            metrics.addCustomChart(new SingleLineChart("mineskin_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_SKIN)));
+            metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
+            metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
+            metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     protected abstract void pluginStartup() throws InitializeException;

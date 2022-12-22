@@ -20,6 +20,8 @@
 package net.skinsrestorer.shared.plugin;
 
 import lombok.Getter;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
+import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
@@ -36,8 +38,8 @@ import java.util.zip.GZIPInputStream;
 public abstract class SkinsRestorerServerShared extends SkinsRestorerShared implements ISRServerPlugin {
     protected boolean proxyMode;
 
-    protected SkinsRestorerServerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder) {
-        super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder);
+    protected SkinsRestorerServerShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
+        super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory);
         injector.register(ISRServerPlugin.class, this);
     }
 

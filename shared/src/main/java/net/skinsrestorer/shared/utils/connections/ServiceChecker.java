@@ -22,11 +22,11 @@ package net.skinsrestorer.shared.utils.connections;
 import lombok.Getter;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServiceChecker {
     private static final String XKNAT_NAME = "xknat";
@@ -38,58 +38,69 @@ public class ServiceChecker {
     public static ServiceCheckResponse checkServices(MojangAPI mojangAPI) {
         ServiceCheckResponse response = new ServiceCheckResponse();
 
+        // ##### Ashcon request #####
+        Optional<AshconResponse> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
+        if (uuidAshcon.isPresent()) {
+            try {
+                Optional<String> uuid = mojangAPI.getUUIDAshcon(uuidAshcon.get());
+
+                if (uuid.isPresent()) {
+                    response.addResult("Ashcon UUID §a✔ xknat UUID: §b" + uuid.get());
+                    response.incrementWorkingUUID();
+                } else {
+                    response.addResult("Ashcon UUID §c✘ Error getting UUID");
+                }
+            } catch (SkinRequestException e) {
+                response.addResult("Ashcon UUID §c✘ Error getting UUID: " + e.getMessage());
+            }
+        } else response.addResult("Ashcon §c✘ Error getting data by name");
+
         // ##### UUID requests #####
-        try {
-            Optional<String> uuid = mojangAPI.getUUIDAshcon(XKNAT_NAME);
-
-            if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
-                response.addResult("Ashcon UUID §a✔ xknat UUID: §b" + uuid);
-                response.incrementWorkingUUID();
-            } else response.addResult("Ashcon UUID §c✘ Error getting UUID: null");
-        } catch (SkinRequestException e) {
-            response.addResult("Ashcon UUID §c✘ Error getting UUID: " + e.getMessage());
-        }
-
         try {
             Optional<String> uuid = mojangAPI.getUUIDMojang(XKNAT_NAME);
 
             if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
-                response.addResult("Mojang API UUID §a✔ xknat UUID: §b" + uuid);
+                response.addResult("Mojang API UUID §a✔ xknat UUID: §b" + uuid.get());
                 response.incrementWorkingUUID();
-            } else response.addResult("Mojang API UUID §c✘ Error getting UUID: null");
+            } else response.addResult("Mojang API UUID §c✘ Error getting UUID");
         } catch (SkinRequestException e) {
             response.addResult("Mojang API UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         try {
-            Optional<String> uuid = mojangAPI.getUUIDMinetools(XKNAT_NAME);
+            Optional<String> uuid = mojangAPI.getUUIDMineTools(XKNAT_NAME);
 
             if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
-                response.addResult("Minetools API UUID §a✔ xknat UUID: §b" + uuid);
+                response.addResult("MineTools API UUID §a✔ xknat UUID: §b" + uuid.get());
                 response.incrementWorkingUUID();
-            } else response.addResult("Minetools API UUID §c✘ Error getting UUID: null");
+            } else response.addResult("MineTools API UUID §c✘ Error getting UUID");
         } catch (SkinRequestException e) {
-            response.addResult("Minetools API UUID §c✘ Error getting UUID: " + e.getMessage());
+            response.addResult("MineTools API UUID §c✘ Error getting UUID: " + e.getMessage());
         }
 
         // ##### Profile requests #####
-        Optional<IProperty> ashcon = mojangAPI.getProfileAshcon(XKNAT_UUID);
-        if (ashcon.isPresent()) {
-            response.addResult("Ashcon Profile §a✔ xknat Profile: §b" + ashcon);
-            response.incrementWorkingProfile();
-        } else response.addResult("Ashcon Profile §c✘ Error getting Profile: null");
+        Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID);
+        if (nameAshcon.isPresent()) {
+            Optional<IProperty> property = mojangAPI.getPropertyAshcon(nameAshcon.get());
+            if (property.isPresent()) {
+                response.addResult("Ashcon Profile §a✔ xknat Profile: §b" + property.get());
+                response.incrementWorkingProfile();
+            } else {
+                response.addResult("Ashcon Profile §c✘ Error getting Profile");
+            }
+        } else response.addResult("Ashcon §c✘ Error getting data by uuid");
 
         Optional<IProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
         if (mojang.isPresent()) {
-            response.addResult("Mojang-API Profile §a✔ xknat Profile: §b" + mojang);
+            response.addResult("Mojang-API Profile §a✔ xknat Profile: §b" + mojang.get());
             response.incrementWorkingProfile();
-        } else response.addResult("Mojang-API Profile §c✘ Error getting Profile: null");
+        } else response.addResult("Mojang-API Profile §c✘ Error getting Profile");
 
-        Optional<IProperty> minetools = mojangAPI.getProfileMinetools(XKNAT_UUID);
+        Optional<IProperty> minetools = mojangAPI.getProfileMineTools(XKNAT_UUID);
         if (minetools.isPresent()) {
-            response.addResult("Minetools Profile §a✔ xknat Profile: §b" + minetools);
+            response.addResult("MineTools Profile §a✔ xknat Profile: §b" + minetools.get());
             response.incrementWorkingProfile();
-        } else response.addResult("Minetools Profile §c✘ Error getting Profile: null");
+        } else response.addResult("MineTools Profile §c✘ Error getting Profile");
 
         return response;
     }
@@ -97,19 +108,19 @@ public class ServiceChecker {
     @Getter
     public static class ServiceCheckResponse {
         private final List<String> results = new LinkedList<>();
-        private final AtomicInteger workingUUID = new AtomicInteger();
-        private final AtomicInteger workingProfile = new AtomicInteger();
+        private int workingUUID = 0;
+        private int workingProfile = 0;
 
-        public void addResult(String result) {
+        private void addResult(String result) {
             results.add(result);
         }
 
-        public void incrementWorkingUUID() {
-            workingUUID.getAndIncrement();
+        private void incrementWorkingUUID() {
+            workingUUID++;
         }
 
-        public void incrementWorkingProfile() {
-            workingProfile.getAndIncrement();
+        private void incrementWorkingProfile() {
+            workingProfile++;
         }
     }
 }

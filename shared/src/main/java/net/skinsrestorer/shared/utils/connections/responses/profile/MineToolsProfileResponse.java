@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.utils.connections.responses.profile;
 import lombok.Getter;
 
 @Getter
-public class MinetoolsProfileResponse {
+public class MineToolsProfileResponse {
     private Raw raw;
 
     @Getter

@@ -25,6 +25,7 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.IMojangAPI;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.exception.NotPremiumExceptionShared;
@@ -32,11 +33,12 @@ import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
-import net.skinsrestorer.shared.utils.connections.responses.profile.MinetoolsProfileResponse;
+import net.skinsrestorer.shared.utils.connections.responses.profile.MineToolsProfileResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.MojangProfileResponse;
 import net.skinsrestorer.shared.utils.connections.responses.profile.PropertyResponse;
-import net.skinsrestorer.shared.utils.connections.responses.uuid.MinetoolsUUIDResponse;
+import net.skinsrestorer.shared.utils.connections.responses.uuid.MineToolsUUIDResponse;
 import net.skinsrestorer.shared.utils.connections.responses.uuid.MojangUUIDResponse;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import javax.net.ssl.HttpsURLConnection;
@@ -50,15 +52,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MojangAPI implements IMojangAPI {
+    private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuidOrName%";
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";
-
-    private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuidOrName%";
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
     @Inject
     private MetricsCounter metricsCounter;
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private IPropertyFactory propertyFactory;
 
     /**
      * Get the skin property from a single request
@@ -69,7 +74,7 @@ public class MojangAPI implements IMojangAPI {
      * @throws SkinRequestException or error
      */
     public Optional<IProperty> getSkin(String nameOrUuid) throws SkinRequestException {
-        final String upperCaseNameOrUuid = nameOrUuid.trim().toUpperCase();
+        String upperCaseNameOrUuid = nameOrUuid.trim().toUpperCase();
         if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(upperCaseNameOrUuid))) {
             HardcodedSkins hardcodedSkin = HardcodedSkins.valueOf(upperCaseNameOrUuid);
             return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, hardcodedSkin.value, hardcodedSkin.signature));
@@ -80,12 +85,17 @@ public class MojangAPI implements IMojangAPI {
             throw new NotPremiumExceptionShared();
         }
 
-        final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
-        if (skin.isPresent()) {
-            return skin;
+        Optional<IProperty> property = getDataAshcon(nameOrUuid).flatMap(this::getPropertyAshcon);
+        if (property.isPresent()) {
+            return property;
         } else {
             if (!isUuid) {
-                nameOrUuid = getUUIDStartMojang(nameOrUuid);
+                Optional<String> uuidResult = getUUIDStartMojang(nameOrUuid);
+                if (uuidResult.isPresent()) {
+                    nameOrUuid = uuidResult.get();
+                } else {
+                    return Optional.empty();
+                }
             }
 
             return getProfileStartMojang(nameOrUuid);
@@ -100,92 +110,78 @@ public class MojangAPI implements IMojangAPI {
      * @throws NotPremiumException  if the player is not premium
      * @throws SkinRequestException or error
      */
-    public String getUUID(String playerName) throws SkinRequestException {
+    public Optional<String> getUUID(String playerName) throws SkinRequestException {
         if (C.validMojangUsername(playerName)) {
             throw new NotPremiumExceptionShared();
         }
 
-        Optional<String> ashcon = getUUIDAshcon(playerName);
-
+        Optional<AshconResponse> ashcon = getDataAshcon(playerName);
         if (ashcon.isPresent()) {
-            return ashcon.get();
-        } else {
-            return getUUIDStartMojang(playerName);
+            Optional<String> ashconUUID = getUUIDAshcon(ashcon.get());
+
+            if (ashconUUID.isPresent()) {
+                return ashconUUID;
+            }
         }
+
+        return getUUIDStartMojang(playerName);
     }
 
-    private String getUUIDStartMojang(String playerName) throws SkinRequestException {
+    private Optional<String> getUUIDStartMojang(String playerName) throws SkinRequestException {
         Optional<String> mojang = getUUIDMojang(playerName);
 
         if (mojang.isPresent()) {
-            return mojang.get();
+            return mojang;
         } else {
-            Optional<String> minetools = getUUIDMinetools(playerName);
-
-            return minetools.orElse(null);
+            return getUUIDMineTools(playerName);
         }
     }
 
-    /**
-     * @param playerName Mojang username of the player
-     * @return Dash-less UUID (String)
-     * @throws SkinRequestException If player is NOT_PREMIUM or server is RATE_LIMITED
-     */
-    protected Optional<String> getUUIDAshcon(String playerName) throws SkinRequestException {
+    protected Optional<AshconResponse> getDataAshcon(String uuidOrName) {
         try {
-            final String output = readURL(ASHCON.replace("%uuidOrName%", playerName), MetricsCounter.Service.ASHCON).getRight();
-            final AshconResponse obj = new Gson().fromJson(output, AshconResponse.class);
+            String output = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON).getRight();
 
-            if (obj.getCode() != 0) {
-                if (obj.getCode() == 404) {
-                    throw new NotPremiumExceptionShared();
-                }
-                //throw new SkinRequestException(Locale.ALT_API_FAILED); <- WIP (might not be good when there is a 202 mojang down error)
-            }
-
-            if (obj.getUuid() != null)
-                return Optional.of(obj.getUuid().replace("-", ""));
-        } catch (IOException ignored) {
+            return Optional.of(new Gson().fromJson(output, AshconResponse.class));
+        } catch (Exception e) {
+            logger.debug("Failed to get data from Ashcon API for " + uuidOrName, e);
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     public Optional<String> getUUIDMojang(String playerName) throws SkinRequestException {
         try {
-            final String output = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG).getRight();
+            Pair<Integer, String> response = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
 
-            //todo get http code instead of checking for isEmpty
-            if (output.isEmpty())
+            if (response.getLeft() != 200 || response.getRight().isEmpty()) {
                 throw new NotPremiumExceptionShared();
+            }
 
-            final MojangUUIDResponse obj = new Gson().fromJson(output, MojangUUIDResponse.class);
+            MojangUUIDResponse obj = new Gson().fromJson(response.getRight(), MojangUUIDResponse.class);
             if (obj.getError() != null) {
                 return Optional.empty();
             }
 
             return Optional.of(obj.getId());
-        } catch (IOException ignored) {
+        } catch (Exception e) {
+            logger.debug("Failed to get UUID from Mojang for name " + playerName, e);
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
-    protected Optional<String> getUUIDMinetools(String playerName) throws SkinRequestException {
+    protected Optional<String> getUUIDMineTools(String playerName) throws SkinRequestException {
         try {
-            final String output = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10000).getRight();
-            final MinetoolsUUIDResponse obj = new Gson().fromJson(output, MinetoolsUUIDResponse.class);
+            String output = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000).getRight();
+            MineToolsUUIDResponse obj = new Gson().fromJson(output, MineToolsUUIDResponse.class);
 
-            if (obj.getId() != null)
-                return Optional.of(obj.getId());
-        } catch (IOException ignored) {
+            return Optional.ofNullable(obj.getId());
+        } catch (IOException e) {
+            logger.debug("Failed to get UUID from MineTools for name " + playerName, e);
+            return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     public Optional<IProperty> getProfile(String uuid) {
-        Optional<IProperty> ashcon = getProfileAshcon(uuid);
+        Optional<IProperty> ashcon = getDataAshcon(uuid).flatMap(this::getPropertyAshcon);
 
         if (ashcon.isPresent()) {
             return ashcon;
@@ -200,76 +196,90 @@ public class MojangAPI implements IMojangAPI {
         if (mojang.isPresent()) {
             return mojang;
         } else {
-            return getProfileMinetools(uuid);
+            return getProfileMineTools(uuid);
         }
-    }
-
-    protected Optional<IProperty> getProfileAshcon(String uuid) {
-        try {
-            final String output = readURL(ASHCON.replace("%uuidOrName%", uuid), MetricsCounter.Service.ASHCON).getRight();
-            final AshconResponse obj = new Gson().fromJson(output, AshconResponse.class);
-
-            if (obj.getTextures() != null) {
-                final AshconResponse.Textures textures = obj.getTextures();
-                final AshconResponse.Textures.Raw rawTextures = textures.getRaw();
-
-                if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
-                    return Optional.empty();
-                }
-
-                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(rawTextures));
-            }
-        } catch (Exception ignored) {
-        }
-
-        return Optional.empty();
     }
 
     public Optional<IProperty> getProfileMojang(String uuid) {
         try {
-            final String output = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG).getRight();
-            final MojangProfileResponse obj = new Gson().fromJson(output, MojangProfileResponse.class);
-            if (obj.getProperties() != null) {
-                final PropertyResponse property = obj.getProperties()[0];
-
-                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-                    return Optional.empty();
-                }
-
-                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+            String output = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG).getRight();
+            MojangProfileResponse obj = new Gson().fromJson(output, MojangProfileResponse.class);
+            if (obj.getProperties() == null) {
+                return Optional.empty();
             }
-        } catch (Exception ignored) {
-        }
 
-        return Optional.empty();
+            PropertyResponse property = obj.getProperties()[0];
+
+            if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(propertyFactory.createProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        } catch (Exception e) {
+            logger.debug("Failed to get profile from Mojang for uuid " + uuid, e);
+            return Optional.empty();
+        }
     }
 
-    protected Optional<IProperty> getProfileMinetools(String uuid) {
+    protected Optional<IProperty> getProfileMineTools(String uuid) {
         try {
-            final String output = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10000).getRight();
-            final MinetoolsProfileResponse obj = new Gson().fromJson(output, MinetoolsProfileResponse.class);
-            if (obj.getRaw() != null) {
-                final MinetoolsProfileResponse.Raw raw = obj.getRaw();
-                // Break on ERR
-                if (raw.getStatus() != null && raw.getStatus().equalsIgnoreCase("ERR")) {
-                    throw new SkinRequestExceptionShared();
-                }
-
-                PropertyResponse property = raw.getProperties()[0];
-                if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-                    return Optional.empty();
-                }
-
-                return Optional.of(SkinsRestorerAPI.getApi().createPlatformProperty(property));
+            String output = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000).getRight();
+            MineToolsProfileResponse obj = new Gson().fromJson(output, MineToolsProfileResponse.class);
+            if (obj.getRaw() == null) {
+                return Optional.empty();
             }
-        } catch (Exception ignored) {
+
+            MineToolsProfileResponse.Raw raw = obj.getRaw();
+            if (raw.getStatus() != null && raw.getStatus().equalsIgnoreCase("ERR")) {
+                throw new SkinRequestExceptionShared();
+            }
+
+            PropertyResponse property = raw.getProperties()[0];
+            if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(propertyFactory.createProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        } catch (Exception e) {
+            logger.debug("Failed to get profile from MineTools for uuid " + uuid, e);
+            return Optional.empty();
+        }
+    }
+
+    protected Optional<IProperty> getPropertyAshcon(AshconResponse response) {
+        if (response.getTextures() != null) {
+            AshconResponse.Textures textures = response.getTextures();
+            AshconResponse.Textures.Raw rawTextures = textures.getRaw();
+
+            if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(propertyFactory.createProperty(
+                    IProperty.TEXTURES_NAME,
+                    rawTextures.getValue(),
+                    rawTextures.getSignature()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    protected Optional<String> getUUIDAshcon(AshconResponse response) throws SkinRequestException {
+        if (response.getCode() != 0) {
+            if (response.getCode() == 404) {
+                throw new NotPremiumExceptionShared();
+            }
+            // TODO: Handle other errors
+            //throw new SkinRequestException(Locale.ALT_API_FAILED); <- WIP (might not be good when there is a 202 mojang down error)
+        } else if (response.getUuid() != null) {
+            return Optional.of(response.getUuid().replace("-", ""));
         }
 
         return Optional.empty();
     }
 
     private Pair<Integer, String> readURL(String url, MetricsCounter.Service service) throws IOException {
-        return readURL(url, service, 5000);
+        return readURL(url, service, 5_000);
     }
 
     private Pair<Integer, String> readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {

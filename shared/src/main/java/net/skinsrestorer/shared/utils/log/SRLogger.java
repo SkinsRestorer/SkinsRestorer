@@ -23,8 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
-import net.skinsrestorer.shared.storage.Config;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +41,11 @@ public class SRLogger {
     }
 
     public void load(Path dataFolder) {
+        if (System.getProperty("sr.unit.test") != null) {
+            debug = true;
+            return;
+        }
+
         Path configFile = dataFolder.resolve("config.yml");
 
         if (Files.exists(configFile)) {
@@ -69,15 +72,17 @@ public class SRLogger {
     }
 
     public void debug(SRLogLevel level, String message) {
-        if (debug)
+        if (!debug) {
             return;
+        }
 
         log(level, message);
     }
 
     public void debug(SRLogLevel level, String message, Throwable thrown) {
-        if (debug)
+        if (!debug) {
             return;
+        }
 
         log(level, message, thrown);
     }

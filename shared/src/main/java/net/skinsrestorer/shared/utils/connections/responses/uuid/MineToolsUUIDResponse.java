@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.utils.connections.responses.uuid;
 import lombok.Getter;
 
 @Getter
-public class MinetoolsUUIDResponse {
+public class MineToolsUUIDResponse {
     /**
      * UUID without dashes
      */

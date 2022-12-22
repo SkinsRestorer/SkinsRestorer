@@ -55,7 +55,6 @@ import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyProperty;
 import org.bstats.bukkit.Metrics;
-import org.bstats.charts.SingleLineChart;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -90,7 +89,9 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 true,
                 version,
                 "SkinsRestorerUpdater/Bukkit",
-                dataFolder
+                dataFolder,
+                new WrapperFactoryBukkit(),
+                new PropertyFactoryBukkit()
         );
         injector.register(SkinsRestorerBukkit.class, this);
         injector.register(Server.class, server);
@@ -103,11 +104,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         logger.load(dataFolder);
 
         if (!unitTest) {
-            Metrics metrics = new Metrics(pluginInstance, 1669);
-            metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-            metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-            metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-            metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
+            registerMetrics(new Metrics(pluginInstance, 1669));
         }
 
         // Init config files // TODO: Split config files
@@ -181,7 +178,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             if (Files.exists(dataFolder.resolve("enableSkinStorageAPI.txt"))) {
                 initMineSkinAPI();
                 initStorage();
-                registerAPI(new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
+                registerAPI(skinApplierBukkit);
             }
 
             server.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:skinchange");
@@ -264,7 +261,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             initStorage();
 
             // Init API
-            registerAPI(new WrapperFactoryBukkit(), new PropertyFactoryBukkit(), skinApplierBukkit);
+            registerAPI(skinApplierBukkit);
 
             // Init commands
             CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();

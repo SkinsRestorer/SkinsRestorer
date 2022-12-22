@@ -36,7 +36,6 @@ import net.skinsrestorer.sponge.commands.SkinCommand;
 import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
-import org.bstats.charts.SingleLineChart;
 import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
@@ -55,7 +54,7 @@ import java.util.stream.Collectors;
 @Getter
 public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     private final Object pluginInstance; // Only for platform API use
-    private final Metrics metrics;
+    private final Metrics.Factory metricsFactory;
     private final PluginContainer pluginContainer;
     protected Game game;
 
@@ -65,11 +64,13 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
                 false,
                 container.getVersion().orElse("Unknown"),
                 "SkinsRestorerUpdater/Sponge",
-                dataFolder
+                dataFolder,
+                new WrapperFactorySponge(),
+                GenericProperty::new
         );
         injector.register(SkinsRestorerSponge.class, this);
         this.pluginInstance = pluginInstance;
-        this.metrics = metricsFactory.make(2337);
+        this.metricsFactory = metricsFactory;
         this.pluginContainer = container;
     }
 
@@ -77,10 +78,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     protected void pluginStartup() {
         logger.load(dataFolder);
 
-        metrics.addCustomChart(new SingleLineChart("mineskin_calls", metricsCounter::collectMineskinCalls));
-        metrics.addCustomChart(new SingleLineChart("minetools_calls", metricsCounter::collectMinetoolsCalls));
-        metrics.addCustomChart(new SingleLineChart("mojang_calls", metricsCounter::collectMojangCalls));
-        metrics.addCustomChart(new SingleLineChart("ashcon_calls", metricsCounter::collectAshconCalls));
+        registerMetrics(metricsFactory.make(2337));
 
         checkUpdateInit(() -> {
             checkUpdate(true);
@@ -110,7 +108,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
 
         // Init API
-        registerAPI(new WrapperFactorySponge(), GenericProperty::new, skinApplierSponge);
+        registerAPI(skinApplierSponge);
 
         Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
 

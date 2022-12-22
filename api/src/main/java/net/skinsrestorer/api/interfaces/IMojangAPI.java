@@ -25,7 +25,7 @@ import net.skinsrestorer.api.property.IProperty;
 import java.util.Optional;
 
 public interface IMojangAPI {
-    String getUUID(String playerName) throws SkinRequestException;
+    Optional<String> getUUID(String playerName) throws SkinRequestException;
 
     Optional<IProperty> getProfile(String uuid);
 }

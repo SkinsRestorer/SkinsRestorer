@@ -323,6 +323,4 @@ public class Config implements SettingsHolder {
                 "Discord: https://discord.me/SkinsRestorer/"
         );
     }
-
-
 }
