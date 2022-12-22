@@ -71,16 +71,17 @@ public enum Message implements MessageKeyGetter {
     COMMAND_SERVER_NOT_ALLOWED_MESSAGE,
     PLAYER_HAS_NO_PERMISSION_SKIN,
     PLAYER_HAS_NO_PERMISSION_URL,
-    SKIN_DISABLED,
-    SKINURL_DISALLOWED,
+    ERROR_SKIN_DISABLED,
+    ERROR_SKINURL_DISALLOWED,
     NOT_PREMIUM,
+    ONLY_ALLOWED_ON_CONSOLE,
     INVALID_PLAYER,
     SKIN_COOLDOWN,
-    SKIN_CHANGE_SUCCESS,
-    SKIN_CLEAR_SUCCESS,
-    SKIN_CLEAR_ISSUER,
+    SUCCESS_SKIN_CHANGE,
+    SUCCESS_SKIN_CLEAR,
+    SUCCESS_SKIN_CLEAR_OTHER,
     MS_UPDATING_SKIN,
-    SUCCESS_CREATE_SKIN,
+    SUCCESS_ADMIN_CREATECUSTOM,
     SUCCESS_UPDATING_SKIN,
     SUCCESS_UPDATING_SKIN_OTHER,
     ERROR_UPDATING_SKIN,
@@ -99,15 +100,15 @@ public enum Message implements MessageKeyGetter {
     SKINSMENU_CLEAR_SKIN,
     SKINSMENU_SELECT_SKIN,
     SKIN_SEARCH_MESSAGE,
-    ADMIN_SET_SKIN,
-    DATA_DROPPED,
-    ADMIN_APPLYSKIN_SUCCES,
-    ADMIN_APPLYSKIN_ERROR,
+    SUCCESS_SKIN_CHANGE_OTHER,
+    SUCCESS_ADMIN_DROP,
+    SUCCES_ADMIN_APPLYSKIN,
+    ERROR_ADMIN_APPLYSKIN,
     STATUS_OK,
     ALT_API_FAILED,
-    MS_API_FAILED,
+    ERROR_MS_API_FAILED,
     NO_SKIN_DATA,
-    RELOAD,
+    SUCCESS_ADMIN_RELOAD,
     OUTDATED,
     SR_LINE,
     CUSTOM_HELP_IF_ENABLED;
@@ -174,17 +175,16 @@ public enum Message implements MessageKeyGetter {
                 Files.createDirectories(archive);
                 String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
                 Files.move(oldMessagesFile, archive.resolve(newName));
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (Exception ignored) {
             }
         }
 
         Path oldAcf = dataFolder.resolve("command-messages.properties");
         if (Files.exists(oldAcf)) {
             try {
-                Files.move(oldAcf, dataFolder.resolve("command.properties"));
-            } catch (IOException e) {
-                e.printStackTrace();
+                Files.createDirectories(archive);
+                Files.move(oldAcf, archive.resolve("command-messages.properties"));
+            } catch (Exception ignored) {
             }
         }
     }

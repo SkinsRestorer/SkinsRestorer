@@ -110,9 +110,9 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             if (sender == target) {
-                sender.sendMessage(Message.SKIN_CLEAR_SUCCESS);
+                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
             } else {
-                sender.sendMessage(Message.SKIN_CLEAR_ISSUER, playerName);
+                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, playerName);
             }
         });
     }
@@ -193,7 +193,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             if (setSkin(sender, player, skin, true, skinVariant) && !sender.equalsPlayer(player))
-                sender.sendMessage(Message.ADMIN_SET_SKIN, player.getName());
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, player.getName());
         });
     }
 
@@ -231,7 +231,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
         if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
                 && settings.getProperty(Config.DISABLED_SKINS).stream().anyMatch(skin::equalsIgnoreCase)) {
-            sender.sendMessage(Message.SKIN_DISABLED);
+            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
         }
 
@@ -251,7 +251,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             if (!C.allowedSkinUrl(settings, skin)) {
-                sender.sendMessage(Message.SKINURL_DISALLOWED);
+                sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
             }
 
@@ -270,9 +270,9 @@ public abstract class SharedSkinCommand extends BaseCommand {
                 SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
 
-                String success = locale.getMessage(player, Message.SKIN_CHANGE_SUCCESS);
+                String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
-                    player.sendMessage(Message.SKIN_CHANGE_SUCCESS, "skinUrl");
+                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
 
                 return true;
             } catch (SkinRequestException e) {
@@ -292,9 +292,9 @@ public abstract class SharedSkinCommand extends BaseCommand {
 
                 SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
 
-                String success = locale.getMessage(player, Message.SKIN_CHANGE_SUCCESS);
+                String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
-                    player.sendMessage(Message.SKIN_CHANGE_SUCCESS, skin); // TODO: should this not be sender? -> hidden skin set?
+                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skin); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;
             } catch (SkinRequestException | NotPremiumException e) {

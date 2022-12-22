@@ -40,7 +40,7 @@ public class ServicesTest {
         });
 
         injector.register(SRLogger.class, logger);
-        injector.register(SkinsRestorerLocale.class, mock(SkinsRestorerLocale.class));
+        injector.register(SkinsRestorerLocale.class, mockgit pu(SkinsRestorerLocale.class));
         injector.register(IPropertyFactory.class, (name, value, signature) -> {
             System.out.println("Property: " + name + " " + value + " " + signature);
             return new GenericProperty(name, value, signature);
