@@ -64,7 +64,11 @@ public class WrapperBukkit {
         return new ISRPlayer() {
             @Override
             public Locale getLocale() {
-                return LocaleParser.parseLocale(player.getLocale());
+                try {
+                    return LocaleParser.parseLocale(player.getLocale());
+                } catch (NoSuchMethodError ignored) {
+                    return LocaleParser.getDefaultLocale();
+                }
             }
 
             @Override
