@@ -23,4 +23,8 @@ import net.skinsrestorer.api.property.IProperty;
 
 public interface IPropertyFactory {
     IProperty createProperty(String name, String value, String signature);
+
+    default IProperty createSkinProperty(String value, String signature) {
+        return createProperty(IProperty.TEXTURES_NAME, value, signature);
+    }
 }

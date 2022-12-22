@@ -26,14 +26,5 @@ dependencies {
     testImplementation("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT") {
         exclude("com.google.code.gson", "gson")
     }
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
-    testImplementation("org.mockito:mockito-core:4.8.0")
-    testImplementation("org.mockito:mockito-inline:4.8.0")
     testRuntimeOnly("com.mojang:authlib:1.11")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
 }

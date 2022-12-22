@@ -25,6 +25,7 @@ import co.aikar.commands.CommandHelp;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
@@ -238,7 +239,7 @@ public abstract class SharedSRCommand extends BaseCommand {
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
                 }
                 sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
-            } catch (SkinRequestException e) {
+            } catch (NotPremiumException | SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
         });
@@ -256,7 +257,7 @@ public abstract class SharedSRCommand extends BaseCommand {
             for (ISRPlayer player : onlinePlayersFunction.call()) {
                 try {
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
-                } catch (SkinRequestException ignored) {
+                } catch (SkinRequestException | NotPremiumException ignored) {
                     sender.sendMessage(Message.PREFIX + "§cFailed to apply skin to " + player.getName());
                 }
             }

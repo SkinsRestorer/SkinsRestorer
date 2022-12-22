@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.listeners;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
@@ -43,7 +44,7 @@ public abstract class SharedLoginProfileListener<R> {
         return event.runAsync(() -> {
             try {
                 handleAsync(event).ifPresent(event::setResultProperty);
-            } catch (SkinRequestException e) {
+            } catch (SkinRequestException | NotPremiumException e) {
                 logger.debug(e);
             }
         });
@@ -53,7 +54,7 @@ public abstract class SharedLoginProfileListener<R> {
         return settings.getProperty(Config.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(Config.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
     }
 
-    private Optional<IProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException {
+    private Optional<IProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException, NotPremiumException {
         String playerName = event.getPlayerName();
         Pair<IProperty, Boolean> result = skinStorage.getDefaultSkinForPlayer(playerName);
 

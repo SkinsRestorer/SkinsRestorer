@@ -75,10 +75,9 @@ public class SkinsRestorerAPI {
      *
      * @param playerName Mojang username of the player
      * @return String uuid trimmed (without dashes)
-     * @throws NotPremiumException  if the player is not premium
-     * @throws SkinRequestException or error
+     * @throws NotPremiumException if the player is not premium
      */
-    public String getMojangUniqueId(@NonNull String playerName) throws SkinRequestException {
+    public String getMojangUniqueId(@NonNull String playerName) throws NotPremiumException {
         return this.mojangAPI.getUUID(playerName).orElse(null);
     }
 
@@ -90,7 +89,7 @@ public class SkinsRestorerAPI {
      * @return The players skin property, null if not found
      **/
     @Nullable
-    public IProperty getProfile(@NonNull String uuid) {
+    public IProperty getProfile(@NonNull String uuid) throws NotPremiumException {
         return mojangAPI.getProfile(uuid).orElse(null);
     }
 
@@ -249,7 +248,7 @@ public class SkinsRestorerAPI {
         return gson.fromJson(decodedString, MojangProfileResponse.class);
     }
 
-    public void setSkin(String playerName, String skinName) throws SkinRequestException {
+    public void setSkin(String playerName, String skinName) throws SkinRequestException, NotPremiumException {
         setSkinName(playerName, skinName);
         getSkinStorage().fetchSkinData(skinName);
     }
@@ -293,7 +292,7 @@ public class SkinsRestorerAPI {
      * @param playerWrapper
      * @throws SkinRequestException
      */
-    public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException {
+    public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException, NotPremiumException {
         String playerName = playerWrapper.getName();
         applySkin(playerWrapper, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
     }
@@ -306,7 +305,7 @@ public class SkinsRestorerAPI {
      * @param skinName
      * @throws SkinRequestException
      */
-    public void applySkin(PlayerWrapper playerWrapper, String skinName) throws SkinRequestException {
+    public void applySkin(PlayerWrapper playerWrapper, String skinName) throws SkinRequestException, NotPremiumException {
         applySkin(playerWrapper, skinStorage.fetchSkinData(skinName));
     }
 

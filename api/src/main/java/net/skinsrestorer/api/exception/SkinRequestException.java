@@ -19,6 +19,12 @@
  */
 package net.skinsrestorer.api.exception;
 
+/**
+ * Thrown when a request for a skin has failed for some reason.
+ * This does NOT mean that the player is not premium.
+ * (This will never be thrown for that reason)
+ * If the player is not premium, {@link NotPremiumException} is thrown.
+ */
 public class SkinRequestException extends Exception {
     private static final long serialVersionUID = -246848643846947966L;
 

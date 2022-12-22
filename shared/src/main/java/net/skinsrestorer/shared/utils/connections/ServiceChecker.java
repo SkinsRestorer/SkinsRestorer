@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.utils.connections;
 
 import lombok.Getter;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.utils.connections.responses.AshconResponse;
 
@@ -31,6 +31,10 @@ import java.util.Optional;
 public class ServiceChecker {
     private static final String XKNAT_NAME = "xknat";
     private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
+    private static final String MESSAGE_ERROR = "%s §c✘ Error getting %s";
+    private static final String MESSAGE_ERROR_EXCEPTION = "%s §c✘ Error getting %s: %s";
+    private static final String UUID_MESSAGE = "%s §a✔ xknat UUID: §b%s";
+    private static final String PROFILE_MESSAGE = "%s §a✔ xknat Profile: §b%s";
 
     private ServiceChecker() {
     }
@@ -39,68 +43,72 @@ public class ServiceChecker {
         ServiceCheckResponse response = new ServiceCheckResponse();
 
         // ##### Ashcon request #####
-        Optional<AshconResponse> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
-        if (uuidAshcon.isPresent()) {
-            try {
+        try {
+            Optional<AshconResponse> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
+            if (uuidAshcon.isPresent()) {
                 Optional<String> uuid = mojangAPI.getUUIDAshcon(uuidAshcon.get());
 
                 if (uuid.isPresent()) {
-                    response.addResult("Ashcon UUID §a✔ xknat UUID: §b" + uuid.get());
+                    response.addResult(String.format(UUID_MESSAGE, "Ashcon", uuid.get()));
                     response.incrementWorkingUUID();
                 } else {
-                    response.addResult("Ashcon UUID §c✘ Error getting UUID");
+                    response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
                 }
-            } catch (SkinRequestException e) {
-                response.addResult("Ashcon UUID §c✘ Error getting UUID: " + e.getMessage());
-            }
-        } else response.addResult("Ashcon §c✘ Error getting data by name");
+            } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
+        } catch (NotPremiumException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()));
+        }
 
         // ##### UUID requests #####
         try {
             Optional<String> uuid = mojangAPI.getUUIDMojang(XKNAT_NAME);
 
             if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
-                response.addResult("Mojang API UUID §a✔ xknat UUID: §b" + uuid.get());
+                response.addResult(String.format(UUID_MESSAGE, "Mojang", uuid.get()));
                 response.incrementWorkingUUID();
-            } else response.addResult("Mojang API UUID §c✘ Error getting UUID");
-        } catch (SkinRequestException e) {
-            response.addResult("Mojang API UUID §c✘ Error getting UUID: " + e.getMessage());
+            } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"));
+        } catch (NotPremiumException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()));
         }
 
         try {
             Optional<String> uuid = mojangAPI.getUUIDMineTools(XKNAT_NAME);
 
             if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
-                response.addResult("MineTools API UUID §a✔ xknat UUID: §b" + uuid.get());
+                response.addResult(String.format(UUID_MESSAGE, "MineTools", uuid.get()));
                 response.incrementWorkingUUID();
-            } else response.addResult("MineTools API UUID §c✘ Error getting UUID");
-        } catch (SkinRequestException e) {
-            response.addResult("MineTools API UUID §c✘ Error getting UUID: " + e.getMessage());
+            } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"));
+        } catch (NotPremiumException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()));
         }
 
         // ##### Profile requests #####
-        Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID);
-        if (nameAshcon.isPresent()) {
-            Optional<IProperty> property = mojangAPI.getPropertyAshcon(nameAshcon.get());
-            if (property.isPresent()) {
-                response.addResult("Ashcon Profile §a✔ xknat Profile: §b" + property.get());
-                response.incrementWorkingProfile();
-            } else {
-                response.addResult("Ashcon Profile §c✘ Error getting Profile");
-            }
-        } else response.addResult("Ashcon §c✘ Error getting data by uuid");
+        try {
+            Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID);
+            if (nameAshcon.isPresent()) {
+                Optional<IProperty> property = mojangAPI.getPropertyAshcon(nameAshcon.get());
+                if (property.isPresent()) {
+                    response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", property.get()));
+                    response.incrementWorkingProfile();
+                } else {
+                    response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
+                }
+            } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
+        } catch (NotPremiumException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()));
+        }
 
         Optional<IProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
         if (mojang.isPresent()) {
-            response.addResult("Mojang-API Profile §a✔ xknat Profile: §b" + mojang.get());
+            response.addResult(String.format(PROFILE_MESSAGE, "Mojang", mojang.get()));
             response.incrementWorkingProfile();
-        } else response.addResult("Mojang-API Profile §c✘ Error getting Profile");
+        } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"));
 
         Optional<IProperty> minetools = mojangAPI.getProfileMineTools(XKNAT_UUID);
         if (minetools.isPresent()) {
-            response.addResult("MineTools Profile §a✔ xknat Profile: §b" + minetools.get());
+            response.addResult(String.format(PROFILE_MESSAGE, "MineTools", minetools.get()));
             response.incrementWorkingProfile();
-        } else response.addResult("MineTools Profile §c✘ Error getting Profile");
+        } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"));
 
         return response;
     }

@@ -20,11 +20,10 @@
 package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
@@ -57,6 +56,8 @@ public class SkinStorage implements ISkinStorage {
     private SettingsManager settings;
     @Inject
     private SkinsRestorerLocale locale;
+    @Inject
+    private IPropertyFactory propertyFactory;
     @Setter
     private StorageAdapter storageAdapter;
 
@@ -72,7 +73,7 @@ public class SkinStorage implements ISkinStorage {
                 if (!C.validUrl(skin)) {
                     fetchSkinData(skin);
                 }
-            } catch (SkinRequestException e) {
+            } catch (SkinRequestException | NotPremiumException e) {
                 // removing skin from list
                 toRemove.add(skin);
                 logger.warning("[WARNING] DefaultSkin '" + skin + "'(.skin) could not be found or requested! Removing from list..");
@@ -92,7 +93,7 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException {
+    public Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException {
         final Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
         String skin = result.getLeft();
 
@@ -104,22 +105,21 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public IProperty fetchSkinData(String skinName) throws SkinRequestException {
+    public IProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException {
         Optional<IProperty> textures = getSkinData(skinName, true);
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
                 textures = mojangAPI.getSkin(skinName);
 
-                if (!textures.isPresent())
+                if (!textures.isPresent()) {
                     throw new SkinRequestExceptionShared(locale, Message.ERROR_NO_SKIN);
+                }
 
                 setSkinData(skinName, textures.get());
 
                 return textures.get();
-            } catch (NotPremiumException e) {
-                throw new SkinRequestExceptionShared(locale, Message.INVALID_PLAYER, skinName);
-            } catch (SkinRequestException e) {
+            } catch (SkinRequestException | NotPremiumException e) {
                 throw e;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,10 +148,10 @@ public class SkinStorage implements ISkinStorage {
      * @param value          skin data value
      * @param signature      signature to verify skin data
      * @param timestamp      time cached property data was created
-     * @return Platform specific property
-     * @throws SkinRequestException throws when no API calls were successful
+     * @return Platform-specific property
+     * @throws NotPremiumException throws when no API calls were successful
      */
-    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, long timestamp) throws SkinRequestException {
+    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, long timestamp) throws NotPremiumException {
         if (updateOutdated && C.validMojangUsername(playerName) && isExpired(timestamp)) {
             Optional<IProperty> skin = mojangAPI.getSkin(playerName);
 
@@ -161,7 +161,7 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        return SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, value, signature);
+        return propertyFactory.createSkinProperty(value, signature);
     }
 
     @Override
@@ -191,7 +191,7 @@ public class SkinStorage implements ISkinStorage {
             }
 
             return Optional.of(createProperty(skinName, updateOutdated, property.get().getValue(), property.get().getSignature(), property.get().getTimestamp()));
-        } catch (StorageAdapter.StorageException | SkinRequestException e) {
+        } catch (StorageAdapter.StorageException | NotPremiumException e) {
             logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
             removeSkinData(skinName);
             return Optional.empty();
@@ -302,11 +302,11 @@ public class SkinStorage implements ISkinStorage {
             if (!settings.getProperty(Config.DEFAULT_SKINS_PREMIUM)) {
                 // check if player is premium
                 try {
-                    if (mojangAPI.getUUID(playerName) != null) {
+                    if (mojangAPI.getUUID(playerName).isPresent()) {
                         // player is premium, return his skin name instead of default skin
                         return Pair.of(playerName, false);
                     }
-                } catch (SkinRequestException ignored) {
+                } catch (NotPremiumException ignored) {
                     // Player is not premium catching exception here to continue returning a default skin name
                 }
             }

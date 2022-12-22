@@ -20,9 +20,11 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.storage.Message;
 
 public class NotPremiumExceptionShared extends NotPremiumException {
-    public NotPremiumExceptionShared() {
-        super();
+    public NotPremiumExceptionShared(SkinsRestorerLocale locale, String playerName) {
+        super(locale.getMessage(locale.getDefaultForeign(), Message.NOT_PREMIUM, playerName));
     }
 }

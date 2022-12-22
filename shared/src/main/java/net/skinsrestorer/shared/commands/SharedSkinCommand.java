@@ -297,7 +297,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
                     player.sendMessage(Message.SKIN_CHANGE_SUCCESS, skin); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;
-            } catch (SkinRequestException e) {
+            } catch (SkinRequestException | NotPremiumException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
         }
