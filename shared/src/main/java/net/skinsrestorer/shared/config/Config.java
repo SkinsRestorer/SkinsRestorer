@@ -17,12 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage;
+package net.skinsrestorer.shared.config;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
-import ch.jalu.configme.properties.ListProperty;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.TypeBasedProperty;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -64,8 +63,6 @@ public class Config implements SettingsHolder {
     public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
-    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
-    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);
     @Comment({
             "\n##########",
             "\n# Locale #",
@@ -87,17 +84,6 @@ public class Config implements SettingsHolder {
             return value.toString();
         }
     });
-    public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("DefaultSkins.Names", new PropertyType<String>() {
-        @Override
-        public @Nullable String convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
-            return object == null ? null : object.toString().replace(".skin", "");
-        }
-
-        @Override
-        public @Nullable Object toExportValue(String value) {
-            return value;
-        }
-    }, listOf("xknat", "pistonmaster"));
     public static final Property<Boolean> DISABLED_SKINS_ENABLED = newProperty("DisabledSkins.Enabled", false);
     public static final Property<List<String>> DISABLED_SKINS = newListProperty("DisabledSkins.Names", "steve", "owner");
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("NotAllowedCommandServers.Enabled", true);
@@ -106,9 +92,6 @@ public class Config implements SettingsHolder {
     @Comment("Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("NotAllowedCommandServers.IfNoServerBlockCommand", false);
     public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("NotAllowedCommandServers.List", listOf("auth"));
-    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("CustomGUI.Enabled", false);
-    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("CustomGUI.ShowOnlyCustomGUI", true);
-    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("CustomGUI.Names", "xknat", "pistonmaster");
     @Comment({
             "\n############",
             "\n# Advanced #",
@@ -121,22 +104,6 @@ public class Config implements SettingsHolder {
             "with \"skinsrestorer.ownskin\" players can run /skin set %playerusername%."
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("PerSkinPermissions", false);
-    @Comment({
-            "Time that skins are stored in the database before we request again (in minutes).",
-            "[?] A value of 0 will disable auto updating of skins and players will need to manual run /skin update.",
-            "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
-    })
-    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("SkinExpiresAfter", 15);
-    public static final Property<Boolean> MYSQL_ENABLED = newProperty("MySQL.Enabled", false);
-    public static final Property<String> MYSQL_HOST = newProperty("MySQL.Host", "localhost");
-    public static final Property<Integer> MYSQL_PORT = newProperty("MySQL.Port", 3306);
-    public static final Property<String> MYSQL_DATABASE = newProperty("MySQL.Database", "db");
-    public static final Property<String> MYSQL_USERNAME = newProperty("MySQL.Username", "root");
-    public static final Property<String> MYSQL_PASSWORD = newProperty("MySQL.Password", "pass");
-    public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newProperty("MySQL.MaxPoolSize", 10);
-    public static final Property<String> MYSQL_SKIN_TABLE = newProperty("MySQL.SkinTable", "Skins");
-    public static final Property<String> MYSQL_PLAYER_TABLE = newProperty("MySQL.PlayerTable", "Players");
-    public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("MySQL.ConnectionOptions", "sslMode=trust&serverTimezone=UTC");
     @Comment({
             "Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.",
             "[?] Unsure? leave this true for better performance."
@@ -155,12 +122,6 @@ public class Config implements SettingsHolder {
             "https://textures.minecraft.net",
             "http://textures.minecraft.net"
     );
-    @Comment({
-            "Here you can fill in your APIKey for lower MineSkin request times.",
-            "Key can be requested from https://mineskin.org/apikey",
-            "[?] A key is not required, but recommended."
-    })
-    public static final Property<String> MINESKIN_API_KEY = newProperty("MineskinAPIKey", "key");
     @Comment({
             "\n#################",
             "\n# Compatibility #",
@@ -200,11 +161,6 @@ public class Config implements SettingsHolder {
             "Handy for when you want run /skin apply to apply skin after texturepack popup"
     })
     public static final Property<Boolean> DISABLE_ON_JOIN_SKINS = newProperty("DisableOnJoinSkins", false);
-    @Comment({
-            "<!! Warning !!>",
-            "Enable this will require players to run \"/skin update\" to update their skin."
-    })
-    public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("DisallowAutoUpdateSkin", false);
     @Comment({
             "<!! Warning Experimental !!>",
             "This enables the experimental PaperMC join event integration that allows instant skins on join.",
@@ -246,7 +202,7 @@ public class Config implements SettingsHolder {
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("",
                 "\n##################################",
-                "\n#    SkinsRestorer Config.yml    #",
+                "\n#      SkinsRestorer config      #",
                 "\n##################################",
                 "\n",
                 "We from SRTeam thank you for using our plugin!",
@@ -264,18 +220,6 @@ public class Config implements SettingsHolder {
                 "(!) IF YOU ARE USING A PROXY (Bungee, Waterfall or Velocity), Check & set on every BACKEND server spigot.yml -> bungeecord: true.  (!)",
                 "(!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Backend & Proxy).                      (!)"
         );
-        conf.setComment("DefaultSkins",
-                "\n#################",
-                "\n# Customization #",
-                "\n#################",
-                "\n",
-                "Here you can design the plugin the way you want it.",
-                "\n",
-                "Enable or disable default skins",
-                "ApplyForPremium: false will only put a skin on skinless/steve players.",
-                "If there is more than one, the plugin will choose a random one.",
-                "[?] Supports custom & url.png skins, read SkinFile Generator below. [?]"
-        );
         conf.setComment("DisabledSkins",
                 "Skins in this list will be disabled, so users can't set them.",
                 "Can be bypassed with 'skinsrestorer.bypassdisabled'."
@@ -283,17 +227,6 @@ public class Config implements SettingsHolder {
         conf.setComment("NotAllowedCommandServers",
                 "Disable all SkinsRestorer commands on specific backend servers.",
                 "[!] This only works & is relevant if you're using proxies like bungee / waterfall"
-        );
-        conf.setComment("CustomGUI",
-                "Custom list for the /skins GUI.",
-                "ShowOnlyCustomGUI will only show CustomGUI.Names in the gui."
-        );
-        conf.setComment("MySQL",
-                "Settings for MySQL skin storage (recommended for big BungeeCord networks)",
-                "[!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]",
-                "[!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]",
-                "[!] Make sure you have the correct permissions set for your MySQL user. [!]",
-                "[!] Make sure to fill in MySQL.ConnectionOptions if you're using certificate / ssl authentication. [!]"
         );
         conf.setComment("RestrctSkinUrls",
                 "When enabled, only websites from the list below is allowed to be set using /skin url <url>",

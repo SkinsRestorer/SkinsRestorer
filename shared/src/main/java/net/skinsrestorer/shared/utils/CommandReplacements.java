@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.storage.CallableSetting;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 
 import java.util.Map;

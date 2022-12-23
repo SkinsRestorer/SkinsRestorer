@@ -31,7 +31,7 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;

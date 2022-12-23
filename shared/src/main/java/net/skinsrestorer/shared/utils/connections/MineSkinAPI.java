@@ -31,9 +31,9 @@ import net.skinsrestorer.api.interfaces.IMineSkinAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.MineSkinConfig;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.exception.TryAgainException;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.responses.mineskin.MineSkinErrorDelayResponse;
@@ -61,6 +61,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MineSkinAPI implements IMineSkinAPI {
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
+    private final Gson gson = new Gson();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
+        Thread t = new Thread(r);
+        t.setName("SkinsRestorer-MineSkinAPI");
+        return t;
+    });
     @Inject
     private SRLogger logger;
     @Inject
@@ -69,12 +75,6 @@ public class MineSkinAPI implements IMineSkinAPI {
     private SettingsManager settings;
     @Inject
     private SkinsRestorerLocale locale;
-    private final Gson gson = new Gson();
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
-        Thread t = new Thread(r);
-        t.setName("SkinsRestorer-MineSkinAPI");
-        return t;
-    });
 
     @Override
     public IProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
@@ -205,8 +205,10 @@ public class MineSkinAPI implements IMineSkinAPI {
                 con.setDoOutput(true);
                 con.setDoInput(true);
 
-                if (!settings.getProperty(Config.MINESKIN_API_KEY).isEmpty())
-                    con.setRequestProperty("Authorization", "Bearer " + settings.getProperty(Config.MINESKIN_API_KEY));
+                String apiKey = settings.getProperty(MineSkinConfig.MINESKIN_API_KEY);
+                if (!apiKey.isEmpty()) {
+                    con.setRequestProperty("Authorization", "Bearer " + apiKey);
+                }
 
                 DataOutputStream output = new DataOutputStream(con.getOutputStream());
                 output.writeBytes(query);

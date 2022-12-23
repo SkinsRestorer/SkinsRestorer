@@ -28,6 +28,7 @@ import net.skinsrestorer.api.interfaces.ISkinStorage;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
@@ -62,11 +63,12 @@ public class SkinStorage implements ISkinStorage {
     private StorageAdapter storageAdapter;
 
     public void preloadDefaultSkins() {
-        if (!settings.getProperty(Config.DEFAULT_SKINS_ENABLED))
+        if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
             return;
+        }
 
         List<String> toRemove = new ArrayList<>();
-        List<String> defaultSkins = new ArrayList<>(settings.getProperty(Config.DEFAULT_SKINS));
+        List<String> defaultSkins = new ArrayList<>(settings.getProperty(StorageConfig.DEFAULT_SKINS));
         defaultSkins.forEach(skin -> {
             // TODO: add try for skinUrl
             try {
@@ -83,12 +85,12 @@ public class SkinStorage implements ISkinStorage {
         });
         if (!toRemove.isEmpty()) {
             defaultSkins.removeAll(toRemove);
-            settings.setProperty(Config.DEFAULT_SKINS, defaultSkins);
+            settings.setProperty(StorageConfig.DEFAULT_SKINS, defaultSkins);
         }
 
         if (defaultSkins.isEmpty()) {
             logger.warning("[WARNING] No more working DefaultSkin left... disabling feature");
-            settings.setProperty(Config.DEFAULT_SKINS_ENABLED, false);
+            settings.setProperty(StorageConfig.DEFAULT_SKINS_ENABLED, false);
         }
     }
 
@@ -297,9 +299,9 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        if (settings.getProperty(Config.DEFAULT_SKINS_ENABLED)) {
+        if (settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
             // don't return default skin name for premium players if enabled
-            if (!settings.getProperty(Config.DEFAULT_SKINS_PREMIUM)) {
+            if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
                 // check if player is premium
                 try {
                     if (mojangAPI.getUUID(playerName).isPresent()) {
@@ -312,7 +314,7 @@ public class SkinStorage implements ISkinStorage {
             }
 
             // return default skin name if user has no custom skin set, or we want to clear to default
-            List<String> skins = settings.getProperty(Config.DEFAULT_SKINS);
+            List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
 
             // return player name if there are no default skins set
             if (skins.isEmpty())
@@ -338,10 +340,10 @@ public class SkinStorage implements ISkinStorage {
      */
     private boolean isExpired(long timestamp) {
         // Don't update if timestamp is not 0 or update is disabled.
-        if (timestamp == 0 || settings.getProperty(Config.DISALLOW_AUTO_UPDATE_SKIN))
+        if (timestamp == 0 || settings.getProperty(StorageConfig.DISALLOW_AUTO_UPDATE_SKIN))
             return false;
 
-        return timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(Config.SKIN_EXPIRES_AFTER)) <= System.currentTimeMillis();
+        return timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)) <= System.currentTimeMillis();
     }
 
     public boolean purgeOldSkins(int days) {

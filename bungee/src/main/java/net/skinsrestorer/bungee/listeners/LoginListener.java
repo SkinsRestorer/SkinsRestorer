@@ -20,7 +20,6 @@
 package net.skinsrestorer.bungee.listeners;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.Getter;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;

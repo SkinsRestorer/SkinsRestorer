@@ -25,7 +25,8 @@ import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.util.Pair;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -62,7 +63,7 @@ public abstract class SharedLoginProfileListener<R> {
         if (event.isOnline()
                 && !result.getRight()
                 && !settings.getProperty(Config.ALWAYS_APPLY_PREMIUM)
-                && !settings.getProperty(Config.DEFAULT_SKINS_PREMIUM))
+                && !settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM))
             return Optional.empty();
 
         return Optional.of(result.getLeft());

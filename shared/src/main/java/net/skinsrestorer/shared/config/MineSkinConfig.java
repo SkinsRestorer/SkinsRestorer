@@ -17,34 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.config;
 
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.concurrent.TimeUnit;
+import ch.jalu.configme.Comment;
+import ch.jalu.configme.SettingsHolder;
+import ch.jalu.configme.properties.Property;
 
-public interface ISRPlugin {
-    Path getDataFolder();
+import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
-    String getVersion();
-
-    InputStream getResource(String resource);
-
-    void runAsync(Runnable runnable);
-
-    void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
-
-    default void checkUpdate() {
-        checkUpdate(false);
-    }
-
-    void checkUpdate(boolean showUpToDate);
-
-    boolean isPluginEnabled(String pluginName);
-
-    void loadConfig();
-
-    void loadLocales();
-
-    boolean isOutdated();
+public class MineSkinConfig implements SettingsHolder {
+    @Comment({
+            "Here you can fill in your APIKey for lower MineSkin request times.",
+            "Key can be requested from https://mineskin.org/apikey",
+            "[?] A key is not required, but recommended."
+    })
+    public static final Property<String> MINESKIN_API_KEY = newProperty("MineskinAPIKey", "key");
 }

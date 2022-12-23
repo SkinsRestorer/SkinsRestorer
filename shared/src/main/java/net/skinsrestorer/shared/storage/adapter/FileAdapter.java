@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.storage.adapter;
 
 import ch.jalu.configme.SettingsManager;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.config.StorageConfig;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -157,6 +157,27 @@ public class FileAdapter implements StorageAdapter {
                 s.substring(0, s.length() - 5) // remove .skin (5 characters)
         ).sorted().collect(Collectors.toList());
 
+        if (settings.getProperty(StorageConfig.CUSTOM_GUI_ENABLED)) {
+            List<String> customSkinNames = settings.getProperty(StorageConfig.CUSTOM_GUI_SKINS);
+            if (settings.getProperty(StorageConfig.CUSTOM_GUI_ONLY)) {
+                skinNames = skinNames.stream().filter(customSkinNames::contains).collect(Collectors.toList());
+            } else {
+                skinNames = skinNames.stream().sorted((s1, s2) -> {
+                    boolean s1Custom = customSkinNames.contains(s1);
+                    boolean s2Custom = customSkinNames.contains(s2);
+                    if (s1Custom && s2Custom) {
+                        return s1.compareTo(s2);
+                    } else if (s1Custom) {
+                        return -1;
+                    } else if (s2Custom) {
+                        return 1;
+                    } else {
+                        return s1.compareTo(s2);
+                    }
+                }).collect(Collectors.toList());
+            }
+        }
+
         int i = 0;
         for (String skinName : skinNames) {
             if (list.size() >= 36)
@@ -165,14 +186,8 @@ public class FileAdapter implements StorageAdapter {
             if (i < offset) {
                 continue;
             }
-            if (settings.getProperty(Config.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui // TODO fix diff with MySQL CUSTOM_SKIN_ENABLE
-                for (String guiSkins : settings.getProperty(Config.CUSTOM_GUI_SKINS)) {
-                    if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
-                        getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                }
-            } else {
-                getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-            }
+
+            getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
             i++;
         }
         return list;

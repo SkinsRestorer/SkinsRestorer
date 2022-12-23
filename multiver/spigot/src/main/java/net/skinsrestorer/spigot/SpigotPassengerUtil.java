@@ -20,7 +20,7 @@
 package net.skinsrestorer.spigot;
 
 import ch.jalu.configme.SettingsManager;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.config.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;

@@ -31,11 +31,18 @@ import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.MineSkinConfig;
+import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.storage.*;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateChecker;
@@ -62,7 +69,6 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final SRLogger logger;
-    protected final MetricsCounter metricsCounter;
     protected final UpdateChecker updateChecker;
     @Getter
     protected final Path dataFolder;
@@ -80,7 +86,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
 
         injector.register(ISRPlugin.class, this);
 
-        injector.register(MetricsCounter.class, (metricsCounter = new MetricsCounter()));
+        injector.register(MetricsCounter.class, new MetricsCounter());
         injector.register(CooldownStorage.class, new CooldownStorage());
         injector.register(SRLogger.class, (logger = new SRLogger(isrLogger, loggerColor)));
 
@@ -130,7 +136,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         if (settings == null) {
             settings = SettingsManagerBuilder
                     .withYamlFile(dataFolder.resolve("config.yml"))
-                    .configurationData(Config.class)
+                    .configurationData(Config.class, DatabaseConfig.class, StorageConfig.class, MineSkinConfig.class)
                     .useDefaultMigrationService()
                     .create();
             injector.register(SettingsManager.class, settings);
@@ -139,9 +145,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         }
 
         //__Default__Skins
-        if (settings.getProperty(Config.DEFAULT_SKINS_ENABLED) && settings.getProperty(Config.DEFAULT_SKINS).isEmpty()) {
+        if (settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED) && settings.getProperty(StorageConfig.DEFAULT_SKINS).isEmpty()) {
             logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
-            settings.setProperty(Config.DEFAULT_SKINS_ENABLED, false);
+            settings.setProperty(StorageConfig.DEFAULT_SKINS_ENABLED, false);
         }
 
         //__Disabled__Skins
@@ -155,15 +161,15 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
             settings.setProperty(Config.RESTRICT_SKIN_URLS_ENABLED, false);
         }
 
-        if (!settings.getProperty(Config.CUSTOM_GUI_ENABLED))
-            settings.setProperty(Config.CUSTOM_GUI_ONLY, false);
+        if (!settings.getProperty(StorageConfig.CUSTOM_GUI_ENABLED))
+            settings.setProperty(StorageConfig.CUSTOM_GUI_ONLY, false);
 
         if (!settings.getProperty(Config.DISMOUNT_PLAYER_ON_UPDATE)) {
             settings.setProperty(Config.REMOUNT_PLAYER_ON_UPDATE, false);
         }
 
-        if (settings.getProperty(Config.MINESKIN_API_KEY).equals("key")) {
-            settings.setProperty(Config.MINESKIN_API_KEY, "");
+        if (settings.getProperty(MineSkinConfig.MINESKIN_API_KEY).equals("key")) {
+            settings.setProperty(MineSkinConfig.MINESKIN_API_KEY, "");
         }
 
         logger.setDebug(settings.getProperty(Config.DEBUG));
@@ -185,16 +191,16 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         SkinStorage skinStorage = injector.getSingleton(SkinStorage.class);
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
-            if (settings.getProperty(Config.MYSQL_ENABLED)) {
+            if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
                 MySQL mysql = new MySQL(
                         logger,
-                        settings.getProperty(Config.MYSQL_HOST),
-                        settings.getProperty(Config.MYSQL_PORT),
-                        settings.getProperty(Config.MYSQL_DATABASE),
-                        settings.getProperty(Config.MYSQL_USERNAME),
-                        settings.getProperty(Config.MYSQL_PASSWORD),
-                        settings.getProperty(Config.MYSQL_MAX_POOL_SIZE),
-                        settings.getProperty(Config.MYSQL_CONNECTION_OPTIONS)
+                        settings.getProperty(DatabaseConfig.MYSQL_HOST),
+                        settings.getProperty(DatabaseConfig.MYSQL_PORT),
+                        settings.getProperty(DatabaseConfig.MYSQL_DATABASE),
+                        settings.getProperty(DatabaseConfig.MYSQL_USERNAME),
+                        settings.getProperty(DatabaseConfig.MYSQL_PASSWORD),
+                        settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE),
+                        settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS)
                 );
 
                 mysql.connectPool();
@@ -261,6 +267,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     protected void registerMetrics(Object metricsParent) {
+        MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         try {
             Field field = metricsParent.getClass().getDeclaredField("metricsBase");
             field.setAccessible(true);

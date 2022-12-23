@@ -20,9 +20,9 @@
 package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 
 import java.util.Optional;

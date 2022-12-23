@@ -20,7 +20,7 @@
 package net.skinsrestorer.shared.utils;
 
 import ch.jalu.configme.SettingsManager;
-import net.skinsrestorer.shared.storage.Config;
+import net.skinsrestorer.shared.config.Config;
 
 public class C {
     private C() {
