@@ -88,7 +88,7 @@ public class WrapperBukkit {
                 try {
                     return LocaleParser.parseLocale(player.getLocale()).orElseGet(() -> settings.getProperty(Config.LANGUAGE));
                 } catch (NoSuchMethodError ignored) {
-                    return LocaleParser.getDefaultLocale();
+                    return settings.getProperty(Config.LANGUAGE);
                 }
             }
 
