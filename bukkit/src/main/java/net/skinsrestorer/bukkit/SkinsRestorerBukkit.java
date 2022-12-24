@@ -28,7 +28,7 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
@@ -46,7 +46,6 @@ import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.YamlConfig;
-import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import net.skinsrestorer.spigot.SpigotUtil;
@@ -176,7 +175,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
-                                SkinsRestorerAPIShared.getApi().applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                                skinApplierBukkit.applySkin(player, SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
                             } catch (IOException ignored) {
                             }
 

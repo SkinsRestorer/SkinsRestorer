@@ -25,7 +25,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;

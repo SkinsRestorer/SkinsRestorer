@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;

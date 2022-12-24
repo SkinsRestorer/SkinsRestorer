@@ -28,7 +28,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.commands.ISRCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;

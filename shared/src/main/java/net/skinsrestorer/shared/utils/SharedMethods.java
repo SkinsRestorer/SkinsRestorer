@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.MySQL;

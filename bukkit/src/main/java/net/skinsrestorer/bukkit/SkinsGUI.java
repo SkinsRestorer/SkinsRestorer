@@ -19,11 +19,11 @@
  */
 package net.skinsrestorer.bukkit;
 
+import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.bukkit.BukkitHeadAPI;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.storage.Message;
@@ -141,14 +141,15 @@ public class SkinsGUI implements InventoryHolder {
         lore.add(C.c(SkinsRestorerAPIShared.getApi().getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
         Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
-        is.setItemMeta(sm);
 
         try {
-            BukkitHeadAPI.setSkull(is, property);
-        } catch (Exception e) {
+            SkullUtils.applySkin(sm, property);
+        } catch (AssertionError e) {
             log.info("ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
             e.printStackTrace();
         }
+
+        is.setItemMeta(sm);
 
         return is;
     }

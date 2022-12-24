@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.skinsrestorer.api.reflection.reflect;
+package net.skinsrestorer.shared.reflection.reflect;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;

@@ -17,12 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.reflection;
+package net.skinsrestorer.shared.reflection;
 
-import net.skinsrestorer.api.reflection.exception.EnumNotFoundException;
-import net.skinsrestorer.api.reflection.exception.FieldNotFoundException;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
-import net.skinsrestorer.api.reflection.reflect.DuckBypass;
+import net.skinsrestorer.shared.reflection.exception.EnumNotFoundException;
+import net.skinsrestorer.shared.reflection.exception.FieldNotFoundException;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.reflection.reflect.DuckBypass;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 
 import java.lang.reflect.Constructor;
@@ -329,9 +329,8 @@ public class ReflectionUtil {
         }
     }
 
-    private static void setFieldAccessible(Field f) {
-        reflect.setEditable(f);
-        f.setAccessible(true);
+    private static void setFieldAccessible(Field field) {
+        field.setAccessible(true);
     }
 
     public static void setObject(Class<?> clazz, Object obj, String fieldName, Object value) {

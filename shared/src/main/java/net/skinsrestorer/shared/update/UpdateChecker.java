@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.ResourceInfo;

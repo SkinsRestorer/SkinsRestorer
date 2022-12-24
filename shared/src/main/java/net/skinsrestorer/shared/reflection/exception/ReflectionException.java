@@ -17,12 +17,16 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.reflection.exception;
+package net.skinsrestorer.shared.reflection.exception;
 
-public class EnumNotFoundException extends ReflectiveOperationException {
-    private static final long serialVersionUID = -1133593687030970956L;
+public class ReflectionException extends ReflectiveOperationException {
+    private static final long serialVersionUID = -8198968403615763053L;
 
-    public EnumNotFoundException(String message) {
+    public ReflectionException(String message) {
         super(message);
+    }
+
+    public ReflectionException(Exception e) {
+        super(e);
     }
 }

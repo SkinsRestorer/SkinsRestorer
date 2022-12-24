@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.skinsrestorer.api.reflection.access;
+package net.skinsrestorer.shared.reflection.access;
 
-import net.skinsrestorer.api.reflection.reflect.DuckReflect;
+import net.skinsrestorer.shared.reflection.reflect.DuckReflect;
 
 import java.lang.reflect.*;
 
