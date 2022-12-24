@@ -20,11 +20,11 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;

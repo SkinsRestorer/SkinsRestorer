@@ -29,7 +29,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
@@ -46,6 +45,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
@@ -57,7 +57,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -97,16 +96,9 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     public void pluginStartup() {
-        logger.load(dataFolder);
+        startupStart();
 
-        registerMetrics(new Metrics(pluginInstance, 1686));
-
-        checkUpdateInit(() -> {
-            checkUpdate(true);
-
-            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        });
+        updateCheck();
 
         // Init config files
         loadConfig();
@@ -158,6 +150,11 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+    }
+
+    @Override
+    protected Object createMetricsInstance() {
+        return new Metrics(pluginInstance, 1686);
     }
 
     @Override

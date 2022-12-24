@@ -25,7 +25,6 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.lang.reflect.Field;

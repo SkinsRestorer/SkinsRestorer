@@ -29,7 +29,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.commands.GUICommand;
@@ -48,6 +47,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
@@ -70,7 +70,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -79,11 +78,10 @@ import java.util.stream.Collectors;
 public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private final Server server;
     private final JavaPlugin pluginInstance; // Only for platform API use
-    private final boolean unitTest;
     private boolean isUpdaterInitialized = false;
     private boolean updateDownloaded = false;
 
-    public SkinsRestorerBukkit(Server server, String version, Path dataFolder, JavaPlugin pluginInstance, boolean unitTest) {
+    public SkinsRestorerBukkit(Server server, String version, Path dataFolder, JavaPlugin pluginInstance) {
         super(
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
@@ -97,15 +95,10 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         injector.register(Server.class, server);
         this.server = server;
         this.pluginInstance = pluginInstance;
-        this.unitTest = unitTest;
     }
 
     public void pluginStartup() throws InitializeException {
-        logger.load(dataFolder);
-
-        if (!unitTest) {
-            registerMetrics(new Metrics(pluginInstance, 1669));
-        }
+        startupStart();
 
         // Init config files // TODO: Split config files
         loadConfig();
@@ -217,13 +210,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                     try {
                         String subChannel = in.readUTF();
 
-                        if (subChannel.equalsIgnoreCase("OPENGUI")) { // LEGACY
-                            Player player = server.getPlayer(in.readUTF());
-                            if (player == null)
-                                return;
-
-                            requestSkinsFromProxy(player, 0);
-                        } else if (subChannel.equalsIgnoreCase("returnSkins") || subChannel.equalsIgnoreCase("returnSkinsV2")) {
+                        if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
                             Player player = server.getPlayer(in.readUTF());
                             if (player == null)
                                 return;
@@ -234,16 +221,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                             byte[] msgBytes = new byte[len];
                             in.readFully(msgBytes);
 
-                            Map<String, String> skinList;
-                            if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
-                                skinList = convertToObjectV2(msgBytes);
-                            } else { // LEGACY
-                                skinList = new TreeMap<>();
-
-                                convertToObject(msgBytes).forEach((key, value) -> {
-                                    skinList.put(key, value.getValue());
-                                });
-                            }
+                            Map<String, String> skinList = convertToObjectV2(msgBytes);
 
                             Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ProxyGUIActions(this),
                                     injector.getSingleton(SkinsRestorerLocale.class),
@@ -288,6 +266,12 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         }
     }
 
+    @Override
+    protected Object createMetricsInstance() {
+        return new Metrics(pluginInstance, 1669);
+    }
+
+    @Override
     protected void updateCheck() {
         // Check for updates
         isUpdaterInitialized = true;
@@ -310,22 +294,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         });
     }
 
-    public void requestSkinClearFromProxy(Player player) {
-        sendToMessageChannel(player, out -> {
-            out.writeUTF("clearSkin");
-            out.writeUTF(player.getName());
-        });
-    }
-
-    public void requestSkinSetFromProxy(Player player, String skinName) {
-        sendToMessageChannel(player, out -> {
-            out.writeUTF("setSkin");
-            out.writeUTF(player.getName());
-            out.writeUTF(skinName);
-        });
-    }
-
-    private void sendToMessageChannel(Player player, IOExceptionConsumer<DataOutputStream> consumer) {
+    public void sendToMessageChannel(Player player, IOExceptionConsumer<DataOutputStream> consumer) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);

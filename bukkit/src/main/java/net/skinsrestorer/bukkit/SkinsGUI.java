@@ -267,26 +267,31 @@ public class SkinsGUI implements InventoryHolder {
 
         @Override
         public void accept(EventInfo event) {
+            Player player = event.getPlayer();
             switch (event.getMaterial()) {
                 case PLAYER_HEAD:
-                    plugin.runAsync(() -> {
-                        String skin = event.getItemMeta().getDisplayName();
-                        plugin.requestSkinSetFromProxy(event.getPlayer(), skin);
-                    });
-                    event.getPlayer().closeInventory();
+                    String skinName = event.getItemMeta().getDisplayName();
+                    plugin.runAsync(() -> plugin.sendToMessageChannel(player, out -> {
+                        out.writeUTF("setSkin");
+                        out.writeUTF(player.getName());
+                        out.writeUTF(skinName);
+                    }));
+                    player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinClearFromProxy(event.getPlayer()));
-                    event.getPlayer().closeInventory();
+                    plugin.runAsync(() -> plugin.sendToMessageChannel(player, out -> {
+                        out.writeUTF("clearSkin");
+                        out.writeUTF(player.getName());
+                    }));
+                    player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(event.getPlayer(), event.getCurrentPage() + 1));
+                            plugin.requestSkinsFromProxy(player, event.getCurrentPage() + 1));
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(event.getPlayer(), event.getCurrentPage() - 1));
+                            plugin.requestSkinsFromProxy(player, event.getCurrentPage() - 1));
                     break;
                 default:
                     break;

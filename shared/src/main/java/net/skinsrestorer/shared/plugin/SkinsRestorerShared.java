@@ -65,9 +65,11 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SkinsRestorerShared implements ISRPlugin {
+    protected final boolean unitTest = System.getProperty("sr.unit.test") != null;
     protected final SRLogger logger;
     protected final UpdateChecker updateChecker;
     @Getter
@@ -283,4 +285,23 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     protected abstract void pluginStartup() throws InitializeException;
+
+    protected abstract Object createMetricsInstance();
+
+    protected void startupStart() {
+        logger.load(dataFolder);
+
+        if (!unitTest) {
+            registerMetrics(createMetricsInstance());
+        }
+    }
+
+    protected void updateCheck() {
+        checkUpdateInit(() -> {
+            checkUpdate(true);
+
+            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
+            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
+        });
+    }
 }

@@ -53,7 +53,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -82,16 +81,9 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     public void pluginStartup() {
-        logger.load(dataFolder);
+        startupStart();
 
-        registerMetrics(metricsFactory.make(pluginInstance, 10606));
-
-        checkUpdateInit(() -> {
-            checkUpdate(true);
-
-            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        });
+        updateCheck();
 
         // Init config files
         loadConfig();
@@ -140,6 +132,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+    }
+
+    @Override
+    protected Object createMetricsInstance() {
+        return metricsFactory.make(pluginInstance, 10606);
     }
 
     @Override

@@ -21,11 +21,11 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

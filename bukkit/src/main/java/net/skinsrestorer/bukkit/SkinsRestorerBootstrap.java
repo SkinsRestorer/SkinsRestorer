@@ -27,7 +27,7 @@ public class SkinsRestorerBootstrap extends JavaPlugin {
         Exception startupError = null;
         SkinsRestorerBukkit skinsRestorerBukkit = null;
         try {
-            skinsRestorerBukkit = new SkinsRestorerBukkit(getServer(), getDescription().getVersion(), getDataFolder().toPath(), this, false);
+            skinsRestorerBukkit = new SkinsRestorerBukkit(getServer(), getDescription().getVersion(), getDataFolder().toPath(), this);
             skinsRestorerBukkit.pluginStartup();
         } catch (Exception e) {
             startupError = e;

@@ -19,11 +19,11 @@
  */
 package net.skinsrestorer.shared.reflection;
 
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.reflection.exception.EnumNotFoundException;
 import net.skinsrestorer.shared.reflection.exception.FieldNotFoundException;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.reflection.reflect.DuckBypass;
-import net.skinsrestorer.api.serverinfo.ServerVersion;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

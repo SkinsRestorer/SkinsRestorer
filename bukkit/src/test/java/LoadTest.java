@@ -13,6 +13,7 @@ import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -92,7 +93,7 @@ public class LoadTest {
             when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
             when(plugin.getFile()).thenReturn(null);
 
-            new SkinsRestorerBukkit(server, "UnitTest", configDir, plugin, true).pluginStartup();
+            new SkinsRestorerBukkit(server, "UnitTest", configDir, plugin).pluginStartup();
 
             while (!runQueue.isEmpty()) {
                 try {
@@ -110,6 +111,6 @@ public class LoadTest {
     }
 
     public abstract static class JavaPluginMock extends JavaPlugin {
-        public abstract File getFile();
+        public abstract @NotNull File getFile();
     }
 }

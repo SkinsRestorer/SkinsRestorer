@@ -47,7 +47,6 @@ import org.spongepowered.api.plugin.PluginContainer;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -76,16 +75,9 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
     @Override
     protected void pluginStartup() {
-        logger.load(dataFolder);
+        startupStart();
 
-        registerMetrics(metricsFactory.make(2337));
-
-        checkUpdateInit(() -> {
-            checkUpdate(true);
-
-            int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-            runRepeatAsync(this::checkUpdate, delayInt, delayInt, TimeUnit.MINUTES);
-        });
+        updateCheck();
 
         // Init config files
         loadConfig();
@@ -120,6 +112,11 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+    }
+
+    @Override
+    protected Object createMetricsInstance() {
+        return metricsFactory.make(2337);
     }
 
     @Override
