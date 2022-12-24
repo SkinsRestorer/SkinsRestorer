@@ -22,8 +22,8 @@ package net.skinsrestorer.bukkit.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.bukkit.entity.Player;
 
 import java.util.*;

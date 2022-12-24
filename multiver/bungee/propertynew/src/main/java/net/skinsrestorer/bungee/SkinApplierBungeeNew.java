@@ -25,9 +25,10 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,8 +43,13 @@ public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
         Property[] newProps = new Property[]{(Property) textures.getHandle()};
 
         if (profile == null) {
-            ReflectionUtil.setObject(InitialHandler.class, handler, "loginProfile",
-                    new LoginResult(null, null, newProps));
+            try {
+                Field field = InitialHandler.class.getDeclaredField("loginProfile");
+                field.setAccessible(true);
+                field.set(handler, new LoginResult(null, null, newProps));
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         } else {
             profile.setProperties(newProps);
         }

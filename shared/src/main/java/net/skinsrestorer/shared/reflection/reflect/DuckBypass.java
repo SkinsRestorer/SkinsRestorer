@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.skinsrestorer.api.reflection.reflect;
+package net.skinsrestorer.shared.reflection.reflect;
 
-import net.skinsrestorer.api.reflection.access.IAccess;
-import net.skinsrestorer.api.reflection.access.MultiImpl;
+import net.skinsrestorer.shared.reflection.access.IAccess;
+import net.skinsrestorer.shared.reflection.access.MultiImpl;
 
 import java.lang.reflect.*;
 

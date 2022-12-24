@@ -26,7 +26,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
