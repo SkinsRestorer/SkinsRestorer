@@ -250,7 +250,8 @@ public class SkinApplierBukkit {
     private Collection<? extends Player> getOnlinePlayers() {
         try {
             return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
-        } catch (UnsupportedClassVersionError e) {
+        } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
+            // Bad loaders full ignore finding java 17 classes instead of throwing class version errors
             return Bukkit.getOnlinePlayers();
         }
     }
