@@ -105,7 +105,7 @@ public class SkinStorage implements ISkinStorage {
 
                 return textures.get();
             } catch (NotPremiumException e) {
-                throw new SkinRequestExceptionShared(Message.INVALID_PLAYER, skinName);
+                throw new SkinRequestExceptionShared(Message.NOT_PREMIUM);
             } catch (SkinRequestException e) {
                 throw e;
             } catch (Exception e) {

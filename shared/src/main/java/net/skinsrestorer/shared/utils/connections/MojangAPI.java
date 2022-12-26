@@ -76,7 +76,7 @@ public class MojangAPI implements IMojangAPI {
 
         boolean isUuid = nameOrUuid.matches("[a-f\\d]{32}");
         if (!isUuid && !C.validMojangUsername(nameOrUuid)) {
-            throw new NotPremiumExceptionShared();
+            throw new NotPremiumExceptionShared(); //todo: throw a different error?
         }
 
         final Optional<IProperty> skin = getProfileAshcon(nameOrUuid);
