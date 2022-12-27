@@ -37,7 +37,7 @@ public class ServicesTest {
                 System.out.println(level + " " + message);
                 throwable.printStackTrace();
             }
-        });
+        }, false);
 
         injector.register(SRLogger.class, logger);
         injector.register(SkinsRestorerLocale.class, mock(SkinsRestorerLocale.class));

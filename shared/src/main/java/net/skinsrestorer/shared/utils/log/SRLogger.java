@@ -36,10 +36,6 @@ public class SRLogger {
     @Setter
     private boolean debug = false;
 
-    public SRLogger(ISRLogger logger) {
-        this(logger, false);
-    }
-
     public void load(Path dataFolder) {
         if (System.getProperty("sr.unit.test") != null) {
             debug = true;

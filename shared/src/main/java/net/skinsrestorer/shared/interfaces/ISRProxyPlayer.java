@@ -25,4 +25,6 @@ public interface ISRProxyPlayer extends ISRPlayer {
     Optional<String> getCurrentServer();
 
     void sendDataToServer(String channel, byte[] data);
+
+    void forceExecuteCommand(String command);
 }

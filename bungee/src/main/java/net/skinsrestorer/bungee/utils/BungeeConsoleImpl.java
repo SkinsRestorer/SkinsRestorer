@@ -32,9 +32,4 @@ public class BungeeConsoleImpl implements ISRConsole {
     public void sendMessage(String message) {
         commandSender.sendMessage(TextComponent.fromLegacyText(message));
     }
-
-    @Override
-    public boolean isReady() {
-        return commandSender != null;
-    }
 }

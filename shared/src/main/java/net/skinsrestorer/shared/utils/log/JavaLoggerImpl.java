@@ -35,11 +35,7 @@ public class JavaLoggerImpl implements ISRLogger {
     public void log(SRLogLevel level, String message) {
         switch (level) {
             case INFO:
-                if (console.isReady()) {
-                    console.sendMessage(message);
-                } else {
-                    logger.info(message);
-                }
+                console.sendMessage(message);
                 break;
             case WARNING:
                 logger.warning(message);

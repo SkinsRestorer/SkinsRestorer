@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -35,7 +34,6 @@ import java.util.zip.GZIPOutputStream;
 public abstract class SharedPluginMessageListener {
     private final SRLogger logger;
     private final SkinStorage skinStorage;
-    private final SharedSkinCommand skinCommand;
     private final Function<String, Optional<ISRProxyPlayer>> playerGetter;
 
     private static byte[] convertToByteArray(Map<String, String> map) {
@@ -107,22 +105,20 @@ public abstract class SharedPluginMessageListener {
             ISRProxyPlayer player = optional.get();
 
             switch (subChannel) {
-                //sr:messagechannel
+                // sr:messagechannel
                 case "getSkins":
-                    int page = in.readInt();
-                    if (page > 999)
-                        page = 999;
+                    int page = Math.min(in.readInt(), 999);
                     sendPage(page, player);
                     break;
                 case "clearSkin":
-                    skinCommand.onSkinClearOther(player, player);
+                    player.forceExecuteCommand("skin clear");
                     break;
                 case "updateSkin":
-                    skinCommand.onSkinUpdateOther(player, player);
+                    player.forceExecuteCommand("skin update");
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
-                    skinCommand.onSkinSetOther(player, player, skin, null);
+                    player.forceExecuteCommand("skin set " + skin);
                     break;
                 default:
                     break;

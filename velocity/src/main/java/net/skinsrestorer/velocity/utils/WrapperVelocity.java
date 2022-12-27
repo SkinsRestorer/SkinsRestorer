@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.velocity.SkinsRestorerVelocity;
 
 import javax.inject.Inject;
 import java.util.Locale;
@@ -42,6 +43,7 @@ import java.util.UUID;
 public class WrapperVelocity {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final SkinsRestorerVelocity plugin;
 
     private static String getSenderName(CommandSource source) {
         return source instanceof Player ? ((Player) source).getUsername() : "CONSOLE";
@@ -101,6 +103,11 @@ public class WrapperVelocity {
             public void sendDataToServer(String channel, byte[] data) {
                 player.getCurrentServer().map(server ->
                         server.sendPluginMessage(MinecraftChannelIdentifier.from(channel), data));
+            }
+
+            @Override
+            public void forceExecuteCommand(String command) {
+                plugin.getProxy().getCommandManager().executeAsync(player, command);
             }
 
             @Override

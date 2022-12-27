@@ -31,9 +31,4 @@ public class BukkitConsoleImpl implements ISRConsole {
     public void sendMessage(String message) {
         consoleCommandSender.sendMessage(message);
     }
-
-    @Override
-    public boolean isReady() {
-        return consoleCommandSender != null;
-    }
 }
