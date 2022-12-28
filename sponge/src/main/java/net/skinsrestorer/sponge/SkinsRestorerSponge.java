@@ -21,32 +21,38 @@ package net.skinsrestorer.sponge;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.SpongeCommandManager;
+import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
+import lombok.val;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.commands.SharedSRCommand;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
-import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
-import net.skinsrestorer.sponge.commands.SkinCommand;
-import net.skinsrestorer.sponge.commands.SrCommand;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.profile.property.ProfileProperty;
 
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -83,10 +89,6 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         loadConfig();
         loadLocales();
 
-        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
-        injector.provide(OnlinePlayersMethod.class,
-                (CallableValue<Collection<ISRPlayer>>) () -> game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList()));
-
         initMineSkinAPI();
 
         // Init storage
@@ -107,8 +109,8 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        manager.registerCommand(injector.getSingleton(SkinCommand.class));
-        manager.registerCommand(injector.newInstance(SrCommand.class));
+        manager.registerCommand(injector.getSingleton(SharedSkinCommand.class));
+        manager.registerCommand(injector.newInstance(SharedSRCommand.class));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
@@ -146,7 +148,62 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        return new SpongeCommandManager(pluginContainer);
+        SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);
+
+        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
+
+        val playerResolver = manager.getCommandContexts().getResolver(Player.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+            Object playerObject = playerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return wrapper.player((Player) playerObject);
+        });
+
+        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+            Object commandSenderObject = commandSenderResolver.getContext(c);
+            if (commandSenderObject == null) {
+                return null;
+            }
+            return wrapper.commandSender((CommandSource) commandSenderObject);
+        });
+
+        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
+        manager.getCommandContexts().registerContext(OnlineISRPlayer.class, c -> {
+            Object playerObject = onlinePlayerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return new OnlineISRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+        });
+
+        return manager;
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return game.getPlatform().getMinecraftVersion().getName();
+    }
+
+    @Override
+    public String getProxyMode() {
+        return "Sponge-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME);
+        return properties.stream()
+                .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
+        return game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     private static class WrapperFactorySponge implements IWrapperFactory {

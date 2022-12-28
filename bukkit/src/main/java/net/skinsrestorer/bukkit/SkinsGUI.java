@@ -25,9 +25,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.bukkit.commands.SkinCommand;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.commands.SharedSkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
@@ -216,7 +216,7 @@ public class SkinsGUI implements InventoryHolder {
     @RequiredArgsConstructor
     public static class ServerGUIActions implements Consumer<EventInfo> {
         private final ISRServerPlugin plugin;
-        private final SkinCommand skinCommand;
+        private final SharedSkinCommand skinCommand;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
         private final Server server;
@@ -229,12 +229,12 @@ public class SkinsGUI implements InventoryHolder {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
                         String skin = event.getItemMeta().getDisplayName();
-                        skinCommand.onSkinSetShort(event.getPlayer(), skin);
+                        skinCommand.onSkinSetShort(wrapper.player(event.getPlayer()), skin);
                     });
                     event.getPlayer().closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    skinCommand.onSkinClear(event.getPlayer());
+                    skinCommand.onSkinClear(wrapper.player(event.getPlayer()));
                     event.getPlayer().closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:

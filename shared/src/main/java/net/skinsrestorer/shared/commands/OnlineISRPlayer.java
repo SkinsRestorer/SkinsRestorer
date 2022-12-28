@@ -17,14 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.injector;
+package net.skinsrestorer.shared.commands;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.PARAMETER})
-public @interface OnlinePlayersMethod {
+@Getter
+@ToString
+@EqualsAndHashCode
+@RequiredArgsConstructor
+public class OnlineISRPlayer {
+    private final ISRPlayer player;
 }

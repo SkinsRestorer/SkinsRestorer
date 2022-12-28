@@ -20,10 +20,11 @@
 package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.configme.properties.Property;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
-import lombok.RequiredArgsConstructor;
+import co.aikar.commands.annotation.*;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
@@ -41,34 +42,51 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
-@RequiredArgsConstructor
-public abstract class SharedSkinCommand extends BaseCommand {
-    protected final ISRPlugin plugin;
-    private final SettingsManager settings;
-    private final CooldownStorage cooldownStorage;
-    private final SkinStorage skinStorage;
-    private final SkinsRestorerLocale locale;
-    private final SRLogger logger;
+@CommandAlias("skin")
+@CommandPermission("%skin")
+@SuppressWarnings("unused")
+public class SharedSkinCommand extends BaseCommand {
+    @Inject
+    private ISRPlugin plugin;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private CooldownStorage cooldownStorage;
+    @Inject
+    private SkinStorage skinStorage;
+    @Inject
+    private SkinsRestorerLocale locale;
+    @Inject
+    private SRLogger logger;
 
     @SuppressWarnings("deprecation")
-    protected void onDefault(ISRCommandSender sender) {
+    @Default
+    public void onDefault(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
-    protected void onSkinSetShort(ISRPlayer player, String skin) {
+    @Default
+    @CommandPermission("%skinSet")
+    @Description("%helpSkinSet")
+    @Syntax("%SyntaxDefaultCommand")
+    public void onSkinSetShort(ISRPlayer player, String skin) {
         if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
-        onSkinSetOther(player, player, skin, null);
+        onSkinSetOther(player, new OnlineISRPlayer(player), skin, null);
     }
 
-    protected void onHelp(ISRCommandSender sender, CommandHelp help) {
+    @HelpCommand
+    @Syntax("%helpHelpCommand")
+    public void onHelp(ISRCommandSender sender, CommandHelp help) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         if (settings.getProperty(Config.ENABLE_CUSTOM_HELP)) {
@@ -78,38 +96,46 @@ public abstract class SharedSkinCommand extends BaseCommand {
         }
     }
 
-    protected void onSkinClear(ISRPlayer player) {
+    @Subcommand("clear")
+    @CommandPermission("%skinClear")
+    @Description("%helpSkinClear")
+    public void onSkinClear(ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
-        onSkinClearOther(player, player);
+        onSkinClearOther(player, new OnlineISRPlayer(player));
     }
 
-    public void onSkinClearOther(ISRCommandSender sender, ISRPlayer target) {
+    @Subcommand("clear")
+    @CommandPermission("%skinClearOther")
+    @CommandCompletion("@players")
+    @Syntax("%SyntaxSkinClearOther")
+    @Description("%helpSkinClearOther")
+    public void onSkinClearOther(ISRCommandSender sender, OnlineISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
+        ISRPlayer targetPlayer = target.getPlayer();
+
         plugin.runAsync(() -> {
-            String senderName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
-                sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderName));
+            if (checkCoolDown(sender)) {
                 return;
             }
 
-            String playerName = target.getName();
+            String playerName = targetPlayer.getName();
 
             // remove users defined skin from database
             skinStorage.removeSkinOfPlayer(playerName);
 
             try {
                 IProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(), property);
+                SkinsRestorerAPI.getApi().applySkin(targetPlayer.getWrapper(), property);
             } catch (NotPremiumException e) {
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper(),
+                SkinsRestorerAPI.getApi().applySkin(targetPlayer.getWrapper(),
                         SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", ""));
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
 
-            if (sender == target) {
+            if (sender.getName().equals(targetPlayer.getName())) {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
             } else {
                 sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, playerName);
@@ -117,29 +143,41 @@ public abstract class SharedSkinCommand extends BaseCommand {
         });
     }
 
-    protected void onSkinSearch(ISRCommandSender sender, String searchString) {
+    @Subcommand("search")
+    @CommandPermission("%skinSearch")
+    @Description("%helpSkinSearch")
+    @Syntax("%SyntaxSkinSearch")
+    public void onSkinSearch(ISRCommandSender sender, String searchString) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
 
-    protected void onSkinUpdate(ISRPlayer player) {
+    @Subcommand("update")
+    @CommandPermission("%skinUpdate")
+    @Description("%helpSkinUpdate")
+    public void onSkinUpdate(ISRPlayer player) {
         if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
-        onSkinUpdateOther(player, player);
+        onSkinUpdateOther(player, new OnlineISRPlayer(player));
     }
 
-    public void onSkinUpdateOther(ISRCommandSender sender, ISRPlayer player) {
+    @Subcommand("update")
+    @CommandPermission("%skinUpdateOther")
+    @CommandCompletion("@players")
+    @Description("%helpSkinUpdateOther")
+    @Syntax("%SyntaxSkinUpdateOther")
+    public void onSkinUpdateOther(ISRCommandSender sender, OnlineISRPlayer target) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
+        ISRPlayer targetPlayer = target.getPlayer();
+
         plugin.runAsync(() -> {
-            final String senderName = sender.getName();
-            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
-                sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderName));
+            if (checkCoolDown(sender)) {
                 return;
             }
 
-            final String playerName = player.getName();
+            final String playerName = targetPlayer.getName();
             Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
 
             try {
@@ -163,8 +201,8 @@ public abstract class SharedSkinCommand extends BaseCommand {
                 return;
             }
 
-            if (setSkin(sender, player, skin.get(), false, null)) {
-                if (sender == player)
+            if (setSkin(sender, targetPlayer, skin.get(), false, null)) {
+                if (sender.getName().equals(targetPlayer.getName()))
                     sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
                 else
                     sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, playerName);
@@ -172,32 +210,49 @@ public abstract class SharedSkinCommand extends BaseCommand {
         });
     }
 
-    protected void onSkinSet(ISRPlayer player, String[] skin) {
+    @Subcommand("set")
+    @CommandPermission("%skinSet")
+    @CommandCompletion("@skin")
+    @Description("%helpSkinSet")
+    @Syntax("%SyntaxSkinSet")
+    public void onSkinSet(ISRPlayer player, String[] skin) {
         if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         if (skin.length == 0)
             throw new InvalidCommandArgument(true);
 
-        onSkinSetOther(player, player, skin[0], null);
+        onSkinSetOther(player, new OnlineISRPlayer(player), skin[0], null);
     }
 
-    public void onSkinSetOther(ISRCommandSender sender, ISRPlayer player, String skin, SkinVariant skinVariant) {
+    @Subcommand("set")
+    @CommandPermission("%skinSetOther")
+    @CommandCompletion("@players @skin")
+    @Description("%helpSkinSetOther")
+    @Syntax("%SyntaxSkinSetOther")
+    public void onSkinSetOther(ISRCommandSender sender, OnlineISRPlayer target, String skin, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
+        ISRPlayer targetPlayer = target.getPlayer();
         plugin.runAsync(() -> {
             if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(player) || !skin.equalsIgnoreCase(sender.getName()))) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
-            if (setSkin(sender, player, skin, true, skinVariant) && !sender.equalsPlayer(player))
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, player.getName());
+            if (setSkin(sender, targetPlayer, skin, true, skinVariant) && !sender.equalsPlayer(targetPlayer)) {
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, targetPlayer.getName());
+            }
         });
     }
 
-    protected void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
+    @Subcommand("url")
+    @CommandPermission("%skinSetUrl")
+    @CommandCompletion("@skinUrl")
+    @Description("%helpSkinSetUrl")
+    @Syntax("%SyntaxSkinUrl")
+    public void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
         if (!CommandUtil.isAllowedToExecute(player, settings)) return;
 
         if (!C.validUrl(url)) {
@@ -205,20 +260,22 @@ public abstract class SharedSkinCommand extends BaseCommand {
             return;
         }
 
-        onSkinSetOther(player, player, url, skinVariant);
+        onSkinSetOther(player, new OnlineISRPlayer(player), url, skinVariant);
     }
 
     protected void sendHelp(ISRCommandSender sender) {
         if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
 
         String srLine = locale.getMessage(sender, Message.SR_LINE);
-        if (!srLine.isEmpty())
+        if (!srLine.isEmpty()) {
             sender.sendMessage(srLine);
+        }
 
         sender.sendMessage(Message.CUSTOM_HELP_IF_ENABLED, plugin.getVersion());
 
-        if (!srLine.isEmpty())
+        if (!srLine.isEmpty()) {
             sender.sendMessage(srLine);
+        }
     }
 
     protected boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
@@ -235,9 +292,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             return false;
         }
 
-        String senderName = sender.getName();
-        if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderName)) {
-            sender.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(senderName)));
+        if (checkCoolDown(sender)) {
             return false;
         }
 
@@ -256,7 +311,7 @@ public abstract class SharedSkinCommand extends BaseCommand {
             }
 
             // Apply cooldown to sender
-            cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
+            setCoolDown(sender, Config.SKIN_CHANGE_COOLDOWN);
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
@@ -284,7 +339,8 @@ public abstract class SharedSkinCommand extends BaseCommand {
         } else {
             // If skin is not an url, it's a username
             // Apply cooldown to sender
-            cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_CHANGE_COOLDOWN), TimeUnit.SECONDS);
+            setCoolDown(sender, Config.SKIN_CHANGE_COOLDOWN);
+
             try {
                 if (restoreOnFailure) {
                     SkinsRestorerAPI.getApi().setSkinName(playerName, skin);
@@ -303,10 +359,28 @@ public abstract class SharedSkinCommand extends BaseCommand {
         }
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        cooldownStorage.setCooldown(senderName, settings.getProperty(Config.SKIN_ERROR_COOLDOWN), TimeUnit.SECONDS);
+        setCoolDown(sender, Config.SKIN_ERROR_COOLDOWN);
         if (restoreOnFailure) {
             SkinsRestorerAPI.getApi().setSkinName(playerName, oldSkinName);
         }
         return false;
+    }
+
+    private boolean checkCoolDown(ISRCommandSender sender) {
+        if (sender instanceof ISRPlayer) {
+            UUID senderUUID = ((ISRPlayer) sender).getUniqueId();
+            if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderUUID)) {
+                sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void setCoolDown(ISRCommandSender sender, Property<Integer> time) {
+        if (sender instanceof ISRPlayer) {
+            UUID senderUUID = ((ISRPlayer) sender).getUniqueId();
+            cooldownStorage.setCooldown(senderUUID, settings.getProperty(time), TimeUnit.SECONDS);
+        }
     }
 }

@@ -24,6 +24,7 @@ import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.io.*;
 import java.util.Map;
 import java.util.Optional;
@@ -31,10 +32,13 @@ import java.util.function.Function;
 import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor
-public abstract class SharedPluginMessageListener {
-    private final SRLogger logger;
-    private final SkinStorage skinStorage;
-    private final Function<String, Optional<ISRProxyPlayer>> playerGetter;
+public final class SRPluginMessageAdapter {
+    @Inject
+    private SRLogger logger;
+    @Inject
+    private SkinStorage skinStorage;
+    @Inject
+    private Function<String, Optional<ISRProxyPlayer>> playerGetter;
 
     private static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -82,11 +86,13 @@ public abstract class SharedPluginMessageListener {
     }
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
 
-        if (!event.getTag().equals("sr:messagechannel") && !event.getTag().equals("sr:skinchange"))
+        if (!event.getTag().equals("sr:messagechannel") && !event.getTag().equals("sr:skinchange")) {
             return;
+        }
 
         if (!event.isServerConnection()) {
             event.setCancelled(true);
@@ -94,7 +100,6 @@ public abstract class SharedPluginMessageListener {
         }
 
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
-
         try {
             String subChannel = in.readUTF();
             Optional<ISRProxyPlayer> optional = playerGetter.apply(in.readUTF());

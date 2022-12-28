@@ -22,8 +22,10 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import io.papermc.lib.PaperLib;
 import lombok.Getter;
+import lombok.val;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
@@ -32,8 +34,6 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.commands.GUICommand;
-import net.skinsrestorer.bukkit.commands.SkinCommand;
-import net.skinsrestorer.bukkit.commands.SrCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
@@ -42,13 +42,14 @@ import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.commands.OnlineISRPlayer;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.storage.CallableValue;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -57,6 +58,7 @@ import net.skinsrestorer.v1_7.BukkitLegacyProperty;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -68,8 +70,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -161,9 +162,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 
-        injector.provide(OnlinePlayersMethod.class, (CallableValue<Collection<ISRPlayer>>)
-                () -> server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList()));
-
         // Init SkinsGUI click listener even when in ProxyMode
         server.getPluginManager().registerEvents(new InventoryListener(), pluginInstance);
 
@@ -244,8 +242,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             // Init commands
             CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-            manager.registerCommand(injector.getSingleton(SkinCommand.class));
-            manager.registerCommand(injector.newInstance(SrCommand.class));
             manager.registerCommand(injector.newInstance(GUICommand.class));
 
             // Init listener
@@ -460,7 +456,72 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        return new PaperCommandManager(pluginInstance);
+        PaperCommandManager manager = new PaperCommandManager(pluginInstance);
+
+        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
+
+        val playerResolver = manager.getCommandContexts().getResolver(Player.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+            Object playerObject = playerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return wrapper.player((Player) playerObject);
+        });
+
+        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+            Object commandSenderObject = commandSenderResolver.getContext(c);
+            if (commandSenderObject == null) {
+                return null;
+            }
+            return wrapper.commandSender((CommandSender) commandSenderObject);
+        });
+
+
+        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
+        manager.getCommandContexts().registerContext(OnlineISRPlayer.class, c -> {
+            Object playerObject = onlinePlayerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return new OnlineISRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+        });
+
+        return manager;
+    }
+
+    @Override
+    public void reloadPlatformHook() {
+        injector.getSingleton(SkinApplierBukkit.class).setOptFileChecked(false);
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return server.getVersion();
+    }
+
+    @Override
+    public String getProxyMode() {
+        return String.valueOf(proxyMode);
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        try {
+            Map<String, Collection<IProperty>> propertyMap = injector.getSingleton(SkinApplierBukkit.class)
+                    .getPlayerProperties(player.getWrapper().get(Player.class));
+            return new ArrayList<>(propertyMap.get(IProperty.TEXTURES_NAME));
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
+        return server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     private static class WrapperFactoryBukkit implements IWrapperFactory {

@@ -22,31 +22,29 @@ package net.skinsrestorer.bungee;
 import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.CommandManager;
+import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import lombok.Getter;
+import lombok.val;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
+import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.bungee.commands.GUICommand;
-import net.skinsrestorer.bungee.commands.SkinCommand;
-import net.skinsrestorer.bungee.commands.SrCommand;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.injector.GetPlayerMethod;
-import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -56,9 +54,9 @@ import org.bstats.bungeecord.Metrics;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -104,12 +102,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         loadConfig();
         loadLocales();
 
-        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
-        injector.provide(GetPlayerMethod.class, (Function<String, Optional<ISRProxyPlayer>>)
-                name -> Optional.ofNullable(proxy.getPlayer(name)).map(wrapper::player));
-        injector.provide(OnlinePlayersMethod.class, (CallableValue<Collection<ISRPlayer>>)
-                () -> proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList()));
-
         initMineSkinAPI();
 
         // Init storage
@@ -132,21 +124,12 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
-
-        SkinCommand skinCommand = injector.getSingleton(SkinCommand.class);
-        injector.register(SharedSkinCommand.class, skinCommand);
-        manager.registerCommand(skinCommand);
-
-        PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
-        injector.register(SharedPluginMessageListener.class, pluginMessageListener);
-
-        manager.registerCommand(injector.newInstance(SrCommand.class));
-        manager.registerCommand(injector.newInstance(GUICommand.class));
+        manager.registerCommand(injector.newInstance(SharedProxyGUICommand.class));
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");
         proxy.registerChannel("sr:messagechannel");
-        proxy.getPluginManager().registerListener(pluginInstance, pluginMessageListener);
+        proxy.getPluginManager().registerListener(pluginInstance, injector.getSingleton(PluginMessageListener.class));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
@@ -179,7 +162,67 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        return new BungeeCommandManager(pluginInstance);
+        BungeeCommandManager manager = new BungeeCommandManager(pluginInstance);
+
+        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
+
+        val playerResolver = manager.getCommandContexts().getResolver(ProxiedPlayer.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+            Object playerObject = playerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return wrapper.player((ProxiedPlayer) playerObject);
+        });
+
+        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+            Object commandSenderObject = commandSenderResolver.getContext(c);
+            if (commandSenderObject == null) {
+                return null;
+            }
+            return wrapper.commandSender((CommandSender) commandSenderObject);
+        });
+
+        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
+        manager.getCommandContexts().registerContext(OnlineISRPlayer.class, c -> {
+            Object playerObject = onlinePlayerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return new OnlineISRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+        });
+
+        return manager;
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return proxy.getVersion();
+    }
+
+    @Override
+    public String getProxyMode() {
+        return "Bungee-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        List<IProperty> props = injector.getSingleton(SkinApplierBungeeShared.class).getProperties(player.getWrapper().get(ProxiedPlayer.class));
+
+        if (props == null) {
+            return Collections.emptyList();
+        } else {
+            return props.stream()
+                    .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature()))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
+        return proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     private static class WrapperFactoryBungee implements IWrapperFactory {

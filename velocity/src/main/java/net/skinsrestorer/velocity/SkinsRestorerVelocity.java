@@ -21,26 +21,26 @@ package net.skinsrestorer.velocity;
 
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
+import co.aikar.commands.velocity.contexts.OnlinePlayer;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
+import lombok.val;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.injector.GetPlayerMethod;
-import net.skinsrestorer.shared.injector.OnlinePlayersMethod;
+import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
-import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
-import net.skinsrestorer.velocity.command.GUICommand;
-import net.skinsrestorer.velocity.command.SkinCommand;
-import net.skinsrestorer.velocity.command.SrCommand;
 import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.PluginMessageListener;
@@ -52,9 +52,9 @@ import org.slf4j.Logger;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
@@ -89,12 +89,6 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         loadConfig();
         loadLocales();
 
-        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
-        injector.provide(GetPlayerMethod.class, (Function<String, Optional<ISRProxyPlayer>>)
-                name -> proxy.getPlayer(name).map(wrapper::player));
-        injector.provide(OnlinePlayersMethod.class, (CallableValue<Collection<ISRPlayer>>)
-                () -> proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList()));
-
         initMineSkinAPI();
 
         // Init storage
@@ -116,19 +110,12 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
-
-        SkinCommand skinCommand = injector.getSingleton(SkinCommand.class);
-        injector.register(SharedSkinCommand.class, skinCommand);
-        manager.registerCommand(skinCommand);
-        PluginMessageListener pluginMessageListener = injector.getSingleton(PluginMessageListener.class);
-        injector.register(SharedPluginMessageListener.class, pluginMessageListener);
-        manager.registerCommand(injector.newInstance(SrCommand.class));
-        manager.registerCommand(injector.newInstance(GUICommand.class));
+        manager.registerCommand(injector.newInstance(SharedProxyGUICommand.class));
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(pluginInstance, pluginMessageListener);
+        proxy.getEventManager().register(pluginInstance, PluginMessageEvent.class, injector.getSingleton(PluginMessageListener.class));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
@@ -161,7 +148,65 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
     @Override
     protected CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        return new VelocityCommandManager(proxy, pluginInstance);
+        VelocityCommandManager manager = new VelocityCommandManager(proxy, pluginInstance);
+
+        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
+
+        val playerResolver = manager.getCommandContexts().getResolver(Player.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+            Object playerObject = playerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return wrapper.player((Player) playerObject);
+        });
+
+        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
+        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+            Object commandSenderObject = commandSenderResolver.getContext(c);
+            if (commandSenderObject == null) {
+                return null;
+            }
+            return wrapper.commandSender((CommandSource) commandSenderObject);
+        });
+
+        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
+        manager.getCommandContexts().registerContext(OnlineISRPlayer.class, c -> {
+            Object playerObject = onlinePlayerResolver.getContext(c);
+            if (playerObject == null) {
+                return null;
+            }
+            return new OnlineISRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+        });
+
+        return manager;
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return proxy.getVersion().getVersion();
+    }
+
+    @Override
+    public String getProxyMode() {
+        return "Velocity-Plugin";
+    }
+
+    @Override
+    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+        List<GameProfile.Property> prop = player.getWrapper().get(Player.class).getGameProfileProperties();
+
+        if (prop == null) {
+            return Collections.emptyList();
+        }
+
+        return prop.stream().map(VelocityProperty::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<ISRPlayer> getOnlinePlayers() {
+        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
+        return proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     private static class WrapperFactoryVelocity implements IWrapperFactory {

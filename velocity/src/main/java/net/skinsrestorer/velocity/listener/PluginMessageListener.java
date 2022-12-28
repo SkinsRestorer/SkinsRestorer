@@ -19,30 +19,21 @@
  */
 package net.skinsrestorer.velocity.listener;
 
-import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.EventHandler;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
-import net.skinsrestorer.shared.injector.GetPlayerMethod;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.listeners.SRPluginMessageAdapter;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
-import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
-import java.util.Optional;
-import java.util.function.Function;
 
-public class PluginMessageListener extends SharedPluginMessageListener {
+public class PluginMessageListener implements EventHandler<PluginMessageEvent> {
     @Inject
-    public PluginMessageListener(SRLogger logger, SkinStorage skinStorage,
-                                 @GetPlayerMethod Function<String, Optional<ISRProxyPlayer>> playerGetter) {
-        super(logger, skinStorage, playerGetter);
-    }
+    private SRPluginMessageAdapter adapter;
 
-    @Subscribe
-    public void onPluginMessage(PluginMessageEvent event) {
-        handlePluginMessage(new SRPluginMessageEvent() {
+    @Override
+    public void execute(PluginMessageEvent event) {
+        adapter.handlePluginMessage(new SRPluginMessageEvent() {
             @Override
             public boolean isCancelled() {
                 return !event.getResult().isAllowed();

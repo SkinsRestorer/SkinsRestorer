@@ -21,30 +21,49 @@ package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.HelpCommand;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
+import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.listeners.SharedPluginMessageListener;
+import net.skinsrestorer.shared.listeners.SRPluginMessageAdapter;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 
-@RequiredArgsConstructor
-public abstract class SharedProxyGUICommand extends BaseCommand {
-    private final CooldownStorage cooldownStorage;
-    private final SharedPluginMessageListener pluginMessageListener;
+import javax.inject.Inject;
 
+@CommandAlias("skins")
+@CommandPermission("%skins")
+@RequiredArgsConstructor
+@SuppressWarnings("unused")
+public class SharedProxyGUICommand extends BaseCommand {
+    @Inject
+    private CooldownStorage cooldownStorage;
+    @Inject
+    private SRPluginMessageAdapter pluginMessageListener;
+
+    @HelpCommand
     protected void onHelp(ISRCommandSender sender, CommandHelp help) {
         sender.sendMessage("SkinsRestorer Help");
         help.showHelp();
     }
 
-    protected void onDefault(ISRProxyPlayer player) {
-        if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getName())) {
-            player.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(player.getName())));
+    @Default
+    @CommandPermission("%skins")
+    protected void onDefault(ISRPlayer player) {
+        if (!(player instanceof ISRProxyPlayer)) {
+            throw new IllegalStateException("Player is not a proxy player");
+        }
+
+        if (!player.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(player.getUniqueId())) {
+            player.sendMessage(Message.SKIN_COOLDOWN, String.valueOf(cooldownStorage.getCooldownSeconds(player.getUniqueId())));
             return;
         }
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        pluginMessageListener.sendPage(0, player);
+        pluginMessageListener.sendPage(0, (ISRProxyPlayer) player);
     }
 }
