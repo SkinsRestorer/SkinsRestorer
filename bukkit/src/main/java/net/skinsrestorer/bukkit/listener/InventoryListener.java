@@ -48,11 +48,12 @@ public class InventoryListener implements Listener {
             }
         } catch (NoSuchMethodError ignored) {
             // Bukkit 1.8.8
-            if (event.getSlotType() != InventoryType.SlotType.CONTAINER)
+            if (event.getSlotType() != InventoryType.SlotType.CONTAINER) {
                 return;
+            }
 
             Inventory destInvent = event.getInventory();
-            Integer slotClicked = event.getRawSlot();
+            int slotClicked = event.getRawSlot();
             if (slotClicked < destInvent.getSize()) { // Check if slot clicked was container
                 InventoryHolder holder = destInvent.getHolder();
                 if (holder instanceof SkinsGUI) {

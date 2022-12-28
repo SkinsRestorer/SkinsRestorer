@@ -393,7 +393,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             return;
         }
 
-        UpdateDownloaderGithub updateDownloader = new UpdateDownloaderGithub(this, updateChecker, logger, server);
+        UpdateDownloaderGithub updateDownloader = injector.getSingleton(UpdateDownloaderGithub.class);
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
