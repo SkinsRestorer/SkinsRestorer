@@ -27,7 +27,7 @@ import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
@@ -53,7 +53,7 @@ public class GUICommand extends BaseCommand {
     @Inject
     private SkinStorage skinStorage;
     @Inject
-    private SharedSkinCommand skinCommand;
+    private SkinCommand skinCommand;
     @Inject
     private WrapperBukkit wrapper;
 

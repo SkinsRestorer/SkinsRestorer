@@ -39,7 +39,7 @@ import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.commands.OnlineISRPlayer;
-import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
+import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
@@ -124,7 +124,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
-        manager.registerCommand(injector.newInstance(SharedProxyGUICommand.class));
+        manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");

@@ -52,7 +52,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @SuppressWarnings("unused")
-public class SharedSkinCommand extends BaseCommand {
+public class SkinCommand extends BaseCommand {
     @Inject
     private ISRPlugin plugin;
     @Inject

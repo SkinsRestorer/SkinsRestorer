@@ -39,7 +39,7 @@ import javax.inject.Inject;
 @CommandPermission("%skins")
 @RequiredArgsConstructor
 @SuppressWarnings("unused")
-public class SharedProxyGUICommand extends BaseCommand {
+public class ProxyGUICommand extends BaseCommand {
     @Inject
     private CooldownStorage cooldownStorage;
     @Inject

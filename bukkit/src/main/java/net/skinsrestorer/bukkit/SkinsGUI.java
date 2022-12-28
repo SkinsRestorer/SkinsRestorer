@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
@@ -216,7 +216,7 @@ public class SkinsGUI implements InventoryHolder {
     @RequiredArgsConstructor
     public static class ServerGUIActions implements Consumer<EventInfo> {
         private final ISRServerPlugin plugin;
-        private final SharedSkinCommand skinCommand;
+        private final SkinCommand skinCommand;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
         private final Server server;

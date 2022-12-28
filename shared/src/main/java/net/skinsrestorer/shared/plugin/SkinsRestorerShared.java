@@ -31,8 +31,8 @@ import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.commands.SharedSRCommand;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.commands.SRCommand;
+import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.MineSkinConfig;
@@ -109,8 +109,8 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
 
         runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
-        manager.registerCommand(injector.getSingleton(SharedSkinCommand.class));
-        manager.registerCommand(injector.getSingleton(SharedSRCommand.class));
+        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        manager.registerCommand(injector.getSingleton(SRCommand.class));
 
         return manager;
     }

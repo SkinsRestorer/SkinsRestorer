@@ -33,7 +33,7 @@ import lombok.val;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.OnlineISRPlayer;
-import net.skinsrestorer.shared.commands.SharedProxyGUICommand;
+import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
@@ -110,7 +110,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
-        manager.registerCommand(injector.newInstance(SharedProxyGUICommand.class));
+        manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));

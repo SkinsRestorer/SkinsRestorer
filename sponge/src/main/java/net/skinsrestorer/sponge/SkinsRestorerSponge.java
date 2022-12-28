@@ -28,8 +28,8 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.commands.OnlineISRPlayer;
-import net.skinsrestorer.shared.commands.SharedSRCommand;
-import net.skinsrestorer.shared.commands.SharedSkinCommand;
+import net.skinsrestorer.shared.commands.SRCommand;
+import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
@@ -109,8 +109,8 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
 
-        manager.registerCommand(injector.getSingleton(SharedSkinCommand.class));
-        manager.registerCommand(injector.newInstance(SharedSRCommand.class));
+        manager.registerCommand(injector.getSingleton(SkinCommand.class));
+        manager.registerCommand(injector.newInstance(SRCommand.class));
 
         // Run connection check
         runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
