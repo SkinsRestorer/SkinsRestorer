@@ -27,15 +27,15 @@ public class MetricsCounter {
     private final Map<Service, AtomicInteger> map = new EnumMap<>(Service.class);
 
     public void increment(Service service) {
-        map.putIfAbsent(service, new AtomicInteger());
-
-        map.get(service).incrementAndGet();
+        getOrCreate(service).incrementAndGet();
     }
 
     public int collect(Service service) {
-        map.putIfAbsent(service, new AtomicInteger());
+        return getOrCreate(service).getAndSet(0);
+    }
 
-        return map.get(service).getAndSet(0);
+    private AtomicInteger getOrCreate(Service service) {
+        return map.compute(service, (k, v) -> v == null ? new AtomicInteger() : v);
     }
 
     public enum Service {

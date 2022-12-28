@@ -33,6 +33,7 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -50,7 +51,7 @@ public class Mapping1_19_3 implements IMapping {
             final ServerPlayer entityPlayer = (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
 
             ClientboundPlayerInfoRemovePacket removePlayer = new ClientboundPlayerInfoRemovePacket(ImmutableList.of(entityPlayer.getUUID()));
-            ClientboundPlayerInfoUpdatePacket addPlayer = new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, entityPlayer);
+            ClientboundPlayerInfoUpdatePacket addPlayer = ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(entityPlayer));
 
             // Slowly getting from object to object till we get what is needed for
             // the respawn packet

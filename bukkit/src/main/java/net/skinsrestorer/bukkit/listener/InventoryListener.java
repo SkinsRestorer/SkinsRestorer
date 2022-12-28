@@ -61,8 +61,9 @@ public class InventoryListener implements Listener {
                     } catch (Exception e) { // Ensure event always cancels
                         e.printStackTrace();
                     }
+
+                    event.setCancelled(true);
                 }
-                event.setCancelled(true);
             }
         }
     }
