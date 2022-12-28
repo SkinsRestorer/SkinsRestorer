@@ -27,11 +27,11 @@ import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
-import java.io.*;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.zip.GZIPOutputStream;
 
 @RequiredArgsConstructor
 public final class SRPluginMessageAdapter {

@@ -51,7 +51,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @SuppressWarnings("unused")
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-@Conditions("proxy-server")
+@Conditions("allowed-server")
 public class SRCommand extends BaseCommand {
     @Inject
     private ISRPlugin plugin;

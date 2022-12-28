@@ -41,11 +41,6 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
         injector.register(ISRProxyPlugin.class, this);
     }
 
-    @Override
-    protected boolean isProxyMode() {
-        return false;
-    }
-
     public static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
@@ -89,5 +84,10 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
         }
 
         player.sendDataToServer("sr:messagechannel", data);
+    }
+
+    @Override
+    protected boolean isProxyMode() {
+        return false;
     }
 }

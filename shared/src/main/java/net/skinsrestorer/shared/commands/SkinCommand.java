@@ -53,7 +53,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @SuppressWarnings("unused")
 @CommandAlias("skin")
 @CommandPermission("%skin")
-@Conditions("proxy-server")
+@Conditions("allowed-server")
 public class SkinCommand extends BaseCommand {
     @Inject
     private ISRPlugin plugin;

@@ -20,7 +20,10 @@
 package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Conditions;
+import co.aikar.commands.annotation.Default;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
@@ -33,7 +36,7 @@ import javax.inject.Inject;
 @SuppressWarnings("unused")
 @CommandAlias("skins")
 @CommandPermission("%skins")
-@Conditions("cooldown|proxy-server")
+@Conditions("cooldown|allowed-server")
 public class ProxyGUICommand extends BaseCommand {
     @Inject
     private SRLogger logger;
