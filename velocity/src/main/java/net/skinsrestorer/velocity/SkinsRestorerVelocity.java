@@ -37,6 +37,7 @@ import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
@@ -54,6 +55,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -212,6 +214,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     public Collection<ISRPlayer> getOnlinePlayers() {
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
         return proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ISRProxyPlayer> getPlayer(String name) {
+        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 
     private static class WrapperFactoryVelocity implements IWrapperFactory {

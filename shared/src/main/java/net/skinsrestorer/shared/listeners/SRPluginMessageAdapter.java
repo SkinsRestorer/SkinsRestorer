@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.listeners;
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -31,7 +32,6 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public final class SRPluginMessageAdapter {
@@ -40,7 +40,7 @@ public final class SRPluginMessageAdapter {
     @Inject
     private SkinStorage skinStorage;
     @Inject
-    private Function<String, Optional<ISRProxyPlayer>> playerGetter;
+    private ISRProxyPlugin plugin;
     @Inject
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
 
@@ -61,7 +61,7 @@ public final class SRPluginMessageAdapter {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
         try {
             String subChannel = in.readUTF();
-            Optional<ISRProxyPlayer> optional = playerGetter.apply(in.readUTF());
+            Optional<ISRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
 
             if (!optional.isPresent()) {
                 return;

@@ -43,6 +43,7 @@ import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -56,6 +57,7 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -228,6 +230,16 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     public Collection<ISRPlayer> getOnlinePlayers() {
         WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
         return proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ISRProxyPlayer> getPlayer(String name) {
+        ProxiedPlayer player = proxy.getPlayer(name);
+        if (player == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(injector.getSingleton(WrapperBungee.class).player(player));
+        }
     }
 
     private static class WrapperFactoryBungee implements IWrapperFactory {
