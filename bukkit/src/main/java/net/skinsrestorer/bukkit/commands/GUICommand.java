@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
@@ -38,14 +39,13 @@ import org.bukkit.inventory.Inventory;
 
 import javax.inject.Inject;
 
+@SuppressWarnings({"unused"})
 @CommandAlias("skins")
 @CommandPermission("%skins")
-@SuppressWarnings({"unused"})
+@Conditions("cooldown")
 public class GUICommand extends BaseCommand {
     @Inject
     private SkinsRestorerBukkit plugin;
-    @Inject
-    private CooldownStorage cooldownStorage;
     @Inject
     private SkinsRestorerLocale locale;
     @Inject
@@ -53,22 +53,14 @@ public class GUICommand extends BaseCommand {
     @Inject
     private SkinStorage skinStorage;
     @Inject
-    private SkinCommand skinCommand;
-    @Inject
-    private WrapperBukkit wrapper;
+    private SkinsGUI.ServerGUIActions serverGUIActions;
 
     @Default
-    @CommandPermission("%skins")
     public void onDefault(ISRPlayer srPlayer) {
         plugin.runAsync(() -> {
-            if (!srPlayer.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(srPlayer.getUniqueId())) {
-                srPlayer.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(srPlayer.getUniqueId()));
-                return;
-            }
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ServerGUIActions(plugin, skinCommand, locale, logger, plugin.getServer(), skinStorage, wrapper),
-                    locale, logger, plugin.getServer(), skinStorage, srPlayer, 0);
+            Inventory inventory = SkinsGUI.createGUI(serverGUIActions, locale, logger, plugin.getServer(), skinStorage, srPlayer, 0);
             plugin.runSync(() -> srPlayer.getWrapper().get(Player.class).openInventory(inventory));
         });
     }

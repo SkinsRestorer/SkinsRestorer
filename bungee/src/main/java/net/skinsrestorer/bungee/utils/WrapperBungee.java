@@ -101,11 +101,6 @@ public class WrapperBungee {
             }
 
             @Override
-            public void forceExecuteCommand(String command) {
-                ProxyServer.getInstance().getPluginManager().dispatchCommand(player, command);
-            }
-
-            @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);
             }

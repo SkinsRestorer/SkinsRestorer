@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
+import co.aikar.commands.CommandManager;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.AccessLevel;
@@ -43,6 +44,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import javax.inject.Inject;
 import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -215,13 +217,20 @@ public class SkinsGUI implements InventoryHolder {
 
     @RequiredArgsConstructor
     public static class ServerGUIActions implements Consumer<EventInfo> {
-        private final ISRServerPlugin plugin;
-        private final SkinCommand skinCommand;
-        private final SkinsRestorerLocale locale;
-        private final SRLogger logger;
-        private final Server server;
-        private final SkinStorage skinStorage;
-        private final WrapperBukkit wrapper;
+        @Inject
+        private Server server;
+        @Inject
+        private ISRServerPlugin plugin;
+        @Inject
+        private SkinsRestorerLocale locale;
+        @Inject
+        private SRLogger logger;
+        @Inject
+        private SkinStorage skinStorage;
+        @Inject
+        private WrapperBukkit wrapper;
+        @Inject
+        private CommandManager<?, ?, ?, ?, ?, ?> commandManager;
 
         @Override
         public void accept(EventInfo event) {
@@ -229,12 +238,14 @@ public class SkinsGUI implements InventoryHolder {
                 case PLAYER_HEAD:
                     plugin.runAsync(() -> {
                         String skin = event.getItemMeta().getDisplayName();
-                        skinCommand.onSkinSetShort(wrapper.player(event.getPlayer()), skin);
+                        commandManager.getRootCommand("skin").execute(
+                                commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"set", skin});
                     });
                     event.getPlayer().closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    skinCommand.onSkinClear(wrapper.player(event.getPlayer()));
+                    commandManager.getRootCommand("skin").execute(
+                            commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"clear"});
                     event.getPlayer().closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:

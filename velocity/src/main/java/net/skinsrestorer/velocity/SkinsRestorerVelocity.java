@@ -32,7 +32,7 @@ import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
@@ -180,6 +180,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         });
 
         return manager;
+    }
+
+    @Override
+    protected ISRCommandSender convertCommandSender(Object sender) {
+        return injector.getSingleton(WrapperVelocity.class).commandSender((CommandSource) sender);
     }
 
     @Override

@@ -27,7 +27,7 @@ import lombok.val;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -180,6 +180,11 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         });
 
         return manager;
+    }
+
+    @Override
+    protected ISRCommandSender convertCommandSender(Object sender) {
+        return injector.getSingleton(WrapperSponge.class).commandSender((CommandSource) sender);
     }
 
     @Override

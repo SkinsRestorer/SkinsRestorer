@@ -22,9 +22,18 @@ package net.skinsrestorer.shared.plugin;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements ISRProxyPlugin {
     protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
@@ -35,5 +44,50 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
     @Override
     protected boolean isProxyMode() {
         return false;
+    }
+
+    public static byte[] convertToByteArray(Map<String, String> map) {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+
+        try {
+            try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
+                ObjectOutputStream out = new ObjectOutputStream(gzipOut);
+                out.writeObject(map);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return byteOut.toByteArray();
+    }
+
+    public static void sendPage(int page, ISRProxyPlayer player, SRLogger logger, SkinStorage skinStorage) {
+        int skinNumber = 36 * page;
+
+        byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+
+        try {
+            out.writeUTF("returnSkinsV2");
+            out.writeUTF(player.getName());
+            out.writeInt(page);
+
+            out.writeShort(ba.length);
+            out.write(ba);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+        byte[] data = b.toByteArray();
+        logger.debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
+        // Payload may not be larger than 32767 bytes -18 from channel name
+        if (data.length > 32_749) {
+            logger.warning("Too many bytes GUI... canceling GUI..");
+            return;
+        }
+
+        player.sendDataToServer("sr:messagechannel", data);
     }
 }

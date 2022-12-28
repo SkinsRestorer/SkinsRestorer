@@ -42,7 +42,7 @@ import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.commands.OnlineISRPlayer;
+import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
@@ -174,9 +174,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
             server.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:skinchange");
             server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:skinchange", (channel, player, message) -> {
-                if (!channel.equals("sr:skinchange"))
-                    return;
-
                 runAsync(() -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
@@ -186,7 +183,8 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
                             try {
                                 skinApplierBukkit.applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-                            } catch (IOException ignored) {
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
 
                             skinApplierBukkit.updateSkin(player);
@@ -199,9 +197,6 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
             server.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:messagechannel");
             server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:messagechannel", (channel, channelPlayer, message) -> {
-                if (!channel.equals("sr:messagechannel"))
-                    return;
-
                 runAsync(() -> {
                     DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
@@ -489,6 +484,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         });
 
         return manager;
+    }
+
+    @Override
+    protected ISRCommandSender convertCommandSender(Object sender) {
+        return injector.getSingleton(WrapperBukkit.class).commandSender((CommandSender) sender);
     }
 
     @Override

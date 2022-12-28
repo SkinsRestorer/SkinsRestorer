@@ -48,9 +48,10 @@ import java.util.List;
 
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
+@SuppressWarnings("unused")
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
-@SuppressWarnings("unused")
+@Conditions("proxy-server")
 public class SRCommand extends BaseCommand {
     @Inject
     private ISRPlugin plugin;
@@ -65,18 +66,14 @@ public class SRCommand extends BaseCommand {
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
-    protected void onHelp(ISRCommandSender sender, CommandHelp help) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onHelp(ISRCommandSender sender, CommandHelp help) {
         help.showHelp();
     }
 
     @Subcommand("reload")
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
-    protected void onReload(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onReload(ISRCommandSender sender) {
         plugin.reloadPlatformHook();
         plugin.loadConfig();
         plugin.loadLocales();
@@ -88,9 +85,7 @@ public class SRCommand extends BaseCommand {
     @Subcommand("status")
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
-    protected void onStatus(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onStatus(ISRCommandSender sender) {
         plugin.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
 
@@ -135,9 +130,7 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
-    protected void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onDrop(ISRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         plugin.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
@@ -157,9 +150,7 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrProps")
     @Syntax(" <target>")
-    protected void onProps(ISRCommandSender sender, ISRPlayer target) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onProps(ISRCommandSender sender, ISRPlayer target) {
         plugin.runAsync(() -> {
             try {
                 List<IProperty> properties = plugin.getPropertiesOfPlayer(target);
@@ -203,9 +194,7 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
-    protected void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onApplySkin(ISRCommandSender sender, ISRPlayer target) {
         plugin.runAsync(() -> {
             try {
                 SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
@@ -221,9 +210,7 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [classic/slim]")
-    protected void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onCreateCustom(ISRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
         plugin.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
@@ -243,9 +230,7 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("@Skin")
     @Description("Set the skin to every player")
     @Syntax(" <Skin / Url> [classic/slim]")
-    protected void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
                 sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
@@ -281,9 +266,7 @@ public class SRCommand extends BaseCommand {
 
     @Subcommand("applyskinall")
     @Description("Re-apply the skin for every player")
-    protected void onApplySkinAll(ISRCommandSender sender) {
-        if (!CommandUtil.isAllowedToExecute(sender, settings)) return;
-
+    private void onApplySkinAll(ISRCommandSender sender) {
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
                 sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
@@ -304,7 +287,7 @@ public class SRCommand extends BaseCommand {
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold>")
-    protected void onPurgeOldData(ISRCommandSender sender, int days) {
+    private void onPurgeOldData(ISRCommandSender sender, int days) {
         plugin.runAsync(() -> {
             if (!sender.isConsole()) {
                 sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
@@ -318,7 +301,7 @@ public class SRCommand extends BaseCommand {
         });
     }
 
-    protected enum PlayerOrSkin {
+    public enum PlayerOrSkin {
         PLAYER,
         SKIN,
     }

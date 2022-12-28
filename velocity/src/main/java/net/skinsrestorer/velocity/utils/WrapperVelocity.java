@@ -106,11 +106,6 @@ public class WrapperVelocity {
             }
 
             @Override
-            public void forceExecuteCommand(String command) {
-                plugin.getProxy().getCommandManager().executeAsync(player, command);
-            }
-
-            @Override
             public PlayerWrapper getWrapper() {
                 return new PlayerWrapper(player);
             }

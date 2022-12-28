@@ -19,8 +19,10 @@
  */
 package net.skinsrestorer.shared.listeners;
 
+import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -39,51 +41,8 @@ public final class SRPluginMessageAdapter {
     private SkinStorage skinStorage;
     @Inject
     private Function<String, Optional<ISRProxyPlayer>> playerGetter;
-
-    private static byte[] convertToByteArray(Map<String, String> map) {
-        ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-
-        try {
-            try (GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut)) {
-                ObjectOutputStream out = new ObjectOutputStream(gzipOut);
-                out.writeObject(map);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return byteOut.toByteArray();
-    }
-
-    public void sendPage(int page, ISRProxyPlayer player) {
-        int skinNumber = 36 * page;
-
-        byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));
-
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-
-        try {
-            out.writeUTF("returnSkinsV2");
-            out.writeUTF(player.getName());
-            out.writeInt(page);
-
-            out.writeShort(ba.length);
-            out.write(ba);
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        byte[] data = b.toByteArray();
-        logger.debug(String.format("Sending skins to %s (%d bytes)", player.getName(), data.length));
-        // Payload may not be larger than 32767 bytes -18 from channel name
-        if (data.length > 32749) {
-            logger.warning("Too many bytes GUI... canceling GUI..");
-            return;
-        }
-
-        player.sendDataToServer("sr:messagechannel", data);
-    }
+    @Inject
+    private CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
         if (event.isCancelled()) {
@@ -104,8 +63,9 @@ public final class SRPluginMessageAdapter {
             String subChannel = in.readUTF();
             Optional<ISRProxyPlayer> optional = playerGetter.apply(in.readUTF());
 
-            if (!optional.isPresent())
+            if (!optional.isPresent()) {
                 return;
+            }
 
             ISRProxyPlayer player = optional.get();
 
@@ -113,17 +73,16 @@ public final class SRPluginMessageAdapter {
                 // sr:messagechannel
                 case "getSkins":
                     int page = Math.min(in.readInt(), 999);
-                    sendPage(page, player);
+                    SkinsRestorerProxyShared.sendPage(page, player, logger, skinStorage);
                     break;
                 case "clearSkin":
-                    player.forceExecuteCommand("skin clear");
-                    break;
-                case "updateSkin":
-                    player.forceExecuteCommand("skin update");
+                    manager.getRootCommand("skin").execute(
+                            manager.getCommandIssuer(player.getWrapper().get(Object.class)), "skin", new String[]{"clear"});
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
-                    player.forceExecuteCommand("skin set " + skin);
+                    manager.getRootCommand("skin").execute(
+                            manager.getCommandIssuer(player.getWrapper().get(Object.class)), "skin", new String[]{"set", skin});
                     break;
                 default:
                     break;

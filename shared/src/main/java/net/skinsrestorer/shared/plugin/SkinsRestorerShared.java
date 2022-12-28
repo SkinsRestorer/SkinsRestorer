@@ -24,6 +24,7 @@ import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
 import co.aikar.commands.CommandManager;
+import co.aikar.commands.ConditionFailedException;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -38,9 +39,7 @@ import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.MineSkinConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRForeign;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -67,6 +66,8 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -104,20 +105,68 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
 
     protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands() {
         this.manager = createCommandManager();
+        injector.register(CommandManager.class, manager);
+
+        registerConditions();
 
         prepareACF();
 
         runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
-        manager.registerCommand(injector.getSingleton(SkinCommand.class));
-        manager.registerCommand(injector.getSingleton(SRCommand.class));
+        manager.registerCommand(injector.newInstance(SkinCommand.class));
+        manager.registerCommand(injector.newInstance(SRCommand.class));
 
         return manager;
     }
 
     protected abstract CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 
+    private void registerConditions() {
+        SettingsManager settings = injector.getSingleton(SettingsManager.class);
+        CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
+
+        manager.getCommandConditions().addCondition("allowed-server", context -> {
+            ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+            if (!(sender instanceof ISRProxyPlayer)) {
+                return;
+            }
+
+            if (!settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED)) {
+                return;
+            }
+
+            Optional<String> optional = ((ISRProxyPlayer) sender).getCurrentServer();
+            if (!optional.isPresent()) {
+                if (!settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
+                    throw new ConditionFailedException("You are not on a server!");
+                }
+                return;
+            }
+
+            String server = optional.get();
+            boolean inList = settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS).contains(server);
+            boolean shouldBlock = settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
+
+            if (shouldBlock) {
+                throw new ConditionFailedException("You are not allowed to use this command on this server!");
+            }
+        });
+
+        manager.getCommandConditions().addCondition("cooldown", context -> {
+            ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+            if (sender instanceof ISRPlayer) {
+                UUID senderUUID = ((ISRPlayer) sender).getUniqueId();
+                if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderUUID)) {
+                    sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
+                    throw new ConditionFailedException();
+                }
+            }
+        });
+    }
+
     protected abstract boolean isProxyMode();
+
+    protected abstract ISRCommandSender convertCommandSender(Object sender);
 
     public void checkUpdate(boolean showUpToDate) {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
