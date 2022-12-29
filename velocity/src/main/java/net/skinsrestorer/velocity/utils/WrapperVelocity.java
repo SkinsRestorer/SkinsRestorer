@@ -91,7 +91,12 @@ public class WrapperVelocity {
         return new ISRProxyPlayer() {
             @Override
             public Locale getLocale() {
-                return player.getEffectiveLocale();
+                Locale playerLocale = player.getEffectiveLocale();
+                if (playerLocale == null) {
+                    return LocaleParser.getDefaultLocale();
+                }
+
+                return playerLocale;
             }
 
             @Override

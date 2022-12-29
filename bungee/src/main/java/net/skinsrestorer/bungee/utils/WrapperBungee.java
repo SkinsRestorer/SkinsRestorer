@@ -86,7 +86,12 @@ public class WrapperBungee {
         return new ISRProxyPlayer() {
             @Override
             public Locale getLocale() {
-                return player.getLocale();
+                Locale playerLocale = player.getLocale();
+                if (playerLocale == null) {
+                    return LocaleParser.getDefaultLocale();
+                }
+
+                return playerLocale;
             }
 
             @Override
