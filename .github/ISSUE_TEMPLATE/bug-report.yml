@@ -1,6 +1,6 @@
 name: 🐞 Bug
 description: File a bug/issue report
-labels: [🐛 bug]
+labels: ["type: :bug: bug"]
 
 body:
   - type: checkboxes
