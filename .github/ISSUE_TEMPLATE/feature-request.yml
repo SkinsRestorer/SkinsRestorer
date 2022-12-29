@@ -11,7 +11,7 @@ body:
 
         Tip: You can go to the [GitHub issue tab](https://github.com/SkinsRestorer/SkinsRestorerX/labels/type%3A%20%3Abulb%3A%20enhancement) for a list of open feature requests
       options:
-      - label: I have searched the existing issues
+      - label: I have searched the existing feature requests
         required: true
   - type: textarea
     attributes:
