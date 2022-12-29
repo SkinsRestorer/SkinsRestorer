@@ -91,7 +91,6 @@ body:
       description: |
         What client are you using to start Minecraft? Vanilla Launcher, MultiMC Cracked, TLauncher, etc.
         TLaunchers built-in skin mod is known to cause issues with SkinsRestorer.
-      render: markdown
     validations:
       required: false
   - type: input
