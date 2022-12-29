@@ -209,7 +209,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public String getProxyMode() {
+    public String getProxyModeInfo() {
         return "Bungee-Plugin";
     }
 

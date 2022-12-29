@@ -118,7 +118,7 @@ public class SRCommand extends BaseCommand {
             statusMessages.add(breakLine);
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
             statusMessages.add("§7Server: §6" + plugin.getPlatformVersion());
-            statusMessages.add("§7ProxyMode: §6" + plugin.getProxyMode());
+            statusMessages.add("§7ProxyMode: §6" + plugin.getProxyModeInfo());
             statusMessages.add("§7Finished checking services.");
             statusMessages.add(breakLine);
             statusMessages.forEach(sender::sendMessage);

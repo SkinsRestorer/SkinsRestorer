@@ -56,7 +56,7 @@ public interface ISRPlugin {
 
     String getPlatformVersion();
 
-    String getProxyMode();
+    String getProxyModeInfo();
 
     List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
 

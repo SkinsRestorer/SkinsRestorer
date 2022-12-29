@@ -193,7 +193,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     @Override
-    public String getProxyMode() {
+    public String getProxyModeInfo() {
         return "Sponge-Plugin";
     }
 

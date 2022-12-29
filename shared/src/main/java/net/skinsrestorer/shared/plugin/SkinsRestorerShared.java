@@ -46,7 +46,6 @@ import net.skinsrestorer.shared.storage.MySQL;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
-import net.skinsrestorer.shared.update.UpdateChecker;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
@@ -74,7 +73,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class SkinsRestorerShared implements ISRPlugin {
     protected final boolean unitTest = System.getProperty("sr.unit.test") != null;
     protected final SRLogger logger;
-    protected final UpdateChecker updateChecker;
+    protected final UpdateCheckerGitHub updateChecker;
     @Getter
     protected final Path dataFolder;
     @Getter
@@ -99,7 +98,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         injector.register(IPropertyFactory.class, propertyFactory);
 
         this.version = version;
-        this.updateChecker = new UpdateCheckerGitHub(2124, version, logger, updateCheckerAgent);
+        this.updateChecker = new UpdateCheckerGitHub(logger, updateCheckerAgent, this);
         this.dataFolder = dataFolder;
     }
 
@@ -164,8 +163,6 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         });
     }
 
-    protected abstract boolean isProxyMode();
-
     protected abstract ISRCommandSender convertCommandSender(Object sender);
 
     public void checkUpdate(boolean showUpToDate) {
@@ -173,7 +170,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
                 outdated = true;
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, isProxyMode())
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version)
                         .forEach(logger::info);
             }
 
@@ -182,7 +179,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(version, isProxyMode()).forEach(logger::info);
+                updateChecker.getUpToDateMessages().forEach(logger::info);
             }
         }));
     }

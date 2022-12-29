@@ -24,7 +24,7 @@ import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
-import net.skinsrestorer.shared.update.UpdateChecker;
+import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,16 +33,13 @@ import javax.inject.Inject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -51,7 +48,7 @@ public class UpdateDownloaderGithub {
     @Inject
     private SkinsRestorerBukkit plugin;
     @Inject
-    private UpdateChecker updateChecker;
+    private UpdateCheckerGitHub updateChecker;
     @Inject
     private SRLogger logger;
     @Inject
@@ -93,14 +90,14 @@ public class UpdateDownloaderGithub {
     }
 
     public boolean downloadUpdate() {
-        GitHubReleaseInfo releaseInfo = (GitHubReleaseInfo) updateChecker.getLatestResourceInfo();
+        GitHubReleaseInfo releaseInfo = updateChecker.getReleaseInfo();
 
         if (releaseInfo == null) {
             failReason = DownloadFailReason.NOT_CHECKED;
             return false; // Update is not yet checked
         }
 
-        if (!updateChecker.isVersionNewer(updateChecker.getCurrentVersion(), releaseInfo.tag_name)) {
+        if (!updateChecker.isVersionNewer(plugin.getVersion(), releaseInfo.tag_name)) {
             failReason = DownloadFailReason.NO_UPDATE;
             return false; // Version is no update
         }

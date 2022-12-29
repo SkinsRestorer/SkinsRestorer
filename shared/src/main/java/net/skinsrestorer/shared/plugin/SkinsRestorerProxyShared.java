@@ -85,9 +85,4 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
 
         player.sendDataToServer("sr:messagechannel", data);
     }
-
-    @Override
-    protected boolean isProxyMode() {
-        return false;
-    }
 }

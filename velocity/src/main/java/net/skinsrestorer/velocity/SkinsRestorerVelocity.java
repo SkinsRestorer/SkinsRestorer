@@ -195,7 +195,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public String getProxyMode() {
+    public String getProxyModeInfo() {
         return "Velocity-Plugin";
     }
 

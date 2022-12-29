@@ -47,6 +47,7 @@ import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
@@ -388,7 +389,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     public void checkUpdate(boolean showUpToDate) {
         if (unitTest) {
             if (showUpToDate) {
-                updateChecker.getUpToDateMessages(version, proxyMode).forEach(logger::info);
+                updateChecker.getUpToDateMessages().forEach(logger::info);
             }
             return;
         }
@@ -411,7 +412,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                     }
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, proxyMode, true, failReason).forEach(logger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, version, true, failReason).forEach(logger::info);
             }
 
             @Override
@@ -419,7 +420,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 if (!showUpToDate)
                     return;
 
-                updateChecker.getUpToDateMessages(version, proxyMode).forEach(logger::info);
+                updateChecker.getUpToDateMessages().forEach(logger::info);
             }
         }));
     }
@@ -502,7 +503,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
-    public String getProxyMode() {
+    public String getProxyModeInfo() {
         return String.valueOf(proxyMode);
     }
 
