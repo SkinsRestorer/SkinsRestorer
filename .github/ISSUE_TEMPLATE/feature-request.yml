@@ -1,0 +1,22 @@
+name: 💡 Feature Request
+description: Request a feature/enhancement
+labels: ["type: :bulb: enhancement"]
+
+body:
+  - type: checkboxes
+    attributes:
+      label: Is there an existing feature request for this?
+      description: |
+        Please search to see if an feature request like this already exists.
+
+        Tip: You can go to the [GitHub issue tab](https://github.com/SkinsRestorer/SkinsRestorerX/labels/type%3A%20%3Abulb%3A%20enhancement) for a list of open feature requests
+      options:
+      - label: I have searched the existing issues
+        required: true
+  - type: textarea
+    attributes:
+      label: Describe your feature request
+      description: What do you want added to SkinsRestorer?
+      placeholder: "I want x feature added to SkinsRestorer"
+    validations:
+      required: true
