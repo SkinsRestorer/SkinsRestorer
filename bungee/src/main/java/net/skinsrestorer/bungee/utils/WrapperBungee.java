@@ -88,7 +88,7 @@ public class WrapperBungee {
             public Locale getLocale() {
                 Locale playerLocale = player.getLocale();
                 if (playerLocale == null) {
-                    return LocaleParser.getDefaultLocale();
+                    return settings.getProperty(Config.LANGUAGE);
                 }
 
                 return playerLocale;

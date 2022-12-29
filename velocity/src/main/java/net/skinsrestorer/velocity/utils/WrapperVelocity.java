@@ -93,7 +93,7 @@ public class WrapperVelocity {
             public Locale getLocale() {
                 Locale playerLocale = player.getEffectiveLocale();
                 if (playerLocale == null) {
-                    return LocaleParser.getDefaultLocale();
+                    return settings.getProperty(Config.LANGUAGE);
                 }
 
                 return playerLocale;
