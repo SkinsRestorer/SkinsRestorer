@@ -79,11 +79,6 @@ public class WrapperVelocity {
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
             }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleCommandSource;
-            }
         };
     }
 

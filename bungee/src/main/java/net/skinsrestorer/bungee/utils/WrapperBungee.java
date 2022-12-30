@@ -74,11 +74,6 @@ public class WrapperBungee {
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
             }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleCommandSender;
-            }
         };
     }
 

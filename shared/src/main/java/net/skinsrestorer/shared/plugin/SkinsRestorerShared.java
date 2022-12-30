@@ -161,6 +161,14 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
                 }
             }
         });
+
+        manager.getCommandConditions().addCondition("console-only", context -> {
+            if (context.getIssuer().isPlayer()) {
+                ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
+                throw new ConditionFailedException();
+            }
+        });
     }
 
     protected abstract ISRCommandSender convertCommandSender(Object sender);

@@ -230,13 +230,9 @@ public class SRCommand extends BaseCommand {
     @CommandCompletion("@Skin")
     @Description("Set the skin to every player")
     @Syntax(" <Skin / Url> [classic/slim]")
+    @Conditions("console-only")
     private void onSetSkinAll(ISRCommandSender sender, String skin, SkinVariant skinVariant) {
         plugin.runAsync(() -> {
-            if (!sender.isConsole()) {
-                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
-                return;
-            }
-
             String skinName = " ·setSkinAll";
             try {
                 IProperty skinProps;
@@ -266,13 +262,9 @@ public class SRCommand extends BaseCommand {
 
     @Subcommand("applyskinall")
     @Description("Re-apply the skin for every player")
+    @Conditions("console-only")
     private void onApplySkinAll(ISRCommandSender sender) {
         plugin.runAsync(() -> {
-            if (!sender.isConsole()) {
-                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
-                return;
-            }
-
             for (ISRPlayer player : plugin.getOnlinePlayers()) {
                 try {
                     SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
@@ -287,12 +279,9 @@ public class SRCommand extends BaseCommand {
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
     @Syntax(" <targetdaysold>")
+    @Conditions("console-only")
     private void onPurgeOldData(ISRCommandSender sender, int days) {
         plugin.runAsync(() -> {
-            if (!sender.isConsole()) {
-                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
-                return;
-            }
             if (skinStorage.purgeOldSkins(days)) {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
             } else {

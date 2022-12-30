@@ -28,8 +28,6 @@ public interface ISRCommandSender extends ISRForeign {
 
     boolean hasPermission(String permission);
 
-    boolean isConsole();
-
     default boolean equalsPlayer(ISRPlayer player) {
         return getName().equals(player.getName());
     }

@@ -70,11 +70,6 @@ public class WrapperSponge {
             public boolean hasPermission(String permission) {
                 return sender.hasPermission(permission);
             }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleSource;
-            }
         };
     }
 
