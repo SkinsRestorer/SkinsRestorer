@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
-import ch.jalu.configme.SettingsManager;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
@@ -28,27 +27,22 @@ import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bungee.SkinApplierBungeeShared;
 import net.skinsrestorer.bungee.SkinsRestorerBungee;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 
-public class LoginListener extends SharedLoginProfileListener<Void> implements Listener {
-    private final SkinsRestorerBungee plugin;
-    private final SkinApplierBungeeShared skinApplier;
-
+public class LoginListener implements Listener {
     @Inject
-    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerBungee plugin, SkinApplierBungeeShared skinApplier, SRLogger logger) {
-        super(settings, skinStorage, logger);
-        this.plugin = plugin;
-        this.skinApplier = skinApplier;
-    }
+    private SkinsRestorerBungee plugin;
+    @Inject
+    private SkinApplierBungeeShared skinApplier;
+    @Inject
+    private LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
-        handleLogin(wrap(event));
+        adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<Void> wrap(LoginEvent event) {

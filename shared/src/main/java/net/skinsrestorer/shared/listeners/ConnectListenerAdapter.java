@@ -24,11 +24,14 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 
-@RequiredArgsConstructor
-public abstract class SharedConnectListener {
-    private final ISRProxyPlugin plugin;
+import javax.inject.Inject;
 
-    protected void handleConnect(SRServerConnectedEvent event) {
+@RequiredArgsConstructor
+public final class ConnectListenerAdapter {
+    @Inject
+    private ISRProxyPlugin plugin;
+
+    public void handleConnect(SRServerConnectedEvent event) {
         plugin.runAsync(() -> {
             if (plugin.isOutdated()) {
                 ISRPlayer player = event.getPlayer();

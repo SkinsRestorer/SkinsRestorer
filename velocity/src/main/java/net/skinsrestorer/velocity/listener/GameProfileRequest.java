@@ -19,31 +19,25 @@
  */
 package net.skinsrestorer.velocity.listener;
 
-import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
 
 import javax.inject.Inject;
 
-public class GameProfileRequest extends SharedLoginProfileListener<EventTask> {
-    private final SkinApplierVelocity skinApplier;
-
+public class GameProfileRequest {
     @Inject
-    public GameProfileRequest(SkinStorage skinStorage, SettingsManager settings, SkinApplierVelocity skinApplier, SRLogger logger) {
-        super(settings, skinStorage, logger);
-        this.skinApplier = skinApplier;
-    }
+    private SkinApplierVelocity skinApplier;
+    @Inject
+    private LoginProfileListenerAdapter<EventTask> adapter;
 
     @Subscribe
     public EventTask onGameProfileRequest(GameProfileRequestEvent event) {
-        return handleLogin(wrap(event));
+        return adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<EventTask> wrap(GameProfileRequestEvent event) {

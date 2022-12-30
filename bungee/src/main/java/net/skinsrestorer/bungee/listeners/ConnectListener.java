@@ -24,24 +24,20 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
-import net.skinsrestorer.shared.listeners.SharedConnectListener;
+import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
 
 import javax.inject.Inject;
 
-public class ConnectListener extends SharedConnectListener implements Listener {
-    private final WrapperBungee wrapper;
-
+public class ConnectListener implements Listener {
     @Inject
-    public ConnectListener(ISRProxyPlugin plugin, WrapperBungee wrapper) {
-        super(plugin);
-        this.wrapper = wrapper;
-    }
+    private WrapperBungee wrapper;
+    @Inject
+    private ConnectListenerAdapter adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerConnect(final ServerConnectedEvent event) {
-        handleConnect(wrap(event));
+    public void onServerConnect(ServerConnectedEvent event) {
+        adapter.handleConnect(wrap(event));
     }
 
     private SRServerConnectedEvent wrap(ServerConnectedEvent event) {

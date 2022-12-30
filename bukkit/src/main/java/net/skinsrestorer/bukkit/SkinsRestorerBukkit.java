@@ -47,7 +47,6 @@ import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
@@ -174,60 +173,56 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
             }
 
             server.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:skinchange");
-            server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:skinchange", (channel, player, message) -> {
-                runAsync(() -> {
-                    DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+            server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:skinchange", (channel, player, message) -> runAsync(() -> {
+                DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
-                    try {
-                        String subChannel = in.readUTF();
+                try {
+                    String subChannel = in.readUTF();
 
-                        if (subChannel.equalsIgnoreCase("SkinUpdate")) {
-                            try {
-                                skinApplierBukkit.applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            skinApplierBukkit.updateSkin(player);
+                    if (subChannel.equalsIgnoreCase("SkinUpdate")) {
+                        try {
+                            skinApplierBukkit.applySkin(new PlayerWrapper(player), SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+
+                        skinApplierBukkit.updateSkin(player);
                     }
-                });
-            });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }));
 
             server.getMessenger().registerOutgoingPluginChannel(pluginInstance, "sr:messagechannel");
-            server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:messagechannel", (channel, channelPlayer, message) -> {
-                runAsync(() -> {
-                    DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
+            server.getMessenger().registerIncomingPluginChannel(pluginInstance, "sr:messagechannel", (channel, channelPlayer, message) -> runAsync(() -> {
+                DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
 
-                    try {
-                        String subChannel = in.readUTF();
+                try {
+                    String subChannel = in.readUTF();
 
-                        if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
-                            Player player = server.getPlayer(in.readUTF());
-                            if (player == null)
-                                return;
+                    if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
+                        Player player = server.getPlayer(in.readUTF());
+                        if (player == null)
+                            return;
 
-                            int page = in.readInt();
+                        int page = in.readInt();
 
-                            short len = in.readShort();
-                            byte[] msgBytes = new byte[len];
-                            in.readFully(msgBytes);
+                        short len = in.readShort();
+                        byte[] msgBytes = new byte[len];
+                        in.readFully(msgBytes);
 
-                            Map<String, String> skinList = convertToObjectV2(msgBytes);
+                        Map<String, String> skinList = convertToObjectV2(msgBytes);
 
-                            Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ProxyGUIActions(this),
-                                    injector.getSingleton(SkinsRestorerLocale.class),
-                                    logger, server, wrapper.player(player), page, skinList);
+                        Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ProxyGUIActions(this),
+                                injector.getSingleton(SkinsRestorerLocale.class),
+                                logger, server, wrapper.player(player), page, skinList);
 
-                            runSync(() -> player.openInventory(inventory));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        runSync(() -> player.openInventory(inventory));
                     }
-                });
-            });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }));
         } else {
             initMineSkinAPI();
             initStorage();

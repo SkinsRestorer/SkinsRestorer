@@ -19,13 +19,10 @@
  */
 package net.skinsrestorer.paper;
 
-import ch.jalu.configme.SettingsManager;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -34,15 +31,13 @@ import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-public class PaperPlayerJoinEvent extends SharedLoginProfileListener<Void> implements Listener {
+public class PaperPlayerJoinEvent implements Listener {
     @Inject
-    public PaperPlayerJoinEvent(SettingsManager settings, SkinStorage skinStorage, SRLogger logger) {
-        super(settings, skinStorage, logger);
-    }
+    private LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
-        handleLogin(wrap(event));
+        adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {

@@ -31,8 +31,9 @@ public class InventoryListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
         try {
-            if (event.getClickedInventory() == null)
+            if (event.getClickedInventory() == null) {
                 return;
+            }
 
             InventoryHolder holder = event.getView().getTopInventory().getHolder();
             if (holder instanceof SkinsGUI) {

@@ -22,25 +22,21 @@ package net.skinsrestorer.velocity.listener;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
-import net.skinsrestorer.shared.listeners.SharedConnectListener;
+import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 import javax.inject.Inject;
 
-public class ConnectListener extends SharedConnectListener {
-    private final WrapperVelocity wrapper;
-
+public class ConnectListener {
     @Inject
-    public ConnectListener(ISRProxyPlugin plugin, WrapperVelocity wrapper) {
-        super(plugin);
-        this.wrapper = wrapper;
-    }
+    private WrapperVelocity wrapper;
+    @Inject
+    private ConnectListenerAdapter adapter;
 
     @Subscribe(order = PostOrder.LAST)
-    public void onServerConnect(final ServerConnectedEvent event) {
-        handleConnect(wrap(event));
+    public void onServerConnect(ServerConnectedEvent event) {
+        adapter.handleConnect(wrap(event));
     }
 
     private SRServerConnectedEvent wrap(ServerConnectedEvent event) {

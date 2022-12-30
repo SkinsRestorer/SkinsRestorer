@@ -19,15 +19,10 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
-import ch.jalu.configme.SettingsManager;
-import lombok.Getter;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.SkinApplierSponge;
-import net.skinsrestorer.sponge.SkinsRestorerSponge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
@@ -36,21 +31,15 @@ import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 
 import javax.inject.Inject;
 
-@Getter
-public class LoginListener extends SharedLoginProfileListener<Void> implements EventListener<ClientConnectionEvent.Auth> {
-    private final SkinsRestorerSponge plugin;
-    private final SkinApplierSponge skinApplier;
-
+public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
     @Inject
-    public LoginListener(SkinStorage skinStorage, SettingsManager settings, SkinsRestorerSponge plugin, SRLogger logger, SkinApplierSponge skinApplier) {
-        super(settings, skinStorage, logger);
-        this.plugin = plugin;
-        this.skinApplier = skinApplier;
-    }
+    private SkinApplierSponge skinApplier;
+    @Inject
+    private LoginProfileListenerAdapter<Void> adapter;
 
     @Override
     public void handle(@NotNull Auth event) {
-        handleLogin(wrap(event));
+        adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<Void> wrap(Auth event) {

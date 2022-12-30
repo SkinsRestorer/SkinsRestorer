@@ -26,33 +26,30 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import javax.inject.Inject;
 
-public class PlayerJoin extends SharedLoginProfileListener<Void> implements Listener {
+public class PlayerJoin implements Listener {
     @Setter
     private static boolean resourcePack;
-    private final SkinsRestorerBukkit plugin;
-
     @Inject
-    public PlayerJoin(SettingsManager settings, SkinStorage skinStorage, SkinsRestorerBukkit plugin, SRLogger logger) {
-        super(settings, skinStorage, logger);
-        this.plugin = plugin;
-    }
+    private SkinsRestorerBukkit plugin;
+    @Inject
+    private SettingsManager settings;
+    @Inject
+    private LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler
-    public void onJoin(final PlayerJoinEvent event) {
+    public void onJoin(PlayerJoinEvent event) {
         if (resourcePack && settings.getProperty(Config.RESOURCE_PACK_FIX))
             return;
 
-        handleLogin(wrap(event));
+        adapter.handleLogin(wrap(event));
     }
 
     private SRLoginProfileEvent<Void> wrap(PlayerJoinEvent event) {
