@@ -44,8 +44,8 @@ import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
@@ -455,7 +455,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 
         val playerResolver = manager.getCommandContexts().getResolver(Player.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
             Object playerObject = playerResolver.getContext(c);
             if (playerObject == null) {
                 return null;
@@ -464,7 +464,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
             Object commandSenderObject = commandSenderResolver.getContext(c);
             if (commandSenderObject == null) {
                 return null;
@@ -486,7 +486,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
-    protected ISRCommandSender convertCommandSender(Object sender) {
+    protected SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperBukkit.class).commandSender((CommandSender) sender);
     }
 
@@ -506,7 +506,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
-    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+    public List<IProperty> getPropertiesOfPlayer(SRPlayer player) {
         try {
             Map<String, Collection<IProperty>> propertyMap = injector.getSingleton(SkinApplierBukkit.class)
                     .getPlayerProperties(player.getWrapper().get(Player.class));
@@ -518,7 +518,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     }
 
     @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers() {
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
         return server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }

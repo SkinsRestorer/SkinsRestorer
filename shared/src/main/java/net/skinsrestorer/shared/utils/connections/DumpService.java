@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.utils.connections;
 
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
 import net.skinsrestorer.shared.utils.connections.requests.DumpInfo;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class DumpService {
     private final SRLogger logger;
-    private final ISRPlugin plugin;
+    private final SRPlugin plugin;
     private final Gson gson = new Gson();
 
     public Optional<String> dump() throws IOException {

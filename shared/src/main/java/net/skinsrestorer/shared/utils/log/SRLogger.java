@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.utils.log;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.axiom.AxiomConfiguration;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import java.nio.file.Path;
 
 @RequiredArgsConstructor
 public class SRLogger {
-    private final ISRLogger logger;
+    private final SRPlatformLogger logger;
     private final boolean color;
     @Setter
     private boolean debug = false;

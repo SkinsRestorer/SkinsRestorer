@@ -21,8 +21,8 @@ package net.skinsrestorer.shared.listeners;
 
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -37,7 +37,7 @@ import java.util.Optional;
 public final class SRPluginMessageAdapter {
     private final SRLogger logger;
     private final SkinStorage skinStorage;
-    private final ISRProxyPlugin plugin;
+    private final SRProxyPlugin plugin;
     private final CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
@@ -57,13 +57,13 @@ public final class SRPluginMessageAdapter {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
         try {
             String subChannel = in.readUTF();
-            Optional<ISRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
+            Optional<SRProxyPlayer> optional = plugin.getPlayer(in.readUTF());
 
             if (!optional.isPresent()) {
                 return;
             }
 
-            ISRProxyPlayer player = optional.get();
+            SRProxyPlayer player = optional.get();
 
             switch (subChannel) {
                 // sr:messagechannel

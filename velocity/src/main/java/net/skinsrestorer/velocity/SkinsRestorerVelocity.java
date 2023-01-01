@@ -35,9 +35,9 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -157,7 +157,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
 
         val playerResolver = manager.getCommandContexts().getResolver(Player.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
             Object playerObject = playerResolver.getContext(c);
             if (playerObject == null) {
                 return null;
@@ -166,7 +166,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
             Object commandSenderObject = commandSenderResolver.getContext(c);
             if (commandSenderObject == null) {
                 return null;
@@ -187,7 +187,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     @Override
-    protected ISRCommandSender convertCommandSender(Object sender) {
+    protected SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperVelocity.class).commandSender((CommandSource) sender);
     }
 
@@ -202,7 +202,7 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+    public List<IProperty> getPropertiesOfPlayer(SRPlayer player) {
         List<GameProfile.Property> prop = player.getWrapper().get(Player.class).getGameProfileProperties();
 
         if (prop == null) {
@@ -213,13 +213,13 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers() {
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
         return proxy.getAllPlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<ISRProxyPlayer> getPlayer(String name) {
+    public Optional<SRProxyPlayer> getPlayer(String name) {
         return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 

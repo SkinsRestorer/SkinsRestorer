@@ -27,8 +27,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 
 import javax.inject.Inject;
@@ -41,12 +41,12 @@ public class WrapperBungee {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public ISRCommandSender commandSender(CommandSender sender) {
+    public SRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof ProxiedPlayer) {
             return player((ProxiedPlayer) sender);
         }
 
-        return new ISRCommandSender() {
+        return new SRCommandSender() {
             @Override
             public Locale getLocale() {
                 return settings.getProperty(Config.LANGUAGE);
@@ -74,8 +74,8 @@ public class WrapperBungee {
         };
     }
 
-    public ISRProxyPlayer player(ProxiedPlayer player) {
-        return new ISRProxyPlayer() {
+    public SRProxyPlayer player(ProxiedPlayer player) {
+        return new SRProxyPlayer() {
             @Override
             public Locale getLocale() {
                 Locale playerLocale = player.getLocale();

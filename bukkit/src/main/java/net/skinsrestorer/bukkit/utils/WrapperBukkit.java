@@ -24,8 +24,8 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.command.CommandSender;
@@ -40,12 +40,12 @@ public class WrapperBukkit {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public ISRCommandSender commandSender(CommandSender sender) {
+    public SRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof Player) {
             return player((Player) sender);
         }
 
-        return new ISRCommandSender() {
+        return new SRCommandSender() {
             @Override
             public Locale getLocale() {
                 return settings.getProperty(Config.LANGUAGE);
@@ -73,8 +73,8 @@ public class WrapperBukkit {
         };
     }
 
-    public ISRPlayer player(Player player) {
-        return new ISRPlayer() {
+    public SRPlayer player(Player player) {
+        return new SRPlayer() {
             @Override
             public Locale getLocale() {
                 try {

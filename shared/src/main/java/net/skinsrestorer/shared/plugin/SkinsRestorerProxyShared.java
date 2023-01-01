@@ -21,9 +21,9 @@ package net.skinsrestorer.shared.plugin;
 
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -36,11 +36,11 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements ISRProxyPlugin {
-    protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
+public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements SRProxyPlugin {
+    protected SkinsRestorerProxyShared(SRPlatformLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
                                        IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory, platform);
-        injector.register(ISRProxyPlugin.class, this);
+        injector.register(SRProxyPlugin.class, this);
     }
 
     public static byte[] convertToByteArray(Map<String, String> map) {
@@ -58,7 +58,7 @@ public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared imple
         return byteOut.toByteArray();
     }
 
-    public static void sendPage(int page, ISRProxyPlayer player, SRLogger logger, SkinStorage skinStorage) {
+    public static void sendPage(int page, SRProxyPlayer player, SRLogger logger, SkinStorage skinStorage) {
         int skinNumber = 36 * page;
 
         byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));

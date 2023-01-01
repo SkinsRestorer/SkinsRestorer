@@ -31,8 +31,8 @@ import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -154,7 +154,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
 
         val playerResolver = manager.getCommandContexts().getResolver(Player.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
             Object playerObject = playerResolver.getContext(c);
             if (playerObject == null) {
                 return null;
@@ -163,7 +163,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
             Object commandSenderObject = commandSenderResolver.getContext(c);
             if (commandSenderObject == null) {
                 return null;
@@ -184,7 +184,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     @Override
-    protected ISRCommandSender convertCommandSender(Object sender) {
+    protected SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperSponge.class).commandSender((CommandSource) sender);
     }
 
@@ -199,7 +199,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     @Override
-    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+    public List<IProperty> getPropertiesOfPlayer(SRPlayer player) {
         Collection<ProfileProperty> properties = player.getWrapper().get(Player.class).getProfile().getPropertyMap().get(IProperty.TEXTURES_NAME);
         return properties.stream()
                 .map(property -> new GenericProperty(property.getName(), property.getValue(), property.getSignature().orElse("")))
@@ -207,7 +207,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
     }
 
     @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers() {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
         return game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }

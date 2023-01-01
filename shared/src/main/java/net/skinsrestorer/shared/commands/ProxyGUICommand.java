@@ -25,8 +25,8 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -44,13 +44,13 @@ public final class ProxyGUICommand extends BaseCommand {
     private final SkinStorage skinStorage;
 
     @Default
-    private void onDefault(ISRPlayer player) {
-        if (!(player instanceof ISRProxyPlayer)) {
+    private void onDefault(SRPlayer player) {
+        if (!(player instanceof SRProxyPlayer)) {
             throw new IllegalStateException("Player is not a proxy player");
         }
 
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        SkinsRestorerProxyShared.sendPage(0, (ISRProxyPlayer) player, logger, skinStorage);
+        SkinsRestorerProxyShared.sendPage(0, (SRProxyPlayer) player, logger, skinStorage);
     }
 }

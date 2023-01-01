@@ -19,6 +19,6 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-public interface ISRConsole {
+public interface SRConsole {
     void sendMessage(String message);
 }

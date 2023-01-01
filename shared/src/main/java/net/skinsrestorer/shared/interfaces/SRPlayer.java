@@ -19,16 +19,16 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-public interface ISRCommandSender extends ISRForeign {
-    void sendMessage(String message);
+import net.skinsrestorer.api.PlayerWrapper;
 
-    void sendMessage(MessageKeyGetter key, Object... args);
+import java.util.UUID;
+
+public interface SRPlayer extends SRCommandSender {
+    PlayerWrapper getWrapper();
 
     String getName();
 
-    boolean hasPermission(String permission);
+    UUID getUniqueId();
 
-    default boolean equalsPlayer(ISRPlayer player) {
-        return getName().equals(player.getName());
-    }
+    void sendMessage(String message);
 }

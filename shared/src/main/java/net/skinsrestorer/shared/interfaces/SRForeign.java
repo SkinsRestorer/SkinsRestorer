@@ -19,10 +19,8 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import java.util.Locale;
 
-public interface ISRLogger {
-    void log(SRLogLevel level, String message);
-
-    void log(SRLogLevel level, String message, Throwable throwable);
+public interface SRForeign {
+    Locale getLocale();
 }

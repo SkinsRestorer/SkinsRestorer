@@ -20,20 +20,20 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ConnectListenerAdapter {
-    private final ISRProxyPlugin plugin;
+    private final SRProxyPlugin plugin;
 
     public void handleConnect(SRServerConnectedEvent event) {
         plugin.runAsync(() -> {
             if (plugin.isOutdated()) {
-                ISRPlayer player = event.getPlayer();
+                SRPlayer player = event.getPlayer();
 
                 if (player.hasPermission("skinsrestorer.admincommand")) {
                     player.sendMessage(Message.OUTDATED);

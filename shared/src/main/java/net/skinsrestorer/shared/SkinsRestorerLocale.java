@@ -23,7 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.interfaces.ISRForeign;
+import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
@@ -34,13 +34,13 @@ import java.util.Locale;
 
 public class SkinsRestorerLocale {
     @Inject
-    private LocaleManager<ISRForeign> localeManager;
+    private LocaleManager<SRForeign> localeManager;
     @Inject
     private SettingsManager settings;
     @Getter
-    private final ISRForeign defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
+    private final SRForeign defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
 
-    public String getMessage(ISRForeign foreign, MessageKeyGetter key, Object... args) {
+    public String getMessage(SRForeign foreign, MessageKeyGetter key, Object... args) {
         String message = localeManager.getMessage(foreign, key.getKey());
 
         if (message.contains("{prefix}")) {

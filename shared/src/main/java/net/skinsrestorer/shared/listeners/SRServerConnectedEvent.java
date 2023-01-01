@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 
 public interface SRServerConnectedEvent {
-    ISRPlayer getPlayer();
+    SRPlayer getPlayer();
 }

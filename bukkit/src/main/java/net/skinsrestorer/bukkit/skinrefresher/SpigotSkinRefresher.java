@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRServerPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final ISRServerPlugin plugin;
+    private final SRServerPlugin plugin;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -49,7 +49,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(ISRServerPlugin plugin, SRLogger logger) throws InitializeException {
+    public SpigotSkinRefresher(SRServerPlugin plugin, SRLogger logger) throws InitializeException {
         this.plugin = plugin;
 
         try {
@@ -175,7 +175,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
-                        //noinspection UnstableApiUsage
                         long seedEncrypted = Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong();
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, seedEncrypted, worldType, enumGamemode);
@@ -233,7 +232,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                     boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
 
-                    //noinspection UnstableApiUsage
                     sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
                             dimension,
                             Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),

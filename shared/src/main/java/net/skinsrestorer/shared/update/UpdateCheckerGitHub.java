@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.interfaces.SRServerPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
@@ -44,7 +44,7 @@ public class UpdateCheckerGitHub {
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
-    private final ISRPlugin plugin;
+    private final SRPlugin plugin;
     @Getter
     private GitHubReleaseInfo releaseInfo;
 
@@ -109,12 +109,12 @@ public class UpdateCheckerGitHub {
         return updateAvailableMessages;
     }
 
-    private void fillHeader(List<String> updateAvailableMessages, ISRPlugin plugin) {
+    private void fillHeader(List<String> updateAvailableMessages, SRPlugin plugin) {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        if (plugin instanceof ISRServerPlugin) {
-            ISRServerPlugin serverPlugin = (ISRServerPlugin) plugin;
+        if (plugin instanceof SRServerPlugin) {
+            SRServerPlugin serverPlugin = (SRServerPlugin) plugin;
             if (serverPlugin.isProxyMode()) {
                 updateAvailableMessages.add("§a    |------------------|");
                 updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");

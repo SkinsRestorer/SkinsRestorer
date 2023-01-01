@@ -20,15 +20,15 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRConsole;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.SRConsole;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
-public class JavaLoggerImpl implements ISRLogger {
-    private final ISRConsole console;
+public class JavaLoggerImpl implements SRPlatformLogger {
+    private final SRConsole console;
     private final Logger logger;
 
     @Override

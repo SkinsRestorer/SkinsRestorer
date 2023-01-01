@@ -34,9 +34,9 @@ import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -57,7 +57,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @Conditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand extends BaseCommand {
-    private final ISRPlugin plugin;
+    private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;
     private final SkinStorage skinStorage;
@@ -66,7 +66,7 @@ public final class SkinCommand extends BaseCommand {
 
     @SuppressWarnings("deprecation")
     @Default
-    private void onDefault(ISRCommandSender sender) {
+    private void onDefault(SRCommandSender sender) {
         onHelp(sender, getCurrentCommandManager().generateCommandHelp());
     }
 
@@ -75,13 +75,13 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxDefaultCommand")
     @Conditions("cooldown")
-    private void onSkinSetShort(ISRPlayer player, String skin) {
+    private void onSkinSetShort(SRPlayer player, String skin) {
         onSkinSetOther(player, new OnlineISRPlayer(player), skin, null);
     }
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
-    private void onHelp(ISRCommandSender sender, CommandHelp help) {
+    private void onHelp(SRCommandSender sender, CommandHelp help) {
         if (settings.getProperty(Config.ENABLE_CUSTOM_HELP)) {
             sendHelp(sender);
         } else {
@@ -93,7 +93,7 @@ public final class SkinCommand extends BaseCommand {
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
     @Conditions("cooldown")
-    private void onSkinClear(ISRPlayer player) {
+    private void onSkinClear(SRPlayer player) {
         onSkinClearOther(player, new OnlineISRPlayer(player));
     }
 
@@ -103,8 +103,8 @@ public final class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     @Conditions("cooldown")
-    private void onSkinClearOther(ISRCommandSender sender, OnlineISRPlayer target) {
-        ISRPlayer targetPlayer = target.getPlayer();
+    private void onSkinClearOther(SRCommandSender sender, OnlineISRPlayer target) {
+        SRPlayer targetPlayer = target.getPlayer();
 
         plugin.runAsync(() -> {
             String playerName = targetPlayer.getName();
@@ -135,7 +135,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSearch")
     @Syntax("%SyntaxSkinSearch")
     @Conditions("cooldown")
-    private void onSkinSearch(ISRCommandSender sender, String searchString) {
+    private void onSkinSearch(SRCommandSender sender, String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
 
@@ -143,7 +143,7 @@ public final class SkinCommand extends BaseCommand {
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
     @Conditions("cooldown")
-    private void onSkinUpdate(ISRPlayer player) {
+    private void onSkinUpdate(SRPlayer player) {
         onSkinUpdateOther(player, new OnlineISRPlayer(player));
     }
 
@@ -153,8 +153,8 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     @Conditions("cooldown")
-    private void onSkinUpdateOther(ISRCommandSender sender, OnlineISRPlayer target) {
-        ISRPlayer targetPlayer = target.getPlayer();
+    private void onSkinUpdateOther(SRCommandSender sender, OnlineISRPlayer target) {
+        SRPlayer targetPlayer = target.getPlayer();
 
         plugin.runAsync(() -> {
             String playerName = targetPlayer.getName();
@@ -196,7 +196,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSet")
     @Syntax("%SyntaxSkinSet")
     @Conditions("cooldown")
-    private void onSkinSet(ISRPlayer player, String[] skin) {
+    private void onSkinSet(SRPlayer player, String[] skin) {
         if (skin.length == 0) {
             throw new InvalidCommandArgument(true);
         }
@@ -210,8 +210,8 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     @Conditions("cooldown")
-    private void onSkinSetOther(ISRCommandSender sender, OnlineISRPlayer target, String skin, SkinVariant skinVariant) {
-        ISRPlayer targetPlayer = target.getPlayer();
+    private void onSkinSetOther(SRCommandSender sender, OnlineISRPlayer target, String skin, SkinVariant skinVariant) {
+        SRPlayer targetPlayer = target.getPlayer();
         plugin.runAsync(() -> {
             if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
@@ -232,7 +232,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetUrl")
     @Syntax("%SyntaxSkinUrl")
     @Conditions("cooldown")
-    private void onSkinSetUrl(ISRPlayer player, String url, SkinVariant skinVariant) {
+    private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
             return;
@@ -241,7 +241,7 @@ public final class SkinCommand extends BaseCommand {
         onSkinSetOther(player, new OnlineISRPlayer(player), url, skinVariant);
     }
 
-    private void sendHelp(ISRCommandSender sender) {
+    private void sendHelp(SRCommandSender sender) {
         String srLine = locale.getMessage(sender, Message.SR_LINE);
         if (!srLine.isEmpty()) {
             sender.sendMessage(srLine);
@@ -254,7 +254,7 @@ public final class SkinCommand extends BaseCommand {
         }
     }
 
-    private boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
+    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
@@ -338,9 +338,9 @@ public final class SkinCommand extends BaseCommand {
         return false;
     }
 
-    private void setCoolDown(ISRCommandSender sender, Property<Integer> time) {
-        if (sender instanceof ISRPlayer) {
-            UUID senderUUID = ((ISRPlayer) sender).getUniqueId();
+    private void setCoolDown(SRCommandSender sender, Property<Integer> time) {
+        if (sender instanceof SRPlayer) {
+            UUID senderUUID = ((SRPlayer) sender).getUniqueId();
             cooldownStorage.setCooldown(senderUUID, settings.getProperty(time), TimeUnit.SECONDS);
         }
     }

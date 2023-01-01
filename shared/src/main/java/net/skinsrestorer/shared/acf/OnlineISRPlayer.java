@@ -23,12 +23,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class OnlineISRPlayer {
-    private final ISRPlayer player;
+    private final SRPlayer player;
 }

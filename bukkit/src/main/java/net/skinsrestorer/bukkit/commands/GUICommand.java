@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -52,7 +52,7 @@ public class GUICommand extends BaseCommand {
     private final Server server;
 
     @Default
-    public void onDefault(ISRPlayer srPlayer) {
+    public void onDefault(SRPlayer srPlayer) {
         plugin.runAsync(() -> {
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 

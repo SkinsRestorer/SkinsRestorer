@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface ISRPlugin {
+public interface SRPlugin {
     Path getDataFolder();
 
     String getVersion();
@@ -59,9 +59,9 @@ public interface ISRPlugin {
 
     String getProxyModeInfo();
 
-    List<IProperty> getPropertiesOfPlayer(ISRPlayer player);
+    List<IProperty> getPropertiesOfPlayer(SRPlayer player);
 
-    Collection<ISRPlayer> getOnlinePlayers();
+    Collection<SRPlayer> getOnlinePlayers();
 
     default void reloadPlatformHook() {
     }

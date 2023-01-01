@@ -41,9 +41,9 @@ import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.Platform;
@@ -154,7 +154,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
 
         val playerResolver = manager.getCommandContexts().getResolver(ProxiedPlayer.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRPlayer.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
             Object playerObject = playerResolver.getContext(c);
             if (playerObject == null) {
                 return null;
@@ -163,7 +163,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
-        manager.getCommandContexts().registerIssuerAwareContext(ISRCommandSender.class, c -> {
+        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
             Object commandSenderObject = commandSenderResolver.getContext(c);
             if (commandSenderObject == null) {
                 return null;
@@ -184,7 +184,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     @Override
-    protected ISRCommandSender convertCommandSender(Object sender) {
+    protected SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperBungee.class).commandSender((CommandSender) sender);
     }
 
@@ -199,7 +199,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
+    public List<IProperty> getPropertiesOfPlayer(SRPlayer player) {
         List<IProperty> props = injector.getSingleton(SkinApplierBungee.class).getAdapter().getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
@@ -212,13 +212,13 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     }
 
     @Override
-    public Collection<ISRPlayer> getOnlinePlayers() {
+    public Collection<SRPlayer> getOnlinePlayers() {
         WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
         return proxy.getPlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<ISRProxyPlayer> getPlayer(String name) {
+    public Optional<SRProxyPlayer> getPlayer(String name) {
         ProxiedPlayer player = proxy.getPlayer(name);
         if (player == null) {
             return Optional.empty();

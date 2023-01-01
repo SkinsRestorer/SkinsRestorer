@@ -28,8 +28,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.ISRForeign;
-import net.skinsrestorer.shared.interfaces.ISRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRForeign;
+import net.skinsrestorer.shared.interfaces.SRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
@@ -60,7 +60,7 @@ public class SkinsGUI implements InventoryHolder {
     @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorage skinStorage, ISRForeign player, int page) {
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorage skinStorage, SRForeign player, int page) {
         if (page > 999) {
             page = 999;
         }
@@ -70,7 +70,7 @@ public class SkinsGUI implements InventoryHolder {
         return createGUI(callback, locale, logger, server, player, page, skinStorage.getSkins(skinNumber));
     }
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, ISRForeign player, int page, Map<String, String> skinsList) {
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUI instance = new SkinsGUI(page, callback);
         Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
@@ -140,7 +140,7 @@ public class SkinsGUI implements InventoryHolder {
         return inventory;
     }
 
-    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, ISRForeign player, String name, String property) {
+    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, SRForeign player, String name, String property) {
         ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
@@ -161,7 +161,7 @@ public class SkinsGUI implements InventoryHolder {
         return is;
     }
 
-    private static ItemStack createGlass(GlassType type, ISRForeign player, SkinsRestorerLocale locale) {
+    private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
         ItemStack itemStack;
         String text;
         switch (type) {
@@ -217,7 +217,7 @@ public class SkinsGUI implements InventoryHolder {
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<EventInfo> {
         private final Server server;
-        private final ISRServerPlugin plugin;
+        private final SRServerPlugin plugin;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
         private final SkinStorage skinStorage;

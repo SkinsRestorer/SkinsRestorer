@@ -19,8 +19,20 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-public interface ISRServerPlugin extends ISRPlugin {
-    void runSync(Runnable runnable);
+public interface SRCommandSender extends SRForeign {
+    void sendMessage(String message);
 
-    boolean isProxyMode();
+    void sendMessage(MessageKeyGetter key, Object... args);
+
+    String getName();
+
+    boolean hasPermission(String permission);
+
+    default boolean equalsPlayer(SRPlayer player) {
+        if (this instanceof SRPlayer) {
+            return ((SRPlayer) this).getUniqueId().equals(player.getUniqueId());
+        } else {
+            return false;
+        }
+    }
 }

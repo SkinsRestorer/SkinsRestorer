@@ -21,8 +21,6 @@ package net.skinsrestorer.shared.interfaces;
 
 import java.util.Optional;
 
-public interface ISRProxyPlayer extends ISRPlayer {
-    Optional<String> getCurrentServer();
-
-    void sendDataToServer(String channel, byte[] data);
+public interface SRProxyPlugin extends SRPlugin {
+    Optional<SRProxyPlayer> getPlayer(String name);
 }

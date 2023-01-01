@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import java.util.Optional;
+public interface SRServerPlugin extends SRPlugin {
+    void runSync(Runnable runnable);
 
-public interface ISRProxyPlugin extends ISRPlugin {
-    Optional<ISRProxyPlayer> getPlayer(String name);
+    boolean isProxyMode();
 }

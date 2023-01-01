@@ -20,11 +20,11 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 import org.slf4j.Logger;
 
 @RequiredArgsConstructor
-public class Slf4jLoggerImpl implements ISRLogger {
+public class Slf4jLoggerImpl implements SRPlatformLogger {
     private final Logger logger;
 
     @Override

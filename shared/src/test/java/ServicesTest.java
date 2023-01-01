@@ -3,7 +3,7 @@ import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
@@ -26,7 +26,7 @@ public class ServicesTest {
     public void testServices() {
         Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
-        SRLogger logger = new SRLogger(new ISRLogger() {
+        SRLogger logger = new SRLogger(new SRPlatformLogger() {
             @Override
             public void log(SRLogLevel level, String message) {
                 System.out.println(level + " " + message);

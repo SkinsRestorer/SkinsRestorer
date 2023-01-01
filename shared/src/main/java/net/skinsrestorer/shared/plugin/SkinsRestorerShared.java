@@ -71,7 +71,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public abstract class SkinsRestorerShared implements ISRPlugin {
+public abstract class SkinsRestorerShared implements SRPlugin {
     protected final boolean unitTest = System.getProperty("sr.unit.test") != null;
     protected final SRLogger logger;
     protected final UpdateCheckerGitHub updateChecker;
@@ -88,13 +88,13 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     @Getter
     private boolean outdated = false;
 
-    protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor,
+    protected SkinsRestorerShared(SRPlatformLogger isrLogger, boolean loggerColor,
                                   String version, String updateCheckerAgent, Path dataFolder,
                                   IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory,
                                   Platform platform) {
         this.injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
-        injector.register(ISRPlugin.class, this);
+        injector.register(SRPlugin.class, this);
 
         injector.register(MetricsCounter.class, new MetricsCounter());
         injector.register(CooldownStorage.class, new CooldownStorage());
@@ -133,8 +133,8 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
 
         manager.getCommandConditions().addCondition("allowed-server", context -> {
-            ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
-            if (!(sender instanceof ISRProxyPlayer)) {
+            SRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+            if (!(sender instanceof SRProxyPlayer)) {
                 return;
             }
 
@@ -142,7 +142,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
                 return;
             }
 
-            Optional<String> optional = ((ISRProxyPlayer) sender).getCurrentServer();
+            Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
             if (!optional.isPresent()) {
                 if (!settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
                     throw new ConditionFailedException("You are not on a server!");
@@ -160,9 +160,9 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         });
 
         manager.getCommandConditions().addCondition("cooldown", context -> {
-            ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
-            if (sender instanceof ISRPlayer) {
-                UUID senderUUID = ((ISRPlayer) sender).getUniqueId();
+            SRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+            if (sender instanceof SRPlayer) {
+                UUID senderUUID = ((SRPlayer) sender).getUniqueId();
                 if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderUUID)) {
                     sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
                     throw new ConditionFailedException();
@@ -172,14 +172,14 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
 
         manager.getCommandConditions().addCondition("console-only", context -> {
             if (context.getIssuer().isPlayer()) {
-                ISRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
+                SRCommandSender sender = convertCommandSender(context.getIssuer().getIssuer());
                 sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
                 throw new ConditionFailedException();
             }
         });
     }
 
-    protected abstract ISRCommandSender convertCommandSender(Object sender);
+    protected abstract SRCommandSender convertCommandSender(Object sender);
 
     public void checkUpdate(boolean showUpToDate) {
         runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
@@ -249,7 +249,7 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     }
 
     public void loadLocales() {
-        LocaleManager<ISRForeign> localeManager = LocaleManager.create(ISRForeign::getLocale, Locale.ENGLISH);
+        LocaleManager<SRForeign> localeManager = LocaleManager.create(SRForeign::getLocale, Locale.ENGLISH);
         injector.register(LocaleManager.class, localeManager);
         Message.load(localeManager, dataFolder, this);
         injector.getSingleton(SkinsRestorerLocale.class);
