@@ -117,7 +117,7 @@ public class UpdateDownloaderGithub {
         Path updateFile = updateFolder.resolve(pluginFile.getFileName());// /plugins/update/XXX.jar
 
         logger.info("[GitHubUpdate] Downloading update...");
-        plugin.runAsync(downloadAsync(releaseInfo, updateFile, updateChecker.getUserAgent(), new DownloadCallback() {
+        plugin.runAsync(downloadAsync(releaseInfo, updateFile, plugin.getUpdateCheckerAgent(), new DownloadCallback() {
             @Override
             public void finished() {
                 logger.info("[GitHubUpdate] Update saved as " + updateFile.getFileName());

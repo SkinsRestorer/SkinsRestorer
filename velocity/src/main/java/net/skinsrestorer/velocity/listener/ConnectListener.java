@@ -23,8 +23,8 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
+import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 import javax.inject.Inject;

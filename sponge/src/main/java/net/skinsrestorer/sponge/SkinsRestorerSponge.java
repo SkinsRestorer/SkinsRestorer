@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
@@ -70,7 +71,8 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
                 "SkinsRestorerUpdater/Sponge",
                 dataFolder,
                 new WrapperFactorySponge(),
-                GenericProperty::new
+                GenericProperty::new,
+                Platform.SPONGE
         );
         injector.register(SkinsRestorerSponge.class, this);
         this.pluginInstance = pluginInstance;

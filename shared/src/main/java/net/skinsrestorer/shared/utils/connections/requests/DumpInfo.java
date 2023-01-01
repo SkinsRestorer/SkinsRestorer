@@ -17,14 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.serverinfo;
+package net.skinsrestorer.shared.utils.connections.requests;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import net.skinsrestorer.shared.serverinfo.ServerInfo;
 
-@RequiredArgsConstructor
-public enum Platform {
-    BUKKIT,
-    BUNGEECORD,
-    SPONGE,
-    VELOCITY
+@AllArgsConstructor
+public class DumpInfo {
+    private String pluginVersion;
+    private String proxyMode;
+    private String platformVersion;
+    private ServerInfo serverInfo;
 }

@@ -17,36 +17,31 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.serverinfo;
+package net.skinsrestorer.shared.serverinfo;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Arrays;
-
 @RequiredArgsConstructor
 @Getter
-public class ServerData {
-    protected static final String[] HYBRIDS = {
-            "mohist"
-    };
+public class ServerInfo {
     private final boolean hybrid;
-    private final String serverName;
+    private final Platform platform;
+    private final ClassInfo classInfo;
 
-    public static ServerData determineEnvironment(Platform platform, String version) {
+    public static ServerInfo determineEnvironment(Platform platform) {
         ClassInfo info = new ClassInfo(platform);
         boolean hybrid2 = (platform == Platform.BUNGEECORD && info.isVelocity())
                 || (platform == Platform.VELOCITY && info.isBungeecord())
                 || (platform == Platform.SPONGE && info.isCraftBukkit())
-                || (platform == Platform.BUKKIT && (info.isSpongeVanilla() || info.isSpongeForge()))
-                || Arrays.stream(HYBRIDS).anyMatch(str -> str.equals(version.toLowerCase()));
+                || (platform == Platform.BUKKIT && (info.isSpongeVanilla() || info.isSpongeForge()));
 
-        return new ServerData(hybrid2, version);
+        return new ServerInfo(hybrid2, platform, info);
     }
 
     @Data
-    private static class ClassInfo {
+    static class ClassInfo {
         private final boolean craftBukkit;
         private final boolean spigot;
         private final boolean paper;

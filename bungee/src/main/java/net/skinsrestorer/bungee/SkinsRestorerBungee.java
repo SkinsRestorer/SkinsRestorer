@@ -46,6 +46,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -73,7 +74,8 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
                 "SkinsRestorer/BungeeCord",
                 dataFolder,
                 new WrapperFactoryBungee(),
-                new PropertyFactoryBungee()
+                new PropertyFactoryBungee(),
+                Platform.BUNGEECORD
         );
         injector.register(SkinsRestorerBungee.class, this);
         injector.register(ProxyServer.class, proxy);

@@ -31,7 +31,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
@@ -50,6 +49,8 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
+import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
@@ -91,7 +92,8 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                 "SkinsRestorerUpdater/Bukkit",
                 dataFolder,
                 new WrapperFactoryBukkit(),
-                new PropertyFactoryBukkit()
+                new PropertyFactoryBukkit(),
+                Platform.BUKKIT
         );
         injector.register(SkinsRestorerBukkit.class, this);
         injector.register(Server.class, server);

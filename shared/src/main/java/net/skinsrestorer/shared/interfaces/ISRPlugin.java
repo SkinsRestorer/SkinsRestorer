@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.interfaces;
 
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.shared.serverinfo.Platform;
 
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -64,4 +65,8 @@ public interface ISRPlugin {
 
     default void reloadPlatformHook() {
     }
+
+    Platform getPlatform();
+
+    String getUpdateCheckerAgent();
 }

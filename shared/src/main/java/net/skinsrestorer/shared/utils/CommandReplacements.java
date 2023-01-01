@@ -51,6 +51,7 @@ public class CommandReplacements {
             .put("srProps", (s) -> "skinsrestorer.admincommand.props")
             .put("srApplySkin", (s) -> "skinsrestorer.admincommand.applyskin")
             .put("srCreateCustom", (s) -> "skinsrestorer.admincommand.createcustom")
+            .put("srDumpsrDump", (s) -> "skinsrestorer.admincommand.dump")
             .build();
     public static final Map<String, Message> descriptions = FluentMap.<String, Message>builder()
             .put("%helpHelpCommand", Message.HELP_HELP_COMMAND)

@@ -22,7 +22,6 @@ package net.skinsrestorer.shared;
 import ch.jalu.configme.SettingsManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.ISRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
@@ -33,10 +32,11 @@ import javax.inject.Inject;
 import java.text.MessageFormat;
 import java.util.Locale;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsRestorerLocale {
-    private final LocaleManager<ISRForeign> localeManager;
-    private final SettingsManager settings;
+    @Inject
+    private LocaleManager<ISRForeign> localeManager;
+    @Inject
+    private SettingsManager settings;
     @Getter
     private final ISRForeign defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
 

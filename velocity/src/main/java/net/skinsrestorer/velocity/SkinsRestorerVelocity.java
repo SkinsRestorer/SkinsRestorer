@@ -39,6 +39,7 @@ import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
@@ -73,7 +74,8 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
                 "SkinsRestorerUpdater/Velocity",
                 dataFolder,
                 new WrapperFactoryVelocity(),
-                VelocityProperty::new
+                VelocityProperty::new,
+                Platform.VELOCITY
         );
         injector.register(SkinsRestorerVelocity.class, this);
         injector.register(ProxyServer.class, proxy);

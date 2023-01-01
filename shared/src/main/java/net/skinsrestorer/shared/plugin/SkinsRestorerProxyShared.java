@@ -24,6 +24,7 @@ import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.interfaces.ISRLogger;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -36,8 +37,9 @@ import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements ISRProxyPlugin {
-    protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
-        super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory);
+    protected SkinsRestorerProxyShared(ISRLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
+                                       IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
+        super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory, platform);
         injector.register(ISRProxyPlugin.class, this);
     }
 

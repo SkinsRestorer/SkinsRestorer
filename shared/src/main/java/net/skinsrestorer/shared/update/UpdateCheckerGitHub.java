@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
+import javax.inject.Inject;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -37,14 +38,12 @@ import java.util.List;
 /**
  * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckerGitHub {
     private static final String RESOURCE_ID = "SkinsRestorerX";
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
-    @Getter
-    private final String userAgent;
     private final ISRPlugin plugin;
     @Getter
     private GitHubReleaseInfo releaseInfo;
@@ -52,7 +51,7 @@ public class UpdateCheckerGitHub {
     public void checkForUpdate(UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", userAgent);
+            connection.setRequestProperty("User-Agent", plugin.getUpdateCheckerAgent());
 
             releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
 

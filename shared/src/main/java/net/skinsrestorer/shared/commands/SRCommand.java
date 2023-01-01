@@ -24,6 +24,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
@@ -37,11 +38,13 @@ import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.connections.DumpService;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -60,6 +63,7 @@ public final class SRCommand extends BaseCommand {
     private final SkinStorage skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
+    private final DumpService dumpService;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
@@ -283,6 +287,26 @@ public final class SRCommand extends BaseCommand {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
             } else {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §4A error occurred while purging old skins!");
+            }
+        });
+    }
+
+    @Subcommand("dump")
+    @CommandPermission("%srDump")
+    @Description("Upload support data to bytebin.lucko.me")
+    private void onDump(ISRCommandSender sender) {
+        plugin.runAsync(() -> {
+            try {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");
+                val url = dumpService.dump();
+                if (url.isPresent()) {
+                    sender.sendMessage("§e[§2SkinsRestorer§e] §aUpload successful! §ehttps://bytebin.lucko.me/" + url.get());
+                } else {
+                    sender.sendMessage("§e[§2SkinsRestorer§e] §4Upload failed!");
+                }
+            } catch (IOException e) {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to upload data to bytebin.lucko.me");
+                e.printStackTrace();
             }
         });
     }

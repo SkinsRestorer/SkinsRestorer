@@ -40,6 +40,7 @@ import net.skinsrestorer.shared.config.MineSkinConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
+import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.MySQL;
@@ -79,13 +80,18 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
     @Getter
     protected final String version;
     protected final Injector injector;
+    @Getter
+    private final Platform platform;
+    @Getter
+    private final String updateCheckerAgent;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Getter
     private boolean outdated = false;
 
     protected SkinsRestorerShared(ISRLogger isrLogger, boolean loggerColor,
                                   String version, String updateCheckerAgent, Path dataFolder,
-                                  IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory) {
+                                  IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory,
+                                  Platform platform) {
         this.injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
         injector.register(ISRPlugin.class, this);
@@ -97,9 +103,11 @@ public abstract class SkinsRestorerShared implements ISRPlugin {
         injector.register(IWrapperFactory.class, wrapperFactory);
         injector.register(IPropertyFactory.class, propertyFactory);
 
+        this.updateChecker = injector.getSingleton(UpdateCheckerGitHub.class);
         this.version = version;
-        this.updateChecker = new UpdateCheckerGitHub(logger, updateCheckerAgent, this);
         this.dataFolder = dataFolder;
+        this.platform = platform;
+        this.updateCheckerAgent = updateCheckerAgent;
     }
 
     protected CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands() {
