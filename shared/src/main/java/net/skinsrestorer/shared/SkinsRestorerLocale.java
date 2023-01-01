@@ -52,7 +52,7 @@ public class SkinsRestorerLocale {
             }
         }
 
-        return C.c(new MessageFormat(message).format(args));
+        return new MessageFormat(C.c(message)).format(args);
     }
 
     public void setDefaultLocale(Locale locale) {

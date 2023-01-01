@@ -241,7 +241,7 @@ public final class SkinCommand extends BaseCommand {
         onSkinSetOther(player, new OnlineISRPlayer(player), url, skinVariant);
     }
 
-    protected void sendHelp(ISRCommandSender sender) {
+    private void sendHelp(ISRCommandSender sender) {
         String srLine = locale.getMessage(sender, Message.SR_LINE);
         if (!srLine.isEmpty()) {
             sender.sendMessage(srLine);
@@ -254,7 +254,7 @@ public final class SkinCommand extends BaseCommand {
         }
     }
 
-    protected boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
+    private boolean setSkin(ISRCommandSender sender, ISRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
         if (skin.equalsIgnoreCase("null")) {
