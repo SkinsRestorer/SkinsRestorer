@@ -20,6 +20,7 @@
 package net.skinsrestorer.paper;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
@@ -31,9 +32,9 @@ import javax.inject.Inject;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PaperPlayerJoinEvent implements Listener {
-    @Inject
-    private LoginProfileListenerAdapter<Void> adapter;
+    private final LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {

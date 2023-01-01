@@ -214,22 +214,15 @@ public class SkinsGUI implements InventoryHolder {
         NONE, PREV, NEXT, DELETE
     }
 
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<EventInfo> {
-        @Inject
-        private Server server;
-        @Inject
-        private ISRServerPlugin plugin;
-        @Inject
-        private SkinsRestorerLocale locale;
-        @Inject
-        private SRLogger logger;
-        @Inject
-        private SkinStorage skinStorage;
-        @Inject
-        private WrapperBukkit wrapper;
-        @Inject
-        private CommandManager<?, ?, ?, ?, ?, ?> commandManager;
+        private final Server server;
+        private final ISRServerPlugin plugin;
+        private final SkinsRestorerLocale locale;
+        private final SRLogger logger;
+        private final SkinStorage skinStorage;
+        private final WrapperBukkit wrapper;
+        private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
 
         @Override
         public void accept(EventInfo event) {
@@ -271,7 +264,7 @@ public class SkinsGUI implements InventoryHolder {
         }
     }
 
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ProxyGUIActions implements Consumer<EventInfo> {
         private final SkinsRestorerBukkit plugin;
 

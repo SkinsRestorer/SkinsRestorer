@@ -22,6 +22,7 @@ package net.skinsrestorer.velocity.listener;
 import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
@@ -29,11 +30,10 @@ import net.skinsrestorer.velocity.SkinApplierVelocity;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GameProfileRequest {
-    @Inject
-    private SkinApplierVelocity skinApplier;
-    @Inject
-    private LoginProfileListenerAdapter<EventTask> adapter;
+    private final SkinApplierVelocity skinApplier;
+    private final LoginProfileListenerAdapter<EventTask> adapter;
 
     @Subscribe
     public EventTask onGameProfileRequest(GameProfileRequestEvent event) {

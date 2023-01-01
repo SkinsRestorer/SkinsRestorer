@@ -19,25 +19,20 @@
  */
 package net.skinsrestorer.bungee;
 
-import ch.jalu.configme.SettingsManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
-    public SkinApplierBungeeNew(SettingsManager settings, SRLogger log) {
-        super(settings, log);
-    }
-
-    protected void applyToHandler(InitialHandler handler, IProperty textures) {
+public class SkinApplierBungeeNew implements SkinApplyBungeeAdapter {
+    @Override
+    public void applyToHandler(InitialHandler handler, IProperty textures) {
         LoginResult profile = handler.getLoginProfile();
         Property[] newProps = new Property[]{(Property) textures.getHandle()};
 

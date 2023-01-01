@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPI implements IMojangAPI {
     private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuidOrName%";
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
@@ -57,14 +58,10 @@ public class MojangAPI implements IMojangAPI {
     private static final String PROFILE_MOJANG = "https://sessionserver.mojang.com/session/minecraft/profile/%uuid%?unsigned=false";
     private static final String PROFILE_MINETOOLS = "https://api.minetools.eu/profile/%uuid%";
 
-    @Inject
-    private MetricsCounter metricsCounter;
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private IPropertyFactory propertyFactory;
-    @Inject
-    private SkinsRestorerLocale locale;
+    private final MetricsCounter metricsCounter;
+    private final SRLogger logger;
+    private final IPropertyFactory propertyFactory;
+    private final SkinsRestorerLocale locale;
 
     /**
      * Get skin property by player name

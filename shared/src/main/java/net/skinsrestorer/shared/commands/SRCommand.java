@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
@@ -52,17 +53,13 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @CommandAlias("sr|skinsrestorer")
 @CommandPermission("%sr")
 @Conditions("allowed-server")
-public class SRCommand extends BaseCommand {
-    @Inject
-    private ISRPlugin plugin;
-    @Inject
-    private MojangAPI mojangAPI;
-    @Inject
-    private SkinStorage skinStorage;
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private SRLogger logger;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public final class SRCommand extends BaseCommand {
+    private final ISRPlugin plugin;
+    private final MojangAPI mojangAPI;
+    private final SkinStorage skinStorage;
+    private final SettingsManager settings;
+    private final SRLogger logger;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")

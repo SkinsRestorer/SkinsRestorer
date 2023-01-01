@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.update.DownloadCallback;
@@ -44,15 +45,12 @@ import java.nio.file.Path;
 /**
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateDownloaderGithub {
-    @Inject
-    private SkinsRestorerBukkit plugin;
-    @Inject
-    private UpdateCheckerGitHub updateChecker;
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private Server server;
+    private final SkinsRestorerBukkit plugin;
+    private final UpdateCheckerGitHub updateChecker;
+    private final SRLogger logger;
+    private final Server server;
 
     @Getter
     private DownloadFailReason failReason;

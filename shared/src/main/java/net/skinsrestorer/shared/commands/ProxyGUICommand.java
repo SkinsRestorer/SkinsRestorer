@@ -24,6 +24,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
@@ -37,11 +38,10 @@ import javax.inject.Inject;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @Conditions("cooldown|allowed-server")
-public class ProxyGUICommand extends BaseCommand {
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private SkinStorage skinStorage;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public final class ProxyGUICommand extends BaseCommand {
+    private final SRLogger logger;
+    private final SkinStorage skinStorage;
 
     @Default
     private void onDefault(ISRPlayer player) {

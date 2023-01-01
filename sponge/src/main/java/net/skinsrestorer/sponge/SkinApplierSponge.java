@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
-import org.spongepowered.api.Sponge;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
@@ -34,11 +34,13 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.storage.WorldProperties;
 
+import javax.inject.Inject;
 import java.util.Collection;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierSponge implements ISkinApplier {
     private final SkinsRestorerSponge plugin;
+    private final Game game;
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
@@ -56,7 +58,7 @@ public class SkinApplierSponge implements ISkinApplier {
     }
 
     private void setTexture(IProperty property, Collection<ProfileProperty> oldProperties) {
-        ProfileProperty newTextures = Sponge.getServer().getGameProfileManager().createProfileProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
+        ProfileProperty newTextures = game.getServer().getGameProfileManager().createProfileProperty(IProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
         oldProperties.removeIf(property2 -> property2.getName().equals(IProperty.TEXTURES_NAME));
         oldProperties.add(newTextures);
     }
@@ -76,16 +78,16 @@ public class SkinApplierSponge implements ISkinApplier {
         Vector3d rotation = receiver.getRotation();
 
         // Simulate respawn to see skin active
-        for (WorldProperties w : Sponge.getServer().getAllWorldProperties()) {
+        for (WorldProperties w : game.getServer().getAllWorldProperties()) {
             if (!w.getUniqueId().equals(receiver.getWorld().getUniqueId())) {
-                Sponge.getServer().loadWorld(w.getUniqueId());
-                Sponge.getServer().getWorld(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
+                game.getServer().loadWorld(w.getUniqueId());
+                game.getServer().getWorld(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
                 receiver.setLocationAndRotation(loc, rotation);
                 break;
             }
         }
 
         receiver.offer(Keys.VANISH, true);
-        Sponge.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin.getPluginInstance());
+        game.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin.getPluginInstance());
     }
 }

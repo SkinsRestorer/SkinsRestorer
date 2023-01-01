@@ -22,14 +22,15 @@ package net.skinsrestorer.velocity.listener;
 import com.velocitypowered.api.event.EventHandler;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRPluginMessageAdapter;
 import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PluginMessageListener implements EventHandler<PluginMessageEvent> {
-    @Inject
-    private SRPluginMessageAdapter adapter;
+    private final SRPluginMessageAdapter adapter;
 
     @Override
     public void execute(PluginMessageEvent event) {

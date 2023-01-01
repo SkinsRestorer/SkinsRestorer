@@ -75,10 +75,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Getter
 public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private final Server server;
+    @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
+    @Getter
     private boolean isUpdaterInitialized = false;
     private boolean updateDownloaded = false;
 
@@ -213,7 +214,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
                         Map<String, String> skinList = convertToObjectV2(msgBytes);
 
-                        Inventory inventory = SkinsGUI.createGUI(new SkinsGUI.ProxyGUIActions(this),
+                        Inventory inventory = SkinsGUI.createGUI(injector.getSingleton(SkinsGUI.ProxyGUIActions.class),
                                 injector.getSingleton(SkinsRestorerLocale.class),
                                 logger, server, wrapper.player(player), page, skinList);
 

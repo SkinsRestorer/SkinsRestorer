@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.listeners;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.IProperty;
@@ -32,13 +33,11 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import javax.inject.Inject;
 import java.util.Optional;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class LoginProfileListenerAdapter<R> {
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private SkinStorage skinStorage;
-    @Inject
-    private SRLogger logger;
+    private final SettingsManager settings;
+    private final SkinStorage skinStorage;
+    private final SRLogger logger;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
         if (handleSync(event))

@@ -26,10 +26,9 @@ import net.skinsrestorer.shared.storage.Message;
 
 import javax.inject.Inject;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ConnectListenerAdapter {
-    @Inject
-    private ISRProxyPlugin plugin;
+    private final ISRProxyPlugin plugin;
 
     public void handleConnect(SRServerConnectedEvent event) {
         plugin.runAsync(() -> {

@@ -57,7 +57,7 @@ import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPI implements IMineSkinAPI {
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
@@ -67,14 +67,10 @@ public class MineSkinAPI implements IMineSkinAPI {
         t.setName("SkinsRestorer-MineSkinAPI");
         return t;
     });
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private MetricsCounter metricsCounter;
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private SkinsRestorerLocale locale;
+    private final SRLogger logger;
+    private final MetricsCounter metricsCounter;
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
 
     @Override
     public IProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {

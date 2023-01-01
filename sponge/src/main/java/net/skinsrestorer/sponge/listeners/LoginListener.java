@@ -19,23 +19,24 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.IProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.sponge.SkinApplierSponge;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
+import org.spongepowered.api.Game;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
-    @Inject
-    private SkinApplierSponge skinApplier;
-    @Inject
-    private LoginProfileListenerAdapter<Void> adapter;
+    private final SkinApplierSponge skinApplier;
+    private final LoginProfileListenerAdapter<Void> adapter;
+    private final Game game;
 
     @Override
     public void handle(@NotNull Auth event) {
@@ -46,7 +47,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return Sponge.getServer().getOnlineMode();
+                return game.getServer().getOnlineMode();
             }
 
             @Override

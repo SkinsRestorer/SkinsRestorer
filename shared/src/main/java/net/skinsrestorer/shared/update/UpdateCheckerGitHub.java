@@ -42,7 +42,7 @@ public class UpdateCheckerGitHub {
     private static final String RESOURCE_ID = "SkinsRestorerX";
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
     private static final String LOG_ROW = "§a----------------------------------------------";
-    private final SRLogger log;
+    private final SRLogger logger;
     @Getter
     private final String userAgent;
     private final ISRPlugin plugin;
@@ -66,8 +66,8 @@ public class UpdateCheckerGitHub {
                 }
             });
         } catch (Exception e) {
-            log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
-            log.debug(e);
+            logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
+            logger.debug(e);
         }
     }
 

@@ -22,17 +22,17 @@ package net.skinsrestorer.velocity.listener;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
 import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ConnectListener {
-    @Inject
-    private WrapperVelocity wrapper;
-    @Inject
-    private ConnectListenerAdapter adapter;
+    private final WrapperVelocity wrapper;
+    private final ConnectListenerAdapter adapter;
 
     @Subscribe(order = PostOrder.LAST)
     public void onServerConnect(ServerConnectedEvent event) {

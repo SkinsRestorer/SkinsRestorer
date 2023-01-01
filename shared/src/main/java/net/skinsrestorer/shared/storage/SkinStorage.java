@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
@@ -46,19 +47,14 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorage implements ISkinStorage {
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private MojangAPI mojangAPI;
-    @Inject
-    private MineSkinAPI mineSkinAPI;
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private SkinsRestorerLocale locale;
-    @Inject
-    private IPropertyFactory propertyFactory;
+    private final SRLogger logger;
+    private final MojangAPI mojangAPI;
+    private final MineSkinAPI mineSkinAPI;
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
+    private final IPropertyFactory propertyFactory;
     @Setter
     private StorageAdapter storageAdapter;
 

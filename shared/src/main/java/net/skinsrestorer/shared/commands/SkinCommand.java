@@ -25,6 +25,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
@@ -54,19 +55,14 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @CommandAlias("skin")
 @CommandPermission("%skin")
 @Conditions("allowed-server")
-public class SkinCommand extends BaseCommand {
-    @Inject
-    private ISRPlugin plugin;
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private CooldownStorage cooldownStorage;
-    @Inject
-    private SkinStorage skinStorage;
-    @Inject
-    private SkinsRestorerLocale locale;
-    @Inject
-    private SRLogger logger;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public final class SkinCommand extends BaseCommand {
+    private final ISRPlugin plugin;
+    private final SettingsManager settings;
+    private final CooldownStorage cooldownStorage;
+    private final SkinStorage skinStorage;
+    private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
 
     @SuppressWarnings("deprecation")
     @Default

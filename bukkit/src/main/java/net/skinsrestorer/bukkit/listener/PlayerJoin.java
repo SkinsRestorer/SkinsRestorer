@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.listener;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
@@ -28,21 +29,21 @@ import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerJoin implements Listener {
     @Setter
     private static boolean resourcePack;
-    @Inject
-    private SkinsRestorerBukkit plugin;
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private LoginProfileListenerAdapter<Void> adapter;
+    private final SkinsRestorerBukkit plugin;
+    private final SettingsManager settings;
+    private final Server server;
+    private final LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -56,7 +57,7 @@ public class PlayerJoin implements Listener {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return plugin.getServer().getOnlineMode();
+                return server.getOnlineMode();
             }
 
             @Override

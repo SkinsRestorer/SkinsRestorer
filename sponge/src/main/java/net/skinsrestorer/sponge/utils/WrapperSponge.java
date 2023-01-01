@@ -31,10 +31,11 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 
+import javax.inject.Inject;
 import java.util.Locale;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class WrapperSponge {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;

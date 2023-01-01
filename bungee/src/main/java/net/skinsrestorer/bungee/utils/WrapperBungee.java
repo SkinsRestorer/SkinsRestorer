@@ -36,12 +36,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor()
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class WrapperBungee {
-    @Inject
-    private SettingsManager settings;
-    @Inject
-    private SkinsRestorerLocale locale;
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
 
     public ISRCommandSender commandSender(CommandSender sender) {
         if (sender instanceof ProxiedPlayer) {

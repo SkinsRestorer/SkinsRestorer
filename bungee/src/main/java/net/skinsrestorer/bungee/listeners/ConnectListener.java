@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -29,11 +30,10 @@ import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ConnectListener implements Listener {
-    @Inject
-    private WrapperBungee wrapper;
-    @Inject
-    private ConnectListenerAdapter adapter;
+    private final WrapperBungee wrapper;
+    private final ConnectListenerAdapter adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerConnect(ServerConnectedEvent event) {

@@ -42,7 +42,6 @@ import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
@@ -56,8 +55,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Getter
 public class SkinsRestorerSponge extends SkinsRestorerServerShared {
+    @Getter
     private final Object pluginInstance; // Only for platform API use
     private final Metrics.Factory metricsFactory;
     private final PluginContainer pluginContainer;
@@ -104,7 +103,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
         // Init API
         registerAPI(skinApplierSponge);
 
-        Sponge.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
+        game.getEventManager().registerListener(pluginInstance, ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
 
         // Init commands
         CommandManager<?, ?, ?, ?, ?, ?> manager = sharedInitCommands();
@@ -123,7 +122,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
     @Override
     public boolean isPluginEnabled(String pluginName) {
-        return Sponge.getPluginManager().isLoaded(pluginName);
+        return game.getPluginManager().isLoaded(pluginName);
     }
 
     @Override
@@ -138,7 +137,7 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
     @Override
     public void runSync(Runnable runnable) {
-        Sponge.getScheduler().createSyncExecutor(pluginInstance).execute(runnable);
+        game.getScheduler().createSyncExecutor(pluginInstance).execute(runnable);
     }
 
     @Override

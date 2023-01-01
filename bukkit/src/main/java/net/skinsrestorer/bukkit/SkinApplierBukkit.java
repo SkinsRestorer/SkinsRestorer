@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import io.papermc.lib.PaperLib;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
@@ -54,13 +55,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBukkit implements ISkinApplier {
-    @Inject
-    private SkinsRestorerBukkit plugin;
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private SettingsManager settings;
+    private final SkinsRestorerBukkit plugin;
+    private final SRLogger logger;
+    private final SettingsManager settings;
+    private final Server server;
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
@@ -102,7 +102,7 @@ public class SkinApplierBukkit implements ISkinApplier {
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        applySkin(playerWrapper.get(Player.class), property, plugin.getServer());
+        applySkin(playerWrapper.get(Player.class), property, server);
     }
 
     /**
@@ -262,7 +262,7 @@ public class SkinApplierBukkit implements ISkinApplier {
             return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
         } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
             // Bad loaders full ignore finding java 17 classes instead of throwing class version errors
-            return plugin.getServer().getOnlinePlayers();
+            return server.getOnlinePlayers();
         }
     }
 }

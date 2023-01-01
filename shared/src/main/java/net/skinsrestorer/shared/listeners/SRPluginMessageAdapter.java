@@ -33,16 +33,12 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Optional;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRPluginMessageAdapter {
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private SkinStorage skinStorage;
-    @Inject
-    private ISRProxyPlugin plugin;
-    @Inject
-    private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private final SRLogger logger;
+    private final SkinStorage skinStorage;
+    private final ISRProxyPlugin plugin;
+    private final CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
         if (event.isCancelled()) {

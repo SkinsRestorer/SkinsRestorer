@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bungee;
 
-import ch.jalu.configme.SettingsManager;
 import co.aikar.commands.BungeeCommandManager;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.bungee.contexts.OnlinePlayer;
@@ -37,6 +36,7 @@ import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
+import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
@@ -49,7 +49,6 @@ import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 
 import java.io.InputStream;
@@ -63,7 +62,6 @@ import java.util.stream.Collectors;
 
 @Getter
 public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
-    private static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final ProxyServer proxy;
     private final Plugin pluginInstance; // Only for platform API use
 
@@ -81,18 +79,6 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
         injector.register(ProxyServer.class, proxy);
         this.proxy = proxy;
         this.pluginInstance = pluginInstance;
-    }
-
-    /*
-     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
-     * This method will check if the new class is available and return the appropriate class that was compiled for it.
-     */
-    private static SkinApplierBungeeShared selectSkinApplier(SettingsManager settings, SRLogger srLogger) {
-        if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
-            return new SkinApplierBungeeNew(settings, srLogger);
-        } else {
-            return new SkinApplierBungeeOld(settings, srLogger);
-        }
     }
 
     public void pluginStartup() {
@@ -114,11 +100,8 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
             return;
         }
 
-        SkinApplierBungeeShared skinApplierBungee = selectSkinApplier(injector.getSingleton(SettingsManager.class), logger);
-        injector.register(SkinApplierBungeeShared.class, skinApplierBungee);
-
         // Init API
-        registerAPI(skinApplierBungee);
+        registerAPI(injector.getSingleton(SkinApplierBungee.class));
 
         // Init listener
         proxy.getPluginManager().registerListener(pluginInstance, injector.newInstance(LoginListener.class));
@@ -215,7 +198,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(ISRPlayer player) {
-        List<IProperty> props = injector.getSingleton(SkinApplierBungeeShared.class).getProperties(player.getWrapper().get(ProxiedPlayer.class));
+        List<IProperty> props = injector.getSingleton(SkinApplierBungee.class).getAdapter().getProperties(player.getWrapper().get(ProxiedPlayer.class));
 
         if (props == null) {
             return Collections.emptyList();
@@ -258,7 +241,7 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
     private static class PropertyFactoryBungee implements IPropertyFactory {
         @Override
         public IProperty createProperty(String name, String value, String signature) {
-            if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+            if (ReflectionUtil.classExists(SkinApplierBungee.NEW_PROPERTY_CLASS)) {
                 return new BungeePropertyNew(name, value, signature);
             } else {
                 return new BungeePropertyOld(name, value, signature);

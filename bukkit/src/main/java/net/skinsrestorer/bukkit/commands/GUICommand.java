@@ -24,6 +24,7 @@ import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
@@ -31,6 +32,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
@@ -40,24 +42,21 @@ import javax.inject.Inject;
 @CommandAlias("skins")
 @CommandPermission("%skins")
 @Conditions("cooldown")
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUICommand extends BaseCommand {
-    @Inject
-    private SkinsRestorerBukkit plugin;
-    @Inject
-    private SkinsRestorerLocale locale;
-    @Inject
-    private SRLogger logger;
-    @Inject
-    private SkinStorage skinStorage;
-    @Inject
-    private SkinsGUI.ServerGUIActions serverGUIActions;
+    private final SkinsRestorerBukkit plugin;
+    private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
+    private final SkinStorage skinStorage;
+    private final SkinsGUI.ServerGUIActions serverGUIActions;
+    private final Server server;
 
     @Default
     public void onDefault(ISRPlayer srPlayer) {
         plugin.runAsync(() -> {
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(serverGUIActions, locale, logger, plugin.getServer(), skinStorage, srPlayer, 0);
+            Inventory inventory = SkinsGUI.createGUI(serverGUIActions, locale, logger, server, skinStorage, srPlayer, 0);
             plugin.runSync(() -> srPlayer.getWrapper().get(Player.class).openInventory(inventory));
         });
     }

@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.ServerConnection;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -28,9 +29,9 @@ import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
 
 import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PluginMessageListener implements Listener {
-    @Inject
-    private SRPluginMessageAdapter adapter;
+    private final SRPluginMessageAdapter adapter;
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {

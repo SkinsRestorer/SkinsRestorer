@@ -17,9 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee;
+package net.skinsrestorer.bungee.utils;
 
 import ch.jalu.configme.SettingsManager;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -28,21 +29,41 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bungee.SkinApplierBungeeNew;
+import net.skinsrestorer.bungee.SkinApplierBungeeOld;
+import net.skinsrestorer.bungee.SkinApplyBungeeAdapter;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.List;
 
-@RequiredArgsConstructor
-public abstract class SkinApplierBungeeShared implements ISkinApplier {
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class SkinApplierBungee implements ISkinApplier {
+    public static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final SettingsManager settings;
-    private final SRLogger log;
+    private final SRLogger logger;
+    private final ProxyServer proxy;
+    @Getter
+    private final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
+
+    /*
+     * Starting the 1.19 builds of BungeeCord, the Property class has changed.
+     * This method will check if the new class is available and return the appropriate class that was compiled for it.
+     */
+    private static SkinApplyBungeeAdapter selectSkinApplyAdapter() {
+        if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+            return new SkinApplierBungeeNew();
+        } else {
+            return new SkinApplierBungeeOld();
+        }
+    }
 
     @Override
     public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
@@ -68,7 +89,7 @@ public abstract class SkinApplierBungeeShared implements ISkinApplier {
     private void applyEvent(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
         SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
-        ProxyServer.getInstance().getPluginManager().callEvent(event);
+        proxy.getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
 
@@ -76,7 +97,7 @@ public abstract class SkinApplierBungeeShared implements ISkinApplier {
     }
 
     private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, IProperty textures) throws ReflectionException {
-        applyToHandler(handler, textures);
+        adapter.applyToHandler(handler, textures);
 
         if (player == null)
             return;
@@ -84,15 +105,12 @@ public abstract class SkinApplierBungeeShared implements ISkinApplier {
         sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
     }
 
-    protected abstract void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException;
-
-    public abstract List<IProperty> getProperties(ProxiedPlayer player);
-
     private void sendUpdateRequest(@NotNull ProxiedPlayer player, IProperty textures) {
-        if (player.getServer() == null)
+        if (player.getServer() == null) {
             return;
+        }
 
-        log.debug("Sending skin update request for " + player.getName());
+        logger.debug("Sending skin update request for " + player.getName());
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
