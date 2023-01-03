@@ -154,8 +154,9 @@ public class SkinApplierBukkit {
         if (!player.isOnline())
             return;
 
-        if (!optFileChecked)
+        if (!optFileChecked) {
             checkOptFile();
+        }
 
         plugin.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
