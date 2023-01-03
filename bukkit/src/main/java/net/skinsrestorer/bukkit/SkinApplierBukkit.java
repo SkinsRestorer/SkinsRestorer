@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.paper.MultiPaperUtil;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
@@ -250,9 +251,9 @@ public class SkinApplierBukkit {
 
     private Collection<? extends Player> getOnlinePlayers() {
         try {
-            return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
+            return MultiPaperUtil.getOnlinePlayers();
         } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
-            // Bad loaders full ignore finding java 17 classes instead of throwing class version errors
+            // Bad loaders fully ignore finding java 17 classes instead of throwing class version errors
             return Bukkit.getOnlinePlayers();
         }
     }
