@@ -24,7 +24,9 @@ import co.aikar.locales.LocaleManager;
 import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.commands.ISkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.storage.CallableValue;
 import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
@@ -37,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public interface ISRPlugin {
@@ -69,8 +72,22 @@ public interface ISRPlugin {
         LocaleManager<ISRForeign> localeManager = getLocaleManager();
 
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call()));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey())));
+        for (Map.Entry<String, CallableValue<Message>> entry : CommandReplacements.descriptions.entrySet()) {
+            String message = localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), entry.getValue().call().getKey());
+            if (message == null) {
+                srLogger.warning("Missing message for " + entry.getKey());
+                continue;
+            }
+            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
+        }
+        for (Map.Entry<String, CallableValue<Message>> entry : CommandReplacements.syntax.entrySet()) {
+            String message = localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), entry.getValue().call().getKey());
+            if (message == null) {
+                srLogger.warning("Missing message for " + entry.getKey());
+                continue;
+            }
+            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
+        }
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(localeManager.getMessage(SkinsRestorerAPIShared.getDefaultForeign(), v.call().getKey()).split(", "))));
 
