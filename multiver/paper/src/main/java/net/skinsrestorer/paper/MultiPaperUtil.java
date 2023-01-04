@@ -17,13 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.builddata;
+package net.skinsrestorer.paper;
 
-// The constants are replaced before compilation
-public class BuildData {
+import com.github.puregero.multilib.MultiLib;
+import org.bukkit.entity.Player;
 
-    public static final String VERSION = "{version}";
-    public static final String DESCRIPTION = "{description}";
-    public static final String URL = "{url}";
-    public static final String COMMIT = "{commit}";
+import java.util.Collection;
+
+public class MultiPaperUtil {
+    public static Collection<? extends Player> getOnlinePlayers() {
+        return MultiLib.getAllOnlinePlayers();
+    }
 }

@@ -35,6 +35,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PaperPlayerJoinEvent implements Listener {
     private final LoginProfileListenerAdapter<Void> adapter;
+    private final ISRPlugin plugin;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
@@ -45,17 +46,17 @@ public class PaperPlayerJoinEvent implements Listener {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return !UUID.nameUUIDFromBytes(("OfflinePlayer:" + getPlayerName()).getBytes(StandardCharsets.UTF_8)).equals(event.getPlayerProfile().getId());
+                return !event.getPlayerProfile().getProperties().isEmpty();
             }
 
             @Override
             public String getPlayerName() {
-                return event.getPlayerProfile().getName();
+                return event.getName();
             }
 
             @Override
             public boolean isCancelled() {
-                return false;
+                return event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED;
             }
 
             @Override

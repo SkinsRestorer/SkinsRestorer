@@ -47,7 +47,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return game.getServer().getOnlineMode();
+                return game.getServer().getOnlineMode(); // TODO may replace with profile#isFilled() or check properties
             }
 
             @Override

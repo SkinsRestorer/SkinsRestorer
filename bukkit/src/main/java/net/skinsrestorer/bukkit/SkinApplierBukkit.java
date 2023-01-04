@@ -29,6 +29,10 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.interfaces.ISkinApplier;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.reflection.exception.ReflectionException;
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
@@ -146,7 +150,7 @@ public class SkinApplierBukkit implements ISkinApplier {
         }
     }
 
-    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) throws ReflectionException {
+    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             return BukkitPropertyApplier.getPlayerProperties(player);
         } else {
@@ -164,8 +168,9 @@ public class SkinApplierBukkit implements ISkinApplier {
         if (!player.isOnline())
             return;
 
-        if (!optFileChecked)
+        if (!optFileChecked) {
             checkOptFile();
+        }
 
         plugin.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
@@ -259,9 +264,9 @@ public class SkinApplierBukkit implements ISkinApplier {
 
     private Collection<? extends Player> getOnlinePlayers() {
         try {
-            return com.github.puregero.multilib.MultiLib.getAllOnlinePlayers();
+            return MultiPaperUtil.getOnlinePlayers();
         } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
-            // Bad loaders full ignore finding java 17 classes instead of throwing class version errors
+            // Bad loaders fully ignore finding java 17 classes instead of throwing class version errors
             return server.getOnlinePlayers();
         }
     }

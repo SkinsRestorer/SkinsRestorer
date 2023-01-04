@@ -28,6 +28,15 @@ public class SpigotUtil {
         return server.spigot().getConfig();
     }
 
+    public static boolean isRealSpigot(Server server) {
+            try {
+            server.spigot().getConfig();
+            return true;
+        } catch (UnsupportedOperationException e) { // Hypbrid forks don't have a spigot config
+            return false;
+        }
+    }
+
     public static boolean hasPassengerMethods() {
         try {
             Entity.class.getMethod("getPassengers");

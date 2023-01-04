@@ -53,20 +53,25 @@ public class BukkitPropertyApplier {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Collection<IProperty>> getPlayerProperties(Player player) throws ReflectionException {
-        Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
+    public static Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+        try {
+            Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
 
-        Map<String, Collection<IProperty>> properties = new HashMap<>();
-        for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
-            List<IProperty> list = new ArrayList<>();
+            Map<String, Collection<IProperty>> properties = new HashMap<>();
+            for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
+                List<IProperty> list = new ArrayList<>();
 
-            for (Property property : entry.getValue()) {
-                list.add(new BukkitProperty(property.getName(), property.getValue(), property.getSignature()));
+                for (Property property : entry.getValue()) {
+                    list.add(new BukkitProperty(property.getName(), property.getValue(), property.getSignature()));
+                }
+
+                properties.put(entry.getKey(), list);
             }
 
-            properties.put(entry.getKey(), list);
+            return properties;
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+            return Collections.emptyMap();
         }
-
-        return properties;
     }
 }

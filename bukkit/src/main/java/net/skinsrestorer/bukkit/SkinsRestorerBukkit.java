@@ -300,7 +300,7 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
     private void checkProxyMode() {
         proxyMode = false;
         try {
-            if (PaperLib.isSpigot()) {
+            if (PaperLib.isSpigot() && SpigotUtil.isRealSpigot(server)) {
                 proxyMode = SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord");
             }
             // sometimes it does not get the right "bungeecord: true" setting

@@ -31,6 +31,7 @@ import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
@@ -120,6 +121,7 @@ public final class SRCommand extends BaseCommand {
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
             statusMessages.add("§7Server: §6" + plugin.getPlatformVersion());
             statusMessages.add("§7ProxyMode: §6" + plugin.getProxyModeInfo());
+            statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
             statusMessages.add("§7Finished checking services.");
             statusMessages.add(breakLine);
             statusMessages.forEach(sender::sendMessage);
