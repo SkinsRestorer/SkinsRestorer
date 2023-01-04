@@ -5,6 +5,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.*
+import java.io.ByteArrayOutputStream
 
 fun Project.publishShadowJar() {
     configurePublication {
@@ -30,4 +31,13 @@ private fun Project.configurePublication(configurer: MavenPublication.() -> Unit
 fun JavaPluginExtension.javaTarget(version: Int) {
     sourceCompatibility = JavaVersion.toVersion(version)
     targetCompatibility = JavaVersion.toVersion(version)
+}
+
+fun Project.latestCommitHash(): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", "rev-parse", "--short", "HEAD")
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
 }

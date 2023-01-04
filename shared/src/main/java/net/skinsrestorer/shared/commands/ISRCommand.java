@@ -25,6 +25,7 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.ISRCommandSender;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
@@ -101,6 +102,7 @@ public interface ISRCommand {
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
             statusMessages.add("§7Server: §6" + getPlatformVersion());
             statusMessages.add("§7ProxyMode: §6" + getProxyMode());
+            statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
             statusMessages.add("§7Finished checking services.");
             statusMessages.add(breakLine);
             statusMessages.forEach(sender::sendMessage);

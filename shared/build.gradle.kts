@@ -1,4 +1,5 @@
 dependencies {
+    api(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")

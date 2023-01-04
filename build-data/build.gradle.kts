@@ -10,4 +10,5 @@ blossom {
     replaceToken("{version}", version)
     replaceToken("{description}", rootProject.description)
     replaceToken("{url}", "https://skinsrestorer.net/")
+    replaceToken("{commit}", rootProject.latestCommitHash())
 }
