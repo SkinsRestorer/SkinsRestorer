@@ -41,10 +41,7 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.MySQL;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -64,10 +61,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -299,9 +293,22 @@ public abstract class SkinsRestorerShared implements SRPlugin {
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
-        CommandReplacements.descriptions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, locale.getMessage(locale.getDefaultForeign(), v)));
-        CommandReplacements.syntax.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, locale.getMessage(locale.getDefaultForeign(), v)));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+        for (Map.Entry<String, Message> entry : CommandReplacements.descriptions.entrySet()) {
+            String message = locale.getMessage(locale.getDefaultForeign(), entry.getValue());
+            if (message == null) {
+                logger.warning("Missing message for " + entry.getKey());
+                continue;
+            }
+            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
+        }
+        for (Map.Entry<String, Message> entry : CommandReplacements.syntax.entrySet()) {
+            String message = locale.getMessage(locale.getDefaultForeign(), entry.getValue());
+            if (message == null) {
+                logger.warning("Missing message for " + entry.getKey());
+                continue;
+            }
+            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
+        }CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
         CommandPropertiesManager.load(manager, dataFolder, getResource("command.properties"), logger);

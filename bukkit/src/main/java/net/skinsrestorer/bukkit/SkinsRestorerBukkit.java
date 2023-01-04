@@ -507,14 +507,8 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
 
     @Override
     public List<IProperty> getPropertiesOfPlayer(SRPlayer player) {
-        try {
-            Map<String, Collection<IProperty>> propertyMap = injector.getSingleton(SkinApplierBukkit.class)
-                    .getPlayerProperties(player.getWrapper().get(Player.class));
-            return new ArrayList<>(propertyMap.get(IProperty.TEXTURES_NAME));
-        } catch (ReflectionException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+        Map<String, Collection<IProperty>> propertyMap = injector.getSingleton(SkinApplierBukkit.class).getPlayerProperties(player.getWrapper().get(Player.class));
+        return new ArrayList<>(propertyMap.get(IProperty.TEXTURES_NAME));
     }
 
     @Override
