@@ -64,7 +64,7 @@ public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements 
 
             @Override
             public boolean isCancelled() {
-                return event.getLoginResult() == AsyncPlayerPreLoginEvent.Result.ALLOWED;
+                return event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED;
             }
         };
     }
