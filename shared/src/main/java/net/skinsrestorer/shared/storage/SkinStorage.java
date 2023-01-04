@@ -80,7 +80,7 @@ public class SkinStorage implements ISkinStorage {
 
     @Override
     public Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException {
-        final Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
+        Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
         String skin = result.getLeft();
 
         if (C.validUrl(skin)) {

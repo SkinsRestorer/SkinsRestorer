@@ -60,7 +60,7 @@ public class LoginListener extends SharedLoginProfileListener implements EventLi
         return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Sponge.getServer().getOnlineMode();
+                return Sponge.getServer().getOnlineMode(); // TODO may replace with profile#isFilled() or check properties
             }
 
             @Override

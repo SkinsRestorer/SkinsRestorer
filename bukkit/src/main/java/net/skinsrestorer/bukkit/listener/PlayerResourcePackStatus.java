@@ -28,7 +28,6 @@ import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -37,7 +36,6 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 @RequiredArgsConstructor
 public class PlayerResourcePackStatus extends SharedLoginProfileListener implements Listener {
     private final SkinsRestorerBukkit plugin;
-    private final boolean isOnlineMode = Bukkit.getOnlineMode();
 
     @EventHandler
     public void onResourcePackStatus(final PlayerResourcePackStatusEvent event) {
@@ -65,7 +63,7 @@ public class PlayerResourcePackStatus extends SharedLoginProfileListener impleme
         return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Bukkit.getOnlineMode();
+                return !plugin.getSkinApplierBukkit().getPlayerProperties(event.getPlayer()).isEmpty();
             }
 
             @Override

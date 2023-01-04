@@ -137,7 +137,7 @@ public class SkinApplierBukkit {
         }
     }
 
-    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) throws ReflectionException {
+    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             return BukkitPropertyApplier.getPlayerProperties(player);
         } else {

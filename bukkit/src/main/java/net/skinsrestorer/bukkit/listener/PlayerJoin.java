@@ -29,7 +29,6 @@ import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
 import net.skinsrestorer.shared.storage.Config;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -65,7 +64,7 @@ public class PlayerJoin extends SharedLoginProfileListener implements Listener {
         return new SRLoginProfileEvent() {
             @Override
             public boolean isOnline() {
-                return Bukkit.getOnlineMode();
+                return !plugin.getSkinApplierBukkit().getPlayerProperties(event.getPlayer()).isEmpty();
             }
 
             @Override
