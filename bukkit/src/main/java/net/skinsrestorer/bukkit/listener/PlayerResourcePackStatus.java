@@ -21,11 +21,9 @@ package net.skinsrestorer.bukkit.listener;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
@@ -37,7 +35,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerResourcePackStatus implements Listener {
-    private final SkinsRestorerBukkit plugin;
+    private final SRBukkitAdapter plugin;
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
     private final SkinApplierBukkit skinApplier;
@@ -71,8 +69,8 @@ public class PlayerResourcePackStatus implements Listener {
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
-                SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property);
+            public void setResultProperty(SkinProperty property) {
+                skinApplier.applySkin(event.getPlayer(), property);
             }
 
             @Override

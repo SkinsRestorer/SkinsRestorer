@@ -21,7 +21,7 @@ package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 
 import java.util.Optional;
@@ -51,7 +51,7 @@ public interface ISkinStorage {
      * @return The skin property containing the skin data and on the right whether it's custom set
      * @throws SkinRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException;
+    Pair<SkinProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException;
 
     /**
      * This method returns the skin data associated to the skin name.
@@ -61,7 +61,7 @@ public interface ISkinStorage {
      * @return The skin property containing the skin data
      * @throws SkinRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    IProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException;
+    SkinProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException;
 
     /**
      * Removes custom players skin name from database
@@ -84,14 +84,14 @@ public interface ISkinStorage {
      * @param skinName       Skin name
      * @param updateOutdated Whether we update the skin if expired
      */
-    Optional<IProperty> getSkinData(String skinName, boolean updateOutdated);
+    Optional<SkinProperty> getSkinData(String skinName, boolean updateOutdated);
 
     /**
      * Timestamp is set to current time
      *
-     * @see #setSkinData(String, IProperty, long)
+     * @see #setSkinData(String, SkinProperty, long)
      */
-    void setSkinData(String skinName, IProperty textures);
+    void setSkinData(String skinName, SkinProperty textures);
 
     /**
      * Saves skin data to database
@@ -100,7 +100,7 @@ public interface ISkinStorage {
      * @param textures  Property object
      * @param timestamp timestamp string in millis (null for current)
      */
-    void setSkinData(String skinName, IProperty textures, long timestamp);
+    void setSkinData(String skinName, SkinProperty textures, long timestamp);
 
     boolean isInitialized();
 }

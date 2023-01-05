@@ -21,7 +21,7 @@ package net.skinsrestorer.bukkit.utils;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.bukkit.entity.Player;
@@ -30,11 +30,11 @@ import java.util.*;
 
 public class BukkitPropertyApplier {
     @SuppressWarnings("unchecked")
-    public static void applyProperty(Player player, IProperty property) {
+    public static void applyProperty(Player player, SkinProperty property) {
         try {
             GameProfile profile = getGameProfile(player);
-            profile.getProperties().removeAll(IProperty.TEXTURES_NAME);
-            profile.getProperties().put(IProperty.TEXTURES_NAME, property.getHandle());
+            profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+            profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectionException e) {
             e.printStackTrace();
         }
@@ -53,16 +53,16 @@ public class BukkitPropertyApplier {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+    public static Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
         try {
             Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
 
-            Map<String, Collection<IProperty>> properties = new HashMap<>();
+            Map<String, Collection<SkinProperty>> properties = new HashMap<>();
             for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
-                List<IProperty> list = new ArrayList<>();
+                List<SkinProperty> list = new ArrayList<>();
 
                 for (Property property : entry.getValue()) {
-                    list.add(new BukkitProperty(property.getName(), property.getValue(), property.getSignature()));
+                    list.add(SkinProperty.of(property.getValue(), property.getSignature()));
                 }
 
                 properties.put(entry.getKey(), list);

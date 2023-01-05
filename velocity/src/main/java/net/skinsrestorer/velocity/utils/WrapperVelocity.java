@@ -25,7 +25,6 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
@@ -92,6 +91,11 @@ public class WrapperVelocity {
             }
 
             @Override
+            public <P> P getAs(Class<P> playerClass) {
+                return playerClass.cast(player);
+            }
+
+            @Override
             public Optional<String> getCurrentServer() {
                 return player.getCurrentServer().map(server -> server.getServerInfo().getName());
             }
@@ -100,11 +104,6 @@ public class WrapperVelocity {
             public void sendDataToServer(String channel, byte[] data) {
                 player.getCurrentServer().map(server ->
                         server.sendPluginMessage(MinecraftChannelIdentifier.from(channel), data));
-            }
-
-            @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
             }
 
             @Override

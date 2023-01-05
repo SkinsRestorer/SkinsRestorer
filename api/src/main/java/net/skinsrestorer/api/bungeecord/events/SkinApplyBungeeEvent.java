@@ -24,7 +24,7 @@ import lombok.Setter;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Cancellable;
 import net.md_5.bungee.api.plugin.Event;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
 @Getter
@@ -34,9 +34,9 @@ public class SkinApplyBungeeEvent extends Event implements Cancellable {
     @Setter
     private boolean isCancelled = false;
     @Setter
-    private IProperty property;
+    private SkinProperty property;
 
-    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, IProperty property) {
+    public SkinApplyBungeeEvent(@Nullable ProxiedPlayer who, SkinProperty property) {
         this.who = who;
         this.property = property;
     }

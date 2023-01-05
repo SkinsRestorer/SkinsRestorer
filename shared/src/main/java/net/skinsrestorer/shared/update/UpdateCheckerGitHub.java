@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
-import net.skinsrestorer.shared.interfaces.SRServerPlugin;
+import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
@@ -51,7 +51,7 @@ public class UpdateCheckerGitHub {
     public void checkForUpdate(UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", plugin.getUpdateCheckerAgent());
+            connection.setRequestProperty("User-Agent", plugin.getUserAgent());
 
             releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
 
@@ -72,7 +72,7 @@ public class UpdateCheckerGitHub {
 
     public List<String> getUpToDateMessages() {
         List<String> upToDateMessages = new LinkedList<>();
-        fillHeader(upToDateMessages, plugin);
+        fillHeader(upToDateMessages);
         upToDateMessages.add("§b    Current version: §a" + plugin.getVersion());
         upToDateMessages.add("§a    This is the latest version!");
         upToDateMessages.add(LOG_ROW);
@@ -80,15 +80,15 @@ public class UpdateCheckerGitHub {
         return upToDateMessages;
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion) {
-        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, currentVersion, false, null);
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, false, null);
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, String currentVersion, boolean updateDownloader, String failReason) {
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, boolean updateDownloader, String failReason) {
         List<String> updateAvailableMessages = new LinkedList<>();
-        fillHeader(updateAvailableMessages, plugin);
+        fillHeader(updateAvailableMessages);
 
-        updateAvailableMessages.add("§b    Current version: §c" + currentVersion);
+        updateAvailableMessages.add("§b    Current version: §c" + plugin.getVersion());
         updateAvailableMessages.add("§b    New version: §c" + newVersion);
 
         if (updateDownloader && hasDirectDownload) {
@@ -109,12 +109,12 @@ public class UpdateCheckerGitHub {
         return updateAvailableMessages;
     }
 
-    private void fillHeader(List<String> updateAvailableMessages, SRPlugin plugin) {
+    private void fillHeader(List<String> updateAvailableMessages) {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        if (plugin instanceof SRServerPlugin) {
-            SRServerPlugin serverPlugin = (SRServerPlugin) plugin;
+        SRServerPlugin serverPlugin = plugin.getInjector().getIfAvailable(SRServerPlugin.class);
+        if (serverPlugin != null) {
             if (serverPlugin.isProxyMode()) {
                 updateAvailableMessages.add("§a    |------------------|");
                 updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");

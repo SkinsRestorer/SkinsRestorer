@@ -20,12 +20,13 @@
 package net.skinsrestorer.api;
 
 import com.google.gson.Gson;
+import lombok.Getter;
 import lombok.NonNull;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.*;
 import net.skinsrestorer.api.model.MojangProfileResponse;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Base64;
@@ -36,61 +37,51 @@ import java.util.Base64;
  * Advanced help or getting problems? join our discord before submitting issues!!
  */
 @SuppressWarnings({"unused"})
-public class SkinsRestorerAPI {
-    private static SkinsRestorerAPI api;
+public class SkinsRestorerAPI<P> {
+    private static SkinsRestorerAPI<?> api;
+    @Getter
     private final IMojangAPI mojangAPI;
     private final IMineSkinAPI mineSkinAPI;
     private final ISkinStorage skinStorage;
-    private final IWrapperFactory wrapperFactory;
-    private final IPropertyFactory propertyFactory;
-    private final ISkinApplier skinApplier;
+    private final SkinApplier<P> skinApplier;
+    private final NameGetter<P> nameGetter;
     private final Gson gson = new Gson();
+    private Class<P> playerClass;
 
-    public SkinsRestorerAPI(IMojangAPI mojangAPI, IMineSkinAPI mineSkinAPI, ISkinStorage skinStorage, IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, ISkinApplier skinApplier) {
-        if (SkinsRestorerAPI.api == null)
+    public SkinsRestorerAPI(Class<P> playerClass,
+                            IMojangAPI mojangAPI,
+                            IMineSkinAPI mineSkinAPI,
+                            ISkinStorage skinStorage,
+                            SkinApplier<P> skinApplier,
+                            NameGetter<P> nameGetter) {
+        if (SkinsRestorerAPI.api == null) {
             setInstance(this);
+        }
 
         this.mojangAPI = mojangAPI;
         this.mineSkinAPI = mineSkinAPI;
         this.skinStorage = skinStorage;
-        this.wrapperFactory = wrapperFactory;
-        this.propertyFactory = propertyFactory;
         this.skinApplier = skinApplier;
+        this.nameGetter = nameGetter;
     }
 
-    private static synchronized void setInstance(SkinsRestorerAPI api) {
+    private static synchronized void setInstance(SkinsRestorerAPI<?> api) {
         if (SkinsRestorerAPI.api == null)
             SkinsRestorerAPI.api = api;
     }
 
-    public static SkinsRestorerAPI getApi() {
-        if (SkinsRestorerAPI.api == null)
+    @SuppressWarnings("unchecked") // We check manually if the class is the same
+    public static <T> SkinsRestorerAPI<T> getApi(Class<T> playerClass) {
+        if (SkinsRestorerAPI.api == null) {
             throw new IllegalStateException("SkinsRestorerAPI is not initialized yet!");
+        }
 
-        return SkinsRestorerAPI.api;
-    }
+        if (!SkinsRestorerAPI.api.playerClass.equals(playerClass)) {
+            throw new IllegalStateException(String.format("SkinsRestorer API requires %s as player class, but %s was provided!",
+                    SkinsRestorerAPI.api.playerClass.getSimpleName(), playerClass.getSimpleName()));
+        }
 
-    /**
-     * Get the trimmed uuid from a player playerName
-     *
-     * @param playerName Mojang username of the player
-     * @return String uuid trimmed (without dashes)
-     * @throws NotPremiumException if the player is not premium
-     */
-    public String getMojangUniqueId(@NonNull String playerName) throws NotPremiumException {
-        return this.mojangAPI.getUUID(playerName).orElse(null);
-    }
-
-    /**
-     * Returned property contains all skin data.
-     * You can get the wrapped object using {@link IProperty#getHandle()}
-     *
-     * @param uuid The players uuid
-     * @return The players skin property, null if not found
-     **/
-    @Nullable
-    public IProperty getProfile(@NonNull String uuid) throws NotPremiumException {
-        return mojangAPI.getProfile(uuid).orElse(null);
+        return (SkinsRestorerAPI<T>) SkinsRestorerAPI.api;
     }
 
     /**
@@ -132,7 +123,7 @@ public class SkinsRestorerAPI {
      * @return Property object containing skin data, or null if skin not found.
      **/
     @Nullable
-    public IProperty getSkinData(String skinName) {
+    public SkinProperty getSkinData(String skinName) {
         return getSkinStorage().getSkinData(skinName, true).orElse(null);
     }
 
@@ -142,10 +133,10 @@ public class SkinsRestorerAPI {
      * @param skinName  Skin name
      * @param textures  Property object
      * @param timestamp timestamp string in millis (leave null for current)
-     * @deprecated use {@link #setSkinData(String, IProperty)} or {@link #setSkinData(String, IProperty, long)}
+     * @deprecated use {@link #setSkinData(String, SkinProperty)} or {@link #setSkinData(String, SkinProperty, long)}
      */
     @Deprecated
-    public void setSkinData(String skinName, IProperty textures, @Nullable Long timestamp) {
+    public void setSkinData(String skinName, SkinProperty textures, @Nullable Long timestamp) {
         if (timestamp == null) {
             setSkinData(skinName, textures);
         } else {
@@ -160,7 +151,7 @@ public class SkinsRestorerAPI {
      * @param skinName Skin name
      * @param textures Property object
      */
-    public void setSkinData(String skinName, IProperty textures) {
+    public void setSkinData(String skinName, SkinProperty textures) {
         getSkinStorage().setSkinData(skinName, textures);
     }
 
@@ -172,7 +163,7 @@ public class SkinsRestorerAPI {
      * @param textures  Property object
      * @param timestamp timestamp long in millis
      */
-    public void setSkinData(String skinName, IProperty textures, long timestamp) {
+    public void setSkinData(String skinName, SkinProperty textures, long timestamp) {
         getSkinStorage().setSkinData(skinName, textures, timestamp);
     }
 
@@ -185,19 +176,19 @@ public class SkinsRestorerAPI {
      * @return Custom skin property containing "value" and "signature"
      * @throws SkinRequestException on error
      */
-    public IProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
+    public SkinProperty genSkinUrl(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {
         return mineSkinAPI.genSkin(url, skinVariant);
     }
 
     /**
      * @param skinName Skin name
      * @return textures.minecraft.net url
-     * @see #getSkinTextureUrl(IProperty)
-     * @deprecated use {@link #getSkinTextureUrl(IProperty)} instead
+     * @see #getSkinTextureUrl(SkinProperty)
+     * @deprecated use {@link #getSkinTextureUrl(SkinProperty)} instead
      */
     @Deprecated
     public String getSkinTextureUrl(String skinName) {
-        IProperty skin = getSkinData(skinName);
+        SkinProperty skin = getSkinData(skinName);
         if (skin == null)
             return null;
 
@@ -212,7 +203,7 @@ public class SkinsRestorerAPI {
      * @param property Profile property
      * @return full textures.minecraft.net url
      */
-    public String getSkinTextureUrl(@NonNull IProperty property) {
+    public String getSkinTextureUrl(@NonNull SkinProperty property) {
         return getSkinProfileData(property).getTextures().getSKIN().getUrl();
     }
 
@@ -226,9 +217,9 @@ public class SkinsRestorerAPI {
      *
      * @param property Profile property
      * @return textures.minecraft.net id
-     * @see #getSkinTextureUrl(IProperty)
+     * @see #getSkinTextureUrl(SkinProperty)
      */
-    public String getSkinTextureUrlStripped(@NonNull IProperty property) {
+    public String getSkinTextureUrlStripped(@NonNull SkinProperty property) {
         return getSkinProfileData(property).getTextures().getSKIN().getStrippedUrl();
     }
 
@@ -242,7 +233,7 @@ public class SkinsRestorerAPI {
      * @param property Profile property
      * @return Decoded profile data as java object
      */
-    public MojangProfileResponse getSkinProfileData(@NonNull IProperty property) {
+    public MojangProfileResponse getSkinProfileData(@NonNull SkinProperty property) {
         String decodedString = new String(Base64.getDecoder().decode(property.getValue()));
 
         return gson.fromJson(decodedString, MojangProfileResponse.class);
@@ -251,22 +242,6 @@ public class SkinsRestorerAPI {
     public void setSkin(String playerName, String skinName) throws SkinRequestException, NotPremiumException {
         setSkinName(playerName, skinName);
         getSkinStorage().fetchSkinData(skinName);
-    }
-
-    public IProperty createPlatformProperty(IProperty property) {
-        return createPlatformProperty(property.getName(), property.getValue(), property.getSignature());
-    }
-
-    public IProperty createPlatformProperty(String name, String value, String signature) {
-        return propertyFactory.createProperty(name, value, signature);
-    }
-
-    /**
-     * @see #createPlatformProperty(String, String, String)
-     */
-    @Deprecated
-    public IProperty createProperty(String name, String value, String signature) {
-        return createPlatformProperty(name, value, signature);
     }
 
     /**
@@ -289,38 +264,34 @@ public class SkinsRestorerAPI {
      * Applies the player selected skin from the player table/file.
      * This is useful in combination with setSkinName.
      *
-     * @param playerWrapper
+     * @param player
      * @throws SkinRequestException
      */
-    public void applySkin(PlayerWrapper playerWrapper) throws SkinRequestException, NotPremiumException {
-        String playerName = playerWrapper.getName();
-        applySkin(playerWrapper, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
+    public void applySkin(P player) throws SkinRequestException, NotPremiumException {
+        String playerName = nameGetter.getName(player);
+        applySkin(player, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
     }
 
     /**
      * Only Apply the skinName from the skin table/file.
      * This will not keep the skin on rejoin / applySkin(playerWrapper).
      *
-     * @param playerWrapper
+     * @param player
      * @param skinName
      * @throws SkinRequestException
      */
-    public void applySkin(PlayerWrapper playerWrapper, String skinName) throws SkinRequestException, NotPremiumException {
-        applySkin(playerWrapper, skinStorage.fetchSkinData(skinName));
+    public void applySkin(P player, String skinName) throws SkinRequestException, NotPremiumException {
+        applySkin(player, skinStorage.fetchSkinData(skinName));
     }
 
     /**
      * Applies the skin from the property object.
      * This can be a custom skin that is not in the skin table/file.
      *
-     * @param playerWrapper
+     * @param player
      * @param property
      */
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        skinApplier.applySkin(playerWrapper, property);
-    }
-
-    protected IWrapperFactory getWrapperFactory() {
-        return this.wrapperFactory;
+    public void applySkin(P player, SkinProperty property) {
+        skinApplier.applySkin(player, property);
     }
 }

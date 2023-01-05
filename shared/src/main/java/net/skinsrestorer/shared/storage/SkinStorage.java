@@ -24,17 +24,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.ISkinStorage;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.connections.MineSkinAPI;
+import net.skinsrestorer.shared.connections.MojangAPI;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -54,7 +53,6 @@ public class SkinStorage implements ISkinStorage {
     private final MineSkinAPI mineSkinAPI;
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final IPropertyFactory propertyFactory;
     @Setter
     private StorageAdapter storageAdapter;
 
@@ -91,7 +89,7 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public Pair<IProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException {
+    public Pair<SkinProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException {
         Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
         String skin = result.getLeft();
 
@@ -103,8 +101,8 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public IProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException {
-        Optional<IProperty> textures = getSkinData(skinName, true);
+    public SkinProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException {
+        Optional<SkinProperty> textures = getSkinData(skinName, true);
         if (!textures.isPresent()) {
             // No cached skin found, get from MojangAPI, save and return
             try {
@@ -149,9 +147,9 @@ public class SkinStorage implements ISkinStorage {
      * @return Platform-specific property
      * @throws NotPremiumException throws when no API calls were successful
      */
-    private IProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, long timestamp) throws NotPremiumException {
+    private SkinProperty createProperty(String playerName, boolean updateOutdated, String value, String signature, long timestamp) throws NotPremiumException {
         if (updateOutdated && C.validMojangUsername(playerName) && isExpired(timestamp)) {
-            Optional<IProperty> skin = mojangAPI.getSkin(playerName);
+            Optional<SkinProperty> skin = mojangAPI.getSkin(playerName);
 
             if (skin.isPresent()) {
                 setSkinData(playerName, skin.get());
@@ -159,7 +157,7 @@ public class SkinStorage implements ISkinStorage {
             }
         }
 
-        return propertyFactory.createSkinProperty(value, signature);
+        return SkinProperty.of(value, signature);
     }
 
     @Override
@@ -178,7 +176,7 @@ public class SkinStorage implements ISkinStorage {
 
     // #getSkinData() also create while we have #getSkinForPlayer()
     @Override
-    public Optional<IProperty> getSkinData(String skinName, boolean updateOutdated) {
+    public Optional<SkinProperty> getSkinData(String skinName, boolean updateOutdated) {
         skinName = skinName.toLowerCase();
 
         try {
@@ -208,12 +206,12 @@ public class SkinStorage implements ISkinStorage {
     }
 
     @Override
-    public void setSkinData(String skinName, IProperty textures) {
+    public void setSkinData(String skinName, SkinProperty textures) {
         setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
     @Override
-    public void setSkinData(String skinName, IProperty textures, long timestamp) {
+    public void setSkinData(String skinName, SkinProperty textures, long timestamp) {
         skinName = skinName.toLowerCase();
         String value = textures.getValue();
         String signature = textures.getSignature();
@@ -257,7 +255,7 @@ public class SkinStorage implements ISkinStorage {
             Optional<String> mojangUUID = mojangAPI.getUUIDMojang(skinName);
 
             if (mojangUUID.isPresent()) {
-                Optional<IProperty> textures = mojangAPI.getProfileMojang(mojangUUID.get());
+                Optional<SkinProperty> textures = mojangAPI.getProfileMojang(mojangUUID.get());
 
                 if (textures.isPresent()) {
                     setSkinData(skinName, textures.get());

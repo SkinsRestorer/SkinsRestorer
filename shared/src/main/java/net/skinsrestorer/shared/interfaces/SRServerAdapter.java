@@ -19,8 +19,6 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-public interface SRServerPlugin extends SRPlugin {
+public interface SRServerAdapter extends SRPlatformAdapter {
     void runSync(Runnable runnable);
-
-    boolean isProxyMode();
 }

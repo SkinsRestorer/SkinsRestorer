@@ -29,7 +29,7 @@ import lombok.Setter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRForeign;
-import net.skinsrestorer.shared.interfaces.SRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
@@ -217,7 +217,7 @@ public class SkinsGUI implements InventoryHolder {
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<EventInfo> {
         private final Server server;
-        private final SRServerPlugin plugin;
+        private final SRServerAdapter adapter;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
         private final SkinStorage skinStorage;
@@ -228,7 +228,7 @@ public class SkinsGUI implements InventoryHolder {
         public void accept(EventInfo event) {
             switch (event.getMaterial()) {
                 case PLAYER_HEAD:
-                    plugin.runAsync(() -> {
+                    adapter.runAsync(() -> {
                         String skin = event.getItemMeta().getDisplayName();
                         commandManager.getRootCommand("skin").execute(
                                 commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"set", skin});
@@ -241,20 +241,20 @@ public class SkinsGUI implements InventoryHolder {
                     event.getPlayer().closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
-                    plugin.runAsync(() -> {
+                    adapter.runAsync(() -> {
                         Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
                                 wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
 
-                        plugin.runSync(() ->
+                        adapter.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));
                     });
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
-                    plugin.runAsync(() -> {
+                    adapter.runAsync(() -> {
                         Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
                                 wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
 
-                        plugin.runSync(() ->
+                        adapter.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));
                     });
                     break;
@@ -266,7 +266,7 @@ public class SkinsGUI implements InventoryHolder {
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ProxyGUIActions implements Consumer<EventInfo> {
-        private final SkinsRestorerBukkit plugin;
+        private final SRBukkitAdapter adapter;
 
         @Override
         public void accept(EventInfo event) {
@@ -274,7 +274,7 @@ public class SkinsGUI implements InventoryHolder {
             switch (event.getMaterial()) {
                 case PLAYER_HEAD:
                     String skinName = event.getItemMeta().getDisplayName();
-                    plugin.runAsync(() -> plugin.sendToMessageChannel(player, out -> {
+                    adapter.runAsync(() -> adapter.sendToMessageChannel(player, out -> {
                         out.writeUTF("setSkin");
                         out.writeUTF(player.getName());
                         out.writeUTF(skinName);
@@ -282,19 +282,19 @@ public class SkinsGUI implements InventoryHolder {
                     player.closeInventory();
                     break;
                 case RED_STAINED_GLASS_PANE:
-                    plugin.runAsync(() -> plugin.sendToMessageChannel(player, out -> {
+                    adapter.runAsync(() -> adapter.sendToMessageChannel(player, out -> {
                         out.writeUTF("clearSkin");
                         out.writeUTF(player.getName());
                     }));
                     player.closeInventory();
                     break;
                 case GREEN_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(player, event.getCurrentPage() + 1));
+                    adapter.runAsync(() ->
+                            adapter.requestSkinsFromProxy(player, event.getCurrentPage() + 1));
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
-                    plugin.runAsync(() ->
-                            plugin.requestSkinsFromProxy(player, event.getCurrentPage() - 1));
+                    adapter.runAsync(() ->
+                            adapter.requestSkinsFromProxy(player, event.getCurrentPage() - 1));
                     break;
                 default:
                     break;

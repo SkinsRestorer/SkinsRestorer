@@ -27,9 +27,8 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.interfaces.ISkinApplier;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -42,28 +41,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierVelocity implements ISkinApplier {
+public class SkinApplierVelocity implements SkinApplier<Player> {
     private final ProxyServer proxy;
     private final SettingsManager settings;
     private final SRLogger logger;
 
     @Override
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        applySkin(playerWrapper.get(Player.class), property);
-    }
-
-    protected void applySkin(Player player, IProperty property) {
+    public void applySkin(Player player, SkinProperty property) {
         proxy.getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
             if (event.getResult() != ResultedEvent.GenericResult.allowed())
                 return;
 
-            player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), (Property) property.getHandle()));
-            sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? (Property) property.getHandle() : null);
+            Property textures = new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
+            player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), textures));
+            sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
         });
     }
 
-    public GameProfile updateProfileSkin(GameProfile profile, IProperty skin) {
-        Property textures = (Property) skin.getHandle();
+    public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {
+        Property textures = new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
         List<Property> oldProperties = profile.getProperties();
 
         return new GameProfile(profile.getId(), profile.getName(), updatePropertiesSkin(oldProperties, textures));
@@ -75,7 +71,7 @@ public class SkinApplierVelocity implements ISkinApplier {
 
         int i = 0;
         for (Property lProperty : properties) {
-            if (IProperty.TEXTURES_NAME.equals(lProperty.getName())) {
+            if (SkinProperty.TEXTURES_NAME.equals(lProperty.getName())) {
                 properties.set(i, property);
                 applied = true;
             }

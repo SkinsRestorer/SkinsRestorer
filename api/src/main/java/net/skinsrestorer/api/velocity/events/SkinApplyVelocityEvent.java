@@ -24,7 +24,7 @@ import com.velocitypowered.api.proxy.Player;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -33,11 +33,11 @@ import java.util.Objects;
 public class SkinApplyVelocityEvent implements ResultedEvent<ResultedEvent.GenericResult> {
     private final Player who;
     @Setter
-    private IProperty property;
+    private SkinProperty property;
     @NonNull
     private GenericResult result = GenericResult.allowed();
 
-    public SkinApplyVelocityEvent(@Nullable Player who, IProperty property) {
+    public SkinApplyVelocityEvent(@Nullable Player who, SkinProperty property) {
         this.who = who;
         this.property = property;
     }

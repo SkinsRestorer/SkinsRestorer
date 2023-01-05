@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 
 public interface SRLoginProfileEvent<R> {
     boolean isOnline();
@@ -28,7 +28,7 @@ public interface SRLoginProfileEvent<R> {
 
     boolean isCancelled();
 
-    void setResultProperty(IProperty property);
+    void setResultProperty(SkinProperty property);
 
     R runAsync(Runnable runnable);
 }

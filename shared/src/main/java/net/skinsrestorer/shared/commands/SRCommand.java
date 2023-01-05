@@ -30,18 +30,20 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.model.MojangProfileResponse;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.connections.DumpService;
+import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.connections.DumpService;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -60,11 +62,13 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand extends BaseCommand {
     private final SRPlugin plugin;
+    private final SRPlatformAdapter adapter;
     private final MojangAPI mojangAPI;
     private final SkinStorage skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
     private final DumpService dumpService;
+    private final SkinsRestorerAPI<Object> skinsRestorerAPI;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
@@ -76,7 +80,7 @@ public final class SRCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     private void onReload(SRCommandSender sender) {
-        plugin.reloadPlatformHook();
+        adapter.reloadPlatformHook();
         plugin.loadConfig();
         plugin.loadLocales();
         plugin.prepareACF();
@@ -88,7 +92,7 @@ public final class SRCommand extends BaseCommand {
     @CommandPermission("%srStatus")
     @Description("%helpSrStatus")
     private void onStatus(SRCommandSender sender) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             sender.sendMessage("§7Checking needed services for SR to work properly...");
 
             List<String> statusMessages = new LinkedList<>();
@@ -119,8 +123,11 @@ public final class SRCommand extends BaseCommand {
                 statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See https://skinsrestorer.net/firewall for more info");
             statusMessages.add(breakLine);
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
-            statusMessages.add("§7Server: §6" + plugin.getPlatformVersion());
-            statusMessages.add("§7ProxyMode: §6" + plugin.getProxyModeInfo());
+            statusMessages.add("§7Server: §6" + adapter.getPlatformVersion());
+            SRServerPlugin serverPlugin = plugin.getInjector().getIfAvailable(SRServerPlugin.class);
+            if (serverPlugin != null) {
+                statusMessages.add("§7ProxyMode: §6" + serverPlugin.isProxyMode());
+            }
             statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
             statusMessages.add("§7Finished checking services.");
             statusMessages.add(breakLine);
@@ -134,7 +141,7 @@ public final class SRCommand extends BaseCommand {
     @Description("%helpSrDrop")
     @Syntax(" <player|skin> <target> [target2]")
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
                     skinStorage.removeSkinOfPlayer(target);
@@ -154,22 +161,21 @@ public final class SRCommand extends BaseCommand {
     @Description("%helpSrProps")
     @Syntax(" <target>")
     private void onProps(SRCommandSender sender, SRPlayer target) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             try {
-                List<IProperty> properties = plugin.getPropertiesOfPlayer(target);
+                List<SkinProperty> properties = adapter.getPropertiesOfPlayer(target);
 
                 if (properties.isEmpty()) {
                     sender.sendMessage(Message.NO_SKIN_DATA);
                     return;
                 }
 
-                IProperty prop = properties.get(0);
+                SkinProperty prop = properties.get(0);
 
-                String name = prop.getName();
                 String value = prop.getValue();
                 String signature = prop.getSignature();
 
-                MojangProfileResponse profile = SkinsRestorerAPI.getApi().getSkinProfileData(prop);
+                MojangProfileResponse profile = skinsRestorerAPI.getSkinProfileData(prop);
                 String decodedSkin = profile.getTextures().getSKIN().getUrl();
                 long timestamp = profile.getTimestamp();
                 String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
@@ -181,7 +187,6 @@ public final class SRCommand extends BaseCommand {
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
-                logger.info("§aName: §8" + name);
                 logger.info("§aValue: §8" + value);
                 logger.info("§aSignature: §8" + signature);
                 logger.info("§aValue Decoded: §e" + profile);
@@ -198,9 +203,9 @@ public final class SRCommand extends BaseCommand {
     @Description("%helpSrApplySkin")
     @Syntax(" <target>")
     private void onApplySkin(SRCommandSender sender, SRPlayer target) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             try {
-                SkinsRestorerAPI.getApi().applySkin(target.getWrapper());
+                skinsRestorerAPI.applySkin(target.getAs(Object.class));
                 sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
             } catch (Exception ignored) {
                 sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
@@ -214,10 +219,10 @@ public final class SRCommand extends BaseCommand {
     @Description("%helpSrCreateCustom")
     @Syntax(" <skinName> <skinUrl> [classic/slim]")
     private void onCreateCustom(SRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    skinStorage.setSkinData(name, SkinsRestorerAPI.getApi().genSkinUrl(skinUrl, skinVariant),
+                    skinStorage.setSkinData(name, skinsRestorerAPI.genSkinUrl(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
                 } else {
@@ -235,12 +240,12 @@ public final class SRCommand extends BaseCommand {
     @Syntax(" <Skin / Url> [classic/slim]")
     @Conditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skin, SkinVariant skinVariant) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             String skinName = " ·setSkinAll";
             try {
-                IProperty skinProps;
+                SkinProperty skinProps;
                 if (C.validUrl(skin)) {
-                    skinProps = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
+                    skinProps = skinsRestorerAPI.genSkinUrl(skin, skinVariant);
                 } else {
                     skinProps = mojangAPI.getSkin(skin).orElse(null);
                 }
@@ -251,10 +256,10 @@ public final class SRCommand extends BaseCommand {
 
                 skinStorage.setSkinData(skinName, skinProps);
 
-                for (SRPlayer player : plugin.getOnlinePlayers()) {
+                for (SRPlayer player : adapter.getOnlinePlayers()) {
                     final String pName = player.getName();
                     skinStorage.setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
-                    SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skinProps);
+                    skinsRestorerAPI.applySkin(player.getAs(Object.class), skinProps);
                 }
                 sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
             } catch (NotPremiumException | SkinRequestException e) {
@@ -267,10 +272,10 @@ public final class SRCommand extends BaseCommand {
     @Description("Re-apply the skin for every player")
     @Conditions("console-only")
     private void onApplySkinAll(SRCommandSender sender) {
-        plugin.runAsync(() -> {
-            for (SRPlayer player : plugin.getOnlinePlayers()) {
+        adapter.runAsync(() -> {
+            for (SRPlayer player : adapter.getOnlinePlayers()) {
                 try {
-                    SkinsRestorerAPI.getApi().applySkin(player.getWrapper());
+                    skinsRestorerAPI.applySkin(player.getAs(Object.class));
                 } catch (SkinRequestException | NotPremiumException ignored) {
                     sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
                 }
@@ -284,7 +289,7 @@ public final class SRCommand extends BaseCommand {
     @Syntax(" <targetdaysold>")
     @Conditions("console-only")
     private void onPurgeOldData(SRCommandSender sender, int days) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             if (skinStorage.purgeOldSkins(days)) {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
             } else {
@@ -297,7 +302,7 @@ public final class SRCommand extends BaseCommand {
     @CommandPermission("%srDump")
     @Description("Upload support data to bytebin.lucko.me")
     private void onDump(SRCommandSender sender) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             try {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");
                 val url = dumpService.dump();

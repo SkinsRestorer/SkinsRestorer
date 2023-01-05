@@ -27,7 +27,7 @@ import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
-import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -51,6 +51,6 @@ public final class ProxyGUICommand extends BaseCommand {
 
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        SkinsRestorerProxyShared.sendPage(0, (SRProxyPlayer) player, logger, skinStorage);
+        SRProxyPlugin.sendPage(0, (SRProxyPlayer) player, logger, skinStorage);
     }
 }

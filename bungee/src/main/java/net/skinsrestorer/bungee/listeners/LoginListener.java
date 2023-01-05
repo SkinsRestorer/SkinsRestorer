@@ -25,8 +25,8 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.bungee.SkinsRestorerBungee;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
@@ -35,7 +35,7 @@ import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements Listener {
-    private final SkinsRestorerBungee plugin;
+    private final SRBungeeAdapter plugin;
     private final SkinApplierBungee skinApplier;
     private final LoginProfileListenerAdapter<Void> adapter;
 
@@ -62,7 +62,7 @@ public class LoginListener implements Listener {
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
+            public void setResultProperty(SkinProperty property) {
                 skinApplier.applySkin(property, (InitialHandler) event.getConnection());
             }
 

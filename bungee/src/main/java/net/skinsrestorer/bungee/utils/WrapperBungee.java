@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
@@ -87,6 +86,11 @@ public class WrapperBungee {
             }
 
             @Override
+            public <P> P getAs(Class<P> playerClass) {
+                return playerClass.cast(player);
+            }
+
+            @Override
             public Optional<String> getCurrentServer() {
                 return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());
             }
@@ -94,11 +98,6 @@ public class WrapperBungee {
             @Override
             public void sendDataToServer(String channel, byte[] data) {
                 player.getServer().sendData(channel, data);
-            }
-
-            @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
             }
 
             @Override

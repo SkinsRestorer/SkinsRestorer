@@ -21,7 +21,7 @@ package net.skinsrestorer.api.bukkit.events;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -33,11 +33,11 @@ public class SkinApplyBukkitEvent extends Event implements Cancellable {
     public static final HandlerList HANDLERS = new HandlerList();
     private final Player who;
     @Setter
-    private IProperty property;
+    private SkinProperty property;
     @Setter
     private boolean isCancelled = false;
 
-    public SkinApplyBukkitEvent(@NotNull Player who, IProperty property) {
+    public SkinApplyBukkitEvent(@NotNull Player who, SkinProperty property) {
         super(true);
         this.property = property;
         this.who = who;

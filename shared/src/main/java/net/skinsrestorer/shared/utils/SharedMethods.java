@@ -19,12 +19,9 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.connections.ServiceChecker;
+import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-
-import java.util.regex.Pattern;
 
 public class SharedMethods {
     private SharedMethods() {

@@ -21,9 +21,9 @@ package net.skinsrestorer.shared.listeners;
 
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
-import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -37,7 +37,7 @@ import java.util.Optional;
 public final class SRPluginMessageAdapter {
     private final SRLogger logger;
     private final SkinStorage skinStorage;
-    private final SRProxyPlugin plugin;
+    private final SRProxyAdapter plugin;
     private final CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     public void handlePluginMessage(SRPluginMessageEvent event) {
@@ -69,16 +69,16 @@ public final class SRPluginMessageAdapter {
                 // sr:messagechannel
                 case "getSkins":
                     int page = Math.min(in.readInt(), 999);
-                    SkinsRestorerProxyShared.sendPage(page, player, logger, skinStorage);
+                    SRProxyPlugin.sendPage(page, player, logger, skinStorage);
                     break;
                 case "clearSkin":
                     manager.getRootCommand("skin").execute(
-                            manager.getCommandIssuer(player.getWrapper().get(Object.class)), "skin", new String[]{"clear"});
+                            manager.getCommandIssuer(player.getAs(Object.class)), "skin", new String[]{"clear"});
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
                     manager.getRootCommand("skin").execute(
-                            manager.getCommandIssuer(player.getWrapper().get(Object.class)), "skin", new String[]{"set", skin});
+                            manager.getCommandIssuer(player.getAs(Object.class)), "skin", new String[]{"set", skin});
                     break;
                 default:
                     break;

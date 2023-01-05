@@ -21,13 +21,13 @@ package net.skinsrestorer.bungee;
 
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 
 import java.util.List;
 
 public interface SkinApplyBungeeAdapter {
-    void applyToHandler(InitialHandler handler, IProperty textures) throws ReflectionException;
+    void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectionException;
 
-    List<IProperty> getProperties(ProxiedPlayer player);
+    List<SkinProperty> getProperties(ProxiedPlayer player);
 }

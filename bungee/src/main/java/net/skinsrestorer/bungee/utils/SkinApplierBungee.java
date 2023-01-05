@@ -25,10 +25,9 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
-import net.skinsrestorer.api.interfaces.ISkinApplier;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.SkinApplierBungeeNew;
 import net.skinsrestorer.bungee.SkinApplierBungeeOld;
 import net.skinsrestorer.bungee.SkinApplyBungeeAdapter;
@@ -45,7 +44,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierBungee implements ISkinApplier {
+public class SkinApplierBungee implements SkinApplier<ProxiedPlayer> {
     public static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final SettingsManager settings;
     private final SRLogger logger;
@@ -66,19 +65,7 @@ public class SkinApplierBungee implements ISkinApplier {
     }
 
     @Override
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        applySkin(playerWrapper.get(ProxiedPlayer.class), property);
-    }
-
-    public void applySkin(IProperty property, InitialHandler handler) {
-        try {
-            applyEvent(null, property, handler);
-        } catch (ReflectionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void applySkin(ProxiedPlayer player, IProperty property) {
+    public void applySkin(ProxiedPlayer player, SkinProperty property) {
         try {
             applyEvent(player, property, (InitialHandler) player.getPendingConnection());
         } catch (ReflectionException e) {
@@ -86,7 +73,15 @@ public class SkinApplierBungee implements ISkinApplier {
         }
     }
 
-    private void applyEvent(@Nullable ProxiedPlayer player, IProperty property, InitialHandler handler) throws ReflectionException {
+    public void applySkin(SkinProperty property, InitialHandler handler) {
+        try {
+            applyEvent(null, property, handler);
+        } catch (ReflectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectionException {
         SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
 
         proxy.getPluginManager().callEvent(event);
@@ -96,7 +91,7 @@ public class SkinApplierBungee implements ISkinApplier {
         applyWithProperty(player, handler, event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, IProperty textures) throws ReflectionException {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectionException {
         adapter.applyToHandler(handler, textures);
 
         if (player == null)
@@ -105,7 +100,7 @@ public class SkinApplierBungee implements ISkinApplier {
         sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
     }
 
-    private void sendUpdateRequest(@NotNull ProxiedPlayer player, IProperty textures) {
+    private void sendUpdateRequest(@NotNull ProxiedPlayer player, SkinProperty textures) {
         if (player.getServer() == null) {
             return;
         }
@@ -118,7 +113,7 @@ public class SkinApplierBungee implements ISkinApplier {
             out.writeUTF("SkinUpdate");
 
             if (textures != null) {
-                out.writeUTF(textures.getName());
+                out.writeUTF(SkinProperty.TEXTURES_NAME);
                 out.writeUTF(textures.getValue());
                 out.writeUTF(textures.getSignature());
             }

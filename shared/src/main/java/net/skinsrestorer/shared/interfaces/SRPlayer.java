@@ -19,12 +19,10 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.PlayerWrapper;
-
 import java.util.UUID;
 
 public interface SRPlayer extends SRCommandSender {
-    PlayerWrapper getWrapper();
+    <P> P getAs(Class<P> playerClass);
 
     String getName();
 

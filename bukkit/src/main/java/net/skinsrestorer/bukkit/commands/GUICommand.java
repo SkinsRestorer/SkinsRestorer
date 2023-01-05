@@ -25,8 +25,8 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SkinsGUI;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.storage.Message;
@@ -44,7 +44,7 @@ import javax.inject.Inject;
 @Conditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GUICommand extends BaseCommand {
-    private final SkinsRestorerBukkit plugin;
+    private final SRBukkitAdapter plugin;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SkinStorage skinStorage;
@@ -57,7 +57,7 @@ public class GUICommand extends BaseCommand {
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
             Inventory inventory = SkinsGUI.createGUI(serverGUIActions, locale, logger, server, skinStorage, srPlayer, 0);
-            plugin.runSync(() -> srPlayer.getWrapper().get(Player.class).openInventory(inventory));
+            plugin.runSync(() -> srPlayer.getAs(Player.class).openInventory(inventory));
         });
     }
 }

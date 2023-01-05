@@ -19,54 +19,35 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.serverinfo.Platform;
+import co.aikar.commands.CommandManager;
+import net.skinsrestorer.api.property.SkinProperty;
 
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface SRPlugin {
-    Path getDataFolder();
-
-    String getVersion();
-
+public interface SRPlatformAdapter {
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
 
     void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit);
 
-    default void checkUpdate() {
-        checkUpdate(false);
-    }
-
-    void checkUpdate(boolean showUpToDate);
-
     boolean isPluginEnabled(String pluginName);
-
-    void loadConfig();
-
-    void loadLocales();
-
-    void prepareACF();
-
-    boolean isOutdated();
 
     String getPlatformVersion();
 
-    String getProxyModeInfo();
-
-    List<IProperty> getPropertiesOfPlayer(SRPlayer player);
+    List<SkinProperty> getPropertiesOfPlayer(SRPlayer player);
 
     Collection<SRPlayer> getOnlinePlayers();
 
     default void reloadPlatformHook() {
     }
 
-    Platform getPlatform();
+    CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 
-    String getUpdateCheckerAgent();
+    Object createMetricsInstance();
+
+    SRCommandSender convertCommandSender(Object sender);
 }

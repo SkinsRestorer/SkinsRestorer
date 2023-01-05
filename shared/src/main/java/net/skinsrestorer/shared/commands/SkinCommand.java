@@ -30,13 +30,14 @@ import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineISRPlayer;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRPlugin;
+import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorage;
@@ -57,12 +58,14 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @Conditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand extends BaseCommand {
+    private final SRPlatformAdapter adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;
     private final SkinStorage skinStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
+    private final SkinsRestorerAPI<Object> skinsRestorerAPI;
 
     @SuppressWarnings("deprecation")
     @Default
@@ -106,18 +109,17 @@ public final class SkinCommand extends BaseCommand {
     private void onSkinClearOther(SRCommandSender sender, OnlineISRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             String playerName = targetPlayer.getName();
 
             // remove users defined skin from database
             skinStorage.removeSkinOfPlayer(playerName);
 
             try {
-                IProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
-                SkinsRestorerAPI.getApi().applySkin(targetPlayer.getWrapper(), property);
+                SkinProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
+                skinsRestorerAPI.applySkin(targetPlayer.getAs(Object.class), property);
             } catch (NotPremiumException e) {
-                SkinsRestorerAPI.getApi().applySkin(targetPlayer.getWrapper(),
-                        SkinsRestorerAPI.getApi().createPlatformProperty(IProperty.TEXTURES_NAME, "", ""));
+                skinsRestorerAPI.applySkin(targetPlayer.getAs(Object.class), SkinProperty.of("", ""));
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
@@ -156,7 +158,7 @@ public final class SkinCommand extends BaseCommand {
     private void onSkinUpdateOther(SRCommandSender sender, OnlineISRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             String playerName = targetPlayer.getName();
             Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
 
@@ -212,7 +214,7 @@ public final class SkinCommand extends BaseCommand {
     @Conditions("cooldown")
     private void onSkinSetOther(SRCommandSender sender, OnlineISRPlayer target, String skin, SkinVariant skinVariant) {
         SRPlayer targetPlayer = target.getPlayer();
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
@@ -291,11 +293,11 @@ public final class SkinCommand extends BaseCommand {
                 if (skinName.length() > 16) // max len of 16 char
                     skinName = skinName.substring(0, 16);
 
-                IProperty generatedSkin = SkinsRestorerAPI.getApi().genSkinUrl(skin, skinVariant);
-                SkinsRestorerAPI.getApi().setSkinData(skinName, generatedSkin,
+                SkinProperty generatedSkin = skinsRestorerAPI.genSkinUrl(skin, skinVariant);
+                skinsRestorerAPI.setSkinData(skinName, generatedSkin,
                         System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                SkinsRestorerAPI.getApi().setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
-                SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), generatedSkin);
+                skinsRestorerAPI.setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
+                skinsRestorerAPI.applySkin(player.getAs(Object.class), generatedSkin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
@@ -315,10 +317,10 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 if (restoreOnFailure) {
-                    SkinsRestorerAPI.getApi().setSkinName(playerName, skin);
+                    skinsRestorerAPI.setSkinName(playerName, skin);
                 }
 
-                SkinsRestorerAPI.getApi().applySkin(player.getWrapper(), skin);
+                skinsRestorerAPI.applySkin(player.getAs(Object.class), skin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
@@ -333,7 +335,7 @@ public final class SkinCommand extends BaseCommand {
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         setCoolDown(sender, Config.SKIN_ERROR_COOLDOWN);
         if (restoreOnFailure) {
-            SkinsRestorerAPI.getApi().setSkinName(playerName, oldSkinName);
+            skinsRestorerAPI.setSkinName(playerName, oldSkinName);
         }
         return false;
     }

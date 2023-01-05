@@ -23,7 +23,7 @@ import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
-import net.skinsrestorer.shared.interfaces.SRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -33,12 +33,12 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerPlugin plugin;
+    private final SRServerAdapter adapter;
     private final IMapping mapping;
     private boolean useViabackwards = false;
 
-    public MappingSpigotSkinRefresher(SRServerPlugin plugin, SRLogger logger, Server server) throws NoMappingException {
-        this.plugin = plugin;
+    public MappingSpigotSkinRefresher(SRServerAdapter adapter, SRLogger logger, Server server) throws NoMappingException {
+        this.adapter = adapter;
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
             throw new NoMappingException(server);
@@ -46,9 +46,9 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
             this.mapping = mapping.get();
         }
 
-        plugin.runSync(() -> {
+        adapter.runSync(() -> {
             // Wait to run task in order for ViaVersion to determine server protocol
-            if (plugin.isPluginEnabled("ViaBackwards")
+            if (adapter.isPluginEnabled("ViaBackwards")
                     && ViaWorkaround.isProtocolNewer()) {
                 useViabackwards = true;
                 logger.debug("Activating ViaBackwards workaround.");
@@ -71,7 +71,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         mapping.accept(player, viaFunction);
 
         if (player.isOp()) {
-            plugin.runSync(() -> {
+            adapter.runSync(() -> {
                 // Workaround..
                 player.setOp(false);
                 player.setOp(true);

@@ -23,7 +23,7 @@ import com.velocitypowered.api.event.EventTask;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
@@ -58,7 +58,7 @@ public class GameProfileRequest {
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
+            public void setResultProperty(SkinProperty property) {
                 event.setGameProfile(skinApplier.updateProfileSkin(event.getGameProfile(), property));
             }
 

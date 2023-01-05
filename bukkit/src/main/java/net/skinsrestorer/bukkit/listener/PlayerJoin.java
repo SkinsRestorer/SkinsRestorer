@@ -22,11 +22,9 @@ package net.skinsrestorer.bukkit.listener;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
@@ -40,11 +38,11 @@ import javax.inject.Inject;
 public class PlayerJoin implements Listener {
     @Setter
     private static boolean resourcePack;
-    private final SkinsRestorerBukkit plugin;
+    private final SRBukkitAdapter plugin;
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
-
     private final SkinApplierBukkit skinApplier;
+    private final SkinApplierBukkit skinApplierBukkit;
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -72,8 +70,8 @@ public class PlayerJoin implements Listener {
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
-                SkinsRestorerAPI.getApi().applySkin(new PlayerWrapper(event.getPlayer()), property);
+            public void setResultProperty(SkinProperty property) {
+                skinApplierBukkit.applySkin(event.getPlayer(), property);
             }
 
             @Override

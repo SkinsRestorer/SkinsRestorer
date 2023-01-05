@@ -25,10 +25,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
-import net.skinsrestorer.api.interfaces.ISkinApplier;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
@@ -36,6 +35,7 @@ import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.MultiPaperUtil;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -56,8 +56,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierBukkit implements ISkinApplier {
-    private final SkinsRestorerBukkit plugin;
+public class SkinApplierBukkit implements SkinApplier<Player> {
+    private final SRPlugin plugin;
+    private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final SettingsManager settings;
     private final Server server;
@@ -74,8 +75,8 @@ public class SkinApplierBukkit implements ISkinApplier {
         if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
-            boolean viaVersionExists = plugin.isPluginEnabled("ViaVersion");
-            boolean protocolSupportExists = plugin.isPluginEnabled("ProtocolSupport");
+            boolean viaVersionExists = adapter.isPluginEnabled("ViaVersion");
+            boolean protocolSupportExists = adapter.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
                 logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
                 return selectSpigotRefresher(server);
@@ -96,27 +97,17 @@ public class SkinApplierBukkit implements ISkinApplier {
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
         if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(plugin, logger, server);
-        } else return new SpigotSkinRefresher(plugin, logger);
+            return new MappingSpigotSkinRefresher(adapter, logger, server);
+        } else return new SpigotSkinRefresher(adapter, logger);
     }
 
     @Override
-    public void applySkin(PlayerWrapper playerWrapper, IProperty property) {
-        applySkin(playerWrapper.get(Player.class), property, server);
-    }
-
-    /**
-     * Applies the skin In other words, sets the skin data, but no changes will
-     * be visible until you reconnect or force update with
-     *
-     * @param player   Player
-     * @param property Property Object
-     */
-    protected void applySkin(Player player, IProperty property, Server server) {
-        if (!player.isOnline())
+    public void applySkin(Player player, SkinProperty property) {
+        if (!player.isOnline()) {
             return;
+        }
 
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
 
             server.getPluginManager().callEvent(applyEvent);
@@ -124,21 +115,21 @@ public class SkinApplierBukkit implements ISkinApplier {
             if (applyEvent.isCancelled())
                 return;
 
-            IProperty eventProperty = applyEvent.getProperty();
+            SkinProperty eventProperty = applyEvent.getProperty();
 
             if (eventProperty == null)
                 return;
 
             // delay 1 server tick so we override online-mode
-            plugin.runSync(() -> {
+            adapter.runSync(() -> {
                 applyProperty(player, eventProperty);
 
-                plugin.runAsync(() -> updateSkin(player));
+                adapter.runAsync(() -> updateSkin(player));
             });
         });
     }
 
-    public void applyProperty(Player player, IProperty property) {
+    public void applyProperty(Player player, SkinProperty property) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             BukkitPropertyApplier.applyProperty(player, property);
         } else {
@@ -146,7 +137,7 @@ public class SkinApplierBukkit implements ISkinApplier {
         }
     }
 
-    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+    public Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             return BukkitPropertyApplier.getPlayerProperties(player);
         } else {
@@ -168,24 +159,24 @@ public class SkinApplierBukkit implements ISkinApplier {
             checkOptFile();
         }
 
-        plugin.runSync(() -> {
+        adapter.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
                 Entity vehicle = player.getVehicle();
 
-                SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
+                SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle,
                         disableDismountPlayer, disableRemountPlayer, enableDismountEntities, settings);
             }
 
             for (Player ps : getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
-                    ps.hidePlayer(plugin.getPluginInstance(), player);
+                    ps.hidePlayer(adapter.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
 
                 try {
-                    ps.showPlayer(plugin.getPluginInstance(), player);
+                    ps.showPlayer(adapter.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }

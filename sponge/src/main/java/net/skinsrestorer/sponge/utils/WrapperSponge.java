@@ -21,7 +21,6 @@ package net.skinsrestorer.sponge.utils;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
@@ -81,8 +80,8 @@ public class WrapperSponge {
             }
 
             @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
+            public <P> P getAs(Class<P> playerClass) {
+                return playerClass.cast(player);
             }
 
             @Override

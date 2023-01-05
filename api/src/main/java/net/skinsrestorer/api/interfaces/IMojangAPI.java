@@ -20,12 +20,12 @@
 package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.Optional;
 
 public interface IMojangAPI {
     Optional<String> getUUID(String playerName) throws NotPremiumException;
 
-    Optional<IProperty> getProfile(String uuid) throws NotPremiumException;
+    Optional<SkinProperty> getProfile(String uuid) throws NotPremiumException;
 }

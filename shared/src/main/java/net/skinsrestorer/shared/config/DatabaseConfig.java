@@ -44,7 +44,8 @@ public class DatabaseConfig implements SettingsHolder {
                 "[!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]",
                 "[!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]",
                 "[!] Make sure you have the correct permissions set for your MySQL user. [!]",
-                "[!] Make sure to fill in MySQL.ConnectionOptions if you're using certificate / ssl authentication. [!]"
+                "[!] Make sure to fill in MySQL.ConnectionOptions if you're using certificate / ssl authentication. [!]",
+                "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
         );
     }
 }

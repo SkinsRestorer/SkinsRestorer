@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRServerPlugin;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerPlugin plugin;
+    private final SRServerAdapter adapter;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -49,8 +49,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SRServerPlugin plugin, SRLogger logger) throws InitializeException {
-        this.plugin = plugin;
+    public SpigotSkinRefresher(SRServerAdapter adapter, SRLogger logger) throws InitializeException {
+        this.adapter = adapter;
 
         try {
             packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
@@ -90,9 +90,9 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
 
-            plugin.runSync(() -> {
+            adapter.runSync(() -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
-                if (plugin.isPluginEnabled("ViaBackwards")
+                if (adapter.isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
                     logger.debug("Activating ViaBackwards workaround.");
@@ -256,7 +256,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                plugin.runSync(() -> {
+                adapter.runSync(() -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);

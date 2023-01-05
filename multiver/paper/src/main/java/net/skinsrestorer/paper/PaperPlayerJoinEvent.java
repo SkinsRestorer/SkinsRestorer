@@ -21,7 +21,7 @@ package net.skinsrestorer.paper;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import org.bukkit.event.EventHandler;
@@ -57,8 +57,8 @@ public class PaperPlayerJoinEvent implements Listener {
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
-                event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature()));
+            public void setResultProperty(SkinProperty property) {
+                event.getPlayerProfile().setProperty(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
             }
 
             @Override

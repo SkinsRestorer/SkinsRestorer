@@ -21,17 +21,19 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
+import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.storage.Message;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ConnectListenerAdapter {
-    private final SRProxyPlugin plugin;
+    private final SRPlugin plugin;
+    private final SRProxyAdapter adapter;
 
     public void handleConnect(SRServerConnectedEvent event) {
-        plugin.runAsync(() -> {
+        adapter.runAsync(() -> {
             if (plugin.isOutdated()) {
                 SRPlayer player = event.getPlayer();
 

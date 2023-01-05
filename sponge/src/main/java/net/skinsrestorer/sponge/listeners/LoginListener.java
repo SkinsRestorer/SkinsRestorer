@@ -20,7 +20,7 @@
 package net.skinsrestorer.sponge.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import net.skinsrestorer.sponge.SkinApplierSponge;
@@ -61,7 +61,7 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
             }
 
             @Override
-            public void setResultProperty(IProperty property) {
+            public void setResultProperty(SkinProperty property) {
                 skinApplier.updateProfileSkin(event.getProfile(), property);
             }
 

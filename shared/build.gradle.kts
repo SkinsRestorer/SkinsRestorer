@@ -2,9 +2,6 @@ dependencies {
     api(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-
     implementation("com.google.code.gson:gson:2.10")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.9")
     api("com.github.InventivetalentDev.Spiget-Update:core:1.4.6-SNAPSHOT")
@@ -19,6 +16,10 @@ dependencies {
 
     compileOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
     compileOnly("org.slf4j:slf4j-api:2.0.6")
+
+    testRuntimeOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 }
 
 tasks.getByName<Test>("test") {

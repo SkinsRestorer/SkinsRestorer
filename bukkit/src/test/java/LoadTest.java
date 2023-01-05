@@ -1,5 +1,11 @@
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
-import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
+import net.skinsrestorer.bukkit.SRBukkitStarter;
+import net.skinsrestorer.bukkit.update.BukkitUpdateCheck;
+import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
+import net.skinsrestorer.shared.platform.SRBootstrapper;
+import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
@@ -35,7 +41,7 @@ public class LoadTest {
     }
 
     @Test
-    public void testLoad() throws InitializeException {
+    public void testLoad() {
         UUID runId = UUID.randomUUID();
         Path baseDir = Paths.get("build/testrun/" + runId);
         System.out.println("Running test with runId " + runId);
@@ -93,7 +99,17 @@ public class LoadTest {
             when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
             when(plugin.getFile()).thenReturn(null);
 
-            new SkinsRestorerBukkit(server, "UnitTest", configDir, plugin).pluginStartup();
+            SRBootstrapper.startPlugin(
+                    new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                    true,
+                    i -> new SRBukkitAdapter(i, server, plugin),
+                    BukkitUpdateCheck.class,
+                    SRServerPlugin.class,
+                    "UnitTest",
+                    configDir,
+                    Platform.BUKKIT,
+                    SRBukkitStarter.class
+            );
 
             while (!runQueue.isEmpty()) {
                 try {

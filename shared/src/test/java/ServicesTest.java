@@ -1,12 +1,14 @@
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
-import net.skinsrestorer.api.interfaces.IPropertyFactory;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.ServiceChecker;
+import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
+import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.update.SharedUpdateCheck;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,10 +43,8 @@ public class ServicesTest {
 
         injector.register(SRLogger.class, logger);
         injector.register(SkinsRestorerLocale.class, mock(SkinsRestorerLocale.class));
-        injector.register(IPropertyFactory.class, (name, value, signature) -> {
-            System.out.println("Property: " + name + " " + value + " " + signature);
-            return new GenericProperty(name, value, signature);
-        });
+        injector.register(SRPlatformAdapter.class, mock(SRPlatformAdapter.class));
+        new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheck.class);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         ServiceChecker.ServiceCheckResponse serviceChecker = ServiceChecker.checkServices(injector.getSingleton(MojangAPI.class));

@@ -23,7 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.StorageConfig;
@@ -56,9 +56,9 @@ public final class LoginProfileListenerAdapter<R> {
         return settings.getProperty(Config.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(Config.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
     }
 
-    private Optional<IProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException, NotPremiumException {
+    private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException, NotPremiumException {
         String playerName = event.getPlayerName();
-        Pair<IProperty, Boolean> result = skinStorage.getDefaultSkinForPlayer(playerName);
+        Pair<SkinProperty, Boolean> result = skinStorage.getDefaultSkinForPlayer(playerName);
 
         // Skip skin if: online mode, no custom skin set, always apply not enabled and default skins for premium not enabled
         if (event.isOnline()
