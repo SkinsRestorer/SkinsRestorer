@@ -17,13 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.platform;
 
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyPlugin;
+import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -36,11 +36,11 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
-public abstract class SkinsRestorerProxyShared extends SkinsRestorerShared implements SRProxyPlugin {
-    protected SkinsRestorerProxyShared(SRPlatformLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
-                                       IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
+public abstract class SkinsRestorerProxyPlatform extends SkinsRestorerPlatform implements SRProxyAdapter {
+    protected SkinsRestorerProxyPlatform(SRPlatformLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
+                                         IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory, platform);
-        injector.register(SRProxyPlugin.class, this);
+        injector.register(SRProxyAdapter.class, this);
     }
 
     public static byte[] convertToByteArray(Map<String, String> map) {

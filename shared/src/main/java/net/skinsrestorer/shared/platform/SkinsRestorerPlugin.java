@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.platform;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
@@ -67,7 +67,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public abstract class SkinsRestorerShared implements SRPlugin {
+public abstract class SkinsRestorerPlatform implements SRPlugin {
     protected final boolean unitTest = System.getProperty("sr.unit.test") != null;
     protected final SRLogger logger;
     protected final UpdateCheckerGitHub updateChecker;
@@ -84,10 +84,10 @@ public abstract class SkinsRestorerShared implements SRPlugin {
     @Getter
     private boolean outdated = false;
 
-    protected SkinsRestorerShared(SRPlatformLogger isrLogger, boolean loggerColor,
-                                  String version, String updateCheckerAgent, Path dataFolder,
-                                  IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory,
-                                  Platform platform) {
+    protected SkinsRestorerPlatform(SRPlatformLogger isrLogger, boolean loggerColor,
+                                    String version, String updateCheckerAgent, Path dataFolder,
+                                    IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory,
+                                    Platform platform) {
         this.injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
         injector.register(SRPlugin.class, this);

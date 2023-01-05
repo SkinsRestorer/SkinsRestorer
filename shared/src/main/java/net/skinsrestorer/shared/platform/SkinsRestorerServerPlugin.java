@@ -17,12 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.platform;
 
 import lombok.Getter;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
-import net.skinsrestorer.api.property.GenericProperty;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 import net.skinsrestorer.shared.interfaces.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
@@ -36,31 +35,13 @@ import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 @Getter
-public abstract class SkinsRestorerServerShared extends SkinsRestorerShared implements SRServerPlugin {
+public abstract class SkinsRestorerServerPlatform extends SkinsRestorerPlatform implements SRServerPlugin {
     protected boolean proxyMode;
 
-    protected SkinsRestorerServerShared(SRPlatformLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
-                                        IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
+    protected SkinsRestorerServerPlatform(SRPlatformLogger isrLogger, boolean loggerColor, String version, String updateCheckerAgent, Path dataFolder,
+                                          IWrapperFactory wrapperFactory, IPropertyFactory propertyFactory, Platform platform) {
         super(isrLogger, loggerColor, version, updateCheckerAgent, dataFolder, wrapperFactory, propertyFactory, platform);
         injector.register(SRServerPlugin.class, this);
-    }
-
-    /**
-     * Legacy method of converting SkinGUI plugin message data to a map.
-     *
-     * @deprecated Use {@link #convertToObjectV2(byte[])} instead. Will be removed in 15.0.0
-     */
-    @SuppressWarnings("unchecked")
-    protected static Map<String, GenericProperty> convertToObject(byte[] byteArr) {
-        try {
-            ByteArrayInputStream bis = new ByteArrayInputStream(byteArr);
-            ObjectInputStream ois = new ObjectInputStream(bis);
-
-            return (Map<String, GenericProperty>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return Collections.emptyMap();
-        }
     }
 
     @SuppressWarnings("unchecked")
