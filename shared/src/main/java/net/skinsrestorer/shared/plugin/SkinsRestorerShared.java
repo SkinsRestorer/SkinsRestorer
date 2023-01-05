@@ -41,7 +41,10 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.storage.*;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.SkinStorage;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -308,7 +311,8 @@ public abstract class SkinsRestorerShared implements SRPlugin {
                 continue;
             }
             manager.getCommandReplacements().addReplacement(entry.getKey(), message);
-        }CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
+        }
+        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
         CommandPropertiesManager.load(manager, dataFolder, getResource("command.properties"), logger);

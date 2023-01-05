@@ -24,13 +24,11 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.shared.storage.Config;
-import org.bukkit.Server;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -41,8 +39,8 @@ import javax.inject.Inject;
 public class PlayerResourcePackStatus implements Listener {
     private final SkinsRestorerBukkit plugin;
     private final SettingsManager settings;
-    private final Server server;
     private final LoginProfileListenerAdapter<Void> adapter;
+    private final SkinApplierBukkit skinApplier;
 
     @EventHandler
     public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
@@ -59,7 +57,7 @@ public class PlayerResourcePackStatus implements Listener {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return !plugin.getSkinApplierBukkit().getPlayerProperties(event.getPlayer()).isEmpty();
+                return !skinApplier.getPlayerProperties(event.getPlayer()).isEmpty();
             }
 
             @Override

@@ -29,13 +29,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import javax.inject.Inject;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PaperPlayerJoinEvent implements Listener {
     private final LoginProfileListenerAdapter<Void> adapter;
-    private final ISRPlugin plugin;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {

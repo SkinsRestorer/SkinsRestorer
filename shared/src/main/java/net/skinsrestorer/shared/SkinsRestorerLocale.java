@@ -23,8 +23,8 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 
