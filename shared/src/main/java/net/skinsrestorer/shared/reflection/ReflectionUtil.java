@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.reflection;
 import net.skinsrestorer.shared.reflection.exception.EnumNotFoundException;
 import net.skinsrestorer.shared.reflection.exception.FieldNotFoundException;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.reflection.reflect.DuckBypass;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
 
 import java.lang.reflect.Constructor;
@@ -35,7 +34,6 @@ import java.util.stream.Stream;
 public class ReflectionUtil {
     public static final String SERVER_VERSION_STRING = ServerVersion.getNMSVersion();
     public static final ServerVersion SERVER_VERSION;
-    private static final DuckBypass reflect = new DuckBypass();
     private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
 
     static {
@@ -143,7 +141,7 @@ public class ReflectionUtil {
             f = clazz.getField(fieldName);
         }
 
-        setFieldAccessible(f);
+        f.setAccessible(true);
 
         return f;
     }
@@ -212,7 +210,7 @@ public class ReflectionUtil {
         try {
             for (Field f : superClass.getDeclaredFields()) {
                 if (f.getType().getSimpleName().equalsIgnoreCase(typeName)) {
-                    setFieldAccessible(f);
+                    f.setAccessible(true);
 
                     fields.add(f.get(obj));
                 }
@@ -262,8 +260,9 @@ public class ReflectionUtil {
 
             int i = 0;
             for (Class<?> parameter : constructor.getParameterTypes()) {
-                if (!isAssignable(parameter, args[i]))
+                if (!isAssignable(parameter, args[i])) {
                     break;
+                }
 
                 i++;
             }
@@ -305,36 +304,11 @@ public class ReflectionUtil {
         }
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initArgs) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
     public static Object invokeMethod(Object obj, String method) throws ReflectionException {
         try {
             return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
         } catch (Exception e) {
             throw new ReflectionException(e);
         }
-    }
-
-    public static Object invokeMethod(Object obj, String method, Object[] initArgs) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    private static void setFieldAccessible(Field field) {
-        field.setAccessible(true);
-    }
-
-    public static void setObject(Class<?> clazz, Object obj, String fieldName, Object value) {
-        // getField(clazz, fieldName).set(obj, value);
-        reflect.setValue(clazz, fieldName, obj, value);
     }
 }

@@ -17,7 +17,7 @@ dependencies {
     implementation("com.github.aikar:locales:5f204c3afb")
     implementation("org.bstats:bstats-base:3.0.0")
 
-    compileOnly("co.aikar:acf-core:0.5.1-SNAPSHOT")
+    compileOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
     compileOnly("org.slf4j:slf4j-api:2.0.6")
 }
 

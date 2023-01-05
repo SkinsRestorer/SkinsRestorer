@@ -30,16 +30,6 @@ public class SharedMethods {
     private SharedMethods() {
     }
 
-    public static void allowIllegalACFNames() {
-        try {
-            Class<?> patternClass = Class.forName("co.aikar.commands.ACFPatterns");
-
-            ReflectionUtil.setObject(patternClass, null, "VALID_NAME_PATTERN", Pattern.compile("(.*?)"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void runServiceCheck(MojangAPI mojangAPI, SRLogger log) {
         ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
 

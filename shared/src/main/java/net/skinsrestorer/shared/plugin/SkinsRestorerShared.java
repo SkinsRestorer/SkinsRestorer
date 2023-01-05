@@ -51,7 +51,6 @@ import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.CommandPropertiesManager;
 import net.skinsrestorer.shared.utils.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.connections.MineSkinAPI;
 import net.skinsrestorer.shared.utils.connections.MojangAPI;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -189,8 +188,9 @@ public abstract class SkinsRestorerShared implements SRPlugin {
 
             @Override
             public void upToDate() {
-                if (!showUpToDate)
+                if (!showUpToDate) {
                     return;
+                }
 
                 updateChecker.getUpToDateMessages().forEach(logger::info);
             }
@@ -293,8 +293,11 @@ public abstract class SkinsRestorerShared implements SRPlugin {
     public void prepareACF() {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+
         // optional: enable unstable api to use help
         manager.enableUnstableAPI("help");
+        manager.allowInvalidName(true);
+
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
         for (Map.Entry<String, Message> entry : CommandReplacements.descriptions.entrySet()) {
             String message = locale.getMessage(locale.getDefaultForeign(), entry.getValue());
@@ -316,8 +319,6 @@ public abstract class SkinsRestorerShared implements SRPlugin {
                 Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
         CommandPropertiesManager.load(manager, dataFolder, getResource("command.properties"), logger);
-
-        SharedMethods.allowIllegalACFNames();
     }
 
     public void checkUpdateInit(Runnable check) {
