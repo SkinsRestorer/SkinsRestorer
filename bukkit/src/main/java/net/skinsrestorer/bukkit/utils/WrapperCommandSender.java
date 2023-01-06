@@ -17,32 +17,46 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.velocity.utils;
+package net.skinsrestorer.bukkit.utils;
 
 import ch.jalu.configme.SettingsManager;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import org.bukkit.command.CommandSender;
 
-import javax.inject.Inject;
+import java.util.Locale;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperVelocity {
+@SuperBuilder
+public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final CommandSender sender;
 
-    public SRCommandSender commandSender(CommandSource sender) {
-        if (sender instanceof Player) {
-            return player((Player) sender);
-        }
-
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
+    @Override
+    public Locale getLocale() {
+        return settings.getProperty(Config.LANGUAGE);
     }
 
-    public SRProxyPlayer player(Player player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
+    @Override
+    public void sendMessage(String message) {
+        sender.sendMessage(message);
+    }
+
+    @Override
+    public void sendMessage(MessageKeyGetter key, Object... args) {
+        sendMessage(locale.getMessage(this, key, args));
+    }
+
+    @Override
+    public String getName() {
+        return sender.getName();
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return sender.hasPermission(permission);
     }
 }

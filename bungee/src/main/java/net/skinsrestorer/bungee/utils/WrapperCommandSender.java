@@ -20,29 +20,44 @@
 package net.skinsrestorer.bungee.utils;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 
-import javax.inject.Inject;
+import java.util.Locale;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperBungee {
+@SuperBuilder
+public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final CommandSender sender;
 
-    public SRCommandSender commandSender(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer) {
-            return player((ProxiedPlayer) sender);
-        }
-
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
+    @Override
+    public Locale getLocale() {
+        return settings.getProperty(Config.LANGUAGE);
     }
 
-    public SRProxyPlayer player(ProxiedPlayer player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
+    @Override
+    public void sendMessage(String message) {
+        sender.sendMessage(TextComponent.fromLegacyText(message));
+    }
+
+    @Override
+    public void sendMessage(MessageKeyGetter key, Object... args) {
+        sendMessage(locale.getMessage(this, key, args));
+    }
+
+    @Override
+    public String getName() {
+        return sender.getName();
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return sender.hasPermission(permission);
     }
 }

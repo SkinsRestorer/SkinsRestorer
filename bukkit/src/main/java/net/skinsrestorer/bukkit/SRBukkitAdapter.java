@@ -28,7 +28,7 @@ import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.IOExceptionConsumer;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
-import net.skinsrestorer.shared.acf.OnlineISRPlayer;
+import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
@@ -142,12 +142,12 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
 
         val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
-        manager.getCommandContexts().registerContext(OnlineISRPlayer.class, c -> {
+        manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
             Object playerObject = onlinePlayerResolver.getContext(c);
             if (playerObject == null) {
                 return null;
             }
-            return new OnlineISRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+            return new OnlineSRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
         });
 
         return manager;

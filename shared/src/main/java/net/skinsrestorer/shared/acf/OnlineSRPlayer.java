@@ -29,6 +29,6 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 @ToString
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class OnlineISRPlayer {
+public class OnlineSRPlayer {
     private final SRPlayer player;
 }

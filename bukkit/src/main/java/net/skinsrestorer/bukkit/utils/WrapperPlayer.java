@@ -19,30 +19,34 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import ch.jalu.configme.SettingsManager;
-import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import org.bukkit.command.CommandSender;
+import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.entity.Player;
 
-import javax.inject.Inject;
+import java.util.Locale;
+import java.util.UUID;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperBukkit {
-    private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
+@SuperBuilder
+public class WrapperPlayer extends WrapperCommandSender implements SRPlayer {
+    private final Player player;
 
-    public SRCommandSender commandSender(CommandSender sender) {
-        if (sender instanceof Player) {
-            return player((Player) sender);
+    @Override
+    public Locale getLocale() {
+        try {
+            return LocaleParser.parseLocale(player.getLocale()).orElseGet(super::getLocale);
+        } catch (NoSuchMethodError ignored) {
+            return super.getLocale();
         }
-
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public SRPlayer player(Player player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
+    @Override
+    public <P> P getAs(Class<P> playerClass) {
+        return playerClass.cast(player);
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 }

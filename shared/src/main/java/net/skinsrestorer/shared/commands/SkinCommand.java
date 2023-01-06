@@ -32,7 +32,7 @@ import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.acf.OnlineISRPlayer;
+import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -79,7 +79,7 @@ public final class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxDefaultCommand")
     @Conditions("cooldown")
     private void onSkinSetShort(SRPlayer player, String skin) {
-        onSkinSetOther(player, new OnlineISRPlayer(player), skin, null);
+        onSkinSetOther(player, new OnlineSRPlayer(player), skin, null);
     }
 
     @HelpCommand
@@ -97,7 +97,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinClear")
     @Conditions("cooldown")
     private void onSkinClear(SRPlayer player) {
-        onSkinClearOther(player, new OnlineISRPlayer(player));
+        onSkinClearOther(player, new OnlineSRPlayer(player));
     }
 
     @Subcommand("clear")
@@ -106,7 +106,7 @@ public final class SkinCommand extends BaseCommand {
     @Syntax("%SyntaxSkinClearOther")
     @Description("%helpSkinClearOther")
     @Conditions("cooldown")
-    private void onSkinClearOther(SRCommandSender sender, OnlineISRPlayer target) {
+    private void onSkinClearOther(SRCommandSender sender, OnlineSRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
         adapter.runAsync(() -> {
@@ -146,7 +146,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdate")
     @Conditions("cooldown")
     private void onSkinUpdate(SRPlayer player) {
-        onSkinUpdateOther(player, new OnlineISRPlayer(player));
+        onSkinUpdateOther(player, new OnlineSRPlayer(player));
     }
 
     @Subcommand("update")
@@ -155,7 +155,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinUpdateOther")
     @Syntax("%SyntaxSkinUpdateOther")
     @Conditions("cooldown")
-    private void onSkinUpdateOther(SRCommandSender sender, OnlineISRPlayer target) {
+    private void onSkinUpdateOther(SRCommandSender sender, OnlineSRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
         adapter.runAsync(() -> {
@@ -203,7 +203,7 @@ public final class SkinCommand extends BaseCommand {
             throw new InvalidCommandArgument(true);
         }
 
-        onSkinSetOther(player, new OnlineISRPlayer(player), skin[0], null);
+        onSkinSetOther(player, new OnlineSRPlayer(player), skin[0], null);
     }
 
     @Subcommand("set")
@@ -212,7 +212,7 @@ public final class SkinCommand extends BaseCommand {
     @Description("%helpSkinSetOther")
     @Syntax("%SyntaxSkinSetOther")
     @Conditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, OnlineISRPlayer target, String skin, SkinVariant skinVariant) {
+    private void onSkinSetOther(SRCommandSender sender, OnlineSRPlayer target, String skin, SkinVariant skinVariant) {
         SRPlayer targetPlayer = target.getPlayer();
         adapter.runAsync(() -> {
             if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
@@ -240,7 +240,7 @@ public final class SkinCommand extends BaseCommand {
             return;
         }
 
-        onSkinSetOther(player, new OnlineISRPlayer(player), url, skinVariant);
+        onSkinSetOther(player, new OnlineSRPlayer(player), url, skinVariant);
     }
 
     private void sendHelp(SRCommandSender sender) {
