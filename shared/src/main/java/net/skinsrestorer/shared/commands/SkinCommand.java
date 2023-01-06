@@ -256,30 +256,30 @@ public final class SkinCommand extends BaseCommand {
         }
     }
 
-    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skin, boolean restoreOnFailure, SkinVariant skinVariant) {
+    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean restoreOnFailure, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
-        if (skin.equalsIgnoreCase("null")) {
-            sender.sendMessage(Message.INVALID_PLAYER, skin);
+        if (skinName.equalsIgnoreCase("null")) {
+            sender.sendMessage(Message.INVALID_PLAYER, skinName);
             return false;
         }
 
         if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
-                && settings.getProperty(Config.DISABLED_SKINS).stream().anyMatch(skin::equalsIgnoreCase)) {
+                && settings.getProperty(Config.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
         }
 
         String playerName = player.getName();
         String oldSkinName = restoreOnFailure ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
-        if (C.validUrl(skin)) {
+        if (C.validUrl(skinName)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !settings.getProperty(Config.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
 
-            if (!C.allowedSkinUrl(settings, skin)) {
+            if (!C.allowedSkinUrl(settings, skinName)) {
                 sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
             }
@@ -289,14 +289,14 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
-                String skinName = " " + playerName; // so won't overwrite premium player names
-                if (skinName.length() > 16) // max len of 16 char
-                    skinName = skinName.substring(0, 16);
+                String skinUrlName = " " + playerName; // so won't overwrite premium player names
+                if (skinUrlName.length() > 16) // max len of 16 char
+                    skinUrlName = skinUrlName.substring(0, 16);
 
-                SkinProperty generatedSkin = skinsRestorerAPI.genSkinUrl(skin, skinVariant);
-                skinsRestorerAPI.setSkinData(skinName, generatedSkin,
+                SkinProperty generatedSkin = skinsRestorerAPI.genSkinUrl(skinName, skinVariant);
+                skinsRestorerAPI.setSkinData(skinUrlName, generatedSkin,
                         System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                skinsRestorerAPI.setSkinName(playerName, skinName); // set player to "whitespaced" name then reload skin
+                skinsRestorerAPI.setSkinName(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
                 skinsRestorerAPI.applySkin(player.getAs(Object.class), generatedSkin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
@@ -307,7 +307,7 @@ public final class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
-                logger.debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skin, e);
+                logger.debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skinName, e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {
@@ -317,14 +317,14 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 if (restoreOnFailure) {
-                    skinsRestorerAPI.setSkinName(playerName, skin);
+                    skinsRestorerAPI.setSkinName(playerName, skinName);
                 }
 
-                skinsRestorerAPI.applySkin(player.getAs(Object.class), skin);
+                skinsRestorerAPI.applySkin(player.getAs(Object.class), skinName);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
-                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skin); // TODO: should this not be sender? -> hidden skin set?
+                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName); // TODO: should this not be sender? -> hidden skin set?
 
                 return true;
             } catch (SkinRequestException | NotPremiumException e) {
