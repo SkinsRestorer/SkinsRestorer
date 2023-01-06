@@ -5,7 +5,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.1")
 
-    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("org.mariadb.jdbc:mariadb-java-client:3.0.9")
     api("com.github.InventivetalentDev.Spiget-Update:core:1.4.6-SNAPSHOT")
 
