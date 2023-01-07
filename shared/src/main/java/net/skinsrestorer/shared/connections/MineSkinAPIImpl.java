@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.skinsrestorer.api.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.IMineSkinAPI;
+import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
@@ -58,7 +58,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class MineSkinAPI implements IMineSkinAPI {
+public class MineSkinAPIImpl implements MineSkinAPI {
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final Gson gson = new Gson();

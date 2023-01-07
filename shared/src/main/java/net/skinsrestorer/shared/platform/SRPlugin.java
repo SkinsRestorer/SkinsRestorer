@@ -26,25 +26,31 @@ import co.aikar.commands.CommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
-import net.skinsrestorer.api.SkinsRestorerAPI;
-import net.skinsrestorer.api.interfaces.NameGetter;
+import net.skinsrestorer.api.SkinsRestorer;
+import net.skinsrestorer.api.SkinsRestorerProvider;
+import net.skinsrestorer.api.interfaces.MineSkinAPI;
+import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.api.SharedSkinsRestorer;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.MineSkinConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
-import net.skinsrestorer.shared.connections.MineSkinAPI;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.MySQL;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheck;
@@ -222,7 +228,7 @@ public class SRPlugin {
 
     public void initStorage() throws InitializeException {
         // Initialise SkinStorage
-        SkinStorage skinStorage = injector.getSingleton(SkinStorage.class);
+        SkinStorageImpl skinStorage = injector.getSingleton(SkinStorageImpl.class);
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
@@ -304,17 +310,25 @@ public class SRPlugin {
     }
 
     public void initMineSkinAPI() {
-        injector.getSingleton(MineSkinAPI.class);
+        MineSkinAPI mineSkinAPI = injector.getSingleton(MineSkinAPIImpl.class);;
+        injector.register(MineSkinAPI.class, mineSkinAPI);
     }
 
-    public <P> void registerAPI(SkinApplier<P> skinApplier, Class<P> playerClass, NameGetter<P> nameGetter) {
-        injector.register(SkinsRestorerAPI.class, new SkinsRestorerAPI<>(
-                playerClass,
-                injector.getSingleton(MojangAPI.class),
-                injector.getSingleton(MineSkinAPI.class),
-                injector.getSingleton(SkinStorage.class),
-                skinApplier,
-                nameGetter));
+    public <P> void registerAPI() {
+        SkinsRestorer api = new SharedSkinsRestorer(injector.getSingleton(SkinStorageImpl.class),
+                injector.getSingleton(MojangAPIImpl.class),
+                injector.getSingleton(MineSkinAPIImpl.class),
+                injector.getSingleton(SharedSkinApplier.class),
+                injector.getSingleton(EventBusImpl.class));
+        SkinsRestorerProvider.setApi(api);
+        injector.register(SkinsRestorer.class, api);
+    }
+
+    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, NameGetter<P> nameGetter) {
+        SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, nameGetter,
+                injector.getSingleton(SkinStorageImpl.class));
+        injector.register(SharedSkinApplier.class, sharedSkinApplier);
+        injector.register(SkinApplier.class, sharedSkinApplier);
     }
 
     public void registerMetrics(Object metricsParent) {
@@ -333,12 +347,16 @@ public class SRPlugin {
         }
     }
 
-    public void startupStart() {
+    public <P> void startupStart(Class<P> playerClass) {
         logger.load(dataFolder);
 
         if (!unitTest) {
             registerMetrics(adapter.createMetricsInstance());
         }
+
+
+        EventBusImpl<P> sharedEventBus = new EventBusImpl<>(playerClass);
+        injector.register(EventBusImpl.class, sharedEventBus);
     }
 
     public String getUserAgent() {

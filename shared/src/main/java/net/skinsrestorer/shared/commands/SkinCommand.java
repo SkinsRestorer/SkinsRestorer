@@ -27,12 +27,14 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.MineSkinAPI;
+import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -40,7 +42,7 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -62,10 +64,11 @@ public final class SkinCommand extends BaseCommand {
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
-    private final SkinsRestorerAPI<Object> skinsRestorerAPI;
+    private final SharedSkinApplier<Object> skinApplier;
+    private final MineSkinAPI mineSkinAPI;
 
     @SuppressWarnings("deprecation")
     @Default
@@ -117,9 +120,9 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 SkinProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
-                skinsRestorerAPI.applySkin(targetPlayer.getAs(Object.class), property);
+                skinApplier.applySkin(targetPlayer.getAs(Object.class), property);
             } catch (NotPremiumException e) {
-                skinsRestorerAPI.applySkin(targetPlayer.getAs(Object.class), SkinProperty.of("", ""));
+                skinApplier.applySkin(targetPlayer.getAs(Object.class), SkinProperty.of("", ""));
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
@@ -293,15 +296,16 @@ public final class SkinCommand extends BaseCommand {
                 if (skinUrlName.length() > 16) // max len of 16 char
                     skinUrlName = skinUrlName.substring(0, 16);
 
-                SkinProperty generatedSkin = skinsRestorerAPI.genSkinUrl(skinName, skinVariant);
-                skinsRestorerAPI.setSkinData(skinUrlName, generatedSkin,
+                SkinProperty generatedSkin = mineSkinAPI.genSkin(skinName, skinVariant);
+                skinStorage.setSkinData(skinUrlName, generatedSkin,
                         System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
-                skinsRestorerAPI.setSkinName(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
-                skinsRestorerAPI.applySkin(player.getAs(Object.class), generatedSkin);
+                skinStorage.setSkinOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
+                skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX))) {
                     player.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
+                }
 
                 return true;
             } catch (SkinRequestException e) {
@@ -317,10 +321,10 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 if (restoreOnFailure) {
-                    skinsRestorerAPI.setSkinName(playerName, skinName);
+                    skinStorage.setSkinOfPlayer(playerName, skinName);
                 }
 
-                skinsRestorerAPI.applySkin(player.getAs(Object.class), skinName);
+                skinApplier.applySkin(player.getAs(Object.class), skinName);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
                 if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
@@ -335,7 +339,7 @@ public final class SkinCommand extends BaseCommand {
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         setCoolDown(sender, Config.SKIN_ERROR_COOLDOWN);
         if (restoreOnFailure) {
-            skinsRestorerAPI.setSkinName(playerName, oldSkinName);
+            skinStorage.setSkinOfPlayer(playerName, oldSkinName);
         }
         return false;
     }

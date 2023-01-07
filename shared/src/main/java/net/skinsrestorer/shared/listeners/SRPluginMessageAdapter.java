@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRPluginMessageAdapter {
     private final SRLogger logger;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
     private final SRProxyAdapter plugin;
     private final CommandManager<?, ?, ?, ?, ?, ?> manager;
 

@@ -17,37 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.velocity.events;
+package net.skinsrestorer.api.interfaces;
 
-import com.velocitypowered.api.event.ResultedEvent;
-import com.velocitypowered.api.proxy.Player;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
-@Getter
-public class SkinApplyVelocityEvent implements ResultedEvent<ResultedEvent.GenericResult> {
-    private final Player who;
-    @Setter
-    private SkinProperty property;
-    @NonNull
-    private GenericResult result = GenericResult.allowed();
-
-    public SkinApplyVelocityEvent(@Nullable Player who, SkinProperty property) {
-        this.who = who;
-        this.property = property;
-    }
-
-    public GenericResult result() {
-        return result;
-    }
-
-    @Override
-    public void setResult(GenericResult result) {
-        this.result = Objects.requireNonNull(result);
-    }
+public interface MineSkinAPI {
+    /**
+     * Generates a skin using the <a href="https://mineskin.org/">MineSkin</a> API
+     * [WARNING] MineSkin api key might be REQUIRED in the future.
+     *
+     * @param url         pointing to a skin image url
+     * @param skinVariant can be null, steve or slim
+     * @return Custom skin property containing "value" and "signature"
+     * @throws SkinRequestException on error
+     */
+    SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException;
 }

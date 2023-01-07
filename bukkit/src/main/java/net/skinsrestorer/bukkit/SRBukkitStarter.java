@@ -37,7 +37,7 @@ import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -72,7 +72,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() throws InitializeException {
-        plugin.startupStart();
+        plugin.startupStart(Player.class);
 
         // Init config files // TODO: Split config files
         plugin.loadConfig();
@@ -80,7 +80,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
         SkinApplierBukkit skinApplierBukkit;
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
-            if (plugin.isUnitTest()) {
+            if (SRPlugin.isUnitTest()) {
                 skinApplierBukkit.setRefresh(new NOOPRefresher());
             } else {
                 skinApplierBukkit.setRefresh(skinApplierBukkit.detectRefresh(server));
@@ -142,7 +142,8 @@ public class SRBukkitStarter implements SRPlatformStarter {
             if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
                 plugin.initMineSkinAPI();
                 plugin.initStorage();
-                plugin.registerAPI(skinApplierBukkit, Player.class, Player::getName);
+                plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
+                plugin.registerAPI();
             }
 
             server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:skinchange");
@@ -152,9 +153,8 @@ public class SRBukkitStarter implements SRPlatformStarter {
                 try {
                     String subChannel = in.readUTF();
 
-                    if (subChannel.equalsIgnoreCase("SkinUpdate")) {
+                    if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
                         try {
-                            in.readUTF(); // LEGACY property name
                             skinApplierBukkit.applySkin(player, SkinProperty.of(in.readUTF(), in.readUTF()));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -200,9 +200,10 @@ public class SRBukkitStarter implements SRPlatformStarter {
         } else {
             plugin.initMineSkinAPI();
             plugin.initStorage();
+            plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
 
             // Init API
-            plugin.registerAPI(skinApplierBukkit, Player.class, Player::getName);
+            plugin.registerAPI();
 
             // Init commands
             CommandManager<?, ?, ?, ?, ?, ?> manager = plugin.sharedInitCommands();
@@ -223,7 +224,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
             }
 
             // Run connection check
-            adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+            adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
         }
     }
 

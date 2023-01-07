@@ -32,7 +32,7 @@ import java.util.Optional;
  * Skin name: A name assigned to a skin property. Cached in a .skin file with a timestamp for expiry.
  * Player skin: Stored as a skin name in a .player file.
  */
-public interface ISkinStorage {
+public interface SkinStorage {
     /**
      * Returns a players custom skin.
      *
@@ -101,6 +101,4 @@ public interface ISkinStorage {
      * @param timestamp timestamp string in millis (null for current)
      */
     void setSkinData(String skinName, SkinProperty textures, long timestamp);
-
-    boolean isInitialized();
 }

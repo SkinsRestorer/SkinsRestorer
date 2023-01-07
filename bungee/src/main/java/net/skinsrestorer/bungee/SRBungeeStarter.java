@@ -27,9 +27,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
-import net.skinsrestorer.bungee.utils.SkinApplierBungee;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -47,7 +46,7 @@ public class SRBungeeStarter implements SRPlatformStarter {
     private final SRLogger logger;
 
     public void pluginStartup() {
-        plugin.startupStart();
+        plugin.startupStart(ProxiedPlayer.class);
 
         plugin.initUpdateCheck();
 
@@ -65,8 +64,10 @@ public class SRBungeeStarter implements SRPlatformStarter {
             return;
         }
 
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, ProxiedPlayer::getName);
+
         // Init API
-        plugin.registerAPI(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, ProxiedPlayer::getName);
+        plugin.registerAPI();
 
         // Init listener
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(LoginListener.class));
@@ -82,6 +83,6 @@ public class SRBungeeStarter implements SRPlatformStarter {
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(PluginMessageListener.class));
 
         // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

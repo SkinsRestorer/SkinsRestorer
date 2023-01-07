@@ -25,8 +25,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
-import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
@@ -34,6 +32,9 @@ import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
@@ -56,12 +57,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierBukkit implements SkinApplier<Player> {
+public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private final SRPlugin plugin;
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final SettingsManager settings;
     private final Server server;
+    private final EventBusImpl<Player> eventBus;
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
@@ -108,21 +110,17 @@ public class SkinApplierBukkit implements SkinApplier<Player> {
         }
 
         adapter.runAsync(() -> {
-            SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
+            SkinApplyEventImpl<Player> applyEvent = new SkinApplyEventImpl<>(player, property);
 
-            server.getPluginManager().callEvent(applyEvent);
+            eventBus.callEvent(applyEvent);
 
-            if (applyEvent.isCancelled())
+            if (applyEvent.isCancelled()) {
                 return;
-
-            SkinProperty eventProperty = applyEvent.getProperty();
-
-            if (eventProperty == null)
-                return;
+            }
 
             // delay 1 server tick so we override online-mode
             adapter.runSync(() -> {
-                applyProperty(player, eventProperty);
+                applyProperty(player, applyEvent.getProperty());
 
                 adapter.runAsync(() -> updateSkin(player));
             });

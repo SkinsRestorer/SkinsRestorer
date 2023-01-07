@@ -17,15 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api.event;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.property.SkinProperty;
-
-import java.util.Optional;
-
-public interface IMojangAPI {
-    Optional<String> getUUID(String playerName) throws NotPremiumException;
-
-    Optional<SkinProperty> getProfile(String uuid) throws NotPremiumException;
+public interface SkinsRestorerEvent<P> {
 }

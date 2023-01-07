@@ -27,7 +27,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -49,7 +49,7 @@ public class SRVelocityStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() {
-        plugin.startupStart();
+        plugin.startupStart(Player.class);
 
         plugin.initUpdateCheck();
 
@@ -68,9 +68,10 @@ public class SRVelocityStarter implements SRPlatformStarter {
         }
 
         SkinApplierVelocity skinApplierVelocity = injector.getSingleton(SkinApplierVelocity.class);
+        plugin.registerSkinApplier(skinApplierVelocity, Player.class, Player::getUsername);
 
         // Init API
-        plugin.registerAPI(skinApplierVelocity, Player.class, Player::getUsername);
+        plugin.registerAPI();
 
         // Init listener
         proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
@@ -86,6 +87,6 @@ public class SRVelocityStarter implements SRPlatformStarter {
         proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(PluginMessageListener.class));
 
         // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

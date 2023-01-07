@@ -17,40 +17,33 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.bukkit.events;
+package net.skinsrestorer.shared.api.event;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.skinsrestorer.api.event.SkinApplyEvent;
 import net.skinsrestorer.api.property.SkinProperty;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@Getter
-public class SkinApplyBukkitEvent extends Event implements Cancellable {
-    public static final HandlerList HANDLERS = new HandlerList();
-    private final Player who;
-    @Setter
+import java.util.Objects;
+
+public class SkinApplyEventImpl<P> implements SkinApplyEvent<P> {
+    @Getter
+    @Nullable
+    private final P player;
+    @Getter
     private SkinProperty property;
+    @Getter
     @Setter
-    private boolean isCancelled = false;
+    private boolean cancelled;
 
-    public SkinApplyBukkitEvent(@NotNull Player who, SkinProperty property) {
-        super(true);
+    public SkinApplyEventImpl(@Nullable P player, SkinProperty property) {
+        this.player = player;
         this.property = property;
-        this.who = who;
     }
 
-    @SuppressWarnings("unused")
-    public static HandlerList getHandlerList() {
-        return HANDLERS;
-    }
-
-    @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return HANDLERS;
+    public void setProperty(SkinProperty property) {
+        Objects.requireNonNull(property, "property");
+        this.property = property;
     }
 }

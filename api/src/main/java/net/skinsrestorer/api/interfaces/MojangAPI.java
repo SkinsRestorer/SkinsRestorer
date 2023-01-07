@@ -19,6 +19,13 @@
  */
 package net.skinsrestorer.api.interfaces;
 
-public interface NameGetter<P> {
-    String getName(P player);
+import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.property.SkinProperty;
+
+import java.util.Optional;
+
+public interface MojangAPI {
+    Optional<String> getUUID(String playerName) throws NotPremiumException;
+
+    Optional<SkinProperty> getProfile(String uuid) throws NotPremiumException;
 }

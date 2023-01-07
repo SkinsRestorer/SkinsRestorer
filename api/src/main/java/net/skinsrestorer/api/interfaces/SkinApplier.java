@@ -19,15 +19,37 @@
  */
 package net.skinsrestorer.api.interfaces;
 
+import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 
 public interface SkinApplier<P> {
     /**
-     * Applies the skin In other words, sets the skin data, but no changes will
-     * be visible until you reconnect or force update with
+     * Applies the player selected skin from the player table/file.
+     * This is useful in combination with setSkinName.
      *
-     * @param player   Player
-     * @param property Property Object
+     * @param player Player to apply the skin to.
+     * @throws SkinRequestException
+     */
+    void applySkin(P player) throws SkinRequestException, NotPremiumException;
+
+    /**
+     * Only Apply the skinName from the skin table/file.
+     * This will not keep the skin on rejoin / applySkin(playerWrapper).
+     *
+     * @param player   Player to apply the skin to.
+     * @param skinName Skin to apply
+     * @throws SkinRequestException
+     * @throws NotPremiumException
+     */
+    void applySkin(P player, String skinName) throws SkinRequestException, NotPremiumException;
+
+    /**
+     * Applies the skin In other words, sets the skin data, but no changes will
+     * be visible until you reconnect or force update with.
+     *
+     * @param player   Player to apply the skin to.
+     * @param property Skin property to apply
      */
     void applySkin(P player, SkinProperty property);
 }

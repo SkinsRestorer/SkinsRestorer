@@ -24,7 +24,7 @@ import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -47,7 +47,7 @@ public class SRSpongeStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() {
-        plugin.startupStart();
+        plugin.startupStart(Player.class);
 
         plugin.initUpdateCheck();
 
@@ -66,9 +66,10 @@ public class SRSpongeStarter implements SRPlatformStarter {
         }
 
         SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
+        plugin.registerSkinApplier(skinApplierSponge, Player.class, Player::getName);
 
         // Init API
-        plugin.registerAPI(skinApplierSponge, Player.class, Player::getName);
+        plugin.registerAPI();
 
         game.getEventManager().registerListener(adapter.getPluginInstance(), ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
 
@@ -79,6 +80,6 @@ public class SRSpongeStarter implements SRPlatformStarter {
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
         // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPI.class), logger));
+        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

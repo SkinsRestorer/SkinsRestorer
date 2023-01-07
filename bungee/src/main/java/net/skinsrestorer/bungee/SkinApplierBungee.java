@@ -17,38 +17,33 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bungee;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
-import net.skinsrestorer.api.bungeecord.events.SkinApplyBungeeEvent;
-import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bungee.SkinApplierBungeeNew;
-import net.skinsrestorer.bungee.SkinApplierBungeeOld;
-import net.skinsrestorer.bungee.SkinApplyBungeeAdapter;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierBungee implements SkinApplier<ProxiedPlayer> {
+public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
     private final SettingsManager settings;
-    private final SRLogger logger;
-    private final ProxyServer proxy;
+    private final WrapperBungee wrapper;
+    private final SRProxyPlugin proxyPlugin;
+    private final EventBusImpl<ProxiedPlayer> eventBus;
     @Getter
     private final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
 
@@ -82,11 +77,12 @@ public class SkinApplierBungee implements SkinApplier<ProxiedPlayer> {
     }
 
     private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectionException {
-        SkinApplyBungeeEvent event = new SkinApplyBungeeEvent(player, property);
+        SkinApplyEventImpl<ProxiedPlayer> event = new SkinApplyEventImpl<>(player, property);
 
-        proxy.getPluginManager().callEvent(event);
-        if (event.isCancelled())
+        eventBus.callEvent(event);
+        if (event.isCancelled()) {
             return;
+        }
 
         applyWithProperty(player, handler, event.getProperty());
     }
@@ -94,33 +90,10 @@ public class SkinApplierBungee implements SkinApplier<ProxiedPlayer> {
     private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectionException {
         adapter.applyToHandler(handler, textures);
 
-        if (player == null)
-            return;
-
-        sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
-    }
-
-    private void sendUpdateRequest(@NotNull ProxiedPlayer player, SkinProperty textures) {
-        if (player.getServer() == null) {
+        if (player == null) {
             return;
         }
 
-        logger.debug("Sending skin update request for " + player.getName());
-
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-        try {
-            out.writeUTF("SkinUpdate");
-
-            if (textures != null) {
-                out.writeUTF(SkinProperty.TEXTURES_NAME);
-                out.writeUTF(textures.getValue());
-                out.writeUTF(textures.getSignature());
-            }
-
-            player.getServer().sendData("sr:skinchange", b.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
     }
 }

@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.connections;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.interfaces.IMojangAPI;
+import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
@@ -51,7 +51,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class MojangAPI implements IMojangAPI {
+public class MojangAPIImpl implements MojangAPI {
     private static final String ASHCON = "https://api.ashcon.app/mojang/v2/user/%uuidOrName%";
     private static final String UUID_MOJANG = "https://api.mojang.com/users/profiles/minecraft/%playerName%";
     private static final String UUID_MINETOOLS = "https://api.minetools.eu/uuid/%playerName%";

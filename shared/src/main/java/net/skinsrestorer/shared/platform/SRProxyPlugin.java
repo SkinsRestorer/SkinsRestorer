@@ -19,10 +19,14 @@
  */
 package net.skinsrestorer.shared.platform;
 
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
+import org.jetbrains.annotations.NotNull;
 
+import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,7 +34,33 @@ import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRProxyPlugin {
+    private final SRLogger logger;
+
+    public void sendUpdateRequest(@NotNull SRProxyPlayer player, SkinProperty textures) {
+        if (!player.getCurrentServer().isPresent()) {
+            return;
+        }
+
+        logger.debug("Sending skin update request for " + player.getName());
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF("SkinUpdateV2");
+
+            if (textures != null) {
+                out.writeUTF(textures.getValue());
+                out.writeUTF(textures.getSignature());
+            }
+
+            player.sendDataToServer("sr:skinchange", b.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
@@ -46,7 +76,7 @@ public class SRProxyPlugin {
         return byteOut.toByteArray();
     }
 
-    public static void sendPage(int page, SRProxyPlayer player, SRLogger logger, SkinStorage skinStorage) {
+    public static void sendPage(int page, SRProxyPlayer player, SRLogger logger, SkinStorageImpl skinStorage) {
         int skinNumber = 36 * page;
 
         byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));

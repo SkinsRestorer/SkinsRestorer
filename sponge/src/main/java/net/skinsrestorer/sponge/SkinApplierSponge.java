@@ -23,6 +23,7 @@ import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -37,24 +38,25 @@ import javax.inject.Inject;
 import java.util.Collection;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierSponge implements SkinApplier<Player> {
+public class SkinApplierSponge implements SkinApplierAccess<Player> {
     private final SRSpongeAdapter plugin;
     private final Game game;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
-        setTexture(property, player.getProfile().getPropertyMap().get(SkinProperty.TEXTURES_NAME));
+        setTexture(player.getProfile().getPropertyMap().get(SkinProperty.TEXTURES_NAME), property);
 
         plugin.runSync(() -> sendUpdate(player));
     }
 
     public void updateProfileSkin(GameProfile profile, SkinProperty skin) {
-        setTexture(skin, profile.getPropertyMap().get(SkinProperty.TEXTURES_NAME));
+        setTexture(profile.getPropertyMap().get(SkinProperty.TEXTURES_NAME), skin );
     }
 
-    private void setTexture(SkinProperty property, Collection<ProfileProperty> oldProperties) {
-        ProfileProperty newTextures = game.getServer().getGameProfileManager().createProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
-        oldProperties.removeIf(property2 -> property2.getName().equals(SkinProperty.TEXTURES_NAME));
+    private void setTexture(Collection<ProfileProperty> oldProperties, SkinProperty property) {
+        ProfileProperty newTextures = game.getServer().getGameProfileManager()
+                .createProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
+        oldProperties.removeIf(property1 -> property1.getName().equals(SkinProperty.TEXTURES_NAME));
         oldProperties.add(newTextures);
     }
 

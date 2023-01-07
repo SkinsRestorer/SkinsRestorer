@@ -39,7 +39,7 @@ public class ServiceChecker {
     private ServiceChecker() {
     }
 
-    public static ServiceCheckResponse checkServices(MojangAPI mojangAPI) {
+    public static ServiceCheckResponse checkServices(MojangAPIImpl mojangAPI) {
         ServiceCheckResponse response = new ServiceCheckResponse();
 
         // ##### Ashcon request #####

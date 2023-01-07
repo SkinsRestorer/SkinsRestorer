@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -27,7 +27,7 @@ public class SharedMethods {
     private SharedMethods() {
     }
 
-    public static void runServiceCheck(MojangAPI mojangAPI, SRLogger log) {
+    public static void runServiceCheck(MojangAPIImpl mojangAPI, SRLogger log) {
         ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {

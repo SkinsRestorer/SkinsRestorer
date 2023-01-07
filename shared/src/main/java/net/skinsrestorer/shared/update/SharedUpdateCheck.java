@@ -45,7 +45,7 @@ public class SharedUpdateCheck implements UpdateCheck {
     }
 
     public void checkUpdate(boolean showUpToDate) {
-        if (plugin.isUnitTest()) {
+        if (SRPlugin.isUnitTest()) {
             if (showUpToDate) {
                 logger.info("Unit test mode, not checking for updates.");
                 updateChecker.getUpToDateMessages().forEach(logger::info);

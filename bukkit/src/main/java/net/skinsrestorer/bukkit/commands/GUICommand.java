@@ -30,7 +30,7 @@ import net.skinsrestorer.bukkit.SkinsGUI;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -47,7 +47,7 @@ public class GUICommand extends BaseCommand {
     private final SRBukkitAdapter plugin;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
     private final SkinsGUI.ServerGUIActions serverGUIActions;
     private final Server server;
 

@@ -24,13 +24,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.api.interfaces.ISkinStorage;
+import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.StorageConfig;
-import net.skinsrestorer.shared.connections.MineSkinAPI;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
@@ -47,10 +47,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinStorage implements ISkinStorage {
+public class SkinStorageImpl implements SkinStorage {
     private final SRLogger logger;
-    private final MojangAPI mojangAPI;
-    private final MineSkinAPI mineSkinAPI;
+    private final MojangAPIImpl mojangAPI;
+    private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
     @Setter
@@ -220,11 +220,6 @@ public class SkinStorage implements ISkinStorage {
             return;
 
         storageAdapter.setStoredSkinData(skinName, new StorageAdapter.StoredProperty(value, signature, timestamp));
-    }
-
-    @Override
-    public boolean isInitialized() {
-        return storageAdapter != null;
     }
 
     // TODO: CUSTOM_GUI

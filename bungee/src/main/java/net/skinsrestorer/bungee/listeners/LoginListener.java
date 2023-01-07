@@ -27,7 +27,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.SRBungeeAdapter;
-import net.skinsrestorer.bungee.utils.SkinApplierBungee;
+import net.skinsrestorer.bungee.SkinApplierBungee;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 

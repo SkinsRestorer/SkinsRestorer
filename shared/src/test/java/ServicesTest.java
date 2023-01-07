@@ -1,7 +1,7 @@
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
@@ -47,7 +47,7 @@ public class ServicesTest {
         new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheck.class);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        ServiceChecker.ServiceCheckResponse serviceChecker = ServiceChecker.checkServices(injector.getSingleton(MojangAPI.class));
+        ServiceChecker.ServiceCheckResponse serviceChecker = ServiceChecker.checkServices(injector.getSingleton(MojangAPIImpl.class));
 
         serviceChecker.getResults().forEach(System.out::println);
 

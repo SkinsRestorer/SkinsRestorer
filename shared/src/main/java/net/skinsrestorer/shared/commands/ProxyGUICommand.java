@@ -29,7 +29,7 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -41,7 +41,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ProxyGUICommand extends BaseCommand {
     private final SRLogger logger;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
 
     @Default
     private void onDefault(SRPlayer player) {

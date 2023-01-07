@@ -26,15 +26,17 @@ import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.skinsrestorer.api.SkinVariant;
-import net.skinsrestorer.api.SkinsRestorerAPI;
+import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.interfaces.MineSkinAPI;
+import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.connections.DumpService;
-import net.skinsrestorer.shared.connections.MojangAPI;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -42,7 +44,7 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
@@ -63,12 +65,14 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 public final class SRCommand extends BaseCommand {
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
-    private final MojangAPI mojangAPI;
-    private final SkinStorage skinStorage;
+    private final MojangAPIImpl mojangAPI;
+    private final SkinStorageImpl skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
     private final DumpService dumpService;
-    private final SkinsRestorerAPI<Object> skinsRestorerAPI;
+    private final SkinsRestorer skinsRestorer;
+    private final MineSkinAPI mineSkinAPI;
+    private final SkinApplier<Object> skinApplier;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
@@ -175,7 +179,7 @@ public final class SRCommand extends BaseCommand {
                 String value = prop.getValue();
                 String signature = prop.getSignature();
 
-                MojangProfileResponse profile = skinsRestorerAPI.getSkinProfileData(prop);
+                MojangProfileResponse profile = skinsRestorer.getSkinProfileData(prop);
                 String decodedSkin = profile.getTextures().getSKIN().getUrl();
                 long timestamp = profile.getTimestamp();
                 String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
@@ -205,7 +209,7 @@ public final class SRCommand extends BaseCommand {
     private void onApplySkin(SRCommandSender sender, SRPlayer target) {
         adapter.runAsync(() -> {
             try {
-                skinsRestorerAPI.applySkin(target.getAs(Object.class));
+                skinApplier.applySkin(target.getAs(Object.class));
                 sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
             } catch (Exception ignored) {
                 sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
@@ -222,7 +226,7 @@ public final class SRCommand extends BaseCommand {
         adapter.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    skinStorage.setSkinData(name, skinsRestorerAPI.genSkinUrl(skinUrl, skinVariant),
+                    skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant),
                             System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
                     sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
                 } else {
@@ -245,7 +249,7 @@ public final class SRCommand extends BaseCommand {
             try {
                 SkinProperty skinProps;
                 if (C.validUrl(skin)) {
-                    skinProps = skinsRestorerAPI.genSkinUrl(skin, skinVariant);
+                    skinProps = mineSkinAPI.genSkin(skin, skinVariant);
                 } else {
                     skinProps = mojangAPI.getSkin(skin).orElse(null);
                 }
@@ -259,7 +263,7 @@ public final class SRCommand extends BaseCommand {
                 for (SRPlayer player : adapter.getOnlinePlayers()) {
                     final String pName = player.getName();
                     skinStorage.setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
-                    skinsRestorerAPI.applySkin(player.getAs(Object.class), skinProps);
+                    skinApplier.applySkin(player.getAs(Object.class), skinProps);
                 }
                 sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
             } catch (NotPremiumException | SkinRequestException e) {
@@ -275,7 +279,7 @@ public final class SRCommand extends BaseCommand {
         adapter.runAsync(() -> {
             for (SRPlayer player : adapter.getOnlinePlayers()) {
                 try {
-                    skinsRestorerAPI.applySkin(player.getAs(Object.class));
+                    skinApplier.applySkin(player.getAs(Object.class));
                 } catch (SkinRequestException | NotPremiumException ignored) {
                     sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
                 }

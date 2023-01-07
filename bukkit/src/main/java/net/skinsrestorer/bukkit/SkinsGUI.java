@@ -31,7 +31,7 @@ import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
@@ -60,7 +60,7 @@ public class SkinsGUI implements InventoryHolder {
     @Setter(value = AccessLevel.PRIVATE)
     private Inventory inventory;
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorage skinStorage, SRForeign player, int page) {
+    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorageImpl skinStorage, SRForeign player, int page) {
         if (page > 999) {
             page = 999;
         }
@@ -220,7 +220,7 @@ public class SkinsGUI implements InventoryHolder {
         private final SRServerAdapter adapter;
         private final SkinsRestorerLocale locale;
         private final SRLogger logger;
-        private final SkinStorage skinStorage;
+        private final SkinStorageImpl skinStorage;
         private final WrapperBukkit wrapper;
         private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
 

@@ -20,90 +20,54 @@
 package net.skinsrestorer.velocity;
 
 import ch.jalu.configme.SettingsManager;
-import com.velocitypowered.api.event.ResultedEvent;
 import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.util.GameProfile;
 import com.velocitypowered.api.util.GameProfile.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.velocity.events.SkinApplyVelocityEvent;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.platform.SRProxyPlugin;
+import net.skinsrestorer.velocity.utils.WrapperVelocity;
 
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierVelocity implements SkinApplier<Player> {
-    private final ProxyServer proxy;
+public class SkinApplierVelocity implements SkinApplierAccess<Player> {
     private final SettingsManager settings;
-    private final SRLogger logger;
+    private final WrapperVelocity wrapper;
+    private final SRProxyPlugin proxyPlugin;
+    private final EventBusImpl<Player> eventBus;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
-        proxy.getEventManager().fire(new SkinApplyVelocityEvent(player, property)).thenAccept((event) -> {
-            if (event.getResult() != ResultedEvent.GenericResult.allowed())
-                return;
+        SkinApplyEventImpl<Player> applyEvent = new SkinApplyEventImpl<>(player, property);
 
-            Property textures = new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
-            player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), textures));
-            sendUpdateRequest(player, settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
-        });
+        eventBus.callEvent(applyEvent);
+        if (applyEvent.isCancelled()) {
+            return;
+        }
+
+        SkinProperty appliedProperty = applyEvent.getProperty();
+
+        player.setGameProfileProperties(updatePropertiesSkin(player.getGameProfileProperties(), appliedProperty));
+        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(Config.FORWARD_TEXTURES) ? appliedProperty : null);
     }
 
     public GameProfile updateProfileSkin(GameProfile profile, SkinProperty property) {
-        Property textures = new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
-        List<Property> oldProperties = profile.getProperties();
-
-        return new GameProfile(profile.getId(), profile.getName(), updatePropertiesSkin(oldProperties, textures));
+        return new GameProfile(profile.getId(), profile.getName(), updatePropertiesSkin(profile.getProperties(), property));
     }
 
-    private List<Property> updatePropertiesSkin(List<Property> original, Property property) {
+    private List<Property> updatePropertiesSkin(List<Property> original, SkinProperty property) {
         List<Property> properties = new ArrayList<>(original);
-        boolean applied = false;
 
-        int i = 0;
-        for (Property lProperty : properties) {
-            if (SkinProperty.TEXTURES_NAME.equals(lProperty.getName())) {
-                properties.set(i, property);
-                applied = true;
-            }
-            i++;
-        }
-
-        if (!applied)
-            properties.add(property);
+        properties.removeIf(property1 -> property1.getName().equals(SkinProperty.TEXTURES_NAME));
+        properties.add(new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         return properties;
-    }
-
-    private void sendUpdateRequest(Player player, Property textures) {
-        player.getCurrentServer().ifPresent(serverConnection -> {
-            logger.debug("Sending skin update request for " + player.getUsername());
-
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-
-            try {
-                out.writeUTF("SkinUpdate");
-
-                if (textures != null) {
-                    out.writeUTF(textures.getName());
-                    out.writeUTF(textures.getValue());
-                    out.writeUTF(textures.getSignature());
-                }
-
-                serverConnection.sendPluginMessage(MinecraftChannelIdentifier.create("sr", "skinchange"), b.toByteArray());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
     }
 }

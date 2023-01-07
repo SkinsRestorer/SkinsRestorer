@@ -27,7 +27,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.StorageConfig;
-import net.skinsrestorer.shared.storage.SkinStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class LoginProfileListenerAdapter<R> {
     private final SettingsManager settings;
-    private final SkinStorage skinStorage;
+    private final SkinStorageImpl skinStorage;
     private final SRLogger logger;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
