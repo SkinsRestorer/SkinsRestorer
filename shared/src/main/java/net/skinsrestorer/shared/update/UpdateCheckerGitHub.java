@@ -28,10 +28,13 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
+import java.io.BufferedReader;
 import javax.inject.Inject;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,7 +56,13 @@ public class UpdateCheckerGitHub {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
 
-            releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
+            String body = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+            logger.debug("Response body: " + body);
+            logger.debug("Response code: " + connection.getResponseCode());
+
+            releaseInfo = new Gson().fromJson(body, GitHubReleaseInfo.class);
 
             releaseInfo.assets.forEach(gitHubAssetInfo -> {
                 releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
