@@ -24,9 +24,12 @@ import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.UpdateCallback;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 public class UpdateCheckerGitHub extends UpdateChecker {
     private static final String RESOURCE_ID = "SkinsRestorerX";
@@ -43,7 +46,13 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", userAgent);
 
-            releaseInfo = new Gson().fromJson(new InputStreamReader(connection.getInputStream()), GitHubReleaseInfo.class);
+            String body = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+            log.debug("Response body: " + body);
+            log.debug("Response code: " + connection.getResponseCode());
+
+            releaseInfo = new Gson().fromJson(body, GitHubReleaseInfo.class);
 
             releaseInfo.assets.forEach(gitHubAssetInfo -> {
                 releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
@@ -56,8 +65,9 @@ public class UpdateCheckerGitHub extends UpdateChecker {
             });
         } catch (Exception e) {
             log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
-            if (Config.DEBUG)
+            if (Config.DEBUG) {
                 e.printStackTrace();
+            }
         }
     }
 
