@@ -139,7 +139,7 @@ public class UpdateDownloader {
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
-            return (File) method.invoke(plugin);
+            return (File) method.invoke(plugin.getPluginInstance());
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Could not get plugin file", e);
         }
