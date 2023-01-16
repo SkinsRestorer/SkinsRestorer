@@ -136,8 +136,9 @@ public class FileAdapter implements StorageAdapter {
     public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
         Path skinFile = resolveSkinFile(skinName);
 
-        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
-            writer.write(storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp());
+        String data = storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp();
+        try {
+            Files.write(skinFile, data.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
