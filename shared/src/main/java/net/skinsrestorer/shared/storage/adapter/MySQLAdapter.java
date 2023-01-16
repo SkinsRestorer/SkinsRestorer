@@ -38,8 +38,9 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
         try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName)) {
-            if (crs == null)
+            if (crs == null) {
                 return Optional.empty();
+            }
 
             String skin = crs.getString("Skin");
 
@@ -64,12 +65,13 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<StoredProperty> getStoredSkinData(String skinName) {
         try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
-            if (crs == null)
+            if (crs == null) {
                 return Optional.empty();
+            }
 
-            final String value = crs.getString("Value");
-            final String signature = crs.getString("Signature");
-            final String timestamp = crs.getString("timestamp");
+            String value = crs.getString("Value");
+            String signature = crs.getString("Signature");
+            String timestamp = crs.getString("timestamp");
 
             return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
         } catch (SQLException e) {
@@ -106,8 +108,9 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         try (ResultSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36")) {
-            if (crs == null)
+            if (crs == null) {
                 return Collections.emptyMap();
+            }
 
             do {
                 list.put(crs.getString("Nick").toLowerCase(), crs.getString("Value"));

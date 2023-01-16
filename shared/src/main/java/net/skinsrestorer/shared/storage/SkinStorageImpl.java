@@ -322,17 +322,21 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     /**
-     * Checks if updating skins is disabled and if skin expired
+     * Checks if a skin is expired and should be re-fetched from mojang.
      *
      * @param timestamp in milliseconds
      * @return true if skin is outdated
      */
     private boolean isExpired(long timestamp) {
-        // Don't update if timestamp is not 0 or update is disabled.
-        if (timestamp == 0 || settings.getProperty(StorageConfig.DISALLOW_AUTO_UPDATE_SKIN))
+        // Do not update if timestamp is not 0 or update is disabled.
+        if (timestamp == 0 || settings.getProperty(StorageConfig.DISALLOW_AUTO_UPDATE_SKIN)) {
             return false;
+        }
 
-        return timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER)) <= System.currentTimeMillis();
+        long now = System.currentTimeMillis();
+        long expiryDate = timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
+
+        return expiryDate <= now;
     }
 
     public boolean purgeOldSkins(int days) {

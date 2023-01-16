@@ -259,7 +259,7 @@ public final class SkinCommand extends BaseCommand {
         }
     }
 
-    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean restoreOnFailure, SkinVariant skinVariant) {
+    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean saveSkin, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way
         if (skinName.equalsIgnoreCase("null")) {
@@ -274,7 +274,7 @@ public final class SkinCommand extends BaseCommand {
         }
 
         String playerName = player.getName();
-        String oldSkinName = restoreOnFailure ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
+        String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skinName)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
                     && !settings.getProperty(Config.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
@@ -297,8 +297,7 @@ public final class SkinCommand extends BaseCommand {
                     skinUrlName = skinUrlName.substring(0, 16);
 
                 SkinProperty generatedSkin = mineSkinAPI.genSkin(skinName, skinVariant);
-                skinStorage.setSkinData(skinUrlName, generatedSkin,
-                        System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
+                skinStorage.setSkinData(skinUrlName, generatedSkin, 0); // "generate" and save skin forever
                 skinStorage.setSkinOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
                 skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
 
@@ -311,7 +310,7 @@ public final class SkinCommand extends BaseCommand {
             } catch (SkinRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
-                logger.debug(SRLogLevel.SEVERE, "Could not generate skin url: " + skinName, e);
+                logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinName), e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {
@@ -320,15 +319,16 @@ public final class SkinCommand extends BaseCommand {
             setCoolDown(sender, Config.SKIN_CHANGE_COOLDOWN);
 
             try {
-                if (restoreOnFailure) {
+                if (saveSkin) {
                     skinStorage.setSkinOfPlayer(playerName, skinName);
                 }
 
                 skinApplier.applySkin(player.getAs(Object.class), skinName);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX)))
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX))) {
                     player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName); // TODO: should this not be sender? -> hidden skin set?
+                }
 
                 return true;
             } catch (SkinRequestException | NotPremiumException e) {
@@ -338,7 +338,7 @@ public final class SkinCommand extends BaseCommand {
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         setCoolDown(sender, Config.SKIN_ERROR_COOLDOWN);
-        if (restoreOnFailure) {
+        if (saveSkin) {
             skinStorage.setSkinOfPlayer(playerName, oldSkinName);
         }
         return false;
