@@ -51,8 +51,8 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                 triggerHealthUpdate = player -> {
                     try {
                         healthUpdateMethod.invoke(player);
-                    } catch (Exception exception) {
-                        exception.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 };
             } catch (NoSuchMethodException ignored) {
@@ -66,8 +66,8 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                     triggerHealthUpdate = player -> {
                         try {
                             healthUpdateMethod.invoke(getHandleMethod.invoke(player));
-                        } catch (Exception exception) {
-                            exception.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     };
                 } catch (NoSuchMethodException ignored2) {
@@ -78,8 +78,8 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                         triggerHealthUpdate = player -> {
                             try {
                                 mapping.get().triggerHealthUpdate(player);
-                            } catch (Exception exception) {
-                                exception.printStackTrace();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         };
                     }

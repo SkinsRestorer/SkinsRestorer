@@ -242,8 +242,9 @@ public class SkinStorageImpl implements SkinStorage {
         // Check if updating is disabled for skin (by timestamp = 0)
         boolean updateDisabled = storageAdapter.getStoredTimestamp(skinName).map(timestamp -> timestamp == 0).orElse(false);
 
-        if (updateDisabled)
+        if (updateDisabled) {
             throw new SkinRequestExceptionShared(locale, Message.ERROR_UPDATING_CUSTOMSKIN);
+        }
 
         // Update Skin
         try {

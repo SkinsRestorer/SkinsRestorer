@@ -49,6 +49,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.Duration;
@@ -189,7 +190,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
             try {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
-                HttpsURLConnection con = (HttpsURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
+                HttpURLConnection con = (HttpURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
 
                 con.setRequestMethod("POST");
                 con.setRequestProperty("Content-length", String.valueOf(query.length()));

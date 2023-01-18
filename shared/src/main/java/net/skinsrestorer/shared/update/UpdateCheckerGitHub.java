@@ -30,6 +30,7 @@ import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import java.io.BufferedReader;
 import javax.inject.Inject;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -73,7 +74,7 @@ public class UpdateCheckerGitHub {
                     callback.upToDate();
                 }
             });
-        } catch (Exception e) {
+        } catch (IOException e) {
             logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
             logger.debug(e);
         }

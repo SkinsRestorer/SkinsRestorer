@@ -97,29 +97,29 @@ public class SRVelocityAdapter implements SRProxyAdapter {
 
         val playerResolver = manager.getCommandContexts().getResolver(Player.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            Object playerObject = playerResolver.getContext(c);
-            if (playerObject == null) {
+            Player player = (Player) playerResolver.getContext(c);
+            if (player == null) {
                 return null;
             }
-            return wrapper.player((Player) playerObject);
+            return wrapper.player(player);
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            Object commandSenderObject = commandSenderResolver.getContext(c);
-            if (commandSenderObject == null) {
+            CommandSource commandSender = (CommandSource) commandSenderResolver.getContext(c);
+            if (commandSender == null) {
                 return null;
             }
-            return wrapper.commandSender((CommandSource) commandSenderObject);
+            return wrapper.commandSender(commandSender);
         });
 
         val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
         manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
-            Object playerObject = onlinePlayerResolver.getContext(c);
-            if (playerObject == null) {
+            OnlinePlayer onlinePlayer = (OnlinePlayer) onlinePlayerResolver.getContext(c);
+            if (onlinePlayer == null) {
                 return null;
             }
-            return new OnlineSRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+            return new OnlineSRPlayer(wrapper.player(onlinePlayer.getPlayer()));
         });
 
         return manager;

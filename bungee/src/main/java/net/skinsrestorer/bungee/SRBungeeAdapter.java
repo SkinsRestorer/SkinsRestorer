@@ -94,29 +94,29 @@ public class SRBungeeAdapter implements SRProxyAdapter {
 
         val playerResolver = manager.getCommandContexts().getResolver(ProxiedPlayer.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            Object playerObject = playerResolver.getContext(c);
-            if (playerObject == null) {
+            ProxiedPlayer player = (ProxiedPlayer) playerResolver.getContext(c);
+            if (player == null) {
                 return null;
             }
-            return wrapper.player((ProxiedPlayer) playerObject);
+            return wrapper.player(player);
         });
 
         val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            Object commandSenderObject = commandSenderResolver.getContext(c);
+            CommandSender commandSenderObject = (CommandSender) commandSenderResolver.getContext(c);
             if (commandSenderObject == null) {
                 return null;
             }
-            return wrapper.commandSender((CommandSender) commandSenderObject);
+            return wrapper.commandSender(commandSenderObject);
         });
 
         val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
         manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
-            Object playerObject = onlinePlayerResolver.getContext(c);
-            if (playerObject == null) {
+            OnlinePlayer onlinePlayer = (OnlinePlayer) onlinePlayerResolver.getContext(c);
+            if (onlinePlayer == null) {
                 return null;
             }
-            return new OnlineSRPlayer(wrapper.player(((OnlinePlayer) playerObject).getPlayer()));
+            return new OnlineSRPlayer(wrapper.player(onlinePlayer.getPlayer()));
         });
 
         return manager;

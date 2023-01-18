@@ -43,7 +43,7 @@ public class SkinApplierBungeeOld implements SkinApplyBungeeAdapter {
             try {
                 // NEW BUNGEECORD (id, name, property)
                 profile = new LoginResult(null, null, newProps);
-            } catch (Exception error) {
+            } catch (Exception ignored) {
                 // FALL BACK TO OLD (id, property)
                 profile = (LoginResult) ReflectionUtil.invokeConstructor(LoginResult.class,
                         new Class<?>[]{String.class, Property[].class},
