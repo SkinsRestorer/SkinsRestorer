@@ -43,7 +43,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final SettingsManager settings;
     private final WrapperBungee wrapper;
     private final SRProxyPlugin proxyPlugin;
-    private final EventBusImpl<ProxiedPlayer> eventBus;
+    private final EventBusImpl eventBus;
     @Getter
     private final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
 
@@ -77,7 +77,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     }
 
     private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectionException {
-        SkinApplyEventImpl<ProxiedPlayer> event = new SkinApplyEventImpl<>(player, property);
+        SkinApplyEventImpl event = new SkinApplyEventImpl(player, property);
 
         eventBus.callEvent(event);
         if (event.isCancelled()) {

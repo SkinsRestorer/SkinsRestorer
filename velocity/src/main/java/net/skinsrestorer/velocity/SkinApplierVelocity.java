@@ -41,11 +41,11 @@ public class SkinApplierVelocity implements SkinApplierAccess<Player> {
     private final SettingsManager settings;
     private final WrapperVelocity wrapper;
     private final SRProxyPlugin proxyPlugin;
-    private final EventBusImpl<Player> eventBus;
+    private final EventBusImpl eventBus;
 
     @Override
     public void applySkin(Player player, SkinProperty property) {
-        SkinApplyEventImpl<Player> applyEvent = new SkinApplyEventImpl<>(player, property);
+        SkinApplyEventImpl applyEvent = new SkinApplyEventImpl(player, property);
 
         eventBus.callEvent(applyEvent);
         if (applyEvent.isCancelled()) {

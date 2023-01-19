@@ -63,7 +63,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private final SRLogger logger;
     private final SettingsManager settings;
     private final Server server;
-    private final EventBusImpl<Player> eventBus;
+    private final EventBusImpl eventBus;
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
@@ -110,7 +110,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         }
 
         adapter.runAsync(() -> {
-            SkinApplyEventImpl<Player> applyEvent = new SkinApplyEventImpl<>(player, property);
+            SkinApplyEventImpl applyEvent = new SkinApplyEventImpl(player, property);
 
             eventBus.callEvent(applyEvent);
 

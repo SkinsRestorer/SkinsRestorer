@@ -21,8 +21,8 @@ package net.skinsrestorer.api.event;
 
 import net.skinsrestorer.api.property.SkinProperty;
 
-public interface SkinApplyEvent<P> extends SkinsRestorerEvent<P> {
-    P getPlayer();
+public interface SkinApplyEvent extends SkinsRestorerEvent {
+    <P> P getPlayer(Class<P> playerClass);
 
     SkinProperty getProperty();
 

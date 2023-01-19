@@ -19,5 +19,5 @@
  */
 package net.skinsrestorer.api.event;
 
-public interface SkinsRestorerEvent<P> {
+public interface SkinsRestorerEvent {
 }

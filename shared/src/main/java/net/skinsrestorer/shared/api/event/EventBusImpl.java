@@ -31,16 +31,11 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-public class EventBusImpl<P> implements EventBus<P> {
-    private final Class<P> playerClass;
-    private final List<EventSubscription<P, ?>> subscriptions = Collections.synchronizedList(new ArrayList<>());
-
-    public boolean accepts(Class<?> playerClass) {
-        return this.playerClass.isAssignableFrom(playerClass);
-    }
+public class EventBusImpl implements EventBus {
+    private final List<EventSubscription<?>> subscriptions = Collections.synchronizedList(new ArrayList<>());
 
     @Override
-    public <E extends SkinsRestorerEvent<P>> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener) {
+    public <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener) {
         subscriptions.add(new EventSubscription<>(new WeakReference<>(plugin), eventClass, new WeakReference<>(listener)));
     }
 
@@ -48,9 +43,9 @@ public class EventBusImpl<P> implements EventBus<P> {
         subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
     }
 
-    public void callEvent(SkinsRestorerEvent<P> event) {
+    public void callEvent(SkinsRestorerEvent event) {
         clearSubscriptions();
-        for (EventSubscription<P, ?> subscription : subscriptions) {
+        for (EventSubscription<?> subscription : subscriptions) {
             if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
                 continue;
             }
@@ -63,7 +58,7 @@ public class EventBusImpl<P> implements EventBus<P> {
 
             try {
                 //noinspection unchecked
-                ((Consumer<SkinsRestorerEvent<P>>) listener).accept(event);
+                ((Consumer<SkinsRestorerEvent>) listener).accept(event);
             } catch (Throwable t) {
                 t.printStackTrace();
             }

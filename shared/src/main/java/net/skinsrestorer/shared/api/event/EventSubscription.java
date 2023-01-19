@@ -27,7 +27,7 @@ import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor
-public class EventSubscription<P, E extends SkinsRestorerEvent<P>> {
+public class EventSubscription<E extends SkinsRestorerEvent> {
     @Getter
     private final WeakReference<Object> plugin;
     @Getter

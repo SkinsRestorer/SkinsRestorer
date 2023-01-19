@@ -27,19 +27,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class SkinApplyEventImpl<P> implements SkinApplyEvent<P> {
+public class SkinApplyEventImpl implements SkinApplyEvent{
     @Getter
     @Nullable
-    private final P player;
+    private final Object player;
     @Getter
     private SkinProperty property;
     @Getter
     @Setter
     private boolean cancelled;
 
-    public SkinApplyEventImpl(@Nullable P player, SkinProperty property) {
+    public SkinApplyEventImpl(@Nullable Object player, SkinProperty property) {
         this.player = player;
         this.property = property;
+    }
+
+    @Override
+    public <P> P getPlayer(Class<P> playerClass) {
+        return playerClass.cast(player);
     }
 
     public void setProperty(SkinProperty property) {

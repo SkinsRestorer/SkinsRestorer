@@ -21,6 +21,6 @@ package net.skinsrestorer.api.event;
 
 import java.util.function.Consumer;
 
-public interface EventBus<P> {
-    <E extends SkinsRestorerEvent<P>> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener);
+public interface EventBus {
+    <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener);
 }

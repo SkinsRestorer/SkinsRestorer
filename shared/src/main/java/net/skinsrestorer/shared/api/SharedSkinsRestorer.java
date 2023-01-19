@@ -45,7 +45,7 @@ public class SharedSkinsRestorer implements SkinsRestorer {
     @Getter
     private final MineSkinAPI mineSkinAPI;
     private final SharedSkinApplier<?> skinApplier;
-    private final EventBusImpl<?> eventBus;
+    private final EventBusImpl eventBus;
     private final Gson gson = new Gson();
 
     @SuppressWarnings("unchecked")
@@ -58,14 +58,9 @@ public class SharedSkinsRestorer implements SkinsRestorer {
         return (SkinApplier<P>) skinApplier;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public <P> EventBus<P> getEventBus(Class<P> playerClass) {
-        if (!eventBus.accepts(playerClass)) {
-            throw new IllegalArgumentException("Unsupported player class: " + playerClass.getName());
-        }
-
-        return (EventBus<P>) eventBus;
+    public EventBus getEventBus() {
+        return eventBus;
     }
 
     @Override

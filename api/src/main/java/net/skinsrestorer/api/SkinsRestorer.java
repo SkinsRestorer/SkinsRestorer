@@ -45,7 +45,7 @@ public interface SkinsRestorer {
 
     <P> SkinApplier<P> getSkinApplier(Class<P> playerClass);
 
-    <P> EventBus<P> getEventBus(Class<P> playerClass);
+    EventBus getEventBus();
 
     /**
      * Returns a <a href="https://textures.minecraft.net/id">Texture Url</a> based on skin

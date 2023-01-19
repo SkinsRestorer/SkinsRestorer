@@ -355,7 +355,7 @@ public class SRPlugin {
         }
 
 
-        EventBusImpl<P> sharedEventBus = new EventBusImpl<>(playerClass);
+        EventBusImpl sharedEventBus = new EventBusImpl();
         injector.register(EventBusImpl.class, sharedEventBus);
     }
 
