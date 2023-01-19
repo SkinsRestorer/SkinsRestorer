@@ -64,7 +64,7 @@ public class SharedSkinsRestorer implements SkinsRestorer {
     }
 
     @Override
-    public MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property)  {
+    public MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
         String decodedString = new String(Base64.getDecoder().decode(property.getValue()));
 
         return gson.fromJson(decodedString, MojangProfileResponse.class);

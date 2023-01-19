@@ -21,7 +21,6 @@ package net.skinsrestorer.sponge;
 
 import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import org.spongepowered.api.Game;
@@ -50,7 +49,7 @@ public class SkinApplierSponge implements SkinApplierAccess<Player> {
     }
 
     public void updateProfileSkin(GameProfile profile, SkinProperty skin) {
-        setTexture(profile.getPropertyMap().get(SkinProperty.TEXTURES_NAME), skin );
+        setTexture(profile.getPropertyMap().get(SkinProperty.TEXTURES_NAME), skin);
     }
 
     private void setTexture(Collection<ProfileProperty> oldProperties, SkinProperty property) {

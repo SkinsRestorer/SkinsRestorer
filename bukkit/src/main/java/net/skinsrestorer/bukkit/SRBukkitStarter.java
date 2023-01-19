@@ -72,7 +72,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() throws InitializeException {
-        plugin.startupStart(Player.class);
+        plugin.startupStart();
 
         // Init config files // TODO: Split config files
         plugin.loadConfig();

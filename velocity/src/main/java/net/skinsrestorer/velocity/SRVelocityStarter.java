@@ -49,7 +49,7 @@ public class SRVelocityStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() {
-        plugin.startupStart(Player.class);
+        plugin.startupStart();
 
         plugin.initUpdateCheck();
 

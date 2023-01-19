@@ -29,9 +29,9 @@ import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
-import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
@@ -310,11 +310,11 @@ public class SRPlugin {
     }
 
     public void initMineSkinAPI() {
-        MineSkinAPI mineSkinAPI = injector.getSingleton(MineSkinAPIImpl.class);;
+        MineSkinAPI mineSkinAPI = injector.getSingleton(MineSkinAPIImpl.class);
         injector.register(MineSkinAPI.class, mineSkinAPI);
     }
 
-    public <P> void registerAPI() {
+    public void registerAPI() {
         SkinsRestorer api = new SharedSkinsRestorer(injector.getSingleton(SkinStorageImpl.class),
                 injector.getSingleton(MojangAPIImpl.class),
                 injector.getSingleton(MineSkinAPIImpl.class),
@@ -347,7 +347,7 @@ public class SRPlugin {
         }
     }
 
-    public <P> void startupStart(Class<P> playerClass) {
+    public void startupStart() {
         logger.load(dataFolder);
 
         if (!unitTest) {

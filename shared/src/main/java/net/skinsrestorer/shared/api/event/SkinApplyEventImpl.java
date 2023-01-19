@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class SkinApplyEventImpl implements SkinApplyEvent{
+public class SkinApplyEventImpl implements SkinApplyEvent {
     @Getter
     @Nullable
     private final Object player;

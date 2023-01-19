@@ -19,12 +19,10 @@
  */
 package net.skinsrestorer.shared.connections;
 
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
@@ -42,17 +40,10 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {

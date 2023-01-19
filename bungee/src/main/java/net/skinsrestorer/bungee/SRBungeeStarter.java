@@ -46,7 +46,7 @@ public class SRBungeeStarter implements SRPlatformStarter {
     private final SRLogger logger;
 
     public void pluginStartup() {
-        plugin.startupStart(ProxiedPlayer.class);
+        plugin.startupStart();
 
         plugin.initUpdateCheck();
 

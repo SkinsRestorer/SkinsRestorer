@@ -38,29 +38,6 @@ import java.util.zip.GZIPOutputStream;
 public class SRProxyPlugin {
     private final SRLogger logger;
 
-    public void sendUpdateRequest(@NotNull SRProxyPlayer player, SkinProperty textures) {
-        if (!player.getCurrentServer().isPresent()) {
-            return;
-        }
-
-        logger.debug("Sending skin update request for " + player.getName());
-
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-        try {
-            out.writeUTF("SkinUpdateV2");
-
-            if (textures != null) {
-                out.writeUTF(textures.getValue());
-                out.writeUTF(textures.getSignature());
-            }
-
-            player.sendDataToServer("sr:skinchange", b.toByteArray());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
 
@@ -104,5 +81,28 @@ public class SRProxyPlugin {
         }
 
         player.sendDataToServer("sr:messagechannel", data);
+    }
+
+    public void sendUpdateRequest(@NotNull SRProxyPlayer player, SkinProperty textures) {
+        if (!player.getCurrentServer().isPresent()) {
+            return;
+        }
+
+        logger.debug("Sending skin update request for " + player.getName());
+
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF("SkinUpdateV2");
+
+            if (textures != null) {
+                out.writeUTF(textures.getValue());
+                out.writeUTF(textures.getSignature());
+            }
+
+            player.sendDataToServer("sr:skinchange", b.toByteArray());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
