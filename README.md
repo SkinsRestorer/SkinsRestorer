@@ -54,7 +54,7 @@ Implementation:
 ## :scroll: License
 
 SkinsRestorer is licensed under GNU General Public License v3.0. Please
-see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/master/LICENSE) for more info.
+see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/dev/LICENSE) for more info.
 
 ## :family: Authors
 
@@ -86,11 +86,11 @@ supported this project by contributing.
 </dependency>
 ```
 
-##### Example Bukkit plugin
+##### Example Bukkit Plugin
 
 https://github.com/SkinsRestorer/SkinsRestorerAPIExample
 
-### How to install? / installation / setup
+### How to install? / Installation / Setup
 
 Installing SkinsRestorer can be tricky when using a proxy server. Make sure to read on how to
 install [here](https://github.com/SkinsRestorer/SkinsRestorerX/wiki/Installing-SkinsRestorer#Basic-Installation)

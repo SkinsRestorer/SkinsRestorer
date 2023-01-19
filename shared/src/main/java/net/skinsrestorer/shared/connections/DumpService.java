@@ -22,6 +22,8 @@ package net.skinsrestorer.shared.connections;
 import ch.jalu.injector.Injector;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.connections.http.HttpClient;
+import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
@@ -33,10 +35,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -48,13 +47,6 @@ public class DumpService {
     private final Gson gson = new Gson();
 
     public Optional<String> dump() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL("https://bytebin.lucko.me/post").openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-        connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setRequestProperty("User-Agent", plugin.getUserAgent());
-
         String proxyModeInfo;
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin == null) {
@@ -78,15 +70,24 @@ public class DumpService {
                 ServerInfo.determineEnvironment(plugin.getPlatform()),
                 platformType
         );
-        try (OutputStream os = connection.getOutputStream()) {
-            os.write(gson.toJson(dumpInfo).getBytes(StandardCharsets.UTF_8));
-        }
 
-        if (connection.getResponseCode() != 201) {
-            logger.warning("Failed to dump data to bytebin. Response code: " + connection.getResponseCode());
+        HttpClient client = new HttpClient(
+                "https://bytebin.lucko.me/post",
+                new HttpClient.RequestBody(gson.toJson(dumpInfo), HttpClient.HttpType.JSON),
+                HttpClient.HttpType.JSON,
+                plugin.getUserAgent(),
+                HttpClient.HttpMethod.POST,
+                Collections.emptyMap(),
+                20_000
+        );
+
+        HttpResponse response = client.execute();
+
+        if (response.getStatusCode() != 201) {
+            logger.warning("Failed to dump data to bytebin. Response code: " + response.getStatusCode());
             return Optional.empty();
         }
 
-        return connection.getHeaderField("Location").describeConstable();
+        return Optional.ofNullable(response.getHeaders().get("Location")).flatMap(list -> list.stream().findFirst());
     }
 }

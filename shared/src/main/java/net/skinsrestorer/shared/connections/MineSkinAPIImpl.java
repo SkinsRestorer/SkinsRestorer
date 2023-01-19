@@ -31,6 +31,8 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MineSkinConfig;
+import net.skinsrestorer.shared.connections.http.HttpClient;
+import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorDelayResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinUrlResponse;
@@ -54,6 +56,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,7 +66,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MineSkinAPIImpl implements MineSkinAPI {
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
-    private final Gson gson = new Gson();
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
         Thread t = new Thread(r);
         t.setName("SkinsRestorer-MineSkinAPI");
@@ -103,17 +106,15 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             try {
                 val response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
                 logger.debug("MineSkinAPI: Response: " + response);
-                if (!response.isPresent()) // API time out
-                    throw new SkinRequestExceptionShared(locale, Message.ERROR_UPDATING_SKIN);
 
-                switch (response.get().getLeft()) {
+                switch (response.getStatusCode()) {
                     case 200:
-                        MineSkinUrlResponse urlResponse = gson.fromJson(response.get().getRight(), MineSkinUrlResponse.class);
+                        MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
                         return SkinProperty.of(urlResponse.getData().getTexture().getValue(),
                                 urlResponse.getData().getTexture().getSignature());
                     case 500:
                     case 400:
-                        MineSkinErrorResponse errorResponse = gson.fromJson(response.get().getRight(), MineSkinErrorResponse.class);
+                        MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                         String error = errorResponse.getError();
                         switch (error) {
                             case "Failed to generate skin data":
@@ -131,7 +132,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                                 throw new SkinRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
                         }
                     case 403:
-                        MineSkinErrorResponse errorResponse2 = gson.fromJson(response.get().getRight(), MineSkinErrorResponse.class);
+                        MineSkinErrorResponse errorResponse2 = response.getBodyAs(MineSkinErrorResponse.class);
                         String errorCode2 = errorResponse2.getErrorCode();
                         String error2 = errorResponse2.getError();
                         if (errorCode2.equals("invalid_api_key")) {
@@ -153,7 +154,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             throw new SkinRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
                         }
                     case 429:
-                        MineSkinErrorDelayResponse errorDelayResponse = gson.fromJson(response.get().getRight(), MineSkinErrorDelayResponse.class);
+                        MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
                         // If "Too many requests"
                         if (errorDelayResponse.getDelay() != null) {
                             TimeUnit.SECONDS.sleep(errorDelayResponse.getDelay());
@@ -186,52 +187,33 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         }, executorService);
     }
 
-    private Optional<Pair<Integer, String>> queryURL(String query) throws IOException {
-        for (int i = 0; i < 3; i++) { // try 3 times, if server not responding
+    private HttpResponse queryURL(String query) throws IOException {
+        for (int i = 0; true; i++) { // try 3 times, if server not responding
             try {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
-                HttpURLConnection con = (HttpURLConnection) new URL("https://api.mineskin.org/generate/url/").openConnection();
 
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Content-length", String.valueOf(query.length()));
-                con.setRequestProperty("Accept", "application/json");
-                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                con.setRequestProperty("User-Agent", plugin.getUserAgent());
-                con.setConnectTimeout(90000);
-                con.setReadTimeout(90000);
-                con.setDoOutput(true);
-                con.setDoInput(true);
-
+                Map<String, String> headers = new HashMap<>();
                 String apiKey = settings.getProperty(MineSkinConfig.MINESKIN_API_KEY);
                 if (!apiKey.isEmpty()) {
-                    con.setRequestProperty("Authorization", "Bearer " + apiKey);
+                    headers.put("Authorization", "Bearer " + apiKey);
                 }
 
-                DataOutputStream output = new DataOutputStream(con.getOutputStream());
-                output.writeBytes(query);
-                output.close();
-                StringBuilder outStr = new StringBuilder();
-                InputStream is;
+                HttpClient client = new HttpClient(
+                        "https://api.mineskin.org/generate/url/",
+                        new HttpClient.RequestBody(query, HttpClient.HttpType.FORM),
+                        HttpClient.HttpType.JSON,
+                        plugin.getUserAgent(),
+                        HttpClient.HttpMethod.POST,
+                        headers,
+                        90_000
+                );
 
-                try {
-                    is = con.getInputStream();
-                } catch (Exception e) {
-                    is = con.getErrorStream();
-                }
-
-                try (DataInputStream input = new DataInputStream(is)) {
-                    for (int c = input.read(); c != -1; c = input.read())
-                        outStr.append((char) c);
-                }
-
-                return Optional.of(Pair.of(con.getResponseCode(), outStr.toString()));
+                return client.execute();
             } catch (IOException e) {
-                if (i == 2)
+                if (i == 2) {
                     throw e;
-            } catch (Exception ignored) {
+                }
             }
         }
-
-        return Optional.empty();
     }
 }

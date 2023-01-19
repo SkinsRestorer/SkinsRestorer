@@ -26,6 +26,8 @@ import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.connections.http.HttpClient;
+import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.AshconResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MineToolsProfileResponse;
 import net.skinsrestorer.shared.connections.responses.profile.MojangProfileResponse;
@@ -47,6 +49,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -132,9 +136,9 @@ public class MojangAPIImpl implements MojangAPI {
 
     protected Optional<AshconResponse> getDataAshcon(String uuidOrName) throws NotPremiumException {
         try {
-            String output = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON).getRight();
+            HttpResponse response = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
 
-            AshconResponse obj = new Gson().fromJson(output, AshconResponse.class);
+            AshconResponse obj = response.getBodyAs(AshconResponse.class);
 
             if (obj.getError() != null) {
                 logger.debug("Ashcon error: " + obj.getError());
@@ -159,13 +163,13 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<String> getUUIDMojang(String playerName) throws NotPremiumException {
         try {
-            Pair<Integer, String> response = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
+            HttpResponse response = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
 
-            if (response.getLeft() != 200 || response.getRight().isEmpty()) {
+            if (response.getStatusCode() != 200 || response.getBody().isEmpty()) {
                 throw new NotPremiumExceptionShared(locale, playerName);
             }
 
-            MojangUUIDResponse obj = new Gson().fromJson(response.getRight(), MojangUUIDResponse.class);
+            MojangUUIDResponse obj = response.getBodyAs(MojangUUIDResponse.class);
             if (obj.getError() != null) {
                 logger.debug("Mojang error: " + obj.getError());
                 return Optional.empty();
@@ -180,8 +184,8 @@ public class MojangAPIImpl implements MojangAPI {
 
     protected Optional<String> getUUIDMineTools(String playerName) throws NotPremiumException {
         try {
-            String output = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000).getRight();
-            MineToolsUUIDResponse mineToolsResponse = new Gson().fromJson(output, MineToolsUUIDResponse.class);
+            HttpResponse response = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000);
+            MineToolsUUIDResponse mineToolsResponse = response.getBodyAs(MineToolsUUIDResponse.class);
 
             return Optional.ofNullable(mineToolsResponse.getId());
         } catch (Exception e) {
@@ -212,8 +216,8 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfileMojang(String uuid) {
         try {
-            String output = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG).getRight();
-            MojangProfileResponse obj = new Gson().fromJson(output, MojangProfileResponse.class);
+            HttpResponse response = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
+            MojangProfileResponse obj = response.getBodyAs(MojangProfileResponse.class);
             if (obj.getProperties() == null) {
                 return Optional.empty();
             }
@@ -232,8 +236,8 @@ public class MojangAPIImpl implements MojangAPI {
 
     protected Optional<SkinProperty> getProfileMineTools(String uuid) {
         try {
-            String output = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000).getRight();
-            MineToolsProfileResponse obj = new Gson().fromJson(output, MineToolsProfileResponse.class);
+            HttpResponse response = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000);
+            MineToolsProfileResponse obj = response.getBodyAs(MineToolsProfileResponse.class);
             if (obj.getRaw() == null) {
                 return Optional.empty();
             }
@@ -278,23 +282,24 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(response.getUuid().replace("-", ""));
     }
 
-    private Pair<Integer, String> readURL(String url, MetricsCounter.Service service) throws IOException {
+    private HttpResponse readURL(String url, MetricsCounter.Service service) throws IOException {
         return readURL(url, service, 5_000);
     }
 
-    private Pair<Integer, String> readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
-        HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
+    private HttpResponse readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
         metricsCounter.increment(service);
 
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", plugin.getUserAgent());
-        con.setConnectTimeout(timeout);
-        con.setReadTimeout(timeout);
-        con.setDoOutput(true);
+        HttpClient client = new HttpClient(
+                url,
+                null,
+                HttpClient.HttpType.JSON,
+                plugin.getUserAgent(),
+                HttpClient.HttpMethod.GET,
+                Collections.emptyMap(),
+                timeout
+        );
 
-        try (InputStream is = con.getInputStream()) {
-            return Pair.of(con.getResponseCode(), new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining()));
-        }
+        return client.execute();
     }
 
     @RequiredArgsConstructor

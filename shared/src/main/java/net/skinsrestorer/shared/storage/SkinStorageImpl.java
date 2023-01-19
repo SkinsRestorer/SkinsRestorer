@@ -103,27 +103,25 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public SkinProperty fetchSkinData(String skinName) throws SkinRequestException, NotPremiumException {
         Optional<SkinProperty> textures = getSkinData(skinName, true);
-        if (!textures.isPresent()) {
-            // No cached skin found, get from MojangAPI, save and return
-            try {
-                textures = mojangAPI.getSkin(skinName);
-
-                if (!textures.isPresent()) {
-                    throw new SkinRequestExceptionShared(locale, Message.ERROR_NO_SKIN);
-                }
-
-                setSkinData(skinName, textures.get());
-
-                return textures.get();
-            } catch (SkinRequestException | NotPremiumException e) {
-                throw e;
-            } catch (Exception e) {
-                e.printStackTrace();
-
-                throw new SkinRequestExceptionShared(locale, Message.WAIT_A_MINUTE);
-            }
-        } else {
+        if (textures.isPresent()) {
             return textures.get();
+        }
+
+        // No cached skin found, get from MojangAPI, save and return
+        try {
+            Optional<SkinProperty> mojangTextures = mojangAPI.getSkin(skinName);
+
+            if (!mojangTextures.isPresent()) {
+                throw new SkinRequestExceptionShared(locale, Message.ERROR_NO_SKIN);
+            }
+
+            setSkinData(skinName, mojangTextures.get());
+
+            return mojangTextures.get();
+        } catch (RuntimeException e) { // TODO: Figure out what exceptions are thrown by MojangAPI
+            e.printStackTrace();
+
+            throw new SkinRequestExceptionShared(locale, Message.WAIT_A_MINUTE);
         }
     }
 
@@ -131,9 +129,13 @@ public class SkinStorageImpl implements SkinStorage {
     public Optional<String> getSkinNameOfPlayer(String playerName) {
         playerName = playerName.toLowerCase();
 
-        Optional<String> optional = storageAdapter.getStoredSkinNameOfPlayer(playerName);
+        return storageAdapter.getStoredSkinNameOfPlayer(playerName).flatMap(skinName -> {
+            if (skinName.isEmpty()) {
+                return Optional.empty();
+            }
 
-        return optional.isPresent() && !optional.get().isEmpty() ? optional : Optional.empty();
+            return Optional.of(skinName);
+        });
     }
 
     /**
