@@ -24,9 +24,5 @@ import java.util.UUID;
 public interface SRPlayer extends SRCommandSender {
     <P> P getAs(Class<P> playerClass);
 
-    String getName();
-
     UUID getUniqueId();
-
-    void sendMessage(String message);
 }
