@@ -252,8 +252,7 @@ public class SkinApplierBukkit {
     private Collection<? extends Player> getOnlinePlayers() {
         try {
             return MultiPaperUtil.getOnlinePlayers();
-        } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
-            // Bad loaders fully ignore finding java 17 classes instead of throwing class version errors
+        } catch (Throwable e) { // Catch all errors and fallback to bukkit
             return Bukkit.getOnlinePlayers();
         }
     }
