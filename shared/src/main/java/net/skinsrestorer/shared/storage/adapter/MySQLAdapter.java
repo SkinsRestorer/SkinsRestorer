@@ -62,7 +62,7 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<StoredProperty> getStoredSkinData(String skinName) {
+    public Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception {
         try (ResultSet crs = mysql.query("SELECT * FROM " + Config.MYSQL_SKIN_TABLE + " WHERE Nick=?", skinName)) {
             if (crs == null)
                 return Optional.empty();
@@ -72,9 +72,6 @@ public class MySQLAdapter implements StorageAdapter {
             final String timestamp = crs.getString("timestamp");
 
             return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Optional.empty();
         }
     }
 

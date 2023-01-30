@@ -32,7 +32,7 @@ public interface StorageAdapter {
 
     void setStoredSkinNameOfPlayer(String playerName, String skinName);
 
-    Optional<StoredProperty> getStoredSkinData(String skinName) throws StorageException;
+    Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception;
 
     void removeStoredSkinData(String skinName);
 

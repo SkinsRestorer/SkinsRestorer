@@ -98,24 +98,20 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<StoredProperty> getStoredSkinData(String skinName) {
+    public Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception {
         Path skinFile = resolveSkinFile(skinName);
 
-        try {
-            if (!Files.exists(skinFile))
-                return Optional.empty();
-
-            List<String> lines = Files.readAllLines(skinFile);
-
-            String value = lines.get(0);
-            String signature = lines.get(1);
-            String timestamp = lines.get(2);
-
-            return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!Files.exists(skinFile)) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        List<String> lines = Files.readAllLines(skinFile);
+
+        String value = lines.get(0);
+        String signature = lines.get(1);
+        String timestamp = lines.get(2);
+
+        return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
     }
 
     @Override
@@ -162,11 +158,20 @@ public class FileAdapter implements StorageAdapter {
             if (i >= offset) {
                 if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
                     for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
-                        if (skinName.toLowerCase().contains(guiSkins.toLowerCase()))
-                            getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                        if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
+                            try {
+                                getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 } else {
-                    getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                    try {
+                        getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             i++;
