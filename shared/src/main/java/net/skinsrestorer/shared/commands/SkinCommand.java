@@ -34,6 +34,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -87,7 +88,7 @@ public final class SkinCommand extends BaseCommand {
     @HelpCommand
     @Syntax("%helpHelpCommand")
     private void onHelp(SRCommandSender sender, CommandHelp help) {
-        if (settings.getProperty(Config.ENABLE_CUSTOM_HELP)) {
+        if (settings.getProperty(CommandConfig.ENABLE_CUSTOM_HELP)) {
             sendHelp(sender);
         } else {
             help.showHelp();
@@ -217,7 +218,7 @@ public final class SkinCommand extends BaseCommand {
     private void onSkinSetOther(SRCommandSender sender, OnlineSRPlayer target, String skin, SkinVariant skinVariant) {
         SRPlayer targetPlayer = target.getPlayer();
         adapter.runAsync(() -> {
-            if (settings.getProperty(Config.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
+            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
                 if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
@@ -266,8 +267,8 @@ public final class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
-                && settings.getProperty(Config.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
+        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
+                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
         }
@@ -276,18 +277,18 @@ public final class SkinCommand extends BaseCommand {
         String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skinName)) {
             if (!sender.hasPermission("skinsrestorer.command.set.url")
-                    && !settings.getProperty(Config.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
+                    && !settings.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
 
-            if (!C.allowedSkinUrl(settings, skinName)) {
+            if (!allowedSkinUrl(skinName)) {
                 sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
             }
 
             // Apply cooldown to sender
-            setCoolDown(sender, Config.SKIN_CHANGE_COOLDOWN);
+            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
@@ -315,7 +316,7 @@ public final class SkinCommand extends BaseCommand {
         } else {
             // If skin is not an url, it's a username
             // Apply cooldown to sender
-            setCoolDown(sender, Config.SKIN_CHANGE_COOLDOWN);
+            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
             try {
                 if (saveSkin) {
@@ -336,7 +337,7 @@ public final class SkinCommand extends BaseCommand {
         }
 
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
-        setCoolDown(sender, Config.SKIN_ERROR_COOLDOWN);
+        setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         if (saveSkin) {
             skinStorage.setSkinOfPlayer(playerName, oldSkinName);
         }
@@ -347,6 +348,20 @@ public final class SkinCommand extends BaseCommand {
         if (sender instanceof SRPlayer) {
             UUID senderUUID = ((SRPlayer) sender).getUniqueId();
             cooldownStorage.setCooldown(senderUUID, settings.getProperty(time), TimeUnit.SECONDS);
+        }
+    }
+
+    private boolean allowedSkinUrl(String url) {
+        if (settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)) {
+            for (String possiblyAllowedUrl : settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)) {
+                if (url.startsWith(possiblyAllowedUrl)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } else {
+            return true;
         }
     }
 }

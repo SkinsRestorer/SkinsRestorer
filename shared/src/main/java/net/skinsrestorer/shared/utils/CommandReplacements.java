@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.utils;
 
+import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.storage.CallableSetting;
 import net.skinsrestorer.shared.storage.Message;
@@ -27,22 +28,22 @@ import java.util.Map;
 
 public class CommandReplacements {
     public static final Map<String, CallableSetting<String>> permissions = FluentMap.<String, CallableSetting<String>>builder()
-            .put("skin", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command")
+            .put("skin", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command")
             .put("sr", (s) -> "skinsrestorer.admincommand")
 
-            .put("skins", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.gui")
+            .put("skins", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.gui")
 
-            .put("skinSet", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set")
+            .put("skinSet", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set")
             .put("skinSetOther", (s) -> "skinsrestorer.command.set.other")
 
-            .put("skinSetUrl", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set.url")
+            .put("skinSetUrl", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set.url")
 
-            .put("skinClear", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.clear")
+            .put("skinClear", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.clear")
             .put("skinClearOther", (s) -> "skinsrestorer.command.clear.other")
 
-            .put("skinSearch", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.search")
+            .put("skinSearch", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.search")
 
-            .put("skinUpdate", (s) -> s.getProperty(Config.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.update")
+            .put("skinUpdate", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.update")
             .put("skinUpdateOther", (s) -> "skinsrestorer.command.update.other")
 
             .put("srReload", (s) -> "skinsrestorer.admincommand.reload")

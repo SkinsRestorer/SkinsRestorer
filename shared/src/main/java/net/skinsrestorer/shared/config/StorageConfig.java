@@ -36,9 +36,9 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
 public class StorageConfig implements SettingsHolder {
-    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("DefaultSkins.Enabled", false);
-    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("DefaultSkins.ApplyForPremium", false);
-    public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("DefaultSkins.Names", new PropertyType<String>() {
+    public static final Property<Boolean> DEFAULT_SKINS_ENABLED = newProperty("storage.defaultSkins.enabled", false);
+    public static final Property<Boolean> DEFAULT_SKINS_PREMIUM = newProperty("storage.defaultSkins.applyForPremium", false);
+    public static final Property<List<String>> DEFAULT_SKINS = new ListProperty<>("storage.defaultSkins.list", new PropertyType<String>() {
         @Override
         public @Nullable String convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
             return object == null ? null : object.toString().replace(".skin", "");
@@ -53,20 +53,17 @@ public class StorageConfig implements SettingsHolder {
             "<!! Warning !!>",
             "Enable this will require players to run \"/skin update\" to update their skin."
     })
-    public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("DisallowAutoUpdateSkin", false);
+    public static final Property<Boolean> DISALLOW_AUTO_UPDATE_SKIN = newProperty("storage.disallowAutoUpdateSkin", false);
     @Comment({
             "Time that skins are stored in the database before we request again (in minutes).",
             "[?] A value of 0 will disable auto updating of skins and players will need to manual run /skin update.",
             "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
     })
-    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("SkinExpiresAfter", 15);
-    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("CustomGUI.Enabled", false);
-    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("CustomGUI.ShowOnlyCustomGUI", true);
-    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("CustomGUI.Names", "xknat", "pistonmaster");
+    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("storage.SkinExpiresAfter", 15);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("DefaultSkins",
+        conf.setComment("storage.defaultSkins",
                 "\n#################",
                 "\n# Customization #",
                 "\n#################",
@@ -77,10 +74,6 @@ public class StorageConfig implements SettingsHolder {
                 "ApplyForPremium: false will only put a skin on skinless/steve players.",
                 "If there is more than one, the plugin will choose a random one.",
                 "[?] Supports custom & url.png skins, read SkinFile Generator below. [?]"
-        );
-        conf.setComment("CustomGUI",
-                "Custom list for the /skins GUI.",
-                "ShowOnlyCustomGUI will only show CustomGUI.Names in the gui."
         );
     }
 }

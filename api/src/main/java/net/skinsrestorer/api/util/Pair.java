@@ -24,7 +24,7 @@ import lombok.*;
 @Getter
 @ToString
 @EqualsAndHashCode
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE, staticName = "of")
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC, staticName = "of")
 public class Pair<L, R> {
     private final L left;
     private final R right;

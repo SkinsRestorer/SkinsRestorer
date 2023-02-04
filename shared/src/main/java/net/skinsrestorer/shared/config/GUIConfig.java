@@ -19,17 +19,25 @@
  */
 package net.skinsrestorer.shared.config;
 
-import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 
+import java.util.List;
+
+import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
-public class MineSkinConfig implements SettingsHolder {
-    @Comment({
-            "Here you can fill in your APIKey for lower MineSkin request times.",
-            "Key can be requested from https://mineskin.org/apikey",
-            "[?] A key is not required, but recommended."
-    })
-    public static final Property<String> MINESKIN_API_KEY = newProperty("mineskinAPIKey", "key");
+public class GUIConfig implements SettingsHolder {
+    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("CustomGUI.Enabled", false);
+    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("CustomGUI.ShowOnlyCustomGUI", true);
+    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("CustomGUI.Names", "xknat", "pistonmaster");
+
+    @Override
+    public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("CustomGUI",
+                "Custom list for the /skins GUI.",
+                "ShowOnlyCustomGUI will only show CustomGUI.Names in the gui."
+        );
+    }
 }

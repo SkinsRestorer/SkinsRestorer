@@ -39,116 +39,12 @@ import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
 public class Config implements SettingsHolder {
     @Comment({
-            "\n##########",
-            "\n# Basics #",
-            "\n##########",
-            "\n",
-            "Core features are here",
-            "\n",
-            "If true, players can change skins without permission.",
-            "see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms."
-    })
-    public static final Property<Boolean> SKIN_WITHOUT_PERM = newProperty("SkinWithoutPerm", true);
-    @Comment({
-            "Players cooldown in seconds when changing skins (set to 0 to disable).",
-            "SkinErrorCooldown is used when an error or invalid url occurs.",
-            "Can be bypassed with 'skinsrestorer.bypasscooldown'."
-    })
-    public static final Property<Integer> SKIN_CHANGE_COOLDOWN = newProperty("SkinChangeCooldown", 30);
-    public static final Property<Integer> SKIN_ERROR_COOLDOWN = newProperty("SkinErrorCooldown", 5);
-    @Comment({
-            "True will make use of the 'CUSTOM_HELP_IF_ENABLED' & `SR_LINE` in messages.yml.",
-            "This is more customizable, but at the cost of permission specific help."
-    })
-    public static final Property<Boolean> ENABLE_CUSTOM_HELP = newProperty("EnableCustomHelp", false);
-    @Comment("Disable message prefix in SkinsRestorer messages.")
-    public static final Property<Boolean> DISABLE_PREFIX = newProperty("DisablePrefix", false);
-    @Comment({
-            "\n##########",
-            "\n# Locale #",
-            "\n##########",
-            "\n",
-            "Translation & message options here",
-            "\n",
-            "A language code for the language you want to use by default for messages and commands.",
-            "Has to a string separated by an underscore."
-    })
-    public static final Property<Locale> LANGUAGE = new TypeBasedProperty<>("Language", Locale.ENGLISH, new PropertyType<Locale>() {
-        @Override
-        public @Nullable Locale convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
-            return LocaleParser.parseLocale(object == null ? null : object.toString()).orElse(null);
-        }
-
-        @Override
-        public @NotNull Object toExportValue(Locale value) {
-            return value.toString();
-        }
-    });
-    public static final Property<Boolean> DISABLED_SKINS_ENABLED = newProperty("DisabledSkins.Enabled", false);
-    public static final Property<List<String>> DISABLED_SKINS = newListProperty("DisabledSkins.Names", "steve", "owner");
-    public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ENABLED = newProperty("NotAllowedCommandServers.Enabled", true);
-    @Comment("Whether ONLY servers from the list below are allowed to use SkinsRestorer commands.")
-    public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = newProperty("NotAllowedCommandServers.AllowList", false);
-    @Comment("Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)")
-    public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("NotAllowedCommandServers.IfNoServerBlockCommand", false);
-    public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("NotAllowedCommandServers.List", listOf("auth"));
-    @Comment({
-            "\n############",
-            "\n# Advanced #",
-            "\n############",
-            "\n",
-            "Below Config options are OPTIONAL and are irrelevant for small servers.",
-            "\n",
-            "Allows the usage of per-skin permission.",
-            "Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster",
-            "with \"skinsrestorer.ownskin\" players can run /skin set %playerusername%."
-    })
-    public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("PerSkinPermissions", false);
-    @Comment({
             "Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.",
             "[?] Unsure? leave this true for better performance."
     })
     public static final Property<Boolean> NO_SKIN_IF_LOGIN_CANCELED = newProperty("NoSkinIfLoginCanceled", true);
     @Comment("This will make SkinsRestorer always apply the skin even if the player joins as premium on an online mode server.")
     public static final Property<Boolean> ALWAYS_APPLY_PREMIUM = newProperty("AlwaysApplyPremium", false);
-    public static final Property<Boolean> RESTRICT_SKIN_URLS_ENABLED = newProperty("RestrictSkinUrls.Enabled", false);
-    public static final Property<List<String>> RESTRICT_SKIN_URLS_LIST = newListProperty("RestrictSkinUrls.List",
-            "https://i.imgur.com",
-            "http://i.imgur.com",
-            "https://storage.googleapis.com",
-            "http://storage.googleapis.com",
-            "https://cdn.discordapp.com",
-            "http://cdn.discordapp.com",
-            "https://textures.minecraft.net",
-            "http://textures.minecraft.net"
-    );
-    @Comment({
-            "\n#################",
-            "\n# Compatibility #",
-            "\n#################",
-            "\n",
-            "If we break things, you can disable it here.",
-            "\n",
-            "Disabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.",
-            "When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred."
-    })
-    public static final Property<Boolean> RESOURCE_PACK_FIX = newProperty("ResourcePackFix", true);
-    @Comment({
-            "Dismounts a mounted (on a horse, or sitting) player when their skin is updated, preventing players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/disableDismountPlayer.txt"
-    })
-    public static final Property<Boolean> DISMOUNT_PLAYER_ON_UPDATE = newProperty("DismountPlayerOnSkinUpdate", true);
-    @Comment({
-            "Remounts a player that was dismounted after a skin update (above option must be true).",
-            "Disabling this is only recommended if you use plugins that allow you ride other players, or use sit. Otherwise you could get errors or players could be kicked for flying.",
-            "File override = ./plugins/SkinsRestorer/disableRemountPlayer.txt"
-    })
-    public static final Property<Boolean> REMOUNT_PLAYER_ON_UPDATE = newProperty("RemountPlayerOnSkinUpdate", true);
-    @Comment({
-            "Dismounts all passengers mounting a player (such as plugins that let you ride another player), preventing those players from becoming desynced.",
-            "File override = ./plugins/SkinsRestorer/enableDismountEntities.txt"
-    })
-    public static final Property<Boolean> DISMOUNT_PASSENGERS_ON_UPDATE = newProperty("DismountPassengersOnSkinUpdate", false);
     @Comment({
             "\n###############",
             "\n# Danger Zone #",
@@ -219,18 +115,6 @@ public class Config implements SettingsHolder {
                 "\n",
                 "(!) IF YOU ARE USING A PROXY (Bungee, Waterfall or Velocity), Check & set on every BACKEND server spigot.yml -> bungeecord: true.  (!)",
                 "(!) & Install Skinsrestorer.jar on ALL SERVERS!!! (BOTH Backend & Proxy).                      (!)"
-        );
-        conf.setComment("DisabledSkins",
-                "Skins in this list will be disabled, so users can't set them.",
-                "Can be bypassed with 'skinsrestorer.bypassdisabled'."
-        );
-        conf.setComment("NotAllowedCommandServers",
-                "Disable all SkinsRestorer commands on specific backend servers.",
-                "[!] This only works & is relevant if you're using proxies like bungee / waterfall"
-        );
-        conf.setComment("RestrctSkinUrls",
-                "When enabled, only websites from the list below is allowed to be set using /skin url <url>",
-                "[?] this is useful if you host your own image server."
         );
         conf.setFooter(
                 "\n",

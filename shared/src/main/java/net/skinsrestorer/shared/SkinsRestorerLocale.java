@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.storage.Message;
@@ -38,13 +39,13 @@ public class SkinsRestorerLocale {
     @Inject
     private SettingsManager settings;
     @Getter
-    private final SRForeign defaultForeign = () -> settings.getProperty(Config.LANGUAGE);
+    private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LANGUAGE);
 
     public String getMessage(SRForeign foreign, MessageKeyGetter key, Object... args) {
         String message = localeManager.getMessage(foreign, key.getKey());
 
         if (message.contains("{prefix}")) {
-            if (settings.getProperty(Config.DISABLE_PREFIX)) {
+            if (settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
                 // Extra space in pattern to remove space from start of message
                 message = message.replace("{prefix} ", "");
             } else {

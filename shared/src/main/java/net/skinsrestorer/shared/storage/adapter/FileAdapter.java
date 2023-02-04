@@ -155,9 +155,9 @@ public class FileAdapter implements StorageAdapter {
                 s.substring(0, s.length() - 5) // remove .skin (5 characters)
         ).sorted().collect(Collectors.toList());
 
-        if (settings.getProperty(StorageConfig.CUSTOM_GUI_ENABLED)) {
-            List<String> customSkinNames = settings.getProperty(StorageConfig.CUSTOM_GUI_SKINS);
-            if (settings.getProperty(StorageConfig.CUSTOM_GUI_ONLY)) {
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            List<String> customSkinNames = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
                 skinNames = skinNames.stream().filter(customSkinNames::contains).collect(Collectors.toList());
             } else {
                 skinNames = skinNames.stream().sorted((s1, s2) -> {

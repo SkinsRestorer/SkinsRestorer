@@ -38,10 +38,7 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
-import net.skinsrestorer.shared.config.Config;
-import net.skinsrestorer.shared.config.DatabaseConfig;
-import net.skinsrestorer.shared.config.MineSkinConfig;
-import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -130,21 +127,21 @@ public class SRPlugin {
                 return;
             }
 
-            if (!settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ENABLED)) {
+            if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ENABLED)) {
                 return;
             }
 
             Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
             if (!optional.isPresent()) {
-                if (!settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
+                if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
                     throw new ConditionFailedException("You are not on a server!");
                 }
                 return;
             }
 
             String server = optional.get();
-            boolean inList = settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS).contains(server);
-            boolean shouldBlock = settings.getProperty(Config.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
+            boolean inList = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS).contains(server);
+            boolean shouldBlock = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
 
             if (shouldBlock) {
                 throw new ConditionFailedException("You are not allowed to use this command on this server!");
@@ -176,7 +173,17 @@ public class SRPlugin {
         if (settings == null) {
             settings = SettingsManagerBuilder
                     .withYamlFile(dataFolder.resolve("config.yml"))
-                    .configurationData(Config.class, DatabaseConfig.class, StorageConfig.class, MineSkinConfig.class)
+                    .configurationData(
+                            Config.class,
+                            MessageConfig.class,
+                            DatabaseConfig.class,
+                            CommandConfig.class,
+                            GUIConfig.class,
+                            StorageConfig.class,
+                            ProxyConfig.class,
+                            ServerConfig.class,
+                            MineSkinConfig.class
+                    )
                     .useDefaultMigrationService()
                     .create();
             injector.register(SettingsManager.class, settings);
@@ -191,21 +198,21 @@ public class SRPlugin {
         }
 
         //__Disabled__Skins
-        if (settings.getProperty(Config.DISABLED_SKINS_ENABLED) && settings.getProperty(Config.DISABLED_SKINS).isEmpty()) {
+        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && settings.getProperty(CommandConfig.DISABLED_SKINS).isEmpty()) {
             logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
-            settings.setProperty(Config.DISABLED_SKINS_ENABLED, false);
+            settings.setProperty(CommandConfig.DISABLED_SKINS_ENABLED, false);
         }
 
-        if (settings.getProperty(Config.RESTRICT_SKIN_URLS_ENABLED) && settings.getProperty(Config.RESTRICT_SKIN_URLS_LIST).isEmpty()) {
+        if (settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED) && settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST).isEmpty()) {
             logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
-            settings.setProperty(Config.RESTRICT_SKIN_URLS_ENABLED, false);
+            settings.setProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED, false);
         }
 
-        if (!settings.getProperty(StorageConfig.CUSTOM_GUI_ENABLED))
-            settings.setProperty(StorageConfig.CUSTOM_GUI_ONLY, false);
+        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED))
+            settings.setProperty(GUIConfig.CUSTOM_GUI_ONLY, false);
 
-        if (!settings.getProperty(Config.DISMOUNT_PLAYER_ON_UPDATE)) {
-            settings.setProperty(Config.REMOUNT_PLAYER_ON_UPDATE, false);
+        if (!settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE)) {
+            settings.setProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE, false);
         }
 
         if (settings.getProperty(MineSkinConfig.MINESKIN_API_KEY).equals("key")) {
@@ -215,7 +222,7 @@ public class SRPlugin {
         logger.setDebug(settings.getProperty(Config.DEBUG));
         SkinsRestorerLocale locale = injector.getIfAvailable(SkinsRestorerLocale.class);
         if (locale != null) {
-            locale.setDefaultLocale(settings.getProperty(Config.LANGUAGE));
+            locale.setDefaultLocale(settings.getProperty(MessageConfig.LANGUAGE));
         }
     }
 
@@ -353,7 +360,6 @@ public class SRPlugin {
         if (!unitTest) {
             registerMetrics(adapter.createMetricsInstance());
         }
-
 
         EventBusImpl sharedEventBus = new EventBusImpl();
         injector.register(EventBusImpl.class, sharedEventBus);

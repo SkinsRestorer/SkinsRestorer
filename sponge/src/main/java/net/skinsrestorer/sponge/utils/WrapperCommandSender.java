@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import org.spongepowered.api.command.CommandSource;
@@ -38,7 +39,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public Locale getLocale() {
-        return settings.getProperty(Config.LANGUAGE);
+        return settings.getProperty(MessageConfig.LANGUAGE);
     }
 
     @Override

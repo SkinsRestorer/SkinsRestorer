@@ -26,20 +26,20 @@ import ch.jalu.configme.properties.Property;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class DatabaseConfig implements SettingsHolder {
-    public static final Property<Boolean> MYSQL_ENABLED = newProperty("MySQL.Enabled", false);
-    public static final Property<String> MYSQL_HOST = newProperty("MySQL.Host", "localhost");
-    public static final Property<Integer> MYSQL_PORT = newProperty("MySQL.Port", 3306);
-    public static final Property<String> MYSQL_DATABASE = newProperty("MySQL.Database", "db");
-    public static final Property<String> MYSQL_USERNAME = newProperty("MySQL.Username", "root");
-    public static final Property<String> MYSQL_PASSWORD = newProperty("MySQL.Password", "pass");
-    public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newProperty("MySQL.MaxPoolSize", 10);
-    public static final Property<String> MYSQL_SKIN_TABLE = newProperty("MySQL.SkinTable", "Skins");
-    public static final Property<String> MYSQL_PLAYER_TABLE = newProperty("MySQL.PlayerTable", "Players");
-    public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("MySQL.ConnectionOptions", "sslMode=trust&serverTimezone=UTC");
+    public static final Property<Boolean> MYSQL_ENABLED = newProperty("database.enabled", false);
+    public static final Property<String> MYSQL_HOST = newProperty("database.host", "localhost");
+    public static final Property<Integer> MYSQL_PORT = newProperty("database.port", 3306);
+    public static final Property<String> MYSQL_DATABASE = newProperty("database.database", "db");
+    public static final Property<String> MYSQL_USERNAME = newProperty("database.username", "root");
+    public static final Property<String> MYSQL_PASSWORD = newProperty("database.password", "pass");
+    public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newProperty("database.maxPoolSize", 10);
+    public static final Property<String> MYSQL_SKIN_TABLE = newProperty("database.skinTable", "Skins");
+    public static final Property<String> MYSQL_PLAYER_TABLE = newProperty("database.playerTable", "Players");
+    public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("MySQL",
+        conf.setComment("database",
                 "Settings for MySQL skin storage (recommended for big BungeeCord networks)",
                 "[!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]",
                 "[!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]",

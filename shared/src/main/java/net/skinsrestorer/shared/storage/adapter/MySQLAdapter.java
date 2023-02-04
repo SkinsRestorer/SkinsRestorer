@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.storage.adapter;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
+import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.storage.MySQL;
 
@@ -95,9 +96,9 @@ public class MySQLAdapter implements StorageAdapter {
         String filterBy = "";
         String orderBy = "Nick";
 
-        if (settings.getProperty(StorageConfig.CUSTOM_GUI_ENABLED)) {
-            List<String> customSkinNames = settings.getProperty(StorageConfig.CUSTOM_GUI_SKINS);
-            if (settings.getProperty(StorageConfig.CUSTOM_GUI_ONLY)) {
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            List<String> customSkinNames = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
                 filterBy = "WHERE Nick RLIKE '" + String.join("|", customSkinNames) + "'";
             } else {
                 orderBy = "FIELD(Nick, " + customSkinNames.stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";

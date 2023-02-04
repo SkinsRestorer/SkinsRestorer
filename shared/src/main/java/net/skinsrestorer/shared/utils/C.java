@@ -57,18 +57,4 @@ public class C {
     public static boolean validUrl(String url) {
         return url.startsWith("http://") || url.startsWith("https://");
     }
-
-    public static boolean allowedSkinUrl(SettingsManager settings, String url) {
-        if (settings.getProperty(Config.RESTRICT_SKIN_URLS_ENABLED)) {
-            for (String possiblyAllowedUrl : settings.getProperty(Config.RESTRICT_SKIN_URLS_LIST)) {
-                if (url.startsWith(possiblyAllowedUrl)) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else {
-            return true;
-        }
-    }
 }

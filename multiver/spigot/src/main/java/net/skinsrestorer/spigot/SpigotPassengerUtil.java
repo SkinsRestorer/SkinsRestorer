@@ -21,6 +21,7 @@ package net.skinsrestorer.spigot;
 
 import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.ServerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,10 +30,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class SpigotPassengerUtil {
     public static void refreshPassengers(JavaPlugin plugin, Player player, Entity vehicle, boolean disableDismountPlayer, boolean disableRemountPlayer, boolean enableDismountEntities, SettingsManager settings) {
         // Dismounts a player on refreshing, which prevents desync caused by riding a horse, or plugins that allow sitting
-        if (settings.getProperty(Config.DISMOUNT_PLAYER_ON_UPDATE) && !disableDismountPlayer && vehicle != null) {
+        if (settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE) && !disableDismountPlayer && vehicle != null) {
             vehicle.removePassenger(player);
 
-            if (settings.getProperty(Config.REMOUNT_PLAYER_ON_UPDATE) && !disableRemountPlayer) {
+            if (settings.getProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE) && !disableRemountPlayer) {
                 // This is delayed to next tick to allow the accepter to propagate if necessary (IE: Paper's health update)
                 Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                     // This is not really necessary, as addPassenger on vanilla despawned vehicles won't do anything, but better to be safe in case the server has plugins that do strange things
@@ -44,7 +45,7 @@ public class SpigotPassengerUtil {
         }
 
         // Dismounts all entities riding the player, preventing desync from plugins that allow players to mount each other
-        if ((settings.getProperty(Config.DISMOUNT_PASSENGERS_ON_UPDATE) || enableDismountEntities) && !player.isEmpty()) {
+        if ((settings.getProperty(ServerConfig.DISMOUNT_PASSENGERS_ON_UPDATE) || enableDismountEntities) && !player.isEmpty()) {
             for (Entity passenger : player.getPassengers()) {
                 player.removePassenger(passenger);
             }
