@@ -22,12 +22,8 @@ package net.skinsrestorer.bukkit.listener;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.SkinApplierBukkit;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -38,47 +34,15 @@ import javax.inject.Inject;
 public class PlayerJoin implements Listener {
     @Setter
     private static boolean resourcePack;
-    private final SRBukkitAdapter plugin;
     private final SettingsManager settings;
     private final LoginProfileListenerAdapter<Void> adapter;
-    private final SkinApplierBukkit skinApplier;
-    private final SkinApplierBukkit skinApplierBukkit;
+    private final EventWrapper eventWrapper;
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         if (resourcePack && settings.getProperty(ServerConfig.RESOURCE_PACK_FIX))
             return;
 
-        adapter.handleLogin(wrap(event));
-    }
-
-    private SRLoginProfileEvent<Void> wrap(PlayerJoinEvent event) {
-        return new SRLoginProfileEvent<Void>() {
-            @Override
-            public boolean isOnline() {
-                return !skinApplier.getPlayerProperties(event.getPlayer()).isEmpty();
-            }
-
-            @Override
-            public String getPlayerName() {
-                return event.getPlayer().getName();
-            }
-
-            @Override
-            public boolean isCancelled() {
-                return false;
-            }
-
-            @Override
-            public void setResultProperty(SkinProperty property) {
-                skinApplierBukkit.applySkin(event.getPlayer(), property);
-            }
-
-            @Override
-            public Void runAsync(Runnable runnable) {
-                plugin.runAsync(runnable);
-                return null;
-            }
-        };
+        adapter.handleLogin(eventWrapper.wrap(event));
     }
 }
