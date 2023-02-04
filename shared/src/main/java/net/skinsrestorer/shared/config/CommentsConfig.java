@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.config;
 import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 
-public class Config implements SettingsHolder {
-    private Config() {
+public class CommentsConfig implements SettingsHolder {
+    private CommentsConfig() {
     }
 
     @Override

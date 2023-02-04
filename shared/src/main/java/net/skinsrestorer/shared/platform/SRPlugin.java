@@ -174,7 +174,7 @@ public class SRPlugin {
             settings = SettingsManagerBuilder
                     .withYamlFile(dataFolder.resolve("config.yml"))
                     .configurationData(
-                            Config.class,
+                            CommentsConfig.class,
                             MessageConfig.class,
                             DatabaseConfig.class,
                             CommandConfig.class,

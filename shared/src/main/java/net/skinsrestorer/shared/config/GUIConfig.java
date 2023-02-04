@@ -29,13 +29,13 @@ import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class GUIConfig implements SettingsHolder {
-    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("CustomGUI.Enabled", false);
-    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("CustomGUI.ShowOnlyCustomGUI", true);
-    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("CustomGUI.Names", "xknat", "pistonmaster");
+    public static final Property<Boolean> CUSTOM_GUI_ENABLED = newProperty("customGUI.enabled", false);
+    public static final Property<Boolean> CUSTOM_GUI_ONLY = newProperty("customGUI.showOnlyCustomGUI", true);
+    public static final Property<List<String>> CUSTOM_GUI_SKINS = newListProperty("customGUI.list", "xknat", "pistonmaster");
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("CustomGUI",
+        conf.setComment("customGUI",
                 "Custom list for the /skins GUI.",
                 "ShowOnlyCustomGUI will only show CustomGUI.Names in the gui."
         );

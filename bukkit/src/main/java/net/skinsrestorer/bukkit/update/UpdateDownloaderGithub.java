@@ -21,8 +21,8 @@ package net.skinsrestorer.bukkit.update;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.exception.UpdateException;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.update.DownloadCallback;
 import net.skinsrestorer.shared.update.GitHubReleaseInfo;
@@ -49,7 +49,7 @@ import java.nio.file.Path;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateDownloaderGithub {
     private final SRPlugin plugin;
-    private final SRServerAdapter adapter;
+    private final SRBukkitAdapter adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final SRLogger logger;
     private final Server server;
@@ -102,11 +102,7 @@ public class UpdateDownloaderGithub {
             return false; // Version is no update
         }
 
-        Path pluginFile = getPluginFile();// /plugins/XXX.jar
-        if (pluginFile == null) {
-            failReason = DownloadFailReason.NO_PLUGIN_FILE;
-            return false;
-        }
+        Path pluginFile = getPluginFile(); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         try {
             Files.createDirectories(updateFolder);
@@ -134,19 +130,11 @@ public class UpdateDownloaderGithub {
         return true;
     }
 
-    /**
-     * Get the plugin's file name
-     *
-     * @return the plugin file name
-     */
-    public Path getPluginFile() {
-        if (plugin == null) {
-            return null;
-        }
+    private Path getPluginFile() {
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
-            return ((File) method.invoke(plugin)).toPath();
+            return ((File) method.invoke(adapter.getPluginInstance())).toPath();
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Could not get plugin file", e);
         }

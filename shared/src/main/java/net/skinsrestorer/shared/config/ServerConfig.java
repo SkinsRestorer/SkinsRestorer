@@ -21,18 +21,13 @@ package net.skinsrestorer.shared.config;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class ServerConfig implements SettingsHolder {
     @Comment({
-            "\n#################",
-            "\n# Compatibility #",
-            "\n#################",
-            "\n",
-            "If we break things, you can disable it here.",
-            "\n",
             "Disabling this will stop SkinsRestorer from changing skins when a player loads a server resource pack.",
             "When a player loads a server resource pack, their skin is reset. By default, SkinsRestorer reapplies the skin when the player reports that the resource pack has been loaded or an error has occurred."
     })
@@ -53,4 +48,15 @@ public class ServerConfig implements SettingsHolder {
             "File override = ./plugins/SkinsRestorer/enableDismountEntities.txt"
     })
     public static final Property<Boolean> DISMOUNT_PASSENGERS_ON_UPDATE = newProperty("server.dismountPassengersOnSkinUpdate", false);
+
+    @Override
+    public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("server",
+                "\n##########",
+                "\n# Server #",
+                "\n##########",
+                "\n",
+                "If we break things, you can disable it here."
+        );
+    }
 }

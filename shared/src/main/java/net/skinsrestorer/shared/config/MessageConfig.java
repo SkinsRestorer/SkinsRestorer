@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.config;
 
 import ch.jalu.configme.Comment;
 import ch.jalu.configme.SettingsHolder;
+import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.TypeBasedProperty;
 import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
@@ -35,12 +36,6 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class MessageConfig implements SettingsHolder {
     @Comment({
-            "\n##########",
-            "\n# Locale #",
-            "\n##########",
-            "\n",
-            "Translation & message options here",
-            "\n",
             "A language code for the language you want to use by default for messages and commands.",
             "Has to a string separated by an underscore."
     })
@@ -57,4 +52,15 @@ public class MessageConfig implements SettingsHolder {
     });
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
+
+    @Override
+    public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("messages",
+                "\n##########",
+                "\n# Locale #",
+                "\n##########",
+                "\n",
+                "Translation & message options here"
+        );
+    }
 }

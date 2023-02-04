@@ -32,12 +32,6 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 public class CommandConfig implements SettingsHolder {
 
     @Comment({
-            "\n##########",
-            "\n# Basics #",
-            "\n##########",
-            "\n",
-            "Core features are here",
-            "\n",
             "If true, players can change skins without permission.",
             "see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms."
     })
@@ -69,20 +63,22 @@ public class CommandConfig implements SettingsHolder {
     public static final Property<Boolean> DISABLED_SKINS_ENABLED = newProperty("commands.disabledSkins.enabled", false);
     public static final Property<List<String>> DISABLED_SKINS = newListProperty("commands.disabledSkins.list", "steve", "owner");
     @Comment({
-            "\n############",
-            "\n# Advanced #",
-            "\n############",
-            "\n",
-            "Below Config options are OPTIONAL and are irrelevant for small servers.",
-            "\n",
             "Allows the usage of per-skin permission.",
             "Example: skinsrestorer.skin.xknat OR skinsrestorer.skin.Pistonmaster",
-            "with \"skinsrestorer.ownskin\" players can run /skin set %playerusername%."
+            "with \"skinsrestorer.ownskin\" players can run /skin set %playerusername%.",
+            "[!] Only enable if you have set up permissions properly and know what you are doing."
     })
     public static final Property<Boolean> PER_SKIN_PERMISSIONS = newProperty("commands.perSkinPermissions", false);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("commands",
+                "\n###########",
+                "\n# Commands #",
+                "\n###########",
+                "\n",
+                "Control behaviour of commands."
+        );
         conf.setComment("commands.disabledSkins",
                 "Skins in this list will be disabled, so users can't set them.",
                 "Can be bypassed with 'skinsrestorer.bypassdisabled'."
