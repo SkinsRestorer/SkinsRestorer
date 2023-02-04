@@ -75,13 +75,15 @@ supported this project by contributing.
 ```
 
 ##### SkinsRestorer API
+Latest Version (Without the v):
+![Latest Version](https://img.shields.io/github/v/tag/SkinsRestorer/SkinsRestorerX?label=version)
 
 ```xml
 <!-- SkinsRestorer API -->
 <dependency>
     <groupId>net.skinsrestorer</groupId>
     <artifactId>skinsrestorer-api</artifactId>
-    <version>14.2.7</version>
+    <version>VERSION HERE</version>
     <scope>provided</scope>
 </dependency>
 ```

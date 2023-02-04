@@ -189,8 +189,11 @@ public class SkinStorageImpl implements SkinStorage {
             }
 
             return Optional.of(createProperty(skinName, updateOutdated, property.get().getValue(), property.get().getSignature(), property.get().getTimestamp()));
-        } catch (StorageAdapter.StorageException | NotPremiumException e) {
-            logger.info(String.format("Unsupported skin format.. removing (%s).", skinName));
+        } catch (NotPremiumException e) {
+            logger.debug(String.format("Failed to update skin data for %s", skinName));
+            return Optional.empty();
+        } catch (Exception e) {
+            logger.info(String.format("Unsupported skin format... removing (%s).", skinName));
             removeSkinData(skinName);
             return Optional.empty();
         }

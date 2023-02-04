@@ -3,7 +3,7 @@ dependencies {
     implementation(projects.skinsrestorerApi)
 
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2-SNAPSHOT") {
+    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.2") {
         exclude("com.github.waffle", "waffle-jna")
     }
     api("com.github.InventivetalentDev.Spiget-Update:core:1.4.6-SNAPSHOT")

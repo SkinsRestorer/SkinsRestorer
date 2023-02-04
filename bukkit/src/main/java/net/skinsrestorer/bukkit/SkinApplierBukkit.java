@@ -25,6 +25,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
@@ -250,8 +255,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     private Collection<? extends Player> getOnlinePlayers() {
         try {
             return MultiPaperUtil.getOnlinePlayers();
-        } catch (UnsupportedClassVersionError | NoClassDefFoundError e) {
-            // Bad loaders fully ignore finding java 17 classes instead of throwing class version errors
+        } catch (Throwable e) { // Catch all errors and fallback to bukkit
             return server.getOnlinePlayers();
         }
     }
