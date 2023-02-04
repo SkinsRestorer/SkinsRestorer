@@ -29,6 +29,7 @@ import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
@@ -94,6 +95,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
             return;
         }
 
-        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(Config.FORWARD_TEXTURES) ? textures : null);
+        proxyPlugin.sendUpdateRequest(wrapper.player(player), settings.getProperty(AdvancedConfig.FORWARD_TEXTURES) ? textures : null);
     }
 }

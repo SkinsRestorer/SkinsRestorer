@@ -35,6 +35,7 @@ import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceChecker;
@@ -110,9 +111,9 @@ public final class SRCommand extends BaseCommand {
             int workingProfileCount = response.getWorkingProfile();
 
             // only print per API results if in a not working state
-            if (settings.getProperty(Config.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
+            if (settings.getProperty(DevConfig.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
                 for (String result : results) {
-                    if (settings.getProperty(Config.DEBUG) || result.contains("✘")) {
+                    if (settings.getProperty(DevConfig.DEBUG) || result.contains("✘")) {
                         statusMessages.add(result);
                     }
                 }

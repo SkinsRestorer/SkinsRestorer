@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit.utils;
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;

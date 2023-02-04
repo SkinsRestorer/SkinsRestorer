@@ -25,11 +25,12 @@ import ch.jalu.configme.properties.Property;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
-public class MineSkinConfig implements SettingsHolder {
+public class LoginConfig implements SettingsHolder {
     @Comment({
-            "Here you can fill in your APIKey for lower MineSkin request times.",
-            "Key can be requested from https://mineskin.org/apikey",
-            "[?] A key is not required, but recommended."
+            "Stops the process of setting a skin if the LoginEvent was canceled by an AntiBot plugin.",
+            "[?] Unsure? leave this true for better performance."
     })
-    public static final Property<String> MINESKIN_API_KEY = newProperty("mineskinAPIKey", "key");
+    public static final Property<Boolean> NO_SKIN_IF_LOGIN_CANCELED = newProperty("login.noSkinIfLoginCanceled", true);
+    @Comment("This will make SkinsRestorer always apply the skin even if the player joins as premium on an online mode server.")
+    public static final Property<Boolean> ALWAYS_APPLY_PREMIUM = newProperty("login.alwaysApplyPremium", false);
 }

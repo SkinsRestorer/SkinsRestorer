@@ -28,7 +28,7 @@ import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.config.MineSkinConfig;
+import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorDelayResponse;
@@ -184,7 +184,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
 
                 Map<String, String> headers = new HashMap<>();
-                String apiKey = settings.getProperty(MineSkinConfig.MINESKIN_API_KEY);
+                String apiKey = settings.getProperty(APIConfig.MINESKIN_API_KEY);
                 if (!apiKey.isEmpty()) {
                     headers.put("Authorization", "Bearer " + apiKey);
                 }

@@ -36,6 +36,7 @@ import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -211,7 +212,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
             manager.registerCommand(injector.newInstance(GUICommand.class));
 
             // Init listener
-            if (injector.getSingleton(SettingsManager.class).getProperty(Config.ENABLE_PAPER_JOIN_LISTENER)
+            if (injector.getSingleton(SettingsManager.class).getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
                     && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
                 logger.info("Using paper join listener!");
                 server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());

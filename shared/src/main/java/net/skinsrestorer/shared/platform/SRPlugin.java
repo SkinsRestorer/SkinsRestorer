@@ -182,7 +182,10 @@ public class SRPlugin {
                             StorageConfig.class,
                             ProxyConfig.class,
                             ServerConfig.class,
-                            MineSkinConfig.class
+                            LoginConfig.class,
+                            APIConfig.class,
+                            AdvancedConfig.class,
+                            DevConfig.class
                     )
                     .useDefaultMigrationService()
                     .create();
@@ -215,11 +218,11 @@ public class SRPlugin {
             settings.setProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE, false);
         }
 
-        if (settings.getProperty(MineSkinConfig.MINESKIN_API_KEY).equals("key")) {
-            settings.setProperty(MineSkinConfig.MINESKIN_API_KEY, "");
+        if (settings.getProperty(APIConfig.MINESKIN_API_KEY).equals("key")) {
+            settings.setProperty(APIConfig.MINESKIN_API_KEY, "");
         }
 
-        logger.setDebug(settings.getProperty(Config.DEBUG));
+        logger.setDebug(settings.getProperty(DevConfig.DEBUG));
         SkinsRestorerLocale locale = injector.getIfAvailable(SkinsRestorerLocale.class);
         if (locale != null) {
             locale.setDefaultLocale(settings.getProperty(MessageConfig.LANGUAGE));

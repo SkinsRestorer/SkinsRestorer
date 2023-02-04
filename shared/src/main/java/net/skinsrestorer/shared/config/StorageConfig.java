@@ -31,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static ch.jalu.configme.properties.PropertyInitializer.newListProperty;
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
@@ -59,19 +58,19 @@ public class StorageConfig implements SettingsHolder {
             "[?] A value of 0 will disable auto updating of skins and players will need to manual run /skin update.",
             "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
     })
-    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("storage.SkinExpiresAfter", 15);
+    public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("storage.skinExpiresAfter", 15);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
-        conf.setComment("storage.defaultSkins",
-                "\n#################",
-                "\n# Customization #",
-                "\n#################",
+        conf.setComment("storage",
+                "\n###########",
+                "\n# Storage #",
+                "\n###########",
                 "\n",
                 "Here you can design the plugin the way you want it.",
                 "\n",
                 "Enable or disable default skins",
-                "ApplyForPremium: false will only put a skin on skinless/steve players.",
+                "applyForPremium: false will only put a skin on skinless/steve players.",
                 "If there is more than one, the plugin will choose a random one.",
                 "[?] Supports custom & url.png skins, read SkinFile Generator below. [?]"
         );

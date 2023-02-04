@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.utils;
 
 import net.skinsrestorer.shared.config.CommandConfig;
-import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.storage.CallableSetting;
 import net.skinsrestorer.shared.storage.Message;
 

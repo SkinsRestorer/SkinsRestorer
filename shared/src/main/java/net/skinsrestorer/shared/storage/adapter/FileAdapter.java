@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.storage.adapter;
 
 import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.config.GUIConfig;
-import net.skinsrestorer.shared.config.StorageConfig;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -184,23 +183,23 @@ public class FileAdapter implements StorageAdapter {
             if (i < offset) {
                 continue;
             }
-                if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui
-                    for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
-                        if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
-                            try {
-                                getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui
+                for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
+                    if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
+                        try {
+                            getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                } else {
-                    try {
-                        getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                 }
+            } else {
+                try {
+                    getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             i++;
         }
         return list;

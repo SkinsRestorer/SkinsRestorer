@@ -23,7 +23,6 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
-import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.storage.MySQL;
 
 import java.sql.ResultSet;

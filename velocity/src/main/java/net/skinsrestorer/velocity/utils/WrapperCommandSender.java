@@ -24,7 +24,6 @@ import com.velocitypowered.api.command.CommandSource;
 import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;

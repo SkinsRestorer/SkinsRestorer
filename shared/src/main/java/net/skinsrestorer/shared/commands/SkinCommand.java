@@ -35,7 +35,6 @@ import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.config.CommandConfig;
-import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;

@@ -25,7 +25,8 @@ import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.util.Pair;
-import net.skinsrestorer.shared.config.Config;
+import net.skinsrestorer.shared.config.AdvancedConfig;
+import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -53,7 +54,7 @@ public final class LoginProfileListenerAdapter<R> {
     }
 
     private boolean handleSync(SRLoginProfileEvent<R> event) {
-        return settings.getProperty(Config.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(Config.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
+        return settings.getProperty(AdvancedConfig.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(LoginConfig.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
     }
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException, NotPremiumException {
@@ -63,7 +64,7 @@ public final class LoginProfileListenerAdapter<R> {
         // Skip skin if: online mode, no custom skin set, always apply not enabled and default skins for premium not enabled
         if (event.isOnline()
                 && !result.getRight()
-                && !settings.getProperty(Config.ALWAYS_APPLY_PREMIUM)
+                && !settings.getProperty(LoginConfig.ALWAYS_APPLY_PREMIUM)
                 && !settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM))
             return Optional.empty();
 

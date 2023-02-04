@@ -25,7 +25,6 @@ import lombok.Setter;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
-import net.skinsrestorer.shared.config.Config;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
