@@ -38,7 +38,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
         try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName)) {
-            if (crs == null) {
+            if (!crs.next()) {
                 return Optional.empty();
             }
 
@@ -65,7 +65,7 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception {
         try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
-            if (crs == null) {
+            if (!crs.next()) {
                 return Optional.empty();
             }
 
@@ -84,9 +84,8 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
-        mysql.execute("INSERT INTO " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value=?, Signature=?, timestamp=?",
-                skinName, storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()),
-                storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()));
+        mysql.execute("INSERT INTO " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value = VALUES(Value), Signature = VALUES(Signature), timestamp = VALUES(timestamp)",
+                skinName, storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()));
     }
 
     @Override
@@ -105,13 +104,9 @@ public class MySQLAdapter implements StorageAdapter {
         }
 
         try (ResultSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36")) {
-            if (crs == null) {
-                return Collections.emptyMap();
-            }
-
-            do {
+            while (crs.next()) {
                 list.put(crs.getString("Nick").toLowerCase(), crs.getString("Value"));
-            } while (crs.next());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,8 +116,9 @@ public class MySQLAdapter implements StorageAdapter {
     @Override
     public Optional<Long> getStoredTimestamp(String skinName) {
         try (ResultSet crs = mysql.query("SELECT timestamp FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
-            if (crs == null)
+            if (!crs.next()) {
                 return Optional.empty();
+            }
 
             String timestampString = crs.getString("timestamp");
 

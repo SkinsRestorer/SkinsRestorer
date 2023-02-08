@@ -133,12 +133,7 @@ public class MySQL {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return rs;
-                } else {
-                    return null;
-                }
+                return ps.executeQuery();
             }
         }
     }
