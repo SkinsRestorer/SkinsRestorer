@@ -91,14 +91,16 @@ public interface SkinStorage {
      *
      * @see #setSkinData(String, SkinProperty, long)
      */
-    void setSkinData(String skinName, SkinProperty textures);
+    default void setSkinData(String skinName, SkinProperty textures) {
+        setSkinData(skinName, textures, System.currentTimeMillis());
+    }
 
     /**
      * Saves skin data to database
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in millis (null for current)
+     * @param timestamp timestamp string in milliseconds
      */
     void setSkinData(String skinName, SkinProperty textures, long timestamp);
 }

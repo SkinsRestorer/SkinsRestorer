@@ -26,7 +26,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;

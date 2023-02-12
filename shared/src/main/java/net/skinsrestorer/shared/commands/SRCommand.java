@@ -25,7 +25,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.exception.SkinRequestException;

@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.api.interfaces;
 
-import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;

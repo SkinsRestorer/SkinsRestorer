@@ -23,7 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import net.skinsrestorer.api.SkinVariant;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.property.SkinProperty;

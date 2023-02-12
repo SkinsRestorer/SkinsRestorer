@@ -91,12 +91,12 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Pair<SkinProperty, Boolean> getDefaultSkinForPlayer(String playerName) throws SkinRequestException, NotPremiumException {
         Pair<String, Boolean> result = getDefaultSkinName(playerName, false);
-        String skin = result.getLeft();
+        String skinName = result.getLeft();
 
-        if (C.validUrl(skin)) {
-            return Pair.of(mineSkinAPI.genSkin(skin, null), result.getRight());
+        if (C.validUrl(skinName)) {
+            return Pair.of(mineSkinAPI.genSkin(skinName, null), result.getRight());
         } else {
-            return Pair.of(fetchSkinData(skin), result.getRight());
+            return Pair.of(fetchSkinData(skinName), result.getRight());
         }
     }
 
@@ -208,11 +208,6 @@ public class SkinStorageImpl implements SkinStorage {
         skinName = skinName.toLowerCase();
 
         storageAdapter.removeStoredSkinData(skinName);
-    }
-
-    @Override
-    public void setSkinData(String skinName, SkinProperty textures) {
-        setSkinData(skinName, textures, System.currentTimeMillis());
     }
 
     @Override
