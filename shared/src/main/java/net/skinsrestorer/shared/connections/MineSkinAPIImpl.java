@@ -55,6 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MineSkinAPIImpl implements MineSkinAPI {
+    private static final String MINESKIN_ENDPOINT = "https://api.mineskin.org/generate/url/";
     private static final String NAMEMC_SKIN_URL = "https://namemc.com/skin/";
     private static final String NAMEMC_IMG_URL = "https://s.namemc.com/i/%s.png";
     private final ExecutorService executorService = Executors.newSingleThreadExecutor((Runnable r) -> {
@@ -106,31 +107,29 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     case 500:
                     case 400:
                         MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
-                        String error = errorResponse.getError();
+                        String error = errorResponse.getErrorCode();
+                        logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Url: %s", error, url));
                         switch (error) {
-                            case "Failed to generate skin data":
-                            case "Failed to change skin":
-                                logger.debug("[ERROR] MineSkin " + error + ", trying again... ");
+                            case "failed_to_create_id":
+                            case "skin_change_failed":
+                                logger.debug("Trying again in 5 seconds...");
                                 TimeUnit.SECONDS.sleep(5);
 
                                 throw new TryAgainException(); // try again
-                            case "No accounts available":
-                                logger.debug("[ERROR] MineSkin " + error + " for: " + url);
-
+                            case "no_account_available":
                                 throw new SkinRequestExceptionShared(locale, Message.ERROR_MS_FULL);
                             default:
-                                logger.debug("[ERROR] MineSkin Failed! Reason: " + error);
                                 throw new SkinRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
                         }
                     case 403:
-                        MineSkinErrorResponse errorResponse2 = response.getBodyAs(MineSkinErrorResponse.class);
-                        String errorCode2 = errorResponse2.getErrorCode();
-                        String error2 = errorResponse2.getError();
+                        MineSkinErrorResponse apiErrorResponse = response.getBodyAs(MineSkinErrorResponse.class);
+                        String errorCode2 = apiErrorResponse.getErrorCode();
+                        String error2 = apiErrorResponse.getError();
                         if (errorCode2.equals("invalid_api_key")) {
                             logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error2);
                             switch (error2) {
                                 case "Invalid API Key":
-                                    logger.severe("The API Key provided is not registered on MineSkin! Please empty MineskinAPIKey in plugins/SkinsRestorer/config.yml and run /sr reload");
+                                    logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
                                     break;
                                 case "Client not allowed":
                                     logger.severe("This server ip is not on the apikey allowed IPs list!");
@@ -139,7 +138,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                                     logger.severe("This server Origin is not on the apikey allowed Origins list!");
                                     break;
                                 case "Agent not allowed":
-                                    logger.severe("SkinsRestorer's agent \"SkinsRestorer\" is not on the apikey allowed agents list!");
+                                    logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
                                     break;
                             }
                             throw new SkinRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
@@ -190,10 +189,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 }
 
                 HttpClient client = new HttpClient(
-                        "https://api.mineskin.org/generate/url/",
+                        MINESKIN_ENDPOINT,
                         new HttpClient.RequestBody(query, HttpClient.HttpType.FORM),
                         HttpClient.HttpType.JSON,
-                        plugin.getUserAgent(),
+                        "SkinsRestorer/MineSkinAPI",
                         HttpClient.HttpMethod.POST,
                         headers,
                         90_000

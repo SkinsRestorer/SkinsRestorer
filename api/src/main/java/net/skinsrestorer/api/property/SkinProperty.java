@@ -19,20 +19,20 @@
  */
 package net.skinsrestorer.api.property;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Easy way of interacting with properties across multiple platforms.
  */
 @Data
-@AllArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(staticName = "of")
 @SuppressWarnings("unused")
 public class SkinProperty {
     public static final String TEXTURES_NAME = "textures";
-    private String value;
-    private String signature;
-
-    private SkinProperty() {
-    }
+    @NonNull
+    private final String value;
+    @NonNull
+    private final String signature;
 }

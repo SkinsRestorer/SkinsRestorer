@@ -36,7 +36,6 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -49,16 +48,12 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBukkit implements SkinApplierAccess<Player> {
-    private final SRPlugin plugin;
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final SettingsManager settings;
@@ -67,11 +62,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
-    @Setter
-    private boolean optFileChecked;
-    private boolean disableDismountPlayer;
-    private boolean disableRemountPlayer;
-    private boolean enableDismountEntities;
 
     protected Consumer<Player> detectRefresh(Server server) throws InitializeException {
         if (isPaper()) {
@@ -150,19 +140,15 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
      */
     @SuppressWarnings("deprecation")
     public void updateSkin(Player player) {
-        if (!player.isOnline())
+        if (!player.isOnline()) {
             return;
-
-        if (!optFileChecked) {
-            checkOptFile();
         }
 
         adapter.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
                 Entity vehicle = player.getVehicle();
 
-                SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle,
-                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities, settings);
+                SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
             }
 
             for (Player ps : getOnlinePlayers()) {
@@ -182,47 +168,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
             refresh.accept(player);
         });
-    }
-
-    private void checkOptFile() {
-        Path fileDisableDismountPlayer = plugin.getDataFolder().resolve("disablesdismountplayer"); // legacy
-        Path fileDisableRemountPlayer = plugin.getDataFolder().resolve("disablesremountplayer"); // legacy
-        Path fileEnableDismountEntities = plugin.getDataFolder().resolve("enablesdismountentities"); // legacy
-
-        Path fileTxtDisableDismountPlayer = plugin.getDataFolder().resolve("disableDismountPlayer.txt");
-        Path fileTxtDisableRemountPlayer = plugin.getDataFolder().resolve("disableRemountPlayer.txt");
-        Path fileTxtEnableDismountEntities = plugin.getDataFolder().resolve("enableDismountEntities.txt");
-
-        if (Files.exists(fileDisableDismountPlayer)) {
-            try {
-                Files.move(fileDisableDismountPlayer, fileTxtDisableDismountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileDisableRemountPlayer)) {
-            try {
-                Files.move(fileDisableRemountPlayer, fileTxtDisableRemountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileEnableDismountEntities)) {
-            try {
-                Files.move(fileEnableDismountEntities, fileTxtEnableDismountEntities);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer);
-        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
-        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
-
-        logger.debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
-        optFileChecked = true;
     }
 
     private boolean isPaper() {

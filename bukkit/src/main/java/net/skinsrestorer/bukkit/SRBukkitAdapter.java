@@ -159,7 +159,6 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public void reloadPlatformHook() {
-        injector.getSingleton(SkinApplierBukkit.class).setOptFileChecked(false);
     }
 
     @Override
