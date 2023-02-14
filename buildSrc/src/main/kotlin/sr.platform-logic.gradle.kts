@@ -7,7 +7,7 @@ plugins {
 
 (tasks.getByName("shadowJar") as ShadowJar).archiveFileName.set(
     "SkinsRestorer-${
-        project.name.substringAfter("skinsrestorer-").capitalize()
+        project.name.substringAfter("skinsrestorer-").replaceFirstChar(Char::titlecase)
     }-${project.version}.jar"
 )
 
