@@ -17,15 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit;
+package net.skinsrestorer.bukkit.gui;
 
 import co.aikar.commands.CommandManager;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRForeign;
@@ -36,9 +34,7 @@ import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -51,16 +47,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-@RequiredArgsConstructor
-public class SkinsGUI implements InventoryHolder {
+public class SkinsGUI {
     private static final int HEAD_COUNT_PER_PAGE = 36;
-    private final int page; // Page number start with 0
-    private final Consumer<EventInfo> callback;
-    @Getter
-    @Setter(value = AccessLevel.PRIVATE)
-    private Inventory inventory;
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorageImpl skinStorage, SRForeign player, int page) {
+    public static Inventory createGUI(Consumer<ClickEventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorageImpl skinStorage, SRForeign player, int page) {
         if (page > 999) {
             page = 999;
         }
@@ -70,8 +60,8 @@ public class SkinsGUI implements InventoryHolder {
         return createGUI(callback, locale, logger, server, player, page, skinStorage.getSkins(skinNumber));
     }
 
-    public static Inventory createGUI(Consumer<EventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SRForeign player, int page, Map<String, String> skinsList) {
-        SkinsGUI instance = new SkinsGUI(page, callback);
+    public static Inventory createGUI(Consumer<ClickEventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SRForeign player, int page, Map<String, String> skinsList) {
+        SkinsGUIHolder instance = new SkinsGUIHolder(page, callback);
         Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
@@ -192,30 +182,12 @@ public class SkinsGUI implements InventoryHolder {
         return itemStack;
     }
 
-    public void onClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player) || event.getCurrentItem() == null) // Cancel if not a player or if the item is null
-            return;
-
-        final Player player = (Player) event.getWhoClicked();
-        final ItemStack currentItem = event.getCurrentItem();
-
-        // Cancel invalid items
-        if (!currentItem.hasItemMeta()) {
-            return;
-        }
-
-        ItemMeta itemMeta = currentItem.getItemMeta();
-        assert itemMeta != null;
-
-        callback.accept(new EventInfo(XMaterial.matchXMaterial(currentItem), itemMeta, player, page));
-    }
-
     private enum GlassType {
         NONE, PREV, NEXT, DELETE
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ServerGUIActions implements Consumer<EventInfo> {
+    public static class ServerGUIActions implements Consumer<ClickEventInfo> {
         private final Server server;
         private final SRServerAdapter adapter;
         private final SkinsRestorerLocale locale;
@@ -225,7 +197,7 @@ public class SkinsGUI implements InventoryHolder {
         private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
 
         @Override
-        public void accept(EventInfo event) {
+        public void accept(ClickEventInfo event) {
             switch (event.getMaterial()) {
                 case PLAYER_HEAD:
                     adapter.runAsync(() -> {
@@ -265,11 +237,11 @@ public class SkinsGUI implements InventoryHolder {
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ProxyGUIActions implements Consumer<EventInfo> {
+    public static class ProxyGUIActions implements Consumer<ClickEventInfo> {
         private final SRBukkitAdapter adapter;
 
         @Override
-        public void accept(EventInfo event) {
+        public void accept(ClickEventInfo event) {
             Player player = event.getPlayer();
             switch (event.getMaterial()) {
                 case PLAYER_HEAD:
@@ -300,14 +272,5 @@ public class SkinsGUI implements InventoryHolder {
                     break;
             }
         }
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    private static class EventInfo {
-        private final XMaterial material;
-        private final ItemMeta itemMeta;
-        private final Player player;
-        private final int currentPage;
     }
 }

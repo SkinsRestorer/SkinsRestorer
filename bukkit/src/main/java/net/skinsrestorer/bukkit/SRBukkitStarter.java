@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.commands.GUICommand;
+import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;

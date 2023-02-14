@@ -26,7 +26,7 @@ import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.SkinsGUI;
+import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.storage.Message;
