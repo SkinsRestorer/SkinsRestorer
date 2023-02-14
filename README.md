@@ -12,7 +12,7 @@
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/releases/latest"><img src="https://img.shields.io/github/release/SkinsRestorer/SkinsRestorerX.svg" alt="Current Release"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/graphs/contributors"><img src="https://img.shields.io/github/contributors/SkinsRestorer/SkinsRestorerX.svg" alt="Contributors"></a>
 <a href="https://github.com/SkinsRestorer/SkinsRestorerX/commits/master"><img src="https://img.shields.io/github/commits-since/SkinsRestorer/SkinsRestorerX/latest.svg" alt="Commits since last release"></a>
-<a href="https://github.com/SkinsRestorer/SkinsRestorerX/blob/dev/LICENSE"><img src="https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg" alt="License"></a>
+<a href="https://github.com/SkinsRestorer/SkinsRestorerX/blob/HEAD/LICENSE"><img src="https://img.shields.io/github/license/SkinsRestorer/SkinsRestorerX.svg" alt="License"></a>
 </p>
 <p align="center"><a href="https://skinsrestorer.net/discord"><img src="https://discordapp.com/api/guilds/186794372468178944/embed.png" alt="Discord embed"></a></p>
 <p align="center"><a href="https://forthebadge.com"><img src="https://forthebadge.com/images/badges/contains-cat-gifs.svg" alt="Contains Cat GIFs"></a></p>
@@ -54,7 +54,7 @@ Implementation:
 ## :scroll: License
 
 SkinsRestorer is licensed under GNU General Public License v3.0. Please
-see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/dev/LICENSE) for more info.
+see [`LICENSE.txt`](https://github.com/SkinsRestorer/SkinsRestorerX/blob/HEAD/LICENSE) for more info.
 
 ## :family: Authors
 
