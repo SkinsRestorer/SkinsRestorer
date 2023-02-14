@@ -67,7 +67,6 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final MetricsCounter metricsCounter;
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final SRPlugin plugin;
 
     @Override
     public SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException {

@@ -43,6 +43,7 @@ public class EventBusImpl implements EventBus {
         subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
     }
 
+    @SuppressWarnings("unchecked")
     public void callEvent(SkinsRestorerEvent event) {
         clearSubscriptions();
         for (EventSubscription<?> subscription : subscriptions) {
@@ -57,7 +58,6 @@ public class EventBusImpl implements EventBus {
             }
 
             try {
-                //noinspection unchecked
                 ((Consumer<SkinsRestorerEvent>) listener).accept(event);
             } catch (Throwable t) {
                 t.printStackTrace();
