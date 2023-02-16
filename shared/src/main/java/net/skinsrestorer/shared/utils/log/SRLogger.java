@@ -48,7 +48,10 @@ public class SRLogger {
             try (InputStream inputStream = Files.newInputStream(configFile)) {
                 AxiomConfiguration config = new AxiomConfiguration();
                 config.load(inputStream);
-                debug = config.getBoolean("Debug");
+                Boolean debugValue = config.getBoolean("dev.debug");
+                if (debugValue != null) {
+                    debug = debugValue;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
+import co.aikar.commands.CommandManager;
 import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +69,7 @@ public final class SkinCommand extends BaseCommand {
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
     private final MineSkinAPI mineSkinAPI;
+    private final CommandManager<?, ?, ?, ?, ?, ?> manager;
 
     @SuppressWarnings("deprecation")
     @Default
@@ -243,6 +245,14 @@ public final class SkinCommand extends BaseCommand {
         }
 
         onSkinSetOther(player, new OnlineSRPlayer(player), url, skinVariant);
+    }
+
+    @Subcommand("menu|gui")
+    @CommandPermission("%skins")
+    @Private
+    private void onGUIShortcut(SRPlayer player) {
+        manager.getRootCommand("skins").execute(
+                manager.getCommandIssuer(player.getAs(Object.class)), "skins", new String[]{});
     }
 
     private void sendHelp(SRCommandSender sender) {
