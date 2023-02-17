@@ -49,8 +49,6 @@ public class SRVelocityStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() {
-        plugin.startupStart();
-
         plugin.initUpdateCheck();
 
         // Init config files
@@ -85,8 +83,5 @@ public class SRVelocityStarter implements SRPlatformStarter {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
         proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(PluginMessageListener.class));
-
-        // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

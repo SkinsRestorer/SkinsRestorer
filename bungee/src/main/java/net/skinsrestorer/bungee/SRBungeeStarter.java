@@ -46,8 +46,6 @@ public class SRBungeeStarter implements SRPlatformStarter {
     private final SRLogger logger;
 
     public void pluginStartup() {
-        plugin.startupStart();
-
         plugin.initUpdateCheck();
 
         // Init config files
@@ -81,8 +79,5 @@ public class SRBungeeStarter implements SRPlatformStarter {
         proxy.registerChannel("sr:skinchange");
         proxy.registerChannel("sr:messagechannel");
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(PluginMessageListener.class));
-
-        // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

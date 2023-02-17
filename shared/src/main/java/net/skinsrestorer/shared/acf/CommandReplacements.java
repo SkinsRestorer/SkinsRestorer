@@ -17,11 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils;
+package net.skinsrestorer.shared.acf;
 
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.storage.CallableSetting;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.utils.FluentMap;
 
 import java.util.Map;
 

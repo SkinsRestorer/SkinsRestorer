@@ -73,8 +73,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() throws InitializeException {
-        plugin.startupStart();
-
         // Init config files // TODO: Split config files
         plugin.loadConfig();
 
@@ -223,9 +221,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
                     server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
                 }
             }
-
-            // Run connection check
-            adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
         }
     }
 

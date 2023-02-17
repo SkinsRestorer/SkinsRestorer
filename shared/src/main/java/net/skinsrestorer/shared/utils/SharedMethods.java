@@ -27,17 +27,6 @@ public class SharedMethods {
     private SharedMethods() {
     }
 
-    public static void runServiceCheck(MojangAPIImpl mojangAPI, SRLogger log) {
-        ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
-
-        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
-            log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§r§c] -------------------------");
-            log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            log.info("§c[§4Critical§c] §cSee https://skinsrestorer.net/firewall for steps to resolve your issue!");
-            log.info("§c[§4Critical§c] ----------------------------------------------------------------------");
-        }
-    }
-
     public static Throwable getRootCause(Throwable throwable) {
         if (throwable.getCause() != null)
             return getRootCause(throwable.getCause());

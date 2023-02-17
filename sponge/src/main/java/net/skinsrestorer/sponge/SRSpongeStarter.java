@@ -47,8 +47,6 @@ public class SRSpongeStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() {
-        plugin.startupStart();
-
         plugin.initUpdateCheck();
 
         // Init config files
@@ -78,8 +76,5 @@ public class SRSpongeStarter implements SRPlatformStarter {
 
         manager.registerCommand(injector.getSingleton(SkinCommand.class));
         manager.registerCommand(injector.newInstance(SRCommand.class));
-
-        // Run connection check
-        adapter.runAsync(() -> SharedMethods.runServiceCheck(injector.getSingleton(MojangAPIImpl.class), logger));
     }
 }

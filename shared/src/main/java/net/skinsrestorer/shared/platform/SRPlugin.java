@@ -41,6 +41,7 @@ import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
+import net.skinsrestorer.shared.connections.ServiceChecker;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.serverinfo.Platform;
@@ -51,8 +52,8 @@ import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheck;
-import net.skinsrestorer.shared.utils.CommandPropertiesManager;
-import net.skinsrestorer.shared.utils.CommandReplacements;
+import net.skinsrestorer.shared.acf.CommandPropertiesManager;
+import net.skinsrestorer.shared.acf.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.MetricsBase;
@@ -366,6 +367,30 @@ public class SRPlugin {
 
         EventBusImpl sharedEventBus = new EventBusImpl();
         injector.register(EventBusImpl.class, sharedEventBus);
+    }
+
+    public void startupEnd() {
+        boolean runServiceCheck = true;
+        SRServerPlugin plugin = injector.getIfAvailable(SRServerPlugin.class);
+
+        if (plugin != null && plugin.isProxyMode()) {
+            runServiceCheck = false;
+        }
+
+        if (runServiceCheck) {
+            adapter.runAsync(this::runServiceCheck);
+        }
+    }
+
+    private void runServiceCheck() {
+        ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(injector.getSingleton(MojangAPIImpl.class));
+
+        if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
+            logger.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§r§c] -------------------------");
+            logger.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
+            logger.info("§c[§4Critical§c] §cSee https://skinsrestorer.net/firewall for steps to resolve your issue!");
+            logger.info("§c[§4Critical§c] ----------------------------------------------------------------------");
+        }
     }
 
     public String getUserAgent() {
