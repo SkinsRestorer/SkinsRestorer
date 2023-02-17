@@ -37,7 +37,7 @@ import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
-import net.skinsrestorer.shared.connections.ServiceChecker;
+import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
@@ -66,6 +66,7 @@ public final class SRCommand extends BaseCommand {
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
     private final MojangAPIImpl mojangAPI;
+    private final ServiceCheckerService serviceCheckerService;
     private final SkinStorageImpl skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
@@ -103,7 +104,7 @@ public final class SRCommand extends BaseCommand {
             String breakLine = "§3----------------------------------------------";
             statusMessages.add(breakLine);
 
-            ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(mojangAPI);
+            ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
             List<String> results = response.getResults();
 
             int workingUUIDCount = response.getWorkingUUID();

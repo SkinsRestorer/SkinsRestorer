@@ -20,26 +20,27 @@
 package net.skinsrestorer.shared.connections;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.NotPremiumException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.connections.responses.AshconResponse;
 
+import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
-public class ServiceChecker {
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class ServiceCheckerService {
     private static final String XKNAT_NAME = "xknat";
     private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
     private static final String MESSAGE_ERROR = "%s §c✘ Error getting %s";
     private static final String MESSAGE_ERROR_EXCEPTION = "%s §c✘ Error getting %s: %s";
     private static final String UUID_MESSAGE = "%s §a✔ xknat UUID: §b%s";
     private static final String PROFILE_MESSAGE = "%s §a✔ xknat Profile: §b%s";
+    private final MojangAPIImpl mojangAPI;
 
-    private ServiceChecker() {
-    }
-
-    public static ServiceCheckResponse checkServices(MojangAPIImpl mojangAPI) {
+    public ServiceCheckResponse checkServices() {
         ServiceCheckResponse response = new ServiceCheckResponse();
 
         // ##### Ashcon request #####

@@ -19,10 +19,6 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
-import net.skinsrestorer.shared.connections.ServiceChecker;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-
 public class SharedMethods {
     private SharedMethods() {
     }

@@ -41,7 +41,7 @@ import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
-import net.skinsrestorer.shared.connections.ServiceChecker;
+import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.*;
 import net.skinsrestorer.shared.serverinfo.Platform;
@@ -383,7 +383,7 @@ public class SRPlugin {
     }
 
     private void runServiceCheck() {
-        ServiceChecker.ServiceCheckResponse response = ServiceChecker.checkServices(injector.getSingleton(MojangAPIImpl.class));
+        ServiceCheckerService.ServiceCheckResponse response = injector.getSingleton(ServiceCheckerService.class).checkServices();
 
         if (response.getWorkingUUID() == 0 || response.getWorkingProfile() == 0) {
             logger.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§r§c] -------------------------");
