@@ -20,8 +20,7 @@
 package net.skinsrestorer.shared.api;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -38,14 +37,14 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
     }
 
     @Override
-    public void applySkin(P player) throws SkinRequestException, NotPremiumException {
+    public void applySkin(P player) throws DataRequestException {
         String playerName = nameGetter.getName(player);
         applySkin(player, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
     }
 
     @Override
-    public void applySkin(P player, String skinName) throws SkinRequestException, NotPremiumException {
-        applySkin(player, skinStorage.fetchSkinData(skinName));
+    public void applySkin(P player, String skinName) throws DataRequestException {
+        skinStorage.fetchSkinData(skinName).ifPresent(property -> applySkin(player, property));
     }
 
     @Override

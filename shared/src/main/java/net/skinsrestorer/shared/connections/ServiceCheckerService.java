@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.connections;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.connections.responses.AshconResponse;
 
@@ -56,7 +56,7 @@ public class ServiceCheckerService {
                     response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
                 }
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
-        } catch (NotPremiumException e) {
+        } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()));
         }
 
@@ -68,7 +68,7 @@ public class ServiceCheckerService {
                 response.addResult(String.format(UUID_MESSAGE, "Mojang", uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"));
-        } catch (NotPremiumException e) {
+        } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "UUID", e.getMessage()));
         }
 
@@ -79,7 +79,7 @@ public class ServiceCheckerService {
                 response.addResult(String.format(UUID_MESSAGE, "MineTools", uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"));
-        } catch (NotPremiumException e) {
+        } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "UUID", e.getMessage()));
         }
 
@@ -95,22 +95,29 @@ public class ServiceCheckerService {
                     response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
                 }
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
-        } catch (NotPremiumException e) {
+        } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()));
         }
 
-        Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
-        if (mojang.isPresent()) {
-            response.addResult(String.format(PROFILE_MESSAGE, "Mojang", mojang.get()));
-            response.incrementWorkingProfile();
-        } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"));
+        try {
+            Optional<SkinProperty> mojang = mojangAPI.getProfileMojang(XKNAT_UUID);
+            if (mojang.isPresent()) {
+                response.addResult(String.format(PROFILE_MESSAGE, "Mojang", mojang.get()));
+                response.incrementWorkingProfile();
+            } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "Profile"));
+        } catch (DataRequestException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Mojang", "Profile", e.getMessage()));
+        }
 
-        Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(XKNAT_UUID);
-        if (minetools.isPresent()) {
-            response.addResult(String.format(PROFILE_MESSAGE, "MineTools", minetools.get()));
-            response.incrementWorkingProfile();
-        } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"));
-
+        try {
+            Optional<SkinProperty> minetools = mojangAPI.getProfileMineTools(XKNAT_UUID);
+            if (minetools.isPresent()) {
+                response.addResult(String.format(PROFILE_MESSAGE, "MineTools", minetools.get()));
+                response.incrementWorkingProfile();
+            } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "Profile"));
+        } catch (DataRequestException e) {
+            response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "MineTools", "Profile", e.getMessage()));
+        }
         return response;
     }
 

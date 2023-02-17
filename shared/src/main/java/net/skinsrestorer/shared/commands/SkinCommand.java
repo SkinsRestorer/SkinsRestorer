@@ -28,8 +28,7 @@ import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
@@ -117,14 +116,12 @@ public final class SkinCommand extends BaseCommand {
             String playerName = targetPlayer.getName();
 
             // remove users defined skin from database
-            skinStorage.removeSkinOfPlayer(playerName);
+            skinStorage.removeSkinNameOfPlayer(playerName);
 
             try {
-                SkinProperty property = skinStorage.getDefaultSkinForPlayer(playerName).getLeft();
-                skinApplier.applySkin(targetPlayer.getAs(Object.class), property);
-            } catch (NotPremiumException e) {
-                skinApplier.applySkin(targetPlayer.getAs(Object.class), SkinProperty.of("", ""));
-            } catch (SkinRequestException e) {
+                Optional<SkinProperty> property = skinStorage.getDefaultSkinForPlayer(playerName);
+                skinApplier.applySkin(targetPlayer.getAs(Object.class), property.orElse(SkinProperty.of("", "")));
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
 
@@ -180,14 +177,14 @@ public final class SkinCommand extends BaseCommand {
                     }
                 } else {
                     // get DefaultSkin
-                    skin = Optional.of(skinStorage.getDefaultSkinName(playerName, true).getLeft());
+                    skin = skinStorage.getDefaultSkinNameForPlayer(playerName);
                 }
-            } catch (SkinRequestException e) {
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
                 return;
             }
 
-            if (setSkin(sender, targetPlayer, skin.get(), false, null)) {
+            if (setSkin(sender, targetPlayer, skin.orElse(playerName), false, null)) {
                 if (sender.getName().equals(targetPlayer.getName()))
                     sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
                 else
@@ -307,7 +304,7 @@ public final class SkinCommand extends BaseCommand {
 
                 SkinProperty generatedSkin = mineSkinAPI.genSkin(skinName, skinVariant);
                 skinStorage.setSkinData(skinUrlName, generatedSkin, 0); // "generate" and save skin forever
-                skinStorage.setSkinOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
+                skinStorage.setSkinNameOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
                 skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
@@ -316,7 +313,7 @@ public final class SkinCommand extends BaseCommand {
                 }
 
                 return true;
-            } catch (SkinRequestException e) {
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
                 logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinName), e);
@@ -329,7 +326,7 @@ public final class SkinCommand extends BaseCommand {
 
             try {
                 if (saveSkin) {
-                    skinStorage.setSkinOfPlayer(playerName, skinName);
+                    skinStorage.setSkinNameOfPlayer(playerName, skinName);
                 }
 
                 skinApplier.applySkin(player.getAs(Object.class), skinName);
@@ -340,7 +337,7 @@ public final class SkinCommand extends BaseCommand {
                 }
 
                 return true;
-            } catch (SkinRequestException | NotPremiumException e) {
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
         }
@@ -348,7 +345,7 @@ public final class SkinCommand extends BaseCommand {
         // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         if (saveSkin) {
-            skinStorage.setSkinOfPlayer(playerName, oldSkinName);
+            skinStorage.setSkinNameOfPlayer(playerName, oldSkinName);
         }
         return false;
     }

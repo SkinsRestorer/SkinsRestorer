@@ -25,10 +25,9 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorer;
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.model.MojangProfileResponse;
@@ -54,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
@@ -149,7 +149,7 @@ public final class SRCommand extends BaseCommand {
         adapter.runAsync(() -> {
             switch (playerOrSkin) {
                 case PLAYER:
-                    skinStorage.removeSkinOfPlayer(target);
+                    skinStorage.removeSkinNameOfPlayer(target);
                     break;
                 case SKIN:
                     skinStorage.removeSkinData(target);
@@ -227,13 +227,12 @@ public final class SRCommand extends BaseCommand {
         adapter.runAsync(() -> {
             try {
                 if (C.validUrl(skinUrl)) {
-                    skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant),
-                            System.currentTimeMillis() + (100L * 365 * 24 * 60 * 60 * 1000)); // "generate" and save skin for 100 years
+                    skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
                     sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
                 } else {
                     sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
                 }
-            } catch (SkinRequestException e) {
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
         });
@@ -244,30 +243,30 @@ public final class SRCommand extends BaseCommand {
     @Description("Set the skin to every player")
     @Syntax(" <Skin / Url> [classic/slim]")
     @Conditions("console-only")
-    private void onSetSkinAll(SRCommandSender sender, String skin, SkinVariant skinVariant) {
+    private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
         adapter.runAsync(() -> {
-            String skinName = " ·setSkinAll";
+            String appliedSkinName = " ·setSkinAll";
             try {
-                SkinProperty skinProps;
-                if (C.validUrl(skin)) {
-                    skinProps = mineSkinAPI.genSkin(skin, skinVariant);
+                Optional<SkinProperty> skinProps;
+                if (C.validUrl(skinName)) {
+                    skinProps = Optional.of(mineSkinAPI.genSkin(skinName, skinVariant));
                 } else {
-                    skinProps = mojangAPI.getSkin(skin).orElse(null);
+                    skinProps = mojangAPI.getSkin(skinName);
                 }
-                if (skinProps == null) {
+
+                if (!skinProps.isPresent()) {
                     sender.sendMessage("§e[§2SkinsRestorer§e] §4no skin found....");
                     return;
                 }
 
-                skinStorage.setSkinData(skinName, skinProps);
+                skinStorage.setSkinData(appliedSkinName, skinProps.get());
 
                 for (SRPlayer player : adapter.getOnlinePlayers()) {
-                    final String pName = player.getName();
-                    skinStorage.setSkinOfPlayer(pName, skinName); // Set player to "whitespaced" name then reload skin
-                    skinApplier.applySkin(player.getAs(Object.class), skinProps);
+                    skinStorage.setSkinNameOfPlayer(player.getName(), appliedSkinName); // Set player to "whitespaced" name then reload skin
+                    skinApplier.applySkin(player.getAs(Object.class), skinProps.get());
                 }
-                sender.sendMessage("§aSuccessfully set skin of all online players to " + skin);
-            } catch (NotPremiumException | SkinRequestException e) {
+                sender.sendMessage("§aSuccessfully set skin of all online players to " + appliedSkinName);
+            } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             }
         });
@@ -281,7 +280,7 @@ public final class SRCommand extends BaseCommand {
             for (SRPlayer player : adapter.getOnlinePlayers()) {
                 try {
                     skinApplier.applySkin(player.getAs(Object.class));
-                } catch (SkinRequestException | NotPremiumException ignored) {
+                } catch (DataRequestException ignored) {
                     sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
                 }
             }

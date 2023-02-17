@@ -20,8 +20,7 @@
 package net.skinsrestorer.api;
 
 import net.skinsrestorer.api.event.EventBus;
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
@@ -87,8 +86,8 @@ public interface SkinsRestorer {
      */
     MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property);
 
-    default void setSkin(String playerName, String skinName) throws SkinRequestException, NotPremiumException {
-        getSkinStorage().setSkinOfPlayer(playerName, skinName);
+    default void setSkin(String playerName, String skinName) throws DataRequestException {
+        getSkinStorage().setSkinNameOfPlayer(playerName, skinName);
         getSkinStorage().fetchSkinData(skinName);
     }
 }

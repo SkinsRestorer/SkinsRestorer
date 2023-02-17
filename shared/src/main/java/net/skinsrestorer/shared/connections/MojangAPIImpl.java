@@ -20,10 +20,9 @@
 package net.skinsrestorer.shared.connections;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.responses.AshconResponse;
@@ -32,8 +31,7 @@ import net.skinsrestorer.shared.connections.responses.profile.MojangProfileRespo
 import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MineToolsUUIDResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
-import net.skinsrestorer.shared.exception.NotPremiumExceptionShared;
-import net.skinsrestorer.shared.exception.SkinRequestExceptionShared;
+import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -55,39 +53,29 @@ public class MojangAPIImpl implements MojangAPI {
 
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
-    private final SkinsRestorerLocale locale;
     private final SRPlugin plugin;
 
-    /**
-     * Get skin property by player name
-     *
-     * @param playerName Premium username
-     * @return IProperty skin
-     * @throws NotPremiumException if the player is not premium
-     */
-    public Optional<SkinProperty> getSkin(String playerName) throws NotPremiumException {
-        String upperCaseName = playerName.trim().toUpperCase();
-        if (Arrays.stream(HardcodedSkins.values()).anyMatch(t -> t.name().equals(upperCaseName))) {
-            HardcodedSkins hardcodedSkin = HardcodedSkins.valueOf(upperCaseName);
-            return Optional.of(SkinProperty.of(hardcodedSkin.value, hardcodedSkin.signature));
-        }
-
+    @Override
+    public Optional<SkinProperty> getSkin(String playerName) throws DataRequestException {
         if (!C.validMojangUsername(playerName)) {
-            throw new NotPremiumExceptionShared(locale, playerName); //todo: throw a different error?
+            return Optional.empty();
         }
 
-        Optional<SkinProperty> property = getDataAshcon(playerName).flatMap(this::getPropertyAshcon);
-        if (property.isPresent()) {
-            return property;
-        } else {
+        String upperCaseName = playerName.trim().toUpperCase();
+        Optional<HardcodedSkins> hardCodedSkin = Arrays.stream(HardcodedSkins.values()).filter(t -> t.name().equals(upperCaseName)).findAny();
+        if (hardCodedSkin.isPresent()) {
+            return Optional.of(SkinProperty.of(hardCodedSkin.get().value, hardCodedSkin.get().signature));
+        }
+
+        try {
+            return getDataAshcon(playerName).flatMap(this::getPropertyAshcon);
+        } catch (DataRequestException e) {
             Optional<String> uuidResult = getUUIDStartMojang(playerName);
             if (uuidResult.isPresent()) {
-                playerName = uuidResult.get();
-            } else {
-                return Optional.empty();
+                return getProfileStartMojang(uuidResult.get());
             }
 
-            return getProfileStartMojang(playerName);
+            return Optional.empty();
         }
     }
 
@@ -96,173 +84,142 @@ public class MojangAPIImpl implements MojangAPI {
      *
      * @param playerName Mojang username of the player
      * @return String uuid trimmed (without dashes)
-     * @throws NotPremiumException if the player is not premium
      */
-    public Optional<String> getUUID(String playerName) throws NotPremiumException {
+    public Optional<String> getUUID(String playerName) throws DataRequestException {
         if (!C.validMojangUsername(playerName)) {
-            throw new NotPremiumExceptionShared(locale, playerName);
+            return Optional.empty();
         }
 
-        Optional<AshconResponse> ashconResponse = getDataAshcon(playerName);
-        if (ashconResponse.isPresent()) {
-            Optional<String> ashconUUID = getUUIDAshcon(ashconResponse.get());
-
-            if (ashconUUID.isPresent()) {
-                return ashconUUID;
-            }
+        try {
+            return getDataAshcon(playerName).flatMap(this::getUUIDAshcon);
+        } catch (DataRequestException e) {
+            return getUUIDStartMojang(playerName);
         }
-
-        return getUUIDStartMojang(playerName);
     }
 
-    private Optional<String> getUUIDStartMojang(String playerName) throws NotPremiumException {
-        Optional<String> mojang = getUUIDMojang(playerName);
-
-        if (mojang.isPresent()) {
-            return mojang;
-        } else {
+    private Optional<String> getUUIDStartMojang(String playerName) throws DataRequestException {
+        try {
+            return getUUIDMojang(playerName);
+        } catch (DataRequestException e) {
             return getUUIDMineTools(playerName);
         }
     }
 
-    protected Optional<AshconResponse> getDataAshcon(String uuidOrName) throws NotPremiumException {
-        try {
-            HttpResponse response = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
+    protected Optional<AshconResponse> getDataAshcon(String uuidOrName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
+        AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
-            AshconResponse obj = response.getBodyAs(AshconResponse.class);
+        if (response.getError() != null) {
+            logger.debug("Ashcon error: " + response.getError());
+            throw new DataRequestExceptionShared("Ashcon error: " + response.getError());
+        }
 
-            if (obj.getError() != null) {
-                logger.debug("Ashcon error: " + obj.getError());
-                return Optional.empty();
-            }
-
-            if (obj.getCode() == 404) {
-                throw new NotPremiumExceptionShared(locale, uuidOrName);
-            }
-
-            if (obj.getCode() != 0) { // TODO: Verify this is the way we want it to work
-                logger.debug("Ashcon error: " + obj.getCode());
-                return Optional.empty();
-            }
-
-            return Optional.of(obj);
-        } catch (Exception e) {
-            logger.debug("Failed to get data from Ashcon API for " + uuidOrName, e);
+        if (response.getCode() == 404) {
             return Optional.empty();
         }
+
+        if (response.getCode() != 0) {
+            logger.debug("Ashcon error: " + response.getCode());
+            throw new DataRequestExceptionShared("Ashcon error code: " + response.getCode());
+        }
+
+        return Optional.of(response);
     }
 
-    public Optional<String> getUUIDMojang(String playerName) throws NotPremiumException {
-        try {
-            HttpResponse response = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
+    public Optional<String> getUUIDMojang(String playerName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
 
-            if (response.getStatusCode() != 200 || response.getBody().isEmpty()) {
-                throw new NotPremiumExceptionShared(locale, playerName);
-            }
-
-            MojangUUIDResponse obj = response.getBodyAs(MojangUUIDResponse.class);
-            if (obj.getError() != null) {
-                logger.debug("Mojang error: " + obj.getError());
-                return Optional.empty();
-            }
-
-            return Optional.of(obj.getId());
-        } catch (Exception e) {
-            logger.debug("Failed to get UUID from Mojang for name " + playerName, e);
+        if (httpResponse.getStatusCode() == 204 || httpResponse.getStatusCode() == 404 || httpResponse.getBody().isEmpty()) {
             return Optional.empty();
         }
-    }
 
-    protected Optional<String> getUUIDMineTools(String playerName) throws NotPremiumException {
-        try {
-            HttpResponse response = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000);
-            MineToolsUUIDResponse mineToolsResponse = response.getBodyAs(MineToolsUUIDResponse.class);
-
-            return Optional.ofNullable(mineToolsResponse.getId());
-        } catch (Exception e) {
-            logger.debug("Failed to get UUID from MineTools for name " + playerName, e);
-            return Optional.empty();
+        MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
+        if (response.getError() != null) {
+            logger.debug("Mojang error: " + response.getError());
+            throw new DataRequestExceptionShared("Mojang error: " + response.getError());
         }
+
+        return Optional.of(response.getId());
     }
 
-    public Optional<SkinProperty> getProfile(String uuid) throws NotPremiumException {
-        Optional<SkinProperty> ashconProperty = getDataAshcon(uuid).flatMap(this::getPropertyAshcon);
+    protected Optional<String> getUUIDMineTools(String playerName) throws DataRequestException {
+        HttpResponse httpResponse = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000);
+        MineToolsUUIDResponse response = httpResponse.getBodyAs(MineToolsUUIDResponse.class);
 
-        if (ashconProperty.isPresent()) {
-            return ashconProperty;
-        } else {
+        if (response.getStatus() != null && response.getStatus().equals("ERR")) {
+            throw new DataRequestExceptionShared("MineTools error: " + response.getStatus());
+        }
+
+        return Optional.ofNullable(response.getId());
+    }
+
+    public Optional<SkinProperty> getProfile(String uuid) throws DataRequestException {
+        try {
+            return getDataAshcon(uuid).flatMap(this::getPropertyAshcon);
+        } catch (DataRequestException e) {
             return getProfileStartMojang(uuid);
         }
     }
 
-    private Optional<SkinProperty> getProfileStartMojang(String uuid) {
-        Optional<SkinProperty> mojangProperty = getProfileMojang(uuid);
-
-        if (mojangProperty.isPresent()) {
-            return mojangProperty;
-        } else {
+    private Optional<SkinProperty> getProfileStartMojang(String uuid) throws DataRequestException {
+        try {
+            return getProfileMojang(uuid);
+        } catch (DataRequestException e) {
             return getProfileMineTools(uuid);
         }
     }
 
-    public Optional<SkinProperty> getProfileMojang(String uuid) {
-        try {
-            HttpResponse response = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
-            MojangProfileResponse obj = response.getBodyAs(MojangProfileResponse.class);
-            if (obj.getProperties() == null) {
-                return Optional.empty();
-            }
-
-            PropertyResponse property = obj.getProperties()[0];
-            if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
-        } catch (Exception e) {
-            logger.debug("Failed to get profile from Mojang for uuid " + uuid, e);
+    public Optional<SkinProperty> getProfileMojang(String uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
+        MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
+        if (response.getProperties() == null) {
             return Optional.empty();
         }
+
+        PropertyResponse property = response.getProperties()[0];
+        if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
     }
 
-    protected Optional<SkinProperty> getProfileMineTools(String uuid) {
-        try {
-            HttpResponse response = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000);
-            MineToolsProfileResponse obj = response.getBodyAs(MineToolsProfileResponse.class);
-            if (obj.getRaw() == null) {
-                return Optional.empty();
-            }
-
-            MineToolsProfileResponse.Raw raw = obj.getRaw();
-            if (raw.getStatus() != null && raw.getStatus().equals("ERR")) {
-                throw new SkinRequestExceptionShared();
-            }
-
-            PropertyResponse property = raw.getProperties()[0];
-            if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
-        } catch (Exception e) {
-            logger.debug("Failed to get profile from MineTools for uuid " + uuid, e);
+    protected Optional<SkinProperty> getProfileMineTools(String uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000);
+        MineToolsProfileResponse response = httpResponse.getBodyAs(MineToolsProfileResponse.class);
+        if (response.getRaw() == null) {
             return Optional.empty();
         }
+
+        MineToolsProfileResponse.Raw raw = response.getRaw();
+        if (raw.getStatus() != null && raw.getStatus().equals("ERR")) {
+            throw new DataRequestExceptionShared("MineTools error: " + raw.getStatus());
+        }
+
+        PropertyResponse property = raw.getProperties()[0];
+        if (property.getValue().isEmpty() || property.getSignature().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
     }
 
     protected Optional<SkinProperty> getPropertyAshcon(AshconResponse response) {
-        if (response.getTextures() != null) {
-            AshconResponse.Textures textures = response.getTextures();
-            AshconResponse.Textures.Raw rawTextures = textures.getRaw();
-
-            if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature()));
-        } else {
+        AshconResponse.Textures textures = response.getTextures();
+        if (textures == null) {
             return Optional.empty();
         }
+
+        AshconResponse.Textures.Raw rawTextures = textures.getRaw();
+        if (rawTextures == null) {
+            return Optional.empty();
+        }
+
+        if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature()));
     }
 
     protected Optional<String> getUUIDAshcon(AshconResponse response) {
@@ -273,11 +230,11 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(response.getUuid().replace("-", ""));
     }
 
-    private HttpResponse readURL(String url, MetricsCounter.Service service) throws IOException {
+    private HttpResponse readURL(String url, MetricsCounter.Service service) throws DataRequestException {
         return readURL(url, service, 5_000);
     }
 
-    private HttpResponse readURL(String url, MetricsCounter.Service service, int timeout) throws IOException {
+    private HttpResponse readURL(String url, MetricsCounter.Service service, int timeout) throws DataRequestException {
         metricsCounter.increment(service);
 
         HttpClient client = new HttpClient(
@@ -290,7 +247,12 @@ public class MojangAPIImpl implements MojangAPI {
                 timeout
         );
 
-        return client.execute();
+        try {
+            return client.execute();
+        } catch (IOException e) {
+            logger.debug("Error while reading URL: " + url, e);
+            throw new DataRequestExceptionShared(e);
+        }
     }
 
     @RequiredArgsConstructor

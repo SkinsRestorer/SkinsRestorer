@@ -19,8 +19,7 @@
  */
 package net.skinsrestorer.api.interfaces;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 
 public interface SkinApplier<P> {
@@ -29,9 +28,9 @@ public interface SkinApplier<P> {
      * This is useful in combination with setSkinName.
      *
      * @param player Player to apply the skin to.
-     * @throws SkinRequestException
+     * @throws DataRequestException
      */
-    void applySkin(P player) throws SkinRequestException, NotPremiumException;
+    void applySkin(P player) throws DataRequestException;
 
     /**
      * Only Apply the skinName from the skin table/file.
@@ -39,10 +38,9 @@ public interface SkinApplier<P> {
      *
      * @param player   Player to apply the skin to.
      * @param skinName Skin to apply
-     * @throws SkinRequestException
-     * @throws NotPremiumException
+     * @throws DataRequestException
      */
-    void applySkin(P player, String skinName) throws SkinRequestException, NotPremiumException;
+    void applySkin(P player, String skinName) throws DataRequestException;
 
     /**
      * Applies the skin In other words, sets the skin data, but no changes will

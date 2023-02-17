@@ -19,8 +19,9 @@
  */
 package net.skinsrestorer.api.interfaces;
 
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public interface MineSkinAPI {
      * @param url         pointing to a skin image url
      * @param skinVariant can be null, steve or slim
      * @return Custom skin property containing "value" and "signature"
-     * @throws SkinRequestException on error
+     * @throws DataRequestException on error
      */
-    SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws SkinRequestException;
+    SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException;
 }

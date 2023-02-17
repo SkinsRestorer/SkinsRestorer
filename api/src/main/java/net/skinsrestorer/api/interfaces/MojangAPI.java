@@ -19,13 +19,26 @@
  */
 package net.skinsrestorer.api.interfaces;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.Optional;
 
 public interface MojangAPI {
-    Optional<String> getUUID(String playerName) throws NotPremiumException;
+    /**
+     * Get skin property by player name, this method will return empty if the player is not premium.
+     * It may return a hardcoded skin value, for example for "Steve" or "Alex".
+     * It does in theory a name -> uuid -> profile request.
+     * But internally it is faster than calling {@link #getUUID(String)} and {@link #getProfile(String)} separately.
+     * That is because we use ashcon.app, and we can directly get the profile from the name.
+     *
+     * @param playerName Premium player username
+     * @return Skin or empty if the player is not premium
+     * @throws DataRequestException If there was an error while getting the data
+     */
+    Optional<SkinProperty> getSkin(String playerName) throws DataRequestException;
 
-    Optional<SkinProperty> getProfile(String uuid) throws NotPremiumException;
+    Optional<String> getUUID(String playerName) throws DataRequestException;
+
+    Optional<SkinProperty> getProfile(String uuid) throws DataRequestException;
 }

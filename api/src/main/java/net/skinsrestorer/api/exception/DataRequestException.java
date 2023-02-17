@@ -19,13 +19,12 @@
  */
 package net.skinsrestorer.api.exception;
 
-/**
- * Thrown when a requested username does not belong to a premium Minecraft account.
- */
-public class NotPremiumException extends Exception {
-    private static final long serialVersionUID = 1905633222660120414L;
-
-    protected NotPremiumException(String message) {
+public class DataRequestException extends Exception {
+    protected DataRequestException(String message) {
         super(message);
+    }
+
+    protected DataRequestException(Throwable cause) {
+        super(cause);
     }
 }

@@ -20,8 +20,11 @@
 package net.skinsrestorer.shared.connections.http;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,11 @@ public class HttpResponse {
     private final String body;
     private final Map<String, List<String>> headers;
 
-    public <T> T getBodyAs(Class<T> clazz) {
-        return GSON.fromJson(body, clazz);
+    public <T> T getBodyAs(Class<T> clazz) throws DataRequestException {
+        try {
+            return GSON.fromJson(body, clazz);
+        } catch (JsonSyntaxException e) {
+            throw new DataRequestExceptionShared(e);
+        }
     }
 }

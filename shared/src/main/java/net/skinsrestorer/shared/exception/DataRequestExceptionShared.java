@@ -19,12 +19,20 @@
  */
 package net.skinsrestorer.shared.exception;
 
-import net.skinsrestorer.api.exception.NotPremiumException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 
-public class NotPremiumExceptionShared extends NotPremiumException {
-    public NotPremiumExceptionShared(SkinsRestorerLocale locale, String playerName) {
-        super(locale.getMessage(locale.getDefaultForeign(), Message.NOT_PREMIUM, playerName));
+public class DataRequestExceptionShared extends DataRequestException {
+    public DataRequestExceptionShared(String message) {
+        super(message);
+    }
+
+    public DataRequestExceptionShared(Throwable cause) {
+        super(cause);
+    }
+
+    public DataRequestExceptionShared(SkinsRestorerLocale locale, MessageKeyGetter key, Object... args) {
+        this(locale.getMessage(locale.getDefaultForeign(), key, args));
     }
 }

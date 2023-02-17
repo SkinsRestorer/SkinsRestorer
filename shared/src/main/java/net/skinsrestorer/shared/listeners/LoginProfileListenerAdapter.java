@@ -21,10 +21,8 @@ package net.skinsrestorer.shared.listeners;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.NotPremiumException;
-import net.skinsrestorer.api.exception.SkinRequestException;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.util.Pair;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
@@ -47,7 +45,7 @@ public final class LoginProfileListenerAdapter<R> {
         return event.runAsync(() -> {
             try {
                 handleAsync(event).ifPresent(event::setResultProperty);
-            } catch (SkinRequestException | NotPremiumException e) {
+            } catch (DataRequestException e) {
                 logger.debug(e);
             }
         });
@@ -57,17 +55,20 @@ public final class LoginProfileListenerAdapter<R> {
         return settings.getProperty(AdvancedConfig.DISABLE_ON_JOIN_SKINS) || (settings.getProperty(LoginConfig.NO_SKIN_IF_LOGIN_CANCELED) && event.isCancelled());
     }
 
-    private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws SkinRequestException, NotPremiumException {
+    private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
         String playerName = event.getPlayerName();
-        Pair<SkinProperty, Boolean> result = skinStorage.getDefaultSkinForPlayer(playerName);
+        Optional<SkinProperty> skinOfPlayer = skinStorage.getSkinOfPlayer(playerName);
 
-        // Skip skin if: online mode, no custom skin set, always apply not enabled and default skins for premium not enabled
+        if (skinOfPlayer.isPresent()) {
+            return skinOfPlayer;
+        }
+
+        // Skip default skin if: no custom skin set, online mode, always apply not enabled and default skins for premium not enabled
         if (event.isOnline()
-                && !result.getRight()
                 && !settings.getProperty(LoginConfig.ALWAYS_APPLY_PREMIUM)
                 && !settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM))
             return Optional.empty();
 
-        return Optional.of(result.getLeft());
+        return skinStorage.getDefaultSkinForPlayer(playerName);
     }
 }
