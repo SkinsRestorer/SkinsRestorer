@@ -21,7 +21,6 @@ package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.util.Pair;
 
 import java.util.Optional;
 
