@@ -42,9 +42,7 @@ Implementation:
 ## :link: Links
 
 - [Spigot Page](https://www.spigotmc.org/resources/2124)
-- [VelocityPowered Page](https://forums.velocitypowered.com/t/142)
 - [Sponge Ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
-- [PaperMC](https://papermc.io/forums/t/1996)
 - [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki)
 - [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX)
 - [Discord](https://discord.me/skinsrestorer/)
