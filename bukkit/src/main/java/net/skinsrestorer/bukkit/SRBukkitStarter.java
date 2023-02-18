@@ -97,19 +97,17 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
         // Detect MundoSK
         if (server.getPluginManager().getPlugin("MundoSK") != null) {
-            try {
-                try (BufferedReader reader = Files.newBufferedReader(plugin.getDataFolder().getParent().resolve("MundoSK").resolve("config.yml"))) {
-                    AxiomConfiguration config = new AxiomConfiguration();
-                    config.load(reader);
+            try (BufferedReader reader = Files.newBufferedReader(plugin.getDataFolder().getParent().resolve("MundoSK").resolve("config.yml"))) {
+                AxiomConfiguration config = new AxiomConfiguration();
+                config.load(reader);
 
-                    if (config.getBoolean("enable_custom_skin_and_tablist")) {
-                        logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                        logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
-                        logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
-                        logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
-                        logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
-                        logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                    }
+                if (config.getBoolean("enable_custom_skin_and_tablist")) {
+                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                    logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
+                    logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
+                    logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
+                    logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
+                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
                 }
             } catch (Exception ignored) {
             }
@@ -136,15 +134,9 @@ public class SRBukkitStarter implements SRPlatformStarter {
                     String subChannel = in.readUTF();
 
                     if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
-                        try {
-                            skinApplierBukkit.applySkin(player, SkinProperty.of(in.readUTF(), in.readUTF()));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        skinApplierBukkit.updateSkin(player);
+                        skinApplierBukkit.applySkin(player, SkinProperty.of(in.readUTF(), in.readUTF()));
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }));
@@ -175,7 +167,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
                         adapter.runSync(() -> player.openInventory(inventory));
                     }
-                } catch (Exception e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }));
