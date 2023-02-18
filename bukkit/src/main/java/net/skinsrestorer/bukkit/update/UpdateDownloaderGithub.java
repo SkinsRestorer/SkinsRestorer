@@ -102,7 +102,7 @@ public class UpdateDownloaderGithub {
             return false; // Version is no update
         }
 
-        Path pluginFile = getPluginFile(); // /plugins/XXX.jar
+        Path pluginFile = getPluginFile(adapter.getPluginInstance()); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         try {
             Files.createDirectories(updateFolder);
@@ -130,11 +130,11 @@ public class UpdateDownloaderGithub {
         return true;
     }
 
-    private Path getPluginFile() {
+    private Path getPluginFile(JavaPlugin plugin) {
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
-            return ((File) method.invoke(adapter.getPluginInstance())).toPath();
+            return ((File) method.invoke(plugin)).toPath();
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Could not get plugin file", e);
         }

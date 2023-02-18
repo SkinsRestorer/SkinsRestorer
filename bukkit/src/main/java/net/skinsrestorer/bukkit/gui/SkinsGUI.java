@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -135,7 +134,7 @@ public class SkinsGUI {
         SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
 
         List<String> lore = new ArrayList<>();
-        lore.add(C.c(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
+        lore.add(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN));
         Objects.requireNonNull(sm).setDisplayName(name);
         sm.setLore(lore);
 

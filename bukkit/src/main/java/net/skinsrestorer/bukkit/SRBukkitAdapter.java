@@ -23,18 +23,22 @@ import ch.jalu.injector.Injector;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.PaperCommandManager;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.utils.IOExceptionConsumer;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.spigot.SpigotUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -42,6 +46,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -109,6 +116,41 @@ public class SRBukkitAdapter implements SRServerAdapter {
     @Override
     public void runSync(Runnable runnable) {
         server.getScheduler().runTask(pluginInstance, runnable);
+    }
+
+    @Override
+    public boolean determineProxy() {
+        if (PaperLib.isSpigot() && SpigotUtil.isRealSpigot(server)) {
+            if (SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord")) {
+                return true;
+            }
+        }
+
+        // sometimes it does not get the right "bungeecord: true" setting
+        // we will try it again with the old function from SR 13.3
+        Path spigotFile = Paths.get("spigot.yml");
+        if (Files.exists(spigotFile)) {
+            if (YamlConfiguration.loadConfiguration(spigotFile.toFile()).getBoolean("settings.bungeecord")) {
+                return true;
+            }
+        }
+
+        if (PaperLib.isPaper()) {
+            //load paper velocity-support.enabled to allow velocity compatability.
+            Path oldPaperFile = Paths.get("paper.yml");
+            if (Files.exists(oldPaperFile)) {
+                if (YamlConfiguration.loadConfiguration(oldPaperFile.toFile()).getBoolean("settings.velocity-support.enabled")) {
+                    return true;
+                }
+            }
+
+            YamlConfiguration config = PaperUtil.getPaperConfig(server);
+
+            return config != null
+                    && (config.getBoolean("settings.velocity-support.enabled") || config.getBoolean("proxies.velocity.enabled"));
+        }
+
+        return false;
     }
 
     @Override

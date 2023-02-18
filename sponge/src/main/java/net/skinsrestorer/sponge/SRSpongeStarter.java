@@ -24,12 +24,9 @@ import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
@@ -43,16 +40,9 @@ public class SRSpongeStarter implements SRPlatformStarter {
     private final SRSpongeAdapter adapter;
     private final SRPlugin plugin;
     private final Game game;
-    private final SRLogger logger;
 
     @Override
     public void pluginStartup() {
-        plugin.initUpdateCheck();
-
-        // Init config files
-        plugin.loadConfig();
-        plugin.loadLocales();
-
         plugin.initMineSkinAPI();
 
         // Init storage

@@ -20,19 +20,31 @@
 package net.skinsrestorer.shared.platform;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 
+import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRServerPlugin {
     @Getter
     @Setter
     private boolean proxyMode;
+    private final SRPlugin plugin;
+    private final SRServerAdapter serverAdapter;
+    private final SRLogger logger;
 
     @SuppressWarnings("unchecked")
     public static Map<String, String> convertToObjectV2(byte[] byteArr) {
@@ -44,5 +56,52 @@ public class SRServerPlugin {
             e.printStackTrace();
             return Collections.emptyMap();
         }
+    }
+
+    public void checkProxyMode() {
+        proxyMode = checkProxy();
+
+        try {
+            Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
+            if (proxyMode) {
+                Files.createDirectories(plugin.getDataFolder());
+
+                try (InputStream in = serverAdapter.getResource("proxy_warning.txt")) {
+                    if (in == null) {
+                        throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
+                    }
+                    // Always replace the file to make sure it's up-to-date.
+                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+                }
+            } else {
+                Files.deleteIfExists(warning);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (proxyMode) {
+            logger.info("-------------------------/Warning\\-------------------------");
+            logger.info("This plugin is running in PROXY mode!");
+            logger.info("You have to do all configuration at config file");
+            logger.info("inside your BungeeCord/Velocity server.");
+            logger.info("(<proxy>/plugins/SkinsRestorer/)");
+            logger.info("-------------------------\\Warning/-------------------------");
+        }
+    }
+
+    private boolean checkProxy() {
+        Path proxyModeEnabled = plugin.getDataFolder().resolve("enableProxyMode.txt");
+        Path proxyModeDisabled = plugin.getDataFolder().resolve("disableProxyMode.txt");
+
+        if (Files.exists(proxyModeEnabled)) {
+            return true;
+        }
+
+        if (Files.exists(proxyModeDisabled)) {
+            return false;
+        }
+
+        return serverAdapter.determineProxy();
     }
 }

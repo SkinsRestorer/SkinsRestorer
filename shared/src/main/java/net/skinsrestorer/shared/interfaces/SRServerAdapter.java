@@ -21,4 +21,6 @@ package net.skinsrestorer.shared.interfaces;
 
 public interface SRServerAdapter extends SRPlatformAdapter {
     void runSync(Runnable runnable);
+
+    boolean determineProxy();
 }

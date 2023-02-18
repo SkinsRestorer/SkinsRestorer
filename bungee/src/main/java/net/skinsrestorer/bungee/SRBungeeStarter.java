@@ -28,12 +28,9 @@ import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.PluginMessageListener;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 
@@ -43,15 +40,8 @@ public class SRBungeeStarter implements SRPlatformStarter {
     private final SRBungeeAdapter adapter;
     private final SRPlugin plugin;
     private final ProxyServer proxy;
-    private final SRLogger logger;
 
     public void pluginStartup() {
-        plugin.initUpdateCheck();
-
-        // Init config files
-        plugin.loadConfig();
-        plugin.loadLocales();
-
         plugin.initMineSkinAPI();
 
         // Init storage

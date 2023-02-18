@@ -27,12 +27,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.ProxyGUICommand;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.utils.SharedMethods;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.PluginMessageListener;
@@ -45,16 +42,9 @@ public class SRVelocityStarter implements SRPlatformStarter {
     private final SRVelocityAdapter adapter;
     private final SRPlugin plugin;
     private final ProxyServer proxy;
-    private final SRLogger logger;
 
     @Override
     public void pluginStartup() {
-        plugin.initUpdateCheck();
-
-        // Init config files
-        plugin.loadConfig();
-        plugin.loadLocales();
-
         plugin.initMineSkinAPI();
 
         // Init storage

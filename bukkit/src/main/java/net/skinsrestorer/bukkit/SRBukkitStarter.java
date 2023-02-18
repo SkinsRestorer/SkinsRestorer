@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import co.aikar.commands.CommandManager;
-import io.papermc.lib.PaperLib;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.axiom.AxiomConfiguration;
@@ -35,31 +34,26 @@ import net.skinsrestorer.bukkit.skinrefresher.NOOPRefresher;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
-import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.AdvancedConfig;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
-import net.skinsrestorer.shared.utils.SharedMethods;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import net.skinsrestorer.spigot.SpigotUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -73,9 +67,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
     @Override
     public void pluginStartup() throws InitializeException {
-        // Init config files // TODO: Split config files
-        plugin.loadConfig();
-
         SkinApplierBukkit skinApplierBukkit;
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
@@ -123,14 +114,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
             } catch (Exception ignored) {
             }
         }
-
-        // Check if we are running in proxy mode
-        checkProxyMode();
-
-        plugin.initUpdateCheck();
-
-        // Init locale
-        plugin.loadLocales();
 
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 
@@ -221,82 +204,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
                     server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
                 }
             }
-        }
-    }
-
-    private void checkProxyMode() {
-        serverPlugin.setProxyMode(false);
-        try {
-            if (PaperLib.isSpigot() && SpigotUtil.isRealSpigot(server)) {
-                serverPlugin.setProxyMode(SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord"));
-            }
-            // sometimes it does not get the right "bungeecord: true" setting
-            // we will try it again with the old function from SR 13.3
-            Path spigotFile = Paths.get("spigot.yml");
-            if (!serverPlugin.isProxyMode() && Files.exists(spigotFile)) {
-                serverPlugin.setProxyMode(YamlConfiguration.loadConfiguration(spigotFile.toFile()).getBoolean("settings.bungeecord"));
-            }
-
-            if (PaperLib.isPaper()) {
-                //load paper velocity-support.enabled to allow velocity compatability.
-                Path oldPaperFile = Paths.get("paper.yml");
-                if (!serverPlugin.isProxyMode() && Files.exists(oldPaperFile)) {
-                    serverPlugin.setProxyMode(YamlConfiguration.loadConfiguration(oldPaperFile.toFile()).getBoolean("settings.velocity-support.enabled"));
-                }
-
-                YamlConfiguration config = PaperUtil.getPaperConfig(server);
-
-                if (config != null) {
-                    if (!serverPlugin.isProxyMode() && (config.getBoolean("settings.velocity-support.enabled")
-                            || config.getBoolean("proxies.velocity.enabled"))) {
-                        serverPlugin.setProxyMode(true);
-                    }
-                }
-            }
-            Path proxyModeEnabled = plugin.getDataFolder().resolve("enableProxyMode.txt");
-            Path proxyModeDisabled = plugin.getDataFolder().resolve("disableProxyMode.txt");
-
-            if (!serverPlugin.isProxyMode() && Files.exists(proxyModeEnabled)) {
-                serverPlugin.setProxyMode(true);
-                return;
-            }
-
-            if (Files.exists(proxyModeDisabled)) {
-                serverPlugin.setProxyMode(false);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            Path warning = plugin.getDataFolder().resolve("(README) Use proxy config for settings! (README).txt");
-            if (serverPlugin.isProxyMode()) {
-                Files.createDirectories(plugin.getDataFolder());
-
-                try (InputStream in = adapter.getResource("proxy_warning.txt")) {
-                    if (in == null) {
-                        throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
-                    }
-                    // Always replace the file to make sure it's up-to-date.
-                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                Files.deleteIfExists(warning);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (serverPlugin.isProxyMode()) {
-            logger.info("-------------------------/Warning\\-------------------------");
-            logger.info("This plugin is running in PROXY mode!");
-            logger.info("You have to do all configuration at config file");
-            logger.info("inside your BungeeCord/Velocity server.");
-            logger.info("(<proxy>/plugins/SkinsRestorer/)");
-            logger.info("-------------------------\\Warning/-------------------------");
         }
     }
 }

@@ -31,6 +31,8 @@ import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.acf.CommandPropertiesManager;
+import net.skinsrestorer.shared.acf.CommandReplacements;
 import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -52,8 +54,6 @@ import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheck;
-import net.skinsrestorer.shared.acf.CommandPropertiesManager;
-import net.skinsrestorer.shared.acf.CommandReplacements;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.MetricsBase;
@@ -367,13 +367,26 @@ public class SRPlugin {
 
         EventBusImpl sharedEventBus = new EventBusImpl();
         injector.register(EventBusImpl.class, sharedEventBus);
+
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+
+        if (serverPlugin != null) {
+            // Check if we are running in proxy mode
+            serverPlugin.checkProxyMode();
+        }
+
+        // Init config files
+        loadConfig();
+        loadLocales();
     }
 
     public void startupEnd() {
-        boolean runServiceCheck = true;
-        SRServerPlugin plugin = injector.getIfAvailable(SRServerPlugin.class);
+        initUpdateCheck();
 
-        if (plugin != null && plugin.isProxyMode()) {
+        boolean runServiceCheck = true;
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+
+        if (serverPlugin != null && serverPlugin.isProxyMode()) {
             runServiceCheck = false;
         }
 

@@ -90,6 +90,11 @@ public class SRSpongeAdapter implements SRServerAdapter {
     }
 
     @Override
+    public boolean determineProxy() {
+        return false; // TODO: Implement
+    }
+
+    @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
         game.getScheduler().createTaskBuilder().execute(runnable).interval(interval, timeUnit).delay(delay, timeUnit).submit(pluginInstance);
     }
