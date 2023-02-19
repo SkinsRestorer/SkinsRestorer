@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.listener;
+package net.skinsrestorer.bukkit.utils;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -33,7 +33,7 @@ public class EventWrapper {
     private final SRBukkitAdapter plugin;
     private final SkinApplierBukkit skinApplier;
 
-    protected SRLoginProfileEvent<Void> wrap(PlayerEvent event) {
+    public SRLoginProfileEvent<Void> wrap(PlayerEvent event) {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {

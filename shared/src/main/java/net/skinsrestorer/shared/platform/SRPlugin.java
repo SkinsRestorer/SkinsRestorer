@@ -38,7 +38,9 @@ import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
+import net.skinsrestorer.shared.commands.ServerGUICommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -105,7 +107,7 @@ public class SRPlugin {
         this.platform = platform;
     }
 
-    public CommandManager<?, ?, ?, ?, ?, ?> sharedInitCommands() {
+    public void initCommands() {
         this.manager = adapter.createCommandManager();
         injector.register(CommandManager.class, manager);
 
@@ -118,7 +120,14 @@ public class SRPlugin {
         manager.registerCommand(injector.newInstance(SkinCommand.class));
         manager.registerCommand(injector.newInstance(SRCommand.class));
 
-        return manager;
+        if (injector.getIfAvailable(SRServerPlugin.class) != null) {
+            manager.registerCommand(injector.newInstance(ServerGUICommand.class));
+        } else if (injector.getIfAvailable(SRProxyPlugin.class) != null) {
+            manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
+        } else {
+            throw new IllegalStateException("Unknown platform");
+        }
+
     }
 
     public void registerConditions() {

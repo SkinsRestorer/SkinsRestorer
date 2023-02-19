@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit.listener;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.bukkit.utils.EventWrapper;
 import net.skinsrestorer.shared.config.ServerConfig;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import org.bukkit.event.EventHandler;

@@ -25,7 +25,6 @@ import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;
@@ -34,13 +33,13 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public final class SRPluginMessageAdapter {
-    private final SRLogger logger;
+public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
     private final SRProxyAdapter plugin;
     private final CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private final SRProxyPlugin proxyPlugin;
 
-    public void handlePluginMessage(SRPluginMessageEvent event) {
+    public void handlePluginMessage(SRProxyMessageEvent event) {
         if (event.isCancelled()) {
             return;
         }
@@ -64,12 +63,11 @@ public final class SRPluginMessageAdapter {
             }
 
             SRProxyPlayer player = optional.get();
-
             switch (subChannel) {
                 // sr:messagechannel
                 case "getSkins":
                     int page = Math.min(in.readInt(), 999);
-                    SRProxyPlugin.sendPage(page, player, logger, skinStorage);
+                    proxyPlugin.sendPage(page, player, skinStorage);
                     break;
                 case "clearSkin":
                     manager.getRootCommand("skin").execute(

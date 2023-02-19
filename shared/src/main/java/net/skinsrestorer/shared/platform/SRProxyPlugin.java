@@ -53,7 +53,7 @@ public class SRProxyPlugin {
         return byteOut.toByteArray();
     }
 
-    public static void sendPage(int page, SRProxyPlayer player, SRLogger logger, SkinStorageImpl skinStorage) {
+    public void sendPage(int page, SRProxyPlayer player, SkinStorageImpl skinStorage) {
         int skinNumber = 36 * page;
 
         byte[] ba = convertToByteArray(skinStorage.getSkins(skinNumber));

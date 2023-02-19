@@ -17,33 +17,32 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.listeners;
+package net.skinsrestorer.velocity.listener;
 
+import com.velocitypowered.api.event.EventHandler;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.proxy.ServerConnection;
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.ServerConnection;
-import net.md_5.bungee.api.event.PluginMessageEvent;
-import net.md_5.bungee.api.plugin.Listener;
-import net.md_5.bungee.event.EventHandler;
-import net.skinsrestorer.shared.listeners.SRPluginMessageAdapter;
-import net.skinsrestorer.shared.listeners.SRPluginMessageEvent;
+import net.skinsrestorer.shared.listeners.SRProxyMessageAdapter;
+import net.skinsrestorer.shared.listeners.SRProxyMessageEvent;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class PluginMessageListener implements Listener {
-    private final SRPluginMessageAdapter adapter;
+public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
+    private final SRProxyMessageAdapter adapter;
 
-    @EventHandler
-    public void onPluginMessage(PluginMessageEvent event) {
-        adapter.handlePluginMessage(new SRPluginMessageEvent() {
+    @Override
+    public void execute(PluginMessageEvent event) {
+        adapter.handlePluginMessage(new SRProxyMessageEvent() {
             @Override
             public boolean isCancelled() {
-                return event.isCancelled();
+                return !event.getResult().isAllowed();
             }
 
             @Override
             public void setCancelled(boolean cancelled) {
-                event.setCancelled(cancelled);
+                event.setResult(PluginMessageEvent.ForwardResult.handled());
             }
 
             @Override
@@ -53,12 +52,12 @@ public class PluginMessageListener implements Listener {
 
             @Override
             public boolean isServerConnection() {
-                return event.getSender() instanceof ServerConnection;
+                return event.getSource() instanceof ServerConnection;
             }
 
             @Override
             public String getTag() {
-                return event.getTag();
+                return event.getIdentifier().getId();
             }
         });
     }

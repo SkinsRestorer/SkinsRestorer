@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-public interface SRPluginMessageEvent {
+public interface SRProxyMessageEvent {
     boolean isCancelled();
 
     void setCancelled(boolean cancelled);

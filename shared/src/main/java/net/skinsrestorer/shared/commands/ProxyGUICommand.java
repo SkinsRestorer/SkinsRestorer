@@ -42,6 +42,7 @@ import javax.inject.Inject;
 public final class ProxyGUICommand extends BaseCommand {
     private final SRLogger logger;
     private final SkinStorageImpl skinStorage;
+    private final SRProxyPlugin proxyPlugin;
 
     @Default
     private void onDefault(SRPlayer player) {
@@ -51,6 +52,6 @@ public final class ProxyGUICommand extends BaseCommand {
 
         player.sendMessage(Message.SKINSMENU_OPEN);
 
-        SRProxyPlugin.sendPage(0, (SRProxyPlayer) player, logger, skinStorage);
+        proxyPlugin.sendPage(0, (SRProxyPlayer) player, skinStorage);
     }
 }

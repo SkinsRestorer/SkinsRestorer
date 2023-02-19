@@ -20,14 +20,12 @@
 package net.skinsrestorer.bungee;
 
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
-import net.skinsrestorer.bungee.listeners.PluginMessageListener;
-import net.skinsrestorer.shared.commands.ProxyGUICommand;
+import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -62,12 +60,11 @@ public class SRBungeeStarter implements SRPlatformStarter {
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = plugin.sharedInitCommands();
-        manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
+        plugin.initCommands();
 
         // Init message channel
         proxy.registerChannel("sr:skinchange");
         proxy.registerChannel("sr:messagechannel");
-        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(PluginMessageListener.class));
+        proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(ProxyMessageListener.class));
     }
 }

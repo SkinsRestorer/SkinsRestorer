@@ -46,20 +46,25 @@ import java.util.function.Consumer;
 
 import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinsGUI {
     private static final int HEAD_COUNT_PER_PAGE = 36;
+    private final SkinsRestorerLocale locale;
+    private final SRLogger logger;
+    private final Server server;
+    private final SkinStorageImpl skinStorage;
 
-    public static Inventory createGUI(Consumer<ClickEventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SkinStorageImpl skinStorage, SRForeign player, int page) {
+    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page) {
         if (page > 999) {
             page = 999;
         }
 
         int skinNumber = HEAD_COUNT_PER_PAGE * page;
 
-        return createGUI(callback, locale, logger, server, player, page, skinStorage.getSkins(skinNumber));
+        return createGUI(callback, player, page, skinStorage.getSkins(skinNumber));
     }
 
-    public static Inventory createGUI(Consumer<ClickEventInfo> callback, SkinsRestorerLocale locale, SRLogger logger, Server server, SRForeign player, int page, Map<String, String> skinsList) {
+    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback);
         Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
@@ -192,13 +197,10 @@ public class SkinsGUI {
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<ClickEventInfo> {
-        private final Server server;
         private final SRServerAdapter adapter;
-        private final SkinsRestorerLocale locale;
-        private final SRLogger logger;
-        private final SkinStorageImpl skinStorage;
         private final WrapperBukkit wrapper;
         private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
+        private final SkinsGUI gui;
 
         @Override
         public void accept(ClickEventInfo event) {
@@ -218,8 +220,7 @@ public class SkinsGUI {
                     break;
                 case GREEN_STAINED_GLASS_PANE:
                     adapter.runAsync(() -> {
-                        Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
-                                wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
+                        Inventory newInventory = gui.createGUI(this, wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
 
                         adapter.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));
@@ -227,8 +228,7 @@ public class SkinsGUI {
                     break;
                 case YELLOW_STAINED_GLASS_PANE:
                     adapter.runAsync(() -> {
-                        Inventory newInventory = createGUI(this, locale, logger, server, skinStorage,
-                                wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
+                        Inventory newInventory = gui.createGUI(this, wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
 
                         adapter.runSync(() ->
                                 event.getPlayer().openInventory(newInventory));

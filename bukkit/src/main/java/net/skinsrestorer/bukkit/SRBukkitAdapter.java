@@ -27,6 +27,7 @@ import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.utils.IOExceptionConsumer;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.paper.PaperUtil;
@@ -40,6 +41,7 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
@@ -49,10 +51,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -136,7 +135,7 @@ public class SRBukkitAdapter implements SRServerAdapter {
         }
 
         if (PaperLib.isPaper()) {
-            //load paper velocity-support.enabled to allow velocity compatability.
+            // Load paper velocity-support.enabled to allow velocity compatability.
             Path oldPaperFile = Paths.get("paper.yml");
             if (Files.exists(oldPaperFile)) {
                 if (YamlConfiguration.loadConfiguration(oldPaperFile.toFile()).getBoolean("settings.velocity-support.enabled")) {
@@ -151,6 +150,27 @@ public class SRBukkitAdapter implements SRServerAdapter {
         }
 
         return false;
+    }
+
+    @Override
+    public void openServerGUI(SRPlayer player, int page) {
+        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(injector.getSingleton(SkinsGUI.ServerGUIActions.class),
+                player, page);
+
+        runSync(() -> player.getAs(Player.class).openInventory(inventory));
+    }
+
+    @Override
+    public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
+        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(injector.getSingleton(SkinsGUI.ProxyGUIActions.class),
+                player, page, skinList);
+
+        runSync(() -> player.getAs(Player.class).openInventory(inventory));
+    }
+
+    @Override
+    public Optional<SRPlayer> getPlayer(String name) {
+        return Optional.ofNullable(server.getPlayer(name)).map(p -> injector.getSingleton(WrapperBukkit.class).player(p));
     }
 
     @Override

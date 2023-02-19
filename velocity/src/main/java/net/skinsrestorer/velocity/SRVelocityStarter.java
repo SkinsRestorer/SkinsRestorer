@@ -20,19 +20,17 @@
 package net.skinsrestorer.velocity;
 
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
-import net.skinsrestorer.velocity.listener.PluginMessageListener;
+import net.skinsrestorer.velocity.listener.ProxyMessageListener;
 
 import javax.inject.Inject;
 
@@ -66,12 +64,11 @@ public class SRVelocityStarter implements SRPlatformStarter {
         proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(GameProfileRequest.class));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = plugin.sharedInitCommands();
-        manager.registerCommand(injector.newInstance(ProxyGUICommand.class));
+        plugin.initCommands();
 
         // Init message channel
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
-        proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(PluginMessageListener.class));
+        proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
     }
 }

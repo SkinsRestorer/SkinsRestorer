@@ -17,19 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.listeners;
 
-import java.util.Map;
-import java.util.Optional;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 
-public interface SRServerAdapter extends SRPlatformAdapter {
-    void runSync(Runnable runnable);
+public interface SRServerMessageEvent {
+    String getTag();
 
-    boolean determineProxy();
+    SRPlayer getPlayer();
 
-    void openServerGUI(SRPlayer player, int page);
-
-    void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList);
-
-    Optional<SRPlayer> getPlayer(String name);
+    byte[] getData();
 }

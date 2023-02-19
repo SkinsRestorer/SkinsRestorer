@@ -21,20 +21,15 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.axiom.AxiomConfiguration;
-import net.skinsrestorer.bukkit.commands.GUICommand;
-import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
+import net.skinsrestorer.bukkit.listener.ServerMessageListener;
 import net.skinsrestorer.bukkit.skinrefresher.NOOPRefresher;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
@@ -46,16 +41,12 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -95,8 +86,6 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
         checkMundoSK();
 
-        WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
-
         // Init SkinsGUI click listener even when in ProxyMode
         server.getPluginManager().registerEvents(new InventoryListener(), adapter.getPluginInstance());
 
@@ -108,52 +97,12 @@ public class SRBukkitStarter implements SRPlatformStarter {
                 plugin.registerAPI();
             }
 
+            ServerMessageListener serverMessageListener = injector.getSingleton(ServerMessageListener.class);
             server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:skinchange");
-            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:skinchange", (channel, player, message) -> adapter.runAsync(() -> {
-                DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
-
-                try {
-                    String subChannel = in.readUTF();
-
-                    if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
-                        skinApplierBukkit.applySkin(player, SkinProperty.of(in.readUTF(), in.readUTF()));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }));
+            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:skinchange", serverMessageListener);
 
             server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel");
-            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel", (channel, channelPlayer, message) -> adapter.runAsync(() -> {
-                DataInputStream in = new DataInputStream(new ByteArrayInputStream(message));
-
-                try {
-                    String subChannel = in.readUTF();
-
-                    if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
-                        Player player = server.getPlayer(in.readUTF());
-                        if (player == null) {
-                            return;
-                        }
-
-                        int page = in.readInt();
-
-                        short len = in.readShort();
-                        byte[] msgBytes = new byte[len];
-                        in.readFully(msgBytes);
-
-                        Map<String, String> skinList = SRServerPlugin.convertToObjectV2(msgBytes);
-
-                        Inventory inventory = SkinsGUI.createGUI(injector.getSingleton(SkinsGUI.ProxyGUIActions.class),
-                                injector.getSingleton(SkinsRestorerLocale.class),
-                                logger, server, wrapper.player(player), page, skinList);
-
-                        adapter.runSync(() -> player.openInventory(inventory));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }));
+            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel", serverMessageListener);
         } else {
             plugin.initMineSkinAPI();
             plugin.initStorage();
@@ -163,9 +112,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
             plugin.registerAPI();
 
             // Init commands
-            CommandManager<?, ?, ?, ?, ?, ?> manager = plugin.sharedInitCommands();
-
-            manager.registerCommand(injector.newInstance(GUICommand.class));
+            plugin.initCommands();
 
             // Init listener
             if (injector.getSingleton(SettingsManager.class).getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)

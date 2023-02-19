@@ -41,6 +41,8 @@ import org.spongepowered.api.profile.property.ProfileProperty;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -92,6 +94,21 @@ public class SRSpongeAdapter implements SRServerAdapter {
     @Override
     public boolean determineProxy() {
         return false; // TODO: Implement
+    }
+
+    @Override
+    public void openServerGUI(SRPlayer player, int page) {
+        // TODO: Implement
+    }
+
+    @Override
+    public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
+        // TODO: Implement
+    }
+
+    @Override
+    public Optional<SRPlayer> getPlayer(String name) {
+        return game.getServer().getPlayer(name).map(p -> injector.getSingleton(WrapperSponge.class).player(p));
     }
 
     @Override

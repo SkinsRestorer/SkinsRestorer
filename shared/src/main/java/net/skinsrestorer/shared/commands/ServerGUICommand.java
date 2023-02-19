@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.commands;
+package net.skinsrestorer.shared.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.CommandAlias;
@@ -25,16 +25,12 @@ import co.aikar.commands.annotation.CommandPermission;
 import co.aikar.commands.annotation.Conditions;
 import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 
 import javax.inject.Inject;
 
@@ -43,21 +39,18 @@ import javax.inject.Inject;
 @CommandPermission("%skins")
 @Conditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class GUICommand extends BaseCommand {
-    private final SRBukkitAdapter plugin;
+public class ServerGUICommand extends BaseCommand {
+    private final SRServerAdapter plugin;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SkinStorageImpl skinStorage;
-    private final SkinsGUI.ServerGUIActions serverGUIActions;
-    private final Server server;
 
     @Default
     public void onDefault(SRPlayer srPlayer) {
         plugin.runAsync(() -> {
             srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            Inventory inventory = SkinsGUI.createGUI(serverGUIActions, locale, logger, server, skinStorage, srPlayer, 0);
-            plugin.runSync(() -> srPlayer.getAs(Player.class).openInventory(inventory));
+            plugin.openServerGUI(srPlayer, 0);
         });
     }
 }

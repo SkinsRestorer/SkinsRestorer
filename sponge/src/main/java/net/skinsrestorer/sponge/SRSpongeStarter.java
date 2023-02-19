@@ -20,10 +20,7 @@
 package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.SRCommand;
-import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.platform.SRPlugin;
@@ -62,9 +59,6 @@ public class SRSpongeStarter implements SRPlatformStarter {
         game.getEventManager().registerListener(adapter.getPluginInstance(), ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
 
         // Init commands
-        CommandManager<?, ?, ?, ?, ?, ?> manager = plugin.sharedInitCommands();
-
-        manager.registerCommand(injector.getSingleton(SkinCommand.class));
-        manager.registerCommand(injector.newInstance(SRCommand.class));
+        plugin.initCommands();
     }
 }
