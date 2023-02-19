@@ -2,7 +2,7 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("sr.license-logic")
+    id("sr.formatting-logic")
     id("sr.core-dependencies")
 }
 

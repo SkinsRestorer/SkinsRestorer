@@ -1,5 +1,5 @@
 plugins {
-    id("sr.license-logic")
+    id("sr.formatting-logic")
     id("net.kyori.blossom")
 }
 
