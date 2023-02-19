@@ -39,12 +39,12 @@ import java.util.zip.GZIPInputStream;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRServerPlugin {
-    @Getter
-    @Setter
-    private boolean proxyMode;
     private final SRPlugin plugin;
     private final SRServerAdapter serverAdapter;
     private final SRLogger logger;
+    @Getter
+    @Setter
+    private boolean proxyMode;
 
     @SuppressWarnings("unchecked")
     public static Map<String, String> convertToObjectV2(byte[] byteArr) {

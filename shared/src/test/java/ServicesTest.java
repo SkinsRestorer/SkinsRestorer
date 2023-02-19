@@ -1,7 +1,6 @@
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;

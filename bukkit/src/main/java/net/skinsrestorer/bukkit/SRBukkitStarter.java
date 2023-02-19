@@ -183,7 +183,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
     }
 
     private void checkViaVersion() {
-        if (server.getPluginManager().getPlugin("ViaVersion") == null) {
+        if (!adapter.isPluginEnabled("ViaVersion")) {
             return;
         }
 
@@ -197,7 +197,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
     }
 
     private void checkMundoSK() {
-        if (server.getPluginManager().getPlugin("MundoSK") == null) {
+        if (!adapter.isPluginEnabled("MundoSK")) {
             return;
         }
 
