@@ -17,16 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.reflection.exception;
+package net.skinsrestorer.shared.update.model;
 
-public class ReflectionException extends ReflectiveOperationException {
-    private static final long serialVersionUID = -8198968403615763053L;
+import com.google.gson.annotations.SerializedName;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.Getter;
 
-    public ReflectionException(String message) {
-        super(message);
-    }
-
-    public ReflectionException(Exception e) {
-        super(e);
-    }
+@Getter
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
+public class GitHubAssetInfo {
+    private String url;
+    private int id;
+    private String name;
+    @SerializedName("browser_download_url")
+    private String browserDownloadUrl;
 }

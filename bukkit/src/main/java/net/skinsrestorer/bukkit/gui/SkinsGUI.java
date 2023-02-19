@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.gui;
 import co.aikar.commands.CommandManager;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
@@ -40,11 +41,10 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import javax.inject.Inject;
 import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
+
+import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
 public class SkinsGUI {
     private static final int HEAD_COUNT_PER_PAGE = 36;
@@ -130,59 +130,64 @@ public class SkinsGUI {
     }
 
     private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, SRForeign player, String name, String property) {
-        ItemStack is = XMaterial.PLAYER_HEAD.parseItem();
-        SkullMeta sm = (SkullMeta) Objects.requireNonNull(is).getItemMeta();
+        ItemStack itemStack = XMaterial.PLAYER_HEAD.parseItem();
 
-        List<String> lore = new ArrayList<>();
-        lore.add(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN));
-        Objects.requireNonNull(sm).setDisplayName(name);
-        sm.setLore(lore);
+        if (itemStack == null) {
+            throw new IllegalStateException("Could not create skull for " + name + "!");
+        }
+
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+
+        if (skullMeta == null) {
+            throw new IllegalStateException("Could not create skull for " + name + "!");
+        }
+
+        skullMeta.setDisplayName(name);
+        skullMeta.setLore(listOf(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
 
         try {
-            SkullUtils.applySkin(sm, property);
+            SkullUtils.applySkin(skullMeta, property);
         } catch (AssertionError e) {
-            log.info("ERROR: could not add '" + name + "' to SkinsGUI, skin might be corrupted or invalid!");
+            log.warning(String.format("Could not add '%s' to SkinsGUI, skin might be corrupted or invalid!", name));
             e.printStackTrace();
         }
 
-        is.setItemMeta(sm);
+        itemStack.setItemMeta(skullMeta);
 
-        return is;
+        return itemStack;
     }
 
     private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
-        ItemStack itemStack;
-        String text;
-        switch (type) {
-            case NONE:
-                itemStack = XMaterial.WHITE_STAINED_GLASS_PANE.parseItem();
-                text = " ";
-                break;
-            case PREV:
-                itemStack = XMaterial.YELLOW_STAINED_GLASS_PANE.parseItem();
-                text = locale.getMessage(player, Message.SKINSMENU_PREVIOUS_PAGE);
-                break;
-            case NEXT:
-                itemStack = XMaterial.GREEN_STAINED_GLASS_PANE.parseItem();
-                text = locale.getMessage(player, Message.SKINSMENU_NEXT_PAGE);
-                break;
-            case DELETE:
-                itemStack = XMaterial.RED_STAINED_GLASS_PANE.parseItem();
-                text = locale.getMessage(player, Message.SKINSMENU_CLEAR_SKIN);
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown glass type: " + type);
+        ItemStack itemStack = type.getMaterial().parseItem();
+
+        if (itemStack == null) {
+            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
         }
 
-        ItemMeta itemMeta = Objects.requireNonNull(itemStack).getItemMeta();
-        Objects.requireNonNull(itemMeta).setDisplayName(text);
+        String text = type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage());
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta == null) {
+            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
+        }
+
+        itemMeta.setDisplayName(text);
         itemStack.setItemMeta(itemMeta);
 
         return itemStack;
     }
 
+    @Getter
+    @RequiredArgsConstructor
     private enum GlassType {
-        NONE, PREV, NEXT, DELETE
+        NONE(XMaterial.WHITE_STAINED_GLASS_PANE, null),
+        PREV(XMaterial.YELLOW_STAINED_GLASS_PANE, Message.SKINSMENU_PREVIOUS_PAGE),
+        NEXT(XMaterial.GREEN_STAINED_GLASS_PANE, Message.SKINSMENU_NEXT_PAGE),
+        DELETE(XMaterial.RED_STAINED_GLASS_PANE, Message.SKINSMENU_CLEAR_SKIN);
+
+        private final XMaterial material;
+        private final Message message;
     }
 
     @RequiredArgsConstructor(onConstructor_ = @Inject)

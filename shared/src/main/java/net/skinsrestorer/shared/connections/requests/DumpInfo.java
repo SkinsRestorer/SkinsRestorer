@@ -19,10 +19,13 @@
  */
 package net.skinsrestorer.shared.connections.requests;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.AllArgsConstructor;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
 
 @AllArgsConstructor
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class DumpInfo {
     private String pluginVersion;
     private String proxyMode;

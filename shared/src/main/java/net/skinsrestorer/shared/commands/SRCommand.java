@@ -25,12 +25,12 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.SkinsRestorer;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.model.MojangProfileResponse;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.config.DevConfig;
@@ -85,7 +85,6 @@ public final class SRCommand extends BaseCommand {
     @CommandPermission("%srReload")
     @Description("%helpSrReload")
     private void onReload(SRCommandSender sender) {
-        adapter.reloadPlatformHook();
         plugin.loadConfig();
         plugin.loadLocales();
         plugin.prepareACF();

@@ -42,9 +42,6 @@ public interface SRPlatformAdapter {
 
     Collection<SRPlayer> getOnlinePlayers();
 
-    default void reloadPlatformHook() {
-    }
-
     CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 
     Object createMetricsInstance();

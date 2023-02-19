@@ -19,9 +19,12 @@
  */
 package net.skinsrestorer.shared.connections.responses;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 
 @Getter
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class AshconResponse {
     /**
      * UUID with dashes

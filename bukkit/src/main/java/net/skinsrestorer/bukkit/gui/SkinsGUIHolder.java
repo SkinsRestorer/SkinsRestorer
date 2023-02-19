@@ -46,15 +46,10 @@ public class SkinsGUIHolder implements InventoryHolder {
         }
 
         Player player = (Player) event.getWhoClicked();
-
-        if (!(event.getCurrentItem() == null)) {
-            return;
-        }
-
         ItemStack currentItem = event.getCurrentItem();
 
         // Cancel invalid items
-        if (!currentItem.hasItemMeta()) {
+        if (currentItem == null || !currentItem.hasItemMeta()) {
             return;
         }
 

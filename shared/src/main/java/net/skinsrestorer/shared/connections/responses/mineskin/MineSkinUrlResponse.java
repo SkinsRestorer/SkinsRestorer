@@ -20,9 +20,12 @@
 package net.skinsrestorer.shared.connections.responses.mineskin;
 
 import com.google.gson.annotations.SerializedName;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 
 @Getter
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class MineSkinUrlResponse {
     private String id;
     private String idStr;

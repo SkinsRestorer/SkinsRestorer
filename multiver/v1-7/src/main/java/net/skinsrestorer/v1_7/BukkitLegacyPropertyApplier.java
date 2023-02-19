@@ -23,7 +23,6 @@ import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -34,12 +33,12 @@ public class BukkitLegacyPropertyApplier {
             GameProfile profile = getGameProfile(player);
             profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
             profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
 
-    public static GameProfile getGameProfile(Player player) throws ReflectionException {
+    public static GameProfile getGameProfile(Player player) throws ReflectiveOperationException {
         Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
         return (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
     }
@@ -60,7 +59,7 @@ public class BukkitLegacyPropertyApplier {
             }
 
             return properties;
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             return Collections.emptyMap();
         }

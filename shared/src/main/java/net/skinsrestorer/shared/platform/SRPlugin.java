@@ -232,8 +232,12 @@ public class SRPlugin {
 
     public void loadLocales() {
         LocaleManager<SRForeign> localeManager = LocaleManager.create(SRForeign::getLocale, Locale.ENGLISH);
+        try {
+            Message.load(localeManager, dataFolder, adapter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         injector.register(LocaleManager.class, localeManager);
-        Message.load(localeManager, dataFolder, adapter);
         injector.getSingleton(SkinsRestorerLocale.class);
     }
 

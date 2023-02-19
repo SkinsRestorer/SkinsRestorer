@@ -32,7 +32,6 @@ import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
@@ -63,7 +62,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public void applySkin(ProxiedPlayer player, SkinProperty property) {
         try {
             applyEvent(player, property, (InitialHandler) player.getPendingConnection());
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
@@ -71,12 +70,12 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public void applySkin(SkinProperty property, InitialHandler handler) {
         try {
             applyEvent(null, property, handler);
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
 
-    private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectionException {
+    private void applyEvent(@Nullable ProxiedPlayer player, SkinProperty property, InitialHandler handler) throws ReflectiveOperationException {
         SkinApplyEventImpl event = new SkinApplyEventImpl(player, property);
 
         eventBus.callEvent(event);
@@ -87,7 +86,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         applyWithProperty(player, handler, event.getProperty());
     }
 
-    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectionException {
+    private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
         adapter.applyToHandler(handler, textures);
 
         if (player == null) {

@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.inventivetalent.update.spiget.UpdateCallback;
 
 import javax.inject.Inject;
 import java.util.concurrent.ThreadLocalRandom;
@@ -55,10 +54,9 @@ public class SharedUpdateCheck implements UpdateCheck {
 
         adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
-            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+            public void updateAvailable(String newVersion, String downloadUrl) {
                 plugin.setOutdated();
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload)
-                        .forEach(logger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, false).forEach(logger::info);
             }
 
             @Override

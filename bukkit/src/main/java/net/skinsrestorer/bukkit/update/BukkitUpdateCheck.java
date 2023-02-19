@@ -22,10 +22,10 @@ package net.skinsrestorer.bukkit.update;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.update.UpdateCallback;
 import net.skinsrestorer.shared.update.UpdateCheck;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.inventivetalent.update.spiget.UpdateCallback;
 
 import javax.inject.Inject;
 import java.util.concurrent.ThreadLocalRandom;
@@ -62,28 +62,24 @@ public class BukkitUpdateCheck implements UpdateCheck {
 
         adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
-            public void updateAvailable(String newVersion, String downloadUrl, boolean hasDirectDownload) {
+            public void updateAvailable(String newVersion, String downloadUrl) {
                 plugin.setOutdated();
                 if (updateDownloaded) {
                     return;
                 }
 
-                String failReason = null;
-                if (hasDirectDownload) {
-                    if (downloader.downloadUpdate()) {
-                        updateDownloaded = true;
-                    } else {
-                        failReason = downloader.getFailReason().toString();
-                    }
+                if (downloader.downloadUpdate(downloadUrl)) {
+                    updateDownloaded = true;
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, true, failReason).forEach(logger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, true).forEach(logger::info);
             }
 
             @Override
             public void upToDate() {
-                if (!showUpToDate)
+                if (!showUpToDate) {
                     return;
+                }
 
                 updateChecker.getUpToDateMessages().forEach(logger::info);
             }

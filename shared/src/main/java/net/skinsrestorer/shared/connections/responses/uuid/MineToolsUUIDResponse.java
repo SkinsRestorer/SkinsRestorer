@@ -19,9 +19,12 @@
  */
 package net.skinsrestorer.shared.connections.responses.uuid;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 
 @Getter
+@SuppressWarnings("unused")
+@SuppressFBWarnings({"UWF_UNWRITTEN_FIELD", "URF_UNREAD_FIELD"})
 public class MineToolsUUIDResponse {
     /**
      * UUID without dashes

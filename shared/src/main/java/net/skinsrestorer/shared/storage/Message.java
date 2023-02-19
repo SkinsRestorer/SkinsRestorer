@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.storage;
 import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -116,8 +115,7 @@ public enum Message implements MessageKeyGetter {
     @Getter
     private final MessageKey key = MessageKey.of("skinsrestorer." + this.name().toLowerCase());
 
-    @SneakyThrows
-    public static void load(LocaleManager<SRForeign> manager, Path dataFolder, SRPlatformAdapter plugin) {
+    public static void load(LocaleManager<SRForeign> manager, Path dataFolder, SRPlatformAdapter plugin) throws IOException {
         migrateOldFiles(dataFolder);
 
         Path languagesFolder = dataFolder.resolve("languages");

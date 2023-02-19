@@ -24,8 +24,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.inventivetalent.update.spiget.UpdateCallback;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import javax.inject.Inject;
@@ -49,6 +49,7 @@ public class UpdateCheckerGitHub {
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
+    private final Gson gson = new Gson();
     @Getter
     private GitHubReleaseInfo releaseInfo;
 
@@ -57,19 +58,20 @@ public class UpdateCheckerGitHub {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
 
-            String body = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
+            String body;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                body = reader.lines()
+                        .collect(Collectors.joining("\n"));
+            }
+
             logger.debug("Response body: " + body);
             logger.debug("Response code: " + connection.getResponseCode());
 
-            releaseInfo = new Gson().fromJson(body, GitHubReleaseInfo.class);
+            releaseInfo = gson.fromJson(body, GitHubReleaseInfo.class);
 
-            releaseInfo.assets.forEach(gitHubAssetInfo -> {
-                releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
-
-                if (isVersionNewer(plugin.getVersion(), releaseInfo.tag_name)) {
-                    callback.updateAvailable(releaseInfo.tag_name, gitHubAssetInfo.browser_download_url, true);
+            releaseInfo.getAssets().forEach(gitHubAssetInfo -> {
+                if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
+                    callback.updateAvailable(releaseInfo.getTagName(), gitHubAssetInfo.getBrowserDownloadUrl());
                 } else {
                     callback.upToDate();
                 }
@@ -90,25 +92,15 @@ public class UpdateCheckerGitHub {
         return upToDateMessages;
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload) {
-        return getUpdateAvailableMessages(newVersion, downloadUrl, hasDirectDownload, false, null);
-    }
-
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean hasDirectDownload, boolean updateDownloader, String failReason) {
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean updateDownloader) {
         List<String> updateAvailableMessages = new LinkedList<>();
         fillHeader(updateAvailableMessages);
 
         updateAvailableMessages.add("§b    Current version: §c" + plugin.getVersion());
         updateAvailableMessages.add("§b    New version: §c" + newVersion);
 
-        if (updateDownloader && hasDirectDownload) {
+        if (updateDownloader) {
             updateAvailableMessages.add("    A new version is available! Downloading it now...");
-            if (failReason == null) {
-                updateAvailableMessages.add("    Update downloaded successfully, it will be applied on the next restart.");
-            } else {
-                // Update failed
-                updateAvailableMessages.add("§cCould not download the update, reason: " + failReason);
-            }
         } else {
             updateAvailableMessages.add("§e    A new version is available! Download it at:");
             updateAvailableMessages.add("§e    " + downloadUrl);

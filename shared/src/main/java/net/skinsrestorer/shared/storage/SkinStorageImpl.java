@@ -93,7 +93,7 @@ public class SkinStorageImpl implements SkinStorage {
         if (skinName.isPresent()) {
             return fetchSkinData(skinName.get());
         }
-        
+
         return Optional.empty();
     }
 

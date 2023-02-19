@@ -19,14 +19,8 @@
  */
 package net.skinsrestorer.shared.update;
 
-import org.inventivetalent.update.spiget.ResourceInfo;
+public interface UpdateCallback {
+    void updateAvailable(String newVersion, String downloadUrl);
 
-import java.util.List;
-
-public class GitHubReleaseInfo extends ResourceInfo {
-    public String tag_name;
-    public String name;
-    public List<GitHubAssetInfo> assets;
-
-    public String latestDownloadURL;
+    void upToDate();
 }

@@ -200,10 +200,6 @@ public class SRBukkitAdapter implements SRServerAdapter {
     }
 
     @Override
-    public void reloadPlatformHook() {
-    }
-
-    @Override
     public String getPlatformVersion() {
         return server.getVersion();
     }

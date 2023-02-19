@@ -24,8 +24,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
-
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
@@ -42,11 +40,16 @@ public class ServerVersion {
         }
 
         try {
-            String serverPackage = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null).getClass().getPackage().getName();
+            Object bukkitServer = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null);
+
+            if (bukkitServer == null) {
+                return null;
+            }
+
+            String serverPackage = bukkitServer.getClass().getPackage().getName();
 
             return serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
-                 NullPointerException ignored) {
+        } catch (ReflectiveOperationException ignored) {
             return null;
         }
     }

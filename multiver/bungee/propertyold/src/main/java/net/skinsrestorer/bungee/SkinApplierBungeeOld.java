@@ -25,7 +25,6 @@ import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.connection.LoginResult.Property;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -35,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class SkinApplierBungeeOld implements SkinApplyBungeeAdapter {
     @Override
-    public void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectionException {
+    public void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
         LoginResult profile = handler.getLoginProfile();
         Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, textures.getValue(), textures.getSignature())};
 

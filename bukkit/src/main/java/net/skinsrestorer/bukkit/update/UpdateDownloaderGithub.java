@@ -19,14 +19,11 @@
  */
 package net.skinsrestorer.bukkit.update;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.shared.update.DownloadCallback;
-import net.skinsrestorer.shared.update.GitHubReleaseInfo;
-import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,17 +47,13 @@ import java.nio.file.Path;
 public class UpdateDownloaderGithub {
     private final SRPlugin plugin;
     private final SRBukkitAdapter adapter;
-    private final UpdateCheckerGitHub updateChecker;
     private final SRLogger logger;
     private final Server server;
 
-    @Getter
-    private DownloadFailReason failReason;
-
-    private Runnable downloadAsync(GitHubReleaseInfo releaseInfo, Path file, DownloadCallback callback) {
+    private Runnable downloadAsync(String downloadUrl, Path file, DownloadCallback callback) {
         return () -> {
             try {
-                download(releaseInfo, file);
+                download(downloadUrl, file);
                 callback.finished();
             } catch (Exception e) {
                 callback.error(e);
@@ -68,12 +61,12 @@ public class UpdateDownloaderGithub {
         };
     }
 
-    private void download(GitHubReleaseInfo releaseInfo, Path file) {
+    private void download(String downloadUrl, Path file) throws UpdateException {
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(releaseInfo.latestDownloadURL).openConnection();
+            HttpURLConnection connection = (HttpURLConnection) new URL(downloadUrl).openConnection();
             connection.setRequestProperty("User-Agent", plugin.getUserAgent());
             if (connection.getResponseCode() != 200) {
-                throw new UpdateException("Download returned status #" + connection.getResponseCode());
+                throw new UpdateException("Download returned status code " + connection.getResponseCode());
             }
 
             ReadableByteChannel channel = Channels.newChannel(connection.getInputStream());
@@ -81,44 +74,30 @@ public class UpdateDownloaderGithub {
             try (FileOutputStream output = new FileOutputStream(file.toFile())) {
                 output.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
                 output.flush();
-            } catch (IOException e) {
-                throw new UpdateException("Could not save file", e);
             }
         } catch (IOException e) {
             throw new UpdateException("Download failed", e);
         }
     }
 
-    public boolean downloadUpdate() {
-        GitHubReleaseInfo releaseInfo = updateChecker.getReleaseInfo();
-
-        if (releaseInfo == null) {
-            failReason = DownloadFailReason.NOT_CHECKED;
-            return false; // Update is not yet checked
-        }
-
-        if (!updateChecker.isVersionNewer(plugin.getVersion(), releaseInfo.tag_name)) {
-            failReason = DownloadFailReason.NO_UPDATE;
-            return false; // Version is no update
-        }
-
+    public boolean downloadUpdate(String downloadUrl) {
         Path pluginFile = getPluginFile(adapter.getPluginInstance()); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();
         try {
             Files.createDirectories(updateFolder);
-
         } catch (IOException e) {
-            failReason = DownloadFailReason.NO_UPDATE_FOLDER;
+            e.printStackTrace();
             return false;
         }
 
-        Path updateFile = updateFolder.resolve(pluginFile.getFileName());// /plugins/update/XXX.jar
+        Path updateFile = updateFolder.resolve(pluginFile.getFileName()); // /plugins/update/XXX.jar
 
         logger.info("[GitHubUpdate] Downloading update...");
-        adapter.runAsync(downloadAsync(releaseInfo, updateFile, new DownloadCallback() {
+        adapter.runAsync(downloadAsync(downloadUrl, updateFile, new DownloadCallback() {
             @Override
             public void finished() {
-                logger.info("[GitHubUpdate] Update saved as " + updateFile.getFileName());
+                logger.info(String.format("[GitHubUpdate] Update saved as %s", updateFile.getFileName()));
+                logger.info("[GitHubUpdate] The update will be loaded on the next server restart");
             }
 
             @Override
@@ -141,11 +120,6 @@ public class UpdateDownloaderGithub {
     }
 
     public enum DownloadFailReason {
-        NOT_CHECKED,
-        NO_UPDATE,
-        NO_DOWNLOAD,
-        NO_PLUGIN_FILE,
         NO_UPDATE_FOLDER,
-        EXTERNAL_DISALLOWED
     }
 }

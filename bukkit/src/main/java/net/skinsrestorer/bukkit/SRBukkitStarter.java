@@ -54,7 +54,9 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRBukkitStarter implements SRPlatformStarter {
@@ -89,29 +91,9 @@ public class SRBukkitStarter implements SRPlatformStarter {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
 
-        if (server.getPluginManager().getPlugin("ViaVersion") != null) {
-            if (!ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
-                server.getScheduler().runTaskTimerAsynchronously(adapter.getPluginInstance(), () -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"), 50, 20L * 60);
-            }
-        }
+        checkViaVersion();
 
-        // Detect MundoSK
-        if (server.getPluginManager().getPlugin("MundoSK") != null) {
-            try (BufferedReader reader = Files.newBufferedReader(plugin.getDataFolder().getParent().resolve("MundoSK").resolve("config.yml"))) {
-                AxiomConfiguration config = new AxiomConfiguration();
-                config.load(reader);
-
-                if (config.getBoolean("enable_custom_skin_and_tablist")) {
-                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                    logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
-                    logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
-                    logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
-                    logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
-                    logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
-                }
-            } catch (Exception ignored) {
-            }
-        }
+        checkMundoSK();
 
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
 
@@ -150,8 +132,9 @@ public class SRBukkitStarter implements SRPlatformStarter {
 
                     if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
                         Player player = server.getPlayer(in.readUTF());
-                        if (player == null)
+                        if (player == null) {
                             return;
+                        }
 
                         int page = in.readInt();
 
@@ -196,6 +179,47 @@ public class SRBukkitStarter implements SRPlatformStarter {
                     server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
                 }
             }
+        }
+    }
+
+    private void checkViaVersion() {
+        if (server.getPluginManager().getPlugin("ViaVersion") == null) {
+            return;
+        }
+
+        // ViaVersion 4.0.0+ class
+        if (ReflectionUtil.classExists("com.viaversion.viaversion.api.Via")) {
+            return;
+        }
+
+        adapter.runRepeatAsync(() -> logger.severe("Outdated ViaVersion found! Please update to at least ViaVersion 4.0.0 for SkinsRestorer to work again!"),
+                2, 60, TimeUnit.SECONDS);
+    }
+
+    private void checkMundoSK() {
+        if (server.getPluginManager().getPlugin("MundoSK") == null) {
+            return;
+        }
+
+        Path pluginsFolder = plugin.getDataFolder().getParent();
+        if (pluginsFolder == null) { // Unlikely to happen, but just in case
+            return;
+        }
+
+        try (BufferedReader reader = Files.newBufferedReader(pluginsFolder.resolve("MundoSK").resolve("config.yml"))) {
+            AxiomConfiguration config = new AxiomConfiguration();
+            config.load(reader);
+
+            if (Boolean.TRUE.equals(config.getBoolean("enable_custom_skin_and_tablist"))) {
+                logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+                logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
+                logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
+                logger.warning(ChatColor.RED + "That setting is located in §e/plugins/MundoSK/config.yml");
+                logger.warning(ChatColor.RED + "You have to disable ('false') it to get SkinsRestorer to work!");
+                logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
+            }
+        } catch (IOException e) {
+            logger.warning("Could not read MundoSK config.yml to check for 'enable_custom_skin_and_tablist'!", e);
         }
     }
 }
