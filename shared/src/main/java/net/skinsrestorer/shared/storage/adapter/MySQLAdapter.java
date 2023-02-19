@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.storage.adapter;
 
 import ch.jalu.configme.SettingsManager;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
@@ -27,7 +28,10 @@ import net.skinsrestorer.shared.storage.MySQL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -88,6 +92,7 @@ public class MySQLAdapter implements StorageAdapter {
                 skinName, storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()));
     }
 
+    @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
     public Map<String, String> getStoredSkins(int offset) {
         Map<String, String> list = new TreeMap<>();

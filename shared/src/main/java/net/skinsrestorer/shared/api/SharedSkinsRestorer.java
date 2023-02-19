@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.api.event.EventBusImpl;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -65,7 +66,7 @@ public class SharedSkinsRestorer implements SkinsRestorer {
 
     @Override
     public MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
-        String decodedString = new String(Base64.getDecoder().decode(property.getValue()));
+        String decodedString = new String(Base64.getDecoder().decode(property.getValue()), StandardCharsets.UTF_8);
 
         return gson.fromJson(decodedString, MojangProfileResponse.class);
     }

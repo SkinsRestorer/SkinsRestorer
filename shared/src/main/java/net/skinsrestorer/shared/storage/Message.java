@@ -126,24 +126,25 @@ public enum Message implements MessageKeyGetter {
         }
 
         URL jar = src.getLocation();
-        ZipInputStream zip = new ZipInputStream(jar.openStream());
-        ZipEntry entry;
-        while ((entry = zip.getNextEntry()) != null) {
-            String name = entry.getName();
+        try (ZipInputStream zip = new ZipInputStream(jar.openStream())) {
+            ZipEntry entry;
+            while ((entry = zip.getNextEntry()) != null) {
+                String name = entry.getName();
 
-            if (name.startsWith("languages/language") && name.endsWith(".properties")) {
-                String fileName = name.replace("languages/", "");
-                Locale locale = fileName.startsWith("language_") ?
-                        LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
-                        : Locale.ENGLISH;
+                if (name.startsWith("languages/language") && name.endsWith(".properties")) {
+                    String fileName = name.replace("languages/", "");
+                    Locale locale = fileName.startsWith("language_") ?
+                            LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
+                            : Locale.ENGLISH;
 
-                try (InputStream is = plugin.getResource(name)) {
-                    PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
-                            MessageKey.of(k.toString()), C.c(v.toString())));
-                }
-                if (!Files.exists(languagesFolder.resolve(fileName))) {
                     try (InputStream is = plugin.getResource(name)) {
-                        Files.copy(is, languagesFolder.resolve(fileName));
+                        PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
+                                MessageKey.of(k.toString()), C.c(v.toString())));
+                    }
+                    if (!Files.exists(languagesFolder.resolve(fileName))) {
+                        try (InputStream is = plugin.getResource(name)) {
+                            Files.copy(is, languagesFolder.resolve(fileName));
+                        }
                     }
                 }
             }
@@ -151,7 +152,16 @@ public enum Message implements MessageKeyGetter {
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
             for (Path path : stream) {
-                String fileName = path.getFileName().toString();
+                Path languageFile = path.getFileName();
+                if (languageFile == null) {
+                    continue;
+                }
+
+                String fileName = languageFile.toString();
+                if (!fileName.endsWith(".properties")) {
+                    continue;
+                }
+
                 Locale locale = fileName.startsWith("language_") ?
                         LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
                         : Locale.ENGLISH;
@@ -173,7 +183,8 @@ public enum Message implements MessageKeyGetter {
                 Files.createDirectories(archive);
                 String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
                 Files.move(oldMessagesFile, archive.resolve(newName));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -182,7 +193,8 @@ public enum Message implements MessageKeyGetter {
             try {
                 Files.createDirectories(archive);
                 Files.move(oldAcf, archive.resolve("command-messages.properties"));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

@@ -38,6 +38,7 @@ public class LoadTest {
     @BeforeAll
     public static void setup() {
         System.setProperty("sr.unit.test", "true");
+        System.setProperty("sr.nms.version", "1_19_R2");
     }
 
     @Test
@@ -48,7 +49,6 @@ public class LoadTest {
         Path configDir = baseDir.resolve("config");
 
         Queue<Runnable> runQueue = new ConcurrentLinkedQueue<>();
-        System.setProperty("nms.version", "1_19_R2");
         ServerMock server = mock(ServerMock.class);
         Logger logger = Logger.getLogger("TestSkinsRestorer");
         ConsoleCommandSender sender = mock(ConsoleCommandSender.class);

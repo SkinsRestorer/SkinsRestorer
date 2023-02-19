@@ -34,7 +34,7 @@ public class ServerVersion {
 
     @Nullable
     public static String getNMSVersion() {
-        String propertyVersion = System.getProperty("nms.version");
+        String propertyVersion = System.getProperty("sr.nms.version");
         if (propertyVersion != null) {
             return propertyVersion;
         }

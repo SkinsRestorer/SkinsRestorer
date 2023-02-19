@@ -230,17 +230,19 @@ public class FileAdapter implements StorageAdapter {
     public void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
             for (Path file : stream) {
-                try {
-                    if (!Files.exists(file))
-                        continue;
+                if (!Files.exists(file)) {
+                    continue;
+                }
 
+                try {
                     List<String> lines = Files.readAllLines(file);
                     long timestamp = Long.parseLong(lines.get(2));
 
                     if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
                         Files.deleteIfExists(file);
                     }
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {

@@ -24,8 +24,8 @@ import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.APIConfig;
@@ -137,6 +137,9 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                                     break;
                                 case "Agent not allowed":
                                     logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
+                                    break;
+                                default:
+                                    logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
                                     break;
                             }
                             throw new DataRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
