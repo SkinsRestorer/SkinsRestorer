@@ -38,14 +38,14 @@ public class SRBootstrapper {
                                    Class<? extends UpdateCheck> updateCheck, Class<?> srPlatformClass,
                                    String version, Path dataFolder, Platform platform,
                                    Class<? extends SRPlatformStarter> starterCLass) {
-        Injector injector = null;
+        SRPlugin srPlugin = null;
         try {
-            injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
+            Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
             injector.register(SRLogger.class, new SRLogger(isrLogger, loggerColor));
 
             injector.register(SRPlatformAdapter.class, createAdapter.apply(injector));
-            SRPlugin srPlugin = new SRPlugin(injector, version, dataFolder, platform, updateCheck);
+            srPlugin = new SRPlugin(injector, version, dataFolder, platform, updateCheck);
             injector.getSingleton(srPlatformClass);
 
             srPlugin.startupStart();
@@ -58,17 +58,14 @@ public class SRBootstrapper {
             if (SRPlugin.isUnitTest()) {
                 throw new AssertionError("Failed to start plugin: " + e.getMessage());
             }
-        } finally {
-            if (injector != null) {
-                SRPlugin plugin = injector.getIfAvailable(SRPlugin.class);
-                if (plugin != null && !plugin.isUpdaterInitialized() && platform == Platform.BUKKIT) {
-                    isrLogger.log(SRLogLevel.INFO, "Updater was not initialized, a error occurred while starting the plugin. Forcing updater to initialize.");
-                    try {
-                        plugin.initUpdateCheck();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+        }
+
+        if (srPlugin != null && !srPlugin.isUpdaterInitialized()) {
+            isrLogger.log(SRLogLevel.INFO, "Updater was not initialized, a error occurred while starting the plugin. Forcing updater to initialize.");
+            try {
+                srPlugin.initUpdateCheck();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

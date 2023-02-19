@@ -64,7 +64,10 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class SRPlugin {
@@ -288,22 +291,8 @@ public class SRPlugin {
         manager.allowInvalidName(true);
 
         CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
-        for (Map.Entry<String, Message> entry : CommandReplacements.descriptions.entrySet()) {
-            String message = locale.getMessage(locale.getDefaultForeign(), entry.getValue());
-            if (message == null) {
-                logger.warning("Missing message for " + entry.getKey());
-                continue;
-            }
-            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
-        }
-        for (Map.Entry<String, Message> entry : CommandReplacements.syntax.entrySet()) {
-            String message = locale.getMessage(locale.getDefaultForeign(), entry.getValue());
-            if (message == null) {
-                logger.warning("Missing message for " + entry.getKey());
-                continue;
-            }
-            manager.getCommandReplacements().addReplacement(entry.getKey(), message);
-        }
+        CommandReplacements.descriptions.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
+        CommandReplacements.syntax.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
@@ -311,6 +300,10 @@ public class SRPlugin {
     }
 
     public void initUpdateCheck() {
+        if (updaterInitialized) {
+            return;
+        }
+
         updaterInitialized = true;
         Path updaterDisabled = dataFolder.resolve("noupdate.txt");
         if (Files.exists(updaterDisabled)) {
