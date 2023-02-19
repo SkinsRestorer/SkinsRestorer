@@ -28,7 +28,6 @@ import net.skinsrestorer.api.SkinsRestorerAPI;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.commands.GUICommand;
 import net.skinsrestorer.bukkit.commands.SkinCommand;
@@ -43,6 +42,7 @@ import net.skinsrestorer.shared.SkinsRestorerAPIShared;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerServerShared;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.YamlConfig;
@@ -152,7 +152,11 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         updateCheck();
 
         // Init locale
-        Message.load(localeManager, dataFolder, this);
+        try {
+            Message.load(localeManager, dataFolder, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Init SkinsGUI click listener even when in ProxyMode
         Bukkit.getPluginManager().registerEvents(new InventoryListener(), pluginInstance);

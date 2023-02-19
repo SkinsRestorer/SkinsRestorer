@@ -47,6 +47,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.PluginContainer;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -90,7 +91,11 @@ public class SkinsRestorerSponge extends SkinsRestorerServerShared {
 
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        try {
+            Message.load(localeManager, dataFolder, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Init storage
         try {

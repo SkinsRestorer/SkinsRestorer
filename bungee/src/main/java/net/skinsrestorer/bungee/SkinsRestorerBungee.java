@@ -30,7 +30,6 @@ import net.skinsrestorer.api.PlayerWrapper;
 import net.skinsrestorer.api.interfaces.IPropertyFactory;
 import net.skinsrestorer.api.interfaces.IWrapperFactory;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.bungee.commands.GUICommand;
 import net.skinsrestorer.bungee.commands.SkinCommand;
 import net.skinsrestorer.bungee.commands.SrCommand;
@@ -45,6 +44,7 @@ import net.skinsrestorer.shared.interfaces.ISRPlayer;
 import net.skinsrestorer.shared.interfaces.ISRPlugin;
 import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SkinsRestorerProxyShared;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.storage.Config;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.SharedMethods;
@@ -53,6 +53,7 @@ import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bstats.bungeecord.Metrics;
 import org.bstats.charts.SingleLineChart;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Optional;
@@ -111,7 +112,11 @@ public class SkinsRestorerBungee extends SkinsRestorerProxyShared {
 
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        try {
+            Message.load(localeManager, dataFolder, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Init storage
         try {

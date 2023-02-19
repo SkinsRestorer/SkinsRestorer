@@ -34,6 +34,7 @@ import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.connections.ServiceChecker;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -56,7 +57,11 @@ public interface ISRCommand {
 
         ISRPlugin plugin = getPlugin();
         reloadCustomHook();
-        Message.load(plugin.getLocaleManager(), plugin.getDataFolder(), plugin);
+        try {
+            Message.load(plugin.getLocaleManager(), plugin.getDataFolder(), plugin);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Config.load(plugin.getDataFolder(), plugin.getResource("config.yml"), plugin.getLogger());
 
         plugin.prepareACF(plugin.getManager(), plugin.getLogger());

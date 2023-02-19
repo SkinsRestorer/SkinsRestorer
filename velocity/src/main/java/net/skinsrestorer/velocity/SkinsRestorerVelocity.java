@@ -50,6 +50,7 @@ import org.bstats.charts.SingleLineChart;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -100,7 +101,11 @@ public class SkinsRestorerVelocity extends SkinsRestorerProxyShared {
 
         // Init config files
         Config.load(dataFolder, getResource("config.yml"), logger);
-        Message.load(localeManager, dataFolder, this);
+        try {
+            Message.load(localeManager, dataFolder, this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Init storage
         try {
