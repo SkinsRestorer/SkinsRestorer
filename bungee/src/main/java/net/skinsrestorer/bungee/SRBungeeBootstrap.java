@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheck;
 import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 
+@SuppressWarnings("unused")
 public class SRBungeeBootstrap extends Plugin {
     @Override
     public void onEnable() {
@@ -41,6 +42,6 @@ public class SRBungeeBootstrap extends Plugin {
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
                 Platform.BUNGEECORD,
-                SRBungeeStarter.class);
+                SRBungeeInit.class);
     }
 }

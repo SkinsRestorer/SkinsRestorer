@@ -21,44 +21,43 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
+import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.sponge.listeners.LoginListener;
+import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 
 import javax.inject.Inject;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRSpongeStarter implements SRPlatformStarter {
+public class SRSpongeInit implements SRServerPlatformInit {
     private final Injector injector;
     private final SRSpongeAdapter adapter;
     private final SRPlugin plugin;
     private final Game game;
 
     @Override
-    public void pluginStartup() {
-        plugin.initMineSkinAPI();
-
-        // Init storage
-        try {
-            plugin.initStorage();
-        } catch (InitializeException e) {
-            e.printStackTrace();
-            return;
-        }
-
+    public void initSkinApplier() {
         SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
         plugin.registerSkinApplier(skinApplierSponge, Player.class, Player::getName);
+    }
 
-        // Init API
-        plugin.registerAPI();
-
+    @Override
+    public void initLoginProfileListener() {
         game.getEventManager().registerListener(adapter.getPluginInstance(), ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
+    }
 
-        // Init commands
-        plugin.initCommands();
+    @Override
+    public void initGUIListener() {
+        // TODO: Implement
+    }
+
+    @Override
+    public void initMessageChannel() {
+        game.getChannelRegistrar().createRawChannel(adapter.getPluginInstance(), "sr:messagechannel")
+                .addListener(injector.newInstance(ServerMessageListener.class));
     }
 }

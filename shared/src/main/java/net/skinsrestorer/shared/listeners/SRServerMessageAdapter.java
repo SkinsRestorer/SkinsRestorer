@@ -24,6 +24,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.platform.SRServerPlugin;
 
 import javax.inject.Inject;
@@ -39,47 +40,36 @@ public final class SRServerMessageAdapter {
     private final SkinApplierAccess<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
+        if (!event.getChannel().equals("sr:messagechannel")) {
+            return;
+        }
+
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(event.getData()));
 
-        switch (event.getTag()) {
-            case "sr:messagechannel":
-                try {
-                    String subChannel = in.readUTF();
+        try {
+            String subChannel = in.readUTF();
 
-                    if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
-                        Optional<SRPlayer> player = plugin.getPlayer(in.readUTF());
-                        if (!player.isPresent()) {
-                            return;
-                        }
-
-                        int page = in.readInt();
-
-                        short len = in.readShort();
-                        byte[] msgBytes = new byte[len];
-                        in.readFully(msgBytes);
-
-                        Map<String, String> skinList = SRServerPlugin.convertToObjectV2(msgBytes);
-
-                        plugin.openProxyGUI(player.get(), page, skinList);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+            if (subChannel.equalsIgnoreCase("returnSkinsV2")) {
+                Optional<SRPlayer> player = plugin.getPlayer(in.readUTF());
+                if (!player.isPresent()) {
+                    return;
                 }
-                break;
-            case "sr:skinchange":
-                try {
-                    String subChannel = in.readUTF();
 
-                    if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
-                        skinApplier.applySkin(event.getPlayer().getAs(Object.class),
-                                SkinProperty.of(in.readUTF(), in.readUTF()));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                break;
+                int page = in.readInt();
+
+                short len = in.readShort();
+                byte[] msgBytes = new byte[len];
+                in.readFully(msgBytes);
+
+                Map<String, String> skinList = SRServerPlugin.convertToObjectV2(msgBytes);
+
+                plugin.openProxyGUI(player.get(), page, skinList);
+            } else if (subChannel.equalsIgnoreCase("SkinUpdateV2")) {
+                skinApplier.applySkin(event.getPlayer().getAs(Object.class),
+                        SkinProperty.of(in.readUTF(), in.readUTF()));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

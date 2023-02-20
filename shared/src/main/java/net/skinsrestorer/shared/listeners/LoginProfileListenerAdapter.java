@@ -26,6 +26,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 

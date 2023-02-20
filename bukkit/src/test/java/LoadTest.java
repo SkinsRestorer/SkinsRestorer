@@ -1,5 +1,5 @@
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
-import net.skinsrestorer.bukkit.SRBukkitStarter;
+import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheck;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.shared.platform.SRBootstrapper;
@@ -108,7 +108,7 @@ public class LoadTest {
                     "UnitTest",
                     configDir,
                     Platform.BUKKIT,
-                    SRBukkitStarter.class
+                    SRBukkitInit.class
             );
 
             while (!runQueue.isEmpty()) {

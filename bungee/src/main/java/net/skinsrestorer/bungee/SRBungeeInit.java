@@ -26,44 +26,35 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
+import net.skinsrestorer.shared.interfaces.SRProxyPlatformInit;
 import net.skinsrestorer.shared.platform.SRPlugin;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRBungeeStarter implements SRPlatformStarter {
+public class SRBungeeInit implements SRProxyPlatformInit {
     private final Injector injector;
     private final SRBungeeAdapter adapter;
     private final SRPlugin plugin;
     private final ProxyServer proxy;
 
-    public void pluginStartup() {
-        plugin.initMineSkinAPI();
-
-        // Init storage
-        try {
-            plugin.initStorage();
-        } catch (InitializeException e) {
-            e.printStackTrace();
-            return;
-        }
-
+    @Override
+    public void initSkinApplier() {
         plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, ProxiedPlayer::getName);
+    }
 
-        // Init API
-        plugin.registerAPI();
-
-        // Init listener
+    @Override
+    public void initLoginProfileListener() {
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(LoginListener.class));
+    }
+
+    @Override
+    public void initConnectListener() {
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
+    }
 
-        // Init commands
-        plugin.initCommands();
-
-        // Init message channel
-        proxy.registerChannel("sr:skinchange");
+    @Override
+    public void initMessageChannel() {
         proxy.registerChannel("sr:messagechannel");
         proxy.getPluginManager().registerListener(adapter.getPluginInstance(), injector.getSingleton(ProxyMessageListener.class));
     }

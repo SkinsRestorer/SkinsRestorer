@@ -326,7 +326,7 @@ public class SRPlugin {
         outdated = true;
     }
 
-    public void initMineSkinAPI() {
+    private void initMineSkinAPI() {
         MineSkinAPI mineSkinAPI = injector.getSingleton(MineSkinAPIImpl.class);
         injector.register(MineSkinAPI.class, mineSkinAPI);
     }
@@ -364,7 +364,10 @@ public class SRPlugin {
         }
     }
 
-    public void startupStart() {
+    public void startup(SRPlatformInit platformInit) throws InitializeException {
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+        SRProxyPlugin proxyPlugin = injector.getIfAvailable(SRProxyPlugin.class);
+
         logger.load(dataFolder);
 
         if (!unitTest) {
@@ -374,7 +377,6 @@ public class SRPlugin {
         EventBusImpl sharedEventBus = new EventBusImpl();
         injector.register(EventBusImpl.class, sharedEventBus);
 
-        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
 
         if (serverPlugin != null) {
             // Check if we are running in proxy mode
@@ -384,19 +386,25 @@ public class SRPlugin {
         // Init config files
         loadConfig();
         loadLocales();
-    }
 
-    public void startupEnd() {
-        initUpdateCheck();
+        // Load MineSkinAPI with config values
+        initMineSkinAPI();
 
-        boolean runServiceCheck = true;
-        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+        platformInit.initSkinApplier();
 
-        if (serverPlugin != null && serverPlugin.isProxyMode()) {
-            runServiceCheck = false;
+        platformInit.checkPluginSupport();
+
+        if (serverPlugin != null) {
+            serverPlugin.startupPlatform((SRServerPlatformInit) platformInit);
+        } else if (proxyPlugin != null) {
+            proxyPlugin.startupPlatform((SRProxyPlatformInit) platformInit);
+        } else {
+            throw new IllegalStateException("No platform class available!");
         }
 
-        if (runServiceCheck) {
+        initUpdateCheck();
+
+        if (serverPlugin == null || !serverPlugin.isProxyMode()) {
             adapter.runAsync(this::runServiceCheck);
         }
     }

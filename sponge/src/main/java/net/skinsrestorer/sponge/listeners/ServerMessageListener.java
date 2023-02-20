@@ -17,44 +17,51 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.listener;
+package net.skinsrestorer.sponge.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.PluginMessageListener;
+import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.jetbrains.annotations.NotNull;
+import org.spongepowered.api.Platform;
+import org.spongepowered.api.network.ChannelBuf;
+import org.spongepowered.api.network.PlayerConnection;
+import org.spongepowered.api.network.RawDataListener;
+import org.spongepowered.api.network.RemoteConnection;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ServerMessageListener implements PluginMessageListener {
+public class ServerMessageListener implements RawDataListener {
     private final SRServerMessageAdapter adapter;
-    private final WrapperBukkit wrapper;
+    private final WrapperSponge wrapper;
 
     @Override
-    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte @NotNull [] message) {
-        adapter.handlePluginMessage(wrap(channel, player, message));
+    public void handlePayload(@NotNull ChannelBuf data, @NotNull RemoteConnection connection, Platform.@NotNull Type side) {
+        if (!(connection instanceof PlayerConnection)) {
+            return;
+        }
+
+        adapter.handlePluginMessage(wrap(data, (PlayerConnection) connection));
     }
 
-    private SRServerMessageEvent wrap(String channel, Player player, byte[] message) {
+    private SRServerMessageEvent wrap(ChannelBuf data, PlayerConnection player) {
         return new SRServerMessageEvent() {
             @Override
             public SRPlayer getPlayer() {
-                return wrapper.player(player);
+                return wrapper.player(player.getPlayer());
             }
 
             @Override
             public byte[] getData() {
-                return message;
+                return data.array();
             }
 
             @Override
             public String getChannel() {
-                return channel;
+                return "sr:messagechannel"; // TODO: Maybe do not hardcode this
             }
         };
     }

@@ -23,6 +23,7 @@ import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.platform.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 
@@ -44,7 +45,7 @@ public final class SRProxyMessageAdapter {
             return;
         }
 
-        if (!event.getTag().equals("sr:messagechannel") && !event.getTag().equals("sr:skinchange")) {
+        if (!event.getChannel().equals("sr:messagechannel")) {
             return;
         }
 
@@ -64,7 +65,6 @@ public final class SRProxyMessageAdapter {
 
             SRProxyPlayer player = optional.get();
             switch (subChannel) {
-                // sr:messagechannel
                 case "getSkins":
                     int page = Math.min(in.readInt(), 999);
                     proxyPlugin.sendPage(page, player, skinStorage);

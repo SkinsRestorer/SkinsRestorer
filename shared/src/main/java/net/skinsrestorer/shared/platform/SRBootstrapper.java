@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.platform;
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
+import net.skinsrestorer.shared.interfaces.SRPlatformInit;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
-import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.UpdateCheck;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -37,7 +37,7 @@ public class SRBootstrapper {
                                    Function<Injector, SRPlatformAdapter> createAdapter,
                                    Class<? extends UpdateCheck> updateCheck, Class<?> srPlatformClass,
                                    String version, Path dataFolder, Platform platform,
-                                   Class<? extends SRPlatformStarter> starterCLass) {
+                                   Class<? extends SRPlatformInit> initCLass) {
         SRPlugin srPlugin = null;
         try {
             Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
@@ -48,9 +48,7 @@ public class SRBootstrapper {
             srPlugin = new SRPlugin(injector, version, dataFolder, platform, updateCheck);
             injector.getSingleton(srPlatformClass);
 
-            srPlugin.startupStart();
-            injector.getSingleton(starterCLass).pluginStartup();
-            srPlugin.startupEnd();
+            srPlugin.startup(injector.newInstance(initCLass));
         } catch (Exception e) {
             e.printStackTrace();
             isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.");

@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SkinApplierBukkit;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import org.bukkit.event.player.PlayerEvent;
 
 import javax.inject.Inject;

@@ -25,7 +25,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.skinsrestorer.shared.listeners.SRProxyMessageAdapter;
-import net.skinsrestorer.shared.listeners.SRProxyMessageEvent;
+import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 
 import javax.inject.Inject;
 
@@ -35,7 +35,11 @@ public class ProxyMessageListener implements Listener {
 
     @EventHandler
     public void onPluginMessage(PluginMessageEvent event) {
-        adapter.handlePluginMessage(new SRProxyMessageEvent() {
+        adapter.handlePluginMessage(wrap(event));
+    }
+
+    private SRProxyMessageEvent wrap(PluginMessageEvent event) {
+        return new SRProxyMessageEvent() {
             @Override
             public boolean isCancelled() {
                 return event.isCancelled();
@@ -57,9 +61,9 @@ public class ProxyMessageListener implements Listener {
             }
 
             @Override
-            public String getTag() {
+            public String getChannel() {
                 return event.getTag();
             }
-        });
+        };
     }
 }

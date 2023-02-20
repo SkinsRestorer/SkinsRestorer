@@ -62,7 +62,7 @@ public class SRVelocityBootstrap {
                 container.getDescription().getVersion().orElse("Unknown"),
                 dataFolder,
                 Platform.VELOCITY,
-                SRVelocityStarter.class
+                SRVelocityInit.class
         );
     }
 }

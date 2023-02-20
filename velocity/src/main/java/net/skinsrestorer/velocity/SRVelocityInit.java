@@ -25,8 +25,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
+import net.skinsrestorer.shared.interfaces.SRProxyPlatformInit;
 import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
@@ -34,40 +33,32 @@ import net.skinsrestorer.velocity.listener.ProxyMessageListener;
 
 import javax.inject.Inject;
 
+@SuppressWarnings("unused")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRVelocityStarter implements SRPlatformStarter {
+public class SRVelocityInit implements SRProxyPlatformInit {
     private final Injector injector;
     private final SRVelocityAdapter adapter;
     private final SRPlugin plugin;
     private final ProxyServer proxy;
 
     @Override
-    public void pluginStartup() {
-        plugin.initMineSkinAPI();
-
-        // Init storage
-        try {
-            plugin.initStorage();
-        } catch (InitializeException e) {
-            e.printStackTrace();
-            return;
-        }
-
+    public void initSkinApplier() {
         SkinApplierVelocity skinApplierVelocity = injector.getSingleton(SkinApplierVelocity.class);
         plugin.registerSkinApplier(skinApplierVelocity, Player.class, Player::getUsername);
+    }
 
-        // Init API
-        plugin.registerAPI();
-
-        // Init listener
-        proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
+    @Override
+    public void initLoginProfileListener() {
         proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(GameProfileRequest.class));
+    }
 
-        // Init commands
-        plugin.initCommands();
+    @Override
+    public void initConnectListener() {
+        proxy.getEventManager().register(adapter.getPluginInstance(), injector.newInstance(ConnectListener.class));
+    }
 
-        // Init message channel
-        proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:skinchange"));
+    @Override
+    public void initMessageChannel() {
         proxy.getChannelRegistrar().register(MinecraftChannelIdentifier.from("sr:messagechannel"));
         proxy.getEventManager().register(adapter.getPluginInstance(), PluginMessageEvent.class, injector.getSingleton(ProxyMessageListener.class));
     }

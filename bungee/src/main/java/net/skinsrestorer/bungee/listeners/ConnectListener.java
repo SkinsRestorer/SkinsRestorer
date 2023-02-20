@@ -26,7 +26,7 @@ import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
-import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
+import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 
 import javax.inject.Inject;
 

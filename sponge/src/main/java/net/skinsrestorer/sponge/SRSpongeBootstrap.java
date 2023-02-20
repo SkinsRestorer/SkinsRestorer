@@ -37,6 +37,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import java.nio.file.Path;
 
+@SuppressWarnings("unused")
 @Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
 public class SRSpongeBootstrap {
     @Inject
@@ -63,7 +64,7 @@ public class SRSpongeBootstrap {
                 container.getVersion().orElse("Unknown"),
                 dataFolder,
                 Platform.SPONGE,
-                SRSpongeStarter.class
+                SRSpongeInit.class
         );
     }
 }

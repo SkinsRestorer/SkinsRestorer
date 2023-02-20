@@ -22,7 +22,7 @@ package net.skinsrestorer.sponge.listeners;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.sponge.SkinApplierSponge;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Game;

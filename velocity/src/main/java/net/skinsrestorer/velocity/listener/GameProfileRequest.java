@@ -25,7 +25,7 @@ import com.velocitypowered.api.event.player.GameProfileRequestEvent;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
 
 import javax.inject.Inject;

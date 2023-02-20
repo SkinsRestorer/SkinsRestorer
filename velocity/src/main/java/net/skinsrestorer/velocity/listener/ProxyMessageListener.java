@@ -24,7 +24,7 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.ServerConnection;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRProxyMessageAdapter;
-import net.skinsrestorer.shared.listeners.SRProxyMessageEvent;
+import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 
 import javax.inject.Inject;
 
@@ -34,7 +34,11 @@ public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
 
     @Override
     public void execute(PluginMessageEvent event) {
-        adapter.handlePluginMessage(new SRProxyMessageEvent() {
+        adapter.handlePluginMessage(wrap(event));
+    }
+
+    private SRProxyMessageEvent wrap(PluginMessageEvent event) {
+        return new SRProxyMessageEvent() {
             @Override
             public boolean isCancelled() {
                 return !event.getResult().isAllowed();
@@ -56,9 +60,9 @@ public class ProxyMessageListener implements EventHandler<PluginMessageEvent> {
             }
 
             @Override
-            public String getTag() {
+            public String getChannel() {
                 return event.getIdentifier().getId();
             }
-        });
+        };
     }
 }

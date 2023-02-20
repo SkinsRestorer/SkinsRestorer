@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
+@SuppressWarnings("unused")
 public class SRBukkitBootstrap extends JavaPlugin {
     @Override
     public void onEnable() {
@@ -41,6 +42,6 @@ public class SRBukkitBootstrap extends JavaPlugin {
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
                 Platform.BUKKIT,
-                SRBukkitStarter.class);
+                SRBukkitInit.class);
     }
 }

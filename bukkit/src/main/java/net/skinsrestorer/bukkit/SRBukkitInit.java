@@ -32,9 +32,8 @@ import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRPlatformStarter;
+import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
 import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -50,8 +49,7 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SRBukkitStarter implements SRPlatformStarter {
-    private final SRServerPlugin serverPlugin;
+public class SRBukkitInit implements SRServerPlatformInit {
     private final SRPlugin plugin;
     private final SRBukkitAdapter adapter;
     private final Injector injector;
@@ -59,7 +57,7 @@ public class SRBukkitStarter implements SRPlatformStarter {
     private final Server server;
 
     @Override
-    public void pluginStartup() throws InitializeException {
+    public void initSkinApplier() throws InitializeException {
         SkinApplierBukkit skinApplierBukkit;
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
@@ -76,57 +74,36 @@ public class SRBukkitStarter implements SRPlatformStarter {
             throw e;
         }
 
+        plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
+
+        // Log information about the platform
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
         if (ReflectionUtil.SERVER_VERSION != null && !ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
+    }
 
+    @Override
+    public void initLoginProfileListener() {
+        if (injector.getSingleton(SettingsManager.class).getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
+                && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
+            logger.info("Using paper join listener!");
+            server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());
+        } else {
+            server.getPluginManager().registerEvents(injector.newInstance(PlayerJoin.class), adapter.getPluginInstance());
+
+            if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
+                server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
+            }
+        }
+    }
+
+    @Override
+    public void checkPluginSupport() {
         checkViaVersion();
 
         checkMundoSK();
-
-        // Init SkinsGUI click listener even when in ProxyMode
-        server.getPluginManager().registerEvents(new InventoryListener(), adapter.getPluginInstance());
-
-        if (serverPlugin.isProxyMode()) {
-            if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
-                plugin.initMineSkinAPI();
-                plugin.initStorage();
-                plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
-                plugin.registerAPI();
-            }
-
-            ServerMessageListener serverMessageListener = injector.getSingleton(ServerMessageListener.class);
-            server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:skinchange");
-            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:skinchange", serverMessageListener);
-
-            server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel");
-            server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel", serverMessageListener);
-        } else {
-            plugin.initMineSkinAPI();
-            plugin.initStorage();
-            plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
-
-            // Init API
-            plugin.registerAPI();
-
-            // Init commands
-            plugin.initCommands();
-
-            // Init listener
-            if (injector.getSingleton(SettingsManager.class).getProperty(AdvancedConfig.ENABLE_PAPER_JOIN_LISTENER)
-                    && ReflectionUtil.classExists("com.destroystokyo.paper.event.profile.PreFillProfileEvent")) {
-                logger.info("Using paper join listener!");
-                server.getPluginManager().registerEvents(injector.newInstance(PaperPlayerJoinEvent.class), adapter.getPluginInstance());
-            } else {
-                server.getPluginManager().registerEvents(injector.newInstance(PlayerJoin.class), adapter.getPluginInstance());
-
-                if (ReflectionUtil.classExists("org.bukkit.event.player.PlayerResourcePackStatusEvent")) {
-                    server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
-                }
-            }
-        }
     }
 
     private void checkViaVersion() {
@@ -168,5 +145,17 @@ public class SRBukkitStarter implements SRPlatformStarter {
         } catch (IOException e) {
             logger.warning("Could not read MundoSK config.yml to check for 'enable_custom_skin_and_tablist'!", e);
         }
+    }
+
+    @Override
+    public void initGUIListener() {
+        server.getPluginManager().registerEvents(new InventoryListener(), adapter.getPluginInstance());
+    }
+
+    @Override
+    public void initMessageChannel() {
+        server.getMessenger().registerOutgoingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel");
+        server.getMessenger().registerIncomingPluginChannel(adapter.getPluginInstance(), "sr:messagechannel",
+                injector.getSingleton(ServerMessageListener.class));
     }
 }

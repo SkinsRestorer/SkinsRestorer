@@ -22,7 +22,9 @@ package net.skinsrestorer.shared.platform;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
@@ -103,5 +105,29 @@ public class SRServerPlugin {
         }
 
         return serverAdapter.determineProxy();
+    }
+
+    public void startupPlatform(SRServerPlatformInit init) throws InitializeException {
+        init.initGUIListener();
+
+        if (proxyMode) {
+            if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
+                plugin.initStorage();
+                plugin.registerAPI();
+            }
+
+            init.initMessageChannel();
+        } else {
+            plugin.initStorage();
+
+            // Init API
+            plugin.registerAPI();
+
+            // Init commands
+            plugin.initCommands();
+
+            // Init listener
+            init.initLoginProfileListener();
+        }
     }
 }

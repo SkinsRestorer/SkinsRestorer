@@ -21,6 +21,8 @@ package net.skinsrestorer.shared.platform;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.interfaces.SRProxyPlatformInit;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -37,6 +39,7 @@ import java.util.zip.GZIPOutputStream;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SRProxyPlugin {
     private final SRLogger logger;
+    private final SRPlugin plugin;
 
     public static byte[] convertToByteArray(Map<String, String> map) {
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -100,9 +103,26 @@ public class SRProxyPlugin {
                 out.writeUTF(textures.getSignature());
             }
 
-            player.sendDataToServer("sr:skinchange", b.toByteArray());
+            player.sendDataToServer("sr:messagechannel", b.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void startupPlatform(SRProxyPlatformInit init) throws InitializeException {
+        // Init storage
+        plugin.initStorage();
+
+        // Init API
+        plugin.registerAPI();
+
+        // Init listener
+        init.initLoginProfileListener();
+        init.initConnectListener();
+
+        // Init commands
+        plugin.initCommands();
+
+        init.initMessageChannel();
     }
 }

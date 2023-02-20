@@ -29,7 +29,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.SRBungeeAdapter;
 import net.skinsrestorer.bungee.SkinApplierBungee;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 
 import javax.inject.Inject;
 
