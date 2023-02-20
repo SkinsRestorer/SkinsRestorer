@@ -18,7 +18,6 @@ dependencies {
     implementation("org.bstats:bstats-base:3.0.0")
 
     compileOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
-    compileOnly("org.slf4j:slf4j-api:2.0.6")
 
     testRuntimeOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")

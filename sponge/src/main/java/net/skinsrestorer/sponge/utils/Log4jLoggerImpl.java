@@ -17,14 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils.log;
+package net.skinsrestorer.sponge.utils;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
-import org.slf4j.Logger;
+import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import org.apache.logging.log4j.Logger;
 
 @RequiredArgsConstructor
-public class Slf4jLoggerImpl implements SRPlatformLogger {
+public class Log4jLoggerImpl implements SRPlatformLogger {
     private final Logger logger;
 
     @Override

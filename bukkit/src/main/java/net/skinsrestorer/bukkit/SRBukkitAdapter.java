@@ -28,10 +28,11 @@ import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
-import net.skinsrestorer.bukkit.utils.IOExceptionConsumer;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.interfaces.IOExceptionConsumer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
@@ -76,22 +77,15 @@ public class SRBukkitAdapter implements SRServerAdapter {
         return new Metrics(pluginInstance, 1669);
     }
 
-    public void requestSkinsFromProxy(Player player, int page) {
-        sendToMessageChannel(player, out -> {
-            out.writeUTF("getSkins");
-            out.writeUTF(player.getName());
-            out.writeInt(page);
-        });
-    }
-
-    public void sendToMessageChannel(Player player, IOExceptionConsumer<DataOutputStream> consumer) {
+    @Override
+    public void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer) {
         try {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             DataOutputStream out = new DataOutputStream(bytes);
 
             consumer.accept(out);
 
-            player.sendPluginMessage(pluginInstance, "sr:messagechannel", bytes.toByteArray());
+            player.getAs(Player.class).sendPluginMessage(pluginInstance, "sr:messagechannel", bytes.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,16 +148,16 @@ public class SRBukkitAdapter implements SRServerAdapter {
 
     @Override
     public void openServerGUI(SRPlayer player, int page) {
-        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(injector.getSingleton(SkinsGUI.ServerGUIActions.class),
-                player, page);
+        Inventory inventory = injector.getSingleton(SharedGUI.class)
+                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
 
         runSync(() -> player.getAs(Player.class).openInventory(inventory));
     }
 
     @Override
     public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
-        Inventory inventory = injector.getSingleton(SkinsGUI.class).createGUI(injector.getSingleton(SkinsGUI.ProxyGUIActions.class),
-                player, page, skinList);
+        Inventory inventory = injector.getSingleton(SkinsGUI.class)
+                .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
 
         runSync(() -> player.getAs(Player.class).openInventory(inventory));
     }

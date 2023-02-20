@@ -24,34 +24,32 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
-import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Platform;
-import org.spongepowered.api.network.ChannelBuf;
-import org.spongepowered.api.network.PlayerConnection;
-import org.spongepowered.api.network.RawDataListener;
-import org.spongepowered.api.network.RemoteConnection;
+import org.spongepowered.api.network.EngineConnection;
+import org.spongepowered.api.network.ServerPlayerConnection;
+import org.spongepowered.api.network.channel.ChannelBuf;
+import org.spongepowered.api.network.channel.raw.play.RawPlayDataHandler;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ServerMessageListener implements RawDataListener {
+public class ServerMessageListener implements RawPlayDataHandler<EngineConnection> {
     private final SRServerMessageAdapter adapter;
     private final WrapperSponge wrapper;
 
     @Override
-    public void handlePayload(@NotNull ChannelBuf data, @NotNull RemoteConnection connection, Platform.@NotNull Type side) {
-        if (!(connection instanceof PlayerConnection)) {
+    public void handlePayload(ChannelBuf data, EngineConnection connection) {
+        if (!(connection instanceof ServerPlayerConnection)) {
             return;
         }
 
-        adapter.handlePluginMessage(wrap(data, (PlayerConnection) connection));
+        adapter.handlePluginMessage(wrap(data, (ServerPlayerConnection) connection));
     }
 
-    private SRServerMessageEvent wrap(ChannelBuf data, PlayerConnection player) {
+    private SRServerMessageEvent wrap(ChannelBuf data, ServerPlayerConnection player) {
         return new SRServerMessageEvent() {
             @Override
             public SRPlayer getPlayer() {
-                return wrapper.player(player.getPlayer());
+                return wrapper.player(player.player());
             }
 
             @Override

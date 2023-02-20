@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.entity.Player;
 
@@ -28,7 +28,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 @SuperBuilder
-public class WrapperPlayer extends WrapperCommandSender implements SRPlayer {
+public class WrapperPlayer extends WrapperCommandSender implements SRServerPlayer {
     private final Player player;
 
     @Override
@@ -48,5 +48,10 @@ public class WrapperPlayer extends WrapperCommandSender implements SRPlayer {
     @Override
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public void closeInventory() {
+        player.closeInventory();
     }
 }

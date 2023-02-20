@@ -26,8 +26,12 @@ import net.skinsrestorer.shared.platform.SRPlugin;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.event.EventListenerRegistration;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+import org.spongepowered.api.network.channel.raw.RawDataChannel;
 
 import javax.inject.Inject;
 
@@ -42,12 +46,16 @@ public class SRSpongeInit implements SRServerPlatformInit {
     @Override
     public void initSkinApplier() {
         SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
-        plugin.registerSkinApplier(skinApplierSponge, Player.class, Player::getName);
+        plugin.registerSkinApplier(skinApplierSponge, ServerPlayer.class, ServerPlayer::name);
     }
 
     @Override
     public void initLoginProfileListener() {
-        game.getEventManager().registerListener(adapter.getPluginInstance(), ClientConnectionEvent.Auth.class, injector.newInstance(LoginListener.class));
+        game.eventManager().registerListener(EventListenerRegistration
+                .builder(ServerSideConnectionEvent.Login.class)
+                .plugin(adapter.getPluginContainer())
+                .order(Order.DEFAULT)
+                .listener(injector.newInstance(LoginListener.class)).build());
     }
 
     @Override
@@ -57,7 +65,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
 
     @Override
     public void initMessageChannel() {
-        game.getChannelRegistrar().createRawChannel(adapter.getPluginInstance(), "sr:messagechannel")
-                .addListener(injector.newInstance(ServerMessageListener.class));
+        game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
+                .play().addHandler(injector.newInstance(ServerMessageListener.class));
     }
 }

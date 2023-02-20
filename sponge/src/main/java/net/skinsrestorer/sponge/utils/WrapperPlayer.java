@@ -20,19 +20,19 @@
 package net.skinsrestorer.sponge.utils;
 
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
-import org.spongepowered.api.entity.living.player.Player;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Locale;
 import java.util.UUID;
 
 @SuperBuilder
-public class WrapperPlayer extends WrapperCommandSender implements SRPlayer {
-    private final Player player;
+public class WrapperPlayer extends WrapperCommandSender implements SRServerPlayer {
+    private final ServerPlayer player;
 
     @Override
     public Locale getLocale() {
-        return player.getLocale();
+        return player.locale();
     }
 
     @Override
@@ -42,6 +42,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRPlayer {
 
     @Override
     public UUID getUniqueId() {
-        return player.getUniqueId();
+        return player.uniqueId();
+    }
+
+    @Override
+    public void closeInventory() {
+        player.closeInventory();
     }
 }

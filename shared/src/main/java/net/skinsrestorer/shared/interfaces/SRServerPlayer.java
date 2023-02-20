@@ -19,28 +19,6 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
-import java.io.DataOutputStream;
-import java.util.Map;
-import java.util.Optional;
-
-public interface SRServerAdapter extends SRPlatformAdapter {
-    void runSync(Runnable runnable);
-
-    boolean determineProxy();
-
-    void openServerGUI(SRPlayer player, int page);
-
-    void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList);
-
-    Optional<SRPlayer> getPlayer(String name);
-
-    default void requestSkinsFromProxy(SRPlayer player, int page) {
-        sendToMessageChannel(player, out -> {
-            out.writeUTF("getSkins");
-            out.writeUTF(player.getName());
-            out.writeInt(page);
-        });
-    }
-
-    void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer);
+public interface SRServerPlayer extends SRPlayer {
+    void closeInventory();
 }

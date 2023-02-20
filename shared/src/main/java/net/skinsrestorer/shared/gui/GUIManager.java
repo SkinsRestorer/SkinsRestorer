@@ -17,19 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.gui;
+package net.skinsrestorer.shared.gui;
 
-import com.cryptomorin.xseries.XMaterial;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.meta.ItemMeta;
+import net.skinsrestorer.shared.interfaces.SRForeign;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 
-@Getter
-@RequiredArgsConstructor
-public class ClickEventInfo {
-    private final XMaterial material;
-    private final ItemMeta itemMeta;
-    private final Player player;
-    private final int currentPage;
+import java.util.Map;
+import java.util.function.Consumer;
+
+public interface GUIManager<T> {
+    T createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skins);
 }

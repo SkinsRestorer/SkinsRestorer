@@ -23,6 +23,8 @@ import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -36,6 +38,7 @@ import java.util.function.Consumer;
 public class SkinsGUIHolder implements InventoryHolder {
     private final int page; // Page number start with 0
     private final Consumer<ClickEventInfo> callback;
+    private final WrapperBukkit wrapper;
     @Getter
     @Setter
     private Inventory inventory;
@@ -59,6 +62,21 @@ public class SkinsGUIHolder implements InventoryHolder {
             return;
         }
 
-        callback.accept(new ClickEventInfo(XMaterial.matchXMaterial(currentItem), itemMeta, player, page));
+        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), itemMeta.getDisplayName(), wrapper.player(player), page));
+    }
+
+    private ClickEventInfo.MaterialType getMaterialType(XMaterial material) {
+        switch (material) {
+            case PLAYER_HEAD:
+                return ClickEventInfo.MaterialType.HEAD;
+            case RED_STAINED_GLASS_PANE:
+                return ClickEventInfo.MaterialType.RED_PANE;
+            case GREEN_STAINED_GLASS_PANE:
+                return ClickEventInfo.MaterialType.GREEN_PANE;
+            case YELLOW_STAINED_GLASS_PANE:
+                return ClickEventInfo.MaterialType.YELLOW_PANE;
+            default:
+                return ClickEventInfo.MaterialType.UNKNOWN;
+        }
     }
 }

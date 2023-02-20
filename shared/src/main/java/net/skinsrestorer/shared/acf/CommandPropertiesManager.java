@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.acf;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.Locales;
 import co.aikar.locales.MessageKey;
+import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.PropertyReader;
 import net.skinsrestorer.shared.utils.log.SRLogger;
@@ -34,22 +35,16 @@ import java.nio.file.Path;
 public class CommandPropertiesManager {
     private static final String FILE = "command.properties";
 
-    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, InputStream defaultConfigStream, SRLogger logger) {
+    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, SRPlatformAdapter adapter, SRLogger logger) {
         Path outFile = dataFolder.resolve(FILE);
 
         if (!Files.exists(outFile)) {
-            try {
-                Files.copy(defaultConfigStream, outFile);
+            try (InputStream is = adapter.getResource("command.properties")) {
+                Files.copy(is, outFile);
             } catch (IOException ex) {
                 logger.warning("Could not save " + outFile.getFileName() + " to " + outFile);
                 ex.printStackTrace();
             }
-        }
-
-        try {
-            defaultConfigStream.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
 
         try (InputStream in = Files.newInputStream(outFile)) {

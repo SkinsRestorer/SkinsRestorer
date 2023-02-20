@@ -305,7 +305,7 @@ public class SRPlugin {
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
                 Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
 
-        CommandPropertiesManager.load(manager, dataFolder, adapter.getResource("command.properties"), logger);
+        CommandPropertiesManager.load(manager, dataFolder, adapter, logger);
     }
 
     public void initUpdateCheck() {

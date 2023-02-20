@@ -27,17 +27,27 @@ import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.gui.SharedGUI;
+import net.skinsrestorer.shared.interfaces.IOExceptionConsumer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.sponge.gui.SkinsGUI;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.command.CommandSource;
+import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.item.inventory.menu.InventoryMenu;
+import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.plugin.PluginContainer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
@@ -48,16 +58,14 @@ import java.util.stream.Collectors;
 
 public class SRSpongeAdapter implements SRServerAdapter {
     private final Injector injector;
+    private final Metrics metrics;
     @Getter
-    private final Object pluginInstance; // Only for platform API use
-    private final Metrics.Factory metricsFactory;
     private final PluginContainer pluginContainer;
     private final Game game;
 
-    public SRSpongeAdapter(Injector injector, Object pluginInstance, Metrics.Factory metricsFactory, PluginContainer container, Game game) {
+    public SRSpongeAdapter(Injector injector, Metrics metrics, PluginContainer container, Game game) {
         this.injector = injector;
-        this.pluginInstance = pluginInstance;
-        this.metricsFactory = metricsFactory;
+        this.metrics = metrics;
         this.pluginContainer = container;
         this.game = game;
 
@@ -68,12 +76,12 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
     @Override
     public Object createMetricsInstance() {
-        return metricsFactory.make(2337);
+        return metrics;
     }
 
     @Override
     public boolean isPluginEnabled(String pluginName) {
-        return game.getPluginManager().isLoaded(pluginName);
+        return game.pluginManager().plugin(pluginName).isPresent();
     }
 
     @Override
@@ -83,12 +91,12 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
     @Override
     public void runAsync(Runnable runnable) {
-        game.getScheduler().createAsyncExecutor(pluginInstance).execute(runnable);
+        game.asyncScheduler().executor(pluginContainer).execute(runnable);
     }
 
     @Override
     public void runSync(Runnable runnable) {
-        game.getScheduler().createSyncExecutor(pluginInstance).execute(runnable);
+        game.server().scheduler().executor(pluginContainer).execute(runnable);
     }
 
     @Override
@@ -98,22 +106,43 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
     @Override
     public void openServerGUI(SRPlayer player, int page) {
-        // TODO: Implement
+        InventoryMenu inventory = injector.getSingleton(SharedGUI.class)
+                .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
+
+        runSync(() -> inventory.open(player.getAs(ServerPlayer.class)));
     }
 
     @Override
     public void openProxyGUI(SRPlayer player, int page, Map<String, String> skinList) {
-        // TODO: Implement
+        InventoryMenu inventory = injector.getSingleton(SkinsGUI.class)
+                .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
+
+        runSync(() -> inventory.open(player.getAs(ServerPlayer.class)));
     }
 
     @Override
     public Optional<SRPlayer> getPlayer(String name) {
-        return game.getServer().getPlayer(name).map(p -> injector.getSingleton(WrapperSponge.class).player(p));
+        return game.server().player(name).map(p -> injector.getSingleton(WrapperSponge.class).player(p));
+    }
+
+    @Override
+    public void sendToMessageChannel(SRPlayer player, IOExceptionConsumer<DataOutputStream> consumer) {
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(bytes);
+
+            consumer.accept(out);
+
+            game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
+                    .play().sendTo(player.getAs(ServerPlayer.class), buf -> buf.writeBytes(bytes.toByteArray()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        game.getScheduler().createTaskBuilder().execute(runnable).interval(interval, timeUnit).delay(delay, timeUnit).submit(pluginInstance);
+        game.asyncScheduler().executor(pluginContainer).scheduleAtFixedRate(runnable, delay, interval, timeUnit);
     }
 
     @Override
@@ -122,18 +151,18 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
 
-        val playerResolver = manager.getCommandContexts().getResolver(Player.class);
+        val playerResolver = manager.getCommandContexts().getResolver(ServerPlayer.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            Player player = (Player) playerResolver.getContext(c);
+            ServerPlayer player = (ServerPlayer) playerResolver.getContext(c);
             if (player == null) {
                 return null;
             }
             return wrapper.player(player);
         });
 
-        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
+        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandCause.class);
         manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            CommandSource commandSender = (CommandSource) commandSenderResolver.getContext(c);
+            CommandCause commandSender = (CommandCause) commandSenderResolver.getContext(c);
             if (commandSender == null) {
                 return null;
             }
@@ -154,25 +183,26 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
     @Override
     public SRCommandSender convertCommandSender(Object sender) {
-        return injector.getSingleton(WrapperSponge.class).commandSender((CommandSource) sender);
+        return injector.getSingleton(WrapperSponge.class).commandSender((CommandCause) sender);
     }
 
     @Override
     public String getPlatformVersion() {
-        return game.getPlatform().getMinecraftVersion().getName();
+        return game.platform().minecraftVersion().name();
     }
 
     @Override
     public List<SkinProperty> getPropertiesOfPlayer(SRPlayer player) {
-        Collection<ProfileProperty> properties = player.getAs(Player.class).getProfile().getPropertyMap().get(SkinProperty.TEXTURES_NAME);
-        return properties.stream()
-                .map(property -> SkinProperty.of(property.getValue(), property.getSignature().orElseThrow(() -> new IllegalStateException("Signature is missing"))))
+        return player.getAs(Player.class).profile().properties().stream()
+                .filter(property -> property.name().equals(SkinProperty.TEXTURES_NAME))
+                .filter(ProfileProperty::hasSignature)
+                .map(property -> SkinProperty.of(property.value(), property.signature().orElseThrow(() -> new IllegalStateException("Signature is missing"))))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Collection<SRPlayer> getOnlinePlayers() {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
-        return game.getServer().getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
+        return game.server().onlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
     }
 }

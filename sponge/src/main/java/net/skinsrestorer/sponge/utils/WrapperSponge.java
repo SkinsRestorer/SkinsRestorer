@@ -23,9 +23,10 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.entity.living.player.Player;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.service.permission.Subject;
 
 import javax.inject.Inject;
 
@@ -34,15 +35,16 @@ public class WrapperSponge {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public SRCommandSender commandSender(CommandSource sender) {
-        if (sender instanceof Player) {
-            return player((Player) sender);
+    public SRCommandSender commandSender(CommandCause sender) {
+        Subject subject = sender.subject();
+        if (subject instanceof ServerPlayer) {
+            return player((ServerPlayer) subject);
         }
 
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
+        return WrapperCommandSender.builder().subject(subject).audience(sender.audience()).locale(locale).settings(settings).build();
     }
 
-    public SRPlayer player(Player player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
+    public SRServerPlayer player(ServerPlayer player) {
+        return WrapperPlayer.builder().player(player).subject(player).audience(player).locale(locale).settings(settings).build();
     }
 }

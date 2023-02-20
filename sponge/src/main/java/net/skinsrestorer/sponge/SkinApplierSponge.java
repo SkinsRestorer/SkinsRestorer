@@ -19,48 +19,32 @@
  */
 package net.skinsrestorer.sponge;
 
-import com.flowpowered.math.vector.Vector3d;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import org.spongepowered.api.Game;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.entity.living.player.tab.TabListEntry;
-import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.profile.property.ProfileProperty;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.storage.WorldProperties;
 
 import javax.inject.Inject;
-import java.util.Collection;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinApplierSponge implements SkinApplierAccess<Player> {
+public class SkinApplierSponge implements SkinApplierAccess<ServerPlayer> {
     private final SRSpongeAdapter plugin;
     private final Game game;
 
     @Override
-    public void applySkin(Player player, SkinProperty property) {
-        setTexture(player.getProfile().getPropertyMap().get(SkinProperty.TEXTURES_NAME), property);
+    public void applySkin(ServerPlayer player, SkinProperty property) {
+        player.offer(Keys.UPDATE_GAME_PROFILE, true);
+        player.skinProfile().set(ProfileProperty.of(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
-        plugin.runSync(() -> sendUpdate(player));
+        // plugin.runSync(() -> sendUpdate(player)); // TODO: May not be needed
     }
 
-    public void updateProfileSkin(GameProfile profile, SkinProperty skin) {
-        setTexture(profile.getPropertyMap().get(SkinProperty.TEXTURES_NAME), skin);
-    }
-
-    private void setTexture(Collection<ProfileProperty> oldProperties, SkinProperty property) {
-        ProfileProperty newTextures = game.getServer().getGameProfileManager()
-                .createProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
-        oldProperties.removeIf(property1 -> property1.getName().equals(SkinProperty.TEXTURES_NAME));
-        oldProperties.add(newTextures);
-    }
-
-    private void sendUpdate(Player receiver) {
-        receiver.getTabList().removeEntry(receiver.getUniqueId());
+    /*
+    private void sendUpdate(ServerPlayer receiver) {
+        receiver.tabList().removeEntry(receiver.uniqueId());
         receiver.getTabList().addEntry(TabListEntry.builder()
                 .displayName(receiver.getDisplayNameData().displayName().get())
                 .latency(receiver.getConnection().getLatency())
@@ -75,9 +59,9 @@ public class SkinApplierSponge implements SkinApplierAccess<Player> {
 
         // Simulate respawn to see skin active
         for (WorldProperties w : game.getServer().getAllWorldProperties()) {
-            if (!w.getUniqueId().equals(receiver.getWorld().getUniqueId())) {
-                game.getServer().loadWorld(w.getUniqueId());
-                game.getServer().getWorld(w.getUniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
+            if (!w.uniqueId().equals(receiver.getWorld().uniqueId())) {
+                game.getServer().loadWorld(w.uniqueId());
+                game.getServer().getWorld(w.uniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
                 receiver.setLocationAndRotation(loc, rotation);
                 break;
             }
@@ -85,5 +69,5 @@ public class SkinApplierSponge implements SkinApplierAccess<Player> {
 
         receiver.offer(Keys.VANISH, true);
         game.getScheduler().createTaskBuilder().execute(() -> receiver.offer(Keys.VANISH, false)).delayTicks(1).submit(plugin.getPluginInstance());
-    }
+    }*/
 }

@@ -19,21 +19,19 @@
  */
 package net.skinsrestorer.bukkit.gui;
 
-import co.aikar.commands.CommandManager;
 import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.gui.GUIManager;
+import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.interfaces.SRForeign;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -47,25 +45,14 @@ import java.util.function.Consumer;
 import static net.skinsrestorer.shared.utils.FluentList.listOf;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SkinsGUI {
-    private static final int HEAD_COUNT_PER_PAGE = 36;
+public class SkinsGUI implements GUIManager<Inventory> {
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final Server server;
-    private final SkinStorageImpl skinStorage;
-
-    public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page) {
-        if (page > 999) {
-            page = 999;
-        }
-
-        int skinNumber = HEAD_COUNT_PER_PAGE * page;
-
-        return createGUI(callback, player, page, skinStorage.getSkins(skinNumber));
-    }
+    private final WrapperBukkit wrapper;
 
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
-        SkinsGUIHolder instance = new SkinsGUIHolder(page, callback);
+        SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
         instance.setInventory(inventory);
 
@@ -76,7 +63,7 @@ public class SkinsGUI {
 
         int skinCount = 0;
         for (Map.Entry<String, String> entry : skinsList.entrySet()) {
-            if (skinCount >= HEAD_COUNT_PER_PAGE) {
+            if (skinCount >= SharedGUI.HEAD_COUNT_PER_PAGE) {
                 logger.warning("SkinsGUI: Skin count is more than 36, skipping...");
                 break;
             }
@@ -193,88 +180,5 @@ public class SkinsGUI {
 
         private final XMaterial material;
         private final Message message;
-    }
-
-    @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ServerGUIActions implements Consumer<ClickEventInfo> {
-        private final SRServerAdapter adapter;
-        private final WrapperBukkit wrapper;
-        private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
-        private final SkinsGUI gui;
-
-        @Override
-        public void accept(ClickEventInfo event) {
-            switch (event.getMaterial()) {
-                case PLAYER_HEAD:
-                    adapter.runAsync(() -> {
-                        String skin = event.getItemMeta().getDisplayName();
-                        commandManager.getRootCommand("skin").execute(
-                                commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"set", skin});
-                    });
-                    event.getPlayer().closeInventory();
-                    break;
-                case RED_STAINED_GLASS_PANE:
-                    commandManager.getRootCommand("skin").execute(
-                            commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"clear"});
-                    event.getPlayer().closeInventory();
-                    break;
-                case GREEN_STAINED_GLASS_PANE:
-                    adapter.runAsync(() -> {
-                        Inventory newInventory = gui.createGUI(this, wrapper.player(event.getPlayer()), event.getCurrentPage() + 1);
-
-                        adapter.runSync(() ->
-                                event.getPlayer().openInventory(newInventory));
-                    });
-                    break;
-                case YELLOW_STAINED_GLASS_PANE:
-                    adapter.runAsync(() -> {
-                        Inventory newInventory = gui.createGUI(this, wrapper.player(event.getPlayer()), event.getCurrentPage() - 1);
-
-                        adapter.runSync(() ->
-                                event.getPlayer().openInventory(newInventory));
-                    });
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    @RequiredArgsConstructor(onConstructor_ = @Inject)
-    public static class ProxyGUIActions implements Consumer<ClickEventInfo> {
-        private final SRBukkitAdapter adapter;
-
-        @Override
-        public void accept(ClickEventInfo event) {
-            Player player = event.getPlayer();
-            switch (event.getMaterial()) {
-                case PLAYER_HEAD:
-                    String skinName = event.getItemMeta().getDisplayName();
-                    adapter.runAsync(() -> adapter.sendToMessageChannel(player, out -> {
-                        out.writeUTF("setSkin");
-                        out.writeUTF(player.getName());
-                        out.writeUTF(skinName);
-                    }));
-                    player.closeInventory();
-                    break;
-                case RED_STAINED_GLASS_PANE:
-                    adapter.runAsync(() -> adapter.sendToMessageChannel(player, out -> {
-                        out.writeUTF("clearSkin");
-                        out.writeUTF(player.getName());
-                    }));
-                    player.closeInventory();
-                    break;
-                case GREEN_STAINED_GLASS_PANE:
-                    adapter.runAsync(() ->
-                            adapter.requestSkinsFromProxy(player, event.getCurrentPage() + 1));
-                    break;
-                case YELLOW_STAINED_GLASS_PANE:
-                    adapter.runAsync(() ->
-                            adapter.requestSkinsFromProxy(player, event.getCurrentPage() - 1));
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 }

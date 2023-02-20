@@ -21,12 +21,14 @@ package net.skinsrestorer.sponge.utils;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.service.permission.Subject;
 
 import java.util.Locale;
 
@@ -34,7 +36,8 @@ import java.util.Locale;
 public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final CommandSource sender;
+    private final Subject subject;
+    private final Audience audience;
 
     @Override
     public Locale getLocale() {
@@ -43,7 +46,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(Text.builder(message).build());
+        audience.sendMessage(Identity.nil(), Component.text(message));
     }
 
     @Override
@@ -53,11 +56,11 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public String getName() {
-        return sender.getName();
+        return subject.identifier();
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+        return subject.hasPermission(permission);
     }
 }

@@ -17,19 +17,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.builddata;
+package net.skinsrestorer.shared.listeners.event;
 
-// The constants are replaced before compilation
-public class BuildData {
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
 
-    public static final String VERSION = "{version}";
-    public static final String DESCRIPTION = "{description}";
-    public static final String URL = "{url}";
-    public static final String COMMIT = "{commit}";
-    public static final String[] LOCALES = supportedLocales();
+@Getter
+@RequiredArgsConstructor
+public class ClickEventInfo {
+    private final MaterialType material;
+    private final String displayName;
+    private final SRServerPlayer player;
+    private final int currentPage;
 
-    private static String[] supportedLocales() {
-        String values = "{locales}";
-        return values.split("\\|");
+    public enum MaterialType {
+        HEAD,
+        YELLOW_PANE,
+        GREEN_PANE,
+        RED_PANE,
+        UNKNOWN;
     }
 }

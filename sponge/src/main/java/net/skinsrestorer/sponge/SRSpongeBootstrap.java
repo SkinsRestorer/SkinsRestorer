@@ -20,25 +20,24 @@
 package net.skinsrestorer.sponge;
 
 import com.google.inject.Inject;
-import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.platform.SRBootstrapper;
 import net.skinsrestorer.shared.platform.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheck;
-import net.skinsrestorer.shared.utils.log.Slf4jLoggerImpl;
+import net.skinsrestorer.sponge.utils.Log4jLoggerImpl;
+import org.apache.logging.log4j.Logger;
 import org.bstats.sponge.Metrics;
-import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.plugin.PluginContainer;
+import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 import java.nio.file.Path;
 
 @SuppressWarnings("unused")
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
+@Plugin("skinsrestorer")
 public class SRSpongeBootstrap {
     @Inject
     private PluginContainer container;
@@ -54,14 +53,18 @@ public class SRSpongeBootstrap {
     private Game game;
 
     @Listener
-    public void onInitialize(GameInitializationEvent event) {
+    public void onInitialize(ConstructPluginEvent event) {
+        // Need to init metrics before plugin because metrics wants to hook in the lifecycle before the plugin
+        Metrics metrics = metricsFactory.make(2337);
+        metrics.startup(event);
+
         SRBootstrapper.startPlugin(
-                new Slf4jLoggerImpl(logger),
+                new Log4jLoggerImpl(logger),
                 false,
-                i -> new SRSpongeAdapter(i, this, metricsFactory, container, game),
+                i -> new SRSpongeAdapter(i, metrics, container, game),
                 SharedUpdateCheck.class,
                 SRServerPlugin.class,
-                container.getVersion().orElse("Unknown"),
+                container.metadata().version().toString(),
                 dataFolder,
                 Platform.SPONGE,
                 SRSpongeInit.class

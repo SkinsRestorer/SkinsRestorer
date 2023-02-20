@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.storage;
 import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
@@ -31,14 +32,11 @@ import net.skinsrestorer.shared.utils.PropertyReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public enum Message implements MessageKeyGetter {
     PREFIX,
@@ -125,27 +123,18 @@ public enum Message implements MessageKeyGetter {
             throw new IOException("Could not find default language files");
         }
 
-        URL jar = src.getLocation();
-        try (ZipInputStream zip = new ZipInputStream(jar.openStream())) {
-            ZipEntry entry;
-            while ((entry = zip.getNextEntry()) != null) {
-                String name = entry.getName();
+        for (String localeFile : BuildData.LOCALES) {
+            String filePath = "languages/" + localeFile;
+            Locale locale = localeFile.startsWith("language_") ? LocaleParser.parseLocaleStrict(localeFile.replace("language_", "").replace(".properties", "")) : Locale.ENGLISH;
 
-                if (name.startsWith("languages/language") && name.endsWith(".properties")) {
-                    String fileName = name.replace("languages/", "");
-                    Locale locale = fileName.startsWith("language_") ?
-                            LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
-                            : Locale.ENGLISH;
+            try (InputStream is = plugin.getResource(filePath)) {
+                PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k.toString()), C.c(v.toString())));
+            }
 
-                    try (InputStream is = plugin.getResource(name)) {
-                        PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
-                                MessageKey.of(k.toString()), C.c(v.toString())));
-                    }
-                    if (!Files.exists(languagesFolder.resolve(fileName))) {
-                        try (InputStream is = plugin.getResource(name)) {
-                            Files.copy(is, languagesFolder.resolve(fileName));
-                        }
-                    }
+            Path localePath = languagesFolder.resolve(localeFile);
+            if (!Files.exists(localePath)) {
+                try (InputStream is = plugin.getResource(filePath)) {
+                    Files.copy(is, localePath);
                 }
             }
         }

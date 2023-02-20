@@ -23,36 +23,34 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
-import net.skinsrestorer.sponge.SkinApplierSponge;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Game;
+import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.event.EventListener;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent.Login;
+import org.spongepowered.api.profile.property.ProfileProperty;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class LoginListener implements EventListener<ClientConnectionEvent.Auth> {
-    private final SkinApplierSponge skinApplier;
+public class LoginListener implements EventListener<Login> {
     private final LoginProfileListenerAdapter<Void> adapter;
-    private final Game game;
 
     @Override
-    public void handle(@NotNull Auth event) {
+    public void handle(@NotNull ServerSideConnectionEvent.Login event) {
         adapter.handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent<Void> wrap(Auth event) {
+    private SRLoginProfileEvent<Void> wrap(Login event) {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return game.getServer().getOnlineMode(); // TODO may replace with profile#isFilled() or check properties
+                return event.profile().properties().stream().anyMatch(p -> p.name().equals(SkinProperty.TEXTURES_NAME));
             }
 
             @Override
             public String getPlayerName() {
-                return event.getProfile().getName().orElseThrow(() -> new RuntimeException("Could not get player name!"));
+                return event.profile().name().orElseThrow(() -> new RuntimeException("Could not get player name!"));
             }
 
             @Override
@@ -62,7 +60,9 @@ public class LoginListener implements EventListener<ClientConnectionEvent.Auth> 
 
             @Override
             public void setResultProperty(SkinProperty property) {
-                skinApplier.updateProfileSkin(event.getProfile(), property);
+                event.user().offer(Keys.UPDATE_GAME_PROFILE, true);
+                event.user().offer(Keys.SKIN_PROFILE_PROPERTY,
+                        ProfileProperty.of(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
             }
 
             @Override

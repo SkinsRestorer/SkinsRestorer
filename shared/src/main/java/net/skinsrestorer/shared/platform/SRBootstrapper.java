@@ -59,7 +59,7 @@ public class SRBootstrapper {
         }
 
         if (srPlugin != null && !srPlugin.isUpdaterInitialized()) {
-            isrLogger.log(SRLogLevel.INFO, "Updater was not initialized, a error occurred while starting the plugin. Forcing updater to initialize.");
+            isrLogger.log(SRLogLevel.WARNING, "Updater was not initialized, a error occurred while starting the plugin. Forcing updater to initialize.");
             try {
                 srPlugin.initUpdateCheck();
             } catch (Exception e) {
