@@ -40,8 +40,9 @@ public final class LoginProfileListenerAdapter<R> {
     private final SRLogger logger;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
-        if (handleSync(event))
+        if (handleSync(event)) {
             return null;
+        }
 
         return event.runAsync(() -> {
             try {

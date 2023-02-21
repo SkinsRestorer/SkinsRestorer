@@ -56,7 +56,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public String getName() {
-        return subject.identifier();
+        return subject.friendlyIdentifier().orElse(subject.identifier());
     }
 
     @Override

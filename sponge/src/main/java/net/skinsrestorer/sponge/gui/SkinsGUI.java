@@ -62,14 +62,14 @@ public class SkinsGUI implements GUIManager<InventoryMenu> {
                 .itemType(ItemTypes.PLAYER_HEAD)
                 .add(Keys.LORE, listOf(Component.text(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN))))
                 .add(Keys.GAME_PROFILE, GameProfile.of(UUID.randomUUID(), null).withProperty(ProfileProperty.of(SkinProperty.TEXTURES_NAME, property)))
-                .add(Keys.DISPLAY_NAME, Component.text(name))
+                .add(Keys.CUSTOM_NAME, Component.text(name))
                 .build();
     }
 
     private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
         return ItemStack.builder()
                 .itemType(type.getMaterial())
-                .add(Keys.DISPLAY_NAME, Component.text(type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage())))
+                .add(Keys.CUSTOM_NAME, Component.text(type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage())))
                 .build();
     }
 

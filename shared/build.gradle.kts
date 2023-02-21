@@ -17,9 +17,10 @@ dependencies {
     implementation("com.github.aikar:locales:5f204c3afb")
     implementation("org.bstats:bstats-base:3.0.0")
 
-    compileOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
+    compileOnly("com.github.SkinsRestorer.commands:acf-core:ebc273d2f3")
 
-    testRuntimeOnly("com.github.SkinsRestorer.commands:acf-core:cd41e746e3")
+    testRuntimeOnly("com.github.SkinsRestorer.commands:acf-core:ebc273d2f3")
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
 }

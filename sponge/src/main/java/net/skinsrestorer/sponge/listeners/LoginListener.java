@@ -19,29 +19,38 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
-import org.spongepowered.api.event.network.ServerSideConnectionEvent.Login;
-import org.spongepowered.api.profile.property.ProfileProperty;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class LoginListener implements EventListener<Login> {
+public class LoginListener implements EventListener<ServerSideConnectionEvent.Auth> {
     private final LoginProfileListenerAdapter<Void> adapter;
+    private final SRLogger logger;
 
     @Override
-    public void handle(@NotNull ServerSideConnectionEvent.Login event) {
-        adapter.handleLogin(wrap(event));
+    public void handle(@NotNull ServerSideConnectionEvent.Auth event) {
+        logger.info("a");
+        try {
+            adapter.handleLogin(wrap(event));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
-    private SRLoginProfileEvent<Void> wrap(Login event) {
+    private SRLoginProfileEvent<Void> wrap(ServerSideConnectionEvent.Auth event) {
+        logger.info(String.valueOf(event));
+
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
@@ -55,18 +64,24 @@ public class LoginListener implements EventListener<Login> {
 
             @Override
             public boolean isCancelled() {
-                return event.isCancelled();
+                return false;
             }
 
+            @SuppressWarnings("unchecked")
             @Override
             public void setResultProperty(SkinProperty property) {
-                event.user().offer(Keys.UPDATE_GAME_PROFILE, true);
-                event.user().offer(Keys.SKIN_PROFILE_PROPERTY,
-                        ProfileProperty.of(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+                try {
+                    GameProfile gameProfile = (GameProfile) ReflectionUtil.getFieldByType(event.connection(), "GameProfile");
+                    gameProfile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+                    gameProfile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public Void runAsync(Runnable runnable) {
+                runnable.run();
                 return null;
             }
         };

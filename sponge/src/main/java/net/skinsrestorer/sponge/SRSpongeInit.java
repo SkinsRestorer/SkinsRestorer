@@ -52,7 +52,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
     @Override
     public void initLoginProfileListener() {
         game.eventManager().registerListener(EventListenerRegistration
-                .builder(ServerSideConnectionEvent.Login.class)
+                .builder(ServerSideConnectionEvent.Auth.class)
                 .plugin(adapter.getPluginContainer())
                 .order(Order.DEFAULT)
                 .listener(injector.newInstance(LoginListener.class)).build());

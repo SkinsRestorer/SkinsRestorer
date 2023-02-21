@@ -15,7 +15,7 @@ dependencies {
 
     implementation("io.papermc:paperlib:1.0.7")
     implementation("org.bstats:bstats-bukkit:3.0.1")
-    implementation("com.github.SkinsRestorer.commands:acf-paper:cd41e746e3")
+    implementation("com.github.SkinsRestorer.commands:acf-paper:ebc273d2f3")
     implementation("com.github.cryptomorin:XSeries:9.2.0")
 
     compileOnly("com.viaversion:viabackwards-common:4.5.1")

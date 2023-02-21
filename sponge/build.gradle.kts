@@ -11,7 +11,8 @@ dependencies {
     implementation(projects.skinsrestorerShared)
 
     implementation("org.bstats:bstats-sponge:3.0.1")
-    implementation("com.github.bloodmc.commands:acf-sponge8:sponge-api8-SNAPSHOT") // TODO: Make fork
+    implementation("com.github.SkinsRestorer.commands:acf-sponge:ebc273d2f3")
+    compileOnly("com.mojang:authlib:1.11")
 }
 
 sponge {
