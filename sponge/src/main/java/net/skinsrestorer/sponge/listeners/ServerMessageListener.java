@@ -59,7 +59,7 @@ public class ServerMessageListener implements RawPlayDataHandler<EngineConnectio
 
             @Override
             public String getChannel() {
-                return "sr:messagechannel"; // TODO: Maybe do not hardcode this
+                return "sr:messagechannel";
             }
         };
     }

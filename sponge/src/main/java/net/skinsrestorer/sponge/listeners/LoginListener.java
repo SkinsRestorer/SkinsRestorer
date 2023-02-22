@@ -26,7 +26,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
@@ -36,7 +35,6 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements EventListener<ServerSideConnectionEvent.Auth> {
     private final LoginProfileListenerAdapter<Void> adapter;
-    private final SRLogger logger;
 
     @Override
     public void handle(@NotNull ServerSideConnectionEvent.Auth event) {
@@ -48,8 +46,6 @@ public class LoginListener implements EventListener<ServerSideConnectionEvent.Au
     }
 
     private SRLoginProfileEvent<Void> wrap(ServerSideConnectionEvent.Auth event) {
-        logger.info(String.valueOf(event));
-
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {

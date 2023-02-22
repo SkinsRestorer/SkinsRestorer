@@ -24,12 +24,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
+import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.Cause;
-import org.spongepowered.api.event.EventContextKeys;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Container;
@@ -49,28 +48,31 @@ public class GUIListener implements SlotClickHandler {
 
     @Override
     public boolean handle(Cause cause, Container container, Slot slot, int slotIndex, ClickType<?> clickType) {
-        Optional<Player> player = cause.context().get(EventContextKeys.PLAYER);
+        Optional<ServerPlayer> player = cause.first(ServerPlayer.class);
 
-        if (!player.isPresent() || !(player.get() instanceof ServerPlayer)) {
+        if (!player.isPresent()) {
             return false;
         }
 
-        ServerPlayer serverPlayer = (ServerPlayer) player.get();
-
         ItemStack stack = slot.peek();
+
+        System.out.println(stack);
 
         if (stack == ItemStack.empty()) {
             return false;
         }
 
-        Optional<Value<Component>> displayName = stack.getValue(Keys.DISPLAY_NAME);
+        Optional<Value<Component>> displayName = stack.getValue(Keys.CUSTOM_NAME);
 
         if (!displayName.isPresent()) {
             return false;
         }
 
         callback.accept(new ClickEventInfo(getMaterialType(stack),
-                PlainTextComponentSerializer.plainText().serialize(displayName.get().get()), wrapper.player(serverPlayer), page));
+                PlainTextComponentSerializer.plainText().serialize(displayName.get().get()),
+                wrapper.player(player.get()),
+                CommandCause.create(),
+                page));
 
         return false;
     }

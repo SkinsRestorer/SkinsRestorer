@@ -58,13 +58,13 @@ public class SharedGUI {
                     adapter.runAsync(() -> {
                         String skin = event.getDisplayName();
                         commandManager.getRootCommand("skin").execute(
-                                commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"set", skin});
+                                commandManager.getCommandIssuer(event.getCommandIssuer()), "skin", new String[]{"set", skin});
                     });
                     player.closeInventory();
                     break;
                 case RED_PANE:
                     commandManager.getRootCommand("skin").execute(
-                            commandManager.getCommandIssuer(event.getPlayer()), "skin", new String[]{"clear"});
+                            commandManager.getCommandIssuer(event.getCommandIssuer()), "skin", new String[]{"clear"});
                     player.closeInventory();
                     break;
                 case GREEN_PANE:
