@@ -19,116 +19,105 @@
  */
 package net.skinsrestorer.bukkit;
 
+import ch.jalu.configme.SettingsManager;
 import io.papermc.lib.PaperLib;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.paper.MultiPaperUtil;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.event.EventBusImpl;
+import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.serverinfo.ServerVersion;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
-import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@RequiredArgsConstructor
-public class SkinApplierBukkit {
-    private final SkinsRestorerBukkit plugin;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class SkinApplierBukkit implements SkinApplierAccess<Player> {
+    private final SRBukkitAdapter adapter;
+    private final SRLogger logger;
+    private final SettingsManager settings;
+    private final Server server;
+    private final EventBusImpl eventBus;
     @Getter
-    private final Consumer<Player> refresh;
-    @Setter
-    private boolean optFileChecked;
-    private boolean disableDismountPlayer;
-    private boolean disableRemountPlayer;
-    private boolean enableDismountEntities;
+    @Setter(value = AccessLevel.PROTECTED)
+    private Consumer<Player> refresh;
 
-    public SkinApplierBukkit(SkinsRestorerBukkit plugin) throws InitializeException {
-        this.plugin = plugin;
-        this.refresh = detectRefresh();
-    }
-
-    private Consumer<Player> detectRefresh() throws InitializeException {
+    protected Consumer<Player> detectRefresh(Server server) throws InitializeException {
         if (isPaper()) {
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
-            boolean viaVersionExists = plugin.isPluginEnabled("ViaVersion");
-            boolean protocolSupportExists = plugin.isPluginEnabled("ProtocolSupport");
+            boolean viaVersionExists = adapter.isPluginEnabled("ViaVersion");
+            boolean protocolSupportExists = adapter.isPluginEnabled("ProtocolSupport");
             if (viaVersionExists || protocolSupportExists) {
-                plugin.getLogger().debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
-                return selectSpigotRefresher();
+                logger.debug(SRLogLevel.WARNING, "Unsupported plugin (ViaVersion or ProtocolSupport) detected, forcing SpigotSkinRefresher");
+                return selectSpigotRefresher(server);
             }
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(plugin);
+                return new PaperSkinRefresher(logger, server);
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
-                plugin.getLogger().severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
+                logger.severe("PaperSkinRefresher failed! (Are you using hybrid software?) Only limited support can be provided. Falling back to SpigotSkinRefresher.");
             }
         }
 
-        return selectSpigotRefresher();
+        return selectSpigotRefresher(server);
     }
 
-    private Consumer<Player> selectSpigotRefresher() throws InitializeException {
+    private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
         if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
-            return new MappingSpigotSkinRefresher(plugin);
-        } else return new SpigotSkinRefresher(plugin);
+            return new MappingSpigotSkinRefresher(adapter, logger, server);
+        } else return new SpigotSkinRefresher(adapter, logger);
     }
 
-    /**
-     * Applies the skin In other words, sets the skin data, but no changes will
-     * be visible until you reconnect or force update with
-     *
-     * @param player   Player
-     * @param property Property Object
-     */
-    protected void applySkin(Player player, IProperty property) {
-        if (!player.isOnline())
+    @Override
+    public void applySkin(Player player, SkinProperty property) {
+        if (!player.isOnline()) {
             return;
+        }
 
-        plugin.runAsync(() -> {
-            SkinApplyBukkitEvent applyEvent = new SkinApplyBukkitEvent(player, property);
+        adapter.runAsync(() -> {
+            SkinApplyEventImpl applyEvent = new SkinApplyEventImpl(player, property);
 
-            Bukkit.getPluginManager().callEvent(applyEvent);
+            eventBus.callEvent(applyEvent);
 
-            if (applyEvent.isCancelled())
+            if (applyEvent.isCancelled()) {
                 return;
-
-            IProperty eventProperty = applyEvent.getProperty();
-
-            if (eventProperty == null)
-                return;
+            }
 
             // delay 1 server tick so we override online-mode
-            plugin.runSync(() -> {
-                applyProperty(player, eventProperty);
+            adapter.runSync(() -> {
+                applyProperty(player, applyEvent.getProperty());
 
-                plugin.runAsync(() -> updateSkin(player));
+                adapter.runAsync(() -> updateSkin(player));
             });
         });
     }
 
-    public void applyProperty(Player player, IProperty property) {
+    public void applyProperty(Player player, SkinProperty property) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             BukkitPropertyApplier.applyProperty(player, property);
         } else {
@@ -136,7 +125,7 @@ public class SkinApplierBukkit {
         }
     }
 
-    public Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+    public Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
         if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
             return BukkitPropertyApplier.getPlayerProperties(player);
         } else {
@@ -151,31 +140,27 @@ public class SkinApplierBukkit {
      */
     @SuppressWarnings("deprecation")
     public void updateSkin(Player player) {
-        if (!player.isOnline())
+        if (!player.isOnline()) {
             return;
-
-        if (!optFileChecked) {
-            checkOptFile();
         }
 
-        plugin.runSync(() -> {
+        adapter.runSync(() -> {
             if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
                 Entity vehicle = player.getVehicle();
 
-                SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
-                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
+                SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
             }
 
             for (Player ps : getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
                 try {
-                    ps.hidePlayer(plugin.getPluginInstance(), player);
+                    ps.hidePlayer(adapter.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.hidePlayer(player);
                 }
 
                 try {
-                    ps.showPlayer(plugin.getPluginInstance(), player);
+                    ps.showPlayer(adapter.getPluginInstance(), player);
                 } catch (NoSuchMethodError ignored) {
                     ps.showPlayer(player);
                 }
@@ -185,53 +170,12 @@ public class SkinApplierBukkit {
         });
     }
 
-    private void checkOptFile() {
-        Path fileDisableDismountPlayer = plugin.getDataFolder().resolve("disablesdismountplayer"); // legacy
-        Path fileDisableRemountPlayer = plugin.getDataFolder().resolve("disablesremountplayer"); // legacy
-        Path fileEnableDismountEntities = plugin.getDataFolder().resolve("enablesdismountentities"); // legacy
-
-        Path fileTxtDisableDismountPlayer = plugin.getDataFolder().resolve("disableDismountPlayer.txt");
-        Path fileTxtDisableRemountPlayer = plugin.getDataFolder().resolve("disableRemountPlayer.txt");
-        Path fileTxtEnableDismountEntities = plugin.getDataFolder().resolve("enableDismountEntities.txt");
-
-        if (Files.exists(fileDisableDismountPlayer)) {
-            try {
-                Files.move(fileDisableDismountPlayer, fileTxtDisableDismountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileDisableRemountPlayer)) {
-            try {
-                Files.move(fileDisableRemountPlayer, fileTxtDisableRemountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileEnableDismountEntities)) {
-            try {
-                Files.move(fileEnableDismountEntities, fileTxtEnableDismountEntities);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer);
-        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
-        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
-
-        plugin.getLogger().debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
-        optFileChecked = true;
-    }
-
     private boolean isPaper() {
         if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {
-                plugin.getLogger().debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
+                logger.debug(SRLogLevel.WARNING, "Paper detected, but the methods are missing. Disabling Paper Refresher.");
                 return false;
             }
         } else {
@@ -252,7 +196,7 @@ public class SkinApplierBukkit {
         try {
             return MultiPaperUtil.getOnlinePlayers();
         } catch (Throwable e) { // Catch all errors and fallback to bukkit
-            return Bukkit.getOnlinePlayers();
+            return server.getOnlinePlayers();
         }
     }
 }

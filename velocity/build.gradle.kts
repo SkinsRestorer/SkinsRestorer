@@ -6,5 +6,5 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 
     implementation("org.bstats:bstats-velocity:3.0.1")
-    implementation("co.aikar:acf-velocity:0.5.1-SNAPSHOT")
+    implementation("com.github.SkinsRestorer.commands:acf-velocity:ebc273d2f3")
 }

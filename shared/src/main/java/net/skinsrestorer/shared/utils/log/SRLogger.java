@@ -20,38 +20,41 @@
 package net.skinsrestorer.shared.utils.log;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.ISRLogger;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.YamlConfig;
+import lombok.Setter;
+import net.skinsrestorer.axiom.AxiomConfiguration;
+import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 @RequiredArgsConstructor
 public class SRLogger {
-    private final ISRLogger logger;
+    private final SRPlatformLogger logger;
     private final boolean color;
+    @Setter
+    private boolean debug = false;
 
-    public SRLogger(ISRLogger logger) {
-        this(logger, false);
-    }
+    public void load(Path dataFolder) {
+        if (System.getProperty("sr.unit.test") != null) {
+            debug = true;
+            return;
+        }
 
-    public void load(Path pluginFolder) {
-        try {
-            // Manual check config value
-            Path pluginConfigFile = pluginFolder.resolve("config.yml");
+        Path configFile = dataFolder.resolve("config.yml");
 
-            if (Files.exists(pluginConfigFile)) {
-                YamlConfig pluginConfig = new YamlConfig(pluginConfigFile);
-
-                pluginConfig.load();
-
-                if (pluginConfig.getBoolean("Debug")) {
-                    Config.DEBUG = true;
+        if (Files.exists(configFile)) {
+            try (InputStream inputStream = Files.newInputStream(configFile)) {
+                AxiomConfiguration config = new AxiomConfiguration();
+                config.load(inputStream);
+                Boolean debugValue = config.getBoolean("dev.debug");
+                if (debugValue != null) {
+                    debug = debugValue;
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -68,15 +71,17 @@ public class SRLogger {
     }
 
     public void debug(SRLogLevel level, String message) {
-        if (!Config.DEBUG)
+        if (!debug) {
             return;
+        }
 
         log(level, message);
     }
 
     public void debug(SRLogLevel level, String message, Throwable thrown) {
-        if (!Config.DEBUG)
+        if (!debug) {
             return;
+        }
 
         log(level, message, thrown);
     }

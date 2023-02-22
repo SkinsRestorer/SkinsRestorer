@@ -19,95 +19,30 @@
  */
 package net.skinsrestorer.bungee.utils;
 
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.command.ConsoleCommandSender;
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class WrapperBungee {
-    public static ISRCommandSender wrapCommandSender(CommandSender sender) {
-        return new ISRCommandSender() {
-            @Override
-            public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
-            }
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
 
-            @Override
-            public void sendMessage(String message) {
-                sender.sendMessage(TextComponent.fromLegacyText(message));
-            }
+    public SRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer) {
+            return player((ProxiedPlayer) sender);
+        }
 
-            @Override
-            public String getName() {
-                return sender.getName();
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return sender.hasPermission(permission);
-            }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleCommandSender;
-            }
-        };
+        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public static ISRProxyPlayer wrapPlayer(ProxiedPlayer player) {
-        return new ISRProxyPlayer() {
-            @Override
-            public Locale getLocale() {
-                Locale playerLocale = player.getLocale();
-                if (playerLocale == null) {
-                    return LocaleParser.getDefaultLocale();
-                }
-
-                return playerLocale;
-            }
-
-            @Override
-            public Optional<String> getCurrentServer() {
-                return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());
-            }
-
-            @Override
-            public void sendDataToServer(String channel, byte[] data) {
-                player.getServer().sendData(channel, data);
-            }
-
-            @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
-            }
-
-            @Override
-            public String getName() {
-                return player.getName();
-            }
-
-            @Override
-            public UUID getUniqueId() {
-                return player.getUniqueId();
-            }
-
-            @Override
-            public void sendMessage(String message) {
-                player.sendMessage(TextComponent.fromLegacyText(message));
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return player.hasPermission(permission);
-            }
-        };
+    public SRProxyPlayer player(ProxiedPlayer player) {
+        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 }

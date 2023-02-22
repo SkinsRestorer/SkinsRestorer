@@ -19,11 +19,7 @@
  */
 package net.skinsrestorer.shared.reflection;
 
-import net.skinsrestorer.shared.reflection.exception.EnumNotFoundException;
-import net.skinsrestorer.shared.reflection.exception.FieldNotFoundException;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
-import net.skinsrestorer.shared.reflection.reflect.DuckBypass;
-import net.skinsrestorer.api.serverinfo.ServerVersion;
+import net.skinsrestorer.shared.serverinfo.ServerVersion;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -35,7 +31,6 @@ import java.util.stream.Stream;
 public class ReflectionUtil {
     public static final String SERVER_VERSION_STRING = ServerVersion.getNMSVersion();
     public static final ServerVersion SERVER_VERSION;
-    private static final DuckBypass reflect = new DuckBypass();
     private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
 
     static {
@@ -78,49 +73,45 @@ public class ReflectionUtil {
         return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION_STRING + "." + clazz);
     }
 
-    public static Class<?> getNMSClass(String clazz, String fullClassName) throws ReflectionException {
-        try {
-            return forNameWithFallback(clazz, fullClassName);
-        } catch (ClassNotFoundException e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    private static Class<?> forNameWithFallback(String clazz, String fullClassName) throws ClassNotFoundException {
+    public static Class<?> getNMSClass(String clazz, String fullClassName) throws ClassNotFoundException {
         try {
             return Class.forName("net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
         } catch (ClassNotFoundException ignored) {
-            return Class.forName(fullClassName);
+            if (fullClassName != null) {
+                return Class.forName(fullClassName);
+            }
+
+            throw new ClassNotFoundException("Could not find net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
         }
     }
 
-    public static Enum<?> getEnum(Class<?> clazz, String constant) throws EnumNotFoundException {
+    public static Enum<?> getEnum(Class<?> clazz, String constant) throws ReflectiveOperationException {
         Enum<?>[] enumConstants = (Enum<?>[]) clazz.getEnumConstants();
 
         for (Enum<?> e : enumConstants)
             if (e.name().equalsIgnoreCase(constant))
                 return e;
 
-        throw new EnumNotFoundException("Enum constant not found " + constant);
+        throw new ReflectiveOperationException("Enum constant not found " + constant);
     }
 
-    public static Enum<?> getEnum(Class<?> clazz, int ordinal) throws EnumNotFoundException {
+    public static Enum<?> getEnum(Class<?> clazz, int ordinal) throws ReflectiveOperationException {
         try {
             return (Enum<?>) clazz.getEnumConstants()[ordinal];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new EnumNotFoundException("Enum constant not found " + ordinal);
+            throw new ReflectiveOperationException("Enum constant not found " + ordinal);
         }
     }
 
-    public static Enum<?> getEnum(Class<?> clazz, String enumName, String constant) throws EnumNotFoundException, ClassNotFoundException {
+    public static Enum<?> getEnum(Class<?> clazz, String enumName, String constant) throws ReflectiveOperationException {
         return getEnum(getSubClass(clazz, enumName), constant);
     }
 
-    public static Enum<?> getEnum(Class<?> clazz, String enumName, int ordianl) throws EnumNotFoundException, ClassNotFoundException {
+    public static Enum<?> getEnum(Class<?> clazz, String enumName, int ordianl) throws ReflectiveOperationException {
         return getEnum(getSubClass(clazz, enumName), ordianl);
     }
 
-    private static Class<?> getSubClass(Class<?> clazz, String className) throws ClassNotFoundException {
+    private static Class<?> getSubClass(Class<?> clazz, String className) throws ReflectiveOperationException {
         for (Class<?> subClass : clazz.getDeclaredClasses()) {
             if (subClass.getSimpleName().equals(className))
                 return subClass;
@@ -134,7 +125,7 @@ public class ReflectionUtil {
         throw new ClassNotFoundException("Sub class " + className + " of " + clazz.getSimpleName() + " not found!");
     }
 
-    public static Field getField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+    public static Field getField(Class<?> clazz, String fieldName) throws ReflectiveOperationException {
         Field f;
 
         try {
@@ -143,12 +134,12 @@ public class ReflectionUtil {
             f = clazz.getField(fieldName);
         }
 
-        setFieldAccessible(f);
+        f.setAccessible(true);
 
         return f;
     }
 
-    private static Method getMethod(Class<?> clazz, String methodName) throws NoSuchMethodException {
+    private static Method getMethod(Class<?> clazz, String methodName) throws ReflectiveOperationException {
         Method m;
         try {
             m = clazz.getDeclaredMethod(methodName);
@@ -160,7 +151,7 @@ public class ReflectionUtil {
         return m;
     }
 
-    private static Method getMethod(Class<?> clazz, String methodName, Class<?>... args) throws NoSuchMethodException {
+    private static Method getMethod(Class<?> clazz, String methodName, Class<?>... args) throws ReflectiveOperationException {
         Method m;
         try {
             m = clazz.getDeclaredMethod(methodName, args);
@@ -172,7 +163,7 @@ public class ReflectionUtil {
         return m;
     }
 
-    public static <T> Field getField(Class<?> target, String name, Class<T> fieldType, int index) throws FieldNotFoundException {
+    public static <T> Field getField(Class<?> target, String name, Class<T> fieldType, int index) throws ReflectiveOperationException {
         for (final Field field : target.getDeclaredFields()) {
             if ((name == null || field.getName().equals(name)) && fieldType.isAssignableFrom(field.getType()) && index-- <= 0) {
                 field.setAccessible(true);
@@ -183,96 +174,87 @@ public class ReflectionUtil {
         if (target.getSuperclass() != null)
             return getField(target.getSuperclass(), name, fieldType, index);
 
-        throw new FieldNotFoundException("Cannot find field with type " + fieldType + " in " + target.getSimpleName());
+        throw new ReflectiveOperationException("Cannot find field with type " + fieldType + " in " + target.getSimpleName());
     }
 
-    public static Object getObject(Object obj, String fieldName) throws ReflectionException {
-        try {
-            return getField(obj.getClass(), fieldName).get(obj);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
+    public static Object getObject(Object obj, String fieldName) throws ReflectiveOperationException {
+        return getField(obj.getClass(), fieldName).get(obj);
     }
 
-    public static Object getFieldByType(Object obj, String typeName) throws ReflectionException {
+    public static Object getFieldByType(Object obj, String typeName) throws ReflectiveOperationException {
         return getFieldByType(obj, obj.getClass(), typeName);
     }
 
-    private static Object getFieldByType(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
+    private static Object getFieldByType(Object obj, Class<?> superClass, String typeName) throws ReflectiveOperationException {
         return getFieldByTypeList(obj, superClass, typeName).get(0);
     }
 
-    public static List<Object> getFieldByTypeList(Object obj, String typeName) throws ReflectionException {
+    public static List<Object> getFieldByTypeList(Object obj, String typeName) throws ReflectiveOperationException {
         return getFieldByTypeList(obj, obj.getClass(), typeName);
     }
 
-    private static List<Object> getFieldByTypeList(Object obj, Class<?> superClass, String typeName) throws ReflectionException {
+    private static List<Object> getFieldByTypeList(Object obj, Class<?> superClass, String typeName) throws ReflectiveOperationException {
         List<Object> fields = new ArrayList<>();
 
-        try {
-            for (Field f : superClass.getDeclaredFields()) {
-                if (f.getType().getSimpleName().equalsIgnoreCase(typeName)) {
-                    setFieldAccessible(f);
+        for (Field f : superClass.getDeclaredFields()) {
+            if (f.getType().getSimpleName().equalsIgnoreCase(typeName)) {
+                f.setAccessible(true);
 
-                    fields.add(f.get(obj));
-                }
+                fields.add(f.get(obj));
             }
+        }
 
-            if (superClass.getSuperclass() != null) {
-                fields.addAll(getFieldByTypeList(obj, superClass.getSuperclass(), typeName));
-            }
+        if (superClass.getSuperclass() != null) {
+            fields.addAll(getFieldByTypeList(obj, superClass.getSuperclass(), typeName));
+        }
 
-            if (fields.isEmpty() && obj.getClass() == superClass) {
-                throw new FieldNotFoundException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
-            } else {
-                return fields;
-            }
-        } catch (Exception e) {
-            throw new ReflectionException(e);
+        if (fields.isEmpty() && obj.getClass() == superClass) {
+            throw new ReflectiveOperationException("Could not find field of type " + typeName + " in " + obj.getClass().getSimpleName());
+        } else {
+            return fields;
         }
     }
 
-    public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initArgs) throws ReflectionException {
-        try {
-            return getConstructor(clazz, args).newInstance(initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
+    public static Object invokeConstructor(Class<?> clazz, Class<?>[] args, Object... initArgs) throws ReflectiveOperationException {
+        return getConstructor(clazz, args).newInstance(initArgs);
     }
 
-    public static Object invokeConstructor(Class<?> clazz, Object... initArgs) throws ReflectionException {
-        try {
-            return getConstructorByArgs(clazz, initArgs).newInstance(initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
+    public static Object invokeConstructor(Class<?> clazz, Object... initArgs) throws ReflectiveOperationException {
+        return getConstructorByArgs(clazz, initArgs).newInstance(initArgs);
     }
 
-    private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... args) throws NoSuchMethodException {
+    private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... args) throws ReflectiveOperationException {
         Constructor<?> c = clazz.getConstructor(args);
         c.setAccessible(true);
 
         return c;
     }
 
-    private static Constructor<?> getConstructorByArgs(Class<?> clazz, Object... args) throws ReflectionException {
+    private static Constructor<?> getConstructorByArgs(Class<?> clazz, Object... args) throws ReflectiveOperationException {
         for (Constructor<?> constructor : clazz.getConstructors()) {
-            if (constructor.getParameterTypes().length != args.length)
+            if (constructor.getParameterTypes().length != args.length) {
                 continue;
+            }
 
             int i = 0;
             for (Class<?> parameter : constructor.getParameterTypes()) {
-                if (!isAssignable(parameter, args[i]))
+                if (!isAssignable(parameter, args[i])) {
                     break;
+                }
 
                 i++;
             }
 
-            if (i == args.length)
+            if (i == args.length) {
                 return constructor;
+            }
         }
 
-        throw new ReflectionException("Could not find constructor with args " + Arrays.stream(args).map(Object::getClass).map(Class::getSimpleName).collect(Collectors.joining(", ")) + " in " + clazz.getSimpleName());
+        String argsString = Arrays.stream(args)
+                .map(s -> s == null ? "null" : s.getClass().getSimpleName())
+                .collect(Collectors.joining(", "));
+
+        throw new ReflectiveOperationException(String.format("Could not find constructor with args %s in %s", argsString, clazz.getSimpleName()));
     }
 
     private static boolean isAssignable(Class<?> clazz, Object obj) {
@@ -289,52 +271,15 @@ public class ReflectionUtil {
         return builtInMap.getOrDefault(clazz, clazz);
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
+    public static Object invokeMethod(Class<?> clazz, Object obj, String method) throws ReflectiveOperationException {
+        return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj);
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initArgs) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
+    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Class<?>[] args, Object... initArgs) throws ReflectiveOperationException {
+        return Objects.requireNonNull(getMethod(clazz, method, args)).invoke(obj, initArgs);
     }
 
-    public static Object invokeMethod(Class<?> clazz, Object obj, String method, Object... initArgs) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(clazz, method)).invoke(obj, initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    public static Object invokeMethod(Object obj, String method) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    public static Object invokeMethod(Object obj, String method, Object[] initArgs) throws ReflectionException {
-        try {
-            return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj, initArgs);
-        } catch (Exception e) {
-            throw new ReflectionException(e);
-        }
-    }
-
-    private static void setFieldAccessible(Field field) {
-        field.setAccessible(true);
-    }
-
-    public static void setObject(Class<?> clazz, Object obj, String fieldName, Object value) {
-        // getField(clazz, fieldName).set(obj, value);
-        reflect.setValue(clazz, fieldName, obj, value);
+    public static Object invokeMethod(Object obj, String method) throws ReflectiveOperationException {
+        return Objects.requireNonNull(getMethod(obj.getClass(), method)).invoke(obj);
     }
 }

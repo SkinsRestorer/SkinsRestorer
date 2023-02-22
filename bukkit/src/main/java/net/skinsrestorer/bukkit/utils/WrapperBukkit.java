@@ -19,82 +19,30 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Locale;
-import java.util.UUID;
+import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class WrapperBukkit {
-    public static ISRCommandSender wrapCommandSender(CommandSender sender) {
-        return new ISRCommandSender() {
-            @Override
-            public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
-            }
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
 
-            @Override
-            public void sendMessage(String message) {
-                sender.sendMessage(message);
-            }
+    public SRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof Player) {
+            return player((Player) sender);
+        }
 
-            @Override
-            public String getName() {
-                return sender.getName();
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return sender.hasPermission(permission);
-            }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleCommandSender;
-            }
-        };
+        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
-        return new ISRPlayer() {
-            @Override
-            public Locale getLocale() {
-                try {
-                    return LocaleParser.parseLocale(player.getLocale());
-                } catch (NoSuchMethodError ignored) {
-                    return LocaleParser.getDefaultLocale();
-                }
-            }
-
-            @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
-            }
-
-            @Override
-            public String getName() {
-                return player.getName();
-            }
-
-            @Override
-            public UUID getUniqueId() {
-                return player.getUniqueId();
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return player.hasPermission(permission);
-            }
-
-            @Override
-            public void sendMessage(String message) {
-                player.sendMessage(message);
-            }
-        };
+    public SRServerPlayer player(Player player) {
+        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 }

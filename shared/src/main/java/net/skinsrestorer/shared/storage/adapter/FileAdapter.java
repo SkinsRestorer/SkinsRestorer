@@ -19,7 +19,8 @@
  */
 package net.skinsrestorer.shared.storage.adapter;
 
-import net.skinsrestorer.shared.storage.Config;
+import ch.jalu.configme.SettingsManager;
+import net.skinsrestorer.shared.config.GUIConfig;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -37,13 +38,15 @@ public class FileAdapter implements StorageAdapter {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private final Path skinsFolder;
     private final Path playersFolder;
+    private final SettingsManager settings;
 
-    public FileAdapter(Path dataFolder) throws IOException {
+    public FileAdapter(Path dataFolder, SettingsManager settings) throws IOException {
         skinsFolder = dataFolder.resolve("Skins");
         Files.createDirectories(skinsFolder);
 
         playersFolder = dataFolder.resolve("Players");
         Files.createDirectories(playersFolder);
+        this.settings = settings;
     }
 
     @Override
@@ -129,8 +132,9 @@ public class FileAdapter implements StorageAdapter {
     public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
         Path skinFile = resolveSkinFile(skinName);
 
-        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(skinFile), StandardCharsets.UTF_8)) {
-            writer.write(storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp());
+        String data = storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp();
+        try {
+            Files.write(skinFile, data.getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,28 +154,50 @@ public class FileAdapter implements StorageAdapter {
                 s.substring(0, s.length() - 5) // remove .skin (5 characters)
         ).sorted().collect(Collectors.toList());
 
+        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
+            List<String> customSkinNames = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
+                skinNames = skinNames.stream().filter(customSkinNames::contains).collect(Collectors.toList());
+            } else {
+                skinNames = skinNames.stream().sorted((s1, s2) -> {
+                    boolean s1Custom = customSkinNames.contains(s1);
+                    boolean s2Custom = customSkinNames.contains(s2);
+                    if (s1Custom && s2Custom) {
+                        return s1.compareTo(s2);
+                    } else if (s1Custom) {
+                        return -1;
+                    } else if (s2Custom) {
+                        return 1;
+                    } else {
+                        return s1.compareTo(s2);
+                    }
+                }).collect(Collectors.toList());
+            }
+        }
+
         int i = 0;
         for (String skinName : skinNames) {
             if (list.size() >= 36)
                 break;
 
-            if (i >= offset) {
-                if (Config.CUSTOM_GUI_ONLY) { // Show only Config.CUSTOM_GUI_SKINS in the gui
-                    for (String guiSkins : Config.CUSTOM_GUI_SKINS) {
-                        if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
-                            try {
-                                getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+            if (i < offset) {
+                continue;
+            }
+            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui
+                for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
+                    if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
+                        try {
+                            getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
-                } else {
-                    try {
-                        getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                }
+            } else {
+                try {
+                    getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             i++;
@@ -204,17 +230,19 @@ public class FileAdapter implements StorageAdapter {
     public void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException {
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(skinsFolder, "*.skin")) {
             for (Path file : stream) {
-                try {
-                    if (!Files.exists(file))
-                        continue;
+                if (!Files.exists(file)) {
+                    continue;
+                }
 
+                try {
                     List<String> lines = Files.readAllLines(file);
                     long timestamp = Long.parseLong(lines.get(2));
 
                     if (timestamp != 0L && timestamp < targetPurgeTimestamp) {
                         Files.deleteIfExists(file);
                     }
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {

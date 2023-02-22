@@ -1,5 +1,6 @@
 plugins {
     base
+    idea
 }
 
 allprojects {

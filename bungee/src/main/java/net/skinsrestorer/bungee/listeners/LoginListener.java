@@ -19,45 +19,33 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.bungee.SkinsRestorerBungee;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bungee.SRBungeeAdapter;
+import net.skinsrestorer.bungee.SkinApplierBungee;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 
-@RequiredArgsConstructor
-@Getter
-public class LoginListener extends SharedLoginProfileListener implements Listener {
-    private final SkinsRestorerBungee plugin;
+import javax.inject.Inject;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class LoginListener implements Listener {
+    private final SRBungeeAdapter plugin;
+    private final SkinApplierBungee skinApplier;
+    private final LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onLogin(final LoginEvent event) {
-        SRLoginProfileEvent profileEvent = wrap(event);
-        if (handleSync(profileEvent))
-            return;
-
-        event.registerIntent(plugin.getPluginInstance());
-
-        plugin.runAsync(() -> {
-            try {
-                handleAsync(profileEvent).ifPresent(property ->
-                        plugin.getSkinApplierBungee().applySkin(property, (InitialHandler) event.getConnection()));
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-            }
-
-            event.completeIntent(plugin.getPluginInstance());
-        });
+        adapter.handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(LoginEvent event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(LoginEvent event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
                 return event.getConnection().isOnlineMode();
@@ -71,6 +59,23 @@ public class LoginListener extends SharedLoginProfileListener implements Listene
             @Override
             public boolean isCancelled() {
                 return event.isCancelled();
+            }
+
+            @Override
+            public void setResultProperty(SkinProperty property) {
+                skinApplier.applySkin(property, (InitialHandler) event.getConnection());
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                event.registerIntent(plugin.getPluginInstance());
+
+                plugin.runAsync(() -> {
+                    runnable.run();
+
+                    event.completeIntent(plugin.getPluginInstance());
+                });
+                return null;
             }
         };
     }

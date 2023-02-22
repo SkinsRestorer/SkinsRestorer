@@ -20,59 +20,116 @@
 package net.skinsrestorer.shared.update;
 
 import com.google.gson.Gson;
-import net.skinsrestorer.shared.storage.Config;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 import net.skinsrestorer.shared.utils.log.SRLogger;
-import org.inventivetalent.update.spiget.UpdateCallback;
+import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
+import javax.inject.Inject;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class UpdateCheckerGitHub extends UpdateChecker {
+/**
+ * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
+ */
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class UpdateCheckerGitHub {
     private static final String RESOURCE_ID = "SkinsRestorerX";
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
+    private static final String LOG_ROW = "§a----------------------------------------------";
+    private final SRLogger logger;
+    private final SRPlugin plugin;
+    private final Gson gson = new Gson();
+    @Getter
     private GitHubReleaseInfo releaseInfo;
 
-    public UpdateCheckerGitHub(int resourceId, String currentVersion, SRLogger log, String userAgent) {
-        super(resourceId, currentVersion, log, userAgent);
-    }
-
-    @Override
-    public void checkForUpdate(final UpdateCallback callback) {
+    public void checkForUpdate(UpdateCallback callback) {
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", userAgent);
+            connection.setRequestProperty("User-Agent", plugin.getUserAgent());
 
-            String body = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))
-                    .lines()
-                    .collect(Collectors.joining("\n"));
-            log.debug("Response body: " + body);
-            log.debug("Response code: " + connection.getResponseCode());
+            String body;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                body = reader.lines()
+                        .collect(Collectors.joining("\n"));
+            }
 
-            releaseInfo = new Gson().fromJson(body, GitHubReleaseInfo.class);
+            logger.debug("Response body: " + body);
+            logger.debug("Response code: " + connection.getResponseCode());
 
-            releaseInfo.assets.forEach(gitHubAssetInfo -> {
-                releaseInfo.latestDownloadURL = gitHubAssetInfo.browser_download_url;
+            releaseInfo = gson.fromJson(body, GitHubReleaseInfo.class);
 
-                if (isVersionNewer(currentVersion, releaseInfo.tag_name)) {
-                    callback.updateAvailable(releaseInfo.tag_name, gitHubAssetInfo.browser_download_url, true);
+            releaseInfo.getAssets().forEach(gitHubAssetInfo -> {
+                if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
+                    callback.updateAvailable(releaseInfo.getTagName(), gitHubAssetInfo.getBrowserDownloadUrl());
                 } else {
                     callback.upToDate();
                 }
             });
-        } catch (Exception e) {
-            log.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see http://skinsrestorer.net/firewall");
-            if (Config.DEBUG) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
+            logger.debug(e);
         }
     }
 
-    @Override
-    public GitHubReleaseInfo getLatestResourceInfo() {
-        return releaseInfo;
+    public List<String> getUpToDateMessages() {
+        List<String> upToDateMessages = new LinkedList<>();
+        fillHeader(upToDateMessages);
+        upToDateMessages.add("§b    Current version: §a" + plugin.getVersion());
+        upToDateMessages.add("§a    This is the latest version!");
+        upToDateMessages.add(LOG_ROW);
+
+        return upToDateMessages;
+    }
+
+    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean updateDownloader) {
+        List<String> updateAvailableMessages = new LinkedList<>();
+        fillHeader(updateAvailableMessages);
+
+        updateAvailableMessages.add("§b    Current version: §c" + plugin.getVersion());
+        updateAvailableMessages.add("§b    New version: §c" + newVersion);
+
+        if (updateDownloader) {
+            updateAvailableMessages.add("    A new version is available! Downloading it now...");
+        } else {
+            updateAvailableMessages.add("§e    A new version is available! Download it at:");
+            updateAvailableMessages.add("§e    " + downloadUrl);
+        }
+
+        updateAvailableMessages.add(LOG_ROW);
+
+        return updateAvailableMessages;
+    }
+
+    private void fillHeader(List<String> updateAvailableMessages) {
+        updateAvailableMessages.add(LOG_ROW);
+        updateAvailableMessages.add("§a    +==================+");
+        updateAvailableMessages.add("§a    |   SkinsRestorer  |");
+        SRServerPlugin serverPlugin = plugin.getInjector().getIfAvailable(SRServerPlugin.class);
+        if (serverPlugin != null) {
+            if (serverPlugin.isProxyMode()) {
+                updateAvailableMessages.add("§a    |------------------|");
+                updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");
+            } else {
+                updateAvailableMessages.add("§a    |------------------|");
+                updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§r§a |");
+            }
+        }
+        updateAvailableMessages.add("§a    +==================+");
+        updateAvailableMessages.add(LOG_ROW);
+    }
+
+    public boolean isVersionNewer(String oldVersion, String newVersion) {
+        return VersionComparator.SEM_VER_SNAPSHOT.isNewer(oldVersion, newVersion);
     }
 }

@@ -23,24 +23,19 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.md_5.bungee.connection.LoginResult;
 import net.md_5.bungee.protocol.Property;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.api.property.SkinProperty;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
-    public SkinApplierBungeeNew(ISRPlugin plugin, SRLogger log) {
-        super(plugin, log);
-    }
-
-    protected void applyToHandler(InitialHandler handler, IProperty textures) {
+public class SkinApplierBungeeNew implements SkinApplyBungeeAdapter {
+    @Override
+    public void applyToHandler(InitialHandler handler, SkinProperty textures) {
         LoginResult profile = handler.getLoginProfile();
-        Property[] newProps = new Property[]{(Property) textures.getHandle()};
+        Property[] newProps = new Property[]{new Property(SkinProperty.TEXTURES_NAME, textures.getValue(), textures.getSignature())};
 
         if (profile == null) {
             try {
@@ -56,13 +51,14 @@ public class SkinApplierBungeeNew extends SkinApplierBungeeShared {
     }
 
     @Override
-    public List<IProperty> getProperties(ProxiedPlayer player) {
+    public List<SkinProperty> getProperties(ProxiedPlayer player) {
         Property[] props = ((InitialHandler) player.getPendingConnection()).getLoginProfile().getProperties();
 
         if (props == null) {
-            return null;
+            return Collections.emptyList();
         }
 
-        return Arrays.stream(props).map(BungeePropertyNew::new).collect(Collectors.toList());
+        return Arrays.stream(props).filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
+                .map(property -> SkinProperty.of(property.getValue(), property.getSignature())).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,6 @@
 plugins {
     java
-    id("sr.license-logic")
+    id("sr.formatting-logic")
     id("sr.core-dependencies")
     id("io.github.patrick.remapper")
 }

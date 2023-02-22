@@ -19,29 +19,28 @@
  */
 package net.skinsrestorer.bungee.listeners;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.shared.interfaces.ISRProxyPlugin;
-import net.skinsrestorer.shared.listeners.SRServerConnectedEvent;
-import net.skinsrestorer.shared.listeners.SharedConnectListener;
+import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 
-import static net.skinsrestorer.bungee.utils.WrapperBungee.wrapPlayer;
+import javax.inject.Inject;
 
-@Getter
-@RequiredArgsConstructor
-public class ConnectListener extends SharedConnectListener implements Listener {
-    private final ISRProxyPlugin plugin;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class ConnectListener implements Listener {
+    private final WrapperBungee wrapper;
+    private final ConnectListenerAdapter adapter;
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onServerConnect(final ServerConnectedEvent event) {
-        handleConnect(wrap(event));
+    public void onServerConnect(ServerConnectedEvent event) {
+        adapter.handleConnect(wrap(event));
     }
 
     private SRServerConnectedEvent wrap(ServerConnectedEvent event) {
-        return () -> wrapPlayer(event.getPlayer());
+        return () -> wrapper.player(event.getPlayer());
     }
 }

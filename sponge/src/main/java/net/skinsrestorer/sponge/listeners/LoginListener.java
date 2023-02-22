@@ -19,58 +19,65 @@
  */
 package net.skinsrestorer.sponge.listeners;
 
-import lombok.Getter;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
-import net.skinsrestorer.sponge.SkinsRestorerSponge;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.EventListener;
-import org.spongepowered.api.event.network.ClientConnectionEvent;
-import org.spongepowered.api.event.network.ClientConnectionEvent.Auth;
-import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 
-import java.util.Optional;
+import javax.inject.Inject;
 
-@RequiredArgsConstructor
-@Getter
-public class LoginListener extends SharedLoginProfileListener implements EventListener<ClientConnectionEvent.Auth> {
-    private final SkinsRestorerSponge plugin;
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class LoginListener implements EventListener<ServerSideConnectionEvent.Auth> {
+    private final LoginProfileListenerAdapter<Void> adapter;
 
     @Override
-    public void handle(@NotNull Auth event) {
-        SRLoginProfileEvent wrapped = wrap(event);
-        if (handleSync(wrapped))
-            return;
-
-        final GameProfile profile = event.getProfile();
-        profile.getName().flatMap(name -> {
-            try {
-                return handleAsync(wrapped);
-            } catch (SkinRequestException e) {
-                plugin.getLogger().debug(e);
-                return Optional.empty();
-            }
-        }).ifPresent(property -> plugin.getSkinApplierSponge().updateProfileSkin(profile, property));
+    public void handle(@NotNull ServerSideConnectionEvent.Auth event) {
+        try {
+            adapter.handleLogin(wrap(event));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
-    private SRLoginProfileEvent wrap(Auth event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(ServerSideConnectionEvent.Auth event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return Sponge.getServer().getOnlineMode(); // TODO may replace with profile#isFilled() or check properties
+                return event.profile().properties().stream().anyMatch(p -> p.name().equals(SkinProperty.TEXTURES_NAME));
             }
 
             @Override
             public String getPlayerName() {
-                return event.getProfile().getName().orElseThrow(() -> new RuntimeException("Could not get player name!"));
+                return event.profile().name().orElseThrow(() -> new RuntimeException("Could not get player name!"));
             }
 
             @Override
             public boolean isCancelled() {
-                return event.isCancelled();
+                return false;
+            }
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public void setResultProperty(SkinProperty property) {
+                try {
+                    GameProfile gameProfile = (GameProfile) ReflectionUtil.getFieldByType(event.connection(), "GameProfile");
+                    gameProfile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+                    gameProfile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+                } catch (ReflectiveOperationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                runnable.run();
+                return null;
             }
         };
     }
