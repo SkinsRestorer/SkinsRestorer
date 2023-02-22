@@ -19,15 +19,20 @@
  */
 package net.skinsrestorer.sponge;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.effect.VanishState;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.entity.living.player.tab.TabListEntry;
-import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.api.world.server.ServerLocation;
+import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.math.vector.Vector3d;
 
 import javax.inject.Inject;
 
@@ -36,39 +41,44 @@ public class SkinApplierSponge implements SkinApplierAccess<ServerPlayer> {
     private final SRSpongeAdapter plugin;
     private final Game game;
 
+    @SuppressWarnings("unchecked")
     @Override
     public void applySkin(ServerPlayer player, SkinProperty property) {
-        player.offer(Keys.UPDATE_GAME_PROFILE, true);
-        ProfileProperty profileProperty = ProfileProperty.of(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature());
-        player.skinProfile().set(profileProperty);
+        try {
+            GameProfile gameProfile = (GameProfile) ReflectionUtil.invokeMethod(player, "getGameProfile");
+            gameProfile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+            gameProfile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
 
-        plugin.runSync(() -> sendUpdate(player, profileProperty));
+        plugin.runSync(() -> sendUpdate(player));
     }
 
-    private void sendUpdate(ServerPlayer receiver, ProfileProperty property) {
+    private void sendUpdate(ServerPlayer receiver) {
         receiver.tabList().removeEntry(receiver.uniqueId());
         receiver.tabList().addEntry(TabListEntry.builder()
                 .displayName(receiver.displayName().get())
                 .latency(receiver.connection().latency())
                 .list(receiver.tabList())
                 .gameMode(receiver.gameMode().get())
-                .profile(receiver.profile().withProperty(property))
+                .profile(receiver.profile())
                 .build());
 
-        /*
         // Save position to teleport player back after respawn
-        Location<World> loc = receiver.location();
+        ServerLocation loc = receiver.serverLocation();
         Vector3d rotation = receiver.rotation();
 
         // Simulate respawn to see skin active
-        for (WorldProperties w : game.server().getAllWorldProperties()) {
-            if (!w.uniqueId().equals(receiver.getWorld().uniqueId())) {
-                game.getServer().loadWorld(w.uniqueId());
-                game.getServer().getWorld(w.uniqueId()).ifPresent(value -> receiver.setLocation(value.getSpawnLocation()));
-                receiver.setLocationAndRotation(loc, rotation);
-                break;
+        for (ServerWorld serverWorld : game.server().worldManager().worlds()) {
+            if (serverWorld.uniqueId().equals(receiver.world().uniqueId())) {
+                continue;
             }
-        }*/
+
+            receiver.setLocation(serverWorld.location(serverWorld.properties().spawnPosition()));
+            receiver.setLocationAndRotation(loc, rotation);
+            break;
+        }
 
         receiver.offer(Keys.VANISH_STATE, VanishState.vanished());
         game.server().scheduler().executor(plugin.getPluginContainer()).execute(() -> receiver.offer(Keys.VANISH_STATE, VanishState.unvanished()));

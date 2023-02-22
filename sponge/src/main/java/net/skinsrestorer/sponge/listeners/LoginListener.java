@@ -40,7 +40,6 @@ public class LoginListener implements EventListener<ServerSideConnectionEvent.Au
 
     @Override
     public void handle(@NotNull ServerSideConnectionEvent.Auth event) {
-        logger.info("a");
         try {
             adapter.handleLogin(wrap(event));
         } catch (Throwable e) {
