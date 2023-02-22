@@ -54,7 +54,12 @@ public class ServerMessageListener implements RawPlayDataHandler<EngineConnectio
 
             @Override
             public byte[] getData() {
-                return data.array();
+                byte[] result = new byte[data.available()];
+                for (int i = 0; i < result.length; i++) {
+                    result[i] = data.readByte();
+                }
+
+                return result;
             }
 
             @Override
