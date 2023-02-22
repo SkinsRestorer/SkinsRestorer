@@ -3,13 +3,6 @@ plugins {
     id("net.kyori.indra.publishing")
 }
 
-dependencies {
-    compileOnly("org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT")
-    compileOnly("com.mojang:authlib:1.11")
-    compileOnly("net.md-5:bungeecord-api:1.19-R0.1-SNAPSHOT")
-    compileOnly("com.velocitypowered:velocity-api:3.1.1")
-}
-
 tasks.withType<Sign>().configureEach {
     onlyIf { false }
 }

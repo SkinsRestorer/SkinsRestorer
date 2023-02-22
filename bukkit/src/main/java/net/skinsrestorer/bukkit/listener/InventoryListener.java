@@ -19,52 +19,29 @@
  */
 package net.skinsrestorer.bukkit.listener;
 
-import net.skinsrestorer.bukkit.SkinsGUI;
+import net.skinsrestorer.bukkit.gui.SkinsGUIHolder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class InventoryListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onInventoryClick(InventoryClickEvent event) {
-        try {
-            if (event.getClickedInventory() == null)
-                return;
-
-            InventoryHolder holder = event.getView().getTopInventory().getHolder();
-            if (holder instanceof SkinsGUI) {
-                if (event.getClickedInventory().getHolder() == holder) {
-                    try {
-                        ((SkinsGUI) holder).onClick(event);
-                    } catch (Exception e) { // Ensure event always cancels
-                        e.printStackTrace();
-                    }
-                }
-
-                event.setCancelled(true);
-            }
-        } catch (NoSuchMethodError ignored) {
-            // Bukkit 1.8.8
-            if (event.getSlotType() != InventoryType.SlotType.CONTAINER)
-                return;
-
-            Inventory destInvent = event.getInventory();
-            Integer slotClicked = event.getRawSlot();
-            if (slotClicked < destInvent.getSize()) { // Check if slot clicked was container
-                InventoryHolder holder = destInvent.getHolder();
-                if (holder instanceof SkinsGUI) {
-                    try {
-                        ((SkinsGUI) holder).onClick(event);
-                    } catch (Exception e) { // Ensure event always cancels
-                        e.printStackTrace();
-                    }
-
-                    event.setCancelled(true);
+        Inventory inventory = event.getView().getTopInventory();
+        Inventory clickedInventory = event.getView().getInventory(event.getRawSlot());
+        InventoryHolder holder = inventory.getHolder();
+        if (holder instanceof SkinsGUIHolder) {
+            if (inventory == clickedInventory) { // Only handle if there was a click in the top inventory
+                try {
+                    ((SkinsGUIHolder) holder).onClick(event);
+                } catch (Exception e) { // Ensure event always cancels
+                    e.printStackTrace();
                 }
             }
+
+            event.setCancelled(true);
         }
     }
 }

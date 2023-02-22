@@ -19,79 +19,32 @@
  */
 package net.skinsrestorer.sponge.utils;
 
-import net.skinsrestorer.api.PlayerWrapper;
-import net.skinsrestorer.shared.interfaces.ISRCommandSender;
-import net.skinsrestorer.shared.interfaces.ISRPlayer;
-import net.skinsrestorer.shared.utils.LocaleParser;
-import org.spongepowered.api.command.CommandSource;
-import org.spongepowered.api.command.source.ConsoleSource;
-import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.text.Text;
+import ch.jalu.configme.SettingsManager;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.service.permission.Subject;
 
-import java.util.Locale;
-import java.util.UUID;
+import javax.inject.Inject;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class WrapperSponge {
-    public static ISRCommandSender wrapCommandSender(CommandSource sender) {
-        return new ISRCommandSender() {
-            @Override
-            public Locale getLocale() {
-                return LocaleParser.getDefaultLocale();
-            }
+    private final SettingsManager settings;
+    private final SkinsRestorerLocale locale;
 
-            @Override
-            public void sendMessage(String message) {
-                sender.sendMessage(Text.builder(message).build());
-            }
+    public SRCommandSender commandSender(CommandCause sender) {
+        Subject subject = sender.subject();
+        if (subject instanceof ServerPlayer) {
+            return player((ServerPlayer) subject);
+        }
 
-            @Override
-            public String getName() {
-                return sender.getName();
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return sender.hasPermission(permission);
-            }
-
-            @Override
-            public boolean isConsole() {
-                return sender instanceof ConsoleSource;
-            }
-        };
+        return WrapperCommandSender.builder().subject(subject).audience(sender.audience()).locale(locale).settings(settings).build();
     }
 
-    public static ISRPlayer wrapPlayer(Player player) {
-        return new ISRPlayer() {
-            @Override
-            public Locale getLocale() {
-                return player.getLocale();
-            }
-
-            @Override
-            public PlayerWrapper getWrapper() {
-                return new PlayerWrapper(player);
-            }
-
-            @Override
-            public String getName() {
-                return player.getName();
-            }
-
-            @Override
-            public UUID getUniqueId() {
-                return player.getUniqueId();
-            }
-
-            @Override
-            public void sendMessage(String message) {
-                player.sendMessage(Text.builder(message).build());
-            }
-
-            @Override
-            public boolean hasPermission(String permission) {
-                return player.hasPermission(permission);
-            }
-        };
+    public SRServerPlayer player(ServerPlayer player) {
+        return WrapperPlayer.builder().player(player).subject(player).audience(player).locale(locale).settings(settings).build();
     }
 }

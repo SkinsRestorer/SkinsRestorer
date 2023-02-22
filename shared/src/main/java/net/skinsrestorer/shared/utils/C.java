@@ -19,8 +19,6 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.storage.Config;
-
 public class C {
     private C() {
     }
@@ -55,19 +53,5 @@ public class C {
 
     public static boolean validUrl(String url) {
         return url.startsWith("http://") || url.startsWith("https://");
-    }
-
-    public static boolean allowedSkinUrl(String url) {
-        if (Config.RESTRICT_SKIN_URLS_ENABLED) {
-            for (String possiblyAllowedUrl : Config.RESTRICT_SKIN_URLS_LIST) {
-                if (url.startsWith(possiblyAllowedUrl)) {
-                    return true;
-                }
-            }
-
-            return false;
-        } else {
-            return true;
-        }
     }
 }

@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer.shared.storage;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
@@ -41,33 +43,33 @@ public class MySQL {
     private final String options;
     private MariaDbPoolDataSource poolDataSource;
 
-    public void createTable() {
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_PLAYER_TABLE + "` ("
+    public void createTable(SettingsManager settings) {
+        execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` ("
                 + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        execute("CREATE TABLE IF NOT EXISTS `" + Config.MYSQL_SKIN_TABLE + "` ("
+        execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ("
                 + "`Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
                 + "`Value` text COLLATE utf8_unicode_ci,"
                 + "`Signature` text COLLATE utf8_unicode_ci,"
                 + "`timestamp` text COLLATE utf8_unicode_ci,"
                 + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
 
-        if (!columnExists(Config.MYSQL_SKIN_TABLE, "timestamp")) {
-            execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        if (!columnExists(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "timestamp")) {
+            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
         }
 
-        if (columnVarCharLength(Config.MYSQL_PLAYER_TABLE, "Nick") < 17) {
-            execute("ALTER TABLE `" + Config.MYSQL_PLAYER_TABLE + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Nick") < 17) {
+            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
         }
 
-        if (columnVarCharLength(Config.MYSQL_PLAYER_TABLE, "Skin") < 19) {
-            execute("ALTER TABLE `" + Config.MYSQL_PLAYER_TABLE + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Skin") < 19) {
+            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
         }
 
-        if (columnVarCharLength(Config.MYSQL_SKIN_TABLE, "Nick") < 19) {
-            execute("ALTER TABLE `" + Config.MYSQL_SKIN_TABLE + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "Nick") < 19) {
+            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
         }
     }
 
@@ -131,12 +133,7 @@ public class MySQL {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return rs;
-                } else {
-                    return null;
-                }
+                return ps.executeQuery();
             }
         }
     }

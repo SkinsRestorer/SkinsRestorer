@@ -29,7 +29,7 @@ public class SpigotUtil {
     }
 
     public static boolean isRealSpigot(Server server) {
-            try {
+        try {
             server.spigot().getConfig();
             return true;
         } catch (UnsupportedOperationException e) { // Hypbrid forks don't have a spigot config

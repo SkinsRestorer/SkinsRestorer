@@ -1,5 +1,4 @@
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
-enableFeaturePreview("VERSION_CATALOGS")
 
 pluginManagement {
     repositories {
@@ -15,7 +14,9 @@ pluginManagement {
         id("net.kyori.indra.git") version "3.0.1"
         id("net.kyori.indra.publishing") version "3.0.1"
         id("net.kyori.blossom") version "1.3.1"
-        id("io.github.patrick.remapper") version "1.3.0"
+        id("io.github.patrick.remapper") version "1.4.0"
+        id("com.diffplug.spotless") version "6.15.0"
+        id("com.github.spotbugs") version "5.0.13"
     }
 }
 

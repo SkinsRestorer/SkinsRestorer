@@ -19,80 +19,8 @@
  */
 package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.storage.Config;
-import net.skinsrestorer.shared.storage.MySQL;
-import net.skinsrestorer.shared.storage.SkinStorage;
-import net.skinsrestorer.shared.storage.adapter.FileAdapter;
-import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
-import net.skinsrestorer.shared.utils.connections.MojangAPI;
-import net.skinsrestorer.shared.utils.connections.ServiceChecker;
-import net.skinsrestorer.shared.utils.log.SRLogger;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.regex.Pattern;
-
 public class SharedMethods {
     private SharedMethods() {
-    }
-
-    public static void allowIllegalACFNames() {
-        try {
-            Class<?> patternClass = Class.forName("co.aikar.commands.ACFPatterns");
-
-            ReflectionUtil.setObject(patternClass, null, "VALID_NAME_PATTERN", Pattern.compile("(.*?)"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void runServiceCheck(MojangAPI mojangAPI, SRLogger log) {
-        ServiceChecker checker = new ServiceChecker();
-        checker.setMojangAPI(mojangAPI);
-        checker.checkServices();
-        ServiceChecker.ServiceCheckResponse response = checker.getResponse();
-
-        if (response.getWorkingUUID().get() == 0 || response.getWorkingProfile().get() == 0) {
-            log.info("§c[§4Critical§c] ------------------[§2SkinsRestorer §cis §c§l§nOFFLINE§r§c] -------------------------");
-            log.info("§c[§4Critical§c] §cPlugin currently can't fetch new skins due to blocked connection!");
-            log.info("§c[§4Critical§c] §cSee https://skinsrestorer.net/firewall for steps to resolve your issue!");
-            log.info("§c[§4Critical§c] ----------------------------------------------------------------------");
-        }
-    }
-
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static void initStorage(SRLogger srLogger, SkinStorage skinStorage, Path dataFolder) throws InitializeException {
-        try {
-            if (Config.MYSQL_ENABLED) {
-                MySQL mysql = new MySQL(
-                        srLogger,
-                        Config.MYSQL_HOST,
-                        Config.MYSQL_PORT,
-                        Config.MYSQL_DATABASE,
-                        Config.MYSQL_USERNAME,
-                        Config.MYSQL_PASSWORD,
-                        Config.MYSQL_MAX_POOL_SIZE,
-                        Config.MYSQL_CONNECTION_OPTIONS
-                );
-
-                mysql.connectPool();
-                mysql.createTable();
-
-                srLogger.info("Connected to MySQL!");
-                skinStorage.setStorageAdapter(new MySQLAdapter(mysql));
-            } else {
-                skinStorage.setStorageAdapter(new FileAdapter(dataFolder));
-            }
-        } catch (SQLException e) {
-            srLogger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
-            throw new InitializeException(e);
-        } catch (IOException e) {
-            srLogger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
-            throw new InitializeException(e);
-        }
     }
 
     public static Throwable getRootCause(Throwable throwable) {

@@ -19,9 +19,7 @@
  */
 package net.skinsrestorer.shared.exception;
 
-public class UpdateException extends RuntimeException {
-    private static final long serialVersionUID = -6444814178959123178L;
-
+public class UpdateException extends Exception {
     public UpdateException(String message) {
         super(message);
     }

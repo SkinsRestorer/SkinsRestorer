@@ -20,10 +20,5 @@
 package net.skinsrestorer.shared.storage;
 
 public interface CallableValue<V> {
-    /**
-     * Computes a result, or throws an exception if unable to do so.
-     *
-     * @return computed result
-     */
     V call();
 }

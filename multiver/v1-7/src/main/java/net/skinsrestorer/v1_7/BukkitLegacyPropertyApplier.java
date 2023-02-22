@@ -21,46 +21,45 @@ package net.skinsrestorer.v1_7;
 
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public class BukkitLegacyPropertyApplier {
-    public static void applyProperty(Player player, IProperty property) {
+    public static void applyProperty(Player player, SkinProperty property) {
         try {
             GameProfile profile = getGameProfile(player);
-            profile.getProperties().removeAll(IProperty.TEXTURES_NAME);
-            profile.getProperties().put(IProperty.TEXTURES_NAME, (Property) property.getHandle());
-        } catch (ReflectionException e) {
+            profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
+            profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
 
-    public static GameProfile getGameProfile(Player player) throws ReflectionException {
+    public static GameProfile getGameProfile(Player player) throws ReflectiveOperationException {
         Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
         return (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
     }
 
-    public static Map<String, Collection<IProperty>> getPlayerProperties(Player player) {
+    public static Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
         try {
             Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
 
-            Map<String, Collection<IProperty>> properties = new HashMap<>();
+            Map<String, Collection<SkinProperty>> properties = new HashMap<>();
             for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
-                List<IProperty> list = new ArrayList<>();
+                List<SkinProperty> list = new ArrayList<>();
 
                 for (Property property : entry.getValue()) {
-                    list.add(new BukkitLegacyProperty(property.getName(), property.getValue(), property.getSignature()));
+                    list.add(SkinProperty.of(property.getValue(), property.getSignature()));
                 }
 
                 properties.put(entry.getKey(), list);
             }
 
             return properties;
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             return Collections.emptyMap();
         }

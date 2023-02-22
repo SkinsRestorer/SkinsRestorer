@@ -22,24 +22,21 @@ package net.skinsrestorer.shared.storage;
 import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
-import lombok.SneakyThrows;
-import net.skinsrestorer.shared.interfaces.ISRForeign;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
+import net.skinsrestorer.shared.interfaces.SRForeign;
+import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.PropertyReader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public enum Message implements MessageKeyGetter {
     PREFIX,
@@ -116,8 +113,7 @@ public enum Message implements MessageKeyGetter {
     @Getter
     private final MessageKey key = MessageKey.of("skinsrestorer." + this.name().toLowerCase());
 
-    @SneakyThrows
-    public static void load(LocaleManager<ISRForeign> manager, Path dataFolder, ISRPlugin plugin) {
+    public static void load(LocaleManager<SRForeign> manager, Path dataFolder, SRPlatformAdapter plugin) throws IOException {
         migrateOldFiles(dataFolder);
 
         Path languagesFolder = dataFolder.resolve("languages");
@@ -127,33 +123,34 @@ public enum Message implements MessageKeyGetter {
             throw new IOException("Could not find default language files");
         }
 
-        URL jar = src.getLocation();
-        ZipInputStream zip = new ZipInputStream(jar.openStream());
-        ZipEntry entry;
-        while ((entry = zip.getNextEntry()) != null) {
-            String name = entry.getName();
+        for (String localeFile : BuildData.LOCALES) {
+            String filePath = "languages/" + localeFile;
+            Locale locale = localeFile.startsWith("language_") ? LocaleParser.parseLocaleStrict(localeFile.replace("language_", "").replace(".properties", "")) : Locale.ENGLISH;
 
-            if (name.startsWith("languages/language") && name.endsWith(".properties")) {
-                String fileName = name.replace("languages/", "");
-                Locale locale = fileName.startsWith("language_") ?
-                        LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
-                        : Locale.ENGLISH;
+            try (InputStream is = plugin.getResource(filePath)) {
+                PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k.toString()), C.c(v.toString())));
+            }
 
-                try (InputStream is = plugin.getResource(name)) {
-                    PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
-                            MessageKey.of(k.toString()), C.c(v.toString())));
-                }
-                if (!Files.exists(languagesFolder.resolve(fileName))) {
-                    try (InputStream is = plugin.getResource(name)) {
-                        Files.copy(is, languagesFolder.resolve(fileName));
-                    }
+            Path localePath = languagesFolder.resolve(localeFile);
+            if (!Files.exists(localePath)) {
+                try (InputStream is = plugin.getResource(filePath)) {
+                    Files.copy(is, localePath);
                 }
             }
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
             for (Path path : stream) {
-                String fileName = path.getFileName().toString();
+                Path languageFile = path.getFileName();
+                if (languageFile == null) {
+                    continue;
+                }
+
+                String fileName = languageFile.toString();
+                if (!fileName.endsWith(".properties")) {
+                    continue;
+                }
+
                 Locale locale = fileName.startsWith("language_") ?
                         LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
                         : Locale.ENGLISH;
@@ -175,7 +172,8 @@ public enum Message implements MessageKeyGetter {
                 Files.createDirectories(archive);
                 String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
                 Files.move(oldMessagesFile, archive.resolve(newName));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -184,7 +182,8 @@ public enum Message implements MessageKeyGetter {
             try {
                 Files.createDirectories(archive);
                 Files.move(oldAcf, archive.resolve("command-messages.properties"));
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

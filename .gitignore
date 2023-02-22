@@ -11,7 +11,7 @@ target/*
 .factorypath
 
 # UML
-*.plantuml 
+*.plantuml
 
 # Gradle
 .gradle
@@ -26,3 +26,6 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+*.ipr
+*.iws

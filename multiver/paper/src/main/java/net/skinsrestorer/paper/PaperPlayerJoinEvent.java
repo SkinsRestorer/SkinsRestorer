@@ -20,38 +20,27 @@
 package net.skinsrestorer.paper;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.api.exception.SkinRequestException;
-import net.skinsrestorer.shared.interfaces.ISRPlugin;
-import net.skinsrestorer.shared.listeners.SRLoginProfileEvent;
-import net.skinsrestorer.shared.listeners.SharedLoginProfileListener;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
+import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
-@RequiredArgsConstructor
-@Getter
-public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements Listener {
-    private final ISRPlugin plugin;
+import javax.inject.Inject;
+
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class PaperPlayerJoinEvent implements Listener {
+    private final LoginProfileListenerAdapter<Void> adapter;
 
     @EventHandler
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
-        SRLoginProfileEvent profileEvent = wrap(event);
-
-        if (handleSync(profileEvent))
-            return;
-
-        try {
-            handleAsync(profileEvent).ifPresent(property ->
-                    event.getPlayerProfile().setProperty(new ProfileProperty(property.getName(), property.getValue(), property.getSignature())));
-        } catch (SkinRequestException e) {
-            plugin.getLogger().debug(e);
-        }
+        adapter.handleLogin(wrap(event));
     }
 
-    private SRLoginProfileEvent wrap(AsyncPlayerPreLoginEvent event) {
-        return new SRLoginProfileEvent() {
+    private SRLoginProfileEvent<Void> wrap(AsyncPlayerPreLoginEvent event) {
+        return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
                 return !event.getPlayerProfile().getProperties().isEmpty();
@@ -65,6 +54,17 @@ public class PaperPlayerJoinEvent extends SharedLoginProfileListener implements 
             @Override
             public boolean isCancelled() {
                 return event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED;
+            }
+
+            @Override
+            public void setResultProperty(SkinProperty property) {
+                event.getPlayerProfile().setProperty(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
+            }
+
+            @Override
+            public Void runAsync(Runnable runnable) {
+                runnable.run();
+                return null;
             }
         };
     }

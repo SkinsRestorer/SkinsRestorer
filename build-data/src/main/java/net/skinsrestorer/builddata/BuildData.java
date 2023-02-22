@@ -26,4 +26,10 @@ public class BuildData {
     public static final String DESCRIPTION = "{description}";
     public static final String URL = "{url}";
     public static final String COMMIT = "{commit}";
+    public static final String[] LOCALES = supportedLocales();
+
+    private static String[] supportedLocales() {
+        String values = "{locales}";
+        return values.split("\\|");
+    }
 }

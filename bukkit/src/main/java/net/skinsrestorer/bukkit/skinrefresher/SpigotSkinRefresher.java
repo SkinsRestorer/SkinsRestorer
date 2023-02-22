@@ -21,15 +21,14 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.reflection.exception.ReflectionException;
-import net.skinsrestorer.bukkit.SkinsRestorerBukkit;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -37,7 +36,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SkinsRestorerBukkit plugin;
+    private final SRServerAdapter adapter;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -48,8 +47,8 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SkinsRestorerBukkit plugin) throws InitializeException {
-        this.plugin = plugin;
+    public SpigotSkinRefresher(SRServerAdapter adapter, SRLogger logger) throws InitializeException {
+        this.adapter = adapter;
 
         try {
             packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
@@ -61,26 +60,26 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
                 addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "ADD_PLAYER");
-            } catch (Exception e1) {
+            } catch (ReflectiveOperationException e1) {
                 try {
                     Class<?> enumPlayerInfoActionClass = Class.forName("net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo$EnumPlayerInfoAction");
 
                     // Cardboard and other platforms
                     removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 4);
                     addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoActionClass, 0);
-                } catch (Exception e2) {
+                } catch (ReflectiveOperationException e2) {
                     try {
                         // Forge
                         removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "REMOVE_PLAYER");
                         addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
-                    } catch (Exception e3) {
+                    } catch (ReflectiveOperationException e3) {
                         try {
                             Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
 
                             // 1.8
                             removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
                             addPlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "ADD_PLAYER");
-                        } catch (Exception e4) {
+                        } catch (ReflectiveOperationException e4) {
                             // 1.7 and below uses a boolean instead of an enum
                         }
                     }
@@ -89,22 +88,22 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
             getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
 
-            plugin.runSync(() -> {
+            adapter.runSync(() -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
-                if (plugin.isPluginEnabled("ViaBackwards")
+                if (adapter.isPluginEnabled("ViaBackwards")
                         && ViaWorkaround.isProtocolNewer()) {
                     useViabackwards = true;
-                    plugin.getLogger().debug("Activating ViaBackwards workaround.");
+                    logger.debug("Activating ViaBackwards workaround.");
                 }
             });
 
-            plugin.getLogger().debug("Using SpigotSkinRefresher");
+            logger.debug("Using SpigotSkinRefresher");
         } catch (Exception e) {
             throw new InitializeException(e);
         }
     }
 
-    private void sendPacket(Object playerConnection, Object packet) throws ReflectionException {
+    private void sendPacket(Object playerConnection, Object packet) throws ReflectiveOperationException {
         ReflectionUtil.invokeMethod(playerConnection.getClass(), playerConnection, "sendPacket", new Class<?>[]{this.packet}, packet);
     }
 
@@ -117,7 +116,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
-            } catch (ReflectionException e) {
+            } catch (ReflectiveOperationException e) {
                 int ping = (int) ReflectionUtil.getObject(entityPlayer, "ping");
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
@@ -129,21 +128,21 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             Object difficulty;
             try {
                 difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 difficulty = ReflectionUtil.getObject(world, "difficulty");
             }
 
             Object worldData;
             try {
                 worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
-            } catch (Exception ignored) {
+            } catch (ReflectiveOperationException ignored) {
                 worldData = ReflectionUtil.getObject(world, "worldData");
             }
 
             Object worldType;
             try {
                 worldType = ReflectionUtil.invokeMethod(worldData, "getType");
-            } catch (Exception ignored) {
+            } catch (ReflectiveOperationException ignored) {
                 worldType = ReflectionUtil.invokeMethod(worldData, "getGameType");
             }
 
@@ -165,20 +164,19 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
 
                 try {
                     respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, difficulty, worldType, enumGamemode);
-                } catch (Exception ignored2) {
+                } catch (ReflectiveOperationException ignored2) {
                     // 1.14.x removed the difficulty from PlayOutRespawn
                     // https://wiki.vg/Pre-release_protocol#Respawn
                     try {
                         respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, worldType, enumGamemode);
-                    } catch (Exception ignored3) {
+                    } catch (ReflectiveOperationException ignored3) {
                         // Minecraft 1.15 changes
                         // PacketPlayOutRespawn now needs the world seed
 
-                        //noinspection UnstableApiUsage
                         long seedEncrypted = Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong();
                         try {
                             respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, seedEncrypted, worldType, enumGamemode);
-                        } catch (Exception ignored5) {
+                        } catch (ReflectiveOperationException ignored5) {
                             Object dimensionKey = ReflectionUtil.invokeMethod(worldObject, "getDimensionKey");
                             boolean debug = (boolean) ReflectionUtil.invokeMethod(worldObject, "isDebugWorld");
                             boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
@@ -191,7 +189,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                                 Object typeKey = ReflectionUtil.invokeMethod(worldObject, "getTypeKey");
 
                                 respawn = ReflectionUtil.invokeConstructor(playOutRespawn, typeKey, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
-                            } catch (Exception ignored6) {
+                            } catch (ReflectiveOperationException ignored6) {
                                 // Minecraft 1.16.2 changes
                                 respawn = ReflectionUtil.invokeConstructor(playOutRespawn, dimensionManager, dimensionKey, seedEncrypted, enumGamemode, enumGamemodePrevious, debug, flat, true);
                             }
@@ -205,15 +203,15 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 // 1.17+
                 pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0, false);
-            } catch (Exception e1) {
+            } catch (ReflectiveOperationException e1) {
                 try {
                     // 1.9-1.16.5
                     pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>(), 0);
-                } catch (Exception e2) {
+                } catch (ReflectiveOperationException e2) {
                     try {
                         // 1.8
                         pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<Enum<?>>());
-                    } catch (Exception e3) {
+                    } catch (ReflectiveOperationException e3) {
                         // 1.7
                         pos = ReflectionUtil.invokeConstructor(playOutPosition, l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), false);
                     }
@@ -232,7 +230,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                     Object worldObject = ReflectionUtil.getFieldByType(entityPlayer, "World");
                     boolean flat = (boolean) ReflectionUtil.invokeMethod(worldObject, "isFlatWorld");
 
-                    //noinspection UnstableApiUsage
                     sendRespawnPacketDirectly = ViaWorkaround.sendCustomPacketVia(new ViaPacketData(player,
                             dimension,
                             Hashing.sha256().hashString(String.valueOf(player.getWorld().getSeed()), StandardCharsets.UTF_8).asLong(),
@@ -257,13 +254,13 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                plugin.runSync(() -> {
+                adapter.runSync(() -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);
                 });
             }
-        } catch (ReflectionException | InvocationTargetException | IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }
@@ -277,10 +274,10 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
         return null;
     }
 
-    private Object getDimensionManager(Object worldObject, int dimension) throws ReflectionException {
+    private Object getDimensionManager(Object worldObject, int dimension) throws ReflectiveOperationException {
         try {
             return ReflectionUtil.getFieldByType(worldObject, "DimensionManager");
-        } catch (ReflectionException e) {
+        } catch (ReflectiveOperationException e) {
             try {
                 Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
 
@@ -290,11 +287,11 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         return m.invoke(null, dimension);
                     }
                 }
-            } catch (InvocationTargetException | IllegalAccessException e2) {
+            } catch (ReflectiveOperationException e2) {
                 e2.printStackTrace();
             }
         }
 
-        throw new ReflectionException("Could not get DimensionManager from " + worldObject.getClass().getSimpleName());
+        throw new ReflectiveOperationException("Could not get DimensionManager from " + worldObject.getClass().getSimpleName());
     }
 }
