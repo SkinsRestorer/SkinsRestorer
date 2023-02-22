@@ -51,6 +51,55 @@ public class SkinsGUI implements GUIManager<Inventory> {
     private final Server server;
     private final WrapperBukkit wrapper;
 
+    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, SRForeign player, String name, String property) {
+        ItemStack itemStack = XMaterial.PLAYER_HEAD.parseItem();
+
+        if (itemStack == null) {
+            throw new IllegalStateException("Could not create skull for " + name + "!");
+        }
+
+        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+
+        if (skullMeta == null) {
+            throw new IllegalStateException("Could not create skull for " + name + "!");
+        }
+
+        skullMeta.setDisplayName(name);
+        skullMeta.setLore(listOf(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
+
+        try {
+            SkullUtils.applySkin(skullMeta, property);
+        } catch (AssertionError e) {
+            log.warning(String.format("Could not add '%s' to SkinsGUI, skin might be corrupted or invalid!", name));
+            e.printStackTrace();
+        }
+
+        itemStack.setItemMeta(skullMeta);
+
+        return itemStack;
+    }
+
+    private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
+        ItemStack itemStack = type.getMaterial().parseItem();
+
+        if (itemStack == null) {
+            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
+        }
+
+        String text = type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage());
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta == null) {
+            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
+        }
+
+        itemMeta.setDisplayName(text);
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
+    }
+
     public Inventory createGUI(Consumer<ClickEventInfo> callback, SRForeign player, int page, Map<String, String> skinsList) {
         SkinsGUIHolder instance = new SkinsGUIHolder(page, callback, wrapper);
         Inventory inventory = server.createInventory(instance, 54, locale.getMessage(player, Message.SKINSMENU_TITLE_NEW, String.valueOf(page + 1)));
@@ -119,55 +168,6 @@ public class SkinsGUI implements GUIManager<Inventory> {
         }
 
         return inventory;
-    }
-
-    private static ItemStack createSkull(SRLogger log, SkinsRestorerLocale locale, SRForeign player, String name, String property) {
-        ItemStack itemStack = XMaterial.PLAYER_HEAD.parseItem();
-
-        if (itemStack == null) {
-            throw new IllegalStateException("Could not create skull for " + name + "!");
-        }
-
-        SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
-
-        if (skullMeta == null) {
-            throw new IllegalStateException("Could not create skull for " + name + "!");
-        }
-
-        skullMeta.setDisplayName(name);
-        skullMeta.setLore(listOf(locale.getMessage(player, Message.SKINSMENU_SELECT_SKIN)));
-
-        try {
-            SkullUtils.applySkin(skullMeta, property);
-        } catch (AssertionError e) {
-            log.warning(String.format("Could not add '%s' to SkinsGUI, skin might be corrupted or invalid!", name));
-            e.printStackTrace();
-        }
-
-        itemStack.setItemMeta(skullMeta);
-
-        return itemStack;
-    }
-
-    private static ItemStack createGlass(GlassType type, SRForeign player, SkinsRestorerLocale locale) {
-        ItemStack itemStack = type.getMaterial().parseItem();
-
-        if (itemStack == null) {
-            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
-        }
-
-        String text = type.getMessage() == null ? " " : locale.getMessage(player, type.getMessage());
-
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (itemMeta == null) {
-            throw new IllegalStateException("Could not create glass for " + type.name() + "!");
-        }
-
-        itemMeta.setDisplayName(text);
-        itemStack.setItemMeta(itemMeta);
-
-        return itemStack;
     }
 
     @Getter

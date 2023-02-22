@@ -37,12 +37,14 @@ import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.io.ByteArrayOutputStream;
@@ -101,7 +103,21 @@ public class SRSpongeAdapter implements SRServerAdapter {
 
     @Override
     public boolean determineProxy() {
-        return false; // TODO: Implement
+        PluginContainer sponge = Sponge.pluginManager().plugin("sponge").orElseThrow(IllegalStateException::new);
+
+        try {
+            String mode = Sponge.configManager().pluginConfig(sponge)
+                    .config().load().node("ip-forwarding", "mode")
+                    .getString();
+
+            if (mode == null) {
+                throw new IllegalStateException("Invalid config");
+            }
+
+            return !mode.equals("NONE");
+        } catch (ConfigurateException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.api.SkinApplierAccess;
+import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
@@ -37,7 +37,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRServerMessageAdapter {
     private final SRServerAdapter plugin;
-    private final SkinApplierAccess<Object> skinApplier;
+    private final SharedSkinApplier<Object> skinApplier;
 
     public void handlePluginMessage(SRServerMessageEvent event) {
         if (!event.getChannel().equals("sr:messagechannel")) {
