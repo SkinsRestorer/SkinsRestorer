@@ -60,7 +60,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
 
     @Override
     public void initGUIListener() {
-        // TODO: Implement
+        // Not needed on sponge because we bind events to inventories directly
     }
 
     @Override
