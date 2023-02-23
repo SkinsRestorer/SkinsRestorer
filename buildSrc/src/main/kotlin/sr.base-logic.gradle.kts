@@ -39,5 +39,11 @@ signing {
 
 java.targetCompatibility = JavaVersion.VERSION_1_8
 java.sourceCompatibility = JavaVersion.VERSION_1_8
-java.javaTarget(8)
-java.withSourcesJar()
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    withSourcesJar()
+    javaTarget(8)
+}
