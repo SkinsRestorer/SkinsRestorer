@@ -1,27 +1,33 @@
+import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.connections.ServiceCheckerService;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
+import net.skinsrestorer.shared.config.APIConfig;
+import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
-import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.update.SharedUpdateCheck;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
-public class ServicesTest {
+@ExtendWith(MockitoExtension.class)
+public class MineSkinTest {
     @Mock
-    private SRPlatformAdapter srPlatformAdapter;
+    private SettingsManager settingsManager;
     @Mock
     private SkinsRestorerLocale skinsRestorerLocale;
+
+    private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
 
     @BeforeAll
     public static void setup() {
@@ -29,7 +35,7 @@ public class ServicesTest {
     }
 
     @Test
-    public void testServices() {
+    public void testServices() throws DataRequestException {
         Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
         SRLogger logger = new SRLogger(new SRPlatformLogger() {
@@ -47,20 +53,16 @@ public class ServicesTest {
 
         injector.register(SRLogger.class, logger);
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
-        injector.register(SRPlatformAdapter.class, srPlatformAdapter);
-        new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheck.class);
+
+        when(settingsManager.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
+
+        injector.register(SettingsManager.class, settingsManager);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        ServiceCheckerService.ServiceCheckResponse serviceChecker = injector.getSingleton(ServiceCheckerService.class).checkServices();
+        SkinProperty skinProperty = injector.getSingleton(MineSkinAPIImpl.class).genSkin(TEST_URL, null);
 
-        serviceChecker.getResults().forEach(System.out::println);
+        assertNotNull(skinProperty);
 
-        assertFalse(serviceChecker.getResults().isEmpty());
-        assertEquals(3, serviceChecker.getWorkingUUID());
-        assertEquals(3, serviceChecker.getWorkingProfile());
-
-        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.ASHCON));
-        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS));
-        assertEquals(2, metricsCounter.collect(MetricsCounter.Service.MOJANG));
+        assertEquals(1, metricsCounter.collect(MetricsCounter.Service.MINE_SKIN));
     }
 }
