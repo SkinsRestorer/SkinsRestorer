@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.shared.interfaces;
 
+import net.skinsrestorer.shared.utils.MessageKeyGetter;
+
 public interface SRCommandSender extends SRForeign {
     void sendMessage(String message);
 
@@ -27,12 +29,4 @@ public interface SRCommandSender extends SRForeign {
     String getName();
 
     boolean hasPermission(String permission);
-
-    default boolean equalsPlayer(SRPlayer player) {
-        if (this instanceof SRPlayer) {
-            return ((SRPlayer) this).getUniqueId().equals(player.getUniqueId());
-        } else {
-            return false;
-        }
-    }
 }

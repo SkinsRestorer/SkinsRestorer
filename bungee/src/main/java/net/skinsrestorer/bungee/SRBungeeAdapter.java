@@ -34,8 +34,8 @@ import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import org.bstats.bungeecord.Metrics;
 
 import java.io.InputStream;

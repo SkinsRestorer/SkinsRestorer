@@ -32,10 +32,10 @@ import net.skinsrestorer.shared.connections.responses.profile.PropertyResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MineToolsUUIDResponse;
 import net.skinsrestorer.shared.connections.responses.uuid.MojangUUIDResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.IOException;

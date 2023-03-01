@@ -23,11 +23,11 @@ import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
 import net.skinsrestorer.builddata.BuildData;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRForeign;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.LocaleParser;
+import net.skinsrestorer.shared.utils.MessageKeyGetter;
 import net.skinsrestorer.shared.utils.PropertyReader;
 
 import java.io.IOException;

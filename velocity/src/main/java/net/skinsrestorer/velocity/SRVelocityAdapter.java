@@ -33,8 +33,8 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.velocity.utils.WrapperVelocity;
 import org.bstats.velocity.Metrics;
 

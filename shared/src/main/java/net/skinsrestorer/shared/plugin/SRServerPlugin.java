@@ -17,15 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.platform;
+package net.skinsrestorer.shared.plugin;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
-import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;

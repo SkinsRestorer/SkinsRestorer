@@ -30,16 +30,17 @@ import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.MultiPaperUtil;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
@@ -88,7 +89,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
-        if (ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
+        if (BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
             return new MappingSpigotSkinRefresher(adapter, logger, server);
         } else return new SpigotSkinRefresher(adapter, logger);
     }
@@ -171,7 +172,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private boolean isPaper() {
-        if (PaperLib.isPaper() && ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+        if (PaperLib.isPaper() && BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {
@@ -185,7 +186,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
     private boolean hasPaperMethods() {
         try {
-            ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             return true;
         } catch (ClassNotFoundException | NoSuchMethodException e) {
             return false;

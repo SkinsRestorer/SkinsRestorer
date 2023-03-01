@@ -22,9 +22,9 @@ package net.skinsrestorer.bukkit.update;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.shared.exception.UpdateException;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.DownloadCallback;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -117,9 +117,5 @@ public class UpdateDownloaderGithub {
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Could not get plugin file", e);
         }
-    }
-
-    public enum DownloadFailReason {
-        NO_UPDATE_FOLDER,
     }
 }

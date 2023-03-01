@@ -20,12 +20,12 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -39,13 +39,13 @@ public final class PaperSkinRefresher implements Consumer<Player> {
 
     public PaperSkinRefresher(SRLogger logger, Server server) throws InitializeException {
         try {
-            refreshPlayerMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
+            refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
 
             Consumer<Player> triggerHealthUpdate;
             // XP won't get updated on unsupported Paper builds
             try {
-                Method healthUpdateMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
+                Method healthUpdateMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
                 healthUpdateMethod.setAccessible(true);
 
                 triggerHealthUpdate = player -> {
@@ -57,7 +57,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
                 };
             } catch (NoSuchMethodException ignored) {
                 try {
-                    Method getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+                    Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
                     getHandleMethod.setAccessible(true);
 
                     Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");

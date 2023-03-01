@@ -23,8 +23,8 @@ import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 

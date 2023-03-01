@@ -23,9 +23,9 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 
 import javax.inject.Inject;
 import java.io.ByteArrayInputStream;

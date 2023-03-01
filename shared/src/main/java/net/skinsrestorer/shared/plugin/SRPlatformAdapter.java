@@ -17,10 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.plugin;
 
 import co.aikar.commands.CommandManager;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.interfaces.SRPlayer;
 
 import java.io.InputStream;
 import java.util.Collection;

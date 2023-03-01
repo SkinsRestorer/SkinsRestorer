@@ -21,10 +21,10 @@ package net.skinsrestorer.shared.listeners;
 
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
-import net.skinsrestorer.shared.platform.SRProxyPlugin;
+import net.skinsrestorer.shared.plugin.SRProxyAdapter;
+import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 
 import javax.inject.Inject;

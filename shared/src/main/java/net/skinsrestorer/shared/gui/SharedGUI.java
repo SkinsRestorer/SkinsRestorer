@@ -22,9 +22,9 @@ package net.skinsrestorer.shared.gui;
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRForeign;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
 import net.skinsrestorer.shared.interfaces.SRServerPlayer;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
+import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 
 import javax.inject.Inject;
@@ -68,14 +68,10 @@ public class SharedGUI {
                     player.closeInventory();
                     break;
                 case GREEN_PANE:
-                    adapter.runAsync(() -> {
-                        adapter.openServerGUI(player, event.getCurrentPage() + 1);
-                    });
+                    adapter.runAsync(() -> adapter.openServerGUI(player, event.getCurrentPage() + 1));
                     break;
                 case YELLOW_PANE:
-                    adapter.runAsync(() -> {
-                        adapter.openServerGUI(player, event.getCurrentPage() - 1);
-                    });
+                    adapter.runAsync(() -> adapter.openServerGUI(player, event.getCurrentPage() - 1));
                     break;
                 default:
                     break;

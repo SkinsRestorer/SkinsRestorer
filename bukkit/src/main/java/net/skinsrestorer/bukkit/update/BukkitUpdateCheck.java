@@ -20,12 +20,12 @@
 package net.skinsrestorer.bukkit.update;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.UpdateCallback;
 import net.skinsrestorer.shared.update.UpdateCheck;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.util.concurrent.ThreadLocalRandom;

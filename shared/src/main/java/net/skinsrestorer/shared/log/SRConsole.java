@@ -17,10 +17,8 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils.log;
+package net.skinsrestorer.shared.log;
 
-public enum SRLogLevel {
-    SEVERE,
-    WARNING,
-    INFO
+public interface SRConsole {
+    void sendMessage(String message);
 }

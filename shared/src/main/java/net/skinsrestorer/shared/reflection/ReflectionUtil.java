@@ -19,18 +19,13 @@
  */
 package net.skinsrestorer.shared.reflection;
 
-import net.skinsrestorer.shared.serverinfo.ServerVersion;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ReflectionUtil {
-    public static final String SERVER_VERSION_STRING = ServerVersion.getNMSVersion();
-    public static final ServerVersion SERVER_VERSION;
     private static final Map<Class<?>, Class<?>> builtInMap = new HashMap<>();
 
     static {
@@ -42,19 +37,6 @@ public class ReflectionUtil {
         builtInMap.put(Character.class, Character.TYPE);
         builtInMap.put(Byte.class, Byte.TYPE);
         builtInMap.put(Short.class, Short.TYPE);
-
-        if (SERVER_VERSION_STRING == null) {
-            SERVER_VERSION = null;
-        } else {
-            String[] strings;
-            if (SERVER_VERSION_STRING.contains("_")) {
-                strings = SERVER_VERSION_STRING.replace("v", "").replace("R", "").split("_");
-            } else {
-                strings = SERVER_VERSION_STRING.replace("-R0.1-SNAPSHOT", "").split("\\.");
-            }
-
-            SERVER_VERSION = new ServerVersion(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
-        }
     }
 
     private ReflectionUtil() {
@@ -69,46 +51,28 @@ public class ReflectionUtil {
         }
     }
 
-    public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {
-        return Class.forName("org.bukkit.craftbukkit." + SERVER_VERSION_STRING + "." + clazz);
-    }
-
-    public static Class<?> getNMSClass(String clazz, String fullClassName) throws ClassNotFoundException {
-        try {
-            return Class.forName("net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
-        } catch (ClassNotFoundException ignored) {
-            if (fullClassName != null) {
-                return Class.forName(fullClassName);
-            }
-
-            throw new ClassNotFoundException("Could not find net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
-        }
-    }
-
     public static Enum<?> getEnum(Class<?> clazz, String constant) throws ReflectiveOperationException {
         Enum<?>[] enumConstants = (Enum<?>[]) clazz.getEnumConstants();
 
-        for (Enum<?> e : enumConstants)
-            if (e.name().equalsIgnoreCase(constant))
+        for (Enum<?> e : enumConstants) {
+            if (e.name().equalsIgnoreCase(constant)) {
                 return e;
+            }
+        }
 
-        throw new ReflectiveOperationException("Enum constant not found " + constant);
+        throw new ReflectiveOperationException(String.format("Enum constant not found %s", constant));
     }
 
     public static Enum<?> getEnum(Class<?> clazz, int ordinal) throws ReflectiveOperationException {
         try {
             return (Enum<?>) clazz.getEnumConstants()[ordinal];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ReflectiveOperationException("Enum constant not found " + ordinal);
+            throw new ReflectiveOperationException(String.format("Enum constant not found %s", ordinal));
         }
     }
 
     public static Enum<?> getEnum(Class<?> clazz, String enumName, String constant) throws ReflectiveOperationException {
         return getEnum(getSubClass(clazz, enumName), constant);
-    }
-
-    public static Enum<?> getEnum(Class<?> clazz, String enumName, int ordianl) throws ReflectiveOperationException {
-        return getEnum(getSubClass(clazz, enumName), ordianl);
     }
 
     private static Class<?> getSubClass(Class<?> clazz, String className) throws ReflectiveOperationException {
@@ -161,20 +125,6 @@ public class ReflectionUtil {
 
         m.setAccessible(true);
         return m;
-    }
-
-    public static <T> Field getField(Class<?> target, String name, Class<T> fieldType, int index) throws ReflectiveOperationException {
-        for (final Field field : target.getDeclaredFields()) {
-            if ((name == null || field.getName().equals(name)) && fieldType.isAssignableFrom(field.getType()) && index-- <= 0) {
-                field.setAccessible(true);
-                return field;
-            }
-        }
-
-        if (target.getSuperclass() != null)
-            return getField(target.getSuperclass(), name, fieldType, index);
-
-        throw new ReflectiveOperationException("Cannot find field with type " + fieldType + " in " + target.getSimpleName());
     }
 
     public static Object getObject(Object obj, String fieldName) throws ReflectiveOperationException {
@@ -261,10 +211,6 @@ public class ReflectionUtil {
         clazz = convertToPrimitive(clazz);
 
         return clazz.isInstance(obj) || clazz == convertToPrimitive(obj.getClass());
-    }
-
-    private static Class<?>[] toClassArray(Object[] args) {
-        return Stream.of(args).map(Object::getClass).map(ReflectionUtil::convertToPrimitive).toArray(Class<?>[]::new);
     }
 
     private static Class<?> convertToPrimitive(Class<?> clazz) {

@@ -22,10 +22,10 @@ package net.skinsrestorer.shared.acf;
 import co.aikar.commands.CommandManager;
 import co.aikar.commands.Locales;
 import co.aikar.locales.MessageKey;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.PropertyReader;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.io.IOException;
 import java.io.InputStream;

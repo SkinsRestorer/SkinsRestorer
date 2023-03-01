@@ -22,11 +22,11 @@ package net.skinsrestorer.bungee;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
-import net.skinsrestorer.shared.platform.SRBootstrapper;
-import net.skinsrestorer.shared.platform.SRProxyPlugin;
+import net.skinsrestorer.shared.log.JavaLoggerImpl;
+import net.skinsrestorer.shared.plugin.SRBootstrapper;
+import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheck;
-import net.skinsrestorer.shared.utils.log.JavaLoggerImpl;
 
 @SuppressWarnings("unused")
 public class SRBungeeBootstrap extends Plugin {

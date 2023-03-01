@@ -17,12 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.utils.log;
+package net.skinsrestorer.shared.log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.axiom.AxiomConfiguration;
-import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -21,11 +21,12 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -51,11 +52,11 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
         this.adapter = adapter;
 
         try {
-            packet = ReflectionUtil.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
-            playOutHeldItemSlot = ReflectionUtil.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
-            playOutPosition = ReflectionUtil.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
-            playOutPlayerInfo = ReflectionUtil.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
-            playOutRespawn = ReflectionUtil.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
+            packet = BukkitReflection.getNMSClass("Packet", "net.minecraft.network.protocol.Packet");
+            playOutHeldItemSlot = BukkitReflection.getNMSClass("PacketPlayOutHeldItemSlot", "net.minecraft.network.protocol.game.PacketPlayOutHeldItemSlot");
+            playOutPosition = BukkitReflection.getNMSClass("PacketPlayOutPosition", "net.minecraft.network.protocol.game.PacketPlayOutPosition");
+            playOutPlayerInfo = BukkitReflection.getNMSClass("PacketPlayOutPlayerInfo", "net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo");
+            playOutRespawn = BukkitReflection.getNMSClass("PacketPlayOutRespawn", "net.minecraft.network.protocol.game.PacketPlayOutRespawn");
 
             try {
                 removePlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "EnumPlayerInfoAction", "REMOVE_PLAYER");
@@ -74,7 +75,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                         addPlayerEnum = ReflectionUtil.getEnum(playOutPlayerInfo, "Action", "ADD_PLAYER");
                     } catch (ReflectiveOperationException e3) {
                         try {
-                            Class<?> enumPlayerInfoAction = ReflectionUtil.getNMSClass("EnumPlayerInfoAction", null);
+                            Class<?> enumPlayerInfoAction = BukkitReflection.getNMSClass("EnumPlayerInfoAction", null);
 
                             // 1.8
                             removePlayerEnum = ReflectionUtil.getEnum(enumPlayerInfoAction, "REMOVE_PLAYER");
@@ -86,7 +87,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 }
             }
 
-            getHandleMethod = ReflectionUtil.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+            getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
 
             adapter.runSync(() -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
@@ -279,7 +280,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             return ReflectionUtil.getFieldByType(worldObject, "DimensionManager");
         } catch (ReflectiveOperationException e) {
             try {
-                Class<?> dimensionManagerClass = ReflectionUtil.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
+                Class<?> dimensionManagerClass = BukkitReflection.getNMSClass("DimensionManager", "net.minecraft.world.level.dimension.DimensionManager");
 
                 for (Method m : dimensionManagerClass.getDeclaredMethods()) {
                     if (m.getReturnType() == dimensionManagerClass && m.getParameterCount() == 1 && m.getParameterTypes()[0] == Integer.TYPE) {

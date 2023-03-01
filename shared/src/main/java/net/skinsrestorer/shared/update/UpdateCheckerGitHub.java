@@ -22,10 +22,10 @@ package net.skinsrestorer.shared.update;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import javax.inject.Inject;

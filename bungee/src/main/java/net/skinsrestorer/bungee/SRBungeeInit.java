@@ -26,8 +26,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
-import net.skinsrestorer.shared.interfaces.SRProxyPlatformInit;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 
 import javax.inject.Inject;
 
