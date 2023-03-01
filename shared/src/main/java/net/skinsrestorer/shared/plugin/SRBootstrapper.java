@@ -17,17 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.platform;
+package net.skinsrestorer.shared.plugin;
 
 import ch.jalu.injector.Injector;
 import ch.jalu.injector.InjectorBuilder;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
-import net.skinsrestorer.shared.interfaces.SRPlatformInit;
-import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
+import net.skinsrestorer.shared.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.log.SRPlatformLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.UpdateCheck;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import java.nio.file.Path;
 import java.util.function.Function;

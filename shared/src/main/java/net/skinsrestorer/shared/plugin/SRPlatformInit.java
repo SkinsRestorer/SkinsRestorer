@@ -17,10 +17,15 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.plugin;
 
-import co.aikar.locales.MessageKey;
+import net.skinsrestorer.shared.exception.InitializeException;
 
-public interface MessageKeyGetter {
-    MessageKey getKey();
+public interface SRPlatformInit {
+    default void checkPluginSupport() {
+    }
+
+    void initSkinApplier() throws InitializeException;
+
+    void initLoginProfileListener();
 }

@@ -27,10 +27,10 @@ import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
-import net.skinsrestorer.shared.platform.SRProxyPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 

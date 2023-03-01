@@ -20,8 +20,8 @@
 package net.skinsrestorer.sponge;
 
 import com.google.inject.Inject;
-import net.skinsrestorer.shared.platform.SRBootstrapper;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.plugin.SRBootstrapper;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheck;
 import net.skinsrestorer.sponge.utils.Log4jLoggerImpl;

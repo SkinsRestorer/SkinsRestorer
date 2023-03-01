@@ -36,15 +36,15 @@ import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -217,13 +217,13 @@ public final class SkinCommand extends BaseCommand {
         SRPlayer targetPlayer = target.getPlayer();
         adapter.runAsync(() -> {
             if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!sender.equalsPlayer(targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
+                if (!sender.hasPermission("skinsrestorer.ownskin") && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
             }
 
-            if (setSkin(sender, targetPlayer, skin, true, skinVariant) && !sender.equalsPlayer(targetPlayer)) {
+            if (setSkin(sender, targetPlayer, skin, true, skinVariant) && !playerEqual(sender, targetPlayer)) {
                 sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, targetPlayer.getName());
             }
         });
@@ -369,5 +369,10 @@ public final class SkinCommand extends BaseCommand {
         } else {
             return true;
         }
+    }
+
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean playerEqual(SRCommandSender sender, SRPlayer player) {
+        return sender instanceof SRPlayer && ((SRPlayer) sender).getUniqueId().equals(player.getUniqueId());
     }
 }

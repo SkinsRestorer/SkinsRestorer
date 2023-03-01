@@ -28,15 +28,16 @@ import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ServerMessageListener;
 import net.skinsrestorer.bukkit.skinrefresher.NOOPRefresher;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.serverinfo.ServerVersion;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -77,9 +78,9 @@ public class SRBukkitInit implements SRServerPlatformInit {
         plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
 
         // Log information about the platform
-        logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + ReflectionUtil.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
+        logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
-        if (ReflectionUtil.SERVER_VERSION != null && !ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
+        if (BukkitReflection.SERVER_VERSION != null && !BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }

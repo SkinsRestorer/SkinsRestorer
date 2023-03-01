@@ -17,10 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.utils;
 
-import java.io.IOException;
+import co.aikar.locales.MessageKey;
 
-public interface IOExceptionConsumer<C> {
-    void accept(C c) throws IOException;
+public interface MessageKeyGetter {
+    MessageKey getKey();
 }

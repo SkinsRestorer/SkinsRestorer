@@ -20,9 +20,9 @@
 package net.skinsrestorer.shared.update;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
-import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 
 import javax.inject.Inject;
 import java.util.concurrent.ThreadLocalRandom;

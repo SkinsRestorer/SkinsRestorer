@@ -25,8 +25,8 @@ import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.interfaces.MessageKeyGetter;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
+import net.skinsrestorer.shared.utils.MessageKeyGetter;
 
 import java.util.Locale;
 

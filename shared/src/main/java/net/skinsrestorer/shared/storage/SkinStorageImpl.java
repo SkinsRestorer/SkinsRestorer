@@ -30,9 +30,9 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.time.Instant;

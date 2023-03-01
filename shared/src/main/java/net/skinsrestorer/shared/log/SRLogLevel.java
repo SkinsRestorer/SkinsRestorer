@@ -17,10 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.log;
 
-import java.util.Optional;
-
-public interface SRProxyAdapter extends SRPlatformAdapter {
-    Optional<SRProxyPlayer> getPlayer(String name);
+public enum SRLogLevel {
+    SEVERE,
+    WARNING,
+    INFO
 }

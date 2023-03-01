@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRConsole;
+import net.skinsrestorer.shared.log.SRConsole;
 import org.bukkit.command.ConsoleCommandSender;
 
 @RequiredArgsConstructor

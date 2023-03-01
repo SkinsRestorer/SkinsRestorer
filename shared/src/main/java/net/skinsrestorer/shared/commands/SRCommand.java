@@ -38,14 +38,14 @@ import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.utils.C;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.IOException;

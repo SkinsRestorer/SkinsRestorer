@@ -17,15 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.utils;
 
-import net.skinsrestorer.shared.exception.InitializeException;
+import java.io.IOException;
 
-public interface SRPlatformInit {
-    default void checkPluginSupport() {
-    }
-
-    void initSkinApplier() throws InitializeException;
-
-    void initLoginProfileListener();
+public interface IOExceptionConsumer<C> {
+    void accept(C c) throws IOException;
 }

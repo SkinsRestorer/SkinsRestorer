@@ -25,13 +25,9 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
-import net.skinsrestorer.shared.interfaces.SRPlatformAdapter;
-import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
-import net.skinsrestorer.shared.interfaces.SRServerAdapter;
-import net.skinsrestorer.shared.platform.SRPlugin;
-import net.skinsrestorer.shared.platform.SRServerPlugin;
+import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.plugin.*;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.io.IOException;

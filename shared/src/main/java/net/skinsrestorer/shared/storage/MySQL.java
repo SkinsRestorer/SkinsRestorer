@@ -22,7 +22,7 @@ package net.skinsrestorer.shared.storage;
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
-import net.skinsrestorer.shared.utils.log.SRLogger;
+import net.skinsrestorer.shared.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 

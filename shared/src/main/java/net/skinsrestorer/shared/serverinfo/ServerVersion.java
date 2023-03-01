@@ -22,7 +22,8 @@ package net.skinsrestorer.shared.serverinfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 @Getter
 @RequiredArgsConstructor
@@ -32,25 +33,24 @@ public class ServerVersion {
     private final int minor;
     private final int patch;
 
-    @Nullable
-    public static String getNMSVersion() {
+    public static Optional<String> getNMSVersion() {
         String propertyVersion = System.getProperty("sr.nms.version");
         if (propertyVersion != null) {
-            return propertyVersion;
+            return propertyVersion.describeConstable();
         }
 
         try {
             Object bukkitServer = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null);
 
             if (bukkitServer == null) {
-                return null;
+                return Optional.empty();
             }
 
             String serverPackage = bukkitServer.getClass().getPackage().getName();
 
-            return serverPackage.substring(serverPackage.lastIndexOf('.') + 1);
+            return serverPackage.substring(serverPackage.lastIndexOf('.') + 1).describeConstable();
         } catch (ReflectiveOperationException ignored) {
-            return null;
+            return Optional.empty();
         }
     }
 

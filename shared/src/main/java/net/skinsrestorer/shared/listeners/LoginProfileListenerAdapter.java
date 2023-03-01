@@ -27,8 +27,8 @@ import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 
 import javax.inject.Inject;
 import java.util.Optional;

@@ -17,15 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.platform;
+package net.skinsrestorer.shared.plugin;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRProxyPlatformInit;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;

@@ -36,10 +36,10 @@ import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorResp
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinUrlResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.exception.TryAgainException;
+import net.skinsrestorer.shared.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.utils.MetricsCounter;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
-import net.skinsrestorer.shared.utils.log.SRLogger;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;

@@ -21,8 +21,8 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRServerPlatformInit;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import org.spongepowered.api.Game;

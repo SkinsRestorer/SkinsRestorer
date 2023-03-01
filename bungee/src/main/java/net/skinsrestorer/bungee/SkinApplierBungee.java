@@ -30,7 +30,7 @@ import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
-import net.skinsrestorer.shared.platform.SRProxyPlugin;
+import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 

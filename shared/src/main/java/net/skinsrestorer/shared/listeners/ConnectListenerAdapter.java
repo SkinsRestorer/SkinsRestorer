@@ -21,9 +21,9 @@ package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
-import net.skinsrestorer.shared.platform.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRPlugin;
+import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.storage.Message;
 
 import javax.inject.Inject;

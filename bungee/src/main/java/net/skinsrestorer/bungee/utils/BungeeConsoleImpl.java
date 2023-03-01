@@ -22,7 +22,7 @@ package net.skinsrestorer.bungee.utils;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.skinsrestorer.shared.interfaces.SRConsole;
+import net.skinsrestorer.shared.log.SRConsole;
 
 @RequiredArgsConstructor
 public class BungeeConsoleImpl implements SRConsole {

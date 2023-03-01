@@ -20,8 +20,8 @@
 package net.skinsrestorer.velocity.utils;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRPlatformLogger;
-import net.skinsrestorer.shared.utils.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRLogLevel;
+import net.skinsrestorer.shared.log.SRPlatformLogger;
 import org.slf4j.Logger;
 
 @RequiredArgsConstructor

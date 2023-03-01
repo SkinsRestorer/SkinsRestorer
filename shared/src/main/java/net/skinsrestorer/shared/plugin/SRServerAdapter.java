@@ -17,7 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.plugin;
+
+import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 
 import java.io.DataOutputStream;
 import java.util.Map;
