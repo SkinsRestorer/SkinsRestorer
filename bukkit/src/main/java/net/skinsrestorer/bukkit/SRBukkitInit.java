@@ -27,7 +27,6 @@ import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
 import net.skinsrestorer.bukkit.listener.ServerMessageListener;
-import net.skinsrestorer.bukkit.skinrefresher.NOOPRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.PaperPlayerJoinEvent;
@@ -63,7 +62,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
             if (SRPlugin.isUnitTest()) {
-                skinApplierBukkit.setRefresh(new NOOPRefresher());
+                skinApplierBukkit.setRefresh(player -> {});
             } else {
                 skinApplierBukkit.setRefresh(skinApplierBukkit.detectRefresh(server));
             }
@@ -80,7 +79,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         // Log information about the platform
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
-        if (BukkitReflection.SERVER_VERSION != null && !BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
+        if (!BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }

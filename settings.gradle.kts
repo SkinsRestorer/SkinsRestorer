@@ -37,9 +37,6 @@ dependencyResolutionManagement {
         maven("https://repo.spongepowered.org/maven/") {
             name = "SpongePowered Repository"
         }
-        maven("https://nexus.velocitypowered.com/repository/velocity-artifacts-release/") {
-            name = "Velocitypowered Repository"
-        }
         maven("https://repo.codemc.org/repository/maven-public/") {
             name = "CodeMC Repository"
         }
