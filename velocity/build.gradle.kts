@@ -8,3 +8,11 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.0.1")
     implementation("com.github.SkinsRestorer.commands:acf-velocity:ebc273d2f3")
 }
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
