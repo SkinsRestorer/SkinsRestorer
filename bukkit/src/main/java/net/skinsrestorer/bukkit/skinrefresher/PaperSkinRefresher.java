@@ -42,50 +42,7 @@ public final class PaperSkinRefresher implements Consumer<Player> {
             refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
 
-            Consumer<Player> triggerHealthUpdate;
-            // XP won't get updated on unsupported Paper builds
-            try {
-                Method healthUpdateMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
-                healthUpdateMethod.setAccessible(true);
-
-                triggerHealthUpdate = player -> {
-                    try {
-                        healthUpdateMethod.invoke(player);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                };
-            } catch (NoSuchMethodException ignored) {
-                try {
-                    Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-                    getHandleMethod.setAccessible(true);
-
-                    Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
-                    healthUpdateMethod.setAccessible(true);
-
-                    triggerHealthUpdate = player -> {
-                        try {
-                            healthUpdateMethod.invoke(getHandleMethod.invoke(player));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    };
-                } catch (NoSuchMethodException ignored2) {
-                    Optional<IMapping> mapping = MappingManager.getMapping(server);
-                    if (!mapping.isPresent()) {
-                        throw new NoMappingException(server);
-                    } else {
-                        triggerHealthUpdate = player -> {
-                            try {
-                                mapping.get().triggerHealthUpdate(player);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        };
-                    }
-                }
-            }
-            this.triggerHealthUpdate = triggerHealthUpdate;
+            this.triggerHealthUpdate = selectHealthUpdateMethod(server);
 
             logger.debug("Using PaperSkinRefresher");
         } catch (NoMappingException e) {
@@ -101,5 +58,50 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     public void accept(Player player) {
         refreshPlayerMethod.invoke(player);
         triggerHealthUpdate.accept(player);
+    }
+
+    private Consumer<Player> selectHealthUpdateMethod(Server server) throws ReflectiveOperationException, NoMappingException {
+        // XP won't get updated on unsupported Paper builds
+        try {
+            Method healthUpdateMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
+            healthUpdateMethod.setAccessible(true);
+
+            return player -> {
+                try {
+                    healthUpdateMethod.invoke(player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+        } catch (NoSuchMethodException ignored) {
+            try {
+                Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
+                getHandleMethod.setAccessible(true);
+
+                Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
+                healthUpdateMethod.setAccessible(true);
+
+                return player -> {
+                    try {
+                        healthUpdateMethod.invoke(getHandleMethod.invoke(player));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                };
+            } catch (NoSuchMethodException ignored2) {
+                Optional<IMapping> mapping = MappingManager.getMapping(server);
+                if (!mapping.isPresent()) {
+                    throw new NoMappingException(server);
+                } else {
+                    return player -> {
+                        try {
+                            mapping.get().triggerHealthUpdate(player);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    };
+                }
+            }
+        }
     }
 }
