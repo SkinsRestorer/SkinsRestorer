@@ -36,7 +36,7 @@ public class ServerVersion {
     public static Optional<String> getNMSVersion() {
         String propertyVersion = System.getProperty("sr.nms.version");
         if (propertyVersion != null) {
-            return propertyVersion.describeConstable();
+            return Optional.of(propertyVersion);
         }
 
         try {
@@ -48,7 +48,7 @@ public class ServerVersion {
 
             String serverPackage = bukkitServer.getClass().getPackage().getName();
 
-            return serverPackage.substring(serverPackage.lastIndexOf('.') + 1).describeConstable();
+            return Optional.of(serverPackage.substring(serverPackage.lastIndexOf('.') + 1));
         } catch (ReflectiveOperationException ignored) {
             return Optional.empty();
         }
