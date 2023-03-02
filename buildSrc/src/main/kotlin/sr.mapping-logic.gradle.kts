@@ -7,12 +7,6 @@ plugins {
 
 dependencies.implementation(project(":mappings:shared"))
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
-
 tasks.remap.get().apply {
     archiveClassifier.set("remapped")
 }

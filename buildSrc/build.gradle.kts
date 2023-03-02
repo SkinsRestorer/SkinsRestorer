@@ -20,9 +20,3 @@ dependencies {
 }
 
 java.targetCompatibility = JavaVersion.VERSION_17
-
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
-}
