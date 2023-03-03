@@ -188,7 +188,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         try {
             BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             return true;
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
+        } catch (ReflectiveOperationException e) {
             return false;
         }
     }

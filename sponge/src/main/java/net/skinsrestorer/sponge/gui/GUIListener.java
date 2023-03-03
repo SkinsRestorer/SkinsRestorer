@@ -56,8 +56,6 @@ public class GUIListener implements SlotClickHandler {
 
         ItemStack stack = slot.peek();
 
-        System.out.println(stack);
-
         if (stack == ItemStack.empty()) {
             return false;
         }
