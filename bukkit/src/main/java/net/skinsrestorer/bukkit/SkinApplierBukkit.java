@@ -40,7 +40,7 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.serverinfo.ServerVersion;
+import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
 import net.skinsrestorer.v1_7.BukkitLegacyPropertyApplier;
@@ -89,7 +89,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
-        if (BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 17, 1))) {
+        if (BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
             return new MappingSpigotSkinRefresher(adapter, logger, server);
         } else return new SpigotSkinRefresher(adapter, logger);
     }
@@ -172,7 +172,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private boolean isPaper() {
-        if (PaperLib.isPaper() && BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 11, 2))) {
+        if (PaperLib.isPaper() && BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {

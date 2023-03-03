@@ -19,25 +19,21 @@
  */
 package net.skinsrestorer.shared.update;
 
-import com.google.gson.Gson;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.shared.connections.http.HttpClient;
+import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
+import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
-import org.inventivetalent.update.spiget.comparator.VersionComparator;
 
 import javax.inject.Inject;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -49,34 +45,33 @@ public class UpdateCheckerGitHub {
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
-    private final Gson gson = new Gson();
-    @Getter
-    private GitHubReleaseInfo releaseInfo;
 
     public void checkForUpdate(UpdateCallback callback) {
+        HttpClient client = new HttpClient(
+                String.format(RELEASES_URL_LATEST, RESOURCE_ID),
+                null,
+                HttpClient.HttpType.JSON,
+                plugin.getUserAgent(),
+                HttpClient.HttpMethod.GET,
+                Collections.emptyMap(),
+                90_000
+        );
+
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(String.format(RELEASES_URL_LATEST, RESOURCE_ID)).openConnection();
-            connection.setRequestProperty("User-Agent", plugin.getUserAgent());
+            HttpResponse response = client.execute();
+            GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
-            String body;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                body = reader.lines()
-                        .collect(Collectors.joining("\n"));
-            }
+            logger.debug("Response body: " + response.getBody());
+            logger.debug("Response code: " + response.getStatusCode());
 
-            logger.debug("Response body: " + body);
-            logger.debug("Response code: " + connection.getResponseCode());
-
-            releaseInfo = gson.fromJson(body, GitHubReleaseInfo.class);
-
-            releaseInfo.getAssets().forEach(gitHubAssetInfo -> {
+            releaseInfo.getAssets().forEach(gitHubAssetInfo -> { // TODO: Check if this is the correct asset
                 if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
                     callback.updateAvailable(releaseInfo.getTagName(), gitHubAssetInfo.getBrowserDownloadUrl());
                 } else {
                     callback.upToDate();
                 }
             });
-        } catch (IOException e) {
+        } catch (IOException | DataRequestException e) {
             logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
             logger.debug(e);
         }
@@ -129,7 +124,7 @@ public class UpdateCheckerGitHub {
         updateAvailableMessages.add(LOG_ROW);
     }
 
-    public boolean isVersionNewer(String oldVersion, String newVersion) {
-        return VersionComparator.SEM_VER_SNAPSHOT.isNewer(oldVersion, newVersion);
+    public boolean isVersionNewer(String currentVersion, String newVersion) {
+        return SemanticVersion.fromString(newVersion).isNewerThan(SemanticVersion.fromString(currentVersion));
     }
 }

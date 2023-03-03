@@ -36,7 +36,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
-import net.skinsrestorer.shared.serverinfo.ServerVersion;
+import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -79,7 +79,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
         // Log information about the platform
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
 
-        if (!BukkitReflection.SERVER_VERSION.isNewer(new ServerVersion(1, 7, 10))) {
+        if (!BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 7, 10))) {
             logger.warning(ChatColor.YELLOW + "Although SkinsRestorer allows using this ancient version, we will not provide full support for it. This version of Minecraft does not allow using all of SkinsRestorers features due to client side restrictions. Please be aware things WILL BREAK and not work!");
         }
     }

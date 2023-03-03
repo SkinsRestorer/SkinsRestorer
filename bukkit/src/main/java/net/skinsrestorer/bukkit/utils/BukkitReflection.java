@@ -19,14 +19,16 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.shared.serverinfo.ServerVersion;
+import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+
+import java.util.Optional;
 
 public class BukkitReflection {
     public static final String SERVER_VERSION_STRING;
-    public static final ServerVersion SERVER_VERSION;
+    public static final SemanticVersion SERVER_VERSION;
 
     static {
-        SERVER_VERSION_STRING = ServerVersion.getNMSVersion().orElseThrow(() -> new RuntimeException("Failed to get NMS version"));
+        SERVER_VERSION_STRING = getNMSVersion().orElseThrow(() -> new RuntimeException("Failed to get NMS version"));
 
         String[] strings;
         if (SERVER_VERSION_STRING.contains("_")) {
@@ -35,7 +37,7 @@ public class BukkitReflection {
             strings = SERVER_VERSION_STRING.replace("-R0.1-SNAPSHOT", "").split("\\.");
         }
 
-        SERVER_VERSION = new ServerVersion(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
+        SERVER_VERSION = new SemanticVersion(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
     }
 
     public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {
@@ -51,6 +53,27 @@ public class BukkitReflection {
             }
 
             throw new ClassNotFoundException("Could not find net.minecraft.server." + SERVER_VERSION_STRING + "." + clazz);
+        }
+    }
+
+    private static Optional<String> getNMSVersion() {
+        String propertyVersion = System.getProperty("sr.nms.version");
+        if (propertyVersion != null) {
+            return Optional.of(propertyVersion);
+        }
+
+        try {
+            Object bukkitServer = Class.forName("org.bukkit.Bukkit").getMethod("getServer").invoke(null);
+
+            if (bukkitServer == null) {
+                return Optional.empty();
+            }
+
+            String serverPackage = bukkitServer.getClass().getPackage().getName();
+
+            return Optional.of(serverPackage.substring(serverPackage.lastIndexOf('.') + 1));
+        } catch (ReflectiveOperationException ignored) {
+            return Optional.empty();
         }
     }
 }
