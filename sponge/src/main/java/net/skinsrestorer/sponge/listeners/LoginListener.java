@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;

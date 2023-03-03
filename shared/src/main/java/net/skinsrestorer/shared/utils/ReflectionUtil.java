@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.reflection;
+package net.skinsrestorer.shared.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

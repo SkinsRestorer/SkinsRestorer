@@ -22,7 +22,7 @@ package net.skinsrestorer.bukkit.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
 
 import java.util.*;

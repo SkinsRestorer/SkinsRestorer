@@ -53,10 +53,7 @@ import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.MySQL;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
 import net.skinsrestorer.shared.update.UpdateCheck;
@@ -247,12 +244,14 @@ public class SRPlugin {
 
     public void loadLocales() {
         LocaleManager<SRForeign> localeManager = LocaleManager.create(SRForeign::getLocale, Locale.ENGLISH);
+        injector.register(LocaleManager.class, localeManager);
         try {
-            Message.load(localeManager, dataFolder, adapter);
+            MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
+            messageLoader.migrateOldFiles();
+            messageLoader.loadMessages();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        injector.register(LocaleManager.class, localeManager);
         injector.getSingleton(SkinsRestorerLocale.class);
     }
 

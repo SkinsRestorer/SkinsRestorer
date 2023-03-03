@@ -26,7 +26,7 @@ import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

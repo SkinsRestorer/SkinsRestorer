@@ -24,7 +24,7 @@ import com.mojang.authlib.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.effect.VanishState;
