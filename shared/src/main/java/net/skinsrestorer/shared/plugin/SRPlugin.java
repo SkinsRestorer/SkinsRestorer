@@ -236,10 +236,6 @@ public class SRPlugin {
         }
 
         logger.setDebug(settings.getProperty(DevConfig.DEBUG));
-        SkinsRestorerLocale locale = injector.getIfAvailable(SkinsRestorerLocale.class);
-        if (locale != null) {
-            locale.setDefaultLocale(settings.getProperty(MessageConfig.LANGUAGE));
-        }
     }
 
     public void loadLocales() {

@@ -30,7 +30,6 @@ import net.skinsrestorer.shared.utils.MessageKeyGetter;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
-import java.util.Locale;
 
 public class SkinsRestorerLocale {
     @Inject
@@ -53,9 +52,5 @@ public class SkinsRestorerLocale {
         }
 
         return new MessageFormat(C.c(message)).format(args);
-    }
-
-    public void setDefaultLocale(Locale locale) {
-        localeManager.setDefaultLocale(locale);
     }
 }
