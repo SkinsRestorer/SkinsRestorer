@@ -86,7 +86,11 @@ public final class SRCommand extends BaseCommand {
     @Description("%helpSrReload")
     private void onReload(SRCommandSender sender) {
         plugin.loadConfig();
-        plugin.loadLocales();
+        try {
+            plugin.loadLocales();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         plugin.prepareACF();
 
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);

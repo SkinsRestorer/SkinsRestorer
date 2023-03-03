@@ -47,7 +47,7 @@ public class SRBootstrapper {
             injector.getSingleton(srPlatformClass);
 
             srPlugin.startup(injector.newInstance(initCLass));
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.");
 

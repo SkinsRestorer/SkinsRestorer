@@ -238,16 +238,12 @@ public class SRPlugin {
         logger.setDebug(settings.getProperty(DevConfig.DEBUG));
     }
 
-    public void loadLocales() {
+    public void loadLocales() throws IOException {
         LocaleManager<SRForeign> localeManager = LocaleManager.create(SRForeign::getLocale, Locale.ENGLISH);
         injector.register(LocaleManager.class, localeManager);
-        try {
-            MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
-            messageLoader.migrateOldFiles();
-            messageLoader.loadMessages();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
+        messageLoader.migrateOldFiles();
+        messageLoader.loadMessages();
         injector.getSingleton(SkinsRestorerLocale.class);
     }
 
@@ -383,7 +379,11 @@ public class SRPlugin {
 
         // Init config files
         loadConfig();
-        loadLocales();
+        try {
+            loadLocales();
+        } catch (IOException e) {
+            throw new InitializeException(e);
+        }
 
         // Load MineSkinAPI with config values
         initMineSkinAPI();
