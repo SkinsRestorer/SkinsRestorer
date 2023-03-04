@@ -21,7 +21,7 @@ package net.skinsrestorer.bungee.utils;
 
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Locale;
 import java.util.Optional;

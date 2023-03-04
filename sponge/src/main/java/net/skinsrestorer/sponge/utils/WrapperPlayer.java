@@ -20,7 +20,7 @@
 package net.skinsrestorer.sponge.utils;
 
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Locale;

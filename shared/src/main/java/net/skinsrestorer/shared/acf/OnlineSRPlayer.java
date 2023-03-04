@@ -23,7 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 
 @Getter
 @ToString

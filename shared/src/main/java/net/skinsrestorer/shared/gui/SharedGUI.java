@@ -21,11 +21,11 @@ package net.skinsrestorer.shared.gui;
 
 import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRForeign;
-import net.skinsrestorer.shared.interfaces.SRServerPlayer;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
 import javax.inject.Inject;
 import java.util.function.Consumer;

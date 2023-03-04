@@ -22,7 +22,7 @@ package net.skinsrestorer.velocity.utils;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Locale;
 import java.util.Optional;

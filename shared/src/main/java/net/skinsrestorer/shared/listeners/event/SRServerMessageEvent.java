@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.listeners.event;
 
-import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 
 public interface SRServerMessageEvent {
     SRPlayer getPlayer();

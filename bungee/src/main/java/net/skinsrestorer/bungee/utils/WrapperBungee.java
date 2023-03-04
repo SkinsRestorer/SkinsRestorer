@@ -24,8 +24,8 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
 

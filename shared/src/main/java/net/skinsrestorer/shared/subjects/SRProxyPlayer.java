@@ -17,10 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.subjects;
 
-import java.util.Locale;
+import java.util.Optional;
 
-public interface SRForeign {
-    Locale getLocale();
+public interface SRProxyPlayer extends SRPlayer {
+    Optional<String> getCurrentServer();
+
+    void sendDataToServer(String channel, byte[] data);
 }

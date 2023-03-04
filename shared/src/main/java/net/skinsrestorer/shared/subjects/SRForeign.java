@@ -17,12 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.subjects;
 
-import java.util.UUID;
+import java.util.Locale;
 
-public interface SRPlayer extends SRCommandSender {
-    <P> P getAs(Class<P> playerClass);
-
-    UUID getUniqueId();
+public interface SRForeign {
+    Locale getLocale();
 }

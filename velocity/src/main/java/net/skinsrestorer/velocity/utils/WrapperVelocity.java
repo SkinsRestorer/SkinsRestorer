@@ -24,8 +24,8 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
 

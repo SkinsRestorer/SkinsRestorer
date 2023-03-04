@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import net.skinsrestorer.shared.interfaces.SRForeign;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
+import net.skinsrestorer.shared.subjects.SRForeign;
 
 import java.util.Map;
 import java.util.function.Consumer;

@@ -21,9 +21,9 @@ package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.bukkit.utils.WrapperBukkit;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;

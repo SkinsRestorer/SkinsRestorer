@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 
 import java.io.DataOutputStream;

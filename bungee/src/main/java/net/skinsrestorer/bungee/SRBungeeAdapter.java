@@ -32,10 +32,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.utils.WrapperBungee;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import org.bstats.bungeecord.Metrics;
 
 import java.io.InputStream;

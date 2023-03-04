@@ -17,16 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.interfaces;
+package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.shared.utils.MessageKeyGetter;
+import java.util.UUID;
 
-public interface SRCommandSender extends SRForeign {
-    void sendMessage(String message);
+public interface SRPlayer extends SRCommandSender {
+    <P> P getAs(Class<P> playerClass);
 
-    void sendMessage(MessageKeyGetter key, Object... args);
-
-    String getName();
-
-    boolean hasPermission(String permission);
+    UUID getUniqueId();
 }

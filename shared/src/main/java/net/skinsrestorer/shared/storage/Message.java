@@ -21,9 +21,8 @@ package net.skinsrestorer.shared.storage;
 
 import co.aikar.locales.MessageKey;
 import lombok.Getter;
-import net.skinsrestorer.shared.utils.MessageKeyGetter;
 
-public enum Message implements MessageKeyGetter {
+public enum Message {
     PREFIX,
     HELP_HELP_COMMAND,
     HELP_SKIN_SET,

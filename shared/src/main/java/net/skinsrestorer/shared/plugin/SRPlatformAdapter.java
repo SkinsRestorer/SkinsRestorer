@@ -21,8 +21,8 @@ package net.skinsrestorer.shared.plugin;
 
 import co.aikar.commands.CommandManager;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.io.InputStream;
 import java.util.Collection;

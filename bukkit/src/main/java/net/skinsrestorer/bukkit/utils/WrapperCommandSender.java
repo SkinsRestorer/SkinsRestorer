@@ -23,8 +23,8 @@ import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.interfaces.SRCommandSender;
-import net.skinsrestorer.shared.utils.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.bukkit.command.CommandSender;
 
 import java.util.Locale;
@@ -46,7 +46,7 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public void sendMessage(MessageKeyGetter key, Object... args) {
+    public void sendMessage(Message key, Object... args) {
         sendMessage(locale.getMessage(this, key, args));
     }
 

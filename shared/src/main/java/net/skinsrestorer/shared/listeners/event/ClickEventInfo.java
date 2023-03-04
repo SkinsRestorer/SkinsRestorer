@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.listeners.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
 @Getter
 @RequiredArgsConstructor
@@ -37,6 +37,6 @@ public class ClickEventInfo {
         YELLOW_PANE,
         GREEN_PANE,
         RED_PANE,
-        UNKNOWN;
+        UNKNOWN
     }
 }

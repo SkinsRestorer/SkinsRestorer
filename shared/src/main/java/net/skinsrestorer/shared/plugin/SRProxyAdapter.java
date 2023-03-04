@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Optional;
 

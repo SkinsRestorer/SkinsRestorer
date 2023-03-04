@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.utils.MessageKeyGetter;
+import net.skinsrestorer.shared.storage.Message;
 
 public class DataRequestExceptionShared extends DataRequestException {
     public DataRequestExceptionShared(String message) {
@@ -32,7 +32,7 @@ public class DataRequestExceptionShared extends DataRequestException {
         super(cause);
     }
 
-    public DataRequestExceptionShared(SkinsRestorerLocale locale, MessageKeyGetter key, Object... args) {
+    public DataRequestExceptionShared(SkinsRestorerLocale locale, Message key, Object... args) {
         this(locale.getMessage(locale.getDefaultForeign(), key, args));
     }
 }

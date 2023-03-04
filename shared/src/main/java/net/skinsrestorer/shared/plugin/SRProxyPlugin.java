@@ -22,9 +22,9 @@ package net.skinsrestorer.shared.plugin;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.interfaces.SRProxyPlayer;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;

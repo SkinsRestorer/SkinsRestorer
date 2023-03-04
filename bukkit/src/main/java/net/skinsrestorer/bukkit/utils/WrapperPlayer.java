@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.interfaces.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.entity.Player;
 

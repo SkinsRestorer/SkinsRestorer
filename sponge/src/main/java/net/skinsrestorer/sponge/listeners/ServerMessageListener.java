@@ -20,9 +20,9 @@
 package net.skinsrestorer.sponge.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.interfaces.SRPlayer;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.sponge.utils.WrapperSponge;
 import org.spongepowered.api.network.EngineConnection;
 import org.spongepowered.api.network.ServerPlayerConnection;
