@@ -25,6 +25,7 @@ import net.skinsrestorer.shared.exception.UpdateException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.update.DownloadCallback;
+import net.skinsrestorer.shared.update.UpdateDownloader;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,7 +45,7 @@ import java.nio.file.Path;
  * Parts taken from <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
  */
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class UpdateDownloaderGithub {
+public class UpdateDownloaderGithub implements UpdateDownloader {
     private final SRPlugin plugin;
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
@@ -80,6 +81,7 @@ public class UpdateDownloaderGithub {
         }
     }
 
+    @Override
     public boolean downloadUpdate(String downloadUrl) {
         Path pluginFile = getPluginFile(adapter.getPluginInstance()); // /plugins/XXX.jar
         Path updateFolder = server.getUpdateFolderFile().toPath();

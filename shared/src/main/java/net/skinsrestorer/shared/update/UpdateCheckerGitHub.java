@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.shared.update;
 
+import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.connections.http.HttpClient;
@@ -45,6 +46,7 @@ public class UpdateCheckerGitHub {
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
+    private final Injector injector;
 
     public void checkForUpdate(UpdateCallback callback) {
         HttpClient client = new HttpClient(
@@ -110,7 +112,7 @@ public class UpdateCheckerGitHub {
         updateAvailableMessages.add(LOG_ROW);
         updateAvailableMessages.add("§a    +==================+");
         updateAvailableMessages.add("§a    |   SkinsRestorer  |");
-        SRServerPlugin serverPlugin = plugin.getInjector().getIfAvailable(SRServerPlugin.class);
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin != null) {
             if (serverPlugin.isProxyMode()) {
                 updateAvailableMessages.add("§a    |------------------|");

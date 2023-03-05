@@ -41,8 +41,9 @@ public class PlayerJoin implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        if (resourcePack && settings.getProperty(ServerConfig.RESOURCE_PACK_FIX))
+        if (resourcePack && settings.getProperty(ServerConfig.RESOURCE_PACK_FIX)) {
             return;
+        }
 
         adapter.handleLogin(eventWrapper.wrap(event));
     }

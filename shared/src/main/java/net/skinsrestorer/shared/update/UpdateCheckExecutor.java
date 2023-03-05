@@ -17,41 +17,23 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.update;
+package net.skinsrestorer.shared.update;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.update.UpdateCallback;
-import net.skinsrestorer.shared.update.UpdateCheck;
-import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
 
 import javax.inject.Inject;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class BukkitUpdateCheck implements UpdateCheck {
+public class UpdateCheckExecutor {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter adapter;
-    private final UpdateCheckerGitHub updateChecker;
     private final SRLogger logger;
-    private final UpdateDownloaderGithub downloader;
+    private final SRPlatformAdapter adapter;
     private boolean updateDownloaded;
 
-    @Override
-    public void run() {
-        checkUpdate(true);
-
-        // Delay update between 5 & 30 minutes
-        int delayInt = 300 + ThreadLocalRandom.current().nextInt(1800 + 1 - 300);
-        // Repeat update between 1 & 4 hours
-        int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
-        adapter.runRepeatAsync(() -> checkUpdate(false), delayInt, periodInt, TimeUnit.SECONDS);
-    }
-
-    public void checkUpdate(boolean showUpToDate) {
+    public void checkUpdate(boolean showUpToDate, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {
         if (SRPlugin.isUnitTest()) {
             if (showUpToDate) {
                 logger.info("Unit test mode, not checking for updates.");
@@ -68,11 +50,11 @@ public class BukkitUpdateCheck implements UpdateCheck {
                     return;
                 }
 
-                if (downloader.downloadUpdate(downloadUrl)) {
+                if (downloader != null && downloader.downloadUpdate(downloadUrl)) {
                     updateDownloaded = true;
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, true).forEach(logger::info);
+                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, downloader != null).forEach(logger::info);
             }
 
             @Override

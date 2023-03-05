@@ -25,7 +25,7 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.log.SRPlatformLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.update.UpdateCheck;
+import net.skinsrestorer.shared.update.UpdateCheckInit;
 
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -33,7 +33,7 @@ import java.util.function.Function;
 public class SRBootstrapper {
     public static void startPlugin(SRPlatformLogger isrLogger, boolean loggerColor,
                                    Function<Injector, SRPlatformAdapter> createAdapter,
-                                   Class<? extends UpdateCheck> updateCheck, Class<?> srPlatformClass,
+                                   Class<? extends UpdateCheckInit> updateCheck, Class<?> srPlatformClass,
                                    String version, Path dataFolder, Platform platform,
                                    Class<? extends SRPlatformInit> initCLass) {
         SRPlugin srPlugin = null;

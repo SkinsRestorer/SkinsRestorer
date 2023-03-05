@@ -1,6 +1,6 @@
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
-import net.skinsrestorer.bukkit.update.BukkitUpdateCheck;
+import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
@@ -103,7 +103,7 @@ public class LoadTest {
                     new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                     true,
                     i -> new SRBukkitAdapter(i, server, plugin),
-                    BukkitUpdateCheck.class,
+                    BukkitUpdateCheckInit.class,
                     SRServerPlugin.class,
                     "UnitTest",
                     configDir,

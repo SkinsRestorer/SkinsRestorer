@@ -54,6 +54,7 @@ public class CommandReplacements {
             .put("srCreateCustom", (s) -> "skinsrestorer.admincommand.createcustom")
             .put("srDumpsrDump", (s) -> "skinsrestorer.admincommand.dump")
             .build();
+
     public static final Map<String, Message> descriptions = FluentMap.<String, Message>builder()
             .put("%helpHelpCommand", Message.HELP_HELP_COMMAND)
             .put("%helpSkinClear", Message.HELP_SKIN_CLEAR)
@@ -72,6 +73,7 @@ public class CommandReplacements {
             .put("%helpSrApplySkin", Message.HELP_SR_APPLY_SKIN)
             .put("%helpSrCreateCustom", Message.HELP_SR_CREATECUSTOM)
             .build();
+
     public static final Map<String, Message> syntax = FluentMap.<String, Message>builder()
             .put("%SyntaxDefaultCommand", Message.SYNTAX_DEFAULTCOMMAND)
             .put("%SyntaxSkinSet", Message.SYNTAX_SKINSET)

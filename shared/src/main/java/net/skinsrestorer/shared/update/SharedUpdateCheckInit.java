@@ -29,44 +29,18 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class SharedUpdateCheck implements UpdateCheck {
+public class SharedUpdateCheckInit implements UpdateCheckInit {
     private final SRPlugin plugin;
     private final SRPlatformAdapter adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final SRLogger logger;
+    private final UpdateCheckExecutor updateCheckExecutor;
 
     @Override
     public void run() {
-        checkUpdate(true);
+        updateCheckExecutor.checkUpdate(false, updateChecker, null);
 
         int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-        adapter.runRepeatAsync(() -> checkUpdate(false), delayInt, delayInt, TimeUnit.MINUTES);
-    }
-
-    public void checkUpdate(boolean showUpToDate) {
-        if (SRPlugin.isUnitTest()) {
-            if (showUpToDate) {
-                logger.info("Unit test mode, not checking for updates.");
-                updateChecker.getUpToDateMessages().forEach(logger::info);
-            }
-            return;
-        }
-
-        adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
-            @Override
-            public void updateAvailable(String newVersion, String downloadUrl) {
-                plugin.setOutdated();
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, false).forEach(logger::info);
-            }
-
-            @Override
-            public void upToDate() {
-                if (!showUpToDate) {
-                    return;
-                }
-
-                updateChecker.getUpToDateMessages().forEach(logger::info);
-            }
-        }));
+        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(false, updateChecker, null), delayInt, delayInt, TimeUnit.MINUTES);
     }
 }

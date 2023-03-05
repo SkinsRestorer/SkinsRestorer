@@ -19,5 +19,6 @@
  */
 package net.skinsrestorer.shared.update;
 
-public interface UpdateCheck extends Runnable {
+public interface UpdateDownloader {
+    boolean downloadUpdate(String downloadUrl);
 }

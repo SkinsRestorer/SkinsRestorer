@@ -8,7 +8,7 @@ import net.skinsrestorer.shared.log.SRPlatformLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.update.SharedUpdateCheck;
+import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -51,7 +51,8 @@ public class ServicesTest {
         injector.register(SRLogger.class, logger);
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
-        new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheck.class);
+
+        new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheckInit.class);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         ServiceCheckerService.ServiceCheckResponse serviceChecker = injector.getSingleton(ServiceCheckerService.class).checkServices();

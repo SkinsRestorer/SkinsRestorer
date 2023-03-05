@@ -56,7 +56,7 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.shared.update.UpdateCheck;
+import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.bstats.MetricsBase;
 import org.bstats.charts.SingleLineChart;
@@ -78,12 +78,11 @@ public class SRPlugin {
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
     private final SRPlatformAdapter adapter;
     private final SRLogger logger;
-    private final UpdateCheck updateCheck;
+    private final UpdateCheckInit updateCheckInit;
     @Getter
     private final Path dataFolder;
     @Getter
     private final String version;
-    @Getter
     private final Injector injector;
     @Getter
     private final Platform platform;
@@ -93,7 +92,7 @@ public class SRPlugin {
     @Getter
     private boolean updaterInitialized = false;
 
-    public SRPlugin(Injector injector, String version, Path dataFolder, Platform platform, Class<? extends UpdateCheck> updateCheck) {
+    public SRPlugin(Injector injector, String version, Path dataFolder, Platform platform, Class<? extends UpdateCheckInit> updateCheck) {
         injector.register(SRPlugin.class, this);
         injector.register(MetricsCounter.class, new MetricsCounter());
         injector.register(CooldownStorage.class, new CooldownStorage());
@@ -101,7 +100,7 @@ public class SRPlugin {
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
         this.logger = injector.getSingleton(SRLogger.class);
-        this.updateCheck = injector.getSingleton(updateCheck);
+        this.updateCheckInit = injector.getSingleton(updateCheck);
         this.version = version;
         this.dataFolder = dataFolder;
         this.platform = platform;
@@ -312,7 +311,7 @@ public class SRPlugin {
         if (Files.exists(updaterDisabled)) {
             logger.info("Updater Disabled");
         } else {
-            updateCheck.run();
+            updateCheckInit.run();
         }
     }
 

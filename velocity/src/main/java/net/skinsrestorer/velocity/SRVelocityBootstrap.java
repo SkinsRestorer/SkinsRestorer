@@ -30,7 +30,7 @@ import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
-import net.skinsrestorer.shared.update.SharedUpdateCheck;
+import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.velocity.utils.Slf4jLoggerImpl;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class SRVelocityBootstrap {
                 new Slf4jLoggerImpl(logger),
                 false,
                 i -> new SRVelocityAdapter(i, this, proxy, metricsFactory),
-                SharedUpdateCheck.class,
+                SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 container.getDescription().getVersion().orElse("Unknown"),
                 dataFolder,

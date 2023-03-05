@@ -20,6 +20,7 @@
 package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
+import ch.jalu.injector.Injector;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
@@ -74,6 +75,7 @@ public final class SRCommand extends BaseCommand {
     private final SkinsRestorer skinsRestorer;
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplier<Object> skinApplier;
+    private final Injector injector;
 
     @HelpCommand
     @Syntax("%helpHelpCommand")
@@ -132,7 +134,7 @@ public final class SRCommand extends BaseCommand {
             statusMessages.add(breakLine);
             statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
             statusMessages.add("§7Server: §6" + adapter.getPlatformVersion());
-            SRServerPlugin serverPlugin = plugin.getInjector().getIfAvailable(SRServerPlugin.class);
+            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
             if (serverPlugin != null) {
                 statusMessages.add("§7ProxyMode: §6" + serverPlugin.isProxyMode());
             }

@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.bukkit;
 
-import net.skinsrestorer.bukkit.update.BukkitUpdateCheck;
+import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
 import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
@@ -37,7 +37,7 @@ public class SRBukkitBootstrap extends JavaPlugin {
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
                 i -> new SRBukkitAdapter(i, server, this),
-                BukkitUpdateCheck.class,
+                BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
