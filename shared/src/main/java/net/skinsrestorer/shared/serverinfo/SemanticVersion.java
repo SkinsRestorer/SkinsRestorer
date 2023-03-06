@@ -31,6 +31,10 @@ import java.util.Arrays;
 public class SemanticVersion {
     private final int[] version;
 
+    public SemanticVersion(int major, int minor, int patch) {
+        this(new int[]{major, minor, patch});
+    }
+
     public static SemanticVersion fromString(String version) {
         // Sanitize version
         version = version.replace("v", "");
