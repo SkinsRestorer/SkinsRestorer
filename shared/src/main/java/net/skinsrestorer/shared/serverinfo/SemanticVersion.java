@@ -23,13 +23,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class SemanticVersion {
-    private final int major;
-    private final int minor;
-    private final int patch;
+    private final int[] version;
 
     public static SemanticVersion fromString(String version) {
         // Sanitize version
@@ -37,25 +37,31 @@ public class SemanticVersion {
         version = version.replace("-SNAPSHOT", "");
 
         String[] split = version.split("\\.");
-        return new SemanticVersion(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+        return new SemanticVersion(Arrays.stream(split).mapToInt(Integer::parseInt).toArray());
     }
 
     public boolean isNewerThan(SemanticVersion otherVersion) {
-        if (otherVersion.major > major) {
-            return false;
-        } else if (otherVersion.major < major) {
-            return true;
-        } else if (otherVersion.minor > minor) {
-            return false;
-        } else if (otherVersion.minor < minor) {
-            return true;
-        } else if (otherVersion.patch > patch) {
-            return false;
-        } else return otherVersion.patch < patch;
+        int i = 0;
+        for (int version : version) {
+            if (i == otherVersion.version.length) {
+                return true;
+            }
+
+            int otherVersionPart = otherVersion.version[i];
+            if (version > otherVersionPart) {
+                return true;
+            } else if (version < otherVersionPart) {
+                return false;
+            }
+
+            i++;
+        }
+
+        return false;
     }
 
     @Override
     public String toString() {
-        return major + "." + minor + "." + patch;
+        return String.join(".", Arrays.stream(version).mapToObj(String::valueOf).toArray(String[]::new));
     }
 }
