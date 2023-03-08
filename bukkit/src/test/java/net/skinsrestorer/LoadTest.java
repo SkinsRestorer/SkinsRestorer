@@ -1,3 +1,24 @@
+/*
+ * SkinsRestorer
+ *
+ * Copyright (C) 2022 SkinsRestorer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
+package net.skinsrestorer;
+
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
@@ -20,9 +41,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -34,13 +56,8 @@ import java.util.logging.Logger;
 
 import static org.mockito.Mockito.*;
 
+@ExtendWith({MockitoExtension.class, SRExtension.class, SRBukkitExtension.class})
 public class LoadTest {
-    @BeforeAll
-    public static void setup() {
-        System.setProperty("sr.unit.test", "true");
-        System.setProperty("sr.nms.version", "1_19_R2");
-    }
-
     @Test
     public void testLoad() {
         UUID runId = UUID.randomUUID();

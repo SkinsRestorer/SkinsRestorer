@@ -9,6 +9,7 @@ dependencies {
     compileOnly(projects.skinsrestorerBuildData)
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
+    testImplementation(testFixtures(projects.skinsrestorerShared))
 
     implementation("org.bstats:bstats-sponge:3.0.1")
     implementation("com.github.SkinsRestorer.commands:acf-sponge:ebc273d2f3")
