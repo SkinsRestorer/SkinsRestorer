@@ -43,14 +43,12 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
@@ -58,12 +56,13 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class, SRBukkitExtension.class})
 public class LoadTest {
+    @TempDir
+    private Path tempDir;
+
     @Test
     public void testLoad() {
-        UUID runId = UUID.randomUUID();
-        Path baseDir = Paths.get("build/testrun/" + runId);
-        System.out.println("Running test with runId " + runId);
-        Path configDir = baseDir.resolve("config");
+        Path pluginFile = tempDir.resolve("SkinsRestorer.jar");
+        Path configDir = tempDir.resolve("config");
 
         Queue<Runnable> runQueue = new ConcurrentLinkedQueue<>();
         ServerMock server = mock(ServerMock.class);
@@ -93,48 +92,45 @@ public class LoadTest {
         when(server.getScheduler()).thenReturn(scheduler);
         when(server.getServicesManager()).thenReturn(mock(ServicesManager.class));
         when(server.getPluginCommand(anyString())).thenReturn(mock(PluginCommand.class));
-        when(server.getUpdateFolderFile()).thenReturn(baseDir.resolve("update").toFile());
+        when(server.getUpdateFolderFile()).thenReturn(tempDir.resolve("update").toFile());
         when(server.getUpdateFolder()).thenReturn("test");
         when(server.getBukkitVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
+        when(server.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
+        when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
+        when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
 
-        try (MockedStatic<Bukkit> ignored = mockStatic(Bukkit.class)) {
-            when(Bukkit.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
-            when(Bukkit.getServer()).thenReturn(server);
-            when(Bukkit.getHelpMap()).thenReturn(mock(HelpMap.class));
-            when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
-            when(Bukkit.getScheduler()).thenReturn(scheduler);
+        Bukkit.setServer(server);
 
-            JavaPluginMock plugin = mock(JavaPluginMock.class);
-            when(plugin.getDataFolder()).thenReturn(configDir.toFile());
-            when(plugin.getServer()).thenReturn(server);
-            when(plugin.getLogger()).thenReturn(logger);
-            when(plugin.getName()).thenReturn("SkinsRestorer");
-            when(plugin.getDescription()).thenReturn(mock(PluginDescriptionFile.class));
-            when(plugin.isEnabled()).thenReturn(true);
-            when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
-            when(plugin.getFile()).thenReturn(null);
+        JavaPluginMock plugin = mock(JavaPluginMock.class);
+        when(plugin.getDataFolder()).thenReturn(configDir.toFile());
+        when(plugin.getServer()).thenReturn(server);
+        when(plugin.getLogger()).thenReturn(logger);
+        when(plugin.getName()).thenReturn("SkinsRestorer");
+        when(plugin.getDescription()).thenReturn(mock(PluginDescriptionFile.class));
+        when(plugin.isEnabled()).thenReturn(true);
+        when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
+        when(plugin.getFile()).thenReturn(null);
 
-            SRBootstrapper.startPlugin(
-                    new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
-                    true,
-                    i -> new SRBukkitAdapter(i, server, plugin),
-                    BukkitUpdateCheckInit.class,
-                    SRServerPlugin.class,
-                    "UnitTest",
-                    configDir,
-                    Platform.BUKKIT,
-                    SRBukkitInit.class
-            );
+        SRBootstrapper.startPlugin(
+                new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
+                true,
+                i -> new SRBukkitAdapter(i, server, pluginFile, plugin),
+                BukkitUpdateCheckInit.class,
+                SRServerPlugin.class,
+                "UnitTest",
+                configDir,
+                Platform.BUKKIT,
+                SRBukkitInit.class
+        );
 
-            while (!runQueue.isEmpty()) {
-                try {
-                    runQueue.poll().run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
-                }
+        while (!runQueue.isEmpty()) {
+            try {
+                runQueue.poll().run();
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw e;
             }
         }
     }
@@ -144,6 +140,8 @@ public class LoadTest {
     }
 
     public abstract static class JavaPluginMock extends JavaPlugin {
-        public abstract @NotNull File getFile();
+        public @NotNull File getFile() {
+            return super.getFile();
+        }
     }
 }

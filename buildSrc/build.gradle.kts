@@ -19,4 +19,12 @@ dependencies {
     implementation("io.github.patrick.remapper:io.github.patrick.remapper.gradle.plugin:1.4.0")
 }
 
-java.targetCompatibility = JavaVersion.VERSION_17
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+kotlin {
+    jvmToolchain(17)
+}

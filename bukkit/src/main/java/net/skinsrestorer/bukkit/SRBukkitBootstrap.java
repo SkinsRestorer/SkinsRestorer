@@ -28,15 +28,18 @@ import net.skinsrestorer.shared.serverinfo.Platform;
 import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.nio.file.Path;
+
 @SuppressWarnings("unused")
 public class SRBukkitBootstrap extends JavaPlugin {
     @Override
     public void onEnable() {
         Server server = getServer();
+        Path pluginFile = getFile().toPath();
         SRBootstrapper.startPlugin(
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
-                i -> new SRBukkitAdapter(i, server, this),
+                i -> new SRBukkitAdapter(i, server, pluginFile, this),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 getDescription().getVersion(),
