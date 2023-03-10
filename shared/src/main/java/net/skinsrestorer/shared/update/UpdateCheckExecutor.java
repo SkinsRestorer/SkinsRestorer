@@ -34,14 +34,6 @@ public class UpdateCheckExecutor {
     private boolean updateDownloaded;
 
     public void checkUpdate(boolean showUpToDate, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {
-        if (SRPlugin.isUnitTest()) {
-            if (showUpToDate) {
-                logger.info("Unit test mode, not checking for updates.");
-                updateChecker.getUpToDateMessages().forEach(logger::info);
-            }
-            return;
-        }
-
         adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl) {

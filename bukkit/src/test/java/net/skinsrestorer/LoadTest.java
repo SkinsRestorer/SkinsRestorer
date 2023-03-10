@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer;
 
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.SRBukkitInit;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
@@ -31,14 +32,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.help.HelpMap;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -84,16 +82,14 @@ public class LoadTest {
             return null;
         }).when(scheduler).runTaskAsynchronously(any(), any(Runnable.class));
 
+        /*
         doAnswer(invocation -> {
             runQueue.add(invocation.getArgument(1));
             return null;
         }).when(scheduler).runTask(any(), any(Runnable.class));
+        */
 
         when(server.getScheduler()).thenReturn(scheduler);
-        when(server.getServicesManager()).thenReturn(mock(ServicesManager.class));
-        when(server.getPluginCommand(anyString())).thenReturn(mock(PluginCommand.class));
-        when(server.getUpdateFolderFile()).thenReturn(tempDir.resolve("update").toFile());
-        when(server.getUpdateFolder()).thenReturn("test");
         when(server.getBukkitVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
@@ -104,14 +100,9 @@ public class LoadTest {
         Bukkit.setServer(server);
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
-        when(plugin.getDataFolder()).thenReturn(configDir.toFile());
-        when(plugin.getServer()).thenReturn(server);
         when(plugin.getLogger()).thenReturn(logger);
         when(plugin.getName()).thenReturn("SkinsRestorer");
         when(plugin.getDescription()).thenReturn(mock(PluginDescriptionFile.class));
-        when(plugin.isEnabled()).thenReturn(true);
-        when(plugin.getPluginLoader()).thenReturn(mock(JavaPluginLoader.class));
-        when(plugin.getFile()).thenReturn(null);
 
         SRBootstrapper.startPlugin(
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
@@ -119,7 +110,7 @@ public class LoadTest {
                 i -> new SRBukkitAdapter(i, server, pluginFile, plugin),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
-                "UnitTest",
+                BuildData.VERSION,
                 configDir,
                 Platform.BUKKIT,
                 SRBukkitInit.class

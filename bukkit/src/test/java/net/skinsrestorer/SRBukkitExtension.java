@@ -19,12 +19,23 @@
  */
 package net.skinsrestorer;
 
+import org.bukkit.Bukkit;
+import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class SRBukkitExtension implements BeforeAllCallback {
+import java.lang.reflect.Field;
+
+public class SRBukkitExtension implements BeforeAllCallback, AfterEachCallback {
     @Override
     public void beforeAll(ExtensionContext context) {
         System.setProperty("sr.nms.version", "1_19_R2");
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+        Field serverField = Bukkit.class.getDeclaredField("server");
+        serverField.setAccessible(true);
+        serverField.set(null, null);
     }
 }
