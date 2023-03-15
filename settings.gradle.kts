@@ -63,6 +63,7 @@ dependencyResolutionManagement {
             name = "Clojars Repository"
         }
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -76,7 +77,7 @@ gradleEnterprise {
 }
 
 include("mappings:shared")
-setOf("1-18", "1-18-2", "1-19", "1-19-3").forEach {
+setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
     include("mappings:mc-$it")
 }
 
