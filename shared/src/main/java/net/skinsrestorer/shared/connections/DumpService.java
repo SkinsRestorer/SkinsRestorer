@@ -38,7 +38,7 @@ import java.util.Optional;
 public class DumpService {
     private final SRLogger logger;
     private final SRPlugin plugin;
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private final Injector injector;
     private final Gson gson = new Gson();
 

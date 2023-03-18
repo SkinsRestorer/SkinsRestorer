@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.connection.InitialHandler;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;

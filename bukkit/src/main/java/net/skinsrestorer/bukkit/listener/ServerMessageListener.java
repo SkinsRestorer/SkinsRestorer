@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.subjects.SRPlayer;

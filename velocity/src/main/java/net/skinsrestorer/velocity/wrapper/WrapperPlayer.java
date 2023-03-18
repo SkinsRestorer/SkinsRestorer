@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.velocity.utils;
+package net.skinsrestorer.velocity.wrapper;
 
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;

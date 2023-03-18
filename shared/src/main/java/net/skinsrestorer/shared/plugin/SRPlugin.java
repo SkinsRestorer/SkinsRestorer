@@ -76,7 +76,7 @@ public class SRPlugin {
     private static final String USER_AGENT = "SkinsRestorer/%s (%s)";
     @Getter
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private final SRLogger logger;
     private final UpdateCheckInit updateCheckInit;
     @Getter
@@ -367,8 +367,7 @@ public class SRPlugin {
             registerMetrics(adapter.createMetricsInstance());
         }
 
-        EventBusImpl sharedEventBus = new EventBusImpl();
-        injector.register(EventBusImpl.class, sharedEventBus);
+        injector.getSingleton(EventBusImpl.class);
 
 
         if (serverPlugin != null) {

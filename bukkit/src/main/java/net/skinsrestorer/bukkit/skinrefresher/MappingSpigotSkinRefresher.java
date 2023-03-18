@@ -33,11 +33,11 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerAdapter adapter;
+    private final SRServerAdapter<?> adapter;
     private final IMapping mapping;
     private boolean useViabackwards = false;
 
-    public MappingSpigotSkinRefresher(SRServerAdapter adapter, SRLogger logger, Server server) throws NoMappingException {
+    public MappingSpigotSkinRefresher(SRServerAdapter<?> adapter, SRLogger logger, Server server) throws NoMappingException {
         this.adapter = adapter;
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {

@@ -17,12 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.bukkit.logger;
 
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.log.SRConsole;
+import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.Optional;
+@RequiredArgsConstructor
+public class BukkitConsoleImpl implements SRConsole {
+    private final ConsoleCommandSender consoleCommandSender;
 
-public interface SRProxyAdapter<P> extends SRPlatformAdapter<P> {
-    Optional<SRProxyPlayer> getPlayer(String name);
+    @Override
+    public void sendMessage(String message) {
+        consoleCommandSender.sendMessage(message);
+    }
 }

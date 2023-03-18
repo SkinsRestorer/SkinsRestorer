@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
-import net.skinsrestorer.sponge.utils.WrapperSponge;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;

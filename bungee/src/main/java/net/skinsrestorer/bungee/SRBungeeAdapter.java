@@ -30,7 +30,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.bungee.listeners.ForceAliveListener;
+import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -45,7 +46,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SRBungeeAdapter implements SRProxyAdapter {
+public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     private final Injector injector;
     private final ProxyServer proxy;
     @Getter
@@ -125,6 +126,11 @@ public class SRBungeeAdapter implements SRProxyAdapter {
     @Override
     public SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperBungee.class).commandSender((CommandSender) sender);
+    }
+
+    @Override
+    public void extendLifeTime(Plugin plugin, Object object) {
+        proxy.getPluginManager().registerListener(plugin, new ForceAliveListener(object));
     }
 
     @Override

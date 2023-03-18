@@ -17,46 +17,34 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.sponge.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.experimental.SuperBuilder;
+import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import org.bukkit.command.CommandSender;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.service.permission.Subject;
 
-import java.util.Locale;
+import javax.inject.Inject;
 
-@SuperBuilder
-public class WrapperCommandSender implements SRCommandSender {
+@RequiredArgsConstructor(onConstructor_ = @Inject)
+public class WrapperSponge {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final CommandSender sender;
 
-    @Override
-    public Locale getLocale() {
-        return settings.getProperty(MessageConfig.LANGUAGE);
+    public SRCommandSender commandSender(CommandCause sender) {
+        Subject subject = sender.subject();
+        if (subject instanceof ServerPlayer) {
+            return player((ServerPlayer) subject);
+        }
+
+        return WrapperCommandSender.builder().subject(subject).audience(sender.audience()).locale(locale).settings(settings).build();
     }
 
-    @Override
-    public void sendMessage(String message) {
-        sender.sendMessage(message);
-    }
-
-    @Override
-    public void sendMessage(Message key, Object... args) {
-        sendMessage(locale.getMessage(this, key, args));
-    }
-
-    @Override
-    public String getName() {
-        return sender.getName();
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+    public SRServerPlayer player(ServerPlayer player) {
+        return WrapperPlayer.builder().player(player).subject(player).audience(player).locale(locale).settings(settings).build();
     }
 }

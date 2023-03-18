@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.bukkit;
 
+import net.skinsrestorer.bukkit.logger.BukkitConsoleImpl;
 import net.skinsrestorer.bukkit.update.BukkitUpdateCheckInit;
-import net.skinsrestorer.bukkit.utils.BukkitConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;

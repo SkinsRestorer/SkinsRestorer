@@ -65,7 +65,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand extends BaseCommand {
     private final SRPlugin plugin;
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private final MojangAPIImpl mojangAPI;
     private final ServiceCheckerService serviceCheckerService;
     private final SkinStorageImpl skinStorage;

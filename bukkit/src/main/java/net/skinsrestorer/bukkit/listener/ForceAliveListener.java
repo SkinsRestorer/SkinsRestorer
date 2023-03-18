@@ -17,19 +17,21 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bukkit.listener;
 
 import lombok.RequiredArgsConstructor;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.skinsrestorer.shared.log.SRConsole;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.ServerLoadEvent;
 
 @RequiredArgsConstructor
-public class BungeeConsoleImpl implements SRConsole {
-    private final CommandSender commandSender;
+public class ForceAliveListener implements Listener {
+    @SuppressWarnings("unused")
+    private final Object object; // Object to keep alive
 
-    @Override
-    public void sendMessage(String message) {
-        commandSender.sendMessage(TextComponent.fromLegacyText(message));
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void handle(ServerLoadEvent event) {
+        // NO-OP
     }
 }

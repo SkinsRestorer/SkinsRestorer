@@ -31,7 +31,7 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ConnectListenerAdapter {
     private final SRPlugin plugin;
-    private final SRProxyAdapter adapter;
+    private final SRProxyAdapter<?> adapter;
 
     public void handleConnect(SRServerConnectedEvent event) {
         adapter.runAsync(() -> {

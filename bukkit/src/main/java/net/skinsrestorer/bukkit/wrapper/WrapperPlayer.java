@@ -17,28 +17,27 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bukkit.wrapper;
 
 import lombok.experimental.SuperBuilder;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.utils.LocaleParser;
+import org.bukkit.entity.Player;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.UUID;
 
 @SuperBuilder
-public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer {
-    private final ProxiedPlayer player;
+public class WrapperPlayer extends WrapperCommandSender implements SRServerPlayer {
+    private final Player player;
 
     @Override
     public Locale getLocale() {
-        Locale playerLocale = player.getLocale();
-        if (playerLocale == null) {
+        try {
+            return LocaleParser.parseLocale(player.getLocale()).orElseGet(super::getLocale);
+        } catch (NoSuchMethodError ignored) {
             return super.getLocale();
         }
-
-        return playerLocale;
     }
 
     @Override
@@ -47,17 +46,12 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     }
 
     @Override
-    public Optional<String> getCurrentServer() {
-        return Optional.ofNullable(player.getServer()).map(server -> server.getInfo().getName());
-    }
-
-    @Override
-    public void sendDataToServer(String channel, byte[] data) {
-        player.getServer().sendData(channel, data);
-    }
-
-    @Override
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public void closeInventory() {
+        player.closeInventory();
     }
 }

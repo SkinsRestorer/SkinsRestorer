@@ -23,7 +23,7 @@ import com.cryptomorin.xseries.SkullUtils;
 import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.gui.GUIManager;
 import net.skinsrestorer.shared.gui.SharedGUI;

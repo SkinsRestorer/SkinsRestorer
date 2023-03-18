@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class ServicesTest {
     @Mock
-    private SRPlatformAdapter srPlatformAdapter;
+    private SRPlatformAdapter<?> srPlatformAdapter;
     @Mock
     private SkinsRestorerLocale skinsRestorerLocale;
 

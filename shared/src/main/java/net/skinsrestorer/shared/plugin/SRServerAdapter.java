@@ -26,7 +26,7 @@ import java.io.DataOutputStream;
 import java.util.Map;
 import java.util.Optional;
 
-public interface SRServerAdapter extends SRPlatformAdapter {
+public interface SRServerAdapter<P> extends SRPlatformAdapter<P> {
     void runSync(Runnable runnable);
 
     boolean determineProxy();

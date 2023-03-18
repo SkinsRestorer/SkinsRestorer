@@ -24,7 +24,7 @@ import net.md_5.bungee.api.event.ServerConnectedEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
-import net.skinsrestorer.bungee.utils.WrapperBungee;
+import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.listeners.ConnectListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 

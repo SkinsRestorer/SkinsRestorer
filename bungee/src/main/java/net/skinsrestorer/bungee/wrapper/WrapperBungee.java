@@ -17,12 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.velocity.utils;
+package net.skinsrestorer.bungee.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import com.velocitypowered.api.command.CommandSource;
-import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
@@ -30,19 +30,19 @@ import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperVelocity {
+public class WrapperBungee {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public SRCommandSender commandSender(CommandSource sender) {
-        if (sender instanceof Player) {
-            return player((Player) sender);
+    public SRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof ProxiedPlayer) {
+            return player((ProxiedPlayer) sender);
         }
 
         return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public SRProxyPlayer player(Player player) {
+    public SRProxyPlayer player(ProxiedPlayer player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 }

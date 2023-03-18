@@ -17,18 +17,21 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.bungee.listeners;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRConsole;
-import org.bukkit.command.ConsoleCommandSender;
+import net.md_5.bungee.api.event.ProxyReloadEvent;
+import net.md_5.bungee.api.plugin.Listener;
+import net.md_5.bungee.event.EventHandler;
+import net.md_5.bungee.event.EventPriority;
 
 @RequiredArgsConstructor
-public class BukkitConsoleImpl implements SRConsole {
-    private final ConsoleCommandSender consoleCommandSender;
+public class ForceAliveListener implements Listener {
+    @SuppressWarnings("unused")
+    private final Object object; // Object to keep alive
 
-    @Override
-    public void sendMessage(String message) {
-        consoleCommandSender.sendMessage(message);
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void handle(ProxyReloadEvent event) {
+        // NO-OP
     }
 }

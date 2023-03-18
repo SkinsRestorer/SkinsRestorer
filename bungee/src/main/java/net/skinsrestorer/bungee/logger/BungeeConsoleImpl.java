@@ -17,12 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.bungee.logger;
 
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import lombok.RequiredArgsConstructor;
+import net.md_5.bungee.api.CommandSender;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.skinsrestorer.shared.log.SRConsole;
 
-import java.util.Optional;
+@RequiredArgsConstructor
+public class BungeeConsoleImpl implements SRConsole {
+    private final CommandSender commandSender;
 
-public interface SRProxyAdapter<P> extends SRPlatformAdapter<P> {
-    Optional<SRProxyPlayer> getPlayer(String name);
+    @Override
+    public void sendMessage(String message) {
+        commandSender.sendMessage(TextComponent.fromLegacyText(message));
+    }
 }

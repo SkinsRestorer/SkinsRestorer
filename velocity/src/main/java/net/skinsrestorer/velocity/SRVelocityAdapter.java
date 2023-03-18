@@ -24,6 +24,9 @@ import co.aikar.commands.CommandManager;
 import co.aikar.commands.VelocityCommandManager;
 import co.aikar.commands.velocity.contexts.OnlinePlayer;
 import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.event.PostOrder;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
@@ -35,7 +38,8 @@ import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.velocity.utils.WrapperVelocity;
+import net.skinsrestorer.velocity.listener.ForceAliveListener;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 import org.bstats.velocity.Metrics;
 
 import java.io.InputStream;
@@ -47,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Getter
-public class SRVelocityAdapter implements SRProxyAdapter {
+public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     private final Injector injector;
     private final Object pluginInstance; // Only for platform API use
     private final ProxyServer proxy;
@@ -128,6 +132,11 @@ public class SRVelocityAdapter implements SRProxyAdapter {
     @Override
     public SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperVelocity.class).commandSender((CommandSource) sender);
+    }
+
+    @Override
+    public void extendLifeTime(PluginContainer plugin, Object object) {
+        proxy.getEventManager().register(plugin, ProxyShutdownEvent.class, PostOrder.LAST, new ForceAliveListener(object));
     }
 
     @Override

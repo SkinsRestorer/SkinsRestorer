@@ -23,19 +23,23 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.skinsrestorer.api.event.EventBus;
 import net.skinsrestorer.api.event.SkinsRestorerEvent;
+import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
+import javax.inject.Inject;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EventBusImpl implements EventBus {
     private final List<EventSubscription<?>> subscriptions = Collections.synchronizedList(new ArrayList<>());
+    private final SRPlatformAdapter<Object> platformAdapter;
 
     @Override
     public <E extends SkinsRestorerEvent> void subscribe(Object plugin, Class<E> eventClass, Consumer<E> listener) {
+        platformAdapter.extendLifeTime(plugin, listener);
         subscriptions.add(new EventSubscription<>(new WeakReference<>(plugin), eventClass, new WeakReference<>(listener)));
     }
 

@@ -17,32 +17,47 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.bungee.wrapper;
 
 import ch.jalu.configme.SettingsManager;
-import lombok.RequiredArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.config.MessageConfig;
+import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
-import javax.inject.Inject;
+import java.util.Locale;
 
-@RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperBungee {
+@SuperBuilder
+public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final CommandSender sender;
 
-    public SRCommandSender commandSender(CommandSender sender) {
-        if (sender instanceof ProxiedPlayer) {
-            return player((ProxiedPlayer) sender);
-        }
-
-        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
+    @Override
+    public Locale getLocale() {
+        return settings.getProperty(MessageConfig.LANGUAGE);
     }
 
-    public SRProxyPlayer player(ProxiedPlayer player) {
-        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
+    @Override
+    public void sendMessage(String message) {
+        sender.sendMessage(TextComponent.fromLegacyText(message));
+    }
+
+    @Override
+    public void sendMessage(Message key, Object... args) {
+        sendMessage(locale.getMessage(this, key, args));
+    }
+
+    @Override
+    public String getName() {
+        return sender.getName();
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return sender.hasPermission(permission);
     }
 }

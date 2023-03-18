@@ -31,7 +31,7 @@ import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
-import net.skinsrestorer.velocity.utils.Slf4jLoggerImpl;
+import net.skinsrestorer.velocity.logger.Slf4jLoggerImpl;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 

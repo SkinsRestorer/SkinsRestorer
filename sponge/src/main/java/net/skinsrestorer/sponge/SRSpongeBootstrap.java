@@ -24,7 +24,7 @@ import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
-import net.skinsrestorer.sponge.utils.Log4jLoggerImpl;
+import net.skinsrestorer.sponge.logger.Log4jLoggerImpl;
 import org.apache.logging.log4j.Logger;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;

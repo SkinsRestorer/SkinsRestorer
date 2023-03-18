@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public class UpdateCheckExecutor {
     private final SRPlugin plugin;
     private final SRLogger logger;
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private boolean updateDownloaded;
 
     public void checkUpdate(boolean showUpToDate, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {

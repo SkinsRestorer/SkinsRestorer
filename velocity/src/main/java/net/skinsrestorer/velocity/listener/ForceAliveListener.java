@@ -17,12 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.velocity.listener;
 
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import com.velocitypowered.api.event.EventHandler;
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import lombok.RequiredArgsConstructor;
 
-import java.util.Optional;
+@RequiredArgsConstructor
+public class ForceAliveListener implements EventHandler<ProxyShutdownEvent> {
+    @SuppressWarnings("unused")
+    private final Object object; // Object to keep alive
 
-public interface SRProxyAdapter<P> extends SRPlatformAdapter<P> {
-    Optional<SRProxyPlayer> getPlayer(String name);
+    @Override
+    public void execute(ProxyShutdownEvent event) {
+        // NO-OP
+    }
 }

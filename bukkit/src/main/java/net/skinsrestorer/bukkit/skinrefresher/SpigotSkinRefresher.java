@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerAdapter adapter;
+    private final SRServerAdapter<?> adapter;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -48,7 +48,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SRServerAdapter adapter, SRLogger logger) throws InitializeException {
+    public SpigotSkinRefresher(SRServerAdapter<?> adapter, SRLogger logger) throws InitializeException {
         this.adapter = adapter;
 
         try {

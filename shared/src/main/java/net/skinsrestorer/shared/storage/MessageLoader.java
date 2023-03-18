@@ -43,7 +43,7 @@ import java.util.Locale;
 public class MessageLoader {
     private final SRPlugin plugin;
     private final LocaleManager<SRForeign> manager;
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
 
     public void loadMessages() throws IOException {
         Path languagesFolder = plugin.getDataFolder().resolve("languages");

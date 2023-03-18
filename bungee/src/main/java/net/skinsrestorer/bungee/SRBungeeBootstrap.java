@@ -21,7 +21,7 @@ package net.skinsrestorer.bungee;
 
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
-import net.skinsrestorer.bungee.utils.BungeeConsoleImpl;
+import net.skinsrestorer.bungee.logger.BungeeConsoleImpl;
 import net.skinsrestorer.shared.log.JavaLoggerImpl;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;

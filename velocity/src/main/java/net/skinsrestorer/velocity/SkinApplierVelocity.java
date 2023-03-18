@@ -30,7 +30,7 @@ import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.velocity.utils.WrapperVelocity;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
 import java.util.ArrayList;

@@ -59,7 +59,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @Conditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand extends BaseCommand {
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;

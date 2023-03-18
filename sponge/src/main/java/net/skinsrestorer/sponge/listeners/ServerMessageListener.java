@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.listeners.SRServerMessageAdapter;
 import net.skinsrestorer.shared.listeners.event.SRServerMessageEvent;
 import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.sponge.utils.WrapperSponge;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.network.EngineConnection;
 import org.spongepowered.api.network.ServerPlayerConnection;
 import org.spongepowered.api.network.channel.ChannelBuf;

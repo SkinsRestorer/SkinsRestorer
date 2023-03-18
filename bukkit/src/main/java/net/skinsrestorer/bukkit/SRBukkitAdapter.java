@@ -28,7 +28,8 @@ import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.bukkit.listener.ForceAliveListener;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.paper.PaperUtil;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.gui.SharedGUI;
@@ -56,7 +57,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SRBukkitAdapter implements SRServerAdapter {
+public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     private final Injector injector;
     private final Server server;
     @Getter
@@ -214,6 +215,11 @@ public class SRBukkitAdapter implements SRServerAdapter {
     @Override
     public SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperBukkit.class).commandSender((CommandSender) sender);
+    }
+
+    @Override
+    public void extendLifeTime(JavaPlugin plugin, Object object) {
+        server.getPluginManager().registerEvents(new ForceAliveListener(object), plugin);
     }
 
     @Override

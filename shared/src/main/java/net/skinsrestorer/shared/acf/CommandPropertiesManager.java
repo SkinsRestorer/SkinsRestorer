@@ -35,7 +35,7 @@ import java.nio.file.Path;
 public class CommandPropertiesManager {
     private static final String FILE = "command.properties";
 
-    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, SRPlatformAdapter adapter, SRLogger logger) {
+    public static void load(CommandManager<?, ?, ?, ?, ?, ?> manager, Path dataFolder, SRPlatformAdapter<?> adapter, SRLogger logger) {
         Path outFile = dataFolder.resolve(FILE);
 
         if (!Files.exists(outFile)) {

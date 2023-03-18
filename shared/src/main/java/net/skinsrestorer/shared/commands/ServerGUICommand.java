@@ -40,7 +40,7 @@ import javax.inject.Inject;
 @Conditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServerGUICommand extends BaseCommand {
-    private final SRServerAdapter plugin;
+    private final SRServerAdapter<?> plugin;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SkinStorageImpl skinStorage;

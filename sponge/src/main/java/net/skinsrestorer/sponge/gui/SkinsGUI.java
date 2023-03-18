@@ -31,7 +31,7 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.sponge.SRSpongeAdapter;
-import net.skinsrestorer.sponge.utils.WrapperSponge;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;

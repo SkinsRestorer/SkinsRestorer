@@ -17,24 +17,24 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.velocity.wrapper;
 
 import ch.jalu.configme.SettingsManager;
+import com.velocitypowered.api.command.CommandSource;
+import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRServerPlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperBukkit {
+public class WrapperVelocity {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public SRCommandSender commandSender(CommandSender sender) {
+    public SRCommandSender commandSender(CommandSource sender) {
         if (sender instanceof Player) {
             return player((Player) sender);
         }
@@ -42,7 +42,7 @@ public class WrapperBukkit {
         return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public SRServerPlayer player(Player player) {
+    public SRProxyPlayer player(Player player) {
         return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 }

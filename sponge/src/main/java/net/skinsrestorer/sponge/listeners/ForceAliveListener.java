@@ -17,12 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.sponge.listeners;
 
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import lombok.RequiredArgsConstructor;
+import org.spongepowered.api.event.EventListener;
+import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 
-import java.util.Optional;
+@RequiredArgsConstructor
+public class ForceAliveListener implements EventListener<ConstructPluginEvent> {
+    @SuppressWarnings("unused")
+    private final Object object; // Object to keep alive
 
-public interface SRProxyAdapter<P> extends SRPlatformAdapter<P> {
-    Optional<SRProxyPlayer> getPlayer(String name);
+    @Override
+    public void handle(ConstructPluginEvent event) {
+        // NO-OP
+    }
 }

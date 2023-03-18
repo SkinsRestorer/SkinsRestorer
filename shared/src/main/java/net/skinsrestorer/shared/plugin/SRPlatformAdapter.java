@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public interface SRPlatformAdapter {
+public interface SRPlatformAdapter<P> {
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
@@ -49,4 +49,12 @@ public interface SRPlatformAdapter {
     Object createMetricsInstance();
 
     SRCommandSender convertCommandSender(Object sender);
+
+    /**
+     * Force an object to stay alive as long as another plugin is loaded.
+     * This can be done by registering a listener to the plugin and keeping a reference to the object in the listener.
+     * @param plugin The plugin to keep the object alive.
+     * @param object The object to keep alive.
+     */
+    void extendLifeTime(P plugin, Object object);
 }

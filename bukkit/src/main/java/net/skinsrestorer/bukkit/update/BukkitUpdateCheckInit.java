@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class BukkitUpdateCheckInit implements UpdateCheckInit {
-    private final SRPlatformAdapter adapter;
+    private final SRPlatformAdapter<?> adapter;
     private final UpdateCheckerGitHub updateChecker;
     private final UpdateDownloaderGithub downloader;
     private final UpdateCheckExecutor updateCheckExecutor;

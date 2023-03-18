@@ -23,7 +23,7 @@ import com.cryptomorin.xseries.XMaterial;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.bukkit.utils.WrapperBukkit;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

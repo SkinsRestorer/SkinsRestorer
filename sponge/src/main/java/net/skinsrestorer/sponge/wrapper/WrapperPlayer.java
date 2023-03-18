@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.utils;
+package net.skinsrestorer.sponge.wrapper;
 
 import lombok.experimental.SuperBuilder;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;

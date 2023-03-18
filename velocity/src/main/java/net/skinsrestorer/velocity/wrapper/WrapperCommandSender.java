@@ -17,12 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee.utils;
+package net.skinsrestorer.velocity.wrapper;
 
 import ch.jalu.configme.SettingsManager;
+import com.velocitypowered.api.command.CommandSource;
 import lombok.experimental.SuperBuilder;
-import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.storage.Message;
@@ -34,7 +34,7 @@ import java.util.Locale;
 public class WrapperCommandSender implements SRCommandSender {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
-    private final CommandSender sender;
+    private final CommandSource sender;
 
     @Override
     public Locale getLocale() {
@@ -43,7 +43,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(TextComponent.fromLegacyText(message));
+        sender.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public String getName() {
-        return sender.getName();
+        return "CONSOLE";
     }
 
     @Override

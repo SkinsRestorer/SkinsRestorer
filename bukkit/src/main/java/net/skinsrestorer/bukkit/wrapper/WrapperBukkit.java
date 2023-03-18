@@ -17,34 +17,32 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.sponge.utils;
+package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
-import org.spongepowered.api.command.CommandCause;
-import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.service.permission.Subject;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class WrapperSponge {
+public class WrapperBukkit {
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
 
-    public SRCommandSender commandSender(CommandCause sender) {
-        Subject subject = sender.subject();
-        if (subject instanceof ServerPlayer) {
-            return player((ServerPlayer) subject);
+    public SRCommandSender commandSender(CommandSender sender) {
+        if (sender instanceof Player) {
+            return player((Player) sender);
         }
 
-        return WrapperCommandSender.builder().subject(subject).audience(sender.audience()).locale(locale).settings(settings).build();
+        return WrapperCommandSender.builder().sender(sender).locale(locale).settings(settings).build();
     }
 
-    public SRServerPlayer player(ServerPlayer player) {
-        return WrapperPlayer.builder().player(player).subject(player).audience(player).locale(locale).settings(settings).build();
+    public SRServerPlayer player(Player player) {
+        return WrapperPlayer.builder().player(player).sender(player).locale(locale).settings(settings).build();
     }
 }

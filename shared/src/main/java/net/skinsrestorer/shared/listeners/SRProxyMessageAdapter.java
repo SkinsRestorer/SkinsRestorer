@@ -36,7 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
-    private final SRProxyAdapter plugin;
+    private final SRProxyAdapter<?> plugin;
     private final CommandManager<?, ?, ?, ?, ?, ?> manager;
     private final SRProxyPlugin proxyPlugin;
 

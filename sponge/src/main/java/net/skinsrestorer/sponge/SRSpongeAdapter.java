@@ -33,7 +33,8 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
 import net.skinsrestorer.sponge.gui.SkinsGUI;
-import net.skinsrestorer.sponge.utils.WrapperSponge;
+import net.skinsrestorer.sponge.listeners.ForceAliveListener;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
@@ -41,6 +42,9 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.event.EventListenerRegistration;
+import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -58,7 +62,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class SRSpongeAdapter implements SRServerAdapter {
+public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     private final Injector injector;
     private final Metrics metrics;
     @Getter
@@ -200,6 +204,15 @@ public class SRSpongeAdapter implements SRServerAdapter {
     @Override
     public SRCommandSender convertCommandSender(Object sender) {
         return injector.getSingleton(WrapperSponge.class).commandSender((CommandCause) sender);
+    }
+
+    @Override
+    public void extendLifeTime(PluginContainer plugin, Object object) {
+        game.eventManager().registerListener(EventListenerRegistration
+                .builder(ConstructPluginEvent.class)
+                .order(Order.POST)
+                .plugin(plugin)
+                .listener(new ForceAliveListener(object)).build());
     }
 
     @Override
