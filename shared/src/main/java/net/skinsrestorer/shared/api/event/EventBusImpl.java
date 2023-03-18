@@ -43,28 +43,27 @@ public class EventBusImpl implements EventBus {
         subscriptions.add(new EventSubscription<>(new WeakReference<>(plugin), eventClass, new WeakReference<>(listener)));
     }
 
-    private void clearSubscriptions() {
-        subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
-    }
-
     @SuppressWarnings("unchecked")
     public void callEvent(SkinsRestorerEvent event) {
-        clearSubscriptions();
-        for (EventSubscription<?> subscription : subscriptions) {
-            if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
-                continue;
-            }
+        synchronized (subscriptions) {
+            subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
 
-            val listener = subscription.getListener().get();
+            for (EventSubscription<?> subscription : subscriptions) {
+                if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
+                    continue;
+                }
 
-            if (listener == null) {
-                continue;
-            }
+                val listener = subscription.getListener().get();
 
-            try {
-                ((Consumer<SkinsRestorerEvent>) listener).accept(event);
-            } catch (Throwable t) {
-                t.printStackTrace();
+                if (listener == null) {
+                    continue;
+                }
+
+                try {
+                    ((Consumer<SkinsRestorerEvent>) listener).accept(event);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             }
         }
     }
