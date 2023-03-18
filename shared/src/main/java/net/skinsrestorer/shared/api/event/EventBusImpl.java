@@ -27,14 +27,13 @@ import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 
 import javax.inject.Inject;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EventBusImpl implements EventBus {
-    private final List<EventSubscription<?>> subscriptions = Collections.synchronizedList(new ArrayList<>());
+    private final Queue<EventSubscription<?>> subscriptions = new ConcurrentLinkedQueue<>();
     private final SRPlatformAdapter<Object> platformAdapter;
 
     @Override
@@ -45,25 +44,23 @@ public class EventBusImpl implements EventBus {
 
     @SuppressWarnings("unchecked")
     public void callEvent(SkinsRestorerEvent event) {
-        synchronized (subscriptions) {
-            subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
+        subscriptions.removeIf(subscription -> subscription.getPlugin().get() == null || subscription.getListener().get() == null);
 
-            for (EventSubscription<?> subscription : subscriptions) {
-                if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
-                    continue;
-                }
+        for (EventSubscription<?> subscription : subscriptions) {
+            if (!subscription.getEventClass().isAssignableFrom(event.getClass())) {
+                continue;
+            }
 
-                val listener = subscription.getListener().get();
+            val listener = subscription.getListener().get();
 
-                if (listener == null) {
-                    continue;
-                }
+            if (listener == null) {
+                continue;
+            }
 
-                try {
-                    ((Consumer<SkinsRestorerEvent>) listener).accept(event);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
+            try {
+                ((Consumer<SkinsRestorerEvent>) listener).accept(event);
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
         }
     }
