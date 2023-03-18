@@ -29,5 +29,9 @@ public interface IMapping {
 
     void accept(Player player, Predicate<ViaPacketData> viaFunction);
 
+    /**
+     * Can be found at https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java
+     * @return The supported versions of the mapping
+     */
     Set<String> getSupportedVersions();
 }

@@ -1,8 +1,8 @@
 # Compiled plugin files
-target/*
+target/
 
 # IDE files
-.idea/*
+.idea/
 .vscode/*
 .settings/*
 *.iml
@@ -27,5 +27,6 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-*.ipr
+*.iml
 *.iws
+*.ipr

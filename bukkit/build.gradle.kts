@@ -6,7 +6,7 @@ dependencies {
     implementation(projects.multiver.paper)
     implementation(projects.multiver.multipaper)
     implementation(projects.multiver.v17)
-    setOf("1-18", "1-18-2", "1-19", "1-19-3").forEach {
+    setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
     testImplementation(testFixtures(projects.skinsrestorerShared))

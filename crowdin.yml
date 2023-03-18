@@ -1,4 +1,3 @@
 files:
   - source: /shared/src/main/resources/languages/language.properties
     translation: /shared/src/main/resources/languages/language_%osx_locale%.properties
-    escape_special_characters: 0
