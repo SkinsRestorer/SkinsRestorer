@@ -63,7 +63,6 @@ dependencyResolutionManagement {
             name = "Clojars Repository"
         }
         mavenCentral()
-        mavenLocal()
     }
 }
 
