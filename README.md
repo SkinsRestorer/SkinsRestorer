@@ -33,7 +33,7 @@ servers.
 
 - Java 8 till 17 ([Adoptium](https://adoptium.net/)
   | [Oracle Java](https://www.oracle.com/de/java/technologies/javase-downloads.html))
-- Minecraft 1.8.0 - 1.19.3
+- Minecraft 1.8.0 - 1.19.4
 
 Implementation:
 - Proxy: BungeeCord (Waterfall) & Velocity
@@ -44,7 +44,7 @@ Implementation:
 - [Spigot Page](https://www.spigotmc.org/resources/2124)
 - [Sponge Ore Page](https://ore.spongepowered.org/SRTeam/SkinsRestorer)
 - [Wiki](https://github.com/SkinsRestorer/SkinsRestorerX/wiki)
-- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX)
+- [Jenkins](https://ci.codemc.io/job/SkinsRestorer/job/SkinsRestorerX-DEV/)
 - [Discord](https://discord.me/skinsrestorer/)
 - [Website](https://skinsrestorer.net)
 - [Crowdin](https://translate.skinsrestorer.net)
