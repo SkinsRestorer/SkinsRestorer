@@ -16,7 +16,7 @@ dependencies {
     implementation("io.papermc:paperlib:1.0.7")
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation("co.aikar:acf-paper:0.5.1-SNAPSHOT")
-    implementation("com.github.cryptomorin:XSeries:9.3.0")
+    implementation("com.github.cryptomorin:XSeries:9.3.1")
 
     compileOnly("com.viaversion:viabackwards-common:4.5.1")
     compileOnly("com.viaversion:viaversion:4.4.1")
