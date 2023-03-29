@@ -178,12 +178,9 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
                         String subChannel = in.readUTF();
 
                         if (subChannel.equalsIgnoreCase("SkinUpdate")) {
-                            try {
-                                skinApplierBukkit.applySkin(player, SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF()));
-                            } catch (IOException ignored) {
-                            }
-
-                            skinApplierBukkit.updateSkin(player);
+                            IProperty property = SkinsRestorerAPI.getApi().createPlatformProperty(in.readUTF(), in.readUTF(), in.readUTF());
+                            skinApplierBukkit.applySkin(player, property);
+                            skinApplierBukkit.updateSkin(player, property);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

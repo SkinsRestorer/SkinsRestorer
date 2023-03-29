@@ -25,15 +25,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
 import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.paper.MultiPaperUtil;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.paper.PaperSkinApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
 import net.skinsrestorer.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.spigot.SpigotUtil;
@@ -123,7 +124,7 @@ public class SkinApplierBukkit {
             plugin.runSync(() -> {
                 applyProperty(player, eventProperty);
 
-                plugin.runAsync(() -> updateSkin(player));
+                plugin.runAsync(() -> updateSkin(player, eventProperty));
             });
         });
     }
@@ -150,7 +151,7 @@ public class SkinApplierBukkit {
      * @param player - Player
      */
     @SuppressWarnings("deprecation")
-    public void updateSkin(Player player) {
+    public void updateSkin(Player player, IProperty property) {
         if (!player.isOnline())
             return;
 
@@ -159,11 +160,11 @@ public class SkinApplierBukkit {
         }
 
         plugin.runSync(() -> {
-            if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
-                Entity vehicle = player.getVehicle();
+            ejectPassengers(player);
 
-                SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
-                        disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
+            if (PaperSkinApplier.hasProfileMethod()) {
+                PaperSkinApplier.applySkin(player, property);
+                return;
             }
 
             for (Player ps : getOnlinePlayers()) {
@@ -183,6 +184,15 @@ public class SkinApplierBukkit {
 
             refresh.accept(player);
         });
+    }
+
+    private void ejectPassengers(Player player) {
+        if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
+            Entity vehicle = player.getVehicle();
+
+            SpigotPassengerUtil.refreshPassengers(plugin.getPluginInstance(), player, vehicle,
+                    disableDismountPlayer, disableRemountPlayer, enableDismountEntities);
+        }
     }
 
     private void checkOptFile() {
