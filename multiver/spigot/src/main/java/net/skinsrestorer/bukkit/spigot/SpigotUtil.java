@@ -17,18 +17,32 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.paper;
+package net.skinsrestorer.bukkit.spigot;
 
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 
-public class PaperUtil {
-    public static YamlConfiguration getPaperConfig(Server server) {
+public class SpigotUtil {
+    public static YamlConfiguration getSpigotConfig(Server server) {
+        return server.spigot().getConfig();
+    }
+
+    public static boolean isRealSpigot(Server server) {
         try {
-            return (YamlConfiguration) Server.Spigot.class.getMethod("getPaperConfig").invoke(server.spigot());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            server.spigot().getConfig();
+            return true;
+        } catch (UnsupportedOperationException e) { // Hypbrid forks don't have a spigot config
+            return false;
+        }
+    }
+
+    public static boolean hasPassengerMethods() {
+        try {
+            Entity.class.getMethod("getPassengers");
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
         }
     }
 }

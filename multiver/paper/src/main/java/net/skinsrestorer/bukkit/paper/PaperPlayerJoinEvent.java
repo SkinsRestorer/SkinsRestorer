@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.paper;
+package net.skinsrestorer.bukkit.paper;
 
 import com.destroystokyo.paper.profile.ProfileProperty;
 import lombok.RequiredArgsConstructor;

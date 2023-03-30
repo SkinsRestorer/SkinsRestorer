@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.spigot;
+package net.skinsrestorer.bukkit.spigot;
 
 import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.config.ServerConfig;
