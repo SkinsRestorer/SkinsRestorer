@@ -57,15 +57,14 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     private final ProxyServer proxy;
     private final Metrics.Factory metricsFactory;
 
-    public SRVelocityAdapter(Injector injector, Object pluginInstance, ProxyServer proxy, Metrics.Factory metricsFactory) {
+    public SRVelocityAdapter(Injector injector, Object pluginInstance, Metrics.Factory metricsFactory) {
         this.injector = injector;
         this.pluginInstance = pluginInstance;
-        this.proxy = proxy;
+        this.proxy = injector.getSingleton(ProxyServer.class);
         this.metricsFactory = metricsFactory;
 
         injector.register(SRVelocityAdapter.class, this);
         injector.register(SRProxyAdapter.class, this);
-        injector.register(ProxyServer.class, proxy);
     }
 
     @Override

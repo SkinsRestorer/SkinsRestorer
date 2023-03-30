@@ -54,9 +54,10 @@ public class SRVelocityBootstrap {
     @Subscribe
     public void onProxyInitialize(ProxyInitializeEvent event) {
         SRBootstrapper.startPlugin(
+                injector -> injector.register(ProxyServer.class, proxy),
                 new Slf4jLoggerImpl(logger),
                 false,
-                i -> new SRVelocityAdapter(i, this, proxy, metricsFactory),
+                injector -> new SRVelocityAdapter(injector, this, metricsFactory),
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 container.getDescription().getVersion().orElse("Unknown"),

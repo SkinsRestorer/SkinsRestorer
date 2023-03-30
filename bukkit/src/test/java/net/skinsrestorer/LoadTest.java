@@ -45,6 +45,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -58,7 +59,7 @@ public class LoadTest {
     private Path tempDir;
 
     @Test
-    public void testLoad() {
+    public void testLoad() throws ReflectiveOperationException {
         Path pluginFile = tempDir.resolve("SkinsRestorer.jar");
         Path configDir = tempDir.resolve("config");
 
@@ -101,13 +102,17 @@ public class LoadTest {
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
         when(plugin.getLogger()).thenReturn(logger);
-        when(plugin.getName()).thenReturn("SkinsRestorer");
-        when(plugin.getDescription()).thenReturn(mock(PluginDescriptionFile.class));
+        PluginDescriptionFile description =
+                new PluginDescriptionFile("SkinsRestorer", BuildData.VERSION, "net.skinsrestorer.bukkit.SRBukkitBootstrap");
+        Field descriptionField = JavaPlugin.class.getDeclaredField("description");
+        descriptionField.setAccessible(true);
+        descriptionField.set(plugin, description);
 
         SRBootstrapper.startPlugin(
+                injector -> injector.register(Server.class, server),
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
-                i -> new SRBukkitAdapter(i, server, pluginFile, plugin),
+                injector -> new SRBukkitAdapter(injector, pluginFile, plugin),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 BuildData.VERSION,

@@ -65,15 +65,14 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
 
-    public SRBukkitAdapter(Injector injector, Server server, Path pluginFile, JavaPlugin pluginInstance) {
+    public SRBukkitAdapter(Injector injector, Path pluginFile, JavaPlugin pluginInstance) {
         this.injector = injector;
-        this.server = server;
+        this.server = injector.getSingleton(Server.class);
         this.pluginFile = pluginFile;
         this.pluginInstance = pluginInstance;
 
         injector.register(SRBukkitAdapter.class, this);
         injector.register(SRServerAdapter.class, this);
-        injector.register(Server.class, server);
     }
 
     @Override

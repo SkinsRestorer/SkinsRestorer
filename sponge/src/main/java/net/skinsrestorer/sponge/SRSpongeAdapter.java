@@ -69,15 +69,14 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     private final PluginContainer pluginContainer;
     private final Game game;
 
-    public SRSpongeAdapter(Injector injector, Metrics metrics, PluginContainer container, Game game) {
+    public SRSpongeAdapter(Injector injector, Metrics metrics, PluginContainer container) {
         this.injector = injector;
         this.metrics = metrics;
         this.pluginContainer = container;
-        this.game = game;
+        this.game = injector.getSingleton(Game.class);
 
         injector.register(SRSpongeAdapter.class, this);
         injector.register(SRServerAdapter.class, this);
-        injector.register(Game.class, game);
     }
 
     @Override

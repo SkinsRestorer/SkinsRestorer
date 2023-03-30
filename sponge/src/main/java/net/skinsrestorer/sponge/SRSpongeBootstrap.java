@@ -59,9 +59,10 @@ public class SRSpongeBootstrap {
         metrics.startup(event);
 
         SRBootstrapper.startPlugin(
+                injector -> injector.register(Game.class, game),
                 new Log4jLoggerImpl(logger),
                 false,
-                i -> new SRSpongeAdapter(i, metrics, container, game),
+                i -> new SRSpongeAdapter(i, metrics, container),
                 SharedUpdateCheckInit.class,
                 SRServerPlugin.class,
                 container.metadata().version().toString(),

@@ -52,14 +52,13 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     @Getter
     private final Plugin pluginInstance; // Only for platform API use
 
-    public SRBungeeAdapter(Injector injector, Plugin pluginInstance, ProxyServer proxy) {
+    public SRBungeeAdapter(Injector injector, Plugin pluginInstance) {
         this.injector = injector;
-        this.proxy = proxy;
+        this.proxy = injector.getSingleton(ProxyServer.class);
         this.pluginInstance = pluginInstance;
 
         injector.register(SRBungeeAdapter.class, this);
         injector.register(SRProxyAdapter.class, this);
-        injector.register(ProxyServer.class, proxy);
     }
 
     @Override

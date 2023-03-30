@@ -34,9 +34,10 @@ public class SRBungeeBootstrap extends Plugin {
     public void onEnable() {
         ProxyServer proxy = getProxy();
         SRBootstrapper.startPlugin(
+                injector -> injector.register(ProxyServer.class, proxy),
                 new JavaLoggerImpl(new BungeeConsoleImpl(proxy.getConsole()), proxy.getLogger()),
                 true,
-                i -> new SRBungeeAdapter(i, this, proxy),
+                injector -> new SRBungeeAdapter(injector, this),
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
                 getDescription().getVersion(),

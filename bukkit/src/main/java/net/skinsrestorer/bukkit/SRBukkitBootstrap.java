@@ -37,9 +37,10 @@ public class SRBukkitBootstrap extends JavaPlugin {
         Server server = getServer();
         Path pluginFile = getFile().toPath();
         SRBootstrapper.startPlugin(
+                injector -> injector.register(Server.class, server),
                 new JavaLoggerImpl(new BukkitConsoleImpl(server.getConsoleSender()), server.getLogger()),
                 true,
-                i -> new SRBukkitAdapter(i, server, pluginFile, this),
+                injector -> new SRBukkitAdapter(injector, pluginFile, this),
                 BukkitUpdateCheckInit.class,
                 SRServerPlugin.class,
                 getDescription().getVersion(),
