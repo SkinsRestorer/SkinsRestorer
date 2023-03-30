@@ -50,7 +50,7 @@ import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -63,6 +63,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
+    private static final boolean IS_MODERN_AUTH_LIB = ReflectionUtil.classExists("com.mojang.authlib.GameProfile");
 
     protected Consumer<Player> detectRefresh(Server server) throws InitializeException {
         if (isPaper()) {
@@ -118,19 +119,19 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         });
     }
 
-    public void applyProperty(Player player, SkinProperty property) {
-        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
+    private static void applyProperty(Player player, SkinProperty property) {
+        if (IS_MODERN_AUTH_LIB) {
             BukkitPropertyApplier.applyProperty(player, property);
         } else {
             BukkitLegacyPropertyApplier.applyProperty(player, property);
         }
     }
 
-    public Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
-        if (ReflectionUtil.classExists("com.mojang.authlib.GameProfile")) {
-            return BukkitPropertyApplier.getPlayerProperties(player);
+    public static Optional<SkinProperty> getSkinProperty(Player player) {
+        if (IS_MODERN_AUTH_LIB) {
+            return BukkitPropertyApplier.getSkinProperty(player);
         } else {
-            return BukkitLegacyPropertyApplier.getPlayerProperties(player);
+            return BukkitLegacyPropertyApplier.getSkinProperty(player);
         }
     }
 

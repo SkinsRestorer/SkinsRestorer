@@ -220,12 +220,12 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public List<SkinProperty> getPropertiesOfPlayer(SRPlayer player) {
+    public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
         return player.getAs(Player.class).profile().properties().stream()
                 .filter(property -> property.name().equals(SkinProperty.TEXTURES_NAME))
                 .filter(ProfileProperty::hasSignature)
                 .map(property -> SkinProperty.of(property.value(), property.signature().orElseThrow(() -> new IllegalStateException("Signature is missing"))))
-                .collect(Collectors.toList());
+                .findFirst();
     }
 
     @Override

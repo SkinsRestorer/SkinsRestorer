@@ -173,19 +173,14 @@ public final class SRCommand extends BaseCommand {
     private void onProps(SRCommandSender sender, SRPlayer target) {
         adapter.runAsync(() -> {
             try {
-                List<SkinProperty> properties = adapter.getPropertiesOfPlayer(target);
+                Optional<SkinProperty> properties = adapter.getSkinProperty(target);
 
-                if (properties.isEmpty()) {
+                if (!properties.isPresent()) {
                     sender.sendMessage(Message.NO_SKIN_DATA);
                     return;
                 }
 
-                SkinProperty prop = properties.get(0);
-
-                String value = prop.getValue();
-                String signature = prop.getSignature();
-
-                MojangProfileResponse profile = skinsRestorer.getSkinProfileData(prop);
+                MojangProfileResponse profile = skinsRestorer.getSkinProfileData(properties.get());
                 String decodedSkin = profile.getTextures().getSKIN().getUrl();
                 long timestamp = profile.getTimestamp();
                 String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
@@ -197,8 +192,8 @@ public final class SRCommand extends BaseCommand {
                 sender.sendMessage("§cMore info in console!");
 
                 // Console
-                logger.info("§aValue: §8" + value);
-                logger.info("§aSignature: §8" + signature);
+                logger.info("§aValue: §8" + properties.get().getValue());
+                logger.info("§aSignature: §8" + properties.get().getSignature());
                 logger.info("§aValue Decoded: §e" + profile);
             } catch (Exception e) {
                 e.printStackTrace();

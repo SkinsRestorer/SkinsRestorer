@@ -43,25 +43,18 @@ public class BukkitLegacyPropertyApplier {
         return (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
     }
 
-    public static Map<String, Collection<SkinProperty>> getPlayerProperties(Player player) {
+    public static Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            Map<String, Collection<Property>> getGameProfileProperties = getGameProfile(player).getProperties().asMap();
+            Collection<Property> getGameProfileProperties = getGameProfile(player).getProperties().values();
 
-            Map<String, Collection<SkinProperty>> properties = new HashMap<>();
-            for (Map.Entry<String, Collection<Property>> entry : getGameProfileProperties.entrySet()) {
-                List<SkinProperty> list = new ArrayList<>();
-
-                for (Property property : entry.getValue()) {
-                    list.add(SkinProperty.of(property.getValue(), property.getSignature()));
-                }
-
-                properties.put(entry.getKey(), list);
-            }
-
-            return properties;
+            return getGameProfileProperties
+                    .stream()
+                    .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
+                    .map(property -> SkinProperty.of(property.getValue(), property.getSignature()))
+                    .findFirst();
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
-            return Collections.emptyMap();
+            return Optional.empty();
         }
     }
 }

@@ -24,9 +24,10 @@ import net.md_5.bungee.connection.InitialHandler;
 import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SkinApplyBungeeAdapter {
     void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException;
 
-    List<SkinProperty> getProperties(ProxiedPlayer player);
+    Optional<SkinProperty> getSkinProperty(ProxiedPlayer player);
 }

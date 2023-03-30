@@ -37,7 +37,7 @@ public class EventWrapper {
         return new SRLoginProfileEvent<Void>() {
             @Override
             public boolean isOnline() {
-                return !skinApplier.getPlayerProperties(event.getPlayer()).isEmpty();
+                return SkinApplierBukkit.getSkinProperty(event.getPlayer()).isPresent();
             }
 
             @Override

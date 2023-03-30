@@ -227,9 +227,8 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     }
 
     @Override
-    public List<SkinProperty> getPropertiesOfPlayer(SRPlayer player) {
-        Map<String, Collection<SkinProperty>> propertyMap = injector.getSingleton(SkinApplierBukkit.class).getPlayerProperties(player.getAs(Player.class));
-        return new ArrayList<>(propertyMap.get(SkinProperty.TEXTURES_NAME));
+    public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
+        return SkinApplierBukkit.getSkinProperty(player.getAs(Player.class));
     }
 
     @Override

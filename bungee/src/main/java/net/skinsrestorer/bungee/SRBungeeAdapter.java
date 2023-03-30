@@ -138,8 +138,8 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     }
 
     @Override
-    public List<SkinProperty> getPropertiesOfPlayer(SRPlayer player) {
-        return injector.getSingleton(SkinApplierBungee.class).getAdapter().getProperties(player.getAs(ProxiedPlayer.class));
+    public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
+        return SkinApplierBungee.getSkinProperty(player.getAs(ProxiedPlayer.class));
     }
 
     @Override

@@ -26,7 +26,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public interface SRPlatformAdapter<P> {
@@ -40,7 +40,7 @@ public interface SRPlatformAdapter<P> {
 
     String getPlatformVersion();
 
-    List<SkinProperty> getPropertiesOfPlayer(SRPlayer player);
+    Optional<SkinProperty> getSkinProperty(SRPlayer player);
 
     Collection<SRPlayer> getOnlinePlayers();
 

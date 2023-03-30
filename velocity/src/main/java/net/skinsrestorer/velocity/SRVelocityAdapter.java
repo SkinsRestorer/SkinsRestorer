@@ -144,15 +144,11 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     }
 
     @Override
-    public List<SkinProperty> getPropertiesOfPlayer(SRPlayer player) {
+    public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
         List<GameProfile.Property> prop = player.getAs(Player.class).getGameProfileProperties();
 
-        if (prop == null) {
-            return Collections.emptyList();
-        }
-
         return prop.stream().filter(p -> p.getName().equals(SkinProperty.TEXTURES_NAME))
-                .map(p -> SkinProperty.of(p.getValue(), p.getSignature())).collect(Collectors.toList());
+                .map(p -> SkinProperty.of(p.getValue(), p.getSignature())).findFirst();
     }
 
     @Override

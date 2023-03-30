@@ -35,27 +35,31 @@ import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
-    public static final String NEW_PROPERTY_CLASS = "net.md_5.bungee.protocol.Property";
+    public static final boolean IS_NEW_PROPERTY_CLASS = ReflectionUtil.classExists("net.md_5.bungee.protocol.Property");
     private final SettingsManager settings;
     private final WrapperBungee wrapper;
     private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
-    @Getter
-    private final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
+    private static final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
      * This method will check if the new class is available and return the appropriate class that was compiled for it.
      */
     private static SkinApplyBungeeAdapter selectSkinApplyAdapter() {
-        if (ReflectionUtil.classExists(NEW_PROPERTY_CLASS)) {
+        if (IS_NEW_PROPERTY_CLASS) {
             return new SkinApplierBungeeNew();
         } else {
             return new SkinApplierBungeeOld();
         }
+    }
+
+    public static Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
+        return adapter.getSkinProperty(player);
     }
 
     @Override
