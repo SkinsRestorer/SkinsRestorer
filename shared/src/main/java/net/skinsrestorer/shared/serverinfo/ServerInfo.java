@@ -45,6 +45,7 @@ public class ServerInfo {
         private final boolean craftBukkit;
         private final boolean spigot;
         private final boolean paper;
+        private final boolean folia;
 
         private final boolean spongeAPI;
         private final boolean spongeVanilla;
@@ -57,6 +58,7 @@ public class ServerInfo {
             spigot = isClassPresent("org.spigotmc.SpigotConfig");
             paper = isClassPresent("com.destroystokyo.paper.PaperConfig");
             craftBukkit = platform == Platform.BUKKIT || isClassPresent("org.bukkit.Bukkit");
+            folia = isClassPresent("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
             spongeVanilla = isClassPresent("org.spongepowered.server.SpongeVanilla");
             spongeForge = isClassPresent("org.spongepowered.mod.SpongeCoremod");
             spongeAPI = platform == Platform.SPONGE || isClassPresent("org.spongepowered.api.Sponge");

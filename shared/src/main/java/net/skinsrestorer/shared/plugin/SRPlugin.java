@@ -49,6 +49,7 @@ import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.serverinfo.ServerInfo;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
@@ -85,7 +86,7 @@ public class SRPlugin {
     private final String version;
     private final Injector injector;
     @Getter
-    private final Platform platform;
+    private final ServerInfo serverInfo;
     private CommandManager<?, ?, ?, ?, ?, ?> manager;
     @Getter
     private boolean outdated = false;
@@ -103,7 +104,7 @@ public class SRPlugin {
         this.updateCheckInit = injector.getSingleton(updateCheck);
         this.version = version;
         this.dataFolder = dataFolder;
-        this.platform = platform;
+        this.serverInfo = ServerInfo.determineEnvironment(platform);
     }
 
     public void initCommands() {
@@ -417,6 +418,6 @@ public class SRPlugin {
     }
 
     public String getUserAgent() {
-        return String.format(USER_AGENT, version, platform);
+        return String.format(USER_AGENT, version, serverInfo.getPlatform());
     }
 }

@@ -27,7 +27,6 @@ import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.*;
-import net.skinsrestorer.shared.serverinfo.ServerInfo;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class DumpService {
                 plugin.getVersion(),
                 proxyModeInfo,
                 adapter.getPlatformVersion(),
-                ServerInfo.determineEnvironment(plugin.getPlatform()),
+                plugin.getServerInfo(),
                 platformType
         );
 
