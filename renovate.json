@@ -3,7 +3,7 @@
     "config:base"
   ],
   "baseBranches": [
-    "dev"
+    "v15"
   ],
   "reviewers": [
     "xknat"
