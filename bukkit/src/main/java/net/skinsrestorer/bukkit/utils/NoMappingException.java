@@ -24,6 +24,6 @@ import org.bukkit.Server;
 
 public class NoMappingException extends InitializeException {
     public NoMappingException(Server server) {
-        super(String.format("No mapping for this minecraft version found! (%s)", MappingManager.getMappingsVersion(server)));
+        super(String.format("No mapping for this minecraft version found! (%s)", MappingManager.getMappingsVersion(server).orElse("unknown")));
     }
 }

@@ -28,7 +28,6 @@ import net.skinsrestorer.mappings.mapping1_19_4.Mapping1_19_4;
 import net.skinsrestorer.mappings.shared.IMapping;
 import org.bukkit.Server;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
@@ -43,10 +42,14 @@ public class MappingManager {
             .build();
 
     public static Optional<IMapping> getMapping(Server server) {
-        String mappingVersion = getMappingsVersion(server);
+        Optional<String> mappingVersion = getMappingsVersion(server);
+
+        if (!mappingVersion.isPresent()) {
+            return Optional.empty();
+        }
 
         for (IMapping mapping : mappings) {
-            if (mapping.getSupportedVersions().contains(mappingVersion)) {
+            if (mapping.getSupportedVersions().contains(mappingVersion.get())) {
                 return Optional.of(mapping);
             }
         }
@@ -55,13 +58,14 @@ public class MappingManager {
     }
 
     @SuppressWarnings({"deprecation"})
-    public static String getMappingsVersion(Server server) {
+    public static Optional<String> getMappingsVersion(Server server) {
         org.bukkit.UnsafeValues craftMagicNumbers = server.getUnsafe();
         try {
             Method method = craftMagicNumbers.getClass().getMethod("getMappingsVersion");
-            return (String) method.invoke(craftMagicNumbers, new Object[0]);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | ClassCastException e) {
-            return null;
+            return Optional.of((String) method.invoke(craftMagicNumbers, new Object[0]));
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 }
