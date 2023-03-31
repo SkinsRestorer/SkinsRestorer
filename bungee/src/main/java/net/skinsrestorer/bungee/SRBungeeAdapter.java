@@ -41,7 +41,6 @@ import org.bstats.bungeecord.Metrics;
 
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -139,7 +138,7 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
 
     @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
-        return SkinApplierBungee.getSkinProperty(player.getAs(ProxiedPlayer.class));
+        return SkinApplierBungee.getApplyAdapter().getSkinProperty(player.getAs(ProxiedPlayer.class));
     }
 
     @Override
@@ -150,11 +149,6 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
 
     @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
-        ProxiedPlayer player = proxy.getPlayer(name);
-        if (player == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(injector.getSingleton(WrapperBungee.class).player(player));
-        }
+        return Optional.ofNullable(proxy.getPlayer(name)).map(p -> injector.getSingleton(WrapperBungee.class).player(p));
     }
 }

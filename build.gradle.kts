@@ -35,7 +35,7 @@ subprojects {
         in shadow -> plugins.apply("sr.shadow-logic")
         in special -> plugins.apply("sr.base-logic")
         in mappings -> subprojects.onEach {
-            if (it.name.startsWith("mc-")) it.plugins.apply("sr.mapping-logic")
+            if (!it.name.contains("shared")) it.plugins.apply("sr.mapping-logic")
         }
     }
 }

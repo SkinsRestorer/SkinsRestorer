@@ -22,16 +22,18 @@ package net.skinsrestorer.bukkit.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.bukkit.SkinApplyBukkitAdapter;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
-public class BukkitPropertyApplier {
+public class BukkitPropertyApplier implements SkinApplyBukkitAdapter {
     @SuppressWarnings("unchecked")
-    public static void applyProperty(Player player, SkinProperty property) {
+    @Override
+    public void applyProperty(Player player, SkinProperty property) {
         try {
-            GameProfile profile = getGameProfile(player);
+            GameProfile profile = getGameProfile(player, GameProfile.class);
             profile.getProperties().removeAll(SkinProperty.TEXTURES_NAME);
             profile.getProperties().put(SkinProperty.TEXTURES_NAME, new Property(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
         } catch (ReflectiveOperationException e) {
@@ -39,24 +41,13 @@ public class BukkitPropertyApplier {
         }
     }
 
-    public static GameProfile getGameProfile(Player player) throws ReflectiveOperationException {
-        Object ep = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
-        GameProfile profile;
-        try {
-            profile = (GameProfile) ReflectionUtil.invokeMethod(ep.getClass(), ep, "getProfile");
-        } catch (Exception e) {
-            profile = (GameProfile) ReflectionUtil.getFieldByType(ep, "GameProfile");
-        }
-
-        return profile;
-    }
-
     @SuppressWarnings("unchecked")
-    public static Optional<SkinProperty> getSkinProperty(Player player) {
+    @Override
+    public Optional<SkinProperty> getSkinProperty(Player player) {
         try {
-            Collection<Property> getGameProfileProperties = getGameProfile(player).getProperties().values();
+            Collection<Property> properties = getGameProfile(player, GameProfile.class).getProperties().values();
 
-            return getGameProfileProperties
+            return properties
                     .stream()
                     .filter(property -> property.getName().equals(SkinProperty.TEXTURES_NAME))
                     .map(property -> SkinProperty.of(property.getValue(), property.getSignature()))

@@ -26,13 +26,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.multipaper.MultiPaperUtil;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
+import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
+import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.bukkit.multipaper.MultiPaperUtil;
+import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
@@ -41,16 +44,12 @@ import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
-import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
-import net.skinsrestorer.bukkit.spigot.SpigotUtil;
-import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import javax.inject.Inject;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -64,6 +63,16 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
     private static final boolean IS_MODERN_AUTH_LIB = ReflectionUtil.classExists("com.mojang.authlib.GameProfile");
+    @Getter
+    private static final SkinApplyBukkitAdapter applyAdapter = selectSkinApplyAdapter();
+
+    private static SkinApplyBukkitAdapter selectSkinApplyAdapter() {
+        if (IS_MODERN_AUTH_LIB) {
+            return new BukkitPropertyApplier();
+        } else {
+            return new BukkitLegacyPropertyApplier();
+        }
+    }
 
     protected Consumer<Player> detectRefresh(Server server) throws InitializeException {
         if (isPaper()) {
@@ -112,27 +121,11 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
             // delay 1 server tick so we override online-mode
             adapter.runSync(() -> {
-                applyProperty(player, applyEvent.getProperty());
+                applyAdapter.applyProperty(player, applyEvent.getProperty());
 
                 adapter.runAsync(() -> updateSkin(player));
             });
         });
-    }
-
-    private static void applyProperty(Player player, SkinProperty property) {
-        if (IS_MODERN_AUTH_LIB) {
-            BukkitPropertyApplier.applyProperty(player, property);
-        } else {
-            BukkitLegacyPropertyApplier.applyProperty(player, property);
-        }
-    }
-
-    public static Optional<SkinProperty> getSkinProperty(Player player) {
-        if (IS_MODERN_AUTH_LIB) {
-            return BukkitPropertyApplier.getSkinProperty(player);
-        } else {
-            return BukkitLegacyPropertyApplier.getSkinProperty(player);
-        }
     }
 
     /**

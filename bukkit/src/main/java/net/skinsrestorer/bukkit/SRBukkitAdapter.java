@@ -29,15 +29,15 @@ import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
-import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
+import net.skinsrestorer.bukkit.spigot.SpigotUtil;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
-import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -53,7 +53,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -228,7 +230,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
     @Override
     public Optional<SkinProperty> getSkinProperty(SRPlayer player) {
-        return SkinApplierBukkit.getSkinProperty(player.getAs(Player.class));
+        return SkinApplierBukkit.getApplyAdapter().getSkinProperty(player.getAs(Player.class));
     }
 
     @Override

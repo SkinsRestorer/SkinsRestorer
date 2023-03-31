@@ -5,7 +5,7 @@ plugins {
     id("io.github.patrick.remapper")
 }
 
-dependencies.implementation(project(":mappings:shared"))
+dependencies.implementation(project(":mappings:mc-shared"))
 
 tasks.remap.get().apply {
     archiveClassifier.set("remapped")

@@ -17,16 +17,25 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bungee;
+package net.skinsrestorer.bukkit;
 
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.connection.InitialHandler;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public interface SkinApplyBungeeAdapter {
-    void applyToHandler(InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException;
+public interface SkinApplyBukkitAdapter {
+    void applyProperty(Player player, SkinProperty property);
 
-    Optional<SkinProperty> getSkinProperty(ProxiedPlayer player);
+    Optional<SkinProperty> getSkinProperty(Player player);
+
+    default <G> G getGameProfile(Player player, Class<G> gClass) throws ReflectiveOperationException {
+        Object entityPlayer = ReflectionUtil.invokeMethod(player.getClass(), player, "getHandle");
+        try {
+            return gClass.cast(ReflectionUtil.invokeMethod(entityPlayer.getClass(), entityPlayer, "getProfile"));
+        } catch (ReflectiveOperationException e) {
+            return gClass.cast(ReflectionUtil.getFieldByType(entityPlayer, "GameProfile"));
+        }
+    }
 }

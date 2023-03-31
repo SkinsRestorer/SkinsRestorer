@@ -75,8 +75,7 @@ gradleEnterprise {
     }
 }
 
-include("mappings:shared")
-setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
+setOf("shared", "1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
     include("mappings:mc-$it")
 }
 
@@ -84,8 +83,8 @@ setOf("shared", "propertyold", "propertynew").forEach {
     include("multiver:bungee:$it")
 }
 
-setOf("v1-7", "spigot", "paper", "multipaper").forEach {
-    include("multiver:$it")
+setOf("shared", "v1-7", "spigot", "paper", "multipaper").forEach {
+    include("multiver:bukkit:$it")
 }
 
 setupSRSubproject("build-data")

@@ -1,7 +1,3 @@
-plugins {
-    id("sr.base-logic")
-}
-
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)

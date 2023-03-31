@@ -35,7 +35,6 @@ import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
@@ -44,7 +43,8 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     private final WrapperBungee wrapper;
     private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
-    private static final SkinApplyBungeeAdapter adapter = selectSkinApplyAdapter();
+    @Getter
+    private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.
@@ -56,10 +56,6 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
         } else {
             return new SkinApplierBungeeOld();
         }
-    }
-
-    public static Optional<SkinProperty> getSkinProperty(ProxiedPlayer player) {
-        return adapter.getSkinProperty(player);
     }
 
     @Override
@@ -91,7 +87,7 @@ public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     }
 
     private void applyWithProperty(@Nullable ProxiedPlayer player, InitialHandler handler, SkinProperty textures) throws ReflectiveOperationException {
-        adapter.applyToHandler(handler, textures);
+        applyAdapter.applyToHandler(handler, textures);
 
         if (player == null) {
             return;

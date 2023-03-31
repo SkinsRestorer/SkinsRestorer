@@ -1,11 +1,13 @@
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
-    implementation(projects.mappings.shared)
-    implementation(projects.multiver.spigot)
-    implementation(projects.multiver.paper)
-    implementation(projects.multiver.multipaper)
-    implementation(projects.multiver.v17)
+    implementation(projects.mappings.mcShared)
+    implementation(projects.multiver.bukkit.shared)
+    implementation(projects.multiver.bukkit.spigot)
+    implementation(projects.multiver.bukkit.paper)
+    implementation(projects.multiver.bukkit.multipaper)
+    implementation(projects.multiver.bukkit.v17)
+
     setOf("1-18", "1-18-2", "1-19", "1-19-3", "1-19-4").forEach {
         implementation(project(":mappings:mc-$it", "remapped"))
     }
