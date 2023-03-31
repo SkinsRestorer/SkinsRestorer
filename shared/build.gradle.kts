@@ -14,7 +14,7 @@ dependencies {
     api("ch.jalu:injector:1.0")
 
     implementation("com.github.aikar:locales:5f204c3afb")
-    implementation("org.bstats:bstats-base:3.0.0")
+    implementation("org.bstats:bstats-base:3.0.2")
 
     compileOnly("com.github.SkinsRestorer.commands:acf-core:ebc273d2f3")
 
