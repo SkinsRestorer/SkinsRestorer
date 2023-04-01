@@ -25,6 +25,9 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
+import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.multipaper.MultiPaperUtil;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
@@ -39,7 +42,10 @@ import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
+import net.skinsrestorer.paper.MultiPaperUtil;
+import net.skinsrestorer.paper.PaperSkinApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
@@ -123,7 +129,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             adapter.runSync(() -> {
                 applyAdapter.applyProperty(player, applyEvent.getProperty());
 
-                adapter.runAsync(() -> updateSkin(player));
+                adapter.runAsync(() -> updateSkin(player, eventProperty));
             });
         });
     }
@@ -134,16 +140,17 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
      * @param player - Player
      */
     @SuppressWarnings("deprecation")
-    public void updateSkin(Player player) {
+    public void updateSkin(Player player, IProperty property) {
         if (!player.isOnline()) {
             return;
         }
 
         adapter.runSync(() -> {
-            if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
-                Entity vehicle = player.getVehicle();
+            ejectPassengers(player);
 
-                SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
+            if (PaperSkinApplier.hasProfileMethod()) {
+                PaperSkinApplier.applySkin(player, property);
+                return;
             }
 
             for (Player ps : getOnlinePlayers()) {
@@ -163,6 +170,55 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
             refresh.accept(player);
         });
+    }
+
+    private void ejectPassengers(Player player) {
+        if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
+            Entity vehicle = player.getVehicle();
+
+            SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
+        }
+    }
+
+    private void checkOptFile() {
+        Path fileDisableDismountPlayer = plugin.getDataFolder().resolve("disablesdismountplayer"); // legacy
+        Path fileDisableRemountPlayer = plugin.getDataFolder().resolve("disablesremountplayer"); // legacy
+        Path fileEnableDismountEntities = plugin.getDataFolder().resolve("enablesdismountentities"); // legacy
+
+        Path fileTxtDisableDismountPlayer = plugin.getDataFolder().resolve("disableDismountPlayer.txt");
+        Path fileTxtDisableRemountPlayer = plugin.getDataFolder().resolve("disableRemountPlayer.txt");
+        Path fileTxtEnableDismountEntities = plugin.getDataFolder().resolve("enableDismountEntities.txt");
+
+        if (Files.exists(fileDisableDismountPlayer)) {
+            try {
+                Files.move(fileDisableDismountPlayer, fileTxtDisableDismountPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (Files.exists(fileDisableRemountPlayer)) {
+            try {
+                Files.move(fileDisableRemountPlayer, fileTxtDisableRemountPlayer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (Files.exists(fileEnableDismountEntities)) {
+            try {
+                Files.move(fileEnableDismountEntities, fileTxtEnableDismountEntities);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer);
+        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
+        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
+
+        plugin.getLogger().debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
+        optFileChecked = true;
     }
 
     private boolean isPaper() {

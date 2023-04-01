@@ -11,7 +11,7 @@ dependencies {
     implementation(projects.skinsrestorerShared)
     testImplementation(testFixtures(projects.skinsrestorerShared))
 
-    implementation("org.bstats:bstats-sponge:3.0.1")
+    implementation("org.bstats:bstats-sponge:3.0.2")
     implementation("com.github.SkinsRestorer.commands:acf-sponge:ebc273d2f3")
     compileOnly("com.mojang:authlib:1.11")
 }
