@@ -16,7 +16,7 @@ pluginManagement {
         id("net.kyori.blossom") version "1.3.1"
         id("io.github.patrick.remapper") version "1.4.0"
         id("com.diffplug.spotless") version "6.15.0"
-        id("com.github.spotbugs") version "5.0.13"
+        id("com.github.spotbugs") version "5.0.14"
     }
 }
 
