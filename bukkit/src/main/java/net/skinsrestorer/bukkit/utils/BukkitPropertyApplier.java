@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.bukkit.SkinApplyBukkitAdapter;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;

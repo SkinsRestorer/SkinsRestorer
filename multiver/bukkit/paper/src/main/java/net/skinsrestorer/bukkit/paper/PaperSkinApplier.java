@@ -17,19 +17,19 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.paper;
+package net.skinsrestorer.bukkit.paper;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import net.skinsrestorer.api.property.IProperty;
+import net.skinsrestorer.api.property.SkinProperty;
 import org.bukkit.entity.Player;
 
 public class PaperSkinApplier {
-    public static void applySkin(Player player, IProperty property) {
+    public static void applySkin(Player player, SkinProperty property) {
         PlayerProfile profile = player.getPlayerProfile();
 
-        profile.getProperties().removeIf(profileProperty -> profileProperty.getName().equals(IProperty.TEXTURES_NAME));
-        profile.getProperties().add(new ProfileProperty(property.getName(), property.getValue(), property.getSignature()));
+        profile.getProperties().removeIf(profileProperty -> profileProperty.getName().equals(SkinProperty.TEXTURES_NAME));
+        profile.getProperties().add(new ProfileProperty(SkinProperty.TEXTURES_NAME, property.getValue(), property.getSignature()));
 
         player.setPlayerProfile(profile);
     }

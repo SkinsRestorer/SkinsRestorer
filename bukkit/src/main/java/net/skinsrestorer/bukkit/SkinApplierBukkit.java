@@ -25,27 +25,24 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.api.bukkit.events.SkinApplyBukkitEvent;
-import net.skinsrestorer.api.property.IProperty;
-import net.skinsrestorer.api.serverinfo.ServerVersion;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.multipaper.MultiPaperUtil;
+import net.skinsrestorer.bukkit.paper.PaperSkinApplier;
 import net.skinsrestorer.bukkit.skinrefresher.MappingSpigotSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
-import net.skinsrestorer.bukkit.utils.BukkitReflection;
+import net.skinsrestorer.bukkit.utils.NMSVersion;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
 import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
+import net.skinsrestorer.mappings.shared.BukkitReflection;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
-import net.skinsrestorer.paper.MultiPaperUtil;
-import net.skinsrestorer.paper.PaperSkinApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
-import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
@@ -105,7 +102,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private Consumer<Player> selectSpigotRefresher(Server server) throws InitializeException {
-        if (BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
+        if (NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 17, 1))) {
             return new MappingSpigotSkinRefresher(adapter, logger, server);
         } else return new SpigotSkinRefresher(adapter, logger);
     }
@@ -129,7 +126,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             adapter.runSync(() -> {
                 applyAdapter.applyProperty(player, applyEvent.getProperty());
 
-                adapter.runAsync(() -> updateSkin(player, eventProperty));
+                adapter.runAsync(() -> updateSkin(player, applyEvent.getProperty()));
             });
         });
     }
@@ -140,7 +137,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
      * @param player - Player
      */
     @SuppressWarnings("deprecation")
-    public void updateSkin(Player player, IProperty property) {
+    public void updateSkin(Player player, SkinProperty property) {
         if (!player.isOnline()) {
             return;
         }
@@ -180,49 +177,8 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         }
     }
 
-    private void checkOptFile() {
-        Path fileDisableDismountPlayer = plugin.getDataFolder().resolve("disablesdismountplayer"); // legacy
-        Path fileDisableRemountPlayer = plugin.getDataFolder().resolve("disablesremountplayer"); // legacy
-        Path fileEnableDismountEntities = plugin.getDataFolder().resolve("enablesdismountentities"); // legacy
-
-        Path fileTxtDisableDismountPlayer = plugin.getDataFolder().resolve("disableDismountPlayer.txt");
-        Path fileTxtDisableRemountPlayer = plugin.getDataFolder().resolve("disableRemountPlayer.txt");
-        Path fileTxtEnableDismountEntities = plugin.getDataFolder().resolve("enableDismountEntities.txt");
-
-        if (Files.exists(fileDisableDismountPlayer)) {
-            try {
-                Files.move(fileDisableDismountPlayer, fileTxtDisableDismountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileDisableRemountPlayer)) {
-            try {
-                Files.move(fileDisableRemountPlayer, fileTxtDisableRemountPlayer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (Files.exists(fileEnableDismountEntities)) {
-            try {
-                Files.move(fileEnableDismountEntities, fileTxtEnableDismountEntities);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        disableDismountPlayer = Files.exists(fileTxtDisableDismountPlayer);
-        disableRemountPlayer = Files.exists(fileTxtDisableRemountPlayer);
-        enableDismountEntities = Files.exists(fileTxtEnableDismountEntities);
-
-        plugin.getLogger().debug("[Debug] Opt Files: { disableDismountPlayer: " + disableDismountPlayer + ", disableRemountPlayer: " + disableRemountPlayer + ", enableDismountEntities: " + enableDismountEntities + " }");
-        optFileChecked = true;
-    }
-
     private boolean isPaper() {
-        if (PaperLib.isPaper() && BukkitReflection.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
+        if (PaperLib.isPaper() && NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {

@@ -21,7 +21,7 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
-import net.skinsrestorer.bukkit.utils.BukkitReflection;
+import net.skinsrestorer.mappings.shared.BukkitReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -43,7 +43,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private final Class<?> playOutPosition;
     private final Class<?> packet;
     private final Class<?> playOutHeldItemSlot;
-    private final Method getHandleMethod;
     private Enum<?> removePlayerEnum;
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
@@ -87,8 +86,6 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 }
             }
 
-            getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-
             adapter.runSync(() -> {
                 // Wait to run task in order for ViaVersion to determine server protocol
                 if (adapter.isPluginEnabled("ViaBackwards")
@@ -111,7 +108,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     @Override
     public void accept(Player player) {
         try {
-            final Object entityPlayer = getHandleMethod.invoke(player);
+            final Object entityPlayer = BukkitReflection.getHandle(player, Object.class);
             Object removePlayer;
             Object addPlayer;
             try {

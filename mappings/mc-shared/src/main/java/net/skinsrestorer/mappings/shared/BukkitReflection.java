@@ -17,27 +17,22 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.bukkit.utils;
+package net.skinsrestorer.mappings.shared;
 
-import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
 public class BukkitReflection {
     public static final String SERVER_VERSION_STRING;
-    public static final SemanticVersion SERVER_VERSION;
 
     static {
         SERVER_VERSION_STRING = getNMSVersion().orElseThrow(() -> new RuntimeException("Failed to get NMS version"));
+    }
 
-        String[] strings;
-        if (SERVER_VERSION_STRING.contains("_")) {
-            strings = SERVER_VERSION_STRING.replace("v", "").replace("R", "").split("_");
-        } else {
-            strings = SERVER_VERSION_STRING.replace("-R0.1-SNAPSHOT", "").split("\\.");
-        }
-
-        SERVER_VERSION = new SemanticVersion(Integer.parseInt(strings[0]), Integer.parseInt(strings[1]), Integer.parseInt(strings[2]));
+    public static <E> E getHandle(Player player, Class<E> eClass) throws ReflectiveOperationException {
+        return eClass.cast(BukkitReflection.getBukkitClass("entity.CraftPlayer")
+                .getDeclaredMethod("getHandle").invoke(player));
     }
 
     public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {
