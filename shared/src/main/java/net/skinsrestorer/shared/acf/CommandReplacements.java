@@ -22,37 +22,39 @@ package net.skinsrestorer.shared.acf;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.storage.CallableSetting;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.Permission;
+import net.skinsrestorer.shared.subjects.Permissions;
 import net.skinsrestorer.shared.utils.FluentMap;
 
 import java.util.Map;
 
 public class CommandReplacements {
-    public static final Map<String, CallableSetting<String>> permissions = FluentMap.<String, CallableSetting<String>>builder()
-            .put("skin", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command")
-            .put("sr", (s) -> "skinsrestorer.admincommand")
+    public static final Map<String, CallableSetting<Permission>> permissions = FluentMap.<String, CallableSetting<Permission>>builder()
+            .put("skin", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN)
+            .put("sr", (s) -> Permissions.SR)
 
-            .put("skins", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.gui")
+            .put("skins", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKINS)
 
-            .put("skinSet", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set")
-            .put("skinSetOther", (s) -> "skinsrestorer.command.set.other")
+            .put("skinSet", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SET)
+            .put("skinSetOther", (s) -> Permissions.SKIN_SET_OTHER)
 
-            .put("skinSetUrl", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.set.url")
+            .put("skinSetUrl", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SET_URL)
 
-            .put("skinClear", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.clear")
-            .put("skinClearOther", (s) -> "skinsrestorer.command.clear.other")
+            .put("skinClear", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_CLEAR)
+            .put("skinClearOther", (s) -> Permissions.SKIN_CLEAR_OTHER)
 
-            .put("skinSearch", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.search")
+            .put("skinSearch", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SEARCH)
 
-            .put("skinUpdate", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? "" : "skinsrestorer.command.update")
-            .put("skinUpdateOther", (s) -> "skinsrestorer.command.update.other")
+            .put("skinUpdate", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_UPDATE)
+            .put("skinUpdateOther", (s) -> Permissions.SKIN_UPDATE_OTHER)
 
-            .put("srReload", (s) -> "skinsrestorer.admincommand.reload")
-            .put("srStatus", (s) -> "skinsrestorer.admincommand.status")
-            .put("srDrop", (s) -> "skinsrestorer.admincommand.drop")
-            .put("srProps", (s) -> "skinsrestorer.admincommand.props")
-            .put("srApplySkin", (s) -> "skinsrestorer.admincommand.applyskin")
-            .put("srCreateCustom", (s) -> "skinsrestorer.admincommand.createcustom")
-            .put("srDumpsrDump", (s) -> "skinsrestorer.admincommand.dump")
+            .put("srReload", (s) -> Permissions.SR_RELOAD)
+            .put("srStatus", (s) -> Permissions.SR_STATUS)
+            .put("srDrop", (s) -> Permissions.SR_DROP)
+            .put("srProps", (s) -> Permissions.SR_PROPS)
+            .put("srApplySkin", (s) -> Permissions.SR_APPLY_SKIN)
+            .put("srCreateCustom", (s) -> Permissions.SR_CREATE_CUSTOM)
+            .put("srDumpsrDump", (s) -> Permissions.SR_DUMP)
             .build();
 
     public static final Map<String, Message> descriptions = FluentMap.<String, Message>builder()

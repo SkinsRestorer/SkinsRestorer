@@ -53,10 +53,7 @@ import net.skinsrestorer.shared.serverinfo.ServerInfo;
 import net.skinsrestorer.shared.storage.*;
 import net.skinsrestorer.shared.storage.adapter.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
-import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.subjects.SRPlayer;
-import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.*;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.bstats.MetricsBase;
@@ -165,7 +162,7 @@ public class SRPlugin {
             SRCommandSender sender = adapter.convertCommandSender(context.getIssuer().getIssuer());
             if (sender instanceof SRPlayer) {
                 UUID senderUUID = ((SRPlayer) sender).getUniqueId();
-                if (!sender.hasPermission("skinsrestorer.bypasscooldown") && cooldownStorage.hasCooldown(senderUUID)) {
+                if (!sender.hasPermission(Permissions.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
                     sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
                     throw new ConditionFailedException();
                 }
@@ -293,7 +290,7 @@ public class SRPlugin {
         manager.enableUnstableAPI("help");
         manager.allowInvalidName(true);
 
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings)));
+        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings).getPermission()));
         CommandReplacements.descriptions.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
         CommandReplacements.syntax.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->

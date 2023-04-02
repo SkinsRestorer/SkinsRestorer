@@ -42,6 +42,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.Permissions;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.C;
@@ -216,8 +217,8 @@ public final class SkinCommand extends BaseCommand {
     private void onSkinSetOther(SRCommandSender sender, OnlineSRPlayer target, String skin, SkinVariant skinVariant) {
         SRPlayer targetPlayer = target.getPlayer();
         adapter.runAsync(() -> {
-            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission("skinsrestorer.skin." + skin)) {
-                if (!sender.hasPermission("skinsrestorer.ownskin") && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
+            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(Permissions.forSkin(skin))) {
+                if (!sender.hasPermission(Permissions.OWN_SKIN) && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
@@ -273,7 +274,7 @@ public final class SkinCommand extends BaseCommand {
             return false;
         }
 
-        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission("skinsrestorer.bypassdisabled")
+        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission(Permissions.BYPASS_DISABLED)
                 && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
@@ -282,7 +283,7 @@ public final class SkinCommand extends BaseCommand {
         String playerName = player.getName();
         String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skinName)) {
-            if (!sender.hasPermission("skinsrestorer.command.set.url")
+            if (!sender.hasPermission(Permissions.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
                     && !settings.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;

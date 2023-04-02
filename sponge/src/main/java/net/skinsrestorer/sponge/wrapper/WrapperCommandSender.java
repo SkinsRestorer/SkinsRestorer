@@ -27,6 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.spongepowered.api.service.permission.Subject;
 
@@ -60,7 +61,7 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return subject.hasPermission(permission);
+    public boolean hasPermission(Permission permission) {
+        return permission.checkPermission(subject::hasPermission);
     }
 }

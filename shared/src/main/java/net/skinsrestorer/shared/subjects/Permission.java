@@ -19,14 +19,22 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.shared.storage.Message;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-public interface SRCommandSender extends SRForeign {
-    void sendMessage(String message);
+import java.util.function.Predicate;
 
-    void sendMessage(Message key, Object... args);
+@RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
+public class Permission {
+    @Getter
+    private final String permission;
 
-    String getName();
+    public boolean isEmpty() {
+        return permission == null || permission.isEmpty();
+    }
 
-    boolean hasPermission(Permission permission);
+    public boolean checkPermission(Predicate<String> predicate) {
+        return isEmpty() || predicate.test(permission);
+    }
 }

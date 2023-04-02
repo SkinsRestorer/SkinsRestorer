@@ -26,6 +26,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.Locale;
@@ -57,7 +58,7 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+    public boolean hasPermission(Permission permission) {
+        return permission.checkPermission(sender::hasPermission);
     }
 }
