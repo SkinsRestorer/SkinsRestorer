@@ -21,11 +21,6 @@ package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
-import co.aikar.commands.CommandManager;
-import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
@@ -34,6 +29,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -59,7 +55,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @CommandPermission("%skin")
 @Conditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public final class SkinCommand extends BaseCommand {
+public final class SkinCommand {
     private final SRPlatformAdapter<?> adapter;
     private final SRPlugin plugin;
     private final SettingsManager settings;

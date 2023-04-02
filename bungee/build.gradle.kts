@@ -10,5 +10,4 @@ dependencies {
     compileOnly("net.md-5:bungeecord-proxy:1.18-R0.1-SNAPSHOT")
 
     implementation("org.bstats:bstats-bungeecord:3.0.2")
-    implementation("com.github.SkinsRestorer.commands:acf-bungee:ebc273d2f3")
 }

@@ -115,7 +115,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, removePlayerEnum, ImmutableList.of(entityPlayer));
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, addPlayerEnum, ImmutableList.of(entityPlayer));
             } catch (ReflectiveOperationException e) {
-                int ping = (int) ReflectionUtil.getObject(entityPlayer, "ping");
+                int ping = ReflectionUtil.getObject(entityPlayer, "ping", int.class);
                 removePlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), false, 9999);
                 addPlayer = ReflectionUtil.invokeConstructor(playOutPlayerInfo, player.getPlayerListName(), true, ping);
             }
@@ -127,14 +127,14 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             try {
                 difficulty = ReflectionUtil.invokeMethod(world, "getDifficulty");
             } catch (ReflectiveOperationException e) {
-                difficulty = ReflectionUtil.getObject(world, "difficulty");
+                difficulty = ReflectionUtil.getObject(world, "difficulty", Object.class);
             }
 
             Object worldData;
             try {
                 worldData = ReflectionUtil.invokeMethod(world, "getWorldData");
             } catch (ReflectiveOperationException ignored) {
-                worldData = ReflectionUtil.getObject(world, "worldData");
+                worldData = ReflectionUtil.getObject(world, "worldData", Object.class);
             }
 
             Object worldType;

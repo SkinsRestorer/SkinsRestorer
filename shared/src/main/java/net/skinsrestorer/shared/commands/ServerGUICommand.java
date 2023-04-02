@@ -19,13 +19,12 @@
  */
 package net.skinsrestorer.shared.commands;
 
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Conditions;
-import co.aikar.commands.annotation.Default;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
+import net.skinsrestorer.shared.commands.library.annotations.CommandAlias;
+import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
+import net.skinsrestorer.shared.commands.library.annotations.Conditions;
+import net.skinsrestorer.shared.commands.library.annotations.Default;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
@@ -39,7 +38,7 @@ import javax.inject.Inject;
 @CommandPermission("%skins")
 @Conditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public class ServerGUICommand extends BaseCommand {
+public class ServerGUICommand {
     private final SRServerAdapter<?> plugin;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;

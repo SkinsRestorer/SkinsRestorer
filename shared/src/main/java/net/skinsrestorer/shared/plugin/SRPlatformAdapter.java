@@ -19,8 +19,8 @@
  */
 package net.skinsrestorer.shared.plugin;
 
-import co.aikar.commands.CommandManager;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.commands.library.CommandPlatform;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public interface SRPlatformAdapter<P> {
+public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
     InputStream getResource(String resource);
 
     void runAsync(Runnable runnable);
@@ -43,8 +43,6 @@ public interface SRPlatformAdapter<P> {
     Optional<SkinProperty> getSkinProperty(SRPlayer player);
 
     Collection<SRPlayer> getOnlinePlayers();
-
-    CommandManager<?, ?, ?, ?, ?, ?> createCommandManager();
 
     Object createMetricsInstance();
 

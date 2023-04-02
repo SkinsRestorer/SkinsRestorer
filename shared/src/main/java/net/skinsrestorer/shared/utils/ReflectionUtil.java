@@ -127,8 +127,8 @@ public class ReflectionUtil {
         return m;
     }
 
-    public static Object getObject(Object obj, String fieldName) throws ReflectiveOperationException {
-        return getField(obj.getClass(), fieldName).get(obj);
+    public static <T> T getObject(Object obj, String fieldName, Class<T> tClass) throws ReflectiveOperationException {
+        return tClass.cast(getField(obj.getClass(), fieldName).get(obj));
     }
 
     public static Object getFieldByType(Object obj, String typeName) throws ReflectiveOperationException {

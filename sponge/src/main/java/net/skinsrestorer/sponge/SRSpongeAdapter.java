@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -56,7 +57,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -232,5 +232,10 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     public Collection<SRPlayer> getOnlinePlayers() {
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
         return game.server().onlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
+    }
+
+    @Override
+    public void registerCommand(String rootNode, String[] aliases, String rootPermission, CommandExecutor<SRCommandSender> executor) {
+        game.server().commandManager()
     }
 }

@@ -16,9 +16,7 @@ dependencies {
     implementation("com.github.aikar:locales:5f204c3afb")
     implementation("org.bstats:bstats-base:3.0.2")
 
-    compileOnly("com.github.SkinsRestorer.commands:acf-core:ebc273d2f3")
-
-    testRuntimeOnly("com.github.SkinsRestorer.commands:acf-core:ebc273d2f3")
+    implementation("com.mojang:brigadier:1.0.18")
 }
 
 tasks.getByName<Test>("test") {

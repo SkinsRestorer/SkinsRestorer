@@ -21,9 +21,6 @@ package net.skinsrestorer.shared.commands;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
-import co.aikar.commands.BaseCommand;
-import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -34,6 +31,7 @@ import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
@@ -63,7 +61,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @CommandPermission("%sr")
 @Conditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
-public final class SRCommand extends BaseCommand {
+public final class SRCommand {
     private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
     private final MojangAPIImpl mojangAPI;

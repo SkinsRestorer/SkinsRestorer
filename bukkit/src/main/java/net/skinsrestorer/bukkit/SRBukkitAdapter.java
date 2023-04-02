@@ -27,19 +27,23 @@ import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Server;
+import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -53,6 +57,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -237,5 +242,20 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     public Collection<SRPlayer> getOnlinePlayers() {
         WrapperBukkit wrapper = injector.getSingleton(WrapperBukkit.class);
         return server.getOnlinePlayers().stream().map(wrapper::player).collect(Collectors.toList());
+    }
+
+    @Override
+    public void registerCommand(String rootNode, String[] aliases, String rootPermission, CommandExecutor<SRCommandSender> executor) {
+        try {
+            CommandMap commandMap = ReflectionUtil.getObject(server, "commandMap", CommandMap.class);
+            SRBukkitCommand command = new SRBukkitCommand(rootNode, pluginInstance, executor, injector.getSingleton(WrapperBukkit.class));
+
+            command.setAliases(Arrays.asList(aliases));
+            command.setPermission(rootPermission);
+
+            commandMap.register(rootNode, "skinsrestorer", command);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 }
