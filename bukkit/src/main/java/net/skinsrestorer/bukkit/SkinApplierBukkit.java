@@ -32,7 +32,6 @@ import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.paper.MultiPaperUtil;
-import net.skinsrestorer.paper.PaperSkinApplier;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.reflection.ReflectionUtil;
 import net.skinsrestorer.shared.utils.log.SRLogLevel;
@@ -67,7 +66,7 @@ public class SkinApplierBukkit {
     }
 
     private Consumer<Player> detectRefresh() throws InitializeException {
-        if (isPaper()) {
+        if (isPaper() && !ReflectionUtil.SERVER_VERSION.isNewer(new ServerVersion(1, 19, 2))) { // TODO: Properly support newer paper
             // force SpigotSkinRefresher for unsupported plugins (ViaVersion & other ProtocolHack).
             // Ran with #getPlugin() != null instead of #isPluginEnabled() as older Spigot builds return false during the login process even if enabled
             boolean viaVersionExists = plugin.isPluginEnabled("ViaVersion");
@@ -162,10 +161,12 @@ public class SkinApplierBukkit {
         plugin.runSync(() -> {
             ejectPassengers(player);
 
+            /*
             if (PaperSkinApplier.hasProfileMethod()) {
                 PaperSkinApplier.applySkin(player, property);
                 return;
             }
+            */
 
             for (Player ps : getOnlinePlayers()) {
                 // Some older spigot versions only support hidePlayer(player)
