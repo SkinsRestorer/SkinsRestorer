@@ -33,12 +33,8 @@ import net.skinsrestorer.bukkit.skinrefresher.PaperSkinRefresher;
 import net.skinsrestorer.bukkit.skinrefresher.SpigotSkinRefresher;
 import net.skinsrestorer.bukkit.spigot.SpigotPassengerUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
-import net.skinsrestorer.bukkit.utils.BukkitPropertyApplier;
-import net.skinsrestorer.bukkit.utils.NMSVersion;
-import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.bukkit.utils.SkinApplyBukkitAdapter;
+import net.skinsrestorer.bukkit.utils.*;
 import net.skinsrestorer.bukkit.v1_7.BukkitLegacyPropertyApplier;
-import net.skinsrestorer.mappings.shared.BukkitReflection;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
@@ -90,7 +86,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
 
             // use PaperSkinRefresher if no VersionHack plugin found
             try {
-                return new PaperSkinRefresher(logger, server);
+                return new PaperSkinRefresher(logger);
             } catch (NoMappingException e) {
                 throw e;
             } catch (InitializeException e) {
@@ -146,6 +142,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             ejectPassengers(player);
 
             if (PaperSkinApplier.hasProfileMethod()) {
+                System.out.println("hasProfileMethod");
                 PaperSkinApplier.applySkin(player, property);
                 return;
             }

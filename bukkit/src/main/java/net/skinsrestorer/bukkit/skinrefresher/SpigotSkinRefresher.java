@@ -21,7 +21,7 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
-import net.skinsrestorer.mappings.shared.BukkitReflection;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;

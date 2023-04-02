@@ -17,10 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.mappings.shared;
+package net.skinsrestorer.bukkit.utils;
 
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
 public class BukkitReflection {
@@ -31,8 +32,12 @@ public class BukkitReflection {
     }
 
     public static <E> E getHandle(Player player, Class<E> eClass) throws ReflectiveOperationException {
-        return eClass.cast(BukkitReflection.getBukkitClass("entity.CraftPlayer")
-                .getDeclaredMethod("getHandle").invoke(player));
+        Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer")
+                .getDeclaredMethod("getHandle");
+
+        getHandleMethod.setAccessible(true);
+
+        return eClass.cast(getHandleMethod.invoke(player));
     }
 
     public static Class<?> getBukkitClass(String clazz) throws ClassNotFoundException {

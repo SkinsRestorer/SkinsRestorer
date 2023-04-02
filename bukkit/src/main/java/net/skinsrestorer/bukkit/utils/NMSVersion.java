@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.bukkit.utils;
 
-import net.skinsrestorer.mappings.shared.BukkitReflection;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 
 public class NMSVersion {

@@ -20,33 +20,36 @@
 package net.skinsrestorer.bukkit.skinrefresher;
 
 import lombok.SneakyThrows;
-import net.skinsrestorer.bukkit.utils.MappingManager;
-import net.skinsrestorer.bukkit.utils.NoMappingException;
-import net.skinsrestorer.mappings.shared.BukkitReflection;
-import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
-import org.bukkit.Server;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class PaperSkinRefresher implements Consumer<Player> {
     private final Method refreshPlayerMethod;
     private final Consumer<Player> triggerHealthUpdate;
 
-    public PaperSkinRefresher(SRLogger logger, Server server) throws InitializeException {
+    public PaperSkinRefresher(SRLogger logger) throws InitializeException {
         try {
             refreshPlayerMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("refreshPlayer");
             refreshPlayerMethod.setAccessible(true);
 
-            this.triggerHealthUpdate = selectHealthUpdateMethod(server);
+            // XP won't get updated on unsupported Paper builds
+            this.triggerHealthUpdate = player -> {
+                try {
+                    Object entityPlayer = BukkitReflection.getHandle(player, Object.class);
+
+                    ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
+                } catch (ReflectiveOperationException e) {
+                    player.resetMaxHealth();
+                }
+            };
 
             logger.debug("Using PaperSkinRefresher");
-        } catch (NoMappingException e) {
-            throw e;
         } catch (Exception e) {
             logger.debug("Failed PaperSkinRefresher", e);
             throw new InitializeException(e);
@@ -58,50 +61,5 @@ public final class PaperSkinRefresher implements Consumer<Player> {
     public void accept(Player player) {
         refreshPlayerMethod.invoke(player);
         triggerHealthUpdate.accept(player);
-    }
-
-    private Consumer<Player> selectHealthUpdateMethod(Server server) throws ReflectiveOperationException, NoMappingException {
-        // XP won't get updated on unsupported Paper builds
-        try {
-            Method healthUpdateMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("triggerHealthUpdate");
-            healthUpdateMethod.setAccessible(true);
-
-            return player -> {
-                try {
-                    healthUpdateMethod.invoke(player);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            };
-        } catch (NoSuchMethodException ignored) {
-            try {
-                Method getHandleMethod = BukkitReflection.getBukkitClass("entity.CraftPlayer").getDeclaredMethod("getHandle");
-                getHandleMethod.setAccessible(true);
-
-                Method healthUpdateMethod = getHandleMethod.getReturnType().getDeclaredMethod("triggerHealthUpdate");
-                healthUpdateMethod.setAccessible(true);
-
-                return player -> {
-                    try {
-                        healthUpdateMethod.invoke(getHandleMethod.invoke(player));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                };
-            } catch (NoSuchMethodException ignored2) {
-                Optional<IMapping> mapping = MappingManager.getMapping(server);
-                if (!mapping.isPresent()) {
-                    throw new NoMappingException(server);
-                } else {
-                    return player -> {
-                        try {
-                            mapping.get().triggerHealthUpdate(player);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    };
-                }
-            }
-        }
     }
 }
