@@ -5,7 +5,7 @@ plugins {
 }
 
 lombok {
-    version.set("1.18.22")
+    version.set("1.18.26")
 }
 
 dependencies {
