@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.command;
 import lombok.Getter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
+import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.PlatformRegistration;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.bukkit.command.Command;
@@ -50,13 +51,13 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
-        executor.execute(wrapper.commandSender(sender), commandLabel + " " + String.join(" ", args));
+        executor.execute(wrapper.commandSender(sender), CommandUtils.joinCommand(commandLabel, args));
         return true;
     }
 
     @NotNull
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
-        return super.tabComplete(sender, alias, args);
+        return executor.tabComplete(wrapper.commandSender(sender), CommandUtils.joinCommand(alias, args)).join();
     }
 }

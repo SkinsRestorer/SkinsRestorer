@@ -21,8 +21,11 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import org.spongepowered.api.Game;
@@ -56,6 +59,21 @@ public class SRSpongeInit implements SRServerPlatformInit {
                 .plugin(adapter.getPluginContainer())
                 .order(Order.DEFAULT)
                 .listener(injector.newInstance(LoginListener.class)).build());
+    }
+
+    @Override
+    public void initPermissions() {
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+
+        for (PermissionRegistry permission : PermissionRegistry.values()) {
+            String permissionString = permission.getPermission().getPermissionString();
+            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
+
+            game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
+                    .id(permissionString)
+                    .description(Component.text(description))
+                    .register();
+        }
     }
 
     @Override

@@ -21,8 +21,19 @@ package net.skinsrestorer.shared.commands.library;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +46,9 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor
@@ -122,25 +135,7 @@ public class CommandManager<T extends SRCommandSender> {
                 validateMethod(method);
 
                 Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-                Command<T> defaultCommand = requireConditions(source -> {
-                    try {
-                        method.invoke(command, source);
-                        return Command.SINGLE_SUCCESS;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                }, commandConditions);
-
-                if (method.getParameterTypes().length == 1) {
-                    if (node.getCommand() != null) {
-                        throw new IllegalStateException("Default command already set");
-                    }
-
-                    node.executes(defaultCommand);
-                } else { // 2+ parameters
-                    // TODO: Add support for arguments
-                }
+                registerParameters(node, commandConditions, command, method);
 
                 continue;
             }
@@ -157,19 +152,93 @@ public class CommandManager<T extends SRCommandSender> {
 
                     Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
 
-                    childNode.executes(requireConditions(source -> {
-                        try {
-                            method.invoke(command, source); // TODO: Add support for arguments
-                            return Command.SINGLE_SUCCESS;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return 0;
-                        }
-                    }, commandConditions));
-
-                    node.then(childNode);
+                    registerParameters(childNode, commandConditions, command, method);
                 }
             }
+        }
+    }
+
+    private void registerParameters(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Method method) {
+        List<ArgumentBuilder<T, ?>> nodes = new ArrayList<>();
+        nodes.add(node);
+        int i = 0;
+        for (Parameter parameter : method.getParameters()) {
+            if (i == 0) {
+                i++;
+                continue;
+            }
+
+            // Implementing support for other types is easy, just add a new if statement
+            if (parameter.getType() == String.class) {
+                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), StringArgumentType.word()));
+            } else if (parameter.getType() == int.class) {
+                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), IntegerArgumentType.integer()));
+            } else if (Enum.class.isAssignableFrom(parameter.getType())) {
+                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), new ArgumentType<Enum<?>>() {
+                    @Override
+                    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+                        return Suggestions.empty(); // TODO
+                    }
+
+                    @Override
+                    public Collection<String> getExamples() {
+                        List<String> examples = new ArrayList<>();
+                        for (Object constant : parameter.getType().getEnumConstants()) {
+                            System.out.println(constant);
+                            examples.add(constant.toString());
+                        }
+                        return examples;
+                    }
+
+                    @Override
+                    public Enum<?> parse(StringReader reader) throws CommandSyntaxException {
+                        final int start = reader.getCursor();
+                        final String string = reader.readString();
+                        try {
+                            System.out.println(string);
+                            return Enum.valueOf((Class<Enum>) parameter.getType(), string.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                            reader.setCursor(start);
+                            throw new SimpleCommandExceptionType(new LiteralMessage("Invalid enum value")).createWithContext(reader);
+                        }
+                    }
+                }));
+            } else {
+                continue;
+                // TODO
+                // throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
+            }
+
+            i++;
+        }
+
+        nodes.get(nodes.size() - 1).executes(requireConditions(context -> {
+            try {
+                List<Object> args = new ArrayList<>();
+                args.add(context.getSource());
+                int i1 = 0;
+                for (Parameter parameter : method.getParameters()) {
+                    if (i1 == 0) {
+                        i1++;
+                        continue;
+                    }
+                    args.add(context.getArgument(parameter.getName(), parameter.getType()));
+                }
+                method.invoke(command, args.toArray());
+                return Command.SINGLE_SUCCESS;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }, conditionTrail));
+
+        if (nodes.size() == 1) {
+            return;
+        }
+
+        for (int j = 0; j < nodes.size() - 1; j++) {
+            nodes.get(j).then(nodes.get(j + 1));
         }
     }
 

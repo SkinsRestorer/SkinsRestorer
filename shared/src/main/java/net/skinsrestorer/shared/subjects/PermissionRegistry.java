@@ -20,54 +20,47 @@
 package net.skinsrestorer.shared.subjects;
 
 import lombok.Getter;
-
-import java.util.Optional;
+import net.skinsrestorer.shared.storage.Message;
 
 public enum PermissionRegistry {
-    SKIN("skinsrestorer.command", true),
-    SR("skinsrestorer.admincommand"),
-    SKINS("skinsrestorer.command.gui", true),
-    SKIN_SET("skinsrestorer.command.set", true),
-    SKIN_SET_OTHER("skinsrestorer.command.set.other"),
-    SKIN_SET_URL("skinsrestorer.command.set.url", true),
-    SKIN_CLEAR("skinsrestorer.command.clear", true),
-    SKIN_CLEAR_OTHER("skinsrestorer.command.clear.other"),
-    SKIN_SEARCH("skinsrestorer.command.search", true),
-    SKIN_UPDATE("skinsrestorer.command.update", true),
-    SKIN_UPDATE_OTHER("skinsrestorer.command.update.other"),
-    SR_RELOAD("skinsrestorer.admincommand.reload"),
-    SR_STATUS("skinsrestorer.admincommand.status"),
-    SR_DROP("skinsrestorer.admincommand.drop"),
-    SR_PROPS("skinsrestorer.admincommand.props"),
-    SR_APPLY_SKIN("skinsrestorer.admincommand.applyskin"),
-    SR_CREATE_CUSTOM("skinsrestorer.admincommand.createcustom"),
-    SR_DUMP("skinsrestorer.admincommand.dump"),
+    SKIN("skinsrestorer.command", true, Message.PERMISSION_COMMAND),
+    SR("skinsrestorer.admincommand", Message.PERMISSION_ADMINCOMMAND),
+    SKINS("skinsrestorer.command.gui", true, Message.PERMISSION_COMMAND_GUI),
+    SKIN_SET("skinsrestorer.command.set", true, Message.PERMISSION_COMMAND_SET),
+    SKIN_SET_OTHER("skinsrestorer.command.set.other", Message.PERMISSION_COMMAND_SET_OTHER),
+    SKIN_SET_URL("skinsrestorer.command.set.url", true, Message.PERMISSION_COMMAND_SET_URL),
+    SKIN_CLEAR("skinsrestorer.command.clear", true, Message.PERMISSION_COMMAND_CLEAR),
+    SKIN_CLEAR_OTHER("skinsrestorer.command.clear.other", Message.PERMISSION_COMMAND_CLEAR_OTHER),
+    SKIN_SEARCH("skinsrestorer.command.search", true, Message.PERMISSION_COMMAND_SEARCH),
+    SKIN_UPDATE("skinsrestorer.command.update", true, Message.PERMISSION_COMMAND_UPDATE),
+    SKIN_UPDATE_OTHER("skinsrestorer.command.update.other", Message.PERMISSION_COMMAND_UPDATE_OTHER),
+    SR_RELOAD("skinsrestorer.admincommand.reload", Message.PERMISSION_ADMINCOMMAND_RELOAD),
+    SR_STATUS("skinsrestorer.admincommand.status", Message.PERMISSION_ADMINCOMMAND_STATUS),
+    SR_DROP("skinsrestorer.admincommand.drop", Message.PERMISSION_ADMINCOMMAND_DROP),
+    SR_PROPS("skinsrestorer.admincommand.props", Message.PERMISSION_ADMINCOMMAND_PROPS),
+    SR_APPLY_SKIN("skinsrestorer.admincommand.applyskin", Message.PERMISSION_ADMINCOMMAND_APPLYSKIN),
+    SR_CREATE_CUSTOM("skinsrestorer.admincommand.createcustom", Message.PERMISSION_ADMINCOMMAND_CREATECUSTOM),
+    SR_DUMP("skinsrestorer.admincommand.dump", Message.PERMISSION_ADMINCOMMAND_DUMP),
 
-    BYPASS_COOLDOWN("skinsrestorer.bypasscooldown"),
-    BYPASS_DISABLED("skinsrestorer.bypassdisabled"),
-    OWN_SKIN("skinsrestorer.ownskin");
+    BYPASS_COOLDOWN("skinsrestorer.bypasscooldown", Message.PERMISSION_BYPASSCOOLDOWN),
+    BYPASS_DISABLED("skinsrestorer.bypassdisabled", Message.PERMISSION_BYPASSDISABLED),
+    OWN_SKIN("skinsrestorer.ownskin", Message.PERMISSION_OWNSKIN);
 
     @Getter
     private final Permission permission;
+    @Getter
+    private final Message description; // TODO: Implement descriptions
 
-    PermissionRegistry(String permission) {
-        this(permission, false);
+    PermissionRegistry(String permission, Message description) {
+        this(permission, false, description);
     }
 
-    PermissionRegistry(String permission, boolean isDefault) {
+    PermissionRegistry(String permission, boolean isDefault, Message description) {
         this.permission = Permission.of(permission, isDefault);
+        this.description = description;
     }
 
     public static Permission forSkin(String skinName) {
         return Permission.of("skinsrestorer.skin." + skinName, false);
-    }
-
-    public static Optional<Permission> getPermission(String permission) {
-        for (PermissionRegistry value : values()) {
-            if (value.permission.getPermissionString().equals(permission))
-                return Optional.of(value.permission);
-        }
-
-        return Optional.empty();
     }
 }

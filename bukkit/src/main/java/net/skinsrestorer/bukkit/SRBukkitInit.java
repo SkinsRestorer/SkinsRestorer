@@ -31,16 +31,20 @@ import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NMSVersion;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.SimplePluginManager;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -146,6 +150,19 @@ public class SRBukkitInit implements SRServerPlatformInit {
             }
         } catch (IOException e) {
             logger.warning("Could not read MundoSK config.yml to check for 'enable_custom_skin_and_tablist'!", e);
+        }
+    }
+
+    @Override
+    public void initPermissions() {
+        SimplePluginManager pluginManager = (SimplePluginManager) server.getPluginManager();
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+
+        for (PermissionRegistry permission : PermissionRegistry.values()) {
+            String permissionString = permission.getPermission().getPermissionString();
+            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
+
+            pluginManager.addPermission(new Permission(permissionString, description));
         }
     }
 

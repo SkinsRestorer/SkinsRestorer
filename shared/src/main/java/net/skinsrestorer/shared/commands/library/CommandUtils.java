@@ -17,12 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.plugin;
+package net.skinsrestorer.shared.commands.library;
 
-public interface SRServerPlatformInit extends SRPlatformInit {
-    void initPermissions();
+public class CommandUtils {
+    public static String joinCommand(String label, String[] args) {
+        StringBuilder builder = new StringBuilder(sanitizeLabel(label));
+        for (String arg : args) {
+            builder.append(" ").append(arg);
+        }
+        return builder.toString().trim();
+    }
 
-    void initGUIListener();
-
-    void initMessageChannel();
+    public static String sanitizeLabel(String input) {
+        return input.replace("skinsrestorer:", "");
+    }
 }

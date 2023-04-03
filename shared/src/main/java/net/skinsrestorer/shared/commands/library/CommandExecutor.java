@@ -34,6 +34,7 @@ public class CommandExecutor<T> {
     private final CommandPlatform<T> platformAdapter;
 
     public void execute(T executor, String input) {
+        System.out.println("Executing command: " + input + " for " + executor);
         platformAdapter.runAsync(() -> {
             try {
                 dispatcher.execute(input, executor);
@@ -44,6 +45,7 @@ public class CommandExecutor<T> {
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
+        System.out.println("Tab completing command: " + input + " for " + executor);
         return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
     }

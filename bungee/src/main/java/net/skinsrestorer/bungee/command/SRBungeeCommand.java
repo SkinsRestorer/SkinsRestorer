@@ -24,6 +24,7 @@ import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
+import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.PlatformRegistration;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
@@ -39,11 +40,11 @@ public class SRBungeeCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        executor.execute(wrapper.commandSender(sender), getName() + " " + String.join(" ", args));
+        executor.execute(wrapper.commandSender(sender), CommandUtils.joinCommand(getName(), args));
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return executor.tabComplete(wrapper.commandSender(sender), getName() + " " + String.join(" ", args)).join();
+        return executor.tabComplete(wrapper.commandSender(sender), CommandUtils.joinCommand(getName(), args)).join();
     }
 }
