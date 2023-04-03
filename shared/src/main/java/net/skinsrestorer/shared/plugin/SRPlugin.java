@@ -28,7 +28,6 @@ import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -117,7 +116,6 @@ public class SRPlugin {
         } else {
             throw new IllegalStateException("Unknown platform");
         }
-
     }
 
     public void registerConditions() {
@@ -232,7 +230,6 @@ public class SRPlugin {
         MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
         messageLoader.migrateOldFiles();
         messageLoader.loadMessages();
-        injector.getSingleton(SkinsRestorerLocale.class);
     }
 
     public void initStorage() throws InitializeException {
@@ -339,7 +336,6 @@ public class SRPlugin {
         }
 
         injector.getSingleton(EventBusImpl.class);
-
 
         if (serverPlugin != null) {
             // Check if we are running in proxy mode

@@ -34,7 +34,7 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
@@ -74,7 +74,6 @@ public class LoadTest {
 
         when(server.getLogger()).thenReturn(logger);
         when(server.getConsoleSender()).thenReturn(sender);
-        when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
         BukkitScheduler scheduler = mock(BukkitScheduler.class);
 
         doAnswer(invocation -> {
@@ -95,7 +94,7 @@ public class LoadTest {
         when(server.getName()).thenReturn("TestServer");
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
         // when(server.getHelpMap()).thenReturn(mock(HelpMap.class)); // TODO: Add help map support to command manager
-        when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
+        when(server.getPluginManager()).thenReturn(mock(SimplePluginManager.class));
 
         Bukkit.setServer(server);
 

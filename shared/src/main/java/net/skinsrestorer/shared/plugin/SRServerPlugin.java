@@ -106,6 +106,8 @@ public class SRServerPlugin {
     }
 
     public void startupPlatform(SRServerPlatformInit init) throws InitializeException {
+        init.initPermissions();
+
         init.initGUIListener();
 
         if (proxyMode) {

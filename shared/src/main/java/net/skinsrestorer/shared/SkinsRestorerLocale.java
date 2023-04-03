@@ -41,6 +41,10 @@ public class SkinsRestorerLocale {
     public String getMessage(SRForeign foreign, Message key, Object... args) {
         String message = localeManager.getMessage(foreign, key.getKey());
 
+        if (message == null) {
+            throw new IllegalStateException("Message " + key.name() + " not found");
+        }
+
         if (message.contains("{prefix}")) {
             if (settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
                 // Extra space in pattern to remove space from start of message
