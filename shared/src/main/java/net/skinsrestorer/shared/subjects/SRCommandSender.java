@@ -29,4 +29,8 @@ public interface SRCommandSender extends SRForeign {
     String getName();
 
     boolean hasPermission(Permission permission);
+
+    default boolean hasPermission(PermissionRegistry registry) {
+        return hasPermission(registry.getPermission());
+    }
 }

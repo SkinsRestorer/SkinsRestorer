@@ -46,11 +46,10 @@ public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
 
     Object createMetricsInstance();
 
-    SRCommandSender convertCommandSender(Object sender);
-
     /**
      * Force an object to stay alive as long as another plugin is loaded.
      * This can be done by registering a listener to the plugin and keeping a reference to the object in the listener.
+     *
      * @param plugin The plugin to keep the object alive.
      * @param object The object to keep alive.
      */

@@ -39,12 +39,12 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBungee implements SkinApplierAccess<ProxiedPlayer> {
     public static final boolean IS_NEW_PROPERTY_CLASS = ReflectionUtil.classExists("net.md_5.bungee.protocol.Property");
+    @Getter
+    private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
     private final SettingsManager settings;
     private final WrapperBungee wrapper;
     private final SRProxyPlugin proxyPlugin;
     private final EventBusImpl eventBus;
-    @Getter
-    private static final SkinApplyBungeeAdapter applyAdapter = selectSkinApplyAdapter();
 
     /*
      * Starting the 1.19 builds of BungeeCord, the Property class has changed.

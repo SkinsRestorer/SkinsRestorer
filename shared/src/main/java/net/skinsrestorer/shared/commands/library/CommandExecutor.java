@@ -12,13 +12,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommandExecutor<T> {
     private final CommandDispatcher<T> dispatcher;
+    private final CommandPlatform<T> platformAdapter;
 
     public void execute(T executor, String input) {
-        try {
-            dispatcher.execute(input, executor);
-        } catch (CommandSyntaxException e) {
-            e.printStackTrace(); // TODO: Handle
-        }
+        platformAdapter.runAsync(() -> {
+            try {
+                dispatcher.execute(input, executor);
+            } catch (CommandSyntaxException e) {
+                e.printStackTrace(); // TODO: Handle
+            }
+        });
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {

@@ -31,6 +31,7 @@ public interface IMapping {
 
     /**
      * Can be found at <a href="https://hub.spigotmc.org/stash/projects/SPIGOT/repos/craftbukkit/browse/src/main/java/org/bukkit/craftbukkit/util/CraftMagicNumbers.java">SpigotMC</a>
+     *
      * @return The supported versions of the mapping
      */
     Set<String> getSupportedVersions();

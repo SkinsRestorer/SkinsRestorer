@@ -53,6 +53,9 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinApplierBukkit implements SkinApplierAccess<Player> {
+    private static final boolean IS_MODERN_AUTH_LIB = ReflectionUtil.classExists("com.mojang.authlib.GameProfile");
+    @Getter
+    private static final SkinApplyBukkitAdapter applyAdapter = selectSkinApplyAdapter();
     private final SRBukkitAdapter adapter;
     private final SRLogger logger;
     private final SettingsManager settings;
@@ -61,9 +64,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     @Getter
     @Setter(value = AccessLevel.PROTECTED)
     private Consumer<Player> refresh;
-    private static final boolean IS_MODERN_AUTH_LIB = ReflectionUtil.classExists("com.mojang.authlib.GameProfile");
-    @Getter
-    private static final SkinApplyBukkitAdapter applyAdapter = selectSkinApplyAdapter();
 
     private static SkinApplyBukkitAdapter selectSkinApplyAdapter() {
         if (IS_MODERN_AUTH_LIB) {

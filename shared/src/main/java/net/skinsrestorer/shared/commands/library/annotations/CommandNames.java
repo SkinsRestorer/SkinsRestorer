@@ -29,8 +29,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
-public @interface Syntax {
-    String value();
+@Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+public @interface CommandNames {
+    /**
+     * The command names that this command can be called by.
+     * The first name is the primary name of the command.
+     * The rest are aliases.
+     * @return The command names that this command can be called by.
+     */
+    String[] value();
 }
-

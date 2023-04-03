@@ -22,39 +22,38 @@ package net.skinsrestorer.shared.acf;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.storage.CallableSetting;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.Permission;
-import net.skinsrestorer.shared.subjects.Permissions;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.utils.FluentMap;
 
 import java.util.Map;
 
 public class CommandReplacements {
-    public static final Map<String, CallableSetting<Permission>> permissions = FluentMap.<String, CallableSetting<Permission>>builder()
-            .put("skin", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN)
-            .put("sr", (s) -> Permissions.SR)
+    public static final Map<String, CallableSetting<PermissionRegistry>> permissions = FluentMap.<String, CallableSetting<PermissionRegistry>>builder()
+            .put("skin", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN)
+            .put("sr", (s) -> PermissionRegistry.SR)
 
-            .put("skins", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKINS)
+            .put("skins", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKINS)
 
-            .put("skinSet", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SET)
-            .put("skinSetOther", (s) -> Permissions.SKIN_SET_OTHER)
+            .put("skinSet", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN_SET)
+            .put("skinSetOther", (s) -> PermissionRegistry.SKIN_SET_OTHER)
 
-            .put("skinSetUrl", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SET_URL)
+            .put("skinSetUrl", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN_SET_URL)
 
-            .put("skinClear", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_CLEAR)
-            .put("skinClearOther", (s) -> Permissions.SKIN_CLEAR_OTHER)
+            .put("skinClear", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN_CLEAR)
+            .put("skinClearOther", (s) -> PermissionRegistry.SKIN_CLEAR_OTHER)
 
-            .put("skinSearch", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_SEARCH)
+            .put("skinSearch", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN_SEARCH)
 
-            .put("skinUpdate", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? Permissions.EMPTY : Permissions.SKIN_UPDATE)
-            .put("skinUpdateOther", (s) -> Permissions.SKIN_UPDATE_OTHER)
+            .put("skinUpdate", (s) -> s.getProperty(CommandConfig.SKIN_WITHOUT_PERM) ? PermissionRegistry.EMPTY : PermissionRegistry.SKIN_UPDATE)
+            .put("skinUpdateOther", (s) -> PermissionRegistry.SKIN_UPDATE_OTHER)
 
-            .put("srReload", (s) -> Permissions.SR_RELOAD)
-            .put("srStatus", (s) -> Permissions.SR_STATUS)
-            .put("srDrop", (s) -> Permissions.SR_DROP)
-            .put("srProps", (s) -> Permissions.SR_PROPS)
-            .put("srApplySkin", (s) -> Permissions.SR_APPLY_SKIN)
-            .put("srCreateCustom", (s) -> Permissions.SR_CREATE_CUSTOM)
-            .put("srDumpsrDump", (s) -> Permissions.SR_DUMP)
+            .put("srReload", (s) -> PermissionRegistry.SR_RELOAD)
+            .put("srStatus", (s) -> PermissionRegistry.SR_STATUS)
+            .put("srDrop", (s) -> PermissionRegistry.SR_DROP)
+            .put("srProps", (s) -> PermissionRegistry.SR_PROPS)
+            .put("srApplySkin", (s) -> PermissionRegistry.SR_APPLY_SKIN)
+            .put("srCreateCustom", (s) -> PermissionRegistry.SR_CREATE_CUSTOM)
+            .put("srDumpsrDump", (s) -> PermissionRegistry.SR_DUMP)
             .build();
 
     public static final Map<String, Message> descriptions = FluentMap.<String, Message>builder()

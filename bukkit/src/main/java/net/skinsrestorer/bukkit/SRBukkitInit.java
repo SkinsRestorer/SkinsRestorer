@@ -63,7 +63,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
         try {
             skinApplierBukkit = injector.getSingleton(SkinApplierBukkit.class);
             if (SRPlugin.isUnitTest()) {
-                skinApplierBukkit.setRefresh(player -> {});
+                skinApplierBukkit.setRefresh(player -> {
+                });
             } else {
                 skinApplierBukkit.setRefresh(skinApplierBukkit.detectRefresh(server));
             }

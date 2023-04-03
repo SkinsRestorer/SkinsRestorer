@@ -24,7 +24,7 @@ import net.skinsrestorer.shared.listeners.event.SRServerConnectedEvent;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.Permissions;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import javax.inject.Inject;
@@ -39,7 +39,7 @@ public final class ConnectListenerAdapter {
             if (plugin.isOutdated()) {
                 SRPlayer player = event.getPlayer();
 
-                if (player.hasPermission(Permissions.SR)) {
+                if (player.hasPermission(PermissionRegistry.SR)) {
                     player.sendMessage(Message.OUTDATED);
                 }
             }

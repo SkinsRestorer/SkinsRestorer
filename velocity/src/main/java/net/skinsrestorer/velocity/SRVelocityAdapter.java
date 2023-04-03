@@ -21,7 +21,6 @@ package net.skinsrestorer.velocity;
 
 import ch.jalu.injector.Injector;
 import com.velocitypowered.api.command.CommandMeta;
-import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.command.RawCommand;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -30,10 +29,8 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
-import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.acf.OnlineSRPlayer;
-import net.skinsrestorer.shared.commands.library.CommandExecutor;
+import net.skinsrestorer.shared.commands.library.PlatformRegistration;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -93,47 +90,6 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     }
 
     @Override
-    public CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        VelocityCommandManager manager = new VelocityCommandManager(proxy, pluginInstance);
-
-        WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
-
-        val playerResolver = manager.getCommandContexts().getResolver(Player.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            Player player = (Player) playerResolver.getContext(c);
-            if (player == null) {
-                return null;
-            }
-            return wrapper.player(player);
-        });
-
-        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSource.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            CommandSource commandSender = (CommandSource) commandSenderResolver.getContext(c);
-            if (commandSender == null) {
-                return null;
-            }
-            return wrapper.commandSender(commandSender);
-        });
-
-        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
-        manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
-            OnlinePlayer onlinePlayer = (OnlinePlayer) onlinePlayerResolver.getContext(c);
-            if (onlinePlayer == null) {
-                return null;
-            }
-            return new OnlineSRPlayer(wrapper.player(onlinePlayer.getPlayer()));
-        });
-
-        return manager;
-    }
-
-    @Override
-    public SRCommandSender convertCommandSender(Object sender) {
-        return injector.getSingleton(WrapperVelocity.class).commandSender((CommandSource) sender);
-    }
-
-    @Override
     public void extendLifeTime(PluginContainer plugin, Object object) {
         proxy.getEventManager().register(plugin, ProxyShutdownEvent.class, PostOrder.LAST, new ForceAliveListener(object));
     }
@@ -163,24 +119,27 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     }
 
     @Override
-    public void registerCommand(String rootNode, String[] aliases, String rootPermission, CommandExecutor<SRCommandSender> executor) {
-        CommandMeta meta = proxy.getCommandManager().metaBuilder(rootNode).plugin(pluginInstance).aliases(aliases).build();
+    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
+        CommandMeta meta = proxy.getCommandManager()
+                .metaBuilder(registration.getRootNode())
+                .plugin(pluginInstance)
+                .aliases(registration.getAliases()).build();
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
 
         proxy.getCommandManager().register(meta, new RawCommand() {
             @Override
             public void execute(Invocation invocation) {
-                executor.execute(wrapper.commandSender(invocation.source()), invocation.arguments());
+                registration.getExecutor().execute(wrapper.commandSender(invocation.source()), invocation.arguments());
             }
 
             @Override
             public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-                return executor.tabComplete(wrapper.commandSender(invocation.source()), invocation.arguments());
+                return registration.getExecutor().tabComplete(wrapper.commandSender(invocation.source()), invocation.arguments());
             }
 
             @Override
             public boolean hasPermission(Invocation invocation) {
-                return invocation.source().hasPermission(rootPermission);
+                return invocation.source().hasPermission(registration.getRootPermission());
             }
         });
     }

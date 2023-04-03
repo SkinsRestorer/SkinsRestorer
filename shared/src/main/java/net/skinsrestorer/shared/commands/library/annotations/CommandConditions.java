@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-public @interface Conditions {
-    String value();
+public @interface CommandConditions {
+    String[] value();
 }

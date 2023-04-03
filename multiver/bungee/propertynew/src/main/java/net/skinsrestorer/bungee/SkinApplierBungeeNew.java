@@ -27,10 +27,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class SkinApplierBungeeNew implements SkinApplyBungeeAdapter {
     @Override

@@ -20,14 +20,9 @@
 package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
-import co.aikar.commands.SpongeCommandManager;
-import co.aikar.commands.sponge.contexts.OnlinePlayer;
 import lombok.Getter;
-import lombok.val;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.acf.OnlineSRPlayer;
-import net.skinsrestorer.shared.commands.library.CommandExecutor;
+import net.skinsrestorer.shared.commands.library.PlatformRegistration;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -40,7 +35,6 @@ import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventListenerRegistration;
@@ -165,47 +159,6 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        SpongeCommandManager manager = new SpongeCommandManager(pluginContainer);
-
-        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
-
-        val playerResolver = manager.getCommandContexts().getResolver(ServerPlayer.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            ServerPlayer player = (ServerPlayer) playerResolver.getContext(c);
-            if (player == null) {
-                return null;
-            }
-            return wrapper.player(player);
-        });
-
-        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandCause.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            CommandCause commandSender = (CommandCause) commandSenderResolver.getContext(c);
-            if (commandSender == null) {
-                return null;
-            }
-            return wrapper.commandSender(commandSender);
-        });
-
-        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
-        manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
-            OnlinePlayer onlinePlayer = (OnlinePlayer) onlinePlayerResolver.getContext(c);
-            if (onlinePlayer == null) {
-                return null;
-            }
-            return new OnlineSRPlayer(wrapper.player(onlinePlayer.getPlayer()));
-        });
-
-        return manager;
-    }
-
-    @Override
-    public SRCommandSender convertCommandSender(Object sender) {
-        return injector.getSingleton(WrapperSponge.class).commandSender((CommandCause) sender);
-    }
-
-    @Override
     public void extendLifeTime(PluginContainer plugin, Object object) {
         game.eventManager().registerListener(EventListenerRegistration
                 .builder(ConstructPluginEvent.class)
@@ -235,7 +188,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public void registerCommand(String rootNode, String[] aliases, String rootPermission, CommandExecutor<SRCommandSender> executor) {
-        game.server().commandManager()
+    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
+        // TODO
     }
 }

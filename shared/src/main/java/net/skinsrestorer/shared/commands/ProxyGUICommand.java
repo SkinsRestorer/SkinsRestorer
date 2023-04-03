@@ -20,23 +20,24 @@
 package net.skinsrestorer.shared.commands;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.commands.library.annotations.CommandAlias;
+import net.skinsrestorer.shared.commands.library.annotations.CommandConditions;
+import net.skinsrestorer.shared.commands.library.annotations.CommandNames;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
-import net.skinsrestorer.shared.commands.library.annotations.Conditions;
 import net.skinsrestorer.shared.commands.library.annotations.Default;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
 
 @SuppressWarnings("unused")
-@CommandAlias("skins")
-@CommandPermission("%skins")
-@Conditions("cooldown|allowed-server")
+@CommandNames("skins")
+@CommandPermission(PermissionRegistry.SKINS)
+@CommandConditions({"cooldown", "allowed-server"})
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ProxyGUICommand {
     private final SRLogger logger;

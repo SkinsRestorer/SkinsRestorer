@@ -20,19 +20,15 @@
 package net.skinsrestorer.bungee;
 
 import ch.jalu.injector.Injector;
-import co.aikar.commands.BungeeCommandManager;
-import co.aikar.commands.CommandManager;
-import co.aikar.commands.bungee.contexts.OnlinePlayer;
 import lombok.Getter;
-import lombok.val;
-import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.bungee.command.SRBungeeCommand;
 import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
-import net.skinsrestorer.shared.acf.OnlineSRPlayer;
+import net.skinsrestorer.shared.commands.library.PlatformRegistration;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -86,47 +82,6 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     }
 
     @Override
-    public CommandManager<?, ?, ?, ?, ?, ?> createCommandManager() {
-        BungeeCommandManager manager = new BungeeCommandManager(pluginInstance);
-
-        WrapperBungee wrapper = injector.getSingleton(WrapperBungee.class);
-
-        val playerResolver = manager.getCommandContexts().getResolver(ProxiedPlayer.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRPlayer.class, c -> {
-            ProxiedPlayer player = (ProxiedPlayer) playerResolver.getContext(c);
-            if (player == null) {
-                return null;
-            }
-            return wrapper.player(player);
-        });
-
-        val commandSenderResolver = manager.getCommandContexts().getResolver(CommandSender.class);
-        manager.getCommandContexts().registerIssuerAwareContext(SRCommandSender.class, c -> {
-            CommandSender commandSenderObject = (CommandSender) commandSenderResolver.getContext(c);
-            if (commandSenderObject == null) {
-                return null;
-            }
-            return wrapper.commandSender(commandSenderObject);
-        });
-
-        val onlinePlayerResolver = manager.getCommandContexts().getResolver(OnlinePlayer.class);
-        manager.getCommandContexts().registerContext(OnlineSRPlayer.class, c -> {
-            OnlinePlayer onlinePlayer = (OnlinePlayer) onlinePlayerResolver.getContext(c);
-            if (onlinePlayer == null) {
-                return null;
-            }
-            return new OnlineSRPlayer(wrapper.player(onlinePlayer.getPlayer()));
-        });
-
-        return manager;
-    }
-
-    @Override
-    public SRCommandSender convertCommandSender(Object sender) {
-        return injector.getSingleton(WrapperBungee.class).commandSender((CommandSender) sender);
-    }
-
-    @Override
     public void extendLifeTime(Plugin plugin, Object object) {
         proxy.getPluginManager().registerListener(plugin, new ForceAliveListener(object));
     }
@@ -150,5 +105,11 @@ public class SRBungeeAdapter implements SRProxyAdapter<Plugin> {
     @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
         return Optional.ofNullable(proxy.getPlayer(name)).map(p -> injector.getSingleton(WrapperBungee.class).player(p));
+    }
+
+    @Override
+    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
+        proxy.getPluginManager().registerCommand(pluginInstance,
+                new SRBungeeCommand(registration, injector.getSingleton(WrapperBungee.class)));
     }
 }

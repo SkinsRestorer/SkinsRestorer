@@ -22,8 +22,6 @@ package net.skinsrestorer.shared.plugin;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.injector.Injector;
-import co.aikar.commands.CommandManager;
-import co.aikar.commands.ConditionFailedException;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorer;
@@ -42,6 +40,7 @@ import net.skinsrestorer.shared.commands.ProxyGUICommand;
 import net.skinsrestorer.shared.commands.SRCommand;
 import net.skinsrestorer.shared.commands.ServerGUICommand;
 import net.skinsrestorer.shared.commands.SkinCommand;
+import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
@@ -84,7 +83,7 @@ public class SRPlugin {
     private final Injector injector;
     @Getter
     private final ServerInfo serverInfo;
-    private CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private final CommandManager<SRCommandSender> manager;
     @Getter
     private boolean outdated = false;
     @Getter
@@ -94,6 +93,7 @@ public class SRPlugin {
         injector.register(SRPlugin.class, this);
         injector.register(MetricsCounter.class, new MetricsCounter());
         injector.register(CooldownStorage.class, new CooldownStorage());
+        injector.register(CommandManager.class, manager);
 
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
@@ -102,11 +102,11 @@ public class SRPlugin {
         this.version = version;
         this.dataFolder = dataFolder;
         this.serverInfo = ServerInfo.determineEnvironment(platform);
+        this.manager = new CommandManager<>(adapter);
     }
 
-    public void initCommands() {
-        this.manager = adapter.createCommandManager();
-        injector.register(CommandManager.class, manager);
+    public <T extends SRCommandSender> void initCommands() {
+
 
         registerConditions();
 
@@ -131,22 +131,23 @@ public class SRPlugin {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
 
-        manager.getCommandConditions().addCondition("allowed-server", context -> {
-            SRCommandSender sender = adapter.convertCommandSender(context.getIssuer().getIssuer());
+        manager.registerCondition("allowed-server", sender -> {
             if (!(sender instanceof SRProxyPlayer)) {
-                return;
+                return true;
             }
 
             if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ENABLED)) {
-                return;
+                return true;
             }
 
             Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
             if (!optional.isPresent()) {
                 if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
-                    throw new ConditionFailedException("You are not on a server!");
+                    sender.sendMessage("You are not connected to any server."); // TODO: Use locale
+                    return false;
                 }
-                return;
+
+                return true;
             }
 
             String server = optional.get();
@@ -154,27 +155,24 @@ public class SRPlugin {
             boolean shouldBlock = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
 
             if (shouldBlock) {
-                throw new ConditionFailedException("You are not allowed to use this command on this server!");
+                sender.sendMessage("You are not allowed to use this command on this server."); // TODO: Use locale
+                return false;
             }
+
+            return true;
         });
 
-        manager.getCommandConditions().addCondition("cooldown", context -> {
-            SRCommandSender sender = adapter.convertCommandSender(context.getIssuer().getIssuer());
+        manager.registerCondition("cooldown", sender -> {
             if (sender instanceof SRPlayer) {
                 UUID senderUUID = ((SRPlayer) sender).getUniqueId();
-                if (!sender.hasPermission(Permissions.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
+                if (!sender.hasPermission(PermissionRegistry.BYPASS_COOLDOWN) && cooldownStorage.hasCooldown(senderUUID)) {
                     sender.sendMessage(Message.SKIN_COOLDOWN, cooldownStorage.getCooldownSeconds(senderUUID));
-                    throw new ConditionFailedException();
+
+                    return false;
                 }
             }
-        });
 
-        manager.getCommandConditions().addCondition("console-only", context -> {
-            if (context.getIssuer().isPlayer()) {
-                SRCommandSender sender = adapter.convertCommandSender(context.getIssuer().getIssuer());
-                sender.sendMessage(Message.ONLY_ALLOWED_ON_CONSOLE);
-                throw new ConditionFailedException();
-            }
+            return true;
         });
     }
 
@@ -281,16 +279,11 @@ public class SRPlugin {
         }
     }
 
-    @SuppressWarnings({"deprecation"})
     public void prepareACF() {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
 
-        // optional: enable unstable api to use help
-        manager.enableUnstableAPI("help");
-        manager.allowInvalidName(true);
-
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings).getPermission()));
+        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings).getPermissionString()));
         CommandReplacements.descriptions.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
         CommandReplacements.syntax.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
         CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->

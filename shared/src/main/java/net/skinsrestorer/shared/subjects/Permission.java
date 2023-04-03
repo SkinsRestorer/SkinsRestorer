@@ -28,13 +28,13 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 public class Permission {
     @Getter
-    private final String permission;
+    private final String permissionString;
 
     public boolean isEmpty() {
-        return permission == null || permission.isEmpty();
+        return permissionString == null || permissionString.isEmpty();
     }
 
     public boolean checkPermission(Predicate<String> predicate) {
-        return isEmpty() || predicate.test(permission);
+        return isEmpty() || predicate.test(permissionString);
     }
 }

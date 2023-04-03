@@ -29,6 +29,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
+import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.CommandConfig;
 import net.skinsrestorer.shared.log.SRLogLevel;
@@ -38,7 +39,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.subjects.Permissions;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.C;
@@ -51,9 +52,9 @@ import java.util.concurrent.TimeUnit;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
-@CommandAlias("skin")
+@CommandNames("skin")
 @CommandPermission("%skin")
-@Conditions("allowed-server")
+@CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand {
     private final SRPlatformAdapter<?> adapter;
@@ -65,37 +66,25 @@ public final class SkinCommand {
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
     private final MineSkinAPI mineSkinAPI;
-    private final CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private final CommandManager<SRCommandSender> manager;
 
-    @SuppressWarnings("deprecation")
     @Default
     private void onDefault(SRCommandSender sender) {
-        onHelp(sender, getCurrentCommandManager().generateCommandHelp());
+        onHelp(sender);
     }
 
     @Default
     @CommandPermission("%skinSet")
     @Description("%helpSkinSet")
-    @Syntax("%SyntaxDefaultCommand")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinSetShort(SRPlayer player, String skin) {
         onSkinSetOther(player, new OnlineSRPlayer(player), skin, null);
-    }
-
-    @HelpCommand
-    @Syntax("%helpHelpCommand")
-    private void onHelp(SRCommandSender sender, CommandHelp help) {
-        if (settings.getProperty(CommandConfig.ENABLE_CUSTOM_HELP)) {
-            sendHelp(sender);
-        } else {
-            help.showHelp();
-        }
     }
 
     @Subcommand("clear")
     @CommandPermission("%skinClear")
     @Description("%helpSkinClear")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinClear(SRPlayer player) {
         onSkinClearOther(player, new OnlineSRPlayer(player));
     }
@@ -103,9 +92,8 @@ public final class SkinCommand {
     @Subcommand("clear")
     @CommandPermission("%skinClearOther")
     @CommandCompletion("@players")
-    @Syntax("%SyntaxSkinClearOther")
-    @Description("%helpSkinClearOther")
-    @Conditions("cooldown")
+    @Description(Message.HELP_SKIN_CLEAR_OTHER)
+    @CommandConditions("cooldown")
     private void onSkinClearOther(SRCommandSender sender, OnlineSRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
@@ -133,8 +121,7 @@ public final class SkinCommand {
     @Subcommand("search")
     @CommandPermission("%skinSearch")
     @Description("%helpSkinSearch")
-    @Syntax("%SyntaxSkinSearch")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinSearch(SRCommandSender sender, String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
@@ -142,17 +129,15 @@ public final class SkinCommand {
     @Subcommand("update")
     @CommandPermission("%skinUpdate")
     @Description("%helpSkinUpdate")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinUpdate(SRPlayer player) {
         onSkinUpdateOther(player, new OnlineSRPlayer(player));
     }
 
     @Subcommand("update")
     @CommandPermission("%skinUpdateOther")
-    @CommandCompletion("@players")
     @Description("%helpSkinUpdateOther")
-    @Syntax("%SyntaxSkinUpdateOther")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinUpdateOther(SRCommandSender sender, OnlineSRPlayer target) {
         SRPlayer targetPlayer = target.getPlayer();
 
@@ -194,8 +179,7 @@ public final class SkinCommand {
     @CommandPermission("%skinSet")
     @CommandCompletion("@skin")
     @Description("%helpSkinSet")
-    @Syntax("%SyntaxSkinSet")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinSet(SRPlayer player, String[] skin) {
         if (skin.length == 0) {
             throw new InvalidCommandArgument(true);
@@ -208,13 +192,12 @@ public final class SkinCommand {
     @CommandPermission("%skinSetOther")
     @CommandCompletion("@players @skin")
     @Description("%helpSkinSetOther")
-    @Syntax("%SyntaxSkinSetOther")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinSetOther(SRCommandSender sender, OnlineSRPlayer target, String skin, SkinVariant skinVariant) {
         SRPlayer targetPlayer = target.getPlayer();
         adapter.runAsync(() -> {
-            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(Permissions.forSkin(skin))) {
-                if (!sender.hasPermission(Permissions.OWN_SKIN) && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
+            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skin))) {
+                if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
                     sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                     return;
                 }
@@ -230,8 +213,7 @@ public final class SkinCommand {
     @CommandPermission("%skinSetUrl")
     @CommandCompletion("@skinUrl")
     @Description("%helpSkinSetUrl")
-    @Syntax("%SyntaxSkinUrl")
-    @Conditions("cooldown")
+    @CommandConditions("cooldown")
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {
             player.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -241,12 +223,11 @@ public final class SkinCommand {
         onSkinSetOther(player, new OnlineSRPlayer(player), url, skinVariant);
     }
 
-    @Subcommand("menu|gui")
+    @Subcommand({"menu", "gui"})
     @CommandPermission("%skins")
     @Private
     private void onGUIShortcut(SRPlayer player) {
-        manager.getRootCommand("skins").execute(
-                manager.getCommandIssuer(player.getAs(Object.class)), "skins", new String[]{});
+        manager.getExecutor().execute(player, "skins"); // TODO: register on demand
     }
 
     private void sendHelp(SRCommandSender sender) {
@@ -270,7 +251,7 @@ public final class SkinCommand {
             return false;
         }
 
-        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission(Permissions.BYPASS_DISABLED)
+        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)
                 && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
@@ -279,7 +260,7 @@ public final class SkinCommand {
         String playerName = player.getName();
         String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skinName)) {
-            if (!sender.hasPermission(Permissions.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
+            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
                     && !settings.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;

@@ -57,9 +57,9 @@ import java.util.Optional;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
-@CommandAlias("sr|skinsrestorer")
+@CommandNames({"sr", "skinsrestorer"})
 @CommandPermission("%sr")
-@Conditions("allowed-server")
+@CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
     private final SRPlugin plugin;
@@ -75,8 +75,6 @@ public final class SRCommand {
     private final SkinApplier<Object> skinApplier;
     private final Injector injector;
 
-    @HelpCommand
-    @Syntax("%helpHelpCommand")
     private void onHelp(SRCommandSender sender, CommandHelp help) {
         help.showHelp();
     }
@@ -143,11 +141,10 @@ public final class SRCommand {
         });
     }
 
-    @Subcommand("drop|remove")
+    @Subcommand({"drop", "remove"})
     @CommandPermission("%srDrop")
     @CommandCompletion("PLAYER|SKIN @players @players @players")
     @Description("%helpSrDrop")
-    @Syntax(" <player|skin> <target> [target2]")
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         adapter.runAsync(() -> {
             switch (playerOrSkin) {
@@ -167,7 +164,6 @@ public final class SRCommand {
     @CommandPermission("%srProps")
     @CommandCompletion("@players")
     @Description("%helpSrProps")
-    @Syntax(" <target>")
     private void onProps(SRCommandSender sender, SRPlayer target) {
         adapter.runAsync(() -> {
             try {
@@ -204,7 +200,6 @@ public final class SRCommand {
     @CommandPermission("%srApplySkin")
     @CommandCompletion("@players")
     @Description("%helpSrApplySkin")
-    @Syntax(" <target>")
     private void onApplySkin(SRCommandSender sender, SRPlayer target) {
         adapter.runAsync(() -> {
             try {
@@ -220,7 +215,6 @@ public final class SRCommand {
     @CommandPermission("%srCreateCustom")
     @CommandCompletion("@skinName @skinUrl")
     @Description("%helpSrCreateCustom")
-    @Syntax(" <skinName> <skinUrl> [classic/slim]")
     private void onCreateCustom(SRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
         adapter.runAsync(() -> {
             try {
@@ -239,8 +233,7 @@ public final class SRCommand {
     @Subcommand("setskinall")
     @CommandCompletion("@Skin")
     @Description("Set the skin to every player")
-    @Syntax(" <Skin / Url> [classic/slim]")
-    @Conditions("console-only")
+    @CommandConditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
         adapter.runAsync(() -> {
             String appliedSkinName = " ·setSkinAll";
@@ -272,7 +265,7 @@ public final class SRCommand {
 
     @Subcommand("applyskinall")
     @Description("Re-apply the skin for every player")
-    @Conditions("console-only")
+    @CommandConditions("console-only")
     private void onApplySkinAll(SRCommandSender sender) {
         adapter.runAsync(() -> {
             for (SRPlayer player : adapter.getOnlinePlayers()) {
@@ -288,8 +281,7 @@ public final class SRCommand {
 
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
-    @Syntax(" <targetdaysold>")
-    @Conditions("console-only")
+    @CommandConditions("console-only")
     private void onPurgeOldData(SRCommandSender sender, int days) {
         adapter.runAsync(() -> {
             if (skinStorage.purgeOldSkins(days)) {

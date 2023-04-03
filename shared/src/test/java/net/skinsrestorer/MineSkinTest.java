@@ -38,12 +38,11 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class MineSkinTest {
+    private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
     @Mock
     private SettingsManager settingsManager;
     @Mock
     private SkinsRestorerLocale skinsRestorerLocale;
-
-    private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
 
     @Test
     public void testServices(Injector injector) throws DataRequestException {

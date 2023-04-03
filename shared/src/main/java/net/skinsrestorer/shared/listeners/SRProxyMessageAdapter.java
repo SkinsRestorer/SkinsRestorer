@@ -19,12 +19,13 @@
  */
 package net.skinsrestorer.shared.listeners;
 
-import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ import java.util.Optional;
 public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
     private final SRProxyAdapter<?> plugin;
-    private final CommandManager<?, ?, ?, ?, ?, ?> manager;
+    private final CommandManager<SRCommandSender> manager;
     private final SRProxyPlugin proxyPlugin;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -70,13 +71,11 @@ public final class SRProxyMessageAdapter {
                     proxyPlugin.sendPage(page, player, skinStorage);
                     break;
                 case "clearSkin":
-                    manager.getRootCommand("skin").execute(
-                            manager.getCommandIssuer(player.getAs(Object.class)), "skin", new String[]{"clear"});
+                    manager.getExecutor().execute(player, "skin clear");
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
-                    manager.getRootCommand("skin").execute(
-                            manager.getCommandIssuer(player.getAs(Object.class)), "skin", new String[]{"set", skin});
+                    manager.getExecutor().execute(player, "skin set " + skin);
                     break;
                 default:
                     break;
