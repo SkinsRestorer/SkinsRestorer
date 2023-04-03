@@ -25,7 +25,7 @@ public class CommandUtils {
         for (String arg : args) {
             builder.append(" ").append(arg);
         }
-        return builder.toString().trim();
+        return builder.toString();
     }
 
     public static String sanitizeLabel(String input) {

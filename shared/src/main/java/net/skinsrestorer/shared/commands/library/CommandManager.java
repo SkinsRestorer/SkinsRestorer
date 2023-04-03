@@ -145,14 +145,14 @@ public class CommandManager<T extends SRCommandSender> {
             if (names.isPresent()) {
                 validateMethod(method);
 
-                String[] subcommandNames = names.get().value();
+                Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
 
-                for (String subCommandName : subcommandNames) {
+                for (String subCommandName : names.get().value()) {
                     LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(subCommandName);
 
-                    Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-
                     registerParameters(childNode, commandConditions, command, method);
+
+                    node.then(childNode);
                 }
             }
         }
