@@ -108,6 +108,8 @@ public class CommandManager<T extends SRCommandSender> {
         PermissionRegistry rootPermission = getAnnotation(CommandPermission.class, command.getClass())
                 .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
 
+        Optional<PublicVisibility> publicVisibility = getAnnotation(PublicVisibility.class, command.getClass());
+
         LiteralArgumentBuilder<T> rootNode = LiteralArgumentBuilder.literal(rootName);
 
         rootNode.requires(requirePermission(rootPermission));
@@ -125,7 +127,8 @@ public class CommandManager<T extends SRCommandSender> {
             dispatcher.register(LiteralArgumentBuilder.<T>literal(alias).redirect(rootCommandNode));
         }
 
-        platform.registerCommand(new PlatformRegistration<>(rootName, aliases, rootPermission.getPermission().getPermissionString(), executor));
+        platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
+                publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), executor));
     }
 
     private void addMethodCommands(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Class<?> commandClass) {

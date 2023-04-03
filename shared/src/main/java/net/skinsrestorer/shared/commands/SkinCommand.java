@@ -51,8 +51,9 @@ import java.util.concurrent.TimeUnit;
 import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
+@PublicVisibility
 @CommandNames("skin")
-@CommandPermission(PermissionRegistry.SKIN)
+@CommandPermission(value = PermissionRegistry.SKIN)
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand {

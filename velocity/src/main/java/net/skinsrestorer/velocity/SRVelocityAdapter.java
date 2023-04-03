@@ -142,6 +142,10 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
 
             @Override
             public boolean hasPermission(Invocation invocation) {
+                if (registration.getRootPermission() == null) {
+                    return true;
+                }
+
                 return invocation.source().hasPermission(registration.getRootPermission());
             }
         });

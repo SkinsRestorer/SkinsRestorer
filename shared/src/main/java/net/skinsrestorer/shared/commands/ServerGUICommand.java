@@ -20,30 +20,22 @@
 package net.skinsrestorer.shared.commands;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.commands.library.annotations.CommandConditions;
-import net.skinsrestorer.shared.commands.library.annotations.CommandNames;
-import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
-import net.skinsrestorer.shared.commands.library.annotations.RootCommand;
-import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import javax.inject.Inject;
 
 @SuppressWarnings({"unused"})
+@PublicVisibility
 @CommandNames("skins")
-@CommandPermission(PermissionRegistry.SKINS)
+@CommandPermission(value = PermissionRegistry.SKINS)
 @CommandConditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServerGUICommand {
     private final SRServerAdapter<?> plugin;
-    private final SkinsRestorerLocale locale;
-    private final SRLogger logger;
-    private final SkinStorageImpl skinStorage;
 
     @RootCommand
     private void onDefault(SRPlayer srPlayer) {
