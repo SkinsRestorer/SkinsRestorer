@@ -79,11 +79,11 @@ public final class SRCommand {
     private final CommandManager<SRCommandSender> commandManager;
 
     @RootCommand
-    private void onHelp(SRCommandSender sender) {
+    private void onDefault(SRCommandSender sender) {
+        System.out.println(commandManager.dispatcher.getRoot());
         for (String line : commandManager.getHelp("sr", sender)) {
             sender.sendMessage(line);
         }
-
     }
 
     @Subcommand("reload")
@@ -200,7 +200,7 @@ public final class SRCommand {
     private void onApplySkin(SRCommandSender sender, SRPlayer target) {
         try {
             skinApplier.applySkin(target.getAs(Object.class));
-            sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
+            sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN);
         } catch (Exception ignored) {
             sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
         }
@@ -246,6 +246,7 @@ public final class SRCommand {
                 skinStorage.setSkinNameOfPlayer(player.getName(), appliedSkinName); // Set player to "whitespaced" name then reload skin
                 skinApplier.applySkin(player.getAs(Object.class), skinProps.get());
             }
+
             sender.sendMessage("§aSuccessfully set skin of all online players to " + appliedSkinName);
         } catch (DataRequestException e) {
             sender.sendMessage(getRootCause(e).getMessage());

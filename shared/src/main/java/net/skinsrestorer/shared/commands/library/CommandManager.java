@@ -34,6 +34,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +57,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommandManager<T extends SRCommandSender> {
     private final Map<String, Predicate<T>> conditions = new HashMap<>();
-    private final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
+    public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final CommandPlatform<T> platform;
     @Getter
     private final CommandExecutor<T> executor;
@@ -140,12 +141,26 @@ public class CommandManager<T extends SRCommandSender> {
                 if (def.isPresent()) {
                     registerParameters(node, commandConditions, command, method);
                 } else {
-                    for (String subCommandName : names.get().value()) {
-                        LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(subCommandName);
+                    String[] namesArray = names.get().value();
+                    if (namesArray.length == 0) {
+                        throw new IllegalStateException("Subcommand annotation must have at least one name");
+                    }
 
-                        registerParameters(childNode, commandConditions, command, method);
+                    String name = namesArray[0];
+                    String[] aliases = Arrays.copyOfRange(namesArray, 1, namesArray.length);
 
-                        node.then(childNode);
+                    System.out.println("Registering command " + name + " with aliases " + Arrays.toString(aliases));
+
+                    LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
+                    registerParameters(childNode, commandConditions, command, method);
+
+                    CommandNode<T> registeredNode = childNode.build();
+                    node.then(registeredNode);
+
+                    for (String alias : aliases) {
+                        LiteralArgumentBuilder<T> aliasNode = LiteralArgumentBuilder.literal(alias);
+                        aliasNode.redirect(registeredNode);
+                        node.then(aliasNode);
                     }
                 }
             }
@@ -163,7 +178,7 @@ public class CommandManager<T extends SRCommandSender> {
             }
 
             ArgumentType<?> argumentType;
-            // Implementing support for other types is easy, just add a new if statement
+            // Implementing support for other types is easy, just add a new if-statement
             if (parameter.getType() == String.class) {
                 argumentType = StringArgumentType.word();
             } else if (parameter.getType() == int.class) {
@@ -258,17 +273,18 @@ public class CommandManager<T extends SRCommandSender> {
 
         nodes.get(nodes.size() - 1).executes(requireConditions(context -> {
             try {
-                List<Object> args = new ArrayList<>();
-                args.add(context.getSource());
                 int i1 = 0;
+                Object[] parameters = new Object[method.getParameterCount()];
                 for (Parameter parameter : method.getParameters()) {
                     if (i1 == 0) {
+                        parameters[i1] = context.getSource();
                         i1++;
                         continue;
                     }
-                    args.add(context.getArgument(parameter.getName(), parameter.getType()));
+                    parameters[i1] = context.getArgument(parameter.getName(), parameter.getType());
+                    i1++;
                 }
-                method.invoke(command, args.toArray());
+                method.invoke(command, parameters);
                 return Command.SINGLE_SUCCESS;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -276,12 +292,10 @@ public class CommandManager<T extends SRCommandSender> {
             }
         }, conditionTrail));
 
-        if (nodes.size() == 1) {
-            return;
-        }
-
-        for (int j = 0; j < nodes.size() - 1; j++) {
-            nodes.get(j).then(nodes.get(j + 1));
+        if (nodes.size() > 1) {
+            for (int j = 0; j < nodes.size() - 1; j++) {
+                nodes.get(j).then(nodes.get(j + 1));
+            }
         }
     }
 
@@ -351,6 +365,6 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     public String[] getHelp(String command, T source) {
-        return dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, true);
+        return dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, false);
     }
 }

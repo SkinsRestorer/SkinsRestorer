@@ -45,13 +45,8 @@ public class SkinsRestorerLocale {
             throw new IllegalStateException("Message " + key.name() + " not found");
         }
 
-        if (message.contains("{prefix}")) {
-            if (settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-                // Extra space in pattern to remove space from start of message
-                message = message.replace("{prefix} ", "");
-            } else {
-                message = message.replace("{prefix}", localeManager.getMessage(foreign, Message.PREFIX.getKey()));
-            }
+        if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
+            message = getMessage(foreign, Message.PREFIX_FORMAT, message);
         }
 
         return new MessageFormat(C.c(message)).format(args);

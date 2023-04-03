@@ -16,9 +16,7 @@ dependencies {
     implementation("com.github.aikar:locales:5f204c3afb")
     implementation("org.bstats:bstats-base:3.0.2")
 
-    implementation("com.mojang:brigadier:1.1.8") {
-        isTransitive = false
-    }
+    implementation("com.mojang:brigadier:1.1.8")
 }
 
 tasks.getByName<Test>("test") {

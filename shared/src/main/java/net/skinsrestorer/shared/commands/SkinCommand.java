@@ -65,11 +65,13 @@ public final class SkinCommand {
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
     private final MineSkinAPI mineSkinAPI;
-    private final CommandManager<SRCommandSender> manager;
+    private final CommandManager<SRCommandSender> commandManager;
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
-        // TODO: HELP
+        for (String line : commandManager.getHelp("skin", sender)) {
+            sender.sendMessage(line);
+        }
     }
 
     @RootCommand
@@ -207,7 +209,7 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKINS)
     @Private
     private void onGUIShortcut(SRPlayer player) {
-        manager.getExecutor().execute(player, "skins"); // TODO: register on demand
+        commandManager.getExecutor().execute(player, "skins");
     }
 
     private void sendHelp(SRCommandSender sender) {
@@ -266,7 +268,7 @@ public final class SkinCommand {
                 skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX))) {
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX_FORMAT))) {
                     player.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
                 }
 
@@ -290,7 +292,7 @@ public final class SkinCommand {
                 skinApplier.applySkin(player.getAs(Object.class), skinName);
 
                 String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX))) {
+                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX_FORMAT))) {
                     player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName); // TODO: should this not be sender? -> hidden skin set?
                 }
 
