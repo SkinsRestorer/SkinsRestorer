@@ -47,10 +47,8 @@ public class ServerGUICommand {
 
     @Default
     private void onDefault(SRPlayer srPlayer) {
-        plugin.runAsync(() -> {
-            srPlayer.sendMessage(Message.SKINSMENU_OPEN);
+        srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 
-            plugin.openServerGUI(srPlayer, 0);
-        });
+        plugin.openServerGUI(srPlayer, 0);
     }
 }

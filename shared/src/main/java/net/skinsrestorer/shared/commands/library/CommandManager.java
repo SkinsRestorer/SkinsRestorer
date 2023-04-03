@@ -63,7 +63,8 @@ public class CommandManager<T extends SRCommandSender> {
             aliases = Arrays.copyOfRange(names.value(), 1, names.value().length);
         }
 
-        String rootPermission = getAnnotation(CommandPermission.class, command.getClass()).map(CommandPermission::value).orElse(null);
+        PermissionRegistry rootPermission = getAnnotation(CommandPermission.class, command.getClass())
+                .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
 
         LiteralArgumentBuilder<T> rootNode = LiteralArgumentBuilder.literal(rootName);
 
@@ -82,7 +83,7 @@ public class CommandManager<T extends SRCommandSender> {
             dispatcher.register(LiteralArgumentBuilder.<T>literal(alias).redirect(rootCommandNode));
         }
 
-        platform.registerCommand(new PlatformRegistration<>(rootName, aliases, rootPermission, executor));
+        platform.registerCommand(new PlatformRegistration<>(rootName, aliases, rootPermission.getPermission().getPermissionString(), executor));
     }
 
     private void addMethodCommands(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Class<?> commandClass) {
@@ -102,10 +103,6 @@ public class CommandManager<T extends SRCommandSender> {
                 }
 
                 Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-                if (method.getParameterTypes()[0] == SRPlayer.class) {
-                    commandConditions.add("player-only");
-                }
-
                 node.executes(requireConditions(source -> {
                     try {
                         method.invoke(command, source);

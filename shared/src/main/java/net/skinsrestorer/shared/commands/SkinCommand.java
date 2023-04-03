@@ -27,7 +27,6 @@ import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.acf.OnlineSRPlayer;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
@@ -53,7 +52,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
 @CommandNames("skin")
-@CommandPermission("%skin")
+@CommandPermission(PermissionRegistry.SKIN)
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SkinCommand {
@@ -70,149 +69,130 @@ public final class SkinCommand {
 
     @Default
     private void onDefault(SRCommandSender sender) {
-        onHelp(sender);
+        // TODO: HELP
     }
 
     @Default
-    @CommandPermission("%skinSet")
-    @Description("%helpSkinSet")
+    @CommandPermission(PermissionRegistry.SKIN_SET)
+    @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
     private void onSkinSetShort(SRPlayer player, String skin) {
-        onSkinSetOther(player, new OnlineSRPlayer(player), skin, null);
+        onSkinSetOther(player, player, skin, null);
     }
 
     @Subcommand("clear")
-    @CommandPermission("%skinClear")
-    @Description("%helpSkinClear")
+    @CommandPermission(PermissionRegistry.SKIN_CLEAR)
+    @Description(Message.HELP_SKIN_CLEAR)
     @CommandConditions("cooldown")
     private void onSkinClear(SRPlayer player) {
-        onSkinClearOther(player, new OnlineSRPlayer(player));
+        onSkinClearOther(player, player);
     }
 
     @Subcommand("clear")
-    @CommandPermission("%skinClearOther")
-    @CommandCompletion("@players")
+    @CommandPermission(PermissionRegistry.SKIN_CLEAR_OTHER)
     @Description(Message.HELP_SKIN_CLEAR_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinClearOther(SRCommandSender sender, OnlineSRPlayer target) {
-        SRPlayer targetPlayer = target.getPlayer();
+    private void onSkinClearOther(SRCommandSender sender, SRPlayer target) {
+        String playerName = target.getName();
 
-        adapter.runAsync(() -> {
-            String playerName = targetPlayer.getName();
+        // remove users defined skin from database
+        skinStorage.removeSkinNameOfPlayer(playerName);
 
-            // remove users defined skin from database
-            skinStorage.removeSkinNameOfPlayer(playerName);
+        try {
+            Optional<SkinProperty> property = skinStorage.getDefaultSkinForPlayer(playerName);
+            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SkinProperty.of("", "")));
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
+        }
 
-            try {
-                Optional<SkinProperty> property = skinStorage.getDefaultSkinForPlayer(playerName);
-                skinApplier.applySkin(targetPlayer.getAs(Object.class), property.orElse(SkinProperty.of("", "")));
-            } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
-            }
-
-            if (sender.getName().equals(targetPlayer.getName())) {
-                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
-            } else {
-                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, playerName);
-            }
-        });
+        if (sender.getName().equals(target.getName())) {
+            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
+        } else {
+            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, playerName);
+        }
     }
 
     @Subcommand("search")
-    @CommandPermission("%skinSearch")
-    @Description("%helpSkinSearch")
+    @CommandPermission(PermissionRegistry.SKIN_SEARCH)
+    @Description(Message.HELP_SKIN_SEARCH)
     @CommandConditions("cooldown")
     private void onSkinSearch(SRCommandSender sender, String searchString) {
         sender.sendMessage(Message.SKIN_SEARCH_MESSAGE, searchString);
     }
 
     @Subcommand("update")
-    @CommandPermission("%skinUpdate")
-    @Description("%helpSkinUpdate")
+    @CommandPermission(PermissionRegistry.SKIN_UPDATE)
+    @Description(Message.HELP_SKIN_UPDATE)
     @CommandConditions("cooldown")
     private void onSkinUpdate(SRPlayer player) {
-        onSkinUpdateOther(player, new OnlineSRPlayer(player));
+        onSkinUpdateOther(player, player);
     }
 
     @Subcommand("update")
-    @CommandPermission("%skinUpdateOther")
-    @Description("%helpSkinUpdateOther")
+    @CommandPermission(PermissionRegistry.SKIN_UPDATE_OTHER)
+    @Description(Message.HELP_SKIN_UPDATE_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinUpdateOther(SRCommandSender sender, OnlineSRPlayer target) {
-        SRPlayer targetPlayer = target.getPlayer();
+    private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
+        String playerName = target.getName();
+        Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
 
-        adapter.runAsync(() -> {
-            String playerName = targetPlayer.getName();
-            Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
-
-            try {
-                if (skin.isPresent()) {
-                    // Filter skinUrl
-                    if (skin.get().startsWith(" ")) {
-                        sender.sendMessage(Message.ERROR_UPDATING_URL);
-                        return;
-                    }
-
-                    if (!skinStorage.updateSkinData(skin.get())) {
-                        sender.sendMessage(Message.ERROR_UPDATING_SKIN);
-                        return;
-                    }
-                } else {
-                    // get DefaultSkin
-                    skin = skinStorage.getDefaultSkinNameForPlayer(playerName);
-                }
-            } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
-                return;
-            }
-
-            if (setSkin(sender, targetPlayer, skin.orElse(playerName), false, null)) {
-                if (sender.getName().equals(targetPlayer.getName()))
-                    sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
-                else
-                    sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, playerName);
-            }
-        });
-    }
-
-    @Subcommand("set")
-    @CommandPermission("%skinSet")
-    @CommandCompletion("@skin")
-    @Description("%helpSkinSet")
-    @CommandConditions("cooldown")
-    private void onSkinSet(SRPlayer player, String[] skin) {
-        if (skin.length == 0) {
-            throw new InvalidCommandArgument(true);
-        }
-
-        onSkinSetOther(player, new OnlineSRPlayer(player), skin[0], null);
-    }
-
-    @Subcommand("set")
-    @CommandPermission("%skinSetOther")
-    @CommandCompletion("@players @skin")
-    @Description("%helpSkinSetOther")
-    @CommandConditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, OnlineSRPlayer target, String skin, SkinVariant skinVariant) {
-        SRPlayer targetPlayer = target.getPlayer();
-        adapter.runAsync(() -> {
-            if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skin))) {
-                if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, targetPlayer) || !skin.equalsIgnoreCase(sender.getName()))) {
-                    sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+        try {
+            if (skin.isPresent()) {
+                // Filter skinUrl
+                if (skin.get().startsWith(" ")) {
+                    sender.sendMessage(Message.ERROR_UPDATING_URL);
                     return;
                 }
-            }
 
-            if (setSkin(sender, targetPlayer, skin, true, skinVariant) && !playerEqual(sender, targetPlayer)) {
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, targetPlayer.getName());
+                if (!skinStorage.updateSkinData(skin.get())) {
+                    sender.sendMessage(Message.ERROR_UPDATING_SKIN);
+                    return;
+                }
+            } else {
+                // get DefaultSkin
+                skin = skinStorage.getDefaultSkinNameForPlayer(playerName);
             }
-        });
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
+            return;
+        }
+
+        if (setSkin(sender, target, skin.orElse(playerName), false, null)) {
+            if (sender.getName().equals(target.getName()))
+                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
+            else
+                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, playerName);
+        }
+    }
+
+    @Subcommand("set")
+    @CommandPermission(PermissionRegistry.SKIN_SET)
+    @Description(Message.HELP_SKIN_SET)
+    @CommandConditions("cooldown")
+    private void onSkinSet(SRPlayer player, String skin) {
+        onSkinSetOther(player, player, skin, null);
+    }
+
+    @Subcommand("set")
+    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
+    @Description(Message.HELP_SKIN_SET_OTHER)
+    @CommandConditions("cooldown")
+    private void onSkinSetOther(SRCommandSender sender, SRPlayer target, String skin, SkinVariant skinVariant) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skin))) {
+            if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, target) || !skin.equalsIgnoreCase(sender.getName()))) {
+                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+                return;
+            }
+        }
+
+        if (setSkin(sender, target, skin, true, skinVariant) && !playerEqual(sender, target)) {
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
+        }
     }
 
     @Subcommand("url")
-    @CommandPermission("%skinSetUrl")
-    @CommandCompletion("@skinUrl")
-    @Description("%helpSkinSetUrl")
+    @CommandPermission(PermissionRegistry.SKIN_SET_URL)
+    @Description(Message.HELP_SKIN_SET_OTHER_URL) // TODO: rename to HELP_SKIN_SET_URL
     @CommandConditions("cooldown")
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {
@@ -220,11 +200,11 @@ public final class SkinCommand {
             return;
         }
 
-        onSkinSetOther(player, new OnlineSRPlayer(player), url, skinVariant);
+        onSkinSetOther(player, player, url, skinVariant);
     }
 
     @Subcommand({"menu", "gui"})
-    @CommandPermission("%skins")
+    @CommandPermission(PermissionRegistry.SKINS)
     @Private
     private void onGUIShortcut(SRPlayer player) {
         manager.getExecutor().execute(player, "skins"); // TODO: register on demand

@@ -42,6 +42,7 @@ import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.C;
@@ -58,7 +59,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
 @CommandNames({"sr", "skinsrestorer"})
-@CommandPermission("%sr")
+@CommandPermission(PermissionRegistry.SR)
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRCommand {
@@ -80,8 +81,8 @@ public final class SRCommand {
     }
 
     @Subcommand("reload")
-    @CommandPermission("%srReload")
-    @Description("%helpSrReload")
+    @CommandPermission(PermissionRegistry.SR_RELOAD)
+    @Description(Message.HELP_SR_RELOAD)
     private void onReload(SRCommandSender sender) {
         plugin.loadConfig();
         try {
@@ -95,221 +96,198 @@ public final class SRCommand {
     }
 
     @Subcommand("status")
-    @CommandPermission("%srStatus")
-    @Description("%helpSrStatus")
+    @CommandPermission(PermissionRegistry.SR_STATUS)
+    @Description(Message.HELP_SR_STATUS)
     private void onStatus(SRCommandSender sender) {
-        adapter.runAsync(() -> {
-            sender.sendMessage("§7Checking needed services for SR to work properly...");
+        sender.sendMessage("§7Checking needed services for SR to work properly...");
 
-            List<String> statusMessages = new LinkedList<>();
-            String breakLine = "§3----------------------------------------------";
-            statusMessages.add(breakLine);
+        List<String> statusMessages = new LinkedList<>();
+        String breakLine = "§3----------------------------------------------";
+        statusMessages.add(breakLine);
 
-            ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
-            List<String> results = response.getResults();
+        ServiceCheckerService.ServiceCheckResponse response = serviceCheckerService.checkServices();
+        List<String> results = response.getResults();
 
-            int workingUUIDCount = response.getWorkingUUID();
-            int workingProfileCount = response.getWorkingProfile();
+        int workingUUIDCount = response.getWorkingUUID();
+        int workingProfileCount = response.getWorkingProfile();
 
-            // only print per API results if in a not working state
-            if (settings.getProperty(DevConfig.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
-                for (String result : results) {
-                    if (settings.getProperty(DevConfig.DEBUG) || result.contains("✘")) {
-                        statusMessages.add(result);
-                    }
+        // only print per API results if in a not working state
+        if (settings.getProperty(DevConfig.DEBUG) || workingUUIDCount == 0 || workingProfileCount == 0) {
+            for (String result : results) {
+                if (settings.getProperty(DevConfig.DEBUG) || result.contains("✘")) {
+                    statusMessages.add(result);
                 }
             }
+        }
 
-            statusMessages.add("§7Working UUID API count: §6" + workingUUIDCount);
-            statusMessages.add("§7Working Profile API count: §6" + workingProfileCount);
+        statusMessages.add("§7Working UUID API count: §6" + workingUUIDCount);
+        statusMessages.add("§7Working Profile API count: §6" + workingProfileCount);
 
-            if (workingUUIDCount != 0 && workingProfileCount != 0)
-                statusMessages.add("§aThe plugin currently is in a working state.");
-            else
-                statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See https://skinsrestorer.net/firewall for more info");
-            statusMessages.add(breakLine);
-            statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
-            statusMessages.add("§7Server: §6" + adapter.getPlatformVersion());
-            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
-            if (serverPlugin != null) {
-                statusMessages.add("§7ProxyMode: §6" + serverPlugin.isProxyMode());
-            }
-            statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
-            statusMessages.add("§7Finished checking services.");
-            statusMessages.add(breakLine);
-            statusMessages.forEach(sender::sendMessage);
-        });
+        if (workingUUIDCount != 0 && workingProfileCount != 0)
+            statusMessages.add("§aThe plugin currently is in a working state.");
+        else
+            statusMessages.add("§cPlugin currently can't fetch new skins. \n Connection is likely blocked because of firewall. \n Please See https://skinsrestorer.net/firewall for more info");
+        statusMessages.add(breakLine);
+        statusMessages.add("§7SkinsRestorer §6v" + plugin.getVersion());
+        statusMessages.add("§7Server: §6" + adapter.getPlatformVersion());
+        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+        if (serverPlugin != null) {
+            statusMessages.add("§7ProxyMode: §6" + serverPlugin.isProxyMode());
+        }
+        statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
+        statusMessages.add("§7Finished checking services.");
+        statusMessages.add(breakLine);
+        statusMessages.forEach(sender::sendMessage);
     }
 
     @Subcommand({"drop", "remove"})
-    @CommandPermission("%srDrop")
-    @CommandCompletion("PLAYER|SKIN @players @players @players")
-    @Description("%helpSrDrop")
+    @CommandPermission(PermissionRegistry.SR_DROP)
+    @Description(Message.HELP_SR_DROP)
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
-        adapter.runAsync(() -> {
-            switch (playerOrSkin) {
-                case PLAYER:
-                    skinStorage.removeSkinNameOfPlayer(target);
-                    break;
-                case SKIN:
-                    skinStorage.removeSkinData(target);
-                    break;
-            }
+        switch (playerOrSkin) {
+            case PLAYER:
+                skinStorage.removeSkinNameOfPlayer(target);
+                break;
+            case SKIN:
+                skinStorage.removeSkinData(target);
+                break;
+        }
 
-            sender.sendMessage(Message.SUCCESS_ADMIN_DROP, playerOrSkin.toString(), target);
-        });
+        sender.sendMessage(Message.SUCCESS_ADMIN_DROP, playerOrSkin.toString(), target);
     }
 
     @Subcommand("props")
-    @CommandPermission("%srProps")
-    @CommandCompletion("@players")
-    @Description("%helpSrProps")
+    @CommandPermission(PermissionRegistry.SR_PROPS)
+    @Description(Message.HELP_SR_PROPS)
     private void onProps(SRCommandSender sender, SRPlayer target) {
-        adapter.runAsync(() -> {
-            try {
-                Optional<SkinProperty> properties = adapter.getSkinProperty(target);
+        try {
+            Optional<SkinProperty> properties = adapter.getSkinProperty(target);
 
-                if (!properties.isPresent()) {
-                    sender.sendMessage(Message.NO_SKIN_DATA);
-                    return;
-                }
-
-                MojangProfileResponse profile = skinsRestorer.getSkinProfileData(properties.get());
-                String decodedSkin = profile.getTextures().getSKIN().getUrl();
-                long timestamp = profile.getTimestamp();
-                String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
-
-                sender.sendMessage("§aRequest time: §e" + requestDate);
-                sender.sendMessage("§aProfileId: §e" + profile.getProfileId());
-                sender.sendMessage("§aName: §e" + profile.getProfileName());
-                sender.sendMessage("§aSkinTexture: §e" + decodedSkin);
-                sender.sendMessage("§cMore info in console!");
-
-                // Console
-                logger.info("§aValue: §8" + properties.get().getValue());
-                logger.info("§aSignature: §8" + properties.get().getSignature());
-                logger.info("§aValue Decoded: §e" + profile);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (!properties.isPresent()) {
                 sender.sendMessage(Message.NO_SKIN_DATA);
+                return;
             }
-        });
+
+            MojangProfileResponse profile = skinsRestorer.getSkinProfileData(properties.get());
+            String decodedSkin = profile.getTextures().getSKIN().getUrl();
+            long timestamp = profile.getTimestamp();
+            String requestDate = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date(timestamp));
+
+            sender.sendMessage("§aRequest time: §e" + requestDate);
+            sender.sendMessage("§aProfileId: §e" + profile.getProfileId());
+            sender.sendMessage("§aName: §e" + profile.getProfileName());
+            sender.sendMessage("§aSkinTexture: §e" + decodedSkin);
+            sender.sendMessage("§cMore info in console!");
+
+            // Console
+            logger.info("§aValue: §8" + properties.get().getValue());
+            logger.info("§aSignature: §8" + properties.get().getSignature());
+            logger.info("§aValue Decoded: §e" + profile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            sender.sendMessage(Message.NO_SKIN_DATA);
+        }
     }
 
     @Subcommand("applyskin")
-    @CommandPermission("%srApplySkin")
-    @CommandCompletion("@players")
-    @Description("%helpSrApplySkin")
+    @CommandPermission(PermissionRegistry.SR_APPLY_SKIN)
+    @Description(Message.HELP_SR_APPLY_SKIN)
     private void onApplySkin(SRCommandSender sender, SRPlayer target) {
-        adapter.runAsync(() -> {
-            try {
-                skinApplier.applySkin(target.getAs(Object.class));
-                sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
-            } catch (Exception ignored) {
-                sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
-            }
-        });
+        try {
+            skinApplier.applySkin(target.getAs(Object.class));
+            sender.sendMessage(Message.SUCCES_ADMIN_APPLYSKIN);
+        } catch (Exception ignored) {
+            sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
+        }
     }
 
     @Subcommand("createcustom")
-    @CommandPermission("%srCreateCustom")
-    @CommandCompletion("@skinName @skinUrl")
-    @Description("%helpSrCreateCustom")
+    @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
+    @Description(Message.HELP_SR_CREATECUSTOM) // TODO: Fix underscores
     private void onCreateCustom(SRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
-        adapter.runAsync(() -> {
-            try {
-                if (C.validUrl(skinUrl)) {
-                    skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
-                    sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
-                } else {
-                    sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
-                }
-            } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
+        try {
+            if (C.validUrl(skinUrl)) {
+                skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
+                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
+            } else {
+                sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
-        });
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
+        }
     }
 
     @Subcommand("setskinall")
-    @CommandCompletion("@Skin")
     @Description("Set the skin to every player")
     @CommandConditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
-        adapter.runAsync(() -> {
-            String appliedSkinName = " ·setSkinAll";
-            try {
-                Optional<SkinProperty> skinProps;
-                if (C.validUrl(skinName)) {
-                    skinProps = Optional.of(mineSkinAPI.genSkin(skinName, skinVariant));
-                } else {
-                    skinProps = mojangAPI.getSkin(skinName);
-                }
-
-                if (!skinProps.isPresent()) {
-                    sender.sendMessage("§e[§2SkinsRestorer§e] §4no skin found....");
-                    return;
-                }
-
-                skinStorage.setSkinData(appliedSkinName, skinProps.get());
-
-                for (SRPlayer player : adapter.getOnlinePlayers()) {
-                    skinStorage.setSkinNameOfPlayer(player.getName(), appliedSkinName); // Set player to "whitespaced" name then reload skin
-                    skinApplier.applySkin(player.getAs(Object.class), skinProps.get());
-                }
-                sender.sendMessage("§aSuccessfully set skin of all online players to " + appliedSkinName);
-            } catch (DataRequestException e) {
-                sender.sendMessage(getRootCause(e).getMessage());
+        String appliedSkinName = " ·setSkinAll";
+        try {
+            Optional<SkinProperty> skinProps;
+            if (C.validUrl(skinName)) {
+                skinProps = Optional.of(mineSkinAPI.genSkin(skinName, skinVariant));
+            } else {
+                skinProps = mojangAPI.getSkin(skinName);
             }
-        });
+
+            if (!skinProps.isPresent()) {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §4no skin found....");
+                return;
+            }
+
+            skinStorage.setSkinData(appliedSkinName, skinProps.get());
+
+            for (SRPlayer player : adapter.getOnlinePlayers()) {
+                skinStorage.setSkinNameOfPlayer(player.getName(), appliedSkinName); // Set player to "whitespaced" name then reload skin
+                skinApplier.applySkin(player.getAs(Object.class), skinProps.get());
+            }
+            sender.sendMessage("§aSuccessfully set skin of all online players to " + appliedSkinName);
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
+        }
     }
 
     @Subcommand("applyskinall")
     @Description("Re-apply the skin for every player")
     @CommandConditions("console-only")
     private void onApplySkinAll(SRCommandSender sender) {
-        adapter.runAsync(() -> {
-            for (SRPlayer player : adapter.getOnlinePlayers()) {
-                try {
-                    skinApplier.applySkin(player.getAs(Object.class));
-                } catch (DataRequestException ignored) {
-                    sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
-                }
+        for (SRPlayer player : adapter.getOnlinePlayers()) {
+            try {
+                skinApplier.applySkin(player.getAs(Object.class));
+            } catch (DataRequestException ignored) {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to apply skin to " + player.getName());
             }
-            sender.sendMessage("§e[§2SkinsRestorer§e] §aRe-applied skin of all online players");
-        });
+        }
+        sender.sendMessage("§e[§2SkinsRestorer§e] §aRe-applied skin of all online players");
     }
 
     @Subcommand("purgeolddata")
     @Description("Purge old skin data from over x days ago")
     @CommandConditions("console-only")
     private void onPurgeOldData(SRCommandSender sender, int days) {
-        adapter.runAsync(() -> {
-            if (skinStorage.purgeOldSkins(days)) {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
-            } else {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §4A error occurred while purging old skins!");
-            }
-        });
+        if (skinStorage.purgeOldSkins(days)) {
+            sender.sendMessage("§e[§2SkinsRestorer§e] §aSuccessfully purged old skins!");
+        } else {
+            sender.sendMessage("§e[§2SkinsRestorer§e] §4A error occurred while purging old skins!");
+        }
     }
 
     @Subcommand("dump")
-    @CommandPermission("%srDump")
+    @CommandPermission(PermissionRegistry.SR_DUMP)
     @Description("Upload support data to bytebin.lucko.me")
     private void onDump(SRCommandSender sender) {
-        adapter.runAsync(() -> {
-            try {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");
-                val url = dumpService.dump();
-                if (url.isPresent()) {
-                    sender.sendMessage("§e[§2SkinsRestorer§e] §aUpload successful! §ehttps://bytebin.lucko.me/" + url.get());
-                } else {
-                    sender.sendMessage("§e[§2SkinsRestorer§e] §4Upload failed!");
-                }
-            } catch (IOException e) {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to upload data to bytebin.lucko.me");
-                e.printStackTrace();
+        try {
+            sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");
+            val url = dumpService.dump();
+            if (url.isPresent()) {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §aUpload successful! §ehttps://bytebin.lucko.me/" + url.get());
+            } else {
+                sender.sendMessage("§e[§2SkinsRestorer§e] §4Upload failed!");
             }
-        });
+        } catch (IOException e) {
+            sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to upload data to bytebin.lucko.me");
+            e.printStackTrace();
+        }
     }
 
     public enum PlayerOrSkin {
