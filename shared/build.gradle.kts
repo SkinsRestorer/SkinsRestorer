@@ -16,7 +16,7 @@ dependencies {
     implementation("com.github.aikar:locales:5f204c3afb")
     implementation("org.bstats:bstats-base:3.0.2")
 
-    implementation("com.mojang:brigadier:1.0.18")
+    implementation("com.mojang:brigadier:1.0.500")
 }
 
 tasks.getByName<Test>("test") {
