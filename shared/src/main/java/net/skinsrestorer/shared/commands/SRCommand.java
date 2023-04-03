@@ -31,6 +31,7 @@ import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
@@ -75,9 +76,14 @@ public final class SRCommand {
     private final MineSkinAPI mineSkinAPI;
     private final SkinApplier<Object> skinApplier;
     private final Injector injector;
+    private final CommandManager<SRCommandSender> commandManager;
 
+    @RootCommand
     private void onHelp(SRCommandSender sender) {
-        // TODO: HELP
+        for (String line : commandManager.getHelp("sr", sender)) {
+            sender.sendMessage(line);
+        }
+
     }
 
     @Subcommand("reload")

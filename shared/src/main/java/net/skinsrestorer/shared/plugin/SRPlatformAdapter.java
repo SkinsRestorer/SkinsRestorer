@@ -25,7 +25,6 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -41,8 +40,6 @@ public interface SRPlatformAdapter<P> extends CommandPlatform<SRCommandSender> {
     String getPlatformVersion();
 
     Optional<SkinProperty> getSkinProperty(SRPlayer player);
-
-    Collection<SRPlayer> getOnlinePlayers();
 
     Object createMetricsInstance();
 

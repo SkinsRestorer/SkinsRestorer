@@ -22,6 +22,7 @@ package net.skinsrestorer.velocity.wrapper;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import lombok.experimental.SuperBuilder;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Locale;
@@ -66,5 +67,10 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     @Override
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public boolean canSee(SRPlayer player) {
+        return true;
     }
 }

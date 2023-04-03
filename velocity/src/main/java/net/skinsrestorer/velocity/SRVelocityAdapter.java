@@ -115,7 +115,10 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
 
     @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
-        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
+        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player)
+                .or(() -> proxy.getAllPlayers().stream()
+                        .filter(p -> p.getUsername().equalsIgnoreCase(name))
+                        .findFirst().map(injector.getSingleton(WrapperVelocity.class)::player));
     }
 
     @Override

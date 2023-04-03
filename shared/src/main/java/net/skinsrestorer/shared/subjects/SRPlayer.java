@@ -25,4 +25,6 @@ public interface SRPlayer extends SRCommandSender {
     <P> P getAs(Class<P> playerClass);
 
     UUID getUniqueId();
+
+    boolean canSee(SRPlayer player);
 }

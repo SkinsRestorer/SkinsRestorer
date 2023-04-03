@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.wrapper;
 
 import lombok.experimental.SuperBuilder;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import org.bukkit.entity.Player;
@@ -48,6 +49,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
     @Override
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public boolean canSee(SRPlayer player) {
+        return this.player.canSee(player.getAs(Player.class));
     }
 
     @Override

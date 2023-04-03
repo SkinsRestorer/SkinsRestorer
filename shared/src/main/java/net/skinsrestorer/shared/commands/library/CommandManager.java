@@ -42,6 +42,7 @@ import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -50,6 +51,7 @@ import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class CommandManager<T extends SRCommandSender> {
@@ -130,29 +132,21 @@ public class CommandManager<T extends SRCommandSender> {
             method.setAccessible(true);
 
             Optional<RootCommand> def = getAnnotation(RootCommand.class, method);
-
-            if (def.isPresent()) {
-                validateMethod(method);
-
-                Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-                registerParameters(node, commandConditions, command, method);
-
-                continue;
-            }
-
             Optional<Subcommand> names = getAnnotation(Subcommand.class, method);
-
-            if (names.isPresent()) {
+            if (names.isPresent() || def.isPresent()) {
                 validateMethod(method);
 
                 Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
+                if (def.isPresent()) {
+                    registerParameters(node, commandConditions, command, method);
+                } else {
+                    for (String subCommandName : names.get().value()) {
+                        LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(subCommandName);
 
-                for (String subCommandName : names.get().value()) {
-                    LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(subCommandName);
+                        registerParameters(childNode, commandConditions, command, method);
 
-                    registerParameters(childNode, commandConditions, command, method);
-
-                    node.then(childNode);
+                        node.then(childNode);
+                    }
                 }
             }
         }
@@ -168,47 +162,96 @@ public class CommandManager<T extends SRCommandSender> {
                 continue;
             }
 
+            ArgumentType<?> argumentType;
             // Implementing support for other types is easy, just add a new if statement
             if (parameter.getType() == String.class) {
-                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), StringArgumentType.word()));
+                argumentType = StringArgumentType.word();
             } else if (parameter.getType() == int.class) {
-                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), IntegerArgumentType.integer()));
+                argumentType = IntegerArgumentType.integer();
             } else if (Enum.class.isAssignableFrom(parameter.getType())) {
-                nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), new ArgumentType<Enum<?>>() {
+                argumentType = new ArgumentType<Enum<?>>() {
                     @Override
                     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-                        return Suggestions.empty(); // TODO
+                        for (String example : getExamples()) {
+                            if (example.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                builder.suggest(example);
+                            }
+                        }
+                        return builder.buildFuture();
                     }
 
+                    @SuppressWarnings("rawtypes")
                     @Override
                     public Collection<String> getExamples() {
-                        List<String> examples = new ArrayList<>();
-                        for (Object constant : parameter.getType().getEnumConstants()) {
-                            System.out.println(constant);
-                            examples.add(constant.toString());
-                        }
-                        return examples;
+                        return Arrays.stream(parameter.getType().getEnumConstants())
+                                .map(o -> (Enum) o)
+                                .map(Enum::name).collect(Collectors.toList());
                     }
 
+                    @SuppressWarnings({"unchecked", "rawtypes"})
                     @Override
                     public Enum<?> parse(StringReader reader) throws CommandSyntaxException {
                         final int start = reader.getCursor();
                         final String string = reader.readString();
                         try {
-                            System.out.println(string);
                             return Enum.valueOf((Class<Enum>) parameter.getType(), string.toUpperCase());
                         } catch (IllegalArgumentException e) {
-                            e.printStackTrace();
                             reader.setCursor(start);
                             throw new SimpleCommandExceptionType(new LiteralMessage("Invalid enum value")).createWithContext(reader);
                         }
                     }
-                }));
+                };
+            } else if (parameter.getType().isAssignableFrom(SRPlayer.class)) {
+                argumentType = new ArgumentType<SRPlayer>() {
+                    @Override
+                    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+                        for (SRPlayer player : platform.getOnlinePlayers()) {
+                            if (player.getName().toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+                                if (context.getSource() instanceof SRPlayer && !((SRPlayer) context.getSource()).canSee(player)) {
+                                    continue;
+                                }
+
+                                builder.suggest(player.getName());
+                            }
+                        }
+                        return builder.buildFuture();
+                    }
+
+                    @Override
+                    public Collection<String> getExamples() {
+                        return FluentList.listOf("Pistonmaster", "xknat");
+                    }
+
+                    @Override
+                    public SRPlayer parse(StringReader reader) throws CommandSyntaxException {
+                        final int start = reader.getCursor();
+                        final String string = reader.readString();
+
+                        Optional<SRPlayer> exactPlayer = platform.getOnlinePlayers().stream()
+                                .filter(p -> p.getName().equals(string))
+                                .findFirst();
+
+                        if (exactPlayer.isPresent()) {
+                            return exactPlayer.get();
+                        }
+
+                        Optional<SRPlayer> player = platform.getOnlinePlayers().stream()
+                                .filter(p -> p.getName().equalsIgnoreCase(string.toLowerCase()))
+                                .findFirst();
+
+                        if (player.isPresent()) {
+                            return player.get();
+                        }
+
+                        reader.setCursor(start);
+                        throw new SimpleCommandExceptionType(new LiteralMessage("Unknown player")).createWithContext(reader);
+                    }
+                };
             } else {
-                continue;
-                // TODO
-                // throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
+                throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
             }
+
+            nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), argumentType));
 
             i++;
         }
@@ -305,5 +348,9 @@ public class CommandManager<T extends SRCommandSender> {
         }
 
         return true;
+    }
+
+    public String[] getHelp(String command, T source) {
+        return dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, true);
     }
 }

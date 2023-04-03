@@ -20,7 +20,9 @@
 package net.skinsrestorer.sponge.wrapper;
 
 import lombok.experimental.SuperBuilder;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.Locale;
@@ -43,6 +45,11 @@ public class WrapperPlayer extends WrapperCommandSender implements SRServerPlaye
     @Override
     public UUID getUniqueId() {
         return player.uniqueId();
+    }
+
+    @Override
+    public boolean canSee(SRPlayer player) {
+        return this.player.canSee(player.getAs(Player.class));
     }
 
     @Override

@@ -21,6 +21,7 @@ package net.skinsrestorer.bungee.wrapper;
 
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
 import java.util.Locale;
@@ -59,5 +60,10 @@ public class WrapperPlayer extends WrapperCommandSender implements SRProxyPlayer
     @Override
     public UUID getUniqueId() {
         return player.getUniqueId();
+    }
+
+    @Override
+    public boolean canSee(SRPlayer player) {
+        return true;
     }
 }

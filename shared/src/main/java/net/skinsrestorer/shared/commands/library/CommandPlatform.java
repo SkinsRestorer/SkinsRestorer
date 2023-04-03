@@ -19,8 +19,14 @@
  */
 package net.skinsrestorer.shared.commands.library;
 
+import net.skinsrestorer.shared.subjects.SRPlayer;
+
+import java.util.Collection;
+
 public interface CommandPlatform<T> {
     void registerCommand(PlatformRegistration<T> registration);
 
     void runAsync(Runnable runnable);
+
+    Collection<SRPlayer> getOnlinePlayers();
 }
