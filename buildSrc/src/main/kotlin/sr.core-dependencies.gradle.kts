@@ -1,11 +1,14 @@
 plugins {
     java
     `java-test-fixtures`
+    id("io.freefair.lombok")
+}
+
+lombok {
+    version.set("1.18.22")
 }
 
 dependencies {
-    compileOnly("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
     implementation("org.jetbrains:annotations:24.0.1")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.7.3")
 

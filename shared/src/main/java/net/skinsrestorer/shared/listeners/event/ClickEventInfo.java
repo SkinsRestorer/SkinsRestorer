@@ -29,7 +29,6 @@ public class ClickEventInfo {
     private final MaterialType material;
     private final String displayName;
     private final SRServerPlayer player;
-    private final Object commandIssuer;
     private final int currentPage;
 
     public enum MaterialType {

@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.annotations.CommandConditions;
 import net.skinsrestorer.shared.commands.library.annotations.CommandNames;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
-import net.skinsrestorer.shared.commands.library.annotations.Default;
+import net.skinsrestorer.shared.commands.library.annotations.RootCommand;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
 import net.skinsrestorer.shared.storage.Message;
@@ -44,7 +44,7 @@ public final class ProxyGUICommand {
     private final SkinStorageImpl skinStorage;
     private final SRProxyPlugin proxyPlugin;
 
-    @Default
+    @RootCommand
     private void onDefault(SRPlayer player) {
         if (!(player instanceof SRProxyPlayer)) {
             throw new IllegalStateException("Player is not a proxy player");

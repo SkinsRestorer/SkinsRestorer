@@ -76,8 +76,8 @@ public final class SRCommand {
     private final SkinApplier<Object> skinApplier;
     private final Injector injector;
 
-    private void onHelp(SRCommandSender sender, CommandHelp help) {
-        help.showHelp();
+    private void onHelp(SRCommandSender sender) {
+        // TODO: HELP
     }
 
     @Subcommand("reload")
@@ -90,7 +90,6 @@ public final class SRCommand {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        plugin.prepareACF();
 
         sender.sendMessage(Message.SUCCESS_ADMIN_RELOAD);
     }
@@ -203,7 +202,7 @@ public final class SRCommand {
 
     @Subcommand("createcustom")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
-    @Description(Message.HELP_SR_CREATECUSTOM) // TODO: Fix underscores
+    @Description(Message.HELP_SR_CREATE_CUSTOM) // TODO: Fix underscores
     private void onCreateCustom(SRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
         try {
             if (C.validUrl(skinUrl)) {
@@ -218,7 +217,7 @@ public final class SRCommand {
     }
 
     @Subcommand("setskinall")
-    @Description("Set the skin to every player")
+    @Description(Message.HELP_SR_SET_SKIN_ALL)
     @CommandConditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
         String appliedSkinName = " ·setSkinAll";
@@ -248,7 +247,7 @@ public final class SRCommand {
     }
 
     @Subcommand("applyskinall")
-    @Description("Re-apply the skin for every player")
+    @Description(Message.HELP_SR_APPLY_SKIN_ALL)
     @CommandConditions("console-only")
     private void onApplySkinAll(SRCommandSender sender) {
         for (SRPlayer player : adapter.getOnlinePlayers()) {
@@ -262,7 +261,7 @@ public final class SRCommand {
     }
 
     @Subcommand("purgeolddata")
-    @Description("Purge old skin data from over x days ago")
+    @Description(Message.HELP_SR_PURGE_OLD_DATA)
     @CommandConditions("console-only")
     private void onPurgeOldData(SRCommandSender sender, int days) {
         if (skinStorage.purgeOldSkins(days)) {
@@ -274,7 +273,7 @@ public final class SRCommand {
 
     @Subcommand("dump")
     @CommandPermission(PermissionRegistry.SR_DUMP)
-    @Description("Upload support data to bytebin.lucko.me")
+    @Description(Message.HELP_SR_DUMP)
     private void onDump(SRCommandSender sender) {
         try {
             sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");

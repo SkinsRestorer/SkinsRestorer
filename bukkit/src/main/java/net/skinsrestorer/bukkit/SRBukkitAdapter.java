@@ -199,7 +199,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     @Override
     public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
         try {
-            CommandMap commandMap = ReflectionUtil.getObject(server, "commandMap", CommandMap.class);
+            CommandMap commandMap = (CommandMap) ReflectionUtil.invokeMethod(server, "getCommandMap");
             SRBukkitCommand command = new SRBukkitCommand(registration, pluginInstance, injector.getSingleton(WrapperBukkit.class));
 
             commandMap.register(registration.getRootNode(), "skinsrestorer", command);

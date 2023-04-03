@@ -24,17 +24,16 @@ import lombok.Getter;
 import java.util.Optional;
 
 public enum PermissionRegistry {
-    EMPTY(""),
-    SKIN("skinsrestorer.command"),
+    SKIN("skinsrestorer.command", true),
     SR("skinsrestorer.admincommand"),
-    SKINS("skinsrestorer.command.gui"),
-    SKIN_SET("skinsrestorer.command.set"),
+    SKINS("skinsrestorer.command.gui", true),
+    SKIN_SET("skinsrestorer.command.set", true),
     SKIN_SET_OTHER("skinsrestorer.command.set.other"),
-    SKIN_SET_URL("skinsrestorer.command.set.url"),
-    SKIN_CLEAR("skinsrestorer.command.clear"),
+    SKIN_SET_URL("skinsrestorer.command.set.url", true),
+    SKIN_CLEAR("skinsrestorer.command.clear", true),
     SKIN_CLEAR_OTHER("skinsrestorer.command.clear.other"),
-    SKIN_SEARCH("skinsrestorer.command.search"),
-    SKIN_UPDATE("skinsrestorer.command.update"),
+    SKIN_SEARCH("skinsrestorer.command.search", true),
+    SKIN_UPDATE("skinsrestorer.command.update", true),
     SKIN_UPDATE_OTHER("skinsrestorer.command.update.other"),
     SR_RELOAD("skinsrestorer.admincommand.reload"),
     SR_STATUS("skinsrestorer.admincommand.status"),
@@ -48,8 +47,19 @@ public enum PermissionRegistry {
     BYPASS_DISABLED("skinsrestorer.bypassdisabled"),
     OWN_SKIN("skinsrestorer.ownskin");
 
+    @Getter
+    private final Permission permission;
+
+    PermissionRegistry(String permission) {
+        this(permission, false);
+    }
+
+    PermissionRegistry(String permission, boolean isDefault) {
+        this.permission = Permission.of(permission, isDefault);
+    }
+
     public static Permission forSkin(String skinName) {
-        return Permission.of("skinsrestorer.skin." + skinName);
+        return Permission.of("skinsrestorer.skin." + skinName, false);
     }
 
     public static Optional<Permission> getPermission(String permission) {
@@ -59,12 +69,5 @@ public enum PermissionRegistry {
         }
 
         return Optional.empty();
-    }
-
-    @Getter
-    private final Permission permission;
-
-    PermissionRegistry(String permission) {
-        this.permission = Permission.of(permission);
     }
 }

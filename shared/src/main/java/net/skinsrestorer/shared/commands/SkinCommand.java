@@ -67,12 +67,12 @@ public final class SkinCommand {
     private final MineSkinAPI mineSkinAPI;
     private final CommandManager<SRCommandSender> manager;
 
-    @Default
+    @RootCommand
     private void onDefault(SRCommandSender sender) {
         // TODO: HELP
     }
 
-    @Default
+    @RootCommand
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")

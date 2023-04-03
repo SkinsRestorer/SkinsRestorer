@@ -62,6 +62,6 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(subject::hasPermission);
+        return permission.checkPermission(settings, subject::hasPermission);
     }
 }

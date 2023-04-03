@@ -62,7 +62,7 @@ public class SkinsGUIHolder implements InventoryHolder {
             return;
         }
 
-        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), itemMeta.getDisplayName(), wrapper.player(player), player, page));
+        callback.accept(new ClickEventInfo(getMaterialType(XMaterial.matchXMaterial(currentItem)), itemMeta.getDisplayName(), wrapper.player(player), page));
     }
 
     private ClickEventInfo.MaterialType getMaterialType(XMaterial material) {

@@ -33,7 +33,6 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.help.HelpMap;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -95,13 +94,12 @@ public class LoadTest {
         when(server.getVersion()).thenReturn("1.19.2-R0.1-SNAPSHOT");
         when(server.getName()).thenReturn("TestServer");
         when(server.getCommandMap()).thenReturn(mock(SimpleCommandMap.class));
-        when(server.getHelpMap()).thenReturn(mock(HelpMap.class));
+        // when(server.getHelpMap()).thenReturn(mock(HelpMap.class)); // TODO: Add help map support to command manager
         when(server.getPluginManager()).thenReturn(mock(PluginManager.class));
 
         Bukkit.setServer(server);
 
         JavaPluginMock plugin = mock(JavaPluginMock.class);
-        when(plugin.getLogger()).thenReturn(logger);
         PluginDescriptionFile description =
                 new PluginDescriptionFile("SkinsRestorer", BuildData.VERSION, "net.skinsrestorer.bukkit.SRBukkitBootstrap");
         Field descriptionField = JavaPlugin.class.getDeclaredField("description");

@@ -17,6 +17,7 @@ pluginManagement {
         id("io.github.patrick.remapper") version "1.4.0"
         id("com.diffplug.spotless") version "6.17.0"
         id("com.github.spotbugs") version "5.0.14"
+        id("io.freefair.lombok") version "8.0.1"
     }
 }
 

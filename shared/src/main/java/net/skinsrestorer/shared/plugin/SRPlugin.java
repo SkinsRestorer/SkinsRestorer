@@ -29,8 +29,6 @@ import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.acf.CommandPropertiesManager;
-import net.skinsrestorer.shared.acf.CommandReplacements;
 import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -63,7 +61,6 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -93,7 +90,6 @@ public class SRPlugin {
         injector.register(SRPlugin.class, this);
         injector.register(MetricsCounter.class, new MetricsCounter());
         injector.register(CooldownStorage.class, new CooldownStorage());
-        injector.register(CommandManager.class, manager);
 
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
@@ -103,14 +99,11 @@ public class SRPlugin {
         this.dataFolder = dataFolder;
         this.serverInfo = ServerInfo.determineEnvironment(platform);
         this.manager = new CommandManager<>(adapter);
+        injector.register(CommandManager.class, manager);
     }
 
-    public <T extends SRCommandSender> void initCommands() {
-
-
+    public void initCommands() {
         registerConditions();
-
-        prepareACF();
 
         adapter.runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
@@ -277,19 +270,6 @@ public class SRPlugin {
             logger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
             throw new InitializeException(e);
         }
-    }
-
-    public void prepareACF() {
-        SettingsManager settings = injector.getSingleton(SettingsManager.class);
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-
-        CommandReplacements.permissions.forEach((k, v) -> manager.getCommandReplacements().addReplacement(k, v.call(settings).getPermissionString()));
-        CommandReplacements.descriptions.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
-        CommandReplacements.syntax.forEach((key, value) -> manager.getCommandReplacements().addReplacement(key, locale.getMessage(locale.getDefaultForeign(), value)));
-        CommandReplacements.completions.forEach((k, v) -> manager.getCommandCompletions().registerAsyncCompletion(k, c ->
-                Arrays.asList(locale.getMessage(locale.getDefaultForeign(), v).split(", "))));
-
-        CommandPropertiesManager.load(manager, dataFolder, adapter, logger);
     }
 
     public void initUpdateCheck() {

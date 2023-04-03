@@ -1,3 +1,22 @@
+/*
+ * SkinsRestorer
+ *
+ * Copyright (C) 2022 SkinsRestorer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
 package net.skinsrestorer.shared.commands.library;
 
 import com.mojang.brigadier.Command;
@@ -51,6 +70,13 @@ public class CommandManager<T extends SRCommandSender> {
         });
     }
 
+    @SafeVarargs
+    private static <T> Set<T> copyAndInsert(Set<T> set, T... values) {
+        Set<T> copy = new LinkedHashSet<>(set);
+        copy.addAll(Arrays.asList(values));
+        return copy;
+    }
+
     public void registerCommand(Object command) {
         CommandNames names = getAnnotation(CommandNames.class, command.getClass()).orElseThrow(() -> new IllegalStateException("Command is missing @CommandNames annotation"));
 
@@ -87,23 +113,16 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private void addMethodCommands(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Class<?> commandClass) {
-        Map<String, Set<Method>> literalChildren = new HashMap<>();
         for (Method method : commandClass.getDeclaredMethods()) {
             method.setAccessible(true);
 
-            Optional<Default> def = getAnnotation(Default.class, method);
+            Optional<RootCommand> def = getAnnotation(RootCommand.class, method);
 
             if (def.isPresent()) {
-                if (node.getCommand() != null) {
-                    throw new IllegalStateException("Default command already set");
-                }
-
-                if (method.getParameterTypes().length != 1 || !method.getParameterTypes()[0].isAssignableFrom(SRCommandSender.class)) {
-                    throw new IllegalStateException("Default command must have a single parameter of type SRCommandSender");
-                }
+                validateMethod(method);
 
                 Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-                node.executes(requireConditions(source -> {
+                Command<T> defaultCommand = requireConditions(source -> {
                     try {
                         method.invoke(command, source);
                         return Command.SINGLE_SUCCESS;
@@ -111,7 +130,17 @@ public class CommandManager<T extends SRCommandSender> {
                         e.printStackTrace();
                         return 0;
                     }
-                }, commandConditions));
+                }, commandConditions);
+
+                if (method.getParameterTypes().length == 1) {
+                    if (node.getCommand() != null) {
+                        throw new IllegalStateException("Default command already set");
+                    }
+
+                    node.executes(defaultCommand);
+                } else { // 2+ parameters
+                    // TODO: Add support for arguments
+                }
 
                 continue;
             }
@@ -119,34 +148,35 @@ public class CommandManager<T extends SRCommandSender> {
             Optional<Subcommand> names = getAnnotation(Subcommand.class, method);
 
             if (names.isPresent()) {
+                validateMethod(method);
+
                 String[] subcommandNames = names.get().value();
 
-                if (subcommandNames.length == 0) {
-                    throw new IllegalStateException("Subcommand must have at least one name");
-                }
+                for (String subCommandName : subcommandNames) {
+                    LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(subCommandName);
 
-                for (String subcommandName : subcommandNames) {
-                    if (literalChildren.containsKey(subcommandName)) {
-                        literalChildren.get(subcommandName).add(method);
-                    } else {
-                        Set<Method> methods = new HashSet<>();
-                        methods.add(method);
-                        literalChildren.put(subcommandName, methods);
-                    }
+                    Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
+
+                    childNode.executes(requireConditions(source -> {
+                        try {
+                            method.invoke(command, source); // TODO: Add support for arguments
+                            return Command.SINGLE_SUCCESS;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    }, commandConditions));
+
+                    node.then(childNode);
                 }
             }
         }
+    }
 
-        for (Map.Entry<String, Set<Method>> entry : literalChildren.entrySet()) {
-            LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(entry.getKey());
-
-            for (Method method : entry.getValue()) {
-                Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
-
-
-            }
-
-            node.then(childNode);
+    private void validateMethod(Method method) {
+        if (method.getParameterTypes().length < 1 || !SRCommandSender.class.isAssignableFrom(method.getParameterTypes()[0])) {
+            throw new IllegalStateException(
+                    String.format("Method %s must have at least a single parameter of type SRCommandSender", method.getName()));
         }
     }
 
@@ -160,13 +190,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     private Predicate<T> requirePermission(PermissionRegistry permission) {
-        return source -> {
-            if (permission == PermissionRegistry.EMPTY) {
-                return true;
-            }
-
-            return source.hasPermission(permission);
-        };
+        return source -> source.hasPermission(permission);
     }
 
     private Command<T> requireConditions(Command<T> command, Iterable<String> conditions) {
@@ -192,13 +216,6 @@ public class CommandManager<T extends SRCommandSender> {
         }
 
         return copyAndInsert(conditionTrail);
-    }
-
-    @SafeVarargs
-    private static <T> Set<T> copyAndInsert(Set<T> set, T... values) {
-        Set<T> copy = new LinkedHashSet<>(set);
-        copy.addAll(Arrays.asList(values));
-        return copy;
     }
 
     /**

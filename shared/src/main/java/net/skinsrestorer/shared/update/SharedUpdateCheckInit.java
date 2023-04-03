@@ -20,9 +20,7 @@
 package net.skinsrestorer.shared.update;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
-import net.skinsrestorer.shared.plugin.SRPlugin;
 
 import javax.inject.Inject;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,10 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedUpdateCheckInit implements UpdateCheckInit {
-    private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
     private final UpdateCheckerGitHub updateChecker;
-    private final SRLogger logger;
     private final UpdateCheckExecutor updateCheckExecutor;
 
     @Override

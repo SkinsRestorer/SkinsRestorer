@@ -24,7 +24,7 @@ import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.CommandConditions;
 import net.skinsrestorer.shared.commands.library.annotations.CommandNames;
 import net.skinsrestorer.shared.commands.library.annotations.CommandPermission;
-import net.skinsrestorer.shared.commands.library.annotations.Default;
+import net.skinsrestorer.shared.commands.library.annotations.RootCommand;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.Message;
@@ -45,7 +45,7 @@ public class ServerGUICommand {
     private final SRLogger logger;
     private final SkinStorageImpl skinStorage;
 
-    @Default
+    @RootCommand
     private void onDefault(SRPlayer srPlayer) {
         srPlayer.sendMessage(Message.SKINSMENU_OPEN);
 

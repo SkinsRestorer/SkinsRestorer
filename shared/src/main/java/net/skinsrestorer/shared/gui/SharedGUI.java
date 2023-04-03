@@ -19,11 +19,12 @@
  */
 package net.skinsrestorer.shared.gui;
 
-import co.aikar.commands.CommandManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
 
@@ -48,23 +49,18 @@ public class SharedGUI {
     @RequiredArgsConstructor(onConstructor_ = @Inject)
     public static class ServerGUIActions implements Consumer<ClickEventInfo> {
         private final SRServerAdapter<?> adapter;
-        private final CommandManager<?, ?, ?, ?, ?, ?> commandManager;
+        private final CommandManager<SRCommandSender> commandManager;
 
         @Override
         public void accept(ClickEventInfo event) {
             SRServerPlayer player = event.getPlayer();
             switch (event.getMaterial()) {
                 case HEAD:
-                    adapter.runAsync(() -> {
-                        String skin = event.getDisplayName();
-                        commandManager.getRootCommand("skin").execute(
-                                commandManager.getCommandIssuer(event.getCommandIssuer()), "skin", new String[]{"set", skin});
-                    });
+                    commandManager.getExecutor().execute(player, "skin set " + event.getDisplayName());
                     player.closeInventory();
                     break;
                 case RED_PANE:
-                    commandManager.getRootCommand("skin").execute(
-                            commandManager.getCommandIssuer(event.getCommandIssuer()), "skin", new String[]{"clear"});
+                    commandManager.getExecutor().execute(player, "skin clear");
                     player.closeInventory();
                     break;
                 case GREEN_PANE:

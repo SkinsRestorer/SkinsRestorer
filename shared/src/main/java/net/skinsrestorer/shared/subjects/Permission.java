@@ -19,9 +19,11 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.CommandConfig;
 
 import java.util.function.Predicate;
 
@@ -29,12 +31,18 @@ import java.util.function.Predicate;
 public class Permission {
     @Getter
     private final String permissionString;
+    @Getter
+    private final boolean defaultPermission;
 
     public boolean isEmpty() {
         return permissionString == null || permissionString.isEmpty();
     }
 
-    public boolean checkPermission(Predicate<String> predicate) {
+    public boolean checkPermission(SettingsManager settingsManager, Predicate<String> predicate) {
+        if (defaultPermission && settingsManager.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) {
+            return true; // Default permissions are true for everyone if the config option is enabled
+        }
+
         return isEmpty() || predicate.test(permissionString);
     }
 }

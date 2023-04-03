@@ -24,7 +24,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.skinsrestorer.shared.listeners.event.ClickEventInfo;
 import net.skinsrestorer.sponge.wrapper.WrapperSponge;
-import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
@@ -68,9 +67,7 @@ public class GUIListener implements SlotClickHandler {
 
         callback.accept(new ClickEventInfo(getMaterialType(stack),
                 PlainTextComponentSerializer.plainText().serialize(displayName.get().get()),
-                wrapper.player(player.get()),
-                CommandCause.create(),
-                page));
+                wrapper.player(player.get()), page));
 
         return false;
     }
