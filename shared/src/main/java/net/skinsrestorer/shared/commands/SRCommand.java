@@ -209,12 +209,12 @@ public final class SRCommand {
 
     @Subcommand("createcustom")
     @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
-    @Description(Message.HELP_SR_CREATE_CUSTOM) // TODO: Fix underscores
-    private void onCreateCustom(SRCommandSender sender, String name, String skinUrl, SkinVariant skinVariant) {
+    @Description(Message.HELP_SR_CREATE_CUSTOM)
+    private void onCreateCustom(SRCommandSender sender, String skinName, String skinUrl, SkinVariant skinVariant) {
         try {
             if (C.validUrl(skinUrl)) {
-                skinStorage.setSkinData(name, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
-                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, name);
+                skinStorage.setSkinData(skinName, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
+                sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, skinName);
             } else {
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }

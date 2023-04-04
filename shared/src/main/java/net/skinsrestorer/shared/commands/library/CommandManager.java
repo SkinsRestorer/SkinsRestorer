@@ -142,6 +142,9 @@ public class CommandManager<T extends SRCommandSender> {
             usage[i] = "/" + rootName + " " + usage[i];
         }
 
+        dispatcher.findAmbiguities((parent, child, sibling, inputs) ->
+                System.out.println("Ambiguous: " + parent.getName() + " " + child.getName() + " " + sibling.getName() + " " + inputs));
+
         platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
                 publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), description, usage, executor));
     }
@@ -375,7 +378,7 @@ public class CommandManager<T extends SRCommandSender> {
         conditions.put(name, condition);
     }
 
-    protected boolean checkConditions(T source, Iterable<String> conditions) {
+    private boolean checkConditions(T source, Iterable<String> conditions) {
         for (String condition : conditions) {
             if (!this.conditions.get(condition).test(source)) {
                 return false;

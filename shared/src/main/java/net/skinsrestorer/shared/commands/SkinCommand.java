@@ -80,8 +80,8 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
-    private void onSkinSetShort(SRPlayer player, String skin) {
-        onSkinSetOther(player, player, skin, null);
+    private void onSkinSetShort(SRPlayer player, String skinName) {
+        onSkinSetOther(player, player, skinName, null);
     }
 
     @Subcommand("clear")
@@ -173,23 +173,23 @@ public final class SkinCommand {
     @CommandPermission(PermissionRegistry.SKIN_SET)
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
-    private void onSkinSet(SRPlayer player, String skin) {
-        onSkinSetOther(player, player, skin, null);
+    private void onSkinSet(SRPlayer player, String skinName) {
+        onSkinSetOther(player, player, skinName, null);
     }
 
     @Subcommand("set")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, SRPlayer target, String skin, SkinVariant skinVariant) {
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skin))) {
-            if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, target) || !skin.equalsIgnoreCase(sender.getName()))) {
+    private void onSkinSetOther(SRCommandSender sender, SRPlayer target, String skinName, SkinVariant skinVariant) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
+            if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, target) || !skinName.equalsIgnoreCase(sender.getName()))) {
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
                 return;
             }
         }
 
-        if (setSkin(sender, target, skin, true, skinVariant) && !playerEqual(sender, target)) {
+        if (setSkin(sender, target, skinName, true, skinVariant) && !playerEqual(sender, target)) {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
         }
     }
