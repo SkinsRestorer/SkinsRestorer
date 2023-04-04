@@ -53,6 +53,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 @SuppressWarnings("unused")
 @PublicVisibility
 @CommandNames("skin")
+@Description(Message.HELP_SKIN)
 @CommandPermission(value = PermissionRegistry.SKIN)
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)

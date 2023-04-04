@@ -60,6 +60,7 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 
 @SuppressWarnings("unused")
 @CommandNames({"sr", "skinsrestorer"})
+@Description(Message.HELP_SR)
 @CommandPermission(PermissionRegistry.SR)
 @CommandConditions("allowed-server")
 @RequiredArgsConstructor(onConstructor_ = @Inject)

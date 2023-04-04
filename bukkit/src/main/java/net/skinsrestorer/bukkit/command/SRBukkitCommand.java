@@ -41,11 +41,15 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     private final WrapperBukkit wrapper;
 
     public SRBukkitCommand(PlatformRegistration<SRCommandSender> registration, Plugin plugin, WrapperBukkit wrapper) {
-        super(registration.getRootNode());
+        super(
+                registration.getRootNode(),
+                registration.getDescription(),
+                String.join("\n", registration.getUsages()),
+                Arrays.asList(registration.getAliases())
+        );
         this.plugin = plugin;
         this.executor = registration.getExecutor();
         this.wrapper = wrapper;
-        setAliases(Arrays.asList(registration.getAliases()));
         setPermission(registration.getRootPermission());
     }
 

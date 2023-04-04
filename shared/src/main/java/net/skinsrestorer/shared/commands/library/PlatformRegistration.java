@@ -28,5 +28,7 @@ public class PlatformRegistration<T> {
     private final String rootNode;
     private final String[] aliases;
     private final String rootPermission;
+    private final String description;
+    private final String[] usages;
     private final CommandExecutor<T> executor;
 }

@@ -31,6 +31,7 @@ import javax.inject.Inject;
 @SuppressWarnings({"unused"})
 @PublicVisibility
 @CommandNames("skins")
+@Description(Message.HELP_SKINS)
 @CommandPermission(value = PermissionRegistry.SKINS)
 @CommandConditions("cooldown")
 @RequiredArgsConstructor(onConstructor_ = @Inject)

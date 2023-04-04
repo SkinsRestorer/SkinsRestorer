@@ -28,6 +28,7 @@ import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -79,7 +80,6 @@ public class SRPlugin {
     private final Injector injector;
     @Getter
     private final ServerInfo serverInfo;
-    private final CommandManager<SRCommandSender> manager;
     @Getter
     private boolean outdated = false;
     @Getter
@@ -97,12 +97,13 @@ public class SRPlugin {
         this.version = version;
         this.dataFolder = dataFolder;
         this.serverInfo = ServerInfo.determineEnvironment(platform);
-        this.manager = new CommandManager<>(adapter);
-        injector.register(CommandManager.class, manager);
     }
 
     public void initCommands() {
-        registerConditions();
+        CommandManager<SRCommandSender> manager = new CommandManager<>(adapter, injector.getSingleton(SkinsRestorerLocale.class));
+        injector.register(CommandManager.class, manager);
+
+        registerConditions(manager);
 
         adapter.runRepeatAsync(injector.getSingleton(CooldownStorage.class)::cleanup, 60, 60, TimeUnit.SECONDS);
 
@@ -118,7 +119,7 @@ public class SRPlugin {
         }
     }
 
-    public void registerConditions() {
+    private void registerConditions(CommandManager<SRCommandSender> manager) {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         CooldownStorage cooldownStorage = injector.getSingleton(CooldownStorage.class);
 

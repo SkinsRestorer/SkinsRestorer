@@ -26,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Message {
     PREFIX_FORMAT,
+    HELP_SKIN,
+    HELP_SKINS,
+    HELP_SR,
     HELP_HELP_COMMAND,
     HELP_SKIN_SET,
     HELP_SKIN_SET_OTHER,

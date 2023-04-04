@@ -38,6 +38,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
@@ -59,11 +60,13 @@ public class CommandManager<T extends SRCommandSender> {
     private final Map<String, Predicate<T>> conditions = new HashMap<>();
     public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final CommandPlatform<T> platform;
+    private final SkinsRestorerLocale locale;
     @Getter
     private final CommandExecutor<T> executor;
 
-    public CommandManager(CommandPlatform<T> platform) {
+    public CommandManager(CommandPlatform<T> platform, SkinsRestorerLocale locale) {
         this.platform = platform;
+        this.locale = locale;
         this.executor = new CommandExecutor<>(dispatcher, platform);
 
         // Register default conditions
@@ -123,12 +126,32 @@ public class CommandManager<T extends SRCommandSender> {
 
         LiteralCommandNode<T> rootCommandNode = dispatcher.register(rootNode);
 
+        dumpNodes(rootCommandNode, "");
+
         for (String alias : aliases) {
             dispatcher.getRoot().addChild(buildRedirect(alias, rootCommandNode));
         }
 
+        String description = locale.getMessage(locale.getDefaultForeign(),
+                getAnnotation(Description.class, command.getClass())
+                        .orElseThrow(() -> new IllegalStateException("Command is missing @Description annotation")).value());
+
+        String[] usage = dispatcher.getAllUsage(rootCommandNode, null, false);
+
+        for (int i = 0; i < usage.length; i++) {
+            usage[i] = "/" + rootName + " " + usage[i];
+        }
+
         platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
-                publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), executor));
+                publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), description, usage, executor));
+    }
+
+
+    private void dumpNodes(CommandNode<T> currentNode, String prefix) {
+        System.out.println(prefix + currentNode.getName());
+        for (CommandNode<T> child : currentNode.getChildren()) {
+            dumpNodes(child, prefix + "  ");
+        }
     }
 
     private void addMethodCommands(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Class<?> commandClass) {
