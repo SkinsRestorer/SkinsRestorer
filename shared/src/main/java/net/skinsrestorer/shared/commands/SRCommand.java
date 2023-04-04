@@ -82,7 +82,7 @@ public final class SRCommand {
     @RootCommand
     private void onDefault(SRCommandSender sender) {
         System.out.println(commandManager.dispatcher.getRoot());
-        for (String line : commandManager.getHelp("sr", sender)) {
+        for (String line : commandManager.getRootHelp("sr", sender)) {
             sender.sendMessage(line);
         }
     }

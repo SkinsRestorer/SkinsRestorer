@@ -146,7 +146,6 @@ public class CommandManager<T extends SRCommandSender> {
                 publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), description, usage, executor));
     }
 
-
     private void dumpNodes(CommandNode<T> currentNode, String prefix) {
         System.out.println(prefix + currentNode.getName());
         for (CommandNode<T> child : currentNode.getChildren()) {
@@ -386,8 +385,14 @@ public class CommandManager<T extends SRCommandSender> {
         return true;
     }
 
-    public String[] getHelp(String command, T source) {
-        return dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, false);
+    public String[] getRootHelp(String command, T source) {
+        String[] usage = dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, true);
+
+        for (int i = 0; i < usage.length; i++) {
+            usage[i] = "/" + command + " " + usage[i];
+        }
+
+        return usage;
     }
 
     // Taken from https://github.com/PaperMC/Velocity/blob/8abc9c80a69158ebae0121fda78b55c865c0abad/proxy/src/main/java/com/velocitypowered/proxy/util/BrigadierUtils.java#L38

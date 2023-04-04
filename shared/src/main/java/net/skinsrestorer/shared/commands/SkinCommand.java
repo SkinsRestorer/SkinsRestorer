@@ -71,7 +71,7 @@ public final class SkinCommand {
 
     @RootCommand
     private void onDefault(SRCommandSender sender) {
-        for (String line : commandManager.getHelp("skin", sender)) {
+        for (String line : commandManager.getRootHelp("skin", sender)) {
             sender.sendMessage(line);
         }
     }
