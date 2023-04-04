@@ -124,7 +124,7 @@ public class CommandManager<T extends SRCommandSender> {
         LiteralCommandNode<T> rootCommandNode = dispatcher.register(rootNode);
 
         for (String alias : aliases) {
-            dispatcher.register(LiteralArgumentBuilder.<T>literal(alias).redirect(rootCommandNode));
+            dispatcher.getRoot().addChild(buildRedirect(alias, rootCommandNode));
         }
 
         platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
@@ -152,18 +152,14 @@ public class CommandManager<T extends SRCommandSender> {
                     String name = namesArray[0];
                     String[] aliases = Arrays.copyOfRange(namesArray, 1, namesArray.length);
 
-                    System.out.println("Registering command " + name + " with aliases " + Arrays.toString(aliases));
-
                     LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
                     registerParameters(childNode, commandConditions, command, method);
 
-                    CommandNode<T> registeredNode = childNode.build();
+                    LiteralCommandNode<T> registeredNode = childNode.build();
                     node.then(registeredNode);
 
                     for (String alias : aliases) {
-                        LiteralArgumentBuilder<T> aliasNode = LiteralArgumentBuilder.literal(alias);
-                        aliasNode.redirect(registeredNode);
-                        node.then(aliasNode);
+                        node.then(buildRedirect(alias, registeredNode));
                     }
                 }
             }
@@ -296,8 +292,8 @@ public class CommandManager<T extends SRCommandSender> {
         }, conditionTrail));
 
         if (nodes.size() > 1) {
-            for (int j = 0; j < nodes.size() - 1; j++) {
-                nodes.get(j).then(nodes.get(j + 1));
+            for (int i1 = nodes.size() - 1; i1 > 0; i1--) {
+                nodes.get(i1 - 1).then(nodes.get(i1));
             }
         }
     }
@@ -369,5 +365,22 @@ public class CommandManager<T extends SRCommandSender> {
 
     public String[] getHelp(String command, T source) {
         return dispatcher.getAllUsage(dispatcher.getRoot().getChild(command), source, false);
+    }
+
+    // Taken from https://github.com/PaperMC/Velocity/blob/8abc9c80a69158ebae0121fda78b55c865c0abad/proxy/src/main/java/com/velocitypowered/proxy/util/BrigadierUtils.java#L38
+    private LiteralCommandNode<T> buildRedirect(
+            final String alias, final LiteralCommandNode<T> destination) {
+        // Redirects only work for nodes with children, but break the top argument-less command.
+        // Manually adding the root command after setting the redirect doesn't fix it.
+        // See https://github.com/Mojang/brigadier/issues/46). Manually clone the node instead.
+        LiteralArgumentBuilder<T> builder = LiteralArgumentBuilder
+                .<T>literal(alias.toLowerCase(Locale.ENGLISH))
+                .requires(destination.getRequirement())
+                .forward(destination.getRedirect(), destination.getRedirectModifier(), destination.isFork())
+                .executes(destination.getCommand());
+        for (CommandNode<T> child : destination.getChildren()) {
+            builder.then(child);
+        }
+        return builder.build();
     }
 }
