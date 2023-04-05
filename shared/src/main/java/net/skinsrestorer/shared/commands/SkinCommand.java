@@ -81,7 +81,7 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
     private void onSkinSetShort(SRPlayer player, String skinName) {
-        onSkinSetOther(player, player, skinName, null);
+        onSkinSetOther(player, skinName, player, null);
     }
 
     @Subcommand("clear")
@@ -174,14 +174,22 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET)
     @CommandConditions("cooldown")
     private void onSkinSet(SRPlayer player, String skinName) {
-        onSkinSetOther(player, player, skinName, null);
+        onSkinSetOther(player, skinName, player);
     }
 
     @Subcommand("set")
     @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
-    private void onSkinSetOther(SRCommandSender sender, SRPlayer target, String skinName, SkinVariant skinVariant) {
+    private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target) {
+        onSkinSetOther(sender, skinName, target, null);
+    }
+
+    @Subcommand("set")
+    @CommandPermission(PermissionRegistry.SKIN_SET_OTHER)
+    @Description(Message.HELP_SKIN_SET_OTHER)
+    @CommandConditions("cooldown")
+    private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target, SkinVariant skinVariant) {
         if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
             if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, target) || !skinName.equalsIgnoreCase(sender.getName()))) {
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
@@ -204,7 +212,7 @@ public final class SkinCommand {
             return;
         }
 
-        onSkinSetOther(player, player, url, skinVariant);
+        onSkinSetOther(player, url, player, skinVariant);
     }
 
     @Subcommand({"menu", "gui"})

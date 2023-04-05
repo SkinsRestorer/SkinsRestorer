@@ -67,7 +67,7 @@ public class CommandManager<T extends SRCommandSender> {
     public CommandManager(CommandPlatform<T> platform, SkinsRestorerLocale locale) {
         this.platform = platform;
         this.locale = locale;
-        this.executor = new CommandExecutor<>(dispatcher, platform);
+        this.executor = new CommandExecutor<>(dispatcher);
 
         // Register default conditions
         registerCondition("player-only", sender -> {
@@ -122,11 +122,9 @@ public class CommandManager<T extends SRCommandSender> {
         getAnnotation(CommandConditions.class, command.getClass())
                 .ifPresent(condition -> conditionTrail.addAll(Arrays.asList(condition.value())));
 
-        addMethodCommands(rootNode, conditionTrail, command, command.getClass());
+        addMethodCommands(rootNode, rootPermission, conditionTrail, command, command.getClass());
 
         LiteralCommandNode<T> rootCommandNode = dispatcher.register(rootNode);
-
-        dumpNodes(rootCommandNode, "");
 
         for (String alias : aliases) {
             dispatcher.getRoot().addChild(buildRedirect(alias, rootCommandNode));
@@ -142,21 +140,11 @@ public class CommandManager<T extends SRCommandSender> {
             usage[i] = "/" + rootName + " " + usage[i];
         }
 
-        dispatcher.findAmbiguities((parent, child, sibling, inputs) ->
-                System.out.println("Ambiguous: " + parent.getName() + " " + child.getName() + " " + sibling.getName() + " " + inputs));
-
         platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
                 publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), description, usage, executor));
     }
 
-    private void dumpNodes(CommandNode<T> currentNode, String prefix) {
-        System.out.println(prefix + currentNode.getName());
-        for (CommandNode<T> child : currentNode.getChildren()) {
-            dumpNodes(child, prefix + "  ");
-        }
-    }
-
-    private void addMethodCommands(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Class<?> commandClass) {
+    private void addMethodCommands(ArgumentBuilder<T, ?> node, PermissionRegistry rootPermission, Set<String> conditionTrail, Object command, Class<?> commandClass) {
         for (Method method : commandClass.getDeclaredMethods()) {
             method.setAccessible(true);
 
@@ -167,7 +155,7 @@ public class CommandManager<T extends SRCommandSender> {
 
                 Set<String> commandConditions = insertPlayerCondition(insertAnnotationConditions(conditionTrail, method), method);
                 if (def.isPresent()) {
-                    registerParameters(node, commandConditions, command, method);
+                    registerParameters(node, rootPermission, commandConditions, command, method);
                 } else {
                     String[] namesArray = names.get().value();
                     if (namesArray.length == 0) {
@@ -178,7 +166,14 @@ public class CommandManager<T extends SRCommandSender> {
                     String[] aliases = Arrays.copyOfRange(namesArray, 1, namesArray.length);
 
                     LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
-                    registerParameters(childNode, commandConditions, command, method);
+
+                    System.out.println("Registering subcommand " + name);
+                    PermissionRegistry subPermission = getAnnotation(CommandPermission.class, method)
+                            .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
+
+                    childNode.requires(requirePermission(subPermission));
+
+                    registerParameters(childNode, subPermission, commandConditions, command, method);
 
                     LiteralCommandNode<T> registeredNode = childNode.build();
                     node.then(registeredNode);
@@ -191,7 +186,7 @@ public class CommandManager<T extends SRCommandSender> {
         }
     }
 
-    private void registerParameters(ArgumentBuilder<T, ?> node, Set<String> conditionTrail, Object command, Method method) {
+    private void registerParameters(ArgumentBuilder<T, ?> node, PermissionRegistry subPermission, Set<String> conditionTrail, Object command, Method method) {
         List<ArgumentBuilder<T, ?>> nodes = new ArrayList<>();
         nodes.add(node);
         int i = 0;
@@ -290,7 +285,9 @@ public class CommandManager<T extends SRCommandSender> {
                 throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
             }
 
-            nodes.add(RequiredArgumentBuilder.argument(parameter.getName(), argumentType));
+            RequiredArgumentBuilder<T, ?> argumentBuilder = RequiredArgumentBuilder.argument(parameter.getName(), argumentType);
+            argumentBuilder.requires(requirePermission(subPermission));
+            nodes.add(argumentBuilder);
 
             i++;
         }
@@ -308,7 +305,13 @@ public class CommandManager<T extends SRCommandSender> {
                     parameters[i1] = context.getArgument(parameter.getName(), parameter.getType());
                     i1++;
                 }
-                method.invoke(command, parameters);
+                platform.runAsync(() -> {
+                    try {
+                        method.invoke(command, parameters);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
                 return Command.SINGLE_SUCCESS;
             } catch (Exception e) {
                 e.printStackTrace();

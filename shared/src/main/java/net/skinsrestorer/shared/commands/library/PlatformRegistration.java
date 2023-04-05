@@ -21,10 +21,11 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 @Getter
 @RequiredArgsConstructor
-public class PlatformRegistration<T> {
+public class PlatformRegistration<T extends SRCommandSender> {
     private final String rootNode;
     private final String[] aliases;
     private final String rootPermission;

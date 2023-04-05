@@ -40,6 +40,8 @@ public enum PermissionRegistry {
     SR_PROPS("skinsrestorer.admincommand.props", Message.PERMISSION_ADMINCOMMAND_PROPS),
     SR_APPLY_SKIN("skinsrestorer.admincommand.applyskin", Message.PERMISSION_ADMINCOMMAND_APPLYSKIN),
     SR_CREATE_CUSTOM("skinsrestorer.admincommand.createcustom", Message.PERMISSION_ADMINCOMMAND_CREATECUSTOM),
+    SR_APPLY_SKIN_ALL("skinsrestorer.admincommand.applyskinall", Message.PERMISSION_ADMINCOMMAND_APPLYSKINALL),
+    SR_PURGE_OLD_DATA("skinsrestorer.admincommand.purgeolddata", Message.PERMISSION_ADMINCOMMAND_PURGEOLDDATA),
     SR_DUMP("skinsrestorer.admincommand.dump", Message.PERMISSION_ADMINCOMMAND_DUMP),
 
     BYPASS_COOLDOWN("skinsrestorer.bypasscooldown", Message.PERMISSION_BYPASSCOOLDOWN),
@@ -49,7 +51,7 @@ public enum PermissionRegistry {
     @Getter
     private final Permission permission;
     @Getter
-    private final Message description; // TODO: Implement descriptions
+    private final Message description;
 
     PermissionRegistry(String permission, Message description) {
         this(permission, false, description);

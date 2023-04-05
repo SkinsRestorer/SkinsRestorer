@@ -23,30 +23,31 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class CommandExecutor<T> {
+public class CommandExecutor<T extends SRCommandSender> {
     private final CommandDispatcher<T> dispatcher;
-    private final CommandPlatform<T> platformAdapter;
 
     public void execute(T executor, String input) {
         System.out.println("Executing command: " + input + " for " + executor);
-        platformAdapter.runAsync(() -> {
-            try {
-                dispatcher.execute(input, executor);
-            } catch (CommandSyntaxException e) {
-                e.printStackTrace(); // TODO: Handle
-            }
-        });
+        try {
+            dispatcher.execute(input, executor);
+        } catch (CommandSyntaxException e) {
+            executor.sendMessage(e.getRawMessage().getString());
+        }
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
         System.out.println("Tab completing command: " + input + " for " + executor);
-        return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(suggestions ->
+        return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(s -> {
+            System.out.println("Tab complete result: " + s);
+            return s;
+        }).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
     }
 }

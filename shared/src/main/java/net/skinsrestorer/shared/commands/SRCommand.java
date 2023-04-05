@@ -224,6 +224,7 @@ public final class SRCommand {
     }
 
     @Subcommand("setskinall")
+    @CommandPermission(PermissionRegistry.SR_CREATE_CUSTOM)
     @Description(Message.HELP_SR_SET_SKIN_ALL)
     @CommandConditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
@@ -255,6 +256,7 @@ public final class SRCommand {
     }
 
     @Subcommand("applyskinall")
+    @CommandPermission(PermissionRegistry.SR_APPLY_SKIN_ALL)
     @Description(Message.HELP_SR_APPLY_SKIN_ALL)
     @CommandConditions("console-only")
     private void onApplySkinAll(SRCommandSender sender) {
@@ -269,6 +271,7 @@ public final class SRCommand {
     }
 
     @Subcommand("purgeolddata")
+    @CommandPermission(PermissionRegistry.SR_PURGE_OLD_DATA)
     @Description(Message.HELP_SR_PURGE_OLD_DATA)
     @CommandConditions("console-only")
     private void onPurgeOldData(SRCommandSender sender, int days) {
