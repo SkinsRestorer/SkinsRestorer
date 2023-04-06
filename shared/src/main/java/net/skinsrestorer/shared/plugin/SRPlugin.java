@@ -279,9 +279,10 @@ public class SRPlugin {
         Path updaterDisabled = dataFolder.resolve("noupdate.txt");
         if (Files.exists(updaterDisabled)) {
             logger.info("Updater Disabled");
-        } else {
-            updateCheckInit.run();
+            return;
         }
+
+        updateCheckInit.run();
     }
 
     public void setOutdated() {
@@ -321,7 +322,7 @@ public class SRPlugin {
             metrics.addCustomChart(new SingleLineChart("minetools_calls", () -> metricsCounter.collect(MetricsCounter.Service.MINE_TOOLS)));
             metrics.addCustomChart(new SingleLineChart("mojang_calls", () -> metricsCounter.collect(MetricsCounter.Service.MOJANG)));
             metrics.addCustomChart(new SingleLineChart("ashcon_calls", () -> metricsCounter.collect(MetricsCounter.Service.ASHCON)));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
     }

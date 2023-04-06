@@ -36,8 +36,6 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.storage.Message;
@@ -55,19 +53,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class CommandManager<T extends SRCommandSender> {
     private final Map<String, Predicate<T>> conditions = new HashMap<>();
     public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final CommandPlatform<T> platform;
     private final SkinsRestorerLocale locale;
-    @Getter
-    private final CommandExecutor<T> executor;
 
     public CommandManager(CommandPlatform<T> platform, SkinsRestorerLocale locale) {
         this.platform = platform;
         this.locale = locale;
-        this.executor = new CommandExecutor<>(dispatcher);
 
         // Register default conditions
         registerCondition("player-only", sender -> {
@@ -111,8 +105,6 @@ public class CommandManager<T extends SRCommandSender> {
         PermissionRegistry rootPermission = getAnnotation(CommandPermission.class, command.getClass())
                 .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
 
-        Optional<PublicVisibility> publicVisibility = getAnnotation(PublicVisibility.class, command.getClass());
-
         LiteralArgumentBuilder<T> rootNode = LiteralArgumentBuilder.literal(rootName);
 
         rootNode.requires(requirePermission(rootPermission));
@@ -140,8 +132,11 @@ public class CommandManager<T extends SRCommandSender> {
             usage[i] = "/" + rootName + " " + usage[i];
         }
 
-        platform.registerCommand(new PlatformRegistration<>(rootName, aliases,
-                publicVisibility.isPresent() ? null : rootPermission.getPermission().getPermissionString(), description, usage, executor));
+        SRCommandMeta meta = new SRCommandMeta(rootName, aliases, rootPermission.getPermission(), description, usage);
+        CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta);
+        SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
+
+        platform.registerCommand(payload);
     }
 
     private void addMethodCommands(ArgumentBuilder<T, ?> node, PermissionRegistry rootPermission, Set<String> conditionTrail, Object command, Class<?> commandClass) {
@@ -167,7 +162,6 @@ public class CommandManager<T extends SRCommandSender> {
 
                     LiteralArgumentBuilder<T> childNode = LiteralArgumentBuilder.literal(name);
 
-                    System.out.println("Registering subcommand " + name);
                     PermissionRegistry subPermission = getAnnotation(CommandPermission.class, method)
                             .map(CommandPermission::value).orElseThrow(() -> new IllegalStateException("Command is missing @CommandPermission annotation"));
 
@@ -399,6 +393,15 @@ public class CommandManager<T extends SRCommandSender> {
         }
 
         return usage;
+    }
+
+    public void executeCommand(T executor, String input) {
+        System.out.println("Executing command: " + input + " for " + executor);
+        try {
+            dispatcher.execute(input, executor);
+        } catch (CommandSyntaxException e) {
+            executor.sendMessage(e.getRawMessage().getString());
+        }
     }
 
     // Taken from https://github.com/PaperMC/Velocity/blob/8abc9c80a69158ebae0121fda78b55c865c0abad/proxy/src/main/java/com/velocitypowered/proxy/util/BrigadierUtils.java#L38

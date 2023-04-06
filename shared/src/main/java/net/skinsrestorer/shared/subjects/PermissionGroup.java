@@ -19,9 +19,19 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import lombok.Getter;
+import net.skinsrestorer.shared.storage.Message;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 public enum PermissionGroup {
     PLAYER(
             Permission.of("skinsrestorer.player"),
+            Permission.of("skinsrestorer.command.*"),
+            Message.PERMISSION_PLAYER_WILDCARD,
             PermissionRegistry.SKIN,
             PermissionRegistry.SKIN_SET,
             PermissionRegistry.SKIN_SET_URL,
@@ -32,7 +42,9 @@ public enum PermissionGroup {
     ),
     ADMIN(
             Permission.of("skinsrestorer.admin"),
-            PermissionGroup.PLAYER,
+            Permission.of("skinsrestorer.admincommand.*"),
+            Message.PERMISSION_ADMIN_WILDCARD,
+            new PermissionGroup[] {PermissionGroup.PLAYER},
             PermissionRegistry.SR,
             PermissionRegistry.SKIN_SET_OTHER,
             PermissionRegistry.SKIN_CLEAR_OTHER,
@@ -46,13 +58,55 @@ public enum PermissionGroup {
             PermissionRegistry.BYPASS_DISABLED
     );
 
+    @Getter
+    private final Permission basePermission;
+    @Getter
+    private final Permission wildcard;
+    private final Message description;
+    private final PermissionGroup[] parents;
     private final PermissionRegistry[] permissions;
 
-    PermissionGroup(Permission basePermission, PermissionRegistry... permissions) {
+    PermissionGroup(Permission basePermission, Permission wildcard, Message description, PermissionRegistry... permissions) {
+        this(basePermission, wildcard, description, new PermissionGroup[0], permissions);
+    }
+
+    PermissionGroup(Permission basePermission, Permission wildcard, Message description, PermissionGroup[] parents, PermissionRegistry... permissions) {
+        this.basePermission = basePermission;
+        this.wildcard = wildcard;
+        this.description = description;
+        this.parents = parents;
         this.permissions = permissions;
     }
 
-    PermissionGroup(Permission basePermission, PermissionGroup parent, PermissionRegistry... permissions) {
-        this.permissions = permissions;
+    public static PermissionGroup getDefaultGroup() {
+        return PLAYER;
+    }
+
+    public boolean hasPermission(Permission permission) {
+        for (PermissionRegistry registry : permissions) {
+            if (registry.getPermission() == permission) {
+                return true;
+            }
+        }
+
+        for (PermissionGroup parent : parents) {
+            if (parent.hasPermission(permission)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static Collection<PermissionGroup> getGrantedBy(Permission permission) {
+        Set<PermissionGroup> groups = new HashSet<>();
+
+        for (PermissionGroup group : values()) {
+            if (group.hasPermission(permission)) {
+                groups.add(group);
+            }
+        }
+
+        return groups;
     }
 }

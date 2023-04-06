@@ -19,18 +19,43 @@
  */
 package net.skinsrestorer.shared.subjects;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.CommandConfig;
 
+import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 public class Permission {
     @Getter
     private final String permissionString;
 
-    public Tristate checkPermission(Function<String, Tristate> predicate) {
-        return predicate.apply(permissionString);
+    public boolean checkPermission(SettingsManager settings, Predicate<String> predicate) {
+        Collection<PermissionGroup> permissionGroups = PermissionGroup.getGrantedBy(this);
+        if (permissionGroups.isEmpty()) {
+            return internalCheckPermission(predicate);
+        }
+
+        if (permissionGroups.contains(PermissionGroup.getDefaultGroup())
+                && settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) {
+            return true;
+        }
+
+        for (PermissionGroup permissionGroup : permissionGroups) {
+            if (permissionGroup.getBasePermission().internalCheckPermission(predicate)
+                    || permissionGroup.getWildcard().internalCheckPermission(predicate)) {
+                return true;
+            }
+        }
+
+        return internalCheckPermission(predicate);
+    }
+
+    public boolean internalCheckPermission(Predicate<String> predicate) {
+        return predicate.test(permissionString);
     }
 }

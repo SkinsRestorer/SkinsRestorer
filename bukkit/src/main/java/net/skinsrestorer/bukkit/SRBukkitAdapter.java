@@ -29,7 +29,7 @@ import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
-import net.skinsrestorer.shared.commands.library.PlatformRegistration;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -197,12 +197,12 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     }
 
     @Override
-    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
+    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
         try {
             CommandMap commandMap = (CommandMap) ReflectionUtil.invokeMethod(server, "getCommandMap");
-            SRBukkitCommand command = new SRBukkitCommand(registration, pluginInstance, injector.getSingleton(WrapperBukkit.class));
+            SRBukkitCommand command = new SRBukkitCommand(payload, pluginInstance, injector.getSingleton(WrapperBukkit.class));
 
-            commandMap.register(registration.getRootNode(), "skinsrestorer", command);
+            commandMap.register(payload.getMeta().getRootNode(), "skinsrestorer", command);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }

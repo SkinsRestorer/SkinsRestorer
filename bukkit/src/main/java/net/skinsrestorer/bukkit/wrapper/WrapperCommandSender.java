@@ -58,7 +58,7 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public Tristate getPermissionValue(Permission permission) {
-        return permission.checkPermission(s -> sender.hasPermission(s) ? Tristate.TRUE : Tristate.FALSE);
+    public boolean hasPermission(Permission permission) {
+        return permission.checkPermission(settings, sender::hasPermission);
     }
 }

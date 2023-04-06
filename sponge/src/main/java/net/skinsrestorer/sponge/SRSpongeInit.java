@@ -30,9 +30,12 @@ import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventListenerRegistration;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 
@@ -63,17 +66,8 @@ public class SRSpongeInit implements SRServerPlatformInit {
 
     @Override
     public void initPermissions() {
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-
-        for (PermissionRegistry permission : PermissionRegistry.values()) {
-            String permissionString = permission.getPermission().getPermissionString();
-            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
-
-            game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
-                    .id(permissionString)
-                    .description(Component.text(description))
-                    .register();
-        }
+        // We need to delay this until the server is becoming available
+        game.eventManager().registerListeners(adapter.getPluginContainer(), this);
     }
 
     @Override
@@ -85,5 +79,21 @@ public class SRSpongeInit implements SRServerPlatformInit {
     public void initMessageChannel() {
         game.channelManager().ofType(ResourceKey.of("sr", "messagechannel"), RawDataChannel.class)
                 .play().addHandler(injector.newInstance(ServerMessageListener.class));
+    }
+
+    @Listener
+    public void onEngineStarting(StartingEngineEvent<Server> event) {
+        System.out.println("Registering permissions");
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+
+        for (PermissionRegistry permission : PermissionRegistry.values()) {
+            String permissionString = permission.getPermission().getPermissionString();
+            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
+
+            game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
+                    .id(permissionString)
+                    .description(Component.text(description))
+                    .register();
+        }
     }
 }

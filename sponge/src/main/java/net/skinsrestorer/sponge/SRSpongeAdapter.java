@@ -21,8 +21,9 @@ package net.skinsrestorer.sponge;
 
 import ch.jalu.injector.Injector;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.commands.library.PlatformRegistration;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -35,11 +36,18 @@ import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.command.CommandCompletion;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.event.EventListenerRegistration;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
 import org.spongepowered.api.item.inventory.menu.InventoryMenu;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
 import org.spongepowered.api.profile.property.ProfileProperty;
@@ -50,9 +58,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -62,6 +68,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     @Getter
     private final PluginContainer pluginContainer;
     private final Game game;
+    private final Set<SRRegisterPayload<SRCommandSender>> commands = new HashSet<>();
 
     public SRSpongeAdapter(Injector injector, Metrics metrics, PluginContainer container) {
         this.injector = injector;
@@ -71,6 +78,8 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
 
         injector.register(SRSpongeAdapter.class, this);
         injector.register(SRServerAdapter.class, this);
+
+        game.eventManager().registerListeners(pluginContainer, this);
     }
 
     @Override
@@ -188,7 +197,51 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
-    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
-        // TODO
+    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
+        commands.add(payload);
+    }
+
+    @Listener
+    public void onCommandRegister(RegisterCommandEvent<Command.Raw> event) {
+        System.out.println("Registering commands");
+        WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
+        for (SRRegisterPayload<SRCommandSender> payload : commands) {
+            event.register(pluginContainer, new Command.Raw() {
+                @Override
+                public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
+                    String argumentsString = arguments.remaining();
+                    String command = payload.getMeta().getRootNode() + (argumentsString.isEmpty() ? "" : " " + argumentsString);
+                    payload.getExecutor().execute(wrapper.commandSender(cause), command);
+                    return CommandResult.builder().build();
+                }
+
+                @Override
+                public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) {
+                    return payload.getExecutor().tabComplete(wrapper.commandSender(cause), arguments.remaining()).thenApply(list -> list.stream()
+                            .map(CommandCompletion::of)
+                            .collect(Collectors.toList())).join();
+                }
+
+                @Override
+                public boolean canExecute(CommandCause cause) {
+                    return payload.getExecutor().hasPermission(wrapper.commandSender(cause));
+                }
+
+                @Override
+                public Optional<Component> shortDescription(CommandCause cause) {
+                    return Optional.of(Component.text(payload.getMeta().getDescription()));
+                }
+
+                @Override
+                public Optional<Component> extendedDescription(CommandCause cause) {
+                    return Optional.empty();
+                }
+
+                @Override
+                public Component usage(CommandCause cause) {
+                    return Component.empty(); // TODO
+                }
+            }, payload.getMeta().getRootNode(), payload.getMeta().getAliases());
+        }
     }
 }

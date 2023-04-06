@@ -32,10 +32,11 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 public class CommandConfig implements SettingsHolder {
 
     @Comment({
-            "If true, players can change skins without permission.",
-            "see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms."
+            "For all player commands to work by default, you need to give players the permission 'skinsrestorer.player'.",
+            "This option allows you to force the default permission (skinsrestorer.player) to be given to all players.",
+            "Any permission lookup will be bypassed if this is set to true."
     })
-    public static final Property<Boolean> REGISTER_DEFAULT_PERMISSIONS = newProperty("commands.skinWithoutPerm", true);
+    public static final Property<Boolean> FORCE_DEFAULT_PERMISSIONS = newProperty("commands.forceDefaultPermissions", true);
     @Comment({
             "Players cooldown in seconds when changing skins (set to 0 to disable).",
             "SkinErrorCooldown is used when an error or invalid url occurs.",

@@ -23,7 +23,6 @@ permissions: # TODO: Possibly remove wildcards
   skinsrestorer.admincommand.*:
     description: Wildcard permission for admins
     children:
-      skinsrestorer.command.*: true
       skinsrestorer.admincommand: true
       skinsrestorer.command.set.other: true
       skinsrestorer.command.clear.other: true

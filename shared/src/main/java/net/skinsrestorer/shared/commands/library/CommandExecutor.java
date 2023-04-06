@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.commands.library;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -32,14 +31,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommandExecutor<T extends SRCommandSender> {
     private final CommandDispatcher<T> dispatcher;
+    private final CommandManager<T> manager;
+    private final SRCommandMeta meta;
 
     public void execute(T executor, String input) {
-        System.out.println("Executing command: " + input + " for " + executor);
-        try {
-            dispatcher.execute(input, executor);
-        } catch (CommandSyntaxException e) {
-            executor.sendMessage(e.getRawMessage().getString());
-        }
+        manager.executeCommand(executor, input);
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
@@ -49,5 +45,9 @@ public class CommandExecutor<T extends SRCommandSender> {
             return s;
         }).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
+    }
+
+    public boolean hasPermission(T executor) {
+        return executor.hasPermission(meta.getRootPermission());
     }
 }

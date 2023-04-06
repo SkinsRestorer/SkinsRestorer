@@ -29,7 +29,6 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import javax.inject.Inject;
 
 @SuppressWarnings({"unused"})
-@PublicVisibility
 @CommandNames("skins")
 @Description(Message.HELP_SKINS)
 @CommandPermission(value = PermissionRegistry.SKINS)

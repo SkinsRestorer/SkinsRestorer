@@ -25,7 +25,7 @@ import net.skinsrestorer.shared.subjects.SRPlayer;
 import java.util.Collection;
 
 public interface CommandPlatform<T extends SRCommandSender> {
-    void registerCommand(PlatformRegistration<T> registration);
+    void registerCommand(SRRegisterPayload<T> payload);
 
     void runAsync(Runnable runnable);
 

@@ -20,21 +20,37 @@
 package net.skinsrestorer.sponge;
 
 import com.google.inject.Inject;
+import net.kyori.adventure.text.Component;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.plugin.SRBootstrapper;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.sponge.logger.Log4jLoggerImpl;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.apache.logging.log4j.Logger;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.command.Command;
+import org.spongepowered.api.command.CommandCause;
+import org.spongepowered.api.command.CommandCompletion;
+import org.spongepowered.api.command.CommandResult;
+import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.api.event.lifecycle.LoadedGameEvent;
+import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
+import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @Plugin("skinsrestorer")
@@ -56,7 +72,7 @@ public class SRSpongeBootstrap {
     public void onInitialize(ConstructPluginEvent event) {
         // Need to init metrics before plugin because metrics wants to hook in the lifecycle before the plugin
         Metrics metrics = metricsFactory.make(2337);
-        metrics.startup(event);
+        metrics.startup(null);
 
         SRBootstrapper.startPlugin(
                 injector -> injector.register(Game.class, game),

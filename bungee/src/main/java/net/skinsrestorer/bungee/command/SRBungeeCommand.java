@@ -25,16 +25,16 @@ import net.md_5.bungee.api.plugin.TabExecutor;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
-import net.skinsrestorer.shared.commands.library.PlatformRegistration;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 public class SRBungeeCommand extends Command implements TabExecutor {
     private final CommandExecutor<SRCommandSender> executor;
     private final WrapperBungee wrapper;
 
-    public SRBungeeCommand(PlatformRegistration<SRCommandSender> registration, WrapperBungee wrapper) {
-        super(registration.getRootNode(), registration.getRootPermission(), registration.getAliases());
-        this.executor = registration.getExecutor();
+    public SRBungeeCommand(SRRegisterPayload<SRCommandSender> payload, WrapperBungee wrapper) {
+        super(payload.getMeta().getRootNode(), null, payload.getMeta().getAliases());
+        this.executor = payload.getExecutor();
         this.wrapper = wrapper;
     }
 
@@ -46,5 +46,10 @@ public class SRBungeeCommand extends Command implements TabExecutor {
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
         return executor.tabComplete(wrapper.commandSender(sender), CommandUtils.joinCommand(getName(), args)).join();
+    }
+
+    @Override
+    public boolean hasPermission(CommandSender sender) {
+        return executor.hasPermission(wrapper.commandSender(sender));
     }
 }

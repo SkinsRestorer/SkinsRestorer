@@ -42,7 +42,7 @@ public class SkinsRestorerLocale {
         String message = localeManager.getMessage(foreign, key.getKey());
 
         if (message == null) {
-            throw new IllegalStateException("Message " + key.name() + " not found");
+            throw new IllegalStateException(String.format("Message %s not found", key.name()));
         }
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {

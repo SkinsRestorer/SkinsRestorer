@@ -30,7 +30,8 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.commands.library.PlatformRegistration;
+import net.skinsrestorer.shared.commands.library.SRCommandMeta;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
@@ -122,31 +123,27 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     }
 
     @Override
-    public void registerCommand(PlatformRegistration<SRCommandSender> registration) {
+    public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
         CommandMeta meta = proxy.getCommandManager()
-                .metaBuilder(registration.getRootNode())
+                .metaBuilder(payload.getMeta().getRootNode())
                 .plugin(pluginInstance)
-                .aliases(registration.getAliases()).build();
+                .aliases(payload.getMeta().getAliases()).build();
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
 
         proxy.getCommandManager().register(meta, new RawCommand() {
             @Override
             public void execute(Invocation invocation) {
-                registration.getExecutor().execute(wrapper.commandSender(invocation.source()), invocation.arguments());
+                payload.getExecutor().execute(wrapper.commandSender(invocation.source()), invocation.arguments());
             }
 
             @Override
             public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-                return registration.getExecutor().tabComplete(wrapper.commandSender(invocation.source()), invocation.arguments());
+                return payload.getExecutor().tabComplete(wrapper.commandSender(invocation.source()), invocation.arguments());
             }
 
             @Override
             public boolean hasPermission(Invocation invocation) {
-                if (registration.getRootPermission() == null) {
-                    return true;
-                }
-
-                return invocation.source().hasPermission(registration.getRootPermission());
+                return payload.getExecutor().hasPermission(wrapper.commandSender(invocation.source()));
             }
         });
     }

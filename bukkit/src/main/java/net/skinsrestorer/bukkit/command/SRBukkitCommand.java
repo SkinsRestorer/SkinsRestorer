@@ -23,7 +23,7 @@ import lombok.Getter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
-import net.skinsrestorer.shared.commands.library.PlatformRegistration;
+import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -40,17 +40,16 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     private final CommandExecutor<SRCommandSender> executor;
     private final WrapperBukkit wrapper;
 
-    public SRBukkitCommand(PlatformRegistration<SRCommandSender> registration, Plugin plugin, WrapperBukkit wrapper) {
+    public SRBukkitCommand(SRRegisterPayload<SRCommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
         super(
-                registration.getRootNode(),
-                registration.getDescription(),
-                String.join("\n", registration.getUsages()),
-                Arrays.asList(registration.getAliases())
+                payload.getMeta().getRootNode(),
+                payload.getMeta().getDescription(),
+                String.join("\n", payload.getMeta().getUsages()),
+                Arrays.asList(payload.getMeta().getAliases())
         );
         this.plugin = plugin;
-        this.executor = registration.getExecutor();
         this.wrapper = wrapper;
-        setPermission(registration.getRootPermission());
+        this.executor = payload.getExecutor();
     }
 
     @Override
@@ -63,5 +62,10 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     @Override
     public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args) throws IllegalArgumentException {
         return executor.tabComplete(wrapper.commandSender(sender), CommandUtils.joinCommand(alias, args)).join();
+    }
+
+    @Override
+    public boolean testPermissionSilent(@NotNull CommandSender target) {
+        return executor.hasPermission(wrapper.commandSender(target));
     }
 }

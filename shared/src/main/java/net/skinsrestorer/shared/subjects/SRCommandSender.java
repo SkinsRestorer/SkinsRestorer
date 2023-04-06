@@ -28,13 +28,9 @@ public interface SRCommandSender extends SRForeign {
 
     String getName();
 
-    Tristate getPermissionValue(Permission permission);
+    boolean hasPermission(Permission permission);
 
     default boolean hasPermission(PermissionRegistry registry) {
         return hasPermission(registry.getPermission());
-    }
-
-    default boolean hasPermission(Permission permission) {
-        return getPermissionValue(permission) == Tristate.TRUE;
     }
 }

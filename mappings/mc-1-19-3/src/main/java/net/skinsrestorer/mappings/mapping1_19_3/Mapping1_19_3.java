@@ -27,6 +27,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.skinsrestorer.mappings.shared.IMapping;
+import net.skinsrestorer.mappings.shared.MappingReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class Mapping1_19_3 implements IMapping {
     }
 
     public void triggerHealthUpdate(Player player) {
-        extractServerPlayer(player).resetSentInfo();
+        MappingReflection.getHandle(player, ServerPlayer.class).resetSentInfo();
     }
 
     public void accept(Player player, Predicate<ViaPacketData> viaFunction) {
@@ -92,16 +93,7 @@ public class Mapping1_19_3 implements IMapping {
             player.getClass().getMethod("updateScaledHealth").invoke(player);
             player.updateInventory();
             triggerHealthUpdate(player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
-        }
-    }
-
-    private ServerPlayer extractServerPlayer(Player player) {
-        try {
-            return (ServerPlayer) player.getClass().getMethod("getHandle").invoke(player);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
         }

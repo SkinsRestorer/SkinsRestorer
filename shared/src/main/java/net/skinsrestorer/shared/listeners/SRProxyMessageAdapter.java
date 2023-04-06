@@ -38,7 +38,7 @@ import java.util.Optional;
 public final class SRProxyMessageAdapter {
     private final SkinStorageImpl skinStorage;
     private final SRProxyAdapter<?> plugin;
-    private final CommandManager<SRCommandSender> manager;
+    private final CommandManager<SRCommandSender> commandManager;
     private final SRProxyPlugin proxyPlugin;
 
     public void handlePluginMessage(SRProxyMessageEvent event) {
@@ -71,11 +71,11 @@ public final class SRProxyMessageAdapter {
                     proxyPlugin.sendPage(page, player, skinStorage);
                     break;
                 case "clearSkin":
-                    manager.getExecutor().execute(player, "skin clear");
+                    commandManager.executeCommand(player, "skin clear");
                     break;
                 case "setSkin":
                     String skin = in.readUTF();
-                    manager.getExecutor().execute(player, "skin set " + skin);
+                    commandManager.executeCommand(player, "skin set " + skin);
                     break;
                 default:
                     break;

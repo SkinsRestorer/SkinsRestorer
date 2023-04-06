@@ -56,11 +56,11 @@ public class SharedGUI {
             SRServerPlayer player = event.getPlayer();
             switch (event.getMaterial()) {
                 case HEAD:
-                    commandManager.getExecutor().execute(player, "skin set " + event.getDisplayName());
+                    commandManager.executeCommand(player, "skin set " + event.getDisplayName());
                     player.closeInventory();
                     break;
                 case RED_PANE:
-                    commandManager.getExecutor().execute(player, "skin clear");
+                    commandManager.executeCommand(player, "skin clear");
                     player.closeInventory();
                     break;
                 case GREEN_PANE:
