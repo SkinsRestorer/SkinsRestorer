@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 @Getter
@@ -28,7 +29,7 @@ import net.skinsrestorer.shared.subjects.SRCommandSender;
 public class PlatformRegistration<T extends SRCommandSender> {
     private final String rootNode;
     private final String[] aliases;
-    private final String rootPermission;
+    private final Permission rootPermission;
     private final String description;
     private final String[] usages;
     private final CommandExecutor<T> executor;
