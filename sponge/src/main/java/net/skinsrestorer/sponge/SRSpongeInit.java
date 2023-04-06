@@ -25,6 +25,9 @@ import net.kyori.adventure.text.Component;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
+import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.Permission;
+import net.skinsrestorer.shared.subjects.PermissionGroup;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
@@ -38,6 +41,7 @@ import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 import org.spongepowered.api.network.channel.raw.RawDataChannel;
+import org.spongepowered.api.service.permission.PermissionDescription;
 
 import javax.inject.Inject;
 
@@ -83,17 +87,26 @@ public class SRSpongeInit implements SRServerPlatformInit {
 
     @Listener
     public void onEngineStarting(StartingEngineEvent<Server> event) {
-        System.out.println("Registering permissions");
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-
         for (PermissionRegistry permission : PermissionRegistry.values()) {
-            String permissionString = permission.getPermission().getPermissionString();
-            String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
+            newDescriptionBuilder(permission.getPermission(), permission.getDescription()).register();
+        }
 
-            game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
-                    .id(permissionString)
-                    .description(Component.text(description))
+        for (PermissionGroup group : PermissionGroup.values()) {
+            String groupString = group == PermissionGroup.PLAYER ? PermissionDescription.ROLE_USER : PermissionDescription.ROLE_STAFF;
+            newDescriptionBuilder(group.getBasePermission(), group.getDescription())
+                    .assign(groupString, true)
+                    .register();
+            newDescriptionBuilder(group.getWildcard(), group.getDescription())
+                    .assign(groupString, true)
                     .register();
         }
+    }
+
+    private PermissionDescription.Builder newDescriptionBuilder(Permission permission, Message description) {
+        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
+
+        return game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
+                .id(permission.getPermissionString())
+                .description(Component.text(locale.getMessage(locale.getDefaultForeign(), description)));
     }
 }

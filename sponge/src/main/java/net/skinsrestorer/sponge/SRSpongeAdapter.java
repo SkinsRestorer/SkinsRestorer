@@ -203,7 +203,6 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
 
     @Listener
     public void onCommandRegister(RegisterCommandEvent<Command.Raw> event) {
-        System.out.println("Registering commands");
         WrapperSponge wrapper = injector.getSingleton(WrapperSponge.class);
         for (SRRegisterPayload<SRCommandSender> payload : commands) {
             event.register(pluginContainer, new Command.Raw() {

@@ -22,11 +22,11 @@ package net.skinsrestorer.shared.subjects;
 import lombok.Getter;
 import net.skinsrestorer.shared.storage.Message;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 public enum PermissionGroup {
     PLAYER(
             Permission.of("skinsrestorer.player"),
@@ -58,9 +58,7 @@ public enum PermissionGroup {
             PermissionRegistry.BYPASS_DISABLED
     );
 
-    @Getter
     private final Permission basePermission;
-    @Getter
     private final Permission wildcard;
     private final Message description;
     private final PermissionGroup[] parents;

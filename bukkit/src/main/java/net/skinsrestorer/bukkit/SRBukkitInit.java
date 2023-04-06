@@ -38,12 +38,14 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlatformInit;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.shared.subjects.PermissionGroup;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.SimplePluginManager;
 
 import javax.inject.Inject;
@@ -51,6 +53,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -163,6 +169,26 @@ public class SRBukkitInit implements SRServerPlatformInit {
             String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
 
             pluginManager.addPermission(new Permission(permissionString, description));
+        }
+
+        for (PermissionGroup group : PermissionGroup.values()) {
+            String description = locale.getMessage(locale.getDefaultForeign(), group.getDescription());
+            Map<String, Boolean> children = new HashMap<>();
+            mergePermissions(group, children);
+            PermissionDefault permissionDefault = group == PermissionGroup.PLAYER ? PermissionDefault.TRUE : PermissionDefault.OP;
+
+            pluginManager.addPermission(new Permission(group.getBasePermission().getPermissionString(), description, permissionDefault, children));
+            pluginManager.addPermission(new Permission(group.getWildcard().getPermissionString(), description, permissionDefault, children));
+        }
+    }
+
+    private void mergePermissions(PermissionGroup group, Map<String, Boolean> data) {
+        for (PermissionRegistry permission : group.getPermissions()) {
+            data.put(permission.getPermission().getPermissionString(), true);
+        }
+
+        for (PermissionGroup childGroup : group.getParents()) {
+            mergePermissions(childGroup, data);
         }
     }
 

@@ -39,11 +39,7 @@ public class CommandExecutor<T extends SRCommandSender> {
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
-        System.out.println("Tab completing command: " + input + " for " + executor);
-        return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(s -> {
-            System.out.println("Tab complete result: " + s);
-            return s;
-        }).thenApply(suggestions ->
+        return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
     }
 

@@ -142,7 +142,6 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             ejectPassengers(player);
 
             if (PaperSkinApplier.hasProfileMethod()) {
-                System.out.println("hasProfileMethod");
                 PaperSkinApplier.applySkin(player, property);
                 return;
             }
