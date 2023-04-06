@@ -35,7 +35,7 @@ public class CommandConfig implements SettingsHolder {
             "If true, players can change skins without permission.",
             "see https://github.com/SkinsRestorer/SkinsRestorerX/wiki/cmds-&-perms for perms."
     })
-    public static final Property<Boolean> SKIN_WITHOUT_PERM = newProperty("commands.skinWithoutPerm", true);
+    public static final Property<Boolean> REGISTER_DEFAULT_PERMISSIONS = newProperty("commands.skinWithoutPerm", true);
     @Comment({
             "Players cooldown in seconds when changing skins (set to 0 to disable).",
             "SkinErrorCooldown is used when an error or invalid url occurs.",

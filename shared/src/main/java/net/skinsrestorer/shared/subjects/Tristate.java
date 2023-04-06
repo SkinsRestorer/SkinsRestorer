@@ -19,22 +19,8 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import net.skinsrestorer.shared.storage.Message;
-
-public interface SRCommandSender extends SRForeign {
-    void sendMessage(String message);
-
-    void sendMessage(Message key, Object... args);
-
-    String getName();
-
-    Tristate getPermissionValue(Permission permission);
-
-    default boolean hasPermission(PermissionRegistry registry) {
-        return hasPermission(registry.getPermission());
-    }
-
-    default boolean hasPermission(Permission permission) {
-        return getPermissionValue(permission) == Tristate.TRUE;
-    }
+public enum Tristate {
+    TRUE,
+    FALSE,
+    UNDEFINED;
 }

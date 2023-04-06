@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.Tristate;
 
 import java.util.Locale;
 
@@ -58,7 +59,16 @@ public class WrapperCommandSender implements SRCommandSender {
     }
 
     @Override
-    public boolean hasPermission(Permission permission) {
-        return permission.checkPermission(settings, sender::hasPermission);
+    public Tristate getPermissionValue(Permission permission) {
+        return permission.checkPermission(s -> {
+            switch (sender.getPermissionValue(s)) {
+                case TRUE:
+                    return Tristate.TRUE;
+                case FALSE:
+                    return Tristate.FALSE;
+                default:
+                    return Tristate.UNDEFINED;
+            }
+        });
     }
 }

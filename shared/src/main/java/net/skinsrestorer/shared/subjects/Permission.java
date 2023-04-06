@@ -19,28 +19,18 @@
  */
 package net.skinsrestorer.shared.subjects;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.CommandConfig;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
 public class Permission {
     @Getter
     private final String permissionString;
-    private final boolean defaultPermission;
 
-    public boolean checkPermission(SettingsManager settingsManager, Predicate<String> predicate) {
-        if (defaultPermission && settingsManager.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) {
-            return true; // Default permissions are true for everyone if the config option is enabled
-        }
-
-        System.out.println("Checking permission: " + permissionString);
-        boolean result = predicate.test(permissionString);
-        System.out.println("Permission result: " + result);
-        return result;
+    public Tristate checkPermission(Function<String, Tristate> predicate) {
+        return predicate.apply(permissionString);
     }
 }

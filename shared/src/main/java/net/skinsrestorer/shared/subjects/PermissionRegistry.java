@@ -23,16 +23,16 @@ import lombok.Getter;
 import net.skinsrestorer.shared.storage.Message;
 
 public enum PermissionRegistry {
-    SKIN("skinsrestorer.command", true, Message.PERMISSION_COMMAND),
+    SKIN("skinsrestorer.command", Message.PERMISSION_COMMAND),
     SR("skinsrestorer.admincommand", Message.PERMISSION_ADMINCOMMAND),
-    SKINS("skinsrestorer.command.gui", true, Message.PERMISSION_COMMAND_GUI),
-    SKIN_SET("skinsrestorer.command.set", true, Message.PERMISSION_COMMAND_SET),
+    SKINS("skinsrestorer.command.gui", Message.PERMISSION_COMMAND_GUI),
+    SKIN_SET("skinsrestorer.command.set", Message.PERMISSION_COMMAND_SET),
     SKIN_SET_OTHER("skinsrestorer.command.set.other", Message.PERMISSION_COMMAND_SET_OTHER),
-    SKIN_SET_URL("skinsrestorer.command.set.url", true, Message.PERMISSION_COMMAND_SET_URL),
-    SKIN_CLEAR("skinsrestorer.command.clear", true, Message.PERMISSION_COMMAND_CLEAR),
+    SKIN_SET_URL("skinsrestorer.command.set.url", Message.PERMISSION_COMMAND_SET_URL),
+    SKIN_CLEAR("skinsrestorer.command.clear", Message.PERMISSION_COMMAND_CLEAR),
     SKIN_CLEAR_OTHER("skinsrestorer.command.clear.other", Message.PERMISSION_COMMAND_CLEAR_OTHER),
-    SKIN_SEARCH("skinsrestorer.command.search", true, Message.PERMISSION_COMMAND_SEARCH),
-    SKIN_UPDATE("skinsrestorer.command.update", true, Message.PERMISSION_COMMAND_UPDATE),
+    SKIN_SEARCH("skinsrestorer.command.search", Message.PERMISSION_COMMAND_SEARCH),
+    SKIN_UPDATE("skinsrestorer.command.update", Message.PERMISSION_COMMAND_UPDATE),
     SKIN_UPDATE_OTHER("skinsrestorer.command.update.other", Message.PERMISSION_COMMAND_UPDATE_OTHER),
     SR_RELOAD("skinsrestorer.admincommand.reload", Message.PERMISSION_ADMINCOMMAND_RELOAD),
     SR_STATUS("skinsrestorer.admincommand.status", Message.PERMISSION_ADMINCOMMAND_STATUS),
@@ -54,15 +54,11 @@ public enum PermissionRegistry {
     private final Message description;
 
     PermissionRegistry(String permission, Message description) {
-        this(permission, false, description);
-    }
-
-    PermissionRegistry(String permission, boolean isDefault, Message description) {
-        this.permission = Permission.of(permission, isDefault);
+        this.permission = Permission.of(permission);
         this.description = description;
     }
 
     public static Permission forSkin(String skinName) {
-        return Permission.of("skinsrestorer.skin." + skinName, false);
+        return Permission.of("skinsrestorer.skin." + skinName);
     }
 }

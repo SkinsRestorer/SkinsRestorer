@@ -253,7 +253,7 @@ public final class SkinCommand {
         String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
         if (C.validUrl(skinName)) {
             if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
-                    && !settings.getProperty(CommandConfig.SKIN_WITHOUT_PERM)) { // Ignore /skin clear when defaultSkin = url
+                    && !settings.getProperty(CommandConfig.REGISTER_DEFAULT_PERMISSIONS)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
