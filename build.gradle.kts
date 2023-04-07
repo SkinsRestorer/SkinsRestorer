@@ -18,12 +18,12 @@ val platforms = setOf(
 
 val shadow = setOf(
     projects.skinsrestorerShared,
-    projects.multiver.bukkit.folia
 ).map { it.dependencyProject }
 
 val special = setOf(
     projects.skinsrestorer,
-    projects.skinsrestorerApi
+    projects.skinsrestorerApi,
+    projects.multiver.bukkit.folia
 ).map { it.dependencyProject }
 
 val mappings = setOf(

@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
@@ -38,6 +36,7 @@ val projectIncludes = setOf(
 ).map { it.dependencyProject }
 
 tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     projectIncludes.forEach { include ->
         val jarTask = include.tasks.named<Jar>("jar").get()
         dependsOn(jarTask)

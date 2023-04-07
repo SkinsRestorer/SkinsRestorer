@@ -67,6 +67,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     private final Path pluginFile; // Only for platform API use
     @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
+    @Getter
     private final SchedulerProvider schedulerProvider = ProviderSelector.builder(SchedulerProvider.class)
             .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
             .add(new BukkitSchedulerProvider())

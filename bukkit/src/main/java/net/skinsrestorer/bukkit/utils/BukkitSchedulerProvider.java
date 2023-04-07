@@ -20,6 +20,7 @@
 package net.skinsrestorer.bukkit.utils;
 
 import org.bukkit.Server;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,11 @@ public class BukkitSchedulerProvider implements SchedulerProvider {
     @Override
     public void runSync(Server server, Plugin plugin, Runnable runnable) {
         server.getScheduler().runTask(plugin, runnable);
+    }
+
+    @Override
+    public void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable) {
+        runSync(server, plugin, runnable);
     }
 
     @Override

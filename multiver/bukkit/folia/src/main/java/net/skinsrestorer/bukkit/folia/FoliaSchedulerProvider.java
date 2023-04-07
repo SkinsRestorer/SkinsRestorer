@@ -22,6 +22,7 @@ package net.skinsrestorer.bukkit.folia;
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Server;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
 import java.util.concurrent.TimeUnit;
@@ -36,6 +37,11 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
     @Override
     public void runSync(Server server, Plugin plugin, Runnable runnable) {
         server.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
+    }
+
+    @Override
+    public void runSyncToEntity(Server server, Plugin plugin, Entity entity, Runnable runnable) {
+        entity.getScheduler().run(plugin, scheduledTask -> runnable.run(), null);
     }
 
     @Override
