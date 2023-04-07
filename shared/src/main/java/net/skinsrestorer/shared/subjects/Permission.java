@@ -26,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.CommandConfig;
 
 import java.util.Collection;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)

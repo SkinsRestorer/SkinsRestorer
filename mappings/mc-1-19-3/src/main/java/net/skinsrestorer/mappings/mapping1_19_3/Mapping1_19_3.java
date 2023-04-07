@@ -32,7 +32,6 @@ import net.skinsrestorer.mappings.shared.ViaPacketData;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

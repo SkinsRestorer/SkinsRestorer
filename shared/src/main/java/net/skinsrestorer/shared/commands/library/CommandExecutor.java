@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.commands.library;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.suggestion.Suggestion;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommandExecutor<T extends SRCommandSender> {
     private final CommandDispatcher<T> dispatcher;
+    @Getter
     private final CommandManager<T> manager;
     private final SRCommandMeta meta;
 

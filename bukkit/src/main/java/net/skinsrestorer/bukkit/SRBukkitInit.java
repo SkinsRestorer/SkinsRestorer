@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.axiom.AxiomConfiguration;
+import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
 import net.skinsrestorer.bukkit.listener.PlayerResourcePackStatus;
@@ -31,6 +32,7 @@ import net.skinsrestorer.bukkit.paper.PaperPlayerJoinEvent;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.bukkit.utils.NMSVersion;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
+import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.exception.InitializeException;
@@ -43,10 +45,13 @@ import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.help.HelpTopic;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.SimplePluginManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import java.io.BufferedReader;
@@ -107,6 +112,44 @@ public class SRBukkitInit implements SRServerPlatformInit {
                 server.getPluginManager().registerEvents(injector.newInstance(PlayerResourcePackStatus.class), adapter.getPluginInstance());
             }
         }
+    }
+
+    @Override
+    public void initPrePlatformInit() {
+        WrapperBukkit wrapperBukkit = injector.getSingleton(WrapperBukkit.class);
+        server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command -> {
+            if (command instanceof SRBukkitCommand) {
+                SRBukkitCommand srbukkitCommand = (SRBukkitCommand) command;
+
+                return new HelpTopic() {
+                    @Override
+                    public boolean canSee(@NotNull CommandSender player) {
+                        return srbukkitCommand.testPermissionSilent(player);
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getName() {
+                        return "/" + srbukkitCommand.getName();
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getShortText() {
+                        return srbukkitCommand.getDescription();
+                    }
+
+                    @NotNull
+                    @Override
+                    public String getFullText(@NotNull CommandSender forWho) {
+                        return String.join("\n", srbukkitCommand.getExecutor().getManager()
+                                .getRootHelp(srbukkitCommand.getName(), wrapperBukkit.commandSender(forWho)));
+                    }
+                };
+            } else {
+                throw new IllegalArgumentException("Command must be an instance of SRBukkitCommand");
+            }
+        });
     }
 
     @Override

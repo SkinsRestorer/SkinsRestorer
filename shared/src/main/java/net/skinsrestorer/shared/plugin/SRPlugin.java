@@ -359,6 +359,8 @@ public class SRPlugin {
 
         platformInit.checkPluginSupport();
 
+        platformInit.initPrePlatformInit();
+
         if (serverPlugin != null) {
             serverPlugin.startupPlatform((SRServerPlatformInit) platformInit);
         } else if (proxyPlugin != null) {

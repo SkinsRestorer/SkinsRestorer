@@ -44,7 +44,7 @@ public enum PermissionGroup {
             Permission.of("skinsrestorer.admin"),
             Permission.of("skinsrestorer.admincommand.*"),
             Message.PERMISSION_ADMIN_WILDCARD,
-            new PermissionGroup[] {PermissionGroup.PLAYER},
+            new PermissionGroup[]{PermissionGroup.PLAYER},
             PermissionRegistry.SR,
             PermissionRegistry.SKIN_SET_OTHER,
             PermissionRegistry.SKIN_CLEAR_OTHER,
@@ -80,6 +80,18 @@ public enum PermissionGroup {
         return PLAYER;
     }
 
+    public static Collection<PermissionGroup> getGrantedBy(Permission permission) {
+        Set<PermissionGroup> groups = new HashSet<>();
+
+        for (PermissionGroup group : values()) {
+            if (group.hasPermission(permission)) {
+                groups.add(group);
+            }
+        }
+
+        return groups;
+    }
+
     public boolean hasPermission(Permission permission) {
         for (PermissionRegistry registry : permissions) {
             if (registry.getPermission() == permission) {
@@ -94,17 +106,5 @@ public enum PermissionGroup {
         }
 
         return false;
-    }
-
-    public static Collection<PermissionGroup> getGrantedBy(Permission permission) {
-        Set<PermissionGroup> groups = new HashSet<>();
-
-        for (PermissionGroup group : values()) {
-            if (group.hasPermission(permission)) {
-                groups.add(group);
-            }
-        }
-
-        return groups;
     }
 }

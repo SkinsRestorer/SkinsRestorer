@@ -37,6 +37,7 @@ import java.util.List;
 public class SRBukkitCommand extends Command implements PluginIdentifiableCommand {
     @Getter
     private final Plugin plugin;
+    @Getter
     private final CommandExecutor<SRCommandSender> executor;
     private final WrapperBukkit wrapper;
 

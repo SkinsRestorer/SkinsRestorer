@@ -28,7 +28,6 @@ import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.Tristate;
 
 import java.util.Locale;
 

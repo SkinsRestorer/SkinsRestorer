@@ -54,8 +54,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CommandManager<T extends SRCommandSender> {
-    private final Map<String, Predicate<T>> conditions = new HashMap<>();
     public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
+    private final Map<String, Predicate<T>> conditions = new HashMap<>();
     private final CommandPlatform<T> platform;
     private final SkinsRestorerLocale locale;
 

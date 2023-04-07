@@ -28,4 +28,7 @@ public interface SRPlatformInit {
     void initSkinApplier() throws InitializeException;
 
     void initLoginProfileListener();
+
+    default void initPrePlatformInit() {
+    }
 }

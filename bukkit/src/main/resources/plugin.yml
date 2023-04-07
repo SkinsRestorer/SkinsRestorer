@@ -7,30 +7,3 @@ authors: [ "knat", "AlexProgrammerDE", "Th3Tr0LLeR", "McLive", "DoNotSpamPls" ]
 softdepend: [ "ProtocolLib", "ViaVersion", "ViaBackwards", "ProtocolSupport", "MundoSK" ]
 api-version: 1.13
 folia-supported: true
-permissions: # TODO: Possibly remove wildcards
-  # wildcards
-  skinsrestorer.command.*:
-    description: Wildcard permission for players
-    children:
-      skinsrestorer.command: true
-      skinsrestorer.command.set: true
-      skinsrestorer.command.set.url: true
-      skinsrestorer.command.clear: true
-      skinsrestorer.command.update: true
-      skinsrestorer.command.search: true
-      skinsrestorer.command.gui: true
-
-  skinsrestorer.admincommand.*:
-    description: Wildcard permission for admins
-    children:
-      skinsrestorer.admincommand: true
-      skinsrestorer.command.set.other: true
-      skinsrestorer.command.clear.other: true
-      skinsrestorer.command.update.other: true
-      skinsrestorer.admincommand.status: true
-      skinsrestorer.admincommand.drop: true
-      skinsrestorer.admincommand.props: true
-      skinsrestorer.admincommand.applyskin: true
-      skinsrestorer.admincommand.createcustom: true
-      skinsrestorer.bypasscooldown: true
-      skinsrestorer.bypassdisabled: true

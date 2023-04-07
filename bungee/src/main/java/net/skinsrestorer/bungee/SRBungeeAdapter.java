@@ -28,7 +28,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bungee.command.SRBungeeCommand;
 import net.skinsrestorer.bungee.listeners.ForceAliveListener;
 import net.skinsrestorer.bungee.wrapper.WrapperBungee;
-import net.skinsrestorer.shared.commands.library.SRCommandMeta;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
