@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.api.event;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import net.skinsrestorer.api.event.EventBus;
 import net.skinsrestorer.api.event.SkinsRestorerEvent;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -51,7 +50,7 @@ public class EventBusImpl implements EventBus {
                 continue;
             }
 
-            val listener = subscription.getListener().get();
+            Consumer<?> listener = subscription.getListener().get();
 
             if (listener == null) {
                 continue;

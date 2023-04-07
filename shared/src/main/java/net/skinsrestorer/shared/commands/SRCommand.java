@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
@@ -287,7 +286,7 @@ public final class SRCommand {
     private void onDump(SRCommandSender sender) {
         try {
             sender.sendMessage("§e[§2SkinsRestorer§e] §aUploading data to bytebin.lucko.me...");
-            val url = dumpService.dump();
+            Optional<String> url = dumpService.dump();
             if (url.isPresent()) {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §aUpload successful! §ehttps://bytebin.lucko.me/" + url.get());
             } else {

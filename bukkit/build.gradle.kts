@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 dependencies {
     implementation(projects.skinsrestorerApi)
     implementation(projects.skinsrestorerShared)
@@ -29,4 +31,24 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
     testRuntimeOnly("com.mojang:authlib:1.11")
+}
+
+val projectIncludes = setOf(
+    rootProject.projects.multiver.bukkit.folia
+).map { it.dependencyProject }
+
+tasks.jar {
+    projectIncludes.forEach { include ->
+        val jarTask = include.tasks.named<Jar>("jar").get()
+        dependsOn(jarTask)
+        from(zipTree(jarTask.archiveFile))
+    }
+}
+
+tasks.shadowJar {
+    projectIncludes.forEach { include ->
+        val jarTask = include.tasks.named<Jar>("jar").get()
+        dependsOn(jarTask)
+        from(zipTree(jarTask.archiveFile))
+    }
 }

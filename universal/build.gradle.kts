@@ -14,7 +14,7 @@ tasks {
         destinationDirectory.set(rootProject.projectDir.resolve("build/libs"))
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         platforms.forEach { platform ->
-            val shadowJarTask = platform.tasks.named<ShadowJar>("shadowJar").forUseAtConfigurationTime().get()
+            val shadowJarTask = platform.tasks.named<ShadowJar>("shadowJar").get()
             dependsOn(shadowJarTask)
             dependsOn(platform.tasks.withType<Jar>())
             from(zipTree(shadowJarTask.archiveFile))

@@ -28,10 +28,13 @@ import net.skinsrestorer.bukkit.gui.SkinsGUI;
 import net.skinsrestorer.bukkit.listener.ForceAliveListener;
 import net.skinsrestorer.bukkit.paper.PaperUtil;
 import net.skinsrestorer.bukkit.spigot.SpigotUtil;
+import net.skinsrestorer.bukkit.utils.BukkitSchedulerProvider;
+import net.skinsrestorer.bukkit.utils.SchedulerProvider;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
+import net.skinsrestorer.shared.provider.ProviderSelector;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
@@ -64,6 +67,10 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     private final Path pluginFile; // Only for platform API use
     @Getter
     private final JavaPlugin pluginInstance; // Only for platform API use
+    private final SchedulerProvider schedulerProvider = ProviderSelector.builder(SchedulerProvider.class)
+            .add("net.skinsrestorer.bukkit.folia.FoliaSchedulerProvider") // Compiled with java 17, which the bukkit module is not.
+            .add(new BukkitSchedulerProvider())
+            .buildAndGet();
 
     public SRBukkitAdapter(Injector injector, Path pluginFile, JavaPlugin pluginInstance) {
         this.injector = injector;
@@ -106,12 +113,12 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
     @Override
     public void runAsync(Runnable runnable) {
-        server.getScheduler().runTaskAsynchronously(pluginInstance, runnable);
+        schedulerProvider.runAsync(server, pluginInstance, runnable);
     }
 
     @Override
     public void runSync(Runnable runnable) {
-        server.getScheduler().runTask(pluginInstance, runnable);
+        schedulerProvider.runSync(server, pluginInstance, runnable);
     }
 
     @Override
@@ -172,7 +179,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
     @Override
     public void runRepeatAsync(Runnable runnable, int delay, int interval, TimeUnit timeUnit) {
-        server.getScheduler().runTaskTimerAsynchronously(pluginInstance, runnable, timeUnit.toSeconds(delay) * 20L, timeUnit.toSeconds(interval) * 20L);
+        schedulerProvider.runRepeatAsync(server, pluginInstance, runnable, delay, interval, timeUnit);
     }
 
     @Override

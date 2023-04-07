@@ -9,6 +9,8 @@ dependencies {
     implementation("org.bstats:bstats-velocity:3.0.2")
 }
 
-java {
-    javaTarget(11)
+indra {
+    javaVersions {
+        target(11)
+    }
 }

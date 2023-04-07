@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.connections;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.model.SkinVariant;
@@ -94,7 +93,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase() : "";
 
             try {
-                val response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+                HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
                 logger.debug("MineSkinAPI: Response: " + response);
 
                 switch (response.getStatusCode()) {

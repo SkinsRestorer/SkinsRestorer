@@ -17,7 +17,8 @@ val platforms = setOf(
 ).map { it.dependencyProject }
 
 val shadow = setOf(
-    projects.skinsrestorerShared
+    projects.skinsrestorerShared,
+    projects.multiver.bukkit.folia
 ).map { it.dependencyProject }
 
 val special = setOf(

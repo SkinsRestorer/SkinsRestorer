@@ -4,6 +4,7 @@ plugins {
     signing
     id("sr.formatting-logic")
     id("sr.core-dependencies")
+    id("net.kyori.indra")
 }
 
 tasks {
@@ -33,11 +34,48 @@ tasks {
     }
 }
 
-signing {
-    isRequired = false
+tasks.withType<Sign>().configureEach {
+    onlyIf { false }
 }
 
-java {
-    withSourcesJar()
-    javaTarget(8)
+indra {
+    github("SkinsRestorer", "SkinsRestorerX") {
+        ci(true)
+    }
+
+    gpl3OnlyLicense()
+    publishReleasesTo("codemc-releases", "https://repo.codemc.org/repository/maven-releases/")
+    publishSnapshotsTo("codemc-snapshots", "https://repo.codemc.org/repository/maven-snapshots/")
+
+    configurePublications {
+        pom {
+            name.set("SkinsRestorer")
+            url.set("https://skinsrestorer.net/")
+            organization {
+                name.set("SkinsRestorer")
+                url.set("https://skinsrestorer.net")
+            }
+            developers {
+                developer {
+                    id.set("xknat")
+                    timezone.set("Europe/Amsterdam")
+                }
+                developer {
+                    id.set("AlexProgrammerDE")
+                    timezone.set("Europe/Berlin")
+                    url.set("https://pistonmaster.net")
+                }
+            }
+        }
+
+        versionMapping {
+            usage(Usage.JAVA_API) { fromResolutionOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME) }
+            usage(Usage.JAVA_RUNTIME) { fromResolutionResult() }
+        }
+    }
+
+    javaVersions {
+        target(8)
+        minimumToolchain(17)
+    }
 }
