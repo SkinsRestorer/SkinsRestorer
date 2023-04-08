@@ -21,7 +21,6 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
-import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
@@ -163,7 +162,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
                             sb.append(ChatColor.GOLD);
                             sb.append("Aliases: ");
                             sb.append(ChatColor.WHITE);
-                            sb.append(Joiner.on(", ").join(aliases));
+                            sb.append(String.join(", ", aliases));
                         }
                         return sb.toString();
                     }

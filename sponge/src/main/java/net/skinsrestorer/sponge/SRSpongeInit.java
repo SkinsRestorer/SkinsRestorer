@@ -96,16 +96,14 @@ public class SRSpongeInit implements SRServerPlatformInit {
             newDescriptionBuilder(group.getBasePermission(), group.getDescription())
                     .assign(groupString, true)
                     .register();
-            newDescriptionBuilder(group.getWildcard(), group.getDescription())
-                    .assign(groupString, true)
-                    .register();
         }
     }
 
     private PermissionDescription.Builder newDescriptionBuilder(Permission permission, Message description) {
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
 
-        return game.server().serviceProvider().permissionService().newDescriptionBuilder(adapter.getPluginContainer())
+        return game.server().serviceProvider().permissionService()
+                .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())
                 .description(Component.text(locale.getMessage(locale.getDefaultForeign(), description)));
     }
