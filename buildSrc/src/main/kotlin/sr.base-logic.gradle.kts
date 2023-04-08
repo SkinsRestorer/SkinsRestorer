@@ -18,6 +18,10 @@ tasks {
         title = "SkinsRestorer Javadocs"
         options.encoding = Charsets.UTF_8.name()
         (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+        onlyIf { project.name.contains("api") }
+    }
+    delombok {
+        onlyIf { project.name.contains("api") }
     }
     compileJava {
         options.encoding = Charsets.UTF_8.name()
