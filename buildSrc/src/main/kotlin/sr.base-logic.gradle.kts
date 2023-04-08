@@ -38,10 +38,6 @@ tasks.withType<Sign>().configureEach {
     onlyIf { false }
 }
 
-tasks.findByName("testJava8")?.apply {
-    onlyIf { false }
-}
-
 indra {
     github("SkinsRestorer", "SkinsRestorerX") {
         ci(true)
@@ -80,6 +76,7 @@ indra {
 
     javaVersions {
         target(8)
+        testWith(11, 17) // Some test dependencies require minimum 11, so we test with 11 and 17
         minimumToolchain(17)
     }
 }
