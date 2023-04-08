@@ -17,7 +17,3 @@ dependencies {
     testFixturesImplementation("org.mockito:mockito-core:5.2.0")
     testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.2.0")
 }
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}

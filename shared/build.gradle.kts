@@ -18,7 +18,3 @@ dependencies {
 
     implementation("com.mojang:brigadier:1.1.8")
 }
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
-}
