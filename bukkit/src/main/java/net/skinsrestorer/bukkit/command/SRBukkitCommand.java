@@ -23,6 +23,7 @@ import lombok.Getter;
 import net.skinsrestorer.bukkit.wrapper.WrapperBukkit;
 import net.skinsrestorer.shared.commands.library.CommandExecutor;
 import net.skinsrestorer.shared.commands.library.CommandUtils;
+import net.skinsrestorer.shared.commands.library.SRCommandMeta;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import org.bukkit.command.Command;
@@ -40,17 +41,20 @@ public class SRBukkitCommand extends Command implements PluginIdentifiableComman
     @Getter
     private final CommandExecutor<SRCommandSender> executor;
     private final WrapperBukkit wrapper;
+    @Getter
+    private final SRCommandMeta meta;
 
     public SRBukkitCommand(SRRegisterPayload<SRCommandSender> payload, Plugin plugin, WrapperBukkit wrapper) {
         super(
-                payload.getMeta().getRootNode(),
-                payload.getMeta().getDescription(),
-                String.join("\n", payload.getMeta().getUsages()),
+                payload.getMeta().getRootName(),
+                "", // overwritten by help system
+                "", // overwritten by help system
                 Arrays.asList(payload.getMeta().getAliases())
         );
         this.plugin = plugin;
         this.wrapper = wrapper;
         this.executor = payload.getExecutor();
+        this.meta = payload.getMeta();
     }
 
     @Override

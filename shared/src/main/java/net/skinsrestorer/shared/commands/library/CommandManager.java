@@ -132,7 +132,7 @@ public class CommandManager<T extends SRCommandSender> {
             usage[i] = "/" + rootName + " " + usage[i];
         }
 
-        SRCommandMeta meta = new SRCommandMeta(rootName, aliases, rootPermission.getPermission(), description, usage);
+        SRCommandMeta meta = new SRCommandMeta(rootName, aliases, rootPermission.getPermission(), description);
         CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta);
         SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
 

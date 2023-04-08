@@ -210,7 +210,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
             CommandMap commandMap = (CommandMap) ReflectionUtil.invokeMethod(server, "getCommandMap");
             SRBukkitCommand command = new SRBukkitCommand(payload, pluginInstance, injector.getSingleton(WrapperBukkit.class));
 
-            commandMap.register(payload.getMeta().getRootNode(), "skinsrestorer", command);
+            commandMap.register(payload.getMeta().getRootName(), "skinsrestorer", command);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }

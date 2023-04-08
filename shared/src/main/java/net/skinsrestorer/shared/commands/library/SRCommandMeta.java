@@ -26,9 +26,8 @@ import net.skinsrestorer.shared.subjects.Permission;
 @Getter
 @RequiredArgsConstructor
 public class SRCommandMeta {
-    private final String rootNode;
+    private final String rootName;
     private final String[] aliases;
     private final Permission rootPermission;
     private final String description;
-    private final String[] usages;
 }

@@ -33,7 +33,7 @@ public class SRBungeeCommand extends Command implements TabExecutor {
     private final WrapperBungee wrapper;
 
     public SRBungeeCommand(SRRegisterPayload<SRCommandSender> payload, WrapperBungee wrapper) {
-        super(payload.getMeta().getRootNode(), null, payload.getMeta().getAliases());
+        super(payload.getMeta().getRootName(), null, payload.getMeta().getAliases());
         this.executor = payload.getExecutor();
         this.wrapper = wrapper;
     }

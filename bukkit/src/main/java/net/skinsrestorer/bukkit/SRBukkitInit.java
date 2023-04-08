@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
+import com.google.common.base.Joiner;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
@@ -130,20 +131,41 @@ public class SRBukkitInit implements SRServerPlatformInit {
                     @NotNull
                     @Override
                     public String getName() {
-                        return "/" + srbukkitCommand.getName();
+                        return "/" + srbukkitCommand.getMeta().getRootName();
                     }
 
                     @NotNull
                     @Override
                     public String getShortText() {
-                        return srbukkitCommand.getDescription();
+                        return srbukkitCommand.getMeta().getDescription();
                     }
 
                     @NotNull
                     @Override
                     public String getFullText(@NotNull CommandSender forWho) {
-                        return String.join("\n", srbukkitCommand.getExecutor().getManager()
-                                .getRootHelp(srbukkitCommand.getName(), wrapperBukkit.commandSender(forWho)));
+                        StringBuilder sb = new StringBuilder();
+
+                        sb.append(ChatColor.GOLD);
+                        sb.append("Description: ");
+                        sb.append(ChatColor.WHITE);
+                        sb.append(srbukkitCommand.getMeta().getDescription());
+
+                        sb.append("\n");
+
+                        sb.append(ChatColor.GOLD);
+                        sb.append("Usage: ");
+                        sb.append(ChatColor.WHITE);
+                        sb.append(srbukkitCommand.getExecutor().getHelpUsage(wrapperBukkit.commandSender(forWho)));
+
+                        String[] aliases = srbukkitCommand.getMeta().getAliases();
+                        if (aliases.length > 0) {
+                            sb.append("\n");
+                            sb.append(ChatColor.GOLD);
+                            sb.append("Aliases: ");
+                            sb.append(ChatColor.WHITE);
+                            sb.append(Joiner.on(", ").join(aliases));
+                        }
+                        return sb.toString();
                     }
                 };
             } else {

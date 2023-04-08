@@ -209,7 +209,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 @Override
                 public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) {
                     String argumentsString = arguments.remaining();
-                    String command = payload.getMeta().getRootNode() + (argumentsString.isEmpty() ? "" : " " + argumentsString);
+                    String command = payload.getMeta().getRootName() + (argumentsString.isEmpty() ? "" : " " + argumentsString);
                     payload.getExecutor().execute(wrapper.commandSender(cause), command);
                     return CommandResult.builder().build();
                 }
@@ -240,7 +240,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
                 public Component usage(CommandCause cause) {
                     return Component.empty(); // TODO
                 }
-            }, payload.getMeta().getRootNode(), payload.getMeta().getAliases());
+            }, payload.getMeta().getRootName(), payload.getMeta().getAliases());
         }
     }
 }

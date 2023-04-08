@@ -124,7 +124,7 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
     @Override
     public void registerCommand(SRRegisterPayload<SRCommandSender> payload) {
         CommandMeta meta = proxy.getCommandManager()
-                .metaBuilder(payload.getMeta().getRootNode())
+                .metaBuilder(payload.getMeta().getRootName())
                 .plugin(pluginInstance)
                 .aliases(payload.getMeta().getAliases()).build();
         WrapperVelocity wrapper = injector.getSingleton(WrapperVelocity.class);
