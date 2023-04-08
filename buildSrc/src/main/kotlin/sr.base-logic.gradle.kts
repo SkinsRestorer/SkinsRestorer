@@ -86,12 +86,4 @@ tasks.withType<Sign>().configureEach {
     onlyIf { false }
 }
 
-tasks {
-    // exclude the testJava8 task from the default tasks
-    val defaultTasks = listOf("build", "test")
-    all {
-        println("Task: $name")
-        if (name in defaultTasks) {
-        }
-    }
-}
+tasks.findByName("testJava8")?.onlyIf { false }
