@@ -86,4 +86,11 @@ tasks.withType<Sign>().configureEach {
     onlyIf { false }
 }
 
-tasks.findByName("testJava8")?.onlyIf { false }
+tasks {
+    all {
+        println("Task: $name")
+        if (name.equals("testJava8")) {
+            onlyIf { false }
+        }
+    }
+}
