@@ -29,14 +29,14 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProviderSelector<P extends FeatureProvider> {
     private final Class<P> providerType;
-    private final List<Object> providers;
+    private final List<P> providers;
 
     public static <P extends FeatureProvider> Builder<P> builder(Class<P> providerType) {
         return new Builder<>(providerType);
     }
 
     public P get() {
-        for (Object provider : providers) {
+        for (P provider : providers) {
             return providerType.cast(provider);
         }
 
@@ -46,7 +46,7 @@ public class ProviderSelector<P extends FeatureProvider> {
     @RequiredArgsConstructor
     public static class Builder<P extends FeatureProvider> {
         private final Class<P> providerType;
-        private final List<Object> providers = new ArrayList<>();
+        private final List<P> providers = new ArrayList<>();
 
         public Builder<P> add(String providerClass) {
             try {
@@ -60,8 +60,8 @@ public class ProviderSelector<P extends FeatureProvider> {
         public Builder<P> add(Class<? extends P> providerClass) {
             try {
                 Constructor<? extends P> constructor = providerClass.getConstructor();
-                P p = providerType.cast(constructor.newInstance());
-                add(p);
+                P provider = providerType.cast(constructor.newInstance());
+                add(provider);
             } catch (Throwable t) {
                 t.printStackTrace(); // TODO: debug log
             }

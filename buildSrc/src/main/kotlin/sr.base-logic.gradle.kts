@@ -88,7 +88,6 @@ tasks.withType<Sign>().configureEach {
 
 tasks {
     all {
-        println("Task: $name")
         if (name.equals("testJava8")) {
             onlyIf { false }
         }
