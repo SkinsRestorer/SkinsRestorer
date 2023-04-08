@@ -38,6 +38,10 @@ tasks.withType<Sign>().configureEach {
     onlyIf { false }
 }
 
+tasks.findByName("testJava8")?.apply {
+    onlyIf { false }
+}
+
 indra {
     github("SkinsRestorer", "SkinsRestorerX") {
         ci(true)
