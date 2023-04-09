@@ -187,7 +187,7 @@ public class SRPlugin {
                             AdvancedConfig.class,
                             DevConfig.class
                     )
-                    .useDefaultMigrationService()
+                    .migrationService(injector.getSingleton(ConfigMigratorService.class))
                     .create();
             injector.register(SettingsManager.class, settings);
         } else {

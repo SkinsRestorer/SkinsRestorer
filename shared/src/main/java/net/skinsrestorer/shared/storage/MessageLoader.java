@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.CodeSource;
 import java.util.Locale;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -48,10 +47,6 @@ public class MessageLoader {
     public void loadMessages() throws IOException {
         Path languagesFolder = plugin.getDataFolder().resolve("languages");
         Files.createDirectories(languagesFolder);
-        CodeSource src = Message.class.getProtectionDomain().getCodeSource();
-        if (src == null) {
-            throw new IOException("Could not find default language files");
-        }
 
         for (String localeFile : BuildData.LOCALES) {
             String filePath = "languages/" + localeFile;
