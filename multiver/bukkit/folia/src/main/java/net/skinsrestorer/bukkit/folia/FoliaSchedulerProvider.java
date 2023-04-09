@@ -20,7 +20,7 @@
 package net.skinsrestorer.bukkit.folia;
 
 import net.skinsrestorer.bukkit.utils.SchedulerProvider;
-import net.skinsrestorer.shared.utils.ReflectionUtil;
+import net.skinsrestorer.shared.serverinfo.ClassInfo;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -51,6 +51,6 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
 
     @Override
     public boolean isAvailable() {
-        return ReflectionUtil.classExists("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
+        return ClassInfo.get().isFolia();
     }
 }

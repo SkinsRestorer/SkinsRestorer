@@ -21,8 +21,7 @@ package net.skinsrestorer.shared.serverinfo;
 
 public enum Platform {
     BUKKIT,
-    BUNGEECORD,
+    BUNGEE_CORD,
     SPONGE,
-    VELOCITY,
-    FOLIA
+    VELOCITY;
 }

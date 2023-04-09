@@ -19,63 +19,23 @@
  */
 package net.skinsrestorer.shared.serverinfo;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public class ServerInfo {
     private final boolean hybrid;
     private final Platform platform;
     private final ClassInfo classInfo;
 
     public static ServerInfo determineEnvironment(Platform platform) {
-        ClassInfo info = new ClassInfo(platform);
-        boolean hybrid2 = (platform == Platform.BUNGEECORD && info.isVelocity())
+        ClassInfo info = ClassInfo.get();
+        boolean hybrid2 = (platform == Platform.BUNGEE_CORD && info.isVelocity())
                 || (platform == Platform.VELOCITY && info.isBungeecord())
                 || (platform == Platform.SPONGE && info.isCraftBukkit())
                 || (platform == Platform.BUKKIT && (info.isSpongeVanilla() || info.isSpongeForge()));
 
         return new ServerInfo(hybrid2, platform, info);
-    }
-
-    @Data
-    static class ClassInfo {
-        private final boolean craftBukkit;
-        private final boolean spigot;
-        private final boolean paper;
-        private final boolean folia;
-
-        private final boolean spongeAPI;
-        private final boolean spongeVanilla;
-        private final boolean spongeForge;
-
-        private final boolean bungeecord;
-        private final boolean velocity;
-
-        public ClassInfo(Platform platform) {
-            spigot = isClassPresent("org.spigotmc.SpigotConfig");
-            paper = isClassPresent("com.destroystokyo.paper.PaperConfig");
-            craftBukkit = platform == Platform.BUKKIT || isClassPresent("org.bukkit.Bukkit");
-            folia = isClassPresent("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            spongeVanilla = isClassPresent("org.spongepowered.server.SpongeVanilla");
-            spongeForge = isClassPresent("org.spongepowered.mod.SpongeCoremod");
-            spongeAPI = platform == Platform.SPONGE || isClassPresent("org.spongepowered.api.Sponge");
-            bungeecord = platform == Platform.BUNGEECORD || isClassPresent("net.md_5.bungee.BungeeCord");
-            velocity = platform == Platform.VELOCITY || isClassPresent("com.velocitypowered.proxy.Velocity");
-        }
-
-        private boolean isClassPresent(String... classNames) {
-            for (String className : classNames) {
-                try {
-                    Class.forName(className);
-                    return true;
-                } catch (ClassNotFoundException ignored) {
-                }
-            }
-
-            return false;
-        }
     }
 }

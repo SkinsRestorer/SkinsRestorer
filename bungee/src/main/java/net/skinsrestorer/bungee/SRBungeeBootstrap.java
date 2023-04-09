@@ -42,7 +42,7 @@ public class SRBungeeBootstrap extends Plugin {
                 SRProxyPlugin.class,
                 getDescription().getVersion(),
                 getDataFolder().toPath(),
-                Platform.BUNGEECORD,
+                Platform.BUNGEE_CORD,
                 SRBungeeInit.class);
     }
 }
