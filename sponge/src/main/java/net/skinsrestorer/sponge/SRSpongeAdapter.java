@@ -35,7 +35,6 @@ import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.bstats.sponge.Metrics;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.command.CommandCompletion;
@@ -109,10 +108,10 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
 
     @Override
     public boolean determineProxy() {
-        PluginContainer sponge = Sponge.pluginManager().plugin("sponge").orElseThrow(IllegalStateException::new);
+        PluginContainer sponge = game.pluginManager().plugin("sponge").orElseThrow(IllegalStateException::new);
 
         try {
-            String mode = Sponge.configManager().pluginConfig(sponge)
+            String mode = game.configManager().pluginConfig(sponge)
                     .config().load().node("ip-forwarding", "mode")
                     .getString();
 
