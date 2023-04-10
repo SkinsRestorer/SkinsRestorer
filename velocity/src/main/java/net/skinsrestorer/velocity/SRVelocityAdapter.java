@@ -30,6 +30,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.GameProfile;
 import lombok.Getter;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.shared.commands.library.CommandUtils;
 import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -115,10 +116,7 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
 
     @Override
     public Optional<SRProxyPlayer> getPlayer(String name) {
-        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player)
-                .or(() -> proxy.getAllPlayers().stream()
-                        .filter(p -> p.getUsername().equalsIgnoreCase(name))
-                        .findFirst().map(injector.getSingleton(WrapperVelocity.class)::player));
+        return proxy.getPlayer(name).map(injector.getSingleton(WrapperVelocity.class)::player);
     }
 
     @Override
@@ -132,12 +130,14 @@ public class SRVelocityAdapter implements SRProxyAdapter<PluginContainer> {
         proxy.getCommandManager().register(meta, new RawCommand() {
             @Override
             public void execute(Invocation invocation) {
-                payload.getExecutor().execute(wrapper.commandSender(invocation.source()), invocation.arguments());
+                payload.getExecutor().execute(wrapper.commandSender(invocation.source()),
+                        CommandUtils.joinCommand(invocation.alias(), invocation.arguments(), false));
             }
 
             @Override
             public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-                return payload.getExecutor().tabComplete(wrapper.commandSender(invocation.source()), invocation.arguments());
+                return payload.getExecutor().tabComplete(wrapper.commandSender(invocation.source()),
+                        CommandUtils.joinCommand(invocation.alias(), invocation.arguments(), true));
             }
 
             @Override

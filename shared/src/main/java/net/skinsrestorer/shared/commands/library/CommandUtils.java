@@ -28,6 +28,16 @@ public class CommandUtils {
         return builder.toString();
     }
 
+    public static String joinCommand(String label, String args, boolean emptyAddSpace) {
+        StringBuilder builder = new StringBuilder(sanitizeLabel(label));
+
+        if (emptyAddSpace || !args.isEmpty()) {
+            builder.append(" ").append(args);
+        }
+
+        return builder.toString();
+    }
+
     public static String sanitizeLabel(String input) {
         return input.replace("skinsrestorer:", "");
     }
