@@ -194,6 +194,8 @@ public class SRPlugin {
             settings.reload();
         }
 
+        logger.setDebug(settings.getProperty(DevConfig.DEBUG));
+
         //__Default__Skins
         if (settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED) && settings.getProperty(StorageConfig.DEFAULT_SKINS).isEmpty()) {
             logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
@@ -211,18 +213,13 @@ public class SRPlugin {
             settings.setProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED, false);
         }
 
-        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED))
+        if (!settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
             settings.setProperty(GUIConfig.CUSTOM_GUI_ONLY, false);
+        }
 
         if (!settings.getProperty(ServerConfig.DISMOUNT_PLAYER_ON_UPDATE)) {
             settings.setProperty(ServerConfig.REMOUNT_PLAYER_ON_UPDATE, false);
         }
-
-        if (settings.getProperty(APIConfig.MINESKIN_API_KEY).equals("key")) {
-            settings.setProperty(APIConfig.MINESKIN_API_KEY, "");
-        }
-
-        logger.setDebug(settings.getProperty(DevConfig.DEBUG));
     }
 
     public void loadLocales() throws IOException {

@@ -48,6 +48,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,12 +98,13 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 logger.debug("MineSkinAPI: Response: " + response);
 
                 switch (response.getStatusCode()) {
-                    case 200:
+                    case 200: {
                         MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
                         return SkinProperty.of(urlResponse.getData().getTexture().getValue(),
                                 urlResponse.getData().getTexture().getSignature());
+                    }
                     case 500:
-                    case 400:
+                    case 400: {
                         MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                         String error = errorResponse.getErrorCode();
                         logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Url: %s", error, url));
@@ -118,7 +120,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             default:
                                 throw new DataRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
                         }
-                    case 403:
+                    }
+                    case 403: {
                         MineSkinErrorResponse apiErrorResponse = response.getBodyAs(MineSkinErrorResponse.class);
                         String errorCode2 = apiErrorResponse.getErrorCode();
                         String error2 = apiErrorResponse.getError();
@@ -143,7 +146,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             }
                             throw new DataRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
                         }
-                    case 429:
+                    }
+                    case 429: {
                         MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
                         // If "Too many requests"
                         if (errorDelayResponse.getDelay() != null) {
@@ -152,13 +156,15 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                             Instant nextRequestInstant = Instant.ofEpochSecond(errorDelayResponse.getNextRequest());
                             int delay = (int) Duration.between(Instant.now(), nextRequestInstant).getSeconds();
 
-                            if (delay > 0)
+                            if (delay > 0) {
                                 TimeUnit.SECONDS.sleep(delay);
+                            }
                         } else { // Should normally not happen
                             TimeUnit.SECONDS.sleep(2);
                         }
 
                         throw new TryAgainException(); // try again after nextRequest
+                    }
                 }
             } catch (DataRequestException | TryAgainException e) {
                 throw new CompletionException(e);
@@ -183,9 +189,9 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 metricsCounter.increment(MetricsCounter.Service.MINE_SKIN);
 
                 Map<String, String> headers = new HashMap<>();
-                String apiKey = settings.getProperty(APIConfig.MINESKIN_API_KEY);
-                if (!apiKey.isEmpty()) {
-                    headers.put("Authorization", "Bearer " + apiKey);
+                Optional<String> apiKey = getApiKey(settings);
+                if (apiKey.isPresent()) {
+                    headers.put("Authorization", String.format("Bearer %s", apiKey));
                 }
 
                 HttpClient client = new HttpClient(
@@ -205,5 +211,14 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 }
             }
         }
+    }
+
+    private Optional<String> getApiKey(SettingsManager settings) {
+        String apiKey = settings.getProperty(APIConfig.MINESKIN_API_KEY);
+        if (apiKey.isEmpty() || apiKey.equals("key")) {
+            return Optional.empty();
+        }
+
+        return Optional.of(apiKey);
     }
 }
