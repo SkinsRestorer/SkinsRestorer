@@ -23,6 +23,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.suggestion.Suggestion;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 
 import java.util.Arrays;
@@ -36,17 +37,20 @@ public class CommandExecutor<T extends SRCommandSender> {
     @Getter
     private final CommandManager<T> manager;
     private final SRCommandMeta meta;
+    private final SRLogger logger;
 
     public void execute(T executor, String input) {
         manager.executeCommand(executor, input);
     }
 
     public CompletableFuture<List<String>> tabComplete(T executor, String input) {
+        logger.debug(String.format("Tab completing: '%s' for '%s'", input, executor.getName()));
         return dispatcher.getCompletionSuggestions(dispatcher.parse(input, executor)).thenApply(suggestions ->
                 suggestions.getList().stream().map(Suggestion::getText).collect(Collectors.toList()));
     }
 
     public boolean hasPermission(T executor) {
+        logger.debug(String.format("Checking permission: '%s' for '%s'", meta.getRootPermission(), executor.getName()));
         return executor.hasPermission(meta.getRootPermission());
     }
 

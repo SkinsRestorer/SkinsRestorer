@@ -38,6 +38,7 @@ import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.*;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
@@ -57,10 +58,12 @@ public class CommandManager<T extends SRCommandSender> {
     public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
     private final Map<String, Predicate<T>> conditions = new HashMap<>();
     private final CommandPlatform<T> platform;
+    private final SRLogger logger;
     private final SkinsRestorerLocale locale;
 
-    public CommandManager(CommandPlatform<T> platform, SkinsRestorerLocale locale) {
+    public CommandManager(CommandPlatform<T> platform, SRLogger logger, SkinsRestorerLocale locale) {
         this.platform = platform;
+        this.logger = logger;
         this.locale = locale;
 
         // Register default conditions
@@ -133,7 +136,7 @@ public class CommandManager<T extends SRCommandSender> {
         }
 
         SRCommandMeta meta = new SRCommandMeta(rootName, aliases, rootPermission.getPermission(), description);
-        CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta);
+        CommandExecutor<T> executor = new CommandExecutor<>(dispatcher, this, meta, logger);
         SRRegisterPayload<T> payload = new SRRegisterPayload<>(meta, executor);
 
         platform.registerCommand(payload);
@@ -299,6 +302,7 @@ public class CommandManager<T extends SRCommandSender> {
                     parameters[i1] = context.getArgument(parameter.getName(), parameter.getType());
                     i1++;
                 }
+                logger.debug(String.format("Executing command %s with method parameters %s", method.getName(), Arrays.toString(parameters)));
                 platform.runAsync(() -> {
                     try {
                         method.invoke(command, parameters);
@@ -396,7 +400,7 @@ public class CommandManager<T extends SRCommandSender> {
     }
 
     public void executeCommand(T executor, String input) {
-        System.out.println("Executing command: " + input + " for " + executor);
+        logger.debug(String.format("Executing command: '%s' for '%s'", input, executor));
         try {
             dispatcher.execute(input, executor);
         } catch (CommandSyntaxException e) {
