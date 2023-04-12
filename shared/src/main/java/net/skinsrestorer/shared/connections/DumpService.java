@@ -22,9 +22,11 @@ package net.skinsrestorer.shared.connections;
 import ch.jalu.injector.Injector;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.connections.requests.DumpInfo;
+import net.skinsrestorer.shared.connections.responses.BytebinResponse;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.*;
 
@@ -41,7 +43,7 @@ public class DumpService {
     private final Injector injector;
     private final Gson gson = new Gson();
 
-    public Optional<String> dump() throws IOException {
+    public Optional<String> dump() throws IOException, DataRequestException {
         String proxyModeInfo;
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin == null) {
@@ -83,6 +85,8 @@ public class DumpService {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(response.getHeaders().get("Location")).flatMap(list -> list.stream().findFirst());
+        BytebinResponse responseObject = response.getBodyAs(BytebinResponse.class);
+
+        return Optional.of(responseObject.getKey());
     }
 }

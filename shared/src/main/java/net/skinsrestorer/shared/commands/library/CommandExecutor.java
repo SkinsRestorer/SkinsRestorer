@@ -50,7 +50,6 @@ public class CommandExecutor<T extends SRCommandSender> {
     }
 
     public boolean hasPermission(T executor) {
-        logger.debug(String.format("Checking permission: '%s' for '%s'", meta.getRootPermission(), executor.getName()));
         return executor.hasPermission(meta.getRootPermission());
     }
 

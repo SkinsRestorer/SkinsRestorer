@@ -292,7 +292,7 @@ public final class SRCommand {
             } else {
                 sender.sendMessage("§e[§2SkinsRestorer§e] §4Upload failed!");
             }
-        } catch (IOException e) {
+        } catch (IOException | DataRequestException e) {
             sender.sendMessage("§e[§2SkinsRestorer§e] §cFailed to upload data to bytebin.lucko.me");
             e.printStackTrace();
         }
