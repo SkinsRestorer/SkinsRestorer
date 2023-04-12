@@ -21,23 +21,19 @@ package net.skinsrestorer.shared.commands.library;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.*;
+import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
+import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.PermissionRegistry;
@@ -50,9 +46,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class CommandManager<T extends SRCommandSender> {
     public final CommandDispatcher<T> dispatcher = new CommandDispatcher<>();
@@ -196,88 +190,28 @@ public class CommandManager<T extends SRCommandSender> {
             ArgumentType<?> argumentType;
             // Implementing support for other types is easy, just add a new if-statement
             if (parameter.getType() == String.class) {
-                argumentType = StringArgumentType.word();
+                argumentType = new ArgumentType<String>() {
+                    @Override
+                    public String parse(StringReader reader) {
+                        final int start = reader.getCursor();
+                        final String string = reader.getString();
+                        while (reader.canRead() && reader.peek() != ' ') {
+                            reader.skip();
+                        }
+                        return string.substring(start, reader.getCursor());
+                    }
+
+                    @Override
+                    public Collection<String> getExamples() {
+                        return FluentList.listOf("example", "example2");
+                    }
+                };
             } else if (parameter.getType() == int.class) {
                 argumentType = IntegerArgumentType.integer();
             } else if (Enum.class.isAssignableFrom(parameter.getType())) {
-                argumentType = new ArgumentType<Enum<?>>() {
-                    @Override
-                    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-                        for (String example : getExamples()) {
-                            if (example.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                                builder.suggest(example);
-                            }
-                        }
-                        return builder.buildFuture();
-                    }
-
-                    @SuppressWarnings("rawtypes")
-                    @Override
-                    public Collection<String> getExamples() {
-                        return Arrays.stream(parameter.getType().getEnumConstants())
-                                .map(o -> (Enum) o)
-                                .map(Enum::name).collect(Collectors.toList());
-                    }
-
-                    @SuppressWarnings({"unchecked", "rawtypes"})
-                    @Override
-                    public Enum<?> parse(StringReader reader) throws CommandSyntaxException {
-                        final int start = reader.getCursor();
-                        final String string = reader.readString();
-                        try {
-                            return Enum.valueOf((Class<Enum>) parameter.getType(), string.toUpperCase());
-                        } catch (IllegalArgumentException e) {
-                            reader.setCursor(start);
-                            throw new SimpleCommandExceptionType(new LiteralMessage("Invalid enum value")).createWithContext(reader);
-                        }
-                    }
-                };
+                argumentType = new EnumArgumentType(parameter.getType());
             } else if (parameter.getType().isAssignableFrom(SRPlayer.class)) {
-                argumentType = new ArgumentType<SRPlayer>() {
-                    @Override
-                    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-                        for (SRPlayer player : platform.getOnlinePlayers()) {
-                            if (player.getName().toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
-                                if (context.getSource() instanceof SRPlayer && !((SRPlayer) context.getSource()).canSee(player)) {
-                                    continue;
-                                }
-
-                                builder.suggest(player.getName());
-                            }
-                        }
-                        return builder.buildFuture();
-                    }
-
-                    @Override
-                    public Collection<String> getExamples() {
-                        return FluentList.listOf("Pistonmaster", "xknat");
-                    }
-
-                    @Override
-                    public SRPlayer parse(StringReader reader) throws CommandSyntaxException {
-                        final int start = reader.getCursor();
-                        final String string = reader.readString();
-
-                        Optional<SRPlayer> exactPlayer = platform.getOnlinePlayers().stream()
-                                .filter(p -> p.getName().equals(string))
-                                .findFirst();
-
-                        if (exactPlayer.isPresent()) {
-                            return exactPlayer.get();
-                        }
-
-                        Optional<SRPlayer> player = platform.getOnlinePlayers().stream()
-                                .filter(p -> p.getName().equalsIgnoreCase(string.toLowerCase()))
-                                .findFirst();
-
-                        if (player.isPresent()) {
-                            return player.get();
-                        }
-
-                        reader.setCursor(start);
-                        throw new SimpleCommandExceptionType(new LiteralMessage("Unknown player")).createWithContext(reader);
-                    }
-                };
+                argumentType = new SRPlayerArgumentType(platform);
             } else {
                 throw new IllegalStateException("Unsupported parameter type: " + parameter.getType().getName());
             }
