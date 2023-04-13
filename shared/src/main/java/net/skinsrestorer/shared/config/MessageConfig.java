@@ -36,10 +36,10 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 
 public class MessageConfig implements SettingsHolder {
     @Comment({
-            "A language code for the language you want to use by default for messages and commands.",
+            "A locale code for the locale you want to use by default for messages and commands.",
             "Has to a string separated by an underscore."
     })
-    public static final Property<Locale> LANGUAGE = new TypeBasedProperty<>("messages.language", Locale.ENGLISH, new PropertyType<Locale>() {
+    public static final Property<Locale> LOCALE = new TypeBasedProperty<>("messages.locale", Locale.ENGLISH, new PropertyType<Locale>() {
         @Override
         public @Nullable Locale convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
             return LocaleParser.parseLocale(object == null ? null : object.toString()).orElse(null);

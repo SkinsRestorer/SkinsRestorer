@@ -45,18 +45,18 @@ public class MessageLoader {
     private final SRPlatformAdapter<?> adapter;
 
     public void loadMessages() throws IOException {
-        Path languagesFolder = plugin.getDataFolder().resolve("languages");
-        Files.createDirectories(languagesFolder);
+        Path localesFolder = plugin.getDataFolder().resolve("locales");
+        Files.createDirectories(localesFolder);
 
         for (String localeFile : BuildData.LOCALES) {
-            String filePath = "languages/" + localeFile;
-            Locale locale = localeFile.startsWith("language_") ? LocaleParser.parseLocaleStrict(localeFile.replace("language_", "").replace(".properties", "")) : Locale.ENGLISH;
+            String filePath = "locales/" + localeFile;
+            Locale locale = localeFile.startsWith("locale_") ? LocaleParser.parseLocaleStrict(localeFile.replace("locale_", "").replace(".properties", "")) : Locale.ENGLISH;
 
             try (InputStream is = adapter.getResource(filePath)) {
                 PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k.toString()), C.c(v.toString())));
             }
 
-            Path localePath = languagesFolder.resolve(localeFile);
+            Path localePath = localesFolder.resolve(localeFile);
             if (!Files.exists(localePath)) {
                 try (InputStream is = adapter.getResource(filePath)) {
                     Files.copy(is, localePath);
@@ -64,20 +64,20 @@ public class MessageLoader {
             }
         }
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(languagesFolder)) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
             for (Path path : stream) {
-                Path languageFile = path.getFileName();
-                if (languageFile == null) {
+                Path localeFile = path.getFileName();
+                if (localeFile == null) {
                     continue;
                 }
 
-                String fileName = languageFile.toString();
+                String fileName = localeFile.toString();
                 if (!fileName.endsWith(".properties")) {
                     continue;
                 }
 
-                Locale locale = fileName.startsWith("language_") ?
-                        LocaleParser.parseLocaleStrict(fileName.replace("language_", "").replace(".properties", ""))
+                Locale locale = fileName.startsWith("locale_") ?
+                        LocaleParser.parseLocaleStrict(fileName.replace("locale_", "").replace(".properties", ""))
                         : Locale.ENGLISH;
 
                 try (InputStream is = Files.newInputStream(path)) {

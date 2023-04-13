@@ -38,7 +38,7 @@ public class WrapperCommandSender implements SRCommandSender {
 
     @Override
     public Locale getLocale() {
-        return settings.getProperty(MessageConfig.LANGUAGE);
+        return settings.getProperty(MessageConfig.LOCALE);
     }
 
     @Override

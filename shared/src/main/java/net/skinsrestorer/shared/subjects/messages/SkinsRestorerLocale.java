@@ -35,7 +35,7 @@ public class SkinsRestorerLocale {
     @Inject
     private SettingsManager settings;
     @Getter
-    private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LANGUAGE);
+    private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
     public String getMessage(SRForeign foreign, Message key, Object... args) {
         String message = localeManager.getMessage(foreign, key.getKey());
