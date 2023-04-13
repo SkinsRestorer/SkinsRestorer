@@ -30,15 +30,15 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.commands.library.types.EnumArgumentType;
 import net.skinsrestorer.shared.commands.library.types.SRPlayerArgumentType;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.FluentList;
 
 import java.lang.annotation.Annotation;

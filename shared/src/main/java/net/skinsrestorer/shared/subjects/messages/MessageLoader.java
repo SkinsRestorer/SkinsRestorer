@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage;
+package net.skinsrestorer.shared.subjects.messages;
 
 import co.aikar.locales.LocaleManager;
 import co.aikar.locales.MessageKey;

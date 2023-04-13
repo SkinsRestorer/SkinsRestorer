@@ -21,11 +21,11 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.bukkit.command.CommandSender;
 
 import java.util.Locale;

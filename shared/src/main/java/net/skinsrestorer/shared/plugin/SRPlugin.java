@@ -28,7 +28,6 @@ import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.api.NameGetter;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -47,10 +46,19 @@ import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
-import net.skinsrestorer.shared.storage.*;
-import net.skinsrestorer.shared.storage.adapter.FileAdapter;
-import net.skinsrestorer.shared.storage.adapter.MySQLAdapter;
-import net.skinsrestorer.shared.subjects.*;
+import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
+import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
+import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.MessageLoader;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.bstats.MetricsBase;
@@ -236,7 +244,7 @@ public class SRPlugin {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
-                MySQL mysql = new MySQL(
+                MySQLProvider mysql = new MySQLProvider(
                         logger,
                         settings.getProperty(DatabaseConfig.MYSQL_HOST),
                         settings.getProperty(DatabaseConfig.MYSQL_PORT),

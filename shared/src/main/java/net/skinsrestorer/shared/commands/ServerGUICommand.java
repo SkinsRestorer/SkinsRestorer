@@ -22,9 +22,9 @@ package net.skinsrestorer.shared.commands;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 
 import javax.inject.Inject;
 

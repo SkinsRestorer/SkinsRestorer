@@ -21,7 +21,7 @@ package net.skinsrestorer.shared.commands.library;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.subjects.Permission;
+import net.skinsrestorer.shared.subjects.permissions.Permission;
 
 @Getter
 @RequiredArgsConstructor

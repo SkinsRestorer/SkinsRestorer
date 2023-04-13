@@ -21,9 +21,9 @@ package net.skinsrestorer.bukkit.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

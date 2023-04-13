@@ -25,13 +25,14 @@ import lombok.Setter;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;

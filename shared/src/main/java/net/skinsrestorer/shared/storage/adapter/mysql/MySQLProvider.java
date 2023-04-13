@@ -17,7 +17,7 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage;
+package net.skinsrestorer.shared.storage.adapter.mysql;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @RequiredArgsConstructor
-public class MySQL {
+public class MySQLProvider {
     private final SRLogger logger;
     private final String host;
     private final int port;

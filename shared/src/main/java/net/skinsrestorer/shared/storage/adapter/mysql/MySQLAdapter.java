@@ -17,14 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage.adapter;
+package net.skinsrestorer.shared.storage.adapter.mysql;
 
 import ch.jalu.configme.SettingsManager;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
-import net.skinsrestorer.shared.storage.MySQL;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class MySQLAdapter implements StorageAdapter {
-    private final MySQL mysql;
+    private final MySQLProvider mysql;
     private final SettingsManager settings;
 
     @Override

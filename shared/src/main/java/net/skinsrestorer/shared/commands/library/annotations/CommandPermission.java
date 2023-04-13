@@ -19,7 +19,7 @@
  */
 package net.skinsrestorer.shared.commands.library.annotations;
 
-import net.skinsrestorer.shared.subjects.PermissionRegistry;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

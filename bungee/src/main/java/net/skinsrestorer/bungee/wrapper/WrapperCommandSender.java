@@ -23,11 +23,11 @@ import ch.jalu.configme.SettingsManager;
 import lombok.experimental.SuperBuilder;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.Permission;
 
 import java.util.Locale;
 

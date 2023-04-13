@@ -24,11 +24,11 @@ import lombok.experimental.SuperBuilder;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.storage.Message;
-import net.skinsrestorer.shared.subjects.Permission;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
+import net.skinsrestorer.shared.subjects.permissions.Permission;
 import org.spongepowered.api.service.permission.Subject;
 
 import java.util.Locale;

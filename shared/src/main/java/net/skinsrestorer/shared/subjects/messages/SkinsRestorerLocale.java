@@ -17,13 +17,12 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared;
+package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
 import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.MessageConfig;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.utils.C;
 

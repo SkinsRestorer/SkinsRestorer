@@ -20,11 +20,11 @@
 package net.skinsrestorer;
 
 import ch.jalu.injector.Injector;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.serverinfo.Platform;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.update.SharedUpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.junit.jupiter.api.Test;

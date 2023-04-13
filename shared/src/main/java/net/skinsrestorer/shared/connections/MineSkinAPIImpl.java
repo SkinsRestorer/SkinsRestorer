@@ -26,7 +26,6 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.config.APIConfig;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
@@ -37,7 +36,8 @@ import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.exception.TryAgainException;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
 import org.jetbrains.annotations.Nullable;
 

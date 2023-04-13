@@ -40,11 +40,11 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.storage.Message;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
-import net.skinsrestorer.shared.subjects.PermissionRegistry;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;

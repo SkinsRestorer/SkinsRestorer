@@ -23,9 +23,9 @@ import ch.jalu.configme.SettingsManager;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 import javax.inject.Inject;
 

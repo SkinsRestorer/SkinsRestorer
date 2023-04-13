@@ -17,10 +17,10 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.subjects;
+package net.skinsrestorer.shared.subjects.permissions;
 
 import lombok.Getter;
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.messages.Message;
 
 public enum PermissionRegistry {
     SKIN("skinsrestorer.command", Message.PERMISSION_COMMAND),

@@ -21,9 +21,9 @@ package net.skinsrestorer.sponge.wrapper;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRServerPlayer;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import org.spongepowered.api.command.CommandCause;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;

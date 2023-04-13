@@ -20,8 +20,8 @@
 package net.skinsrestorer.shared.exception;
 
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.shared.SkinsRestorerLocale;
-import net.skinsrestorer.shared.storage.Message;
+import net.skinsrestorer.shared.subjects.messages.Message;
+import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 
 public class DataRequestExceptionShared extends DataRequestException {
     public DataRequestExceptionShared(String message) {

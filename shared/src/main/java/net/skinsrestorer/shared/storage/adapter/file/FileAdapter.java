@@ -17,10 +17,11 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.shared.storage.adapter;
+package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
