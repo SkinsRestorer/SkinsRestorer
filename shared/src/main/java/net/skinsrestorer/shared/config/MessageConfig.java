@@ -52,6 +52,11 @@ public class MessageConfig implements SettingsHolder {
     });
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
+    @Comment({
+            "Every message sent by the plugin will use the players client locale if a translation is available.",
+            "If disabled, the config locale will be used instead."
+    })
+    public static final Property<Boolean> PER_ISSUER_LOCALE = newProperty("messages.perIssuerLocale", true);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

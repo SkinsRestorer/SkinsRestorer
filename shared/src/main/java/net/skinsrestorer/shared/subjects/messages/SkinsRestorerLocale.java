@@ -38,14 +38,15 @@ public class SkinsRestorerLocale {
     private final SRForeign defaultForeign = () -> settings.getProperty(MessageConfig.LOCALE);
 
     public String getMessage(SRForeign foreign, Message key, Object... args) {
-        String message = localeManager.getMessage(foreign, key.getKey());
+        SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
+        String message = localeManager.getMessage(target, key.getKey());
 
         if (message == null) {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));
         }
 
         if (key.isPrefixed() && !settings.getProperty(MessageConfig.DISABLE_PREFIX)) {
-            message = getMessage(foreign, Message.PREFIX_FORMAT, message);
+            message = getMessage(target, Message.PREFIX_FORMAT, message);
         }
 
         return new MessageFormat(C.c(message)).format(args);

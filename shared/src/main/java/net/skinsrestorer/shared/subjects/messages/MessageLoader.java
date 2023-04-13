@@ -26,9 +26,8 @@ import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.subjects.SRForeign;
-import net.skinsrestorer.shared.utils.C;
 import net.skinsrestorer.shared.utils.LocaleParser;
-import net.skinsrestorer.shared.utils.PropertyReader;
+import net.skinsrestorer.shared.utils.TranslationReader;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -45,23 +44,18 @@ public class MessageLoader {
     private final SRPlatformAdapter<?> adapter;
 
     public void loadMessages() throws IOException {
-        Path localesFolder = plugin.getDataFolder().resolve("locales");
-        Files.createDirectories(localesFolder);
-
         for (String localeFile : BuildData.LOCALES) {
             String filePath = "locales/" + localeFile;
-            Locale locale = localeFile.startsWith("locale_") ? LocaleParser.parseLocaleStrict(localeFile.replace("locale_", "").replace(".properties", "")) : Locale.ENGLISH;
+            Locale locale = getTranslationLocale(localeFile);
 
             try (InputStream is = adapter.getResource(filePath)) {
-                PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k.toString()), C.c(v.toString())));
+                TranslationReader.readJsonTranslation(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k), v));
             }
+        }
 
-            Path localePath = localesFolder.resolve(localeFile);
-            if (!Files.exists(localePath)) {
-                try (InputStream is = adapter.getResource(filePath)) {
-                    Files.copy(is, localePath);
-                }
-            }
+        Path localesFolder = plugin.getDataFolder().resolve("locales");
+        if (!Files.exists(localesFolder)) {
+            return;
         }
 
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
@@ -72,17 +66,14 @@ public class MessageLoader {
                 }
 
                 String fileName = localeFile.toString();
-                if (!fileName.endsWith(".properties")) {
+                if (!isJson(fileName)) {
                     continue;
                 }
 
-                Locale locale = fileName.startsWith("locale_") ?
-                        LocaleParser.parseLocaleStrict(fileName.replace("locale_", "").replace(".properties", ""))
-                        : Locale.ENGLISH;
+                Locale locale = getTranslationLocale(fileName);
 
                 try (InputStream is = Files.newInputStream(path)) {
-                    PropertyReader.readProperties(is).forEach((k, v) -> manager.addMessage(locale,
-                            MessageKey.of(k.toString()), C.c(v.toString())));
+                    TranslationReader.readJsonTranslation(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k), v));
                 }
             }
         }
@@ -111,5 +102,17 @@ public class MessageLoader {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean isJson(String fileName) {
+        return fileName.endsWith(".json");
+    }
+
+    private Locale getTranslationLocale(String fileName) {
+        return fileName.startsWith("locale_") ? LocaleParser.parseLocaleStrict(stripFileFormat(fileName)) : Locale.ENGLISH;
+    }
+
+    private String stripFileFormat(String fileName) {
+        return fileName.replace("locale_", "").replace(".json", "");
     }
 }
