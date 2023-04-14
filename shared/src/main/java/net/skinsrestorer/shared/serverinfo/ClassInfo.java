@@ -23,23 +23,16 @@ import lombok.Data;
 
 @Data
 public class ClassInfo {
+    private static final ClassInfo INSTANCE = new ClassInfo();
     private final boolean craftBukkit;
     private final boolean spigot;
     private final boolean paper;
     private final boolean folia;
-
     private final boolean spongeAPI;
     private final boolean spongeVanilla;
     private final boolean spongeForge;
-
     private final boolean bungeecord;
     private final boolean velocity;
-
-    private static final ClassInfo INSTANCE = new ClassInfo();
-
-    public static ClassInfo get() {
-        return INSTANCE;
-    }
 
     private ClassInfo() {
         spigot = isClassPresent("org.spigotmc.SpigotConfig");
@@ -51,6 +44,10 @@ public class ClassInfo {
         spongeAPI = isClassPresent("org.spongepowered.api.Sponge");
         bungeecord = isClassPresent("net.md_5.bungee.BungeeCord");
         velocity = isClassPresent("com.velocitypowered.proxy.Velocity");
+    }
+
+    public static ClassInfo get() {
+        return INSTANCE;
     }
 
     private boolean isClassPresent(String... classNames) {

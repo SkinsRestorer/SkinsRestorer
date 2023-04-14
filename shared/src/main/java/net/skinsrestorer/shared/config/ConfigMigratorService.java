@@ -51,7 +51,7 @@ public class ConfigMigratorService implements MigrationService {
     }
 
     private boolean migrateV14Layout(PropertyReader reader,
-                                            ConfigurationData configData) {
+                                     ConfigurationData configData) {
         boolean migrated = false;
         Property<Boolean> oldDebugProperty = newProperty("Debug", false);
         migrated |= moveProperty(oldDebugProperty, DevConfig.DEBUG, reader, configData);
@@ -78,9 +78,9 @@ public class ConfigMigratorService implements MigrationService {
     }
 
     protected <T> boolean moveProperty(Property<T> oldProperty,
-                                              Property<T> newProperty,
-                                              PropertyReader reader,
-                                              ConfigurationData configData) {
+                                       Property<T> newProperty,
+                                       PropertyReader reader,
+                                       ConfigurationData configData) {
         PropertyValue<T> oldPropertyValue = oldProperty.determineValue(reader);
         if (oldPropertyValue.isValidInResource()) {
             if (reader.contains(newProperty.getPath())) {
