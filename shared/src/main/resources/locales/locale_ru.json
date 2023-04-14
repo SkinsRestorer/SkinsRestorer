@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "[помощь]",
   "skinsrestorer.help_skin_set": "Изменяет ваш скин.",
   "skinsrestorer.help_skin_set_other": "Устанавливает скин выбранному игроку.",
   "skinsrestorer.help_skin_set_other_url": "Устанавливает скин выбранному игроку по ссылке.",
@@ -12,7 +11,6 @@
   "skinsrestorer.help_sr_status": "Проверяет необходимые плагину API-сервисы.",
   "skinsrestorer.help_sr_drop": "Удаляет данные об игроке или скине.",
   "skinsrestorer.help_sr_props": "Отображает свойства текущего скина игрока.",
-  "skinsrestorer.help_sr_createcustom": "Создаёт пользовательский скин для всего сервера.",
   "skinsrestorer.success_updating_skin": "&2Ваш скин был обновлён.",
   "skinsrestorer.success_updating_skin_other": "&2Скин обновлён для игрока {0}.",
   "skinsrestorer.command_server_not_allowed_message": "&4Ошибка&8: &cКоманды отключены для сервера {0}.",

@@ -41,7 +41,7 @@ public class C {
         // Note: there are exceptions to players with under 3 characters, who bought the game early in its development.
         if (len > 16) return false;
 
-        // For some reasons Apache's Lists.charactersOf is faster than character indexing for small strings.
+        // For some reason Apache's Lists.charactersOf is faster than character indexing for small strings.
         for (int i = 0; i < len; i++) {
             char c = username.charAt(i);
             // Note: Players who bought the game early in its development can have "-" in usernames.

@@ -13,8 +13,9 @@ dependencies {
     api("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
     api("ch.jalu:injector:1.0")
 
-    implementation("com.github.aikar:locales:5f204c3afb")
-    implementation("org.bstats:bstats-base:3.0.2")
+    compileOnly("org.bstats:bstats-base:3.0.2")
 
     implementation("com.mojang:brigadier:1.1.8")
+
+    testImplementation("org.bstats:bstats-base:3.0.2")
 }

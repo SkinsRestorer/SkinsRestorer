@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "[pomoc]",
   "skinsrestorer.help_skin_set": "Zmienia twojego skina.",
   "skinsrestorer.help_skin_set_other": "Ustawia skina dla wybranego gracza.",
   "skinsrestorer.help_skin_set_other_url": "Ustawia skina z adresu url dla gracza docelowego.",
@@ -12,12 +11,6 @@
   "skinsrestorer.help_sr_status": "Sprawdza usługi API potrzebne wtyczce.",
   "skinsrestorer.help_sr_drop": "Usuwa dane graczy lub skinów.",
   "skinsrestorer.help_sr_props": "Wyświetla aktualne ustawienia skina gracza.",
-  "skinsrestorer.help_sr_createcustom": "Utwórz niestandardowego skina dla całego serwera.",
-  "skinsrestorer.syntax_skinsearch": "<wyszukaj>",
-  "skinsrestorer.syntax_skinupdate_other": "<gracz>",
-  "skinsrestorer.syntax_skinclear_other": "<gracz>",
-  "skinsrestorer.completions_skinname": "<nazwa skina>",
-  "skinsrestorer.completions_skinurl": "<url skina>",
   "skinsrestorer.success_updating_skin": "&2Twój skin został zaktualizowany.",
   "skinsrestorer.success_updating_skin_other": "&2Skin został zaktualizowany dla gracza {0}.",
   "skinsrestorer.command_server_not_allowed_message": "&4Błąd&8: &cKomendy zostały wyłączone dla serwera {0}.",
@@ -46,6 +39,5 @@
   "skinsrestorer.status_ok": "&2Uzyskano połączenie z API Mojang!",
   "skinsrestorer.alt_api_failed": "&4Błąd&8: &cAPI Danych Skinów jest przeciążone, spróbuj ponownie później!",
   "skinsrestorer.no_skin_data": "&4Błąd&8: &cNie uzyskano żadnych danych skina! Czy ten gracz posiada skina?",
-  "skinsrestorer.outdated": "&4Korzystasz z przestarzałej wersji SkinsRestorer!\n&cZaktualizuj do najnowszej wersji na Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.custom_help_if_enabled": "  &2&lSkinsRestorer &7- &f&lv{0} \n    &2/skin <nazwa skina> &7-&f Zmienia twój skin. \n    &2/skin update &7-&f Aktualizuje skina. \n    &2/skin clear &7-&f Czyści skina."
+  "skinsrestorer.outdated": "&4Korzystasz z przestarzałej wersji SkinsRestorer!\n&cZaktualizuj do najnowszej wersji na Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

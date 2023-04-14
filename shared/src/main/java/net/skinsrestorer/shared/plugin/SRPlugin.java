@@ -22,7 +22,6 @@ package net.skinsrestorer.shared.plugin;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.SettingsManagerBuilder;
 import ch.jalu.injector.Injector;
-import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
@@ -52,9 +51,9 @@ import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
-import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
+import net.skinsrestorer.shared.subjects.messages.LocaleManager;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
@@ -69,7 +68,6 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -231,8 +229,7 @@ public class SRPlugin {
     }
 
     public void loadLocales() throws IOException {
-        LocaleManager<SRForeign> localeManager = LocaleManager.create(SRForeign::getLocale, Locale.ENGLISH);
-        injector.register(LocaleManager.class, localeManager);
+        injector.register(LocaleManager.class, new LocaleManager<>());
         MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
         messageLoader.migrateOldFiles();
         messageLoader.loadMessages();

@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import ch.jalu.configme.SettingsManager;
-import co.aikar.locales.LocaleManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.MessageConfig;
 import net.skinsrestorer.shared.subjects.SRForeign;
@@ -39,7 +38,7 @@ public class SkinsRestorerLocale {
 
     public String getMessage(SRForeign foreign, Message key, Object... args) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
-        String message = localeManager.getMessage(target, key.getKey());
+        String message = localeManager.getMessage(target, key);
 
         if (message == null) {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));

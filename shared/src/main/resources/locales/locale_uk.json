@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "[help]",
   "skinsrestorer.help_skin_set": "Змінює ваш скін.",
   "skinsrestorer.help_skin_set_other": "Встановлює скін для цільового гравця.",
   "skinsrestorer.help_skin_set_other_url": "Встановлює скін з URL-адреси для цільового гравця.",
@@ -12,7 +11,6 @@
   "skinsrestorer.help_sr_status": "Перевіряє API-служби, які потрібні плагіну.",
   "skinsrestorer.help_sr_drop": "Видаляє дані про гравців або скіна.",
   "skinsrestorer.help_sr_props": "Відображає поточні властивості скіна гравців.",
-  "skinsrestorer.help_sr_createcustom": "Створює користувацький скін для всього сервера.",
   "skinsrestorer.success_updating_skin": "&2Ваш скін оновлено.",
   "skinsrestorer.success_updating_skin_other": "&2Скін оновлено для гравця {0}.",
   "skinsrestorer.command_server_not_allowed_message": "&4Помилка&8: &cКоманди вимкнено для сервера {0}.",

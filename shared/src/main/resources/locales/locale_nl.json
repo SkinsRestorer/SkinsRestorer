@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "[hulp]",
   "skinsrestorer.help_skin_set": "Werkt je skin bij.",
   "skinsrestorer.help_skin_set_other": "Stelt de skin van een andere speler in.",
   "skinsrestorer.help_skin_set_other_url": "Stelt de skin van een andere speler via link in.",
@@ -12,17 +11,6 @@
   "skinsrestorer.help_sr_status": "Controleert plugin benodigde API-diensten.",
   "skinsrestorer.help_sr_drop": "Verwijdert spelers van skin gegevens.",
   "skinsrestorer.help_sr_props": "Geeft de huidige skin eigenschappen van de spelers weer.",
-  "skinsrestorer.help_sr_createcustom": "Maak een aangepaste server brede skin.",
-  "skinsrestorer.syntax_defaultcommand": "<skin/link>",
-  "skinsrestorer.syntax_skinset": "<skin>",
-  "skinsrestorer.syntax_skinset_other": "<doelspeler> <skin/link>",
-  "skinsrestorer.syntax_skinurl": "<skinlink> [klassiek/dun]",
-  "skinsrestorer.syntax_skinsearch": "<zoeken>",
-  "skinsrestorer.syntax_skinupdate_other": "<doel>",
-  "skinsrestorer.syntax_skinclear_other": "<doel>",
-  "skinsrestorer.completions_skin": "<Skin>",
-  "skinsrestorer.completions_skinname": "<SkinNaam>",
-  "skinsrestorer.completions_skinurl": "<SkinLink>",
   "skinsrestorer.success_updating_skin": "&bJe skin is bijgewerkt.",
   "skinsrestorer.success_updating_skin_other": "&2Skin bijgewerkt voor speler {0}.",
   "skinsrestorer.command_server_not_allowed_message": "&4Fout&8: &cCommands zijn uitgeschakeld voor de server {0}.",
@@ -51,6 +39,5 @@
   "skinsrestorer.status_ok": "&2Mojang API verbinding succesvol!",
   "skinsrestorer.alt_api_failed": "&4Error&8: &cSkin Data API is overbelast, probeer het later opnieuw!",
   "skinsrestorer.no_skin_data": "&4Fout&8: &cGeen skin gegevens gevonden! Heeft deze speler een skin?",
-  "skinsrestorer.outdated": "&4Je gebruikt een verouderde versie van SkinsRestorer!\n&cUpdate aub naar de laatste versie van Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.custom_help_if_enabled": "  &2&lSkinsRestorer &7- &f&lv{0} \n    &2/skin <skinnaam> &7-&f Wijzigt je skin. \n    &2/skin update &7-&f Update je skin. \n    &2/skin clear&7-&f Verwijdert je skin."
+  "skinsrestorer.outdated": "&4Je gebruikt een verouderde versie van SkinsRestorer!\n&cUpdate aub naar de laatste versie van Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

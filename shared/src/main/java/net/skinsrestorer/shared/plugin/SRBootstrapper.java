@@ -53,11 +53,12 @@ public class SRBootstrapper {
 
             srPlugin.startup(injector.newInstance(initCLass));
         } catch (Throwable e) {
-            e.printStackTrace();
             isrLogger.log(SRLogLevel.SEVERE, "An unexpected error occurred while starting the plugin. Please check the console for more details.");
 
             if (SRPlugin.isUnitTest()) {
-                throw new AssertionError("Failed to start plugin: " + e.getMessage());
+                throw new AssertionError(e);
+            } else {
+                e.printStackTrace();
             }
         }
 

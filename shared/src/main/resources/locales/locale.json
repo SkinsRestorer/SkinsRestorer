@@ -88,6 +88,5 @@
   "skinsrestorer.status_ok": "&2Mojang API connection successful!",
   "skinsrestorer.alt_api_failed": "&4Error&8: &cSkin Data API is overloaded, please try again later!",
   "skinsrestorer.no_skin_data": "&4Error&8: &cNo skin data acquired! Does this player have a skin?",
-  "skinsrestorer.outdated": "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.sr_line": "&7&m----------------------------------------"
+  "skinsrestorer.outdated": "&4You are running an outdated version of SkinsRestorer!\n&cPlease update to the latest version on Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

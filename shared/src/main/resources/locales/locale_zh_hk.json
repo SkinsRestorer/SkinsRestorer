@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "帮助",
   "skinsrestorer.help_skin_set": "更改您的皮肤。",
   "skinsrestorer.help_skin_set_other": "为目标玩家设置皮肤。",
   "skinsrestorer.help_skin_set_other_url": "使用链接为目标玩家设置皮肤。",
@@ -12,7 +11,6 @@
   "skinsrestorer.help_sr_status": "检查插件所需的 API 服务。",
   "skinsrestorer.help_sr_drop": "移除玩家或皮肤数据。",
   "skinsrestorer.help_sr_props": "显示玩家当前的皮肤属性。",
-  "skinsrestorer.help_sr_createcustom": "创建一个服务器范围内的自定义皮肤。",
   "skinsrestorer.success_updating_skin": "&2你的皮肤已更新。",
   "skinsrestorer.success_updating_skin_other": "&2已为玩家 {0} 更新皮肤。",
   "skinsrestorer.command_server_not_allowed_message": "&4错误&8: &c服务器 {0} 已禁用该命令。",
@@ -41,6 +39,5 @@
   "skinsrestorer.status_ok": "&2Mojang API 连接成功!",
   "skinsrestorer.alt_api_failed": "&4错误&8: &c皮肤数据 API 超负荷，请稍后重试!",
   "skinsrestorer.no_skin_data": "&4错误&8: &c没有获取到皮肤数据! 确定这个玩家有皮肤吗?",
-  "skinsrestorer.outdated": "&4你正在运行一个旧版本的 SkinsRestorer!\n&c请到 SpigotMC 更新 SkinsRestorer 至最新版本: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.custom_help_if_enabled": "  &2&lSkinsRestorer &7- &f&lv{0} \n  &7/skin <皮肤名> &7-&f 更改你的皮肤。\n  &7/skin update &7-&f 更新你的皮肤。\n  &7/skin clear &7-&f 清除你的皮肤。"
+  "skinsrestorer.outdated": "&4你正在运行一个旧版本的 SkinsRestorer!\n&c请到 SpigotMC 更新 SkinsRestorer 至最新版本: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

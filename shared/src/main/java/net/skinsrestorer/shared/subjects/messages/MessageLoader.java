@@ -19,8 +19,6 @@
  */
 package net.skinsrestorer.shared.subjects.messages;
 
-import co.aikar.locales.LocaleManager;
-import co.aikar.locales.MessageKey;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
@@ -49,34 +47,36 @@ public class MessageLoader {
             Locale locale = getTranslationLocale(localeFile);
 
             try (InputStream is = adapter.getResource(filePath)) {
-                TranslationReader.readJsonTranslation(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k), v));
+                TranslationReader.readJsonTranslation(is)
+                        .forEach((k, v) -> manager.addMessage(Message.fromKey(k), locale, v));
             }
         }
 
         Path localesFolder = plugin.getDataFolder().resolve("locales");
-        if (!Files.exists(localesFolder)) {
-            return;
-        }
+        if (Files.exists(localesFolder)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
+                for (Path path : stream) {
+                    Path localeFile = path.getFileName();
+                    if (localeFile == null) {
+                        continue;
+                    }
 
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
-            for (Path path : stream) {
-                Path localeFile = path.getFileName();
-                if (localeFile == null) {
-                    continue;
-                }
+                    String fileName = localeFile.toString();
+                    if (!isJson(fileName)) {
+                        continue;
+                    }
 
-                String fileName = localeFile.toString();
-                if (!isJson(fileName)) {
-                    continue;
-                }
+                    Locale locale = getTranslationLocale(fileName);
 
-                Locale locale = getTranslationLocale(fileName);
-
-                try (InputStream is = Files.newInputStream(path)) {
-                    TranslationReader.readJsonTranslation(is).forEach((k, v) -> manager.addMessage(locale, MessageKey.of(k), v));
+                    try (InputStream is = Files.newInputStream(path)) {
+                        TranslationReader.readJsonTranslation(is)
+                                .forEach((k, v) -> manager.addMessage(Message.fromKey(k), locale, v));
+                    }
                 }
             }
         }
+
+        manager.verifyValid();
     }
 
     public void migrateOldFiles() {

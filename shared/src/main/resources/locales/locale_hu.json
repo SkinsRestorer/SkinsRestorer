@@ -11,17 +11,6 @@
   "skinsrestorer.help_sr_status": "Ellenőrzi a bővítményhez szükséges API-szolgáltatásokat.",
   "skinsrestorer.help_sr_drop": "Törli a játékos, vagy a kinézeti adatokat.",
   "skinsrestorer.help_sr_props": "Megjeleníti a játékos jelenlegi kinézetének tulajdonságait.",
-  "skinsrestorer.help_sr_createcustom": "Hozz létre egy szerverszintű kinézetet!",
-  "skinsrestorer.syntax_defaultcommand": "<kinézet/URL>",
-  "skinsrestorer.syntax_skinset": "<kinézet>",
-  "skinsrestorer.syntax_skinset_other": "<játékos> <kinézet/URL>",
-  "skinsrestorer.syntax_skinurl": "<kinézeti URL> [classic/slim]",
-  "skinsrestorer.syntax_skinsearch": "<keresés>",
-  "skinsrestorer.syntax_skinupdate_other": "<játékos>",
-  "skinsrestorer.syntax_skinclear_other": "<játékos>",
-  "skinsrestorer.completions_skin": "<kinézet>",
-  "skinsrestorer.completions_skinname": "<kinézetnév>",
-  "skinsrestorer.completions_skinurl": "<kinézeti URL>",
   "skinsrestorer.success_updating_skin": "&2Kinézeted frissítve.",
   "skinsrestorer.success_updating_skin_other": "&2{0} játékos kinézete frissítve.",
   "skinsrestorer.command_server_not_allowed_message": "&eHiba&8: &c{0} szerver számára tiltva lettek a parancsok.",
@@ -49,6 +38,5 @@
   "skinsrestorer.status_ok": "&2Csatlakozás a Mojang API-hoz sikeres!",
   "skinsrestorer.alt_api_failed": "&4Hiba&8: &cKinézeti adat API túlterhelve, kérlek, próbáld meg később!",
   "skinsrestorer.no_skin_data": "&4Hiba&8: &cNincs kinézeti információ. Van ennek a játékosnak kinézete?",
-  "skinsrestorer.outdated": "&4A SkinsRestorer egy elavult verzióját használod.\n&cKérünk, frissíts a legújabb verzióra Spigot-on: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.custom_help_if_enabled": "  &2&lSkinsRestorer &7- &f&lv{0} \n    &2/skin <kinézetnév> &7-&f Kinézeted megváltoztatása \n    &2/skin update &7-&f Kinézeted frissítése \n    &2/skin clear &7-&f Kinézeted törlése"
+  "skinsrestorer.outdated": "&4A SkinsRestorer egy elavult verzióját használod.\n&cKérünk, frissíts a legújabb verzióra Spigot-on: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

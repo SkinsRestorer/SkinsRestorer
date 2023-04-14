@@ -19,7 +19,6 @@
  */
 package net.skinsrestorer.shared.subjects.messages;
 
-import co.aikar.locales.MessageKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +28,6 @@ public enum Message {
     HELP_SKIN,
     HELP_SKINS,
     HELP_SR,
-    HELP_HELP_COMMAND,
     HELP_SKIN_SET,
     HELP_SKIN_SET_OTHER,
     HELP_SKIN_SET_OTHER_URL,
@@ -115,16 +113,24 @@ public enum Message {
     STATUS_OK(true),
     ALT_API_FAILED(true),
     NO_SKIN_DATA(true),
-    OUTDATED(true),
-    SR_LINE,
-    CUSTOM_HELP_IF_ENABLED;
+    OUTDATED(true);
 
     @Getter
-    private final MessageKey key = MessageKey.of("skinsrestorer." + this.name().toLowerCase());
+    private final String key = "skinsrestorer." + this.name().toLowerCase();
     @Getter
     private final boolean prefixed;
 
     Message() {
         this(false);
+    }
+
+    public static Message fromKey(String key) {
+        for (Message message : values()) {
+            if (message.getKey().equals(key)) {
+                return message;
+            }
+        }
+
+        throw new IllegalArgumentException(String.format("No message enum found for key %s", key));
     }
 }

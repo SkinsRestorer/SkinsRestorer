@@ -221,19 +221,6 @@ public final class SkinCommand {
         commandManager.executeCommand(player, "skins");
     }
 
-    private void sendHelp(SRCommandSender sender) {
-        String srLine = locale.getMessage(sender, Message.SR_LINE);
-        if (!srLine.isEmpty()) {
-            sender.sendMessage(srLine);
-        }
-
-        sender.sendMessage(Message.CUSTOM_HELP_IF_ENABLED, plugin.getVersion());
-
-        if (!srLine.isEmpty()) {
-            sender.sendMessage(srLine);
-        }
-    }
-
     private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean saveSkin, SkinVariant skinVariant) {
         // Escape "null" skin, this did cause crash in the past for some waterfall instances
         // TODO: resolve this in a different way

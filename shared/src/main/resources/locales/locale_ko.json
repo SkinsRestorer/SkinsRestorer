@@ -1,5 +1,4 @@
 {
-  "skinsrestorer.help_help_command": "[도움말]",
   "skinsrestorer.help_skin_set": "스킨을 변경해요.",
   "skinsrestorer.help_skin_set_other": "대상 플레이어의 스킨을 설정해요.",
   "skinsrestorer.help_skin_set_other_url": "URL로 대상 플레이어의 스킨을 설정해요.",
@@ -13,24 +12,12 @@
   "skinsrestorer.help_sr_drop": "플레이어나 스킨 데이터를 제거해요.",
   "skinsrestorer.help_sr_props": "플레이어의 현재 스킨 속성을 표시해요.",
   "skinsrestorer.help_sr_apply_skin": "대상 플레이어에게 스킨을 다시 적용시켜요.",
-  "skinsrestorer.help_sr_createcustom": "맞춤 서버 스킨을 생성해요.",
-  "skinsrestorer.syntax_defaultcommand": "<스킨/URL>",
-  "skinsrestorer.syntax_skinset": "<스킨>",
-  "skinsrestorer.syntax_skinset_other": "<대상> <스킨/URL>",
-  "skinsrestorer.syntax_skinurl": "<스킨 URL> [classic/slim]",
-  "skinsrestorer.syntax_skinsearch": "<검색어>",
-  "skinsrestorer.syntax_skinupdate_other": "<대상>",
-  "skinsrestorer.syntax_skinclear_other": "<대상>",
-  "skinsrestorer.completions_skin": "<스킨>",
-  "skinsrestorer.completions_skinname": "<스킨 이름>",
-  "skinsrestorer.completions_skinurl": "<스킨 URL>",
   "skinsrestorer.success_skin_change": "&2스킨이 변경됐어요.",
   "skinsrestorer.success_skin_change_other": "&2{0}님의 스킨을 설정했어요.",
   "skinsrestorer.success_skin_clear": "&2스킨이 초기화됐어요.",
   "skinsrestorer.success_skin_clear_other": "&2{0}님의 스킨이 초기화됐어요.",
   "skinsrestorer.success_updating_skin": "&2스킨이 갱신됐어요.",
   "skinsrestorer.success_updating_skin_other": "&2{0}님의 스킨이 갱신됐어요.",
-  "skinsrestorer.succes_admin_applyskin": "&2플레이어의 스킨이 새로고침됐어요!",
   "skinsrestorer.success_admin_createcustom": "&2스킨 {0}이(가) 생성됐어요!",
   "skinsrestorer.success_admin_drop": "&2{1}의 {0} 데이터를 버렸어요.",
   "skinsrestorer.success_admin_reload": "&2설정과 언어를 다시 불러왔어요!",
@@ -65,6 +52,5 @@
   "skinsrestorer.status_ok": "&2Mojang API와 연결했어요!",
   "skinsrestorer.alt_api_failed": "&4오류&8: &c스킨 데이터 API가 과부하됐어요. 나중에 다시 시도하세요!",
   "skinsrestorer.no_skin_data": "&4오류&8: &c스킨 데이터를 가져오지 못했어요! 해당 플레이어가 스킨을 착용 중인가요?",
-  "skinsrestorer.outdated": "&4SkinRestorer 구버전을 사용 중이에요!\n&cSpigot에서 최신 버전으로 업데이트하세요:\n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/",
-  "skinsrestorer.custom_help_if_enabled": "  &2&lSkinsRestorer &7- &f&lv{0}\n    &2/skin <스킨 이름> &7-&f 스킨을 변경해요. \n    &2/skin update &7-&f 스킨을 갱신해요. \n    &2/skin clear &7-&f 스킨을 초기화해요."
+  "skinsrestorer.outdated": "&4SkinRestorer 구버전을 사용 중이에요!\n&cSpigot에서 최신 버전으로 업데이트하세요:\n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }
