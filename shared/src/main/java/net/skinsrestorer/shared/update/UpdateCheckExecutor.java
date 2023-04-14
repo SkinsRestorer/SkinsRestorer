@@ -20,7 +20,6 @@
 package net.skinsrestorer.shared.update;
 
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 
@@ -29,7 +28,6 @@ import javax.inject.Inject;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckExecutor {
     private final SRPlugin plugin;
-    private final SRLogger logger;
     private final SRPlatformAdapter<?> adapter;
     private boolean updateDownloaded;
 
@@ -46,7 +44,7 @@ public class UpdateCheckExecutor {
                     updateDownloaded = true;
                 }
 
-                updateChecker.getUpdateAvailableMessages(newVersion, downloadUrl, downloader != null).forEach(logger::info);
+                updateChecker.printUpdateAvailable(newVersion, downloadUrl, downloader != null);
             }
 
             @Override
@@ -55,7 +53,7 @@ public class UpdateCheckExecutor {
                     return;
                 }
 
-                updateChecker.getUpToDateMessages().forEach(logger::info);
+                updateChecker.printUpToDate();
             }
         }));
     }

@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.update;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
 import net.skinsrestorer.shared.log.SRLogger;
@@ -33,8 +34,6 @@ import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -78,51 +77,47 @@ public class UpdateCheckerGitHub {
         }
     }
 
-    public List<String> getUpToDateMessages() {
-        List<String> upToDateMessages = new LinkedList<>();
-        fillHeader(upToDateMessages);
-        upToDateMessages.add("§b    Current version: §a" + plugin.getVersion());
-        upToDateMessages.add("§a    This is the latest version!");
-        upToDateMessages.add(LOG_ROW);
-
-        return upToDateMessages;
+    public void printUpToDate() {
+        printHeader();
+        logger.info("§b    Current version: §a" + plugin.getVersion());
+        logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
+        logger.info("§a    This is the latest version!");
+        logger.info(LOG_ROW);
     }
 
-    public List<String> getUpdateAvailableMessages(String newVersion, String downloadUrl, boolean updateDownloader) {
-        List<String> updateAvailableMessages = new LinkedList<>();
-        fillHeader(updateAvailableMessages);
+    public void printUpdateAvailable(String newVersion, String downloadUrl, boolean updateDownloader) {
+        printHeader();
 
-        updateAvailableMessages.add("§b    Current version: §c" + plugin.getVersion());
-        updateAvailableMessages.add("§b    New version: §c" + newVersion);
+        logger.info("§b    Current version: §c" + plugin.getVersion());
+        logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
+        logger.info("§b    New version: §c" + newVersion);
 
         if (updateDownloader) {
-            updateAvailableMessages.add("    A new version is available! Downloading it now...");
+            logger.info("    A new version is available! Downloading it now...");
         } else {
-            updateAvailableMessages.add("§e    A new version is available! Download it at:");
-            updateAvailableMessages.add("§e    " + downloadUrl);
+            logger.info("§e    A new version is available! Download it at:");
+            logger.info("§e    " + downloadUrl);
         }
 
-        updateAvailableMessages.add(LOG_ROW);
-
-        return updateAvailableMessages;
+        logger.info(LOG_ROW);
     }
 
-    private void fillHeader(List<String> updateAvailableMessages) {
-        updateAvailableMessages.add(LOG_ROW);
-        updateAvailableMessages.add("§a    +==================+");
-        updateAvailableMessages.add("§a    |   SkinsRestorer  |");
+    private void printHeader() {
+        logger.info(LOG_ROW);
+        logger.info("§a    +==================+");
+        logger.info("§a    |   SkinsRestorer  |");
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         if (serverPlugin != null) {
             if (serverPlugin.isProxyMode()) {
-                updateAvailableMessages.add("§a    |------------------|");
-                updateAvailableMessages.add("§a    |    §eProxy Mode§a    |");
+                logger.info("§a    |------------------|");
+                logger.info("§a    |    §eProxy Mode§a    |");
             } else {
-                updateAvailableMessages.add("§a    |------------------|");
-                updateAvailableMessages.add("§a    |  §9§n§lStandalone Mode§r§a |");
+                logger.info("§a    |------------------|");
+                logger.info("§a    |  §9§n§lStandalone Mode§r§a |");
             }
         }
-        updateAvailableMessages.add("§a    +==================+");
-        updateAvailableMessages.add(LOG_ROW);
+        logger.info("§a    +==================+");
+        logger.info(LOG_ROW);
     }
 
     public boolean isVersionNewer(String currentVersion, String newVersion) {

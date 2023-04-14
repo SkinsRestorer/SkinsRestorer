@@ -138,7 +138,7 @@ public final class SRCommand {
         if (serverPlugin != null) {
             statusMessages.add("§7ProxyMode: §6" + serverPlugin.isProxyMode());
         }
-        statusMessages.add("§7Commit: §6" + BuildData.COMMIT.substring(0, 7));
+        statusMessages.add("§7Commit: §6" + BuildData.COMMIT_SHORT);
         statusMessages.add("§7Finished checking services.");
         statusMessages.add(breakLine);
         statusMessages.forEach(sender::sendMessage);
@@ -200,8 +200,8 @@ public final class SRCommand {
         try {
             skinApplier.applySkin(target.getAs(Object.class));
             sender.sendMessage(Message.SUCCESS_ADMIN_APPLYSKIN);
-        } catch (Exception ignored) {
-            sender.sendMessage(Message.ERROR_ADMIN_APPLYSKIN);
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
         }
     }
 

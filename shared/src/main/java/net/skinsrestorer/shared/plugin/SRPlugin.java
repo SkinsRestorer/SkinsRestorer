@@ -141,7 +141,7 @@ public class SRPlugin {
             Optional<String> optional = ((SRProxyPlayer) sender).getCurrentServer();
             if (!optional.isPresent()) {
                 if (!settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND)) {
-                    sender.sendMessage("You are not connected to any server."); // TODO: Use locale
+                    sender.sendMessage(Message.NOT_CONNECTED_TO_SERVER);
                     return false;
                 }
 
@@ -153,7 +153,7 @@ public class SRPlugin {
             boolean shouldBlock = settings.getProperty(ProxyConfig.NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST) != inList;
 
             if (shouldBlock) {
-                sender.sendMessage("You are not allowed to use this command on this server."); // TODO: Use locale
+                sender.sendMessage(Message.COMMAND_SERVER_NOT_ALLOWED_MESSAGE, server);
                 return false;
             }
 
