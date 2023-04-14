@@ -25,10 +25,8 @@
   "skinsrestorer.error_updating_customskin": "&4Error&8: &cLa skin no se puede actualizar porque es personalizada.",
   "skinsrestorer.error_invalid_urlskin": "&4Error&8: &cURL de skin o formato no válido, \n&cIntente cargar su máscara en imgur y haga clic con el botón derecho en 'copiar dirección de imagen' \n&cPara guía ver: &c&oskinsrestorer.net/skinurl",
   "skinsrestorer.error_ms_full": "&4MS Error&8: &cSe agotó el tiempo de espera de la API al cargar su &cskin. Por favor, inténtelo de nuevo más tarde. (MineSkin)",
-  "skinsrestorer.error_ms_generic": "&4MS Error&8: {0}",
   "skinsrestorer.generic_error": "&4Error&8: &cOcurrió un error al solicitar los datos de la máscara, ¡inténtalo de nuevo más tarde!",
   "skinsrestorer.wait_a_minute": "&4Error&8: &cEspere un minuto antes de volver a solicitar ese aspecto. (Tarifa limitada)",
-  "skinsrestorer.error_no_skin": "&4Error&8: &cEste jugador no tiene conjunto de pieles.",
   "skinsrestorer.skinsmenu_open": "&2Abriendo el menu de skins...",
   "skinsrestorer.skinsmenu_title_new": "&9Menu de Skins- Página {0}",
   "skinsrestorer.skinsmenu_next_page": "&a&l»&7 Próxima pagina&a&l »",
@@ -36,8 +34,6 @@
   "skinsrestorer.skinsmenu_clear_skin": "&c&l[ &7Eliminar Skin&c&l ]",
   "skinsrestorer.skinsmenu_select_skin": "&2Clic para seleccionar esta skin.",
   "skinsrestorer.skin_search_message": "&2Puede encontrar skins que coincidan con &a{0}&2 aquí: \n&ahttps://namemc.com/minecraft-skins/tag/{0} \n\n&2Si no se encuentran skins, siempre puede encontrar algunas skins en https://namemc.com/minecraft-skins/tag \nPuede configurar la skin usando el enlace de la skin:\n /skin https://namemc.com/skin/",
-  "skinsrestorer.status_ok": "&2Conexion exitosa a la API de Mojang!",
-  "skinsrestorer.alt_api_failed": "&4Error&8: &cLa API de datos de skin está sobrecargada, ¡inténtalo de nuevo más tarde!",
   "skinsrestorer.no_skin_data": "&4Error&8: &c¡No se han adquirido datos de skin! ¿Este jugador tiene una skin?",
   "skinsrestorer.outdated": "&4Estas usando una versión vieja de SkinsRestorer!\n&cPuede actualizarlo mediante el siguiente link: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

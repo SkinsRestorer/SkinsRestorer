@@ -25,10 +25,8 @@
   "skinsrestorer.error_updating_customskin": "&4Fout&8: &cSkin kan niet worden bijgewerkt omdat het op maat is (url).",
   "skinsrestorer.error_invalid_urlskin": "&4Fout&8: &cOngeldige skin url of formaat, \n&cProbeer je skin te uploaden naar imgur en klik met de rechtermuisknop op 'Afbeeldingsadres kopiëren '\n&cVoor handleiding zie: &c&oskinsrestorer.net/skin-url",
   "skinsrestorer.error_ms_full": "&4MS fout&8: &cAPI onderbreking tijdens het uploaden van je &cskin. Probeer het later opnieuw. (MineSkin)",
-  "skinsrestorer.error_ms_generic": "&4MS Fout&8: {0}",
   "skinsrestorer.generic_error": "&4Fout&8: &cEr is een fout opgetreden bij het ophalen van de skin gegevens, probeer het later opnieuw!",
   "skinsrestorer.wait_a_minute": "&4Fout&8: &cWacht alsjeblieft een minuut voordat je die skin opnieuw aanvraagt. (Rate Limited)",
-  "skinsrestorer.error_no_skin": "&4Fout&8: Deze speler heeft geen skin ingesteld.",
   "skinsrestorer.skinsmenu_open": "&2Openen skins menu...",
   "skinsrestorer.skinsmenu_title_new": "&9Skin Menu - Pagina {0}",
   "skinsrestorer.skinsmenu_next_page": "&a&l»&7 Volgende Pagina&a&l »",
@@ -36,8 +34,6 @@
   "skinsrestorer.skinsmenu_clear_skin": "&c&l[ &7Verwijder Skin&c&l ]",
   "skinsrestorer.skinsmenu_select_skin": "&bKlik om deze skin te selecteren",
   "skinsrestorer.skin_search_message": "&bJe kunt skins vinden die overeenkomen met &a{0}&2 hier: \n&ahttps://namemc. om/minecraft-skins/tag/{0} \n\n&2Als er geen skins worden gevonden, kun je altijd wat skins vinden op https://namemc. om/minecraft-skins/tag \nJe kunt de skin instellen met behulp van de skin link:\n /skin https://namemc.com/skin/",
-  "skinsrestorer.status_ok": "&2Mojang API verbinding succesvol!",
-  "skinsrestorer.alt_api_failed": "&4Error&8: &cSkin Data API is overbelast, probeer het later opnieuw!",
   "skinsrestorer.no_skin_data": "&4Fout&8: &cGeen skin gegevens gevonden! Heeft deze speler een skin?",
   "skinsrestorer.outdated": "&4Je gebruikt een verouderde versie van SkinsRestorer!\n&cUpdate aub naar de laatste versie van Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

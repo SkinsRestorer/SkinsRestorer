@@ -64,9 +64,7 @@ public enum Message {
     ERROR_INVALID_URLSKIN(true),
     ERROR_ADMIN_APPLYSKIN(true),
     ERROR_MS_FULL(true),
-    ERROR_MS_GENERIC(true),
     ERROR_MS_API_FAILED(true),
-    ERROR_NO_SKIN(true),
     COMMAND_SERVER_NOT_ALLOWED_MESSAGE(true),
     PLAYER_HAS_NO_PERMISSION_SKIN(true),
     PLAYER_HAS_NO_PERMISSION_URL(true),
@@ -110,8 +108,6 @@ public enum Message {
     SKINSMENU_CLEAR_SKIN,
     SKINSMENU_SELECT_SKIN,
     SKIN_SEARCH_MESSAGE(true),
-    STATUS_OK(true),
-    ALT_API_FAILED(true),
     NO_SKIN_DATA(true),
     OUTDATED(true);
 

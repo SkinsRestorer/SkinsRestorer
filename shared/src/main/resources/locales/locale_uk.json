@@ -25,10 +25,8 @@
   "skinsrestorer.error_updating_customskin": "&4Помилка&8: &cСкін не можна оновити, оскільки він користувацький.",
   "skinsrestorer.error_invalid_urlskin": "&4Помилка&8: &cНедійсна URL-адреса або формат скіна, &cСпробуйте завантажити свій скін на imgur і клацніть правою кнопкою миші «скопіювати адресу зображення» \n&cПосібник див.: &c&oskinsrestorer.net/skinurl",
   "skinsrestorer.error_ms_full": "&4Помилка MS&8: &cминув час очікування API під час завантаження вашого &cскіна. Будь ласка, спробуйте пізніше. (MineSkin)",
-  "skinsrestorer.error_ms_generic": "&4Помилка MS&8: {0}",
   "skinsrestorer.generic_error": "&4Помилка&8: &cСталася помилка під час запиту даних скіна, повторіть спробу пізніше!",
   "skinsrestorer.wait_a_minute": "&4Помилка&8: &cЗачекайте хвилину, перш ніж знову запитувати цю тему. (Ліміт обмежений)",
-  "skinsrestorer.error_no_skin": "&4Помилка&8: &cЦей гравець не має скінів.",
   "skinsrestorer.skinsmenu_open": "&2Відкриття меню скінів...",
   "skinsrestorer.skinsmenu_title_new": "&9Меню скінів - Сторінка {0}",
   "skinsrestorer.skinsmenu_next_page": "&a&l»&7 Наступна сторінка&a&l »",
@@ -36,8 +34,6 @@
   "skinsrestorer.skinsmenu_clear_skin": "&c&l[ &7Видалити скін&c&l ]",
   "skinsrestorer.skinsmenu_select_skin": "&2Натисніть, щоб вибрати цей скін",
   "skinsrestorer.skin_search_message": "&2Ви можете знайти скіни, які відповідають &a{0}&2 тут: \n&ahttps://namemc.com/minecraft-skins/tag/{0} \n\n&2Якщо скіни не знайдено, ви завжди можете знайти кілька скінів на https://namemc.com/minecraft-skins/tag\nВи можете встановити скін за посиланням:\n /skin https://namemc.com/skin/",
-  "skinsrestorer.status_ok": "&2Підключення Mojang API успішне!",
-  "skinsrestorer.alt_api_failed": "&4Помилка&8: &cAPI дані скіна перевантажено, спробуйте пізніше!",
   "skinsrestorer.no_skin_data": "&4Помилка&8: &cНемає даних скіна! У цього гравця є скін?",
   "skinsrestorer.outdated": "&4Ви використовуєте застарілу версію SkinsRestorer!\n&cОновіть до останньої версії на Spigot: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }

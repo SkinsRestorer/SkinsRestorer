@@ -24,10 +24,8 @@
   "skinsrestorer.error_updating_url": "&4Hiba&8: &cNem frissítheted az egyéni URL kinézeteket! \n&cProbáld újra a /skin url parancs használatával",
   "skinsrestorer.error_updating_customskin": "&4Hiba&8: &cKinézeted egyedi, ezért nem frissíthető.",
   "skinsrestorer.error_ms_full": "&4MS Hiba&8: &cAz API nem válaszol a kinézeted feltöltésére. Kérlek, próbáld később! (MineSkin)",
-  "skinsrestorer.error_ms_generic": "&4MS Hiba&8: {0}",
   "skinsrestorer.generic_error": "&4Hiba&8: &cHiba adódott a kinézeti adatok lekérése közben. Kérlek, próbáld később!",
   "skinsrestorer.wait_a_minute": "&4Hiba&8: &cKérlek, várj egy kicsit, míg újra lekéred ezt a kinézetet! (Korlátozott adatforgalom)",
-  "skinsrestorer.error_no_skin": "&4Hiba&8: &cEnnek a játékosnak nincs kinézet beállítva.",
   "skinsrestorer.skinsmenu_open": "&2Kinézeti menü megnyitása...",
   "skinsrestorer.skinsmenu_title_new": "&9Kinézeti menü - {0}. oldal",
   "skinsrestorer.skinsmenu_next_page": "&a&l»&7 Következő oldal&a&l »",
@@ -35,8 +33,6 @@
   "skinsrestorer.skinsmenu_clear_skin": "&c&l[&7 Kinézet eltávolítása&c&l ]",
   "skinsrestorer.skinsmenu_select_skin": "&2Kattints a kinézet kiválasztásához",
   "skinsrestorer.skin_search_message": "&2Itt találhatsz &a{0} &2kinézettel megegyezőeket: \n&ahttp://namemc.com/minecraft-skins/tag/{0} \n\n&2Ha nincs megfelelő kinézetet, találhatsz más kinézeteket itt: &ahttps://namemc.com/minecraft-skins/tag \n&2Beállíthatod a kinézeted a kinézeti linkkel:\n /skin https://namemc.com/skin/",
-  "skinsrestorer.status_ok": "&2Csatlakozás a Mojang API-hoz sikeres!",
-  "skinsrestorer.alt_api_failed": "&4Hiba&8: &cKinézeti adat API túlterhelve, kérlek, próbáld meg később!",
   "skinsrestorer.no_skin_data": "&4Hiba&8: &cNincs kinézeti információ. Van ennek a játékosnak kinézete?",
   "skinsrestorer.outdated": "&4A SkinsRestorer egy elavult verzióját használod.\n&cKérünk, frissíts a legújabb verzióra Spigot-on: \n&ehttps://www.spigotmc.org/resources/skinsrestorer.2124/"
 }
