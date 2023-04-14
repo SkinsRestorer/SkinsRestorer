@@ -200,22 +200,24 @@ public class SRPlugin {
             settings.reload();
         }
 
-        logger.setDebug(settings.getProperty(DevConfig.DEBUG));
+        logger.setDebug(settings.getProperty(DevConfig.DEBUG) || unitTest);
 
-        //__Default__Skins
+        revertSettings(settings);
+    }
+
+    private void revertSettings(SettingsManager settings) {
         if (settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED) && settings.getProperty(StorageConfig.DEFAULT_SKINS).isEmpty()) {
-            logger.warning("[Config] no DefaultSkins found! Disabling DefaultSkins.");
+            logger.warning("[Config] No DefaultSkins configured! Disabling DefaultSkins.");
             settings.setProperty(StorageConfig.DEFAULT_SKINS_ENABLED, false);
         }
 
-        //__Disabled__Skins
         if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && settings.getProperty(CommandConfig.DISABLED_SKINS).isEmpty()) {
-            logger.warning("[Config] no DisabledSkins found! Disabling DisabledSkins.");
+            logger.warning("[Config] No DisabledSkins configured! Disabling DisabledSkins.");
             settings.setProperty(CommandConfig.DISABLED_SKINS_ENABLED, false);
         }
 
         if (settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED) && settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST).isEmpty()) {
-            logger.warning("[Config] no RestrictSkinUrls found! Disabling RestrictSkinUrls.");
+            logger.warning("[Config] No RestrictSkinUrls configured! Disabling RestrictSkinUrls.");
             settings.setProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED, false);
         }
 
@@ -333,7 +335,8 @@ public class SRPlugin {
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         SRProxyPlugin proxyPlugin = injector.getIfAvailable(SRProxyPlugin.class);
 
-        logger.load(dataFolder);
+        // Load config (Also configures logger)
+        loadConfig();
 
         if (!unitTest) {
             registerMetrics(adapter.createMetricsInstance());
@@ -346,8 +349,6 @@ public class SRPlugin {
             serverPlugin.checkProxyMode();
         }
 
-        // Init config files
-        loadConfig();
         try {
             loadLocales();
         } catch (IOException e) {

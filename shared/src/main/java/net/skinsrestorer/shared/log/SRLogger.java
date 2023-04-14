@@ -21,12 +21,6 @@ package net.skinsrestorer.shared.log;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skinsrestorer.axiom.AxiomConfiguration;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 @RequiredArgsConstructor
 public class SRLogger {
@@ -34,28 +28,6 @@ public class SRLogger {
     private final boolean color;
     @Setter
     private boolean debug = false;
-
-    public void load(Path dataFolder) {
-        if (System.getProperty("sr.unit.test") != null) {
-            debug = true;
-            return;
-        }
-
-        Path configFile = dataFolder.resolve("config.yml");
-
-        if (Files.exists(configFile)) {
-            try (InputStream inputStream = Files.newInputStream(configFile)) {
-                AxiomConfiguration config = new AxiomConfiguration();
-                config.load(inputStream);
-                Boolean debugValue = config.getBoolean("dev.debug");
-                if (debugValue != null) {
-                    debug = debugValue;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public void debug(String message) {
         debug(SRLogLevel.INFO, message);

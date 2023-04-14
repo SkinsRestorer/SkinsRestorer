@@ -22,7 +22,6 @@ package net.skinsrestorer.bukkit;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.axiom.AxiomConfiguration;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
 import net.skinsrestorer.bukkit.listener.InventoryListener;
 import net.skinsrestorer.bukkit.listener.PlayerJoin;
@@ -46,6 +45,8 @@ import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.permissions.Permission;
@@ -205,10 +206,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
         }
 
         try (BufferedReader reader = Files.newBufferedReader(pluginsFolder.resolve("MundoSK").resolve("config.yml"))) {
-            AxiomConfiguration config = new AxiomConfiguration();
-            config.load(reader);
-
-            if (Boolean.TRUE.equals(config.getBoolean("enable_custom_skin_and_tablist"))) {
+            FileConfiguration config = YamlConfiguration.loadConfiguration(reader);
+            if (config.getBoolean("enable_custom_skin_and_tablist")) {
                 logger.warning(ChatColor.DARK_RED + "----------------------------------------------");
                 logger.warning(ChatColor.DARK_RED + "             [CRITICAL WARNING]");
                 logger.warning(ChatColor.RED + "We have detected MundoSK on your server with " + ChatColor.YELLOW + "'enable_custom_skin_and_tablist: " + ChatColor.DARK_RED + ChatColor.UNDERLINE + "true" + ChatColor.YELLOW + "' " + ChatColor.RED + ".");
