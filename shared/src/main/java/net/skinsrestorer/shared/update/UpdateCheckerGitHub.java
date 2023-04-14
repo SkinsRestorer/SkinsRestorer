@@ -41,8 +41,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckerGitHub {
-    private static final String RESOURCE_ID = "SkinsRestorerX";
-    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/%s/releases/latest";
+    private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
@@ -50,7 +49,7 @@ public class UpdateCheckerGitHub {
 
     public void checkForUpdate(UpdateCallback callback) {
         HttpClient client = new HttpClient(
-                String.format(RELEASES_URL_LATEST, RESOURCE_ID),
+                RELEASES_URL_LATEST,
                 null,
                 HttpClient.HttpType.JSON,
                 plugin.getUserAgent(),

@@ -10,7 +10,7 @@ dependencies {
     implementation("org.fusesource.jansi:jansi:2.4.0")
 
     api("com.github.SkinsRestorer:ConfigMe:beefdbdf7e")
-    api("net.skinsrestorer:axiom:1.1.2-SNAPSHOT")
+    api("net.skinsrestorer:axiom:1.1.3-SNAPSHOT")
     api("ch.jalu:injector:1.0")
 
     compileOnly("org.bstats:bstats-base:3.0.2")
