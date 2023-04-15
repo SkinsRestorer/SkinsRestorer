@@ -243,7 +243,7 @@ public class SRPlugin {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
-                MySQLProvider mysql = new MySQLProvider(
+                MySQLProvider mySQLProvider = new MySQLProvider(
                         logger,
                         settings.getProperty(DatabaseConfig.MYSQL_HOST),
                         settings.getProperty(DatabaseConfig.MYSQL_PORT),
@@ -254,11 +254,11 @@ public class SRPlugin {
                         settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS)
                 );
 
-                mysql.connectPool();
-                mysql.createTable(settings);
+                mySQLProvider.connectPool();
+                mySQLProvider.createTable(settings);
 
                 logger.info("Connected to MySQL!");
-                skinStorage.setStorageAdapter(new MySQLAdapter(mysql, settings));
+                skinStorage.setStorageAdapter(new MySQLAdapter(mySQLProvider, settings));
             } else {
                 skinStorage.setStorageAdapter(new FileAdapter(dataFolder, settings));
             }

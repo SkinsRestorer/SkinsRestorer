@@ -112,7 +112,6 @@ public enum Message {
     NO_SKIN_DATA(true),
     OUTDATED(true);
 
-    @Getter
     private final String key = "skinsrestorer." + this.name().toLowerCase();
     @Getter
     private final boolean prefixed;
@@ -123,7 +122,7 @@ public enum Message {
 
     public static Message fromKey(String key) {
         for (Message message : values()) {
-            if (message.getKey().equals(key)) {
+            if (message.key.equals(key)) {
                 return message;
             }
         }

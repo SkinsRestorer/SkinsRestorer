@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.subjects.messages;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.builddata.BuildData;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.subjects.SRForeign;
@@ -34,12 +35,14 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
+import java.util.Map;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MessageLoader {
     private final SRPlugin plugin;
     private final LocaleManager<SRForeign> manager;
     private final SRPlatformAdapter<?> adapter;
+    private final SRLogger logger;
 
     public void loadMessages() throws IOException {
         for (String localeFile : BuildData.LOCALES) {
@@ -47,13 +50,16 @@ public class MessageLoader {
             Locale locale = getTranslationLocale(localeFile);
 
             try (InputStream is = adapter.getResource(filePath)) {
-                TranslationReader.readJsonTranslation(is)
-                        .forEach((k, v) -> manager.addMessage(Message.fromKey(k), locale, v));
+                for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
+                    logger.debug(String.format("Loaded message '%s' for locale %s", entry.getKey(), locale));
+                    manager.addMessage(Message.fromKey(entry.getKey()), locale, entry.getValue());
+                }
             }
         }
 
         Path localesFolder = plugin.getDataFolder().resolve("locales");
         if (Files.exists(localesFolder)) {
+            logger.info("Found locales folder, loading custom translations...");
             try (DirectoryStream<Path> stream = Files.newDirectoryStream(localesFolder)) {
                 for (Path path : stream) {
                     Path localeFile = path.getFileName();
@@ -69,8 +75,10 @@ public class MessageLoader {
                     Locale locale = getTranslationLocale(fileName);
 
                     try (InputStream is = Files.newInputStream(path)) {
-                        TranslationReader.readJsonTranslation(is)
-                                .forEach((k, v) -> manager.addMessage(Message.fromKey(k), locale, v));
+                        for (Map.Entry<String, String> entry : TranslationReader.readJsonTranslation(is).entrySet()) {
+                            logger.debug(String.format("Loaded custom message '%s' for locale %s", entry.getKey(), locale));
+                            manager.addMessage(Message.fromKey(entry.getKey()), locale, entry.getValue());
+                        }
                     }
                 }
             }
