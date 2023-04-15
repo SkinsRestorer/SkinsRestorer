@@ -48,6 +48,7 @@ public class UpdateCheckerGitHub {
 
     public void checkForUpdate(UpdateCallback callback) {
         HttpClient client = new HttpClient(
+                logger,
                 RELEASES_URL_LATEST,
                 null,
                 HttpClient.HttpType.JSON,
@@ -60,9 +61,6 @@ public class UpdateCheckerGitHub {
         try {
             HttpResponse response = client.execute();
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
-
-            logger.debug("Response body: " + response.getBody());
-            logger.debug("Response code: " + response.getStatusCode());
 
             releaseInfo.getAssets().forEach(gitHubAssetInfo -> { // TODO: Check if this is the correct asset
                 if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {

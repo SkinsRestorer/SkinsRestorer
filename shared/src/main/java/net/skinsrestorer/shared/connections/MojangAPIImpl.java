@@ -238,6 +238,7 @@ public class MojangAPIImpl implements MojangAPI {
         metricsCounter.increment(service);
 
         HttpClient client = new HttpClient(
+                logger,
                 url,
                 null,
                 HttpClient.HttpType.JSON,

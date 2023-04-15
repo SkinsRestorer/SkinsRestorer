@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.connections.http;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.log.SRLogger;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -32,6 +33,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class HttpClient {
+    private final SRLogger logger;
     private final String url;
     private final RequestBody requestBody;
     private final HttpType accepts;
@@ -71,7 +73,8 @@ public class HttpClient {
         InputStream is;
         try {
             is = connection.getInputStream();
-        } catch (Exception e) {
+        } catch (IOException e) {
+            logger.debug("Failed to get input stream, falling back to error stream.", e);
             is = connection.getErrorStream();
         }
 
@@ -81,7 +84,12 @@ public class HttpClient {
             }
         }
 
-        return new HttpResponse(connection.getResponseCode(), body.toString(), connection.getHeaderFields());
+        HttpResponse response = new HttpResponse(connection.getResponseCode(), body.toString(), connection.getHeaderFields());
+
+        logger.debug("Response body: " + response.getBody());
+        logger.debug("Response code: " + response.getStatusCode());
+
+        return response;
     }
 
     public enum HttpMethod {

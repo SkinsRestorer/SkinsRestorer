@@ -69,6 +69,7 @@ public class DumpService {
         );
 
         HttpClient client = new HttpClient(
+                logger,
                 "https://bytebin.lucko.me/post",
                 new HttpClient.RequestBody(gson.toJson(dumpInfo), HttpClient.HttpType.JSON),
                 HttpClient.HttpType.JSON,

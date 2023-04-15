@@ -195,6 +195,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 }
 
                 HttpClient client = new HttpClient(
+                        logger,
                         MINESKIN_ENDPOINT,
                         new HttpClient.RequestBody(query, HttpClient.HttpType.FORM),
                         HttpClient.HttpType.JSON,
