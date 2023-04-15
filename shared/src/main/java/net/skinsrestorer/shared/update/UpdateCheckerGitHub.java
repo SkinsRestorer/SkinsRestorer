@@ -77,46 +77,52 @@ public class UpdateCheckerGitHub {
         }
     }
 
-    public void printUpToDate() {
-        printHeader();
+    public void printUpToDate(UpdateCause cause) {
+        printHeader(cause);
         logger.info("§b    Current version: §a" + plugin.getVersion());
         logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
         logger.info("§a    This is the latest version!");
-        logger.info(LOG_ROW);
+        printFooter();
     }
 
-    public void printUpdateAvailable(String newVersion, String downloadUrl, boolean updateDownloader) {
-        printHeader();
-
+    public void printUpdateAvailable(UpdateCause cause, String newVersion, String downloadUrl, boolean updateDownloader) {
+        printHeader(cause);
         logger.info("§b    Current version: §c" + plugin.getVersion());
         logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
         logger.info("§b    New version: §c" + newVersion);
-
         if (updateDownloader) {
             logger.info("    A new version is available! Downloading it now...");
         } else {
             logger.info("§e    A new version is available! Download it at:");
             logger.info("§e    " + downloadUrl);
         }
-
-        logger.info(LOG_ROW);
+        printFooter();
     }
 
-    private void printHeader() {
+    private void printHeader(UpdateCause cause) {
         logger.info(LOG_ROW);
         logger.info("§a    +==================+");
         logger.info("§a    |   SkinsRestorer  |");
-        SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
-        if (serverPlugin != null) {
-            if (serverPlugin.isProxyMode()) {
-                logger.info("§a    |------------------|");
-                logger.info("§a    |    §eProxy Mode§a    |");
-            } else {
-                logger.info("§a    |------------------|");
-                logger.info("§a    |  §9§n§lStandalone Mode§r§a |");
+        if (cause.isError()) {
+            logger.info("§a    |------------------|");
+            logger.info("§a    |    §cError Mode§a    |");
+        } else {
+            SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
+            if (serverPlugin != null) {
+                if (serverPlugin.isProxyMode()) {
+                    logger.info("§a    |------------------|");
+                    logger.info("§a    |    §eProxy Mode§a    |");
+                } else {
+                    logger.info("§a    |------------------|");
+                    logger.info("§a    |  §9§n§lStandalone Mode§r§a |");
+                }
             }
         }
         logger.info("§a    +==================+");
+        logger.info(LOG_ROW);
+    }
+
+    private void printFooter() {
         logger.info(LOG_ROW);
     }
 

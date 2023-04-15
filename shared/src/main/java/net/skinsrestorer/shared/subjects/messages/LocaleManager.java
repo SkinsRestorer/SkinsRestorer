@@ -32,17 +32,17 @@ public class LocaleManager<S extends SRForeign> {
     }
 
     public void verifyValid() {
-        for (Message key : Message.values()) {
-            if (!messages.containsKey(key)) {
-                throw new IllegalStateException(String.format("Message %s not found", key.name()));
+        for (Message message : Message.values()) {
+            if (!messages.containsKey(message)) {
+                throw new IllegalStateException(String.format("Message %s not found", message.name()));
             }
         }
 
-        for (Message key : Message.values()) {
-            Map<Locale, String> localeMap = messages.get(key);
+        for (Message message : Message.values()) {
+            Map<Locale, String> localeMap = messages.get(message);
 
             if (!localeMap.containsKey(defaultLocale)) {
-                throw new IllegalStateException(String.format("Message %s does not have a default translation", key.name()));
+                throw new IllegalStateException(String.format("Message %s does not have a default translation", message.name()));
             }
         }
     }

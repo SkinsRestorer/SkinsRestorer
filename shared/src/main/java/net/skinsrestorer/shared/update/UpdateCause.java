@@ -19,15 +19,12 @@
  */
 package net.skinsrestorer.shared.update;
 
-public interface UpdateCheckInit {
-    void run(InitCause cause);
+public enum UpdateCause {
+    STARTUP,
+    SCHEDULED,
+    ERROR;
 
-    enum InitCause {
-        STARTUP,
-        ERROR;
-
-        public UpdateCause toUpdateCause() {
-            return this == STARTUP ? UpdateCause.STARTUP : UpdateCause.ERROR;
-        }
+    public boolean isError() {
+        return this == ERROR;
     }
 }

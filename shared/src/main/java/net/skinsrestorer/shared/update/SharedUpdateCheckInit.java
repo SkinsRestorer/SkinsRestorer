@@ -33,10 +33,10 @@ public class SharedUpdateCheckInit implements UpdateCheckInit {
     private final UpdateCheckExecutor updateCheckExecutor;
 
     @Override
-    public void run() {
-        updateCheckExecutor.checkUpdate(true, updateChecker, null);
+    public void run(InitCause cause) {
+        updateCheckExecutor.checkUpdate(cause.toUpdateCause(), updateChecker, null);
 
         int delayInt = 60 + ThreadLocalRandom.current().nextInt(240 - 60 + 1);
-        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(false, updateChecker, null), delayInt, delayInt, TimeUnit.MINUTES);
+        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(UpdateCause.SCHEDULED, updateChecker, null), delayInt, delayInt, TimeUnit.MINUTES);
     }
 }

@@ -87,28 +87,26 @@ public class MessageLoader {
         manager.verifyValid();
     }
 
-    public void migrateOldFiles() {
-        Path archive = plugin.getDataFolder().resolve("Archive");
+    public void moveOldFiles() {
+        Path dataFolder = plugin.getDataFolder();
 
-        Path oldMessagesFile = plugin.getDataFolder().resolve("messages.yml");
-        if (Files.exists(oldMessagesFile)) {
-            try {
-                Files.createDirectories(archive);
-                String newName = "old-messages-" + System.currentTimeMillis() / 1000 + ".yml";
-                Files.move(oldMessagesFile, archive.resolve(newName));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        moveToArchive(dataFolder.resolve("Archive")); // Now lowercase
+        moveToArchive(dataFolder.resolve("messages.yml"));
+        moveToArchive(dataFolder.resolve("command-messages.properties"));
+        moveToArchive(dataFolder.resolve("languages"));
+    }
+
+    private void moveToArchive(Path path) {
+        if (!Files.exists(path)) {
+            return;
         }
 
-        Path oldAcf = plugin.getDataFolder().resolve("command-messages.properties");
-        if (Files.exists(oldAcf)) {
-            try {
-                Files.createDirectories(archive);
-                Files.move(oldAcf, archive.resolve("command-messages.properties"));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        Path archive = plugin.getDataFolder().resolve("archive");
+        try {
+            Files.createDirectories(archive);
+            Files.move(path, archive.resolve(path.getFileName().toString()));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -233,7 +233,7 @@ public class SRPlugin {
     public void loadLocales() throws IOException {
         injector.register(LocaleManager.class, new LocaleManager<>());
         MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
-        messageLoader.migrateOldFiles();
+        messageLoader.moveOldFiles();
         messageLoader.loadMessages();
     }
 
@@ -274,7 +274,7 @@ public class SRPlugin {
         }
     }
 
-    public void initUpdateCheck() {
+    public void initUpdateCheck(UpdateCheckInit.InitCause cause) {
         if (updaterInitialized) {
             return;
         }
@@ -286,7 +286,7 @@ public class SRPlugin {
             return;
         }
 
-        updateCheckInit.run();
+        updateCheckInit.run(cause);
     }
 
     public void setOutdated() {
@@ -372,7 +372,7 @@ public class SRPlugin {
             throw new IllegalStateException("No platform class available!");
         }
 
-        initUpdateCheck();
+        initUpdateCheck(UpdateCheckInit.InitCause.STARTUP);
 
         if (serverPlugin == null || !serverPlugin.isProxyMode()) {
             adapter.runAsync(this::runServiceCheck);

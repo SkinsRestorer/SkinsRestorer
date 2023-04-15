@@ -21,6 +21,7 @@ package net.skinsrestorer.bukkit.update;
 
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
+import net.skinsrestorer.shared.update.UpdateCause;
 import net.skinsrestorer.shared.update.UpdateCheckExecutor;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.update.UpdateCheckerGitHub;
@@ -37,13 +38,13 @@ public class BukkitUpdateCheckInit implements UpdateCheckInit {
     private final UpdateCheckExecutor updateCheckExecutor;
 
     @Override
-    public void run() {
-        updateCheckExecutor.checkUpdate(true, updateChecker, downloader);
+    public void run(InitCause cause) {
+        updateCheckExecutor.checkUpdate(cause.toUpdateCause(), updateChecker, downloader);
 
         // Delay update between 5 & 30 minutes
         int delayInt = 300 + ThreadLocalRandom.current().nextInt(1800 + 1 - 300);
         // Repeat update between 1 & 4 hours
         int periodInt = 60 * (60 + ThreadLocalRandom.current().nextInt(240 + 1 - 60));
-        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(false, updateChecker, downloader), delayInt, periodInt, TimeUnit.SECONDS);
+        adapter.runRepeatAsync(() -> updateCheckExecutor.checkUpdate(UpdateCause.SCHEDULED, updateChecker, downloader), delayInt, periodInt, TimeUnit.SECONDS);
     }
 }

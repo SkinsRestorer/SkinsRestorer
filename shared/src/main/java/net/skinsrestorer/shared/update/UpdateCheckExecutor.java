@@ -31,7 +31,7 @@ public class UpdateCheckExecutor {
     private final SRPlatformAdapter<?> adapter;
     private boolean updateDownloaded;
 
-    public void checkUpdate(boolean showUpToDate, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {
+    public void checkUpdate(UpdateCause cause, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {
         adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl) {
@@ -44,16 +44,16 @@ public class UpdateCheckExecutor {
                     updateDownloaded = true;
                 }
 
-                updateChecker.printUpdateAvailable(newVersion, downloadUrl, downloader != null);
+                updateChecker.printUpdateAvailable(cause, newVersion, downloadUrl, downloader != null);
             }
 
             @Override
             public void upToDate() {
-                if (!showUpToDate) {
+                if (cause == UpdateCause.SCHEDULED) {
                     return;
                 }
 
-                updateChecker.printUpToDate();
+                updateChecker.printUpToDate(cause);
             }
         }));
     }
