@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class TranslationReader {
@@ -35,7 +35,7 @@ public class TranslationReader {
     public static Map<String, String> readJsonTranslation(InputStream is) {
         JsonObject jsonObject = gson.fromJson(new InputStreamReader(is, StandardCharsets.UTF_8), JsonObject.class);
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new LinkedHashMap<>();
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
             map.put(entry.getKey(), entry.getValue().getAsString());
         }
