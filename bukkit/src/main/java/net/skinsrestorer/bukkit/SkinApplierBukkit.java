@@ -141,7 +141,8 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
         adapter.getSchedulerProvider().runSyncToEntity(server, adapter.getPluginInstance(), player, () -> {
             ejectPassengers(player);
 
-            if (PaperSkinApplier.hasProfileMethod()) {
+            if (ReflectionUtil.classExists("com.destroystokyo.paper.profile.PlayerProfile")
+                    && PaperSkinApplier.hasProfileMethod()) {
                 PaperSkinApplier.applySkin(player, property);
                 return;
             }

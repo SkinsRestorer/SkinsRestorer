@@ -38,7 +38,7 @@ public class PaperSkinApplier {
         try {
             Player.class.getMethod("setPlayerProfile", PlayerProfile.class);
             return true;
-        } catch (NoSuchMethodException e) {
+        } catch (ReflectiveOperationException e) {
             return false;
         }
     }
