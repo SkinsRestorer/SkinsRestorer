@@ -161,10 +161,11 @@ public final class SkinCommand {
         }
 
         if (setSkin(sender, target, skin.orElse(playerName), false, null)) {
-            if (sender.getName().equals(target.getName()))
+            if (sender.getName().equals(target.getName())) {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
-            else
+            } else {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, playerName);
+            }
         }
     }
 
@@ -189,11 +190,8 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_SET_OTHER)
     @CommandConditions("cooldown")
     private void onSkinSetOther(SRCommandSender sender, String skinName, SRPlayer target, SkinVariant skinVariant) {
-        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
-            if (!sender.hasPermission(PermissionRegistry.OWN_SKIN) && (!playerEqual(sender, target) || !skinName.equalsIgnoreCase(sender.getName()))) {
-                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
-                return;
-            }
+        if (!canSetSkin(sender, skinName)) {
+            return;
         }
 
         if (setSkin(sender, target, skinName, true, skinVariant) && !playerEqual(sender, target)) {
@@ -222,15 +220,7 @@ public final class SkinCommand {
     }
 
     private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean saveSkin, SkinVariant skinVariant) {
-        // Escape "null" skin, this did cause crash in the past for some waterfall instances
-        // TODO: resolve this in a different way
-        if (skinName.equalsIgnoreCase("null")) {
-            sender.sendMessage(Message.INVALID_PLAYER, skinName);
-            return false;
-        }
-
-        if (settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)
-                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase)) {
+        if (isDisabledSkin(skinName) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
         }
@@ -249,9 +239,6 @@ public final class SkinCommand {
                 return false;
             }
 
-            // Apply cooldown to sender
-            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
-
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
                 String skinUrlName = " " + playerName; // so won't overwrite premium player names
@@ -263,10 +250,9 @@ public final class SkinCommand {
                 skinStorage.setSkinNameOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
                 skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
 
-                String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX_FORMAT))) {
-                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
-                }
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
+
+                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
                 return true;
             } catch (DataRequestException e) {
@@ -276,10 +262,6 @@ public final class SkinCommand {
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {
-            // If skin is not an url, it's a username
-            // Apply cooldown to sender
-            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
-
             try {
                 if (saveSkin) {
                     skinStorage.setSkinNameOfPlayer(playerName, skinName);
@@ -287,10 +269,9 @@ public final class SkinCommand {
 
                 skinApplier.applySkin(player.getAs(Object.class), skinName);
 
-                String success = locale.getMessage(player, Message.SUCCESS_SKIN_CHANGE);
-                if (!success.isEmpty() && !success.equals(locale.getMessage(player, Message.PREFIX_FORMAT))) {
-                    player.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName); // TODO: should this not be sender? -> hidden skin set?
-                }
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName);
+
+                setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
                 return true;
             } catch (DataRequestException e) {
@@ -298,8 +279,8 @@ public final class SkinCommand {
             }
         }
 
-        // set CoolDown to ERROR_COOLDOWN and rollback to old skin on exception
         setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+
         if (saveSkin) {
             skinStorage.setSkinNameOfPlayer(playerName, oldSkinName);
         }
@@ -313,18 +294,36 @@ public final class SkinCommand {
         }
     }
 
-    private boolean allowedSkinUrl(String url) {
-        if (settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)) {
-            for (String possiblyAllowedUrl : settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)) {
-                if (url.startsWith(possiblyAllowedUrl)) {
-                    return true;
-                }
-            }
+    private boolean isDisabledSkin(String skinName) {
+        return settings.getProperty(CommandConfig.DISABLED_SKINS_ENABLED)
+                && settings.getProperty(CommandConfig.DISABLED_SKINS).stream().anyMatch(skinName::equalsIgnoreCase);
+    }
 
-            return false;
-        } else {
+    private boolean allowedSkinUrl(String url) {
+        if (!settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)) {
             return true;
+
         }
+
+        for (String possiblyAllowedUrl : settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)) {
+            if (url.startsWith(possiblyAllowedUrl)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean canSetSkin(SRCommandSender sender, String skinName) {
+        if (settings.getProperty(CommandConfig.PER_SKIN_PERMISSIONS) && !sender.hasPermission(PermissionRegistry.forSkin(skinName))) {
+            if (sender.hasPermission(PermissionRegistry.OWN_SKIN) && skinName.equalsIgnoreCase(sender.getName())) {
+                return true;
+            } else {
+                sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_SKIN);
+                return false;
+            }
+        }
+        return true;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
