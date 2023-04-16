@@ -78,6 +78,10 @@ public class HttpClient {
             is = connection.getErrorStream();
         }
 
+        if (is == null) {
+            throw new IOException("Failed to get input stream.");
+        }
+
         try (DataInputStream input = new DataInputStream(is)) {
             for (int c = input.read(); c != -1; c = input.read()) {
                 body.append((char) c);

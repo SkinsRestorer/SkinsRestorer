@@ -51,10 +51,9 @@ public class LocaleManager<S extends SRForeign> {
         Locale locale = foreign.getLocale();
         Map<Locale, String> localeMap = messages.get(key);
 
-        // First try language_country_variant, then language_country, then language and finally default
-        return Optional.ofNullable(localeMap.get(locale))
-                .orElseGet(() -> Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage(), locale.getCountry())))
-                        .orElseGet(() -> Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage())))
-                                .orElse(localeMap.get(defaultLocale))));
+        // First try language_country, then language and finally default
+        return Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage(), locale.getCountry())))
+                .orElseGet(() -> Optional.ofNullable(localeMap.get(new Locale(locale.getLanguage())))
+                        .orElse(localeMap.get(defaultLocale)));
     }
 }
