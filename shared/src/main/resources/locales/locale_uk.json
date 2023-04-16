@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "Змінює ваш скін.",
   "skinsrestorer.help_skin_set_other": "Встановлює скін для цільового гравця.",
-  "skinsrestorer.help_skin_set_other_url": "Встановлює скін з URL-адреси для цільового гравця.",
+  "skinsrestorer.help_skin_set_url": "Встановлює скін з URL-адреси для цільового гравця.",
   "skinsrestorer.help_skin_clear": "Очищає ваш скін.",
   "skinsrestorer.help_skin_clear_other": "Очищає скін цільового гравця.",
   "skinsrestorer.help_skin_search": "Пошук скіна, який ви бажаєте",

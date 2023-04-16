@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "يغير جلدك.",
   "skinsrestorer.help_skin_set_other": "تحديث جلد اللاعب المستهدف.",
-  "skinsrestorer.help_skin_set_other_url": "تعيين الجلد من عنوان URL للاعب المستهدف.",
+  "skinsrestorer.help_skin_set_url": "تعيين الجلد من عنوان URL للاعب المستهدف.",
   "skinsrestorer.help_skin_clear": "مسح الجلد الخاص بك.",
   "skinsrestorer.help_skin_clear_other": "مسح جلد اللاعب المستهدف.",
   "skinsrestorer.help_skin_search": "البحث عن الجلد الذي تريده",

@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "Modifie votre skin.",
   "skinsrestorer.help_skin_set_other": "Définit le skin d'un joueur cible.",
-  "skinsrestorer.help_skin_set_other_url": "Définit le skin d'un joueur cible à partir d'une URL.",
+  "skinsrestorer.help_skin_set_url": "Définit le skin d'un joueur cible à partir d'une URL.",
   "skinsrestorer.help_skin_clear": "Efface votre skin.",
   "skinsrestorer.help_skin_clear_other": "Efface le skin d'un joueur ciblé.",
   "skinsrestorer.help_skin_search": "Recherchez un skin que vous voulez",

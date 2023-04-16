@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "스킨을 변경해요.",
   "skinsrestorer.help_skin_set_other": "대상 플레이어의 스킨을 설정해요.",
-  "skinsrestorer.help_skin_set_other_url": "URL로 대상 플레이어의 스킨을 설정해요.",
+  "skinsrestorer.help_skin_set_url": "URL로 대상 플레이어의 스킨을 설정해요.",
   "skinsrestorer.help_skin_clear": "스킨을 초기화해요.",
   "skinsrestorer.help_skin_clear_other": "대상 플레이어의 스킨을 초기화해요.",
   "skinsrestorer.help_skin_search": "원하는 스킨을 검색해 보세요",

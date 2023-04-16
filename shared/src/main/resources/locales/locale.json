@@ -5,7 +5,7 @@
   "skinsrestorer.help_sr": "Admin commands.",
   "skinsrestorer.help_skin_set": "Changes your skin.",
   "skinsrestorer.help_skin_set_other": "Sets the skin for a target player.",
-  "skinsrestorer.help_skin_set_other_url": "Sets the skin from an url for a target player.",
+  "skinsrestorer.help_skin_set_url": "Sets the skin from an url.",
   "skinsrestorer.help_skin_clear": "Clears your skin.",
   "skinsrestorer.help_skin_clear_other": "Clears the skin of a target player.",
   "skinsrestorer.help_skin_search": "Search up a skin that you want",

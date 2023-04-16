@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "Megváltoztatja a kinézeted.",
   "skinsrestorer.help_skin_set_other": "Beállítja a megadott játékos kinézetét.",
-  "skinsrestorer.help_skin_set_other_url": "Megadott játékos kinézetét állítja be a megadott URL alapján.",
+  "skinsrestorer.help_skin_set_url": "Megadott játékos kinézetét állítja be a megadott URL alapján.",
   "skinsrestorer.help_skin_clear": "Kinézeted törlése.",
   "skinsrestorer.help_skin_clear_other": "Törli a megadott játékos kinézetét.",
   "skinsrestorer.help_skin_search": "Keress egy kinézetet, amit szeretnél!",

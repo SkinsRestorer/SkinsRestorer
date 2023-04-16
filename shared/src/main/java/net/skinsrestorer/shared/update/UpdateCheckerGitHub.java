@@ -25,15 +25,18 @@ import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
+import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
+import net.skinsrestorer.shared.update.model.GitHubAssetInfo;
 import net.skinsrestorer.shared.update.model.GitHubReleaseInfo;
 
 import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Optional;
 
 /**
  * Credit goes to <a href="https://github.com/InventivetalentDev/SpigetUpdater">SpigetUpdater</a>
@@ -41,6 +44,7 @@ import java.util.Collections;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class UpdateCheckerGitHub {
     private static final String RELEASES_URL_LATEST = "https://api.github.com/repos/SkinsRestorer/SkinsRestorerX/releases/latest";
+    private static final String JAR_ASSET_NAME = "SkinsRestorer.jar";
     private static final String LOG_ROW = "§a----------------------------------------------";
     private final SRLogger logger;
     private final SRPlugin plugin;
@@ -62,13 +66,19 @@ public class UpdateCheckerGitHub {
             HttpResponse response = client.execute();
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
-            releaseInfo.getAssets().forEach(gitHubAssetInfo -> { // TODO: Check if this is the correct asset
-                if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
-                    callback.updateAvailable(releaseInfo.getTagName(), gitHubAssetInfo.getBrowserDownloadUrl());
-                } else {
-                    callback.upToDate();
-                }
-            });
+            Optional<GitHubAssetInfo> jarAsset = releaseInfo.getAssets().stream()
+                    .filter(asset -> asset.getName().equals(JAR_ASSET_NAME))
+                    .findFirst();
+
+            if (!jarAsset.isPresent()) {
+                throw new DataRequestExceptionShared("No jar asset found in release");
+            }
+
+            if (isVersionNewer(plugin.getVersion(), releaseInfo.getTagName())) {
+                callback.updateAvailable(releaseInfo.getTagName(), jarAsset.get().getBrowserDownloadUrl());
+            } else {
+                callback.upToDate();
+            }
         } catch (IOException | DataRequestException e) {
             logger.warning("Failed to get release info from api.github.com. \n If this message is repeated a lot, please see https://skinsrestorer.net/firewall");
             logger.debug(e);

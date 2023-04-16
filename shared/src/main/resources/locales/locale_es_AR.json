@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "Cambia tu skin.",
   "skinsrestorer.help_skin_set_other": "Establece la skin para un jugador específico.",
-  "skinsrestorer.help_skin_set_other_url": "Establece la skin mediante URL para un jugador específico.",
+  "skinsrestorer.help_skin_set_url": "Establece la skin mediante URL para un jugador específico.",
   "skinsrestorer.help_skin_clear": "Borra tu skin.",
   "skinsrestorer.help_skin_clear_other": "Borra la skin a un jugador específico.",
   "skinsrestorer.help_skin_search": "Busca una skin que quieras",

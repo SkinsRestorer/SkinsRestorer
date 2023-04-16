@@ -201,7 +201,7 @@ public final class SkinCommand {
 
     @Subcommand("url")
     @CommandPermission(PermissionRegistry.SKIN_SET_URL)
-    @Description(Message.HELP_SKIN_SET_OTHER_URL) // TODO: rename to HELP_SKIN_SET_URL
+    @Description(Message.HELP_SKIN_SET_URL)
     @CommandConditions("cooldown")
     private void onSkinSetUrl(SRPlayer player, String url, SkinVariant skinVariant) {
         if (!C.validUrl(url)) {

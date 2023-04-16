@@ -1,7 +1,7 @@
 {
   "skinsrestorer.help_skin_set": "Zmienia twojego skina.",
   "skinsrestorer.help_skin_set_other": "Ustawia skina dla wybranego gracza.",
-  "skinsrestorer.help_skin_set_other_url": "Ustawia skina z adresu url dla gracza docelowego.",
+  "skinsrestorer.help_skin_set_url": "Ustawia skina z adresu url dla gracza docelowego.",
   "skinsrestorer.help_skin_clear": "Usuwa twojego skina.",
   "skinsrestorer.help_skin_clear_other": "Usuwa skina danego gracza.",
   "skinsrestorer.help_skin_search": "Wyszukaj skina, którego chcesz",
