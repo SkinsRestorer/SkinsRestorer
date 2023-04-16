@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -61,7 +62,7 @@ public class MojangAPIImpl implements MojangAPI {
             return Optional.empty();
         }
 
-        String upperCaseName = playerName.trim().toUpperCase();
+        String upperCaseName = playerName.trim().toUpperCase(Locale.ENGLISH);
         Optional<HardcodedSkins> hardCodedSkin = Arrays.stream(HardcodedSkins.values()).filter(t -> t.name().equals(upperCaseName)).findAny();
         if (hardCodedSkin.isPresent()) {
             return Optional.of(SkinProperty.of(hardCodedSkin.get().value, hardCodedSkin.get().signature));

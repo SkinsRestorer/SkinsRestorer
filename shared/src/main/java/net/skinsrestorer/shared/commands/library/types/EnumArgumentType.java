@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -41,7 +42,7 @@ public class EnumArgumentType implements ArgumentType<Enum<?>> {
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
         for (String example : getExamples()) {
-            if (example.toLowerCase().startsWith(builder.getRemaining().toLowerCase())) {
+            if (example.startsWith(builder.getRemaining().toUpperCase(Locale.ENGLISH))) {
                 builder.suggest(example);
             }
         }
@@ -62,7 +63,7 @@ public class EnumArgumentType implements ArgumentType<Enum<?>> {
         final int start = reader.getCursor();
         final String string = reader.readString();
         try {
-            return Enum.valueOf((Class<Enum>) enumType, string.toUpperCase());
+            return Enum.valueOf((Class<Enum>) enumType, string.toUpperCase(Locale.ENGLISH));
         } catch (IllegalArgumentException e) {
             reader.setCursor(start);
             throw new SimpleCommandExceptionType(new LiteralMessage("Invalid enum value")).createWithContext(reader);
