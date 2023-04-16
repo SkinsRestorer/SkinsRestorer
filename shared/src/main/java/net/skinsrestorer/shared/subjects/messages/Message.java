@@ -22,6 +22,8 @@ package net.skinsrestorer.shared.subjects.messages;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Locale;
+
 @RequiredArgsConstructor
 public enum Message {
     PREFIX_FORMAT,
@@ -112,7 +114,7 @@ public enum Message {
     NO_SKIN_DATA(true),
     OUTDATED(true);
 
-    private final String key = "skinsrestorer." + this.name().toLowerCase();
+    private final String key = "skinsrestorer." + this.name().toLowerCase(Locale.ENGLISH);
     @Getter
     private final boolean prefixed;
 

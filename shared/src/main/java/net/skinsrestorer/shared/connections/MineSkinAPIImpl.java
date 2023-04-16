@@ -47,6 +47,7 @@ import java.net.URLEncoder;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -91,7 +92,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     public CompletableFuture<SkinProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
         return CompletableFuture.supplyAsync(() -> {
-            String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase() : "";
+            String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
 
             try {
                 HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
