@@ -72,6 +72,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static net.skinsrestorer.bukkit.utils.WrapperBukkit.wrapPlayer;
 
@@ -392,14 +393,35 @@ public class SkinsRestorerBukkit extends SkinsRestorerServerShared {
         try {
             Path warning = dataFolder.resolve("(README) Use proxy config for settings! (README).txt");
             if (proxyMode) {
-                Files.createDirectories(warning.getParent());
+                if (!Files.isDirectory(warning.getParent())) { // in case the directory is a symbol link
+                    Files.createDirectories(warning.getParent());
+                }
 
                 try (InputStream in = getResource("proxy_warning.txt")) {
                     if (in == null) {
                         throw new IllegalStateException("Could not find proxy_warning.txt in resources!");
                     }
-                    // Always replace the file to make sure it's up-to-date.
-                    Files.copy(in, warning, StandardCopyOption.REPLACE_EXISTING);
+                    final byte[] proxyWarningBuffer = new byte[8192];
+                    final int nBytes = in.read(proxyWarningBuffer);
+                    if (warning.toFile().exists()) {
+                        final boolean needReplace;
+                        try (InputStream existingWarningStream = Files.newInputStream(warning)) {
+                            needReplace = !IntStream.range(0, nBytes).map(i -> proxyWarningBuffer[i]).allMatch(origin -> {
+                                try {
+                                    return origin == existingWarningStream.read();
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                        }
+                        if (needReplace) {
+                            try (OutputStream fos = Files.newOutputStream(warning)) {
+                                fos.write(proxyWarningBuffer, 0, nBytes);
+                            }
+                        }
+                    } else {
+                        Files.copy(in, warning);
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
