@@ -222,14 +222,13 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initPermissions() {
-        SimplePluginManager pluginManager = (SimplePluginManager) server.getPluginManager();
         SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
 
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             String permissionString = permission.getPermission().getPermissionString();
             String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());
 
-            pluginManager.addPermission(new Permission(permissionString, description));
+            addPermission(new Permission(permissionString, description));
         }
 
         for (PermissionGroup group : PermissionGroup.values()) {
@@ -238,9 +237,19 @@ public class SRBukkitInit implements SRServerPlatformInit {
             mergePermissions(group, children);
             PermissionDefault permissionDefault = group == PermissionGroup.PLAYER ? PermissionDefault.TRUE : PermissionDefault.OP;
 
-            pluginManager.addPermission(new Permission(group.getBasePermission().getPermissionString(), description, permissionDefault, children));
-            pluginManager.addPermission(new Permission(group.getWildcard().getPermissionString(), description, permissionDefault, children));
+            addPermission(new Permission(group.getBasePermission().getPermissionString(), description, permissionDefault, children));
+            addPermission(new Permission(group.getWildcard().getPermissionString(), description, permissionDefault, children));
         }
+    }
+
+    private void addPermission(Permission permission) {
+        SimplePluginManager pluginManager = (SimplePluginManager) server.getPluginManager();
+
+        if (pluginManager.getPermission(permission.getName()) != null) {
+            return;
+        }
+
+        pluginManager.addPermission(permission);
     }
 
     private void mergePermissions(PermissionGroup group, Map<String, Boolean> data) {
