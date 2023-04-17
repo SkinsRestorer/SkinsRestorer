@@ -31,7 +31,6 @@ public class MojangCacheFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private boolean isPremium;
     private UUID uniqueId;
-    private String lastKnownName;
     private long timestampSeconds;
     private int dataVersion;
 
@@ -39,13 +38,12 @@ public class MojangCacheFile {
         MojangCacheFile mojangCacheFile = new MojangCacheFile();
         mojangCacheFile.isPremium = cacheData.isPremium();
         mojangCacheFile.uniqueId = cacheData.getUniqueId();
-        mojangCacheFile.lastKnownName = cacheData.getLastKnownName();
         mojangCacheFile.timestampSeconds = cacheData.getTimestamp();
         mojangCacheFile.dataVersion = CURRENT_DATA_VERSION;
         return mojangCacheFile;
     }
 
     public MojangCacheData toCacheData() {
-        return MojangCacheData.of(isPremium, uniqueId, lastKnownName, timestampSeconds);
+        return MojangCacheData.of(isPremium, uniqueId, timestampSeconds);
     }
 }

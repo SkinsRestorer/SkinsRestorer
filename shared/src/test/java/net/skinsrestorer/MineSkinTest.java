@@ -21,9 +21,10 @@ package net.skinsrestorer;
 
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.APIConfig;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.MetricsCounter;
@@ -49,13 +50,14 @@ public class MineSkinTest {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
 
         when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
+        when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
 
         injector.register(SettingsManager.class, settings);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        SkinProperty skinProperty = injector.getSingleton(MineSkinAPIImpl.class).genSkin(TEST_URL, null);
+        MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class).genSkin(TEST_URL, null);
 
-        assertNotNull(skinProperty);
+        assertNotNull(response);
 
         assertEquals(1, metricsCounter.collect(MetricsCounter.Service.MINE_SKIN));
     }

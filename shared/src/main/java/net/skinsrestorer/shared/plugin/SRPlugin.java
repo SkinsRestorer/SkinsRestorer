@@ -26,7 +26,11 @@ import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
 import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
+import net.skinsrestorer.api.storage.CacheStorage;
+import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.PlatformWrapper;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
@@ -39,11 +43,13 @@ import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
+import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
+import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
@@ -78,7 +84,7 @@ public class SRPlugin {
     private static final boolean unitTest = System.getProperty("sr.unit.test") != null;
     private final SRPlatformAdapter<?> adapter;
     private final SRLogger logger;
-    private final UpdateCheckInit updateCheckInit;
+    private final Class<? extends UpdateCheckInit> updateCheck;
     @Getter
     private final Path dataFolder;
     @Getter
@@ -99,7 +105,7 @@ public class SRPlugin {
         this.injector = injector;
         this.adapter = injector.getSingleton(SRPlatformAdapter.class);
         this.logger = injector.getSingleton(SRLogger.class);
-        this.updateCheckInit = injector.getSingleton(updateCheck);
+        this.updateCheck = updateCheck;
         this.version = version;
         this.dataFolder = dataFolder;
         this.serverInfo = ServerInfo.determineEnvironment(platform);
@@ -287,7 +293,7 @@ public class SRPlugin {
             return;
         }
 
-        updateCheckInit.run(cause);
+        injector.getSingleton(updateCheck).run(cause);
     }
 
     public void setOutdated() {
@@ -295,8 +301,6 @@ public class SRPlugin {
     }
 
     private void initMineSkinAPI() {
-        MineSkinAPI mineSkinAPI = injector.getSingleton(MineSkinAPIImpl.class);
-        injector.register(MineSkinAPI.class, mineSkinAPI);
     }
 
     public void registerAPI() {
@@ -352,8 +356,13 @@ public class SRPlugin {
             throw new InitializeException(e);
         }
 
-        // Load MineSkinAPI with config values
-        initMineSkinAPI();
+        // Instantiate API classes and assign them to their interfaces
+        injector.register(MineSkinAPI.class, injector.getSingleton(MineSkinAPIImpl.class));
+        injector.register(MojangAPI.class, injector.getSingleton(MojangAPIImpl.class));
+
+        injector.register(CacheStorage.class, injector.getSingleton(CacheStorageImpl.class));
+        injector.register(SkinStorage.class, injector.getSingleton(SkinStorageImpl.class));
+        injector.register(PlayerStorage.class, injector.getSingleton(PlayerStorageImpl.class));
 
         platformInit.initSkinApplier();
 

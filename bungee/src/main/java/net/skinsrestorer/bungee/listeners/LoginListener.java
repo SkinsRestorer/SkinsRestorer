@@ -32,6 +32,7 @@ import net.skinsrestorer.shared.listeners.LoginProfileListenerAdapter;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements Listener {
@@ -49,6 +50,11 @@ public class LoginListener implements Listener {
             @Override
             public boolean isOnline() {
                 return event.getConnection().isOnlineMode();
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.getConnection().getUniqueId();
             }
 
             @Override

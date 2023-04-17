@@ -31,6 +31,7 @@ import net.skinsrestorer.shared.subjects.permissions.PermissionGroup;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.sponge.listeners.LoginListener;
 import net.skinsrestorer.sponge.listeners.ServerMessageListener;
+import net.skinsrestorer.sponge.wrapper.WrapperSponge;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
@@ -56,7 +57,7 @@ public class SRSpongeInit implements SRServerPlatformInit {
     @Override
     public void initSkinApplier() {
         SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
-        plugin.registerSkinApplier(skinApplierSponge, ServerPlayer.class, ServerPlayer::name);
+        plugin.registerSkinApplier(skinApplierSponge, ServerPlayer.class, injector.getSingleton(WrapperSponge.class)::player);
     }
 
     @Override

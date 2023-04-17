@@ -26,15 +26,19 @@ import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor
 public class PlayerFile {
     private static final int CURRENT_DATA_VERSION = 1;
+    private UUID uniqueId;
     private IdentifierFile skinIdentifier;
     private int dataVersion;
 
     public static PlayerFile fromPlayerData(PlayerData playerData) {
         PlayerFile playerFile = new PlayerFile();
+        playerFile.uniqueId = playerData.getUniqueId();
         playerFile.skinIdentifier = IdentifierFile.of(playerData.getSkinIdentifier());
         playerFile.dataVersion = CURRENT_DATA_VERSION;
         return playerFile;

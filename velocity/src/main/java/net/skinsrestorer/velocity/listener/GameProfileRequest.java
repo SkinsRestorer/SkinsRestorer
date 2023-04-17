@@ -29,6 +29,7 @@ import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.velocity.SkinApplierVelocity;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class GameProfileRequest {
@@ -45,6 +46,11 @@ public class GameProfileRequest {
             @Override
             public boolean isOnline() {
                 return event.isOnlineMode();
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.getOriginalProfile().getId();
             }
 
             @Override

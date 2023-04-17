@@ -65,7 +65,7 @@ public class CacheStorageImpl implements CacheStorage {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
                 storageAdapter.setCachedUUID(playerName,
-                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), playerName, Instant.now().getEpochSecond()));
+                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), Instant.now().getEpochSecond()));
 
                 return uuid;
             } catch (DataRequestException e) {

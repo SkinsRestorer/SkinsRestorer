@@ -75,4 +75,8 @@ public interface SkinStorage {
     Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException;
 
     Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier); // TODO: Remember is API
+
+    void removeSkinData(SkinIdentifier identifier);
+
+    boolean purgeOldSkins(int days);
 }

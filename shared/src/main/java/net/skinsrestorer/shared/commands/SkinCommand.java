@@ -26,6 +26,7 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
@@ -102,22 +103,16 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_CLEAR_OTHER)
     @CommandConditions("cooldown")
     private void onSkinClearOther(SRCommandSender sender, SRPlayer target) {
-        String playerName = target.getName();
-
-        // remove users defined skin from database
+        // Remove the targets defined skin from database
         playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
 
-        try {
-            Optional<SkinProperty> property = playerStorage.getDefaultSkinForPlayer(target.getUniqueId(), target.getName());
-            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
-        } catch (DataRequestException e) {
-            sender.sendMessage(getRootCause(e).getMessage());
-        }
+        Optional<SkinProperty> property = playerStorage.getDefaultSkinForPlayer(target.getUniqueId(), target.getName());
+        skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
 
         if (sender.getName().equals(target.getName())) {
             sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
         } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, playerName);
+            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, target.getName());
         }
     }
 
@@ -267,9 +262,17 @@ public final class SkinCommand {
             }
         } else {
             try {
-                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), skinInput);
+                // Perform skin lookup, which causes a second url regex check, but we don't care
+                Optional<InputDataResult> optional = skinStorage.findOrCreateSkinData(skinInput);
 
-                skinApplier.applySkin(target.getAs(Object.class), skinInput);
+                if (!optional.isPresent()) {
+                    sender.sendMessage(Message.NOT_PREMIUM); // TODO: Is this the right message?
+                    return false;
+                }
+
+                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), optional.get().getIdentifier());
+
+                skinApplier.applySkin(target.getAs(Object.class), optional.get().getProperty());
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 

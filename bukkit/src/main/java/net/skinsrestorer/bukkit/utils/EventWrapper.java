@@ -27,6 +27,7 @@ import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import org.bukkit.event.player.PlayerEvent;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EventWrapper {
@@ -38,6 +39,11 @@ public class EventWrapper {
             @Override
             public boolean isOnline() {
                 return SkinApplierBukkit.getApplyAdapter().getSkinProperty(event.getPlayer()).isPresent();
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.getPlayer().getUniqueId();
             }
 
             @Override

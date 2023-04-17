@@ -29,6 +29,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PaperPlayerJoinEvent implements Listener {
@@ -44,6 +45,11 @@ public class PaperPlayerJoinEvent implements Listener {
             @Override
             public boolean isOnline() {
                 return !event.getPlayerProfile().getProperties().isEmpty();
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.getUniqueId();
             }
 
             @Override

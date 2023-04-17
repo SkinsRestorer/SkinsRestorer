@@ -266,11 +266,12 @@ public class FileAdapter implements StorageAdapter {
             if (i < offset) {
                 continue;
             }
+
             if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) { // Show only Config.CUSTOM_GUI_SKINS in the gui
                 for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
                     if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
                         try {
-                            getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                            getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getProperty().getValue()));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -278,13 +279,14 @@ public class FileAdapter implements StorageAdapter {
                 }
             } else {
                 try {
-                    getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                    getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getProperty().getValue()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             i++;
         }
+
         return list;
     }
 

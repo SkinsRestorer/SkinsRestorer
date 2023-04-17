@@ -26,6 +26,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.skinsrestorer.bungee.listeners.ConnectListener;
 import net.skinsrestorer.bungee.listeners.LoginListener;
 import net.skinsrestorer.bungee.listeners.ProxyMessageListener;
+import net.skinsrestorer.bungee.wrapper.WrapperBungee;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 
@@ -40,7 +41,7 @@ public class SRBungeeInit implements SRProxyPlatformInit {
 
     @Override
     public void initSkinApplier() {
-        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, ProxiedPlayer::getName);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierBungee.class), ProxiedPlayer.class, injector.getSingleton(WrapperBungee.class)::player);
     }
 
     @Override

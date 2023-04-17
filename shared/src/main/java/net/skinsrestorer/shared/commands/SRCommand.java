@@ -165,7 +165,16 @@ public final class SRCommand {
                 }
                 break;
             case SKIN:
-                skinStorage.removeSkinData(target);
+                Optional<InputDataResult> optional = skinStorage.findSkinData(target);
+
+                if (!optional.isPresent()) {
+                    sender.sendMessage("§cSkin §e" + target + " §cnot found."); // TODO: Message
+                    return;
+                }
+
+                InputDataResult result = optional.get();
+
+                skinStorage.removeSkinData(result.getIdentifier());
                 break;
         }
 

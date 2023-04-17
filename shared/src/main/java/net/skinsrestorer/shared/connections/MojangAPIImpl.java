@@ -69,6 +69,7 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getDataAshcon(playerName).flatMap(this::getPropertyAshcon);
         } catch (DataRequestException e) {
+            logger.debug(e);
             Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
             if (uuidResult.isPresent()) {
                 return getProfileStartMojang(uuidResult.get()); // Mojang API requires no dashes
@@ -92,6 +93,7 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getDataAshcon(playerName).flatMap(this::getUUIDAshcon);
         } catch (DataRequestException e) {
+            logger.debug(e);
             return getUUIDStartMojang(playerName);
         }
     }
@@ -100,6 +102,7 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getUUIDMojang(playerName);
         } catch (DataRequestException e) {
+            logger.debug(e);
             return getUUIDMineTools(playerName);
         }
     }
@@ -109,7 +112,6 @@ public class MojangAPIImpl implements MojangAPI {
         AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
         if (response.getError() != null) {
-            logger.debug("Ashcon error: " + response.getError());
             throw new DataRequestExceptionShared("Ashcon error: " + response.getError());
         }
 
@@ -118,7 +120,6 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         if (response.getCode() != 0) {
-            logger.debug("Ashcon error: " + response.getCode());
             throw new DataRequestExceptionShared("Ashcon error code: " + response.getCode());
         }
 
@@ -134,7 +135,6 @@ public class MojangAPIImpl implements MojangAPI {
 
         MojangUUIDResponse response = httpResponse.getBodyAs(MojangUUIDResponse.class);
         if (response.getError() != null) {
-            logger.debug("Mojang error: " + response.getError());
             throw new DataRequestExceptionShared("Mojang error: " + response.getError());
         }
 
@@ -158,6 +158,7 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getDataAshcon(uuid.toString().replace("-", "")).flatMap(this::getPropertyAshcon);
         } catch (DataRequestException e) {
+            logger.debug(e);
             return getProfileStartMojang(uuid);
         }
     }
@@ -166,6 +167,7 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getProfileMojang(uuid);
         } catch (DataRequestException e) {
+            logger.debug(e);
             return getProfileMineTools(uuid);
         }
     }

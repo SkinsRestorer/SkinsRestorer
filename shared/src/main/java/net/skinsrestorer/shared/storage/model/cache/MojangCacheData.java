@@ -29,6 +29,5 @@ import java.util.UUID;
 public class MojangCacheData {
     private final boolean isPremium;
     private final UUID uniqueId; // Null if not premium
-    private final String lastKnownName;
     private final long timestamp; // TODO: Change to Instant/Seconds
 }

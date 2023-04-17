@@ -31,6 +31,7 @@ import org.spongepowered.api.event.EventListener;
 import org.spongepowered.api.event.network.ServerSideConnectionEvent;
 
 import javax.inject.Inject;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoginListener implements EventListener<ServerSideConnectionEvent.Auth> {
@@ -50,6 +51,11 @@ public class LoginListener implements EventListener<ServerSideConnectionEvent.Au
             @Override
             public boolean isOnline() {
                 return event.profile().properties().stream().anyMatch(p -> p.name().equals(SkinProperty.TEXTURES_NAME));
+            }
+
+            @Override
+            public UUID getPlayerUniqueId() {
+                return event.profile().uniqueId();
             }
 
             @Override

@@ -202,6 +202,21 @@ public class SkinStorageImpl implements SkinStorage {
         return Optional.empty();
     }
 
+    @Override
+    public void removeSkinData(SkinIdentifier identifier) {
+        switch (identifier.getSkinType()) {
+            case PLAYER:
+                storageAdapter.removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
+                break;
+            case URL:
+                storageAdapter.removeURLSkinData(identifier.getIdentifier());
+                break;
+            case CUSTOM:
+                storageAdapter.removeCustomSkinData(identifier.getIdentifier());
+                break;
+        }
+    }
+
     /**
      * Checks if a player skin is expired and should be re-fetched from mojang.
      *

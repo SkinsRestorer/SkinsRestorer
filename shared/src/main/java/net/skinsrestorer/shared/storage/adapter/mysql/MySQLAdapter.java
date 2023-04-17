@@ -22,8 +22,10 @@ package net.skinsrestorer.shared.storage.adapter.mysql;
 import ch.jalu.configme.SettingsManager;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.shared.config.DatabaseConfig;
-import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
@@ -35,8 +37,9 @@ import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLAdapter implements StorageAdapter {
@@ -45,177 +48,209 @@ public class MySQLAdapter implements StorageAdapter {
     private final SRLogger logger;
 
     public void createTable() {
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
+                + "`name` varchar(16) NOT NULL,"
+                + "`is_premium` tinyint(1) NOT NULL,"
+                + "`uuid` varchar(36),"
+                + "`timestamp` bigint(20) NOT NULL,"
+                + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
-                + "`Nick` varchar(17) NOT NULL,"
-                + "`Skin` varchar(19) NOT NULL,"
-                + "PRIMARY KEY (`Nick`)) DEFAULT");
+                + "`uuid` varchar(36) NOT NULL,"
+                + "`skin_identifier` VARCHAR(2083),"
+                + "`skin_type` varchar(20),"
+                + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ("
-                + "`Nick` varchar(19) NOT NULL,"
-                + "`Value` text,"
-                + "`Signature` text,"
-                + "`timestamp` text,"
-                + "PRIMARY KEY (`Nick`))");
-    }
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerSkinTable() + "` ("
+                + "`uuid` varchar(36) NOT NULL,"
+                + "`value` text NOT NULL,"
+                + "`signature` text NOT NULL,"
+                + "`timestamp` bigint(20) NOT NULL,"
+                + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-    private boolean columnExists(String tableName, String columnName) {
-        try (ResultSet resultSet =mysql.query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?", tableName, columnName)) {
-            resultSet.next();
-            return resultSet.getInt(1) > 0;
-        } catch (SQLException e) {
-            logger.severe("Error checking if column exists", e);
-            return false;
-        }
-    }
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinTable() + "` ("
+                + "`url` varchar(2083) NOT NULL,"
+                + "`mine_skin_id` varchar(36),"
+                + "`value` text NOT NULL,"
+                + "`signature` text NOT NULL,"
+                + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
-    private int columnVarCharLength(String tableName, String columnName) {
-        try (ResultSet resultSet = mysql.query("SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?", tableName, columnName)) {
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            logger.severe("Error checking if column exists", e);
-            return -1;
-        }
-    }
-
-    @Override
-    public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE Nick=?", playerName)) {
-            if (!crs.next()) {
-                return Optional.empty();
-            }
-
-            String skin = crs.getString("Skin");
-
-            return Optional.of(skin);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public void removeStoredSkinNameOfPlayer(String playerName) {
-        mysql.execute("DELETE FROM " + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName);
-    }
-
-    @Override
-    public void setStoredSkinNameOfPlayer(String playerName, String skinName) {
-        mysql.execute("INSERT INTO " + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + " (Nick, Skin) VALUES (?,?) ON DUPLICATE KEY UPDATE Skin=?",
-                playerName, skinName, skinName);
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
+                + "`name` varchar(36) NOT NULL,"
+                + "`value` text NOT NULL,"
+                + "`signature` text NOT NULL,"
+                + "PRIMARY KEY (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
     }
 
     @Override
     public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
-        return Optional.empty();
-    }
-
-    @Override
-    public void setPlayerData(UUID uuid, PlayerData data) {
-
-    }
-
-    @Override
-    public Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException {
-        return Optional.empty();
-    }
-
-    @Override
-    public void removePlayerSkinData(UUID uuid) {
-
-    }
-
-    @Override
-    public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
-
-    }
-
-    @Override
-    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
-        return Optional.empty();
-    }
-
-    @Override
-    public void removeURLSkinData(String url) {
-
-    }
-
-    @Override
-    public void setURLSkinData(String url, URLSkinData skinData) {
-
-    }
-
-    @Override
-    public Optional<StoredProperty> getCustomSkinData(String skinName) throws Exception {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE UUID=?", uuid.toString())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
 
-            String value = crs.getString("Value");
-            String signature = crs.getString("Signature");
-            String timestamp = crs.getString("timestamp");
+            String skinIdentifier = crs.getString("skin_identifier");
+            String skinType = crs.getString("skin_type");
 
-            return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
+            SkinIdentifier identifier = skinIdentifier != null && skinType != null ?
+                    SkinIdentifier.of(skinIdentifier, SkinType.valueOf(skinType)) : null;
+
+            return Optional.of(PlayerData.of(uuid, identifier));
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void setPlayerData(UUID uuid, PlayerData data) {
+        String skinIdentifier = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getIdentifier() : null;
+        String skinType = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getSkinType().name() : null;
+        mysql.execute("INSERT INTO " + resolvePlayerTable() + " (UUID, skin_identifier, skin_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?",
+                uuid.toString(),
+                skinIdentifier,
+                skinType,
+                skinIdentifier,
+                skinType);
+    }
+
+    @Override
+    public Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerSkinTable() + " WHERE UUID=?", uuid.toString())) {
+            if (!crs.next()) {
+                return Optional.empty();
+            }
+
+            String value = crs.getString("value");
+            String signature = crs.getString("signature");
+            long timestamp = crs.getLong("timestamp");
+
+            return Optional.of(PlayerSkinData.of(uuid, SkinProperty.of(value, signature), timestamp));
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removePlayerSkinData(UUID uuid) {
+        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE UUID=?", uuid.toString());
+    }
+
+    @Override
+    public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
+        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (UUID, value, signature, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?, timestamp=?",
+                uuid.toString(),
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature(),
+                skinData.getTimestamp(),
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature(),
+                skinData.getTimestamp());
+    }
+
+    @Override
+    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveURLSkinTable() + " WHERE url=?", url)) {
+            if (!crs.next()) {
+                return Optional.empty();
+            }
+
+            String mineSkinId = crs.getString("mine_skin_id");
+            String value = crs.getString("value");
+            String signature = crs.getString("signature");
+
+            return Optional.of(URLSkinData.of(url, mineSkinId, SkinProperty.of(value, signature)));
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeURLSkinData(String url) {
+        mysql.execute("DELETE FROM " + resolveURLSkinTable() + " WHERE url=?", url);
+    }
+
+    @Override
+    public void setURLSkinData(String url, URLSkinData skinData) {
+        mysql.execute("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?",
+                url,
+                skinData.getMineSkinId(),
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature(),
+                skinData.getMineSkinId(),
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature());
+    }
+
+    @Override
+    public Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName)) {
+            if (!crs.next()) {
+                return Optional.empty();
+            }
+
+            String value = crs.getString("value");
+            String signature = crs.getString("signature");
+
+            return Optional.of(CustomSkinData.of(skinName, SkinProperty.of(value, signature)));
+        } catch (SQLException e) {
+            throw new StorageException(e);
         }
     }
 
     @Override
     public void removeCustomSkinData(String skinName) {
-        mysql.execute("DELETE FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName);
+        mysql.execute("DELETE FROM " + resolveCustomSkinTable() + " WHERE name=?", skinName);
     }
 
     @Override
     public void setCustomSkinData(String skinName, CustomSkinData skinData) {
-
-    }
-
-    @Override
-    public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
-        mysql.execute("INSERT INTO " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " (Nick, Value, Signature, timestamp) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE Value = VALUES(Value), Signature = VALUES(Signature), timestamp = VALUES(timestamp)",
-                skinName, storedProperty.getValue(), storedProperty.getSignature(), String.valueOf(storedProperty.getTimestamp()));
+        mysql.execute("INSERT INTO " + resolveCustomSkinTable() + " (name, value, signature) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?",
+                skinName,
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature(),
+                skinData.getProperty().getValue(),
+                skinData.getProperty().getSignature());
     }
 
     @SuppressFBWarnings(justification = "SQL injection is not possible here", value = {"SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING"})
     @Override
     public Map<String, String> getStoredSkins(int offset) {
-        Map<String, String> list = new TreeMap<>();
-        String filterBy = "";
-        String orderBy = "Nick";
-
-        if (settings.getProperty(GUIConfig.CUSTOM_GUI_ENABLED)) {
-            List<String> customSkinNames = settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS);
-            if (settings.getProperty(GUIConfig.CUSTOM_GUI_ONLY)) {
-                filterBy = "WHERE Nick RLIKE '" + String.join("|", customSkinNames) + "'";
-            } else {
-                orderBy = "FIELD(Nick, " + customSkinNames.stream().map(skin -> "'" + skin + "'").collect(Collectors.joining(", ")) + ") DESC, Nick";
-            }
-        }
-
-        try (ResultSet crs = mysql.query("SELECT Nick, Value, Signature FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " " + filterBy + " ORDER BY " + orderBy + " LIMIT " + offset + ", 36")) {
-            while (crs.next()) {
-                list.put(crs.getString("Nick").toLowerCase(), crs.getString("Value"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
+        throw new UnsupportedOperationException("MySQL storage does not support this operation YET"); // TODO
     }
 
     @Override
     public void purgeStoredOldSkins(long targetPurgeTimestamp) {
-        // delete if name not start with " " and timestamp below targetPurgeTimestamp
-        mysql.execute("DELETE FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick NOT LIKE ' %' AND " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + ".timestamp NOT LIKE 0 AND " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + ".timestamp<=?", targetPurgeTimestamp);
+        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE timestamp NOT LIKE 0 AND timestamp<=?", targetPurgeTimestamp);
     }
 
     @Override
     public Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException {
-        return Optional.empty();
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveCacheTable() + " WHERE name=?", playerName)) {
+            if (!crs.next()) {
+                return Optional.empty();
+            }
+
+            boolean isPremium = crs.getBoolean("is_premium");
+            UUID uuid = isPremium ? UUID.fromString(crs.getString("uuid")) : null;
+            long timestamp = crs.getLong("timestamp");
+
+            return Optional.of(MojangCacheData.of(isPremium, uuid, timestamp));
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
     }
 
     @Override
     public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
-
+        String uuid = mojangCacheData.getUniqueId() != null ? mojangCacheData.getUniqueId().toString() : null;
+        mysql.execute("INSERT INTO " + resolveCacheTable() + " (name, is_premium, uuid, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE is_premium=?, uuid=?, timestamp=?",
+                playerName,
+                mojangCacheData.isPremium(),
+                uuid,
+                mojangCacheData.getTimestamp(),
+                mojangCacheData.isPremium(),
+                uuid,
+                mojangCacheData.getTimestamp());
     }
 
     private String resolveCustomSkinTable() {

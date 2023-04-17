@@ -30,6 +30,7 @@ import net.skinsrestorer.shared.plugin.SRProxyPlatformInit;
 import net.skinsrestorer.velocity.listener.ConnectListener;
 import net.skinsrestorer.velocity.listener.GameProfileRequest;
 import net.skinsrestorer.velocity.listener.ProxyMessageListener;
+import net.skinsrestorer.velocity.wrapper.WrapperVelocity;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,7 @@ public class SRVelocityInit implements SRProxyPlatformInit {
     @Override
     public void initSkinApplier() {
         SkinApplierVelocity skinApplierVelocity = injector.getSingleton(SkinApplierVelocity.class);
-        plugin.registerSkinApplier(skinApplierVelocity, Player.class, Player::getUsername);
+        plugin.registerSkinApplier(skinApplierVelocity, Player.class, injector.getSingleton(WrapperVelocity.class)::player);
     }
 
     @Override

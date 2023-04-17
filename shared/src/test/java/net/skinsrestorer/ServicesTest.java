@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer;
 
+import ch.jalu.configme.SettingsManager;
 import ch.jalu.injector.Injector;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -34,11 +36,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class, SRExtension.class})
 public class ServicesTest {
     @Mock
     private SRPlatformAdapter<?> srPlatformAdapter;
+    @Mock
+    private SettingsManager settings;
     @Mock
     private SkinsRestorerLocale skinsRestorerLocale;
 
@@ -46,6 +51,10 @@ public class ServicesTest {
     public void testServices(Injector injector) {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
         injector.register(SRPlatformAdapter.class, srPlatformAdapter);
+
+        when(settings.getProperty(AdvancedConfig.NO_CONNECTIONS)).thenReturn(false);
+
+        injector.register(SettingsManager.class, settings);
 
         new SRPlugin(injector, "UnitTest", null, Platform.BUKKIT, SharedUpdateCheckInit.class);
 
