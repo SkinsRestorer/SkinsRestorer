@@ -41,6 +41,7 @@ public class DumpService {
     private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
     private final Injector injector;
+    private final HttpClient httpClient;
     private final Gson gson = new Gson();
 
     public Optional<String> dump() throws IOException, DataRequestException {
@@ -68,18 +69,13 @@ public class DumpService {
                 platformType
         );
 
-        HttpClient client = new HttpClient(
-                logger,
-                "https://bytebin.lucko.me/post",
+        HttpResponse response = httpClient.execute("https://bytebin.lucko.me/post",
                 new HttpClient.RequestBody(gson.toJson(dumpInfo), HttpClient.HttpType.JSON),
                 HttpClient.HttpType.JSON,
                 plugin.getUserAgent(),
                 HttpClient.HttpMethod.POST,
                 Collections.emptyMap(),
-                20_000
-        );
-
-        HttpResponse response = client.execute();
+                20_000);
 
         if (response.getStatusCode() != 201) {
             logger.warning("Failed to dump data to bytebin. Response code: " + response.getStatusCode());

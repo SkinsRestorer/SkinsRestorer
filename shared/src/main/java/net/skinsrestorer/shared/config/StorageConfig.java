@@ -59,6 +59,8 @@ public class StorageConfig implements SettingsHolder {
             "[!] Lowering this value will increase the amount of requests which could be a problem on large servers."
     })
     public static final Property<Integer> SKIN_EXPIRES_AFTER = newProperty("storage.skinExpiresAfter", 15);
+    @Comment("How long we should cache the UUIDs of players (in minutes).")
+    public static final Property<Integer> UUID_EXPIRES_AFTER = newProperty("storage.uuidExpiresAfter", 60);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

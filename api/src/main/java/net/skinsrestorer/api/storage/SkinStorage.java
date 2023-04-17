@@ -17,12 +17,14 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api.storage;
 
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * SkinStorage
@@ -32,43 +34,6 @@ import java.util.Optional;
  */
 public interface SkinStorage {
     /**
-     * This method seeks out the skin that would be set on join and returns
-     * the property containing all the skin data.
-     * That skin can either be custom set, the premium skin or a default skin.
-     * It also executes a skin data update if the saved skin data expired.
-     *
-     * @param playerName Player name to search a skin for
-     * @return The skin property containing the skin data and on the right whether it's custom set
-     * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
-     */
-    Optional<SkinProperty> getSkinOfPlayer(String playerName) throws DataRequestException;
-
-    /**
-     * Returns a players custom skin.
-     *
-     * @param playerName the players name
-     * @return the custom skin name a player has set or null if not set
-     */
-    Optional<String> getSkinNameOfPlayer(String playerName);
-
-    /**
-     * Saves custom player's skin name to database
-     *
-     * @param playerName Players name
-     * @param skinName   Skin name
-     */
-    void setSkinNameOfPlayer(String playerName, String skinName);
-
-    /**
-     * Removes custom players skin name from database
-     *
-     * @param playerName - Players name
-     */
-    void removeSkinNameOfPlayer(String playerName);
-
-    Optional<SkinProperty> getDefaultSkinForPlayer(String playerName) throws DataRequestException;
-
-    /**
      * This method returns the skin data associated to the skin name.
      * If the skin name is not found, it will try to get the skin data from Mojang.
      *
@@ -76,7 +41,7 @@ public interface SkinStorage {
      * @return The skin property containing the skin data
      * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    Optional<SkinProperty> fetchSkinData(String skinName) throws DataRequestException;
+    Optional<SkinProperty> fetchPlayerSkinData(UUID uuid) throws DataRequestException;
 
     /**
      * Returns property object containing skin data of the wanted skin
@@ -87,20 +52,32 @@ public interface SkinStorage {
     Optional<SkinProperty> getSkinData(String skinName, boolean updateOutdated);
 
     /**
-     * Timestamp is set to current time
+     * Saves skin data to database
      *
-     * @see #setSkinData(String, SkinProperty, long)
+     * @param uuid    Player UUID
+     * @param textures  Property object
+     * @param timestamp timestamp string in milliseconds
      */
-    default void setSkinData(String skinName, SkinProperty textures) {
-        setSkinData(skinName, textures, System.currentTimeMillis());
-    }
+    void setPlayerSkinData(UUID uuid, SkinProperty textures, long timestamp);
+
+    /**
+     * Saves skin data to database
+     *
+     * @param url         URL to skin
+     * @param mineSkinId  MineSkin ID
+     * @param textures    Property object
+     */
+    void setURLSkinData(String url, String mineSkinId, SkinProperty textures);
 
     /**
      * Saves skin data to database
      *
      * @param skinName  Skin name
      * @param textures  Property object
-     * @param timestamp timestamp string in milliseconds
      */
-    void setSkinData(String skinName, SkinProperty textures, long timestamp);
+    void setCustomSkinData(String skinName, SkinProperty textures);
+
+    Optional<SkinIdentifier> getSkinIdByString(String input);
+
+    Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier);
 }

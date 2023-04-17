@@ -21,8 +21,12 @@ package net.skinsrestorer.shared.listeners.event;
 
 import net.skinsrestorer.api.property.SkinProperty;
 
+import java.util.UUID;
+
 public interface SRLoginProfileEvent<R> {
     boolean isOnline();
+
+    UUID getPlayerUniqueId();
 
     String getPlayerName();
 

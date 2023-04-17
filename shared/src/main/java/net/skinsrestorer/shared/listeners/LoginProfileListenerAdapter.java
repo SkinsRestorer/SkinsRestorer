@@ -28,6 +28,7 @@ import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 
 import javax.inject.Inject;
@@ -36,6 +37,7 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class LoginProfileListenerAdapter<R> {
     private final SettingsManager settings;
+    private final PlayerStorageImpl playerStorage;
     private final SkinStorageImpl skinStorage;
     private final SRLogger logger;
 
@@ -58,8 +60,7 @@ public final class LoginProfileListenerAdapter<R> {
     }
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
-        String playerName = event.getPlayerName();
-        Optional<SkinProperty> skinOfPlayer = skinStorage.getSkinOfPlayer(playerName);
+        Optional<SkinProperty> skinOfPlayer = playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName());
 
         if (skinOfPlayer.isPresent()) {
             return skinOfPlayer;

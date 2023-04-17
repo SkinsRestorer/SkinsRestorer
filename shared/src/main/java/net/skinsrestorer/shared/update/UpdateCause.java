@@ -22,7 +22,8 @@ package net.skinsrestorer.shared.update;
 public enum UpdateCause {
     STARTUP,
     SCHEDULED,
-    ERROR;
+    ERROR,
+    NO_NETWORK;
 
     public boolean isError() {
         return this == ERROR;

@@ -90,7 +90,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             throw e;
         }
 
-        plugin.registerSkinApplier(skinApplierBukkit, Player.class, Player::getName);
+        plugin.registerSkinApplier(skinApplierBukkit, Player.class, injector.getSingleton(WrapperBukkit.class)::player);
 
         // Log information about the platform
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");

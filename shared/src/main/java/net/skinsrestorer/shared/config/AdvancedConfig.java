@@ -49,6 +49,14 @@ public class AdvancedConfig implements SettingsHolder {
             "This feature is required for solutions like RedisBungee and also fixes bugs in some cases."
     })
     public static final Property<Boolean> FORWARD_TEXTURES = newProperty("advanced.forwardTextures", true);
+    @Comment({
+            "<!! Warning !!>",
+            "When enabled SkinsRestorer will not try to connect to any web server, which means the follow things won't work:",
+            "Getting new skins from Mojang, looking up uuids of players, skin url, update checking and more.",
+            "SkinsRestorer will only be able to access already downloaded skins.",
+            "This is useful for servers that are not connected to the internet or have a firewall blocking connections."
+    })
+    public static final Property<Boolean> NO_CONNECTIONS = newProperty("advanced.noConnections", false);
 
     @Override
     public void registerComments(CommentsConfiguration conf) {

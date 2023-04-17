@@ -20,8 +20,8 @@
 package net.skinsrestorer.shared.connections;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
@@ -39,10 +39,7 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
@@ -55,6 +52,7 @@ public class MojangAPIImpl implements MojangAPI {
     private final MetricsCounter metricsCounter;
     private final SRLogger logger;
     private final SRPlugin plugin;
+    private final HttpClient httpClient;
 
     @Override
     public Optional<SkinProperty> getSkin(String playerName) throws DataRequestException {
@@ -71,9 +69,10 @@ public class MojangAPIImpl implements MojangAPI {
         try {
             return getDataAshcon(playerName).flatMap(this::getPropertyAshcon);
         } catch (DataRequestException e) {
-            Optional<String> uuidResult = getUUIDStartMojang(playerName);
+            Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
             if (uuidResult.isPresent()) {
-                return getProfileStartMojang(uuidResult.get());
+                return getProfileStartMojang(uuidResult.get()
+                        .toString().replace("-", "")); // Mojang API requires no dashes
             }
 
             return Optional.empty();
@@ -86,7 +85,7 @@ public class MojangAPIImpl implements MojangAPI {
      * @param playerName Mojang username of the player
      * @return String uuid trimmed (without dashes)
      */
-    public Optional<String> getUUID(String playerName) throws DataRequestException {
+    public Optional<UUID> getUUID(String playerName) throws DataRequestException {
         if (!C.validMojangUsername(playerName)) {
             return Optional.empty();
         }
@@ -98,7 +97,7 @@ public class MojangAPIImpl implements MojangAPI {
         }
     }
 
-    private Optional<String> getUUIDStartMojang(String playerName) throws DataRequestException {
+    private Optional<UUID> getUUIDStartMojang(String playerName) throws DataRequestException {
         try {
             return getUUIDMojang(playerName);
         } catch (DataRequestException e) {
@@ -127,7 +126,7 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(response);
     }
 
-    public Optional<String> getUUIDMojang(String playerName) throws DataRequestException {
+    public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(UUID_MOJANG.replace("%playerName%", playerName), MetricsCounter.Service.MOJANG);
 
         if (httpResponse.getStatusCode() == 204 || httpResponse.getStatusCode() == 404 || httpResponse.getBody().isEmpty()) {
@@ -140,10 +139,11 @@ public class MojangAPIImpl implements MojangAPI {
             throw new DataRequestExceptionShared("Mojang error: " + response.getError());
         }
 
-        return Optional.of(response.getId());
+        return Optional.ofNullable(response.getId())
+                .map(MojangAPIImpl::convertToDashed);
     }
 
-    protected Optional<String> getUUIDMineTools(String playerName) throws DataRequestException {
+    protected Optional<UUID> getUUIDMineTools(String playerName) throws DataRequestException {
         HttpResponse httpResponse = readURL(UUID_MINETOOLS.replace("%playerName%", playerName), MetricsCounter.Service.MINE_TOOLS, 10_000);
         MineToolsUUIDResponse response = httpResponse.getBodyAs(MineToolsUUIDResponse.class);
 
@@ -151,7 +151,8 @@ public class MojangAPIImpl implements MojangAPI {
             throw new DataRequestExceptionShared("MineTools error: " + response.getStatus());
         }
 
-        return Optional.ofNullable(response.getId());
+        return Optional.ofNullable(response.getId())
+                .map(MojangAPIImpl::convertToDashed);
     }
 
     public Optional<SkinProperty> getProfile(String uuid) throws DataRequestException {
@@ -223,12 +224,12 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature()));
     }
 
-    protected Optional<String> getUUIDAshcon(AshconResponse response) {
+    protected Optional<UUID> getUUIDAshcon(AshconResponse response) {
         if (response.getUuid() == null) {
             return Optional.empty();
         }
 
-        return Optional.of(response.getUuid().replace("-", ""));
+        return Optional.of(UUID.fromString(response.getUuid()));
     }
 
     private HttpResponse readURL(String url, MetricsCounter.Service service) throws DataRequestException {
@@ -238,19 +239,16 @@ public class MojangAPIImpl implements MojangAPI {
     private HttpResponse readURL(String url, MetricsCounter.Service service, int timeout) throws DataRequestException {
         metricsCounter.increment(service);
 
-        HttpClient client = new HttpClient(
-                logger,
-                url,
-                null,
-                HttpClient.HttpType.JSON,
-                plugin.getUserAgent(),
-                HttpClient.HttpMethod.GET,
-                Collections.emptyMap(),
-                timeout
-        );
-
         try {
-            return client.execute();
+            return httpClient.execute(
+                    url,
+                    null,
+                    HttpClient.HttpType.JSON,
+                    plugin.getUserAgent(),
+                    HttpClient.HttpMethod.GET,
+                    Collections.emptyMap(),
+                    timeout
+            );
         } catch (IOException e) {
             logger.debug("Error while reading URL: " + url, e);
             throw new DataRequestExceptionShared(e);
@@ -274,4 +272,14 @@ public class MojangAPIImpl implements MojangAPI {
         private final String value;
         private final String signature;
     }
+
+    public static UUID convertToDashed(String noDashes) {
+        StringBuilder idBuff = new StringBuilder(noDashes);
+        idBuff.insert(20, '-');
+        idBuff.insert(16, '-');
+        idBuff.insert(12, '-');
+        idBuff.insert(8, '-');
+        return UUID.fromString(idBuff.toString());
+    }
+
 }

@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServiceCheckerService {
@@ -47,7 +48,7 @@ public class ServiceCheckerService {
         try {
             Optional<AshconResponse> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
             if (uuidAshcon.isPresent()) {
-                Optional<String> uuid = mojangAPI.getUUIDAshcon(uuidAshcon.get());
+                Optional<UUID> uuid = mojangAPI.getUUIDAshcon(uuidAshcon.get());
 
                 if (uuid.isPresent()) {
                     response.addResult(String.format(UUID_MESSAGE, "Ashcon", uuid.get()));

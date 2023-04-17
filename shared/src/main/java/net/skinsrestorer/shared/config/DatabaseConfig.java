@@ -33,8 +33,7 @@ public class DatabaseConfig implements SettingsHolder {
     public static final Property<String> MYSQL_USERNAME = newProperty("database.username", "root");
     public static final Property<String> MYSQL_PASSWORD = newProperty("database.password", "pass");
     public static final Property<Integer> MYSQL_MAX_POOL_SIZE = newProperty("database.maxPoolSize", 10);
-    public static final Property<String> MYSQL_SKIN_TABLE = newProperty("database.skinTable", "Skins");
-    public static final Property<String> MYSQL_PLAYER_TABLE = newProperty("database.playerTable", "Players");
+    public static final Property<String> MYSQL_TABLE_PREFIX = newProperty("database.tablePrefix", "sr_");
     public static final Property<String> MYSQL_CONNECTION_OPTIONS = newProperty("database.connectionOptions", "sslMode=trust&serverTimezone=UTC");
 
     @Override

@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.connections;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.config.APIConfig;
@@ -67,6 +67,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final MetricsCounter metricsCounter;
     private final SettingsManager settings;
     private final SkinsRestorerLocale locale;
+    private final HttpClient httpClient;
 
     @Override
     public SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException {
@@ -195,8 +196,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                     headers.put("Authorization", String.format("Bearer %s", apiKey));
                 }
 
-                HttpClient client = new HttpClient(
-                        logger,
+                return httpClient.execute(
                         MINESKIN_ENDPOINT,
                         new HttpClient.RequestBody(query, HttpClient.HttpType.FORM),
                         HttpClient.HttpType.JSON,
@@ -205,8 +205,6 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                         headers,
                         90_000
                 );
-
-                return client.execute();
             } catch (IOException e) {
                 if (i == 2) {
                     throw e;

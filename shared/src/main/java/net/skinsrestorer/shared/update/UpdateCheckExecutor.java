@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer.shared.update;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 
@@ -29,9 +31,15 @@ import javax.inject.Inject;
 public class UpdateCheckExecutor {
     private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
+    private final SettingsManager settings;
     private boolean updateDownloaded;
 
     public void checkUpdate(UpdateCause cause, UpdateCheckerGitHub updateChecker, UpdateDownloader downloader) {
+        if (settings.getProperty(AdvancedConfig.NO_CONNECTIONS)) {
+            updateChecker.printUpToDate(UpdateCause.NO_NETWORK);
+            return;
+        }
+
         adapter.runAsync(() -> updateChecker.checkForUpdate(new UpdateCallback() {
             @Override
             public void updateAvailable(String newVersion, String downloadUrl) {

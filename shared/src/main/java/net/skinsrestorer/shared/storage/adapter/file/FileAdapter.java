@@ -20,107 +20,102 @@
 package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
+import com.google.gson.Gson;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.skin.CustomSkinFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.skin.PlayerSkinFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.skin.URLSkinFile;
+import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.PlayerData;
+import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.MalformedInputException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class FileAdapter implements StorageAdapter {
-    private static final Pattern FORBIDDEN_CHARS_PATTERN = Pattern.compile("[\\\\/:*\"<>|.\\?]");
-    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
     private final Path skinsFolder;
     private final Path playersFolder;
+    private final Path cacheFolder;
     private final SettingsManager settings;
+    private final Gson gson = new Gson();
 
     public FileAdapter(Path dataFolder, SettingsManager settings) throws IOException {
-        skinsFolder = dataFolder.resolve("Skins");
+        skinsFolder = dataFolder.resolve("skins");
         Files.createDirectories(skinsFolder);
 
-        playersFolder = dataFolder.resolve("Players");
+        playersFolder = dataFolder.resolve("players");
         Files.createDirectories(playersFolder);
+
+        cacheFolder = dataFolder.resolve("cache");
+        Files.createDirectories(cacheFolder);
         this.settings = settings;
     }
 
     @Override
-    public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        Path playerFile = resolvePlayerFile(playerName);
+    public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
+        Path playerFile = resolvePlayerFile(uuid);
+
+        if (!Files.exists(playerFile)) {
+            return Optional.empty();
+        }
 
         try {
-            if (!Files.exists(playerFile))
-                return Optional.empty();
+            String json = new String(Files.readAllBytes(playerFile), StandardCharsets.UTF_8);
+            PlayerFile file = gson.fromJson(json, PlayerFile.class);
 
-            List<String> lines = Files.readAllLines(playerFile);
-
-            if (lines.isEmpty()) {
-                removeStoredSkinNameOfPlayer(playerName);
-                return Optional.empty();
-            }
-
-            return Optional.of(lines.get(0));
-        } catch (MalformedInputException e) {
-            removeStoredSkinNameOfPlayer(playerName);
-        } catch (IOException e) {
-            e.printStackTrace();
+            return Optional.of(file.toPlayerData());
+        } catch (Exception e) {
+            throw new StorageException(e);
         }
-        return Optional.empty();
     }
 
     @Override
-    public void removeStoredSkinNameOfPlayer(String playerName) {
-        Path playerFile = resolvePlayerFile(playerName);
+    public void setPlayerData(UUID uuid, PlayerData data) {
+        Path playerFile = resolvePlayerFile(uuid);
 
         try {
-            Files.deleteIfExists(playerFile);
+            PlayerFile file = PlayerFile.fromPlayerData(data);
+
+            Files.write(playerFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void setStoredSkinNameOfPlayer(String playerName, String skinName) {
-        Path playerFile = resolvePlayerFile(playerName);
-
-        try {
-            try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(playerFile), StandardCharsets.UTF_8)) {
-                skinName = removeWhitespaces(skinName);
-                skinName = replaceForbiddenChars(skinName);
-
-                writer.write(skinName);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception {
-        Path skinFile = resolveSkinFile(skinName);
+    public Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException {
+        Path skinFile = resolvePlayerSkinFile(uuid);
 
         if (!Files.exists(skinFile)) {
             return Optional.empty();
         }
 
-        List<String> lines = Files.readAllLines(skinFile);
+        try {
+            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
 
-        String value = lines.get(0);
-        String signature = lines.get(1);
-        String timestamp = lines.get(2);
+            PlayerSkinFile file = gson.fromJson(json, PlayerSkinFile.class);
 
-        return Optional.of(new StoredProperty(value, signature, Long.parseLong(timestamp)));
+            return Optional.of(file.toPlayerSkinData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
     }
 
     @Override
-    public void removeStoredSkinData(String skinName) {
-        Path skinFile = resolveSkinFile(skinName);
+    public void removePlayerSkinData(UUID uuid) {
+        Path skinFile = resolvePlayerSkinFile(uuid);
 
         try {
             Files.deleteIfExists(skinFile);
@@ -130,13 +125,100 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public void setStoredSkinData(String skinName, StoredProperty storedProperty) {
-        Path skinFile = resolveSkinFile(skinName);
+    public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
+        Path skinFile = resolvePlayerSkinFile(uuid);
 
-        String data = storedProperty.getValue() + "\n" + storedProperty.getSignature() + "\n" + storedProperty.getTimestamp();
         try {
-            Files.write(skinFile, data.getBytes(StandardCharsets.UTF_8));
+            PlayerSkinFile file = PlayerSkinFile.fromPlayerSkinData(skinData);
+
+            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
+        Path skinFile = resolveURLSkinFile(url);
+
+        if (!Files.exists(skinFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+
+            URLSkinFile file = gson.fromJson(json, URLSkinFile.class);
+
+            return Optional.of(file.toURLSkinData());
         } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeURLSkinData(String url) {
+        Path skinFile = resolveURLSkinFile(url);
+
+        try {
+            Files.deleteIfExists(skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setURLSkinData(String url, URLSkinData skinData) {
+        Path skinFile = resolveURLSkinFile(url);
+
+        try {
+            URLSkinFile file = URLSkinFile.fromURLSkinData(skinData);
+
+            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException {
+        Path skinFile = resolveCustomSkinFile(skinName);
+
+        if (!Files.exists(skinFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+
+            CustomSkinFile file = gson.fromJson(json, CustomSkinFile.class);
+
+            return Optional.of(file.toCustomSkinData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeCustomSkinData(String skinName) {
+        Path skinFile = resolveCustomSkinFile(skinName);
+
+        try {
+            Files.deleteIfExists(skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setCustomSkinData(String skinName, CustomSkinData skinData) {
+        Path skinFile = resolveCustomSkinFile(skinName);
+
+        try {
+            CustomSkinFile file = CustomSkinFile.fromCustomSkinData(skinData);
+
+            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -188,7 +270,7 @@ public class FileAdapter implements StorageAdapter {
                 for (String guiSkins : settings.getProperty(GUIConfig.CUSTOM_GUI_SKINS)) {
                     if (skinName.toLowerCase().contains(guiSkins.toLowerCase())) {
                         try {
-                            getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                            getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -196,7 +278,7 @@ public class FileAdapter implements StorageAdapter {
                 }
             } else {
                 try {
-                    getStoredSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
+                    getCustomSkinData(skinName).ifPresent(property -> list.put(skinName.toLowerCase(), property.getValue()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -204,27 +286,6 @@ public class FileAdapter implements StorageAdapter {
             i++;
         }
         return list;
-    }
-
-    @Override
-    public Optional<Long> getStoredTimestamp(String skinName) {
-        Path skinFile = resolveSkinFile(skinName);
-
-        try {
-            if (!Files.exists(skinFile)) {
-                return Optional.empty();
-            }
-
-            List<String> lines = Files.readAllLines(skinFile);
-
-            if (lines.size() < 3)
-                return Optional.empty();
-
-            return Optional.of(Long.parseLong(lines.get(2)));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
     }
 
     @Override
@@ -252,28 +313,77 @@ public class FileAdapter implements StorageAdapter {
         }
     }
 
-    private Path resolveSkinFile(String skinName) {
-        skinName = removeWhitespaces(skinName);
-        skinName = replaceForbiddenChars(skinName);
-        return skinsFolder.resolve(skinName + ".skin");
-    }
+    @Override
+    public Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException {
+        Path cacheFile = resolveCacheFile(playerName);
 
-    private Path resolvePlayerFile(String playerName) {
-        playerName = replaceForbiddenChars(playerName);
-        return playersFolder.resolve(playerName + ".player");
-    }
-
-    private String replaceForbiddenChars(String str) {
-        // Escape all Windows / Linux forbidden printable ASCII characters
-        return FORBIDDEN_CHARS_PATTERN.matcher(str).replaceAll("·");
-    }
-
-    // TODO remove all whitespace after last starting space.
-    private String removeWhitespaces(String str) {
-        // Remove all whitespace expect when startsWith " ".
-        if (str.startsWith(" ")) {
-            return str;
+        if (!Files.exists(cacheFile)) {
+            return Optional.empty();
         }
-        return WHITESPACE_PATTERN.matcher(str).replaceAll("");
+
+        try {
+            String json = new String(Files.readAllBytes(cacheFile), StandardCharsets.UTF_8);
+
+            MojangCacheFile file = gson.fromJson(json, MojangCacheFile.class);
+
+            return Optional.of(file.toCacheData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
+        Path cacheFile = resolveCacheFile(playerName);
+
+        try {
+            MojangCacheFile file = MojangCacheFile.fromMojangCacheData(mojangCacheData);
+
+            Files.write(cacheFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Path resolveCustomSkinFile(String skinName) {
+        return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
+    }
+
+    private Path resolveURLSkinFile(String url) {
+        return skinsFolder.resolve(hashSHA256(url) + ".urlskin");
+    }
+
+    private Path resolvePlayerSkinFile(UUID uuid) {
+        return skinsFolder.resolve(uuid + ".playerskin");
+    }
+
+    private Path resolvePlayerFile(UUID uuid) {
+        return playersFolder.resolve(uuid + ".player");
+    }
+
+    private Path resolveCacheFile(String name) {
+        return cacheFolder.resolve(name + ".mojangcache");
+    }
+
+    private static String hashSHA256(String input) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
+            return bytesToHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String bytesToHex(byte[] hash) {
+        StringBuilder hexString = new StringBuilder(2 * hash.length);
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                hexString.append('0');
+            }
+            hexString.append(hex);
+        }
+        return hexString.toString();
     }
 }

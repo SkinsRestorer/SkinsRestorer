@@ -24,24 +24,80 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.PlayerData;
+import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
+import javax.inject.Inject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLAdapter implements StorageAdapter {
     private final MySQLProvider mysql;
     private final SettingsManager settings;
+    private final SRLogger logger;
+
+    public void createTable() {
+        /*
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` ("
+                + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
+                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ("
+                + "`Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
+                + "`Value` text COLLATE utf8_unicode_ci,"
+                + "`Signature` text COLLATE utf8_unicode_ci,"
+                + "`timestamp` text COLLATE utf8_unicode_ci,"
+                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+
+        if (!columnExists(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "timestamp")) {
+            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
+        }
+
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Nick") < 17) {
+            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
+        }
+
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Skin") < 19) {
+            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
+        }
+
+        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "Nick") < 19) {
+            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
+        }*/ // TODO
+    }
+
+    private boolean columnExists(String tableName, String columnName) {
+        try (ResultSet resultSet =mysql.query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?", tableName, columnName)) {
+            resultSet.next();
+            return resultSet.getInt(1) > 0;
+        } catch (SQLException e) {
+            logger.severe("Error checking if column exists", e);
+            return false;
+        }
+    }
+
+    private int columnVarCharLength(String tableName, String columnName) {
+        try (ResultSet resultSet = mysql.query("SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?", tableName, columnName)) {
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            logger.severe("Error checking if column exists", e);
+            return -1;
+        }
+    }
 
     @Override
     public Optional<String> getStoredSkinNameOfPlayer(String playerName) {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + " WHERE Nick=?", playerName)) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE Nick=?", playerName)) {
             if (!crs.next()) {
                 return Optional.empty();
             }
@@ -67,7 +123,47 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception {
+    public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
+        return Optional.empty();
+    }
+
+    @Override
+    public void setPlayerData(UUID uuid, PlayerData data) {
+
+    }
+
+    @Override
+    public Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException {
+        return Optional.empty();
+    }
+
+    @Override
+    public void removePlayerSkinData(UUID uuid) {
+
+    }
+
+    @Override
+    public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
+
+    }
+
+    @Override
+    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
+        return Optional.empty();
+    }
+
+    @Override
+    public void removeURLSkinData(String url) {
+
+    }
+
+    @Override
+    public void setURLSkinData(String url, URLSkinData skinData) {
+
+    }
+
+    @Override
+    public Optional<StoredProperty> getCustomSkinData(String skinName) throws Exception {
         try (ResultSet crs = mysql.query("SELECT * FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
             if (!crs.next()) {
                 return Optional.empty();
@@ -82,8 +178,13 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public void removeStoredSkinData(String skinName) {
+    public void removeCustomSkinData(String skinName) {
         mysql.execute("DELETE FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName);
+    }
+
+    @Override
+    public void setCustomSkinData(String skinName, CustomSkinData skinData) {
+
     }
 
     @Override
@@ -119,27 +220,38 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<Long> getStoredTimestamp(String skinName) {
-        try (ResultSet crs = mysql.query("SELECT timestamp FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick=?", skinName)) {
-            if (!crs.next()) {
-                return Optional.empty();
-            }
-
-            String timestampString = crs.getString("timestamp");
-
-            if (timestampString == null)
-                return Optional.empty();
-
-            return Optional.of(Long.parseLong(timestampString));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
-
-    @Override
     public void purgeStoredOldSkins(long targetPurgeTimestamp) {
         // delete if name not start with " " and timestamp below targetPurgeTimestamp
         mysql.execute("DELETE FROM " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + " WHERE Nick NOT LIKE ' %' AND " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + ".timestamp NOT LIKE 0 AND " + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + ".timestamp<=?", targetPurgeTimestamp);
+    }
+
+    @Override
+    public Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException {
+        return Optional.empty();
+    }
+
+    @Override
+    public void setCachedUUID(String playerName, MojangCacheData mojangCacheData) {
+
+    }
+
+    private String resolveCustomSkinTable() {
+
+    }
+
+    private String resolveURLSkinTable() {
+        return skinsFolder.resolve(hashSHA256(url) + ".urlskin");
+    }
+
+    private String resolvePlayerSkinTable() {
+        return skinsFolder.resolve(uuid + ".playerskin");
+    }
+
+    private String resolvePlayerTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE);
+    }
+
+    private String resolveCacheTable() {
+        return cacheFolder.resolve(name + ".mojangcache");
     }
 }

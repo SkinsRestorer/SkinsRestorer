@@ -22,14 +22,21 @@ package net.skinsrestorer.shared.api;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.api.interfaces.SkinStorage;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.shared.subjects.SRPlayer;
+import net.skinsrestorer.shared.utils.SRConstants;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class SharedSkinApplier<P> implements SkinApplier<P> {
     private final Class<P> playerClass;
     private final SkinApplierAccess<P> access;
-    private final NameGetter<P> nameGetter;
+    private final PlatformWrapper<P> wrapper;
+    private final PlayerStorage playerStorage;
     private final SkinStorage skinStorage;
 
     public boolean accepts(Class<?> playerClass) {
@@ -38,13 +45,14 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
 
     @Override
     public void applySkin(P player) throws DataRequestException {
-        String playerName = nameGetter.getName(player);
-        applySkin(player, skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName));
+        SRPlayer srPlayer = wrapper.convert(player);
+        Optional<SkinProperty> playerSkin = playerStorage.getSkinForPlayer(srPlayer.getUniqueId(), srPlayer.getName());
+        applySkin(player, playerSkin.orElse(SRConstants.EMPTY_SKIN));
     }
 
     @Override
-    public void applySkin(P player, String skinName) throws DataRequestException {
-        skinStorage.fetchSkinData(skinName).ifPresent(property -> applySkin(player, property));
+    public void applySkin(P player, SkinIdentifier identifier) throws DataRequestException {
+        skinStorage.fetchPlayerSkinData(skinName).ifPresent(property -> applySkin(player, property));
     }
 
     @Override

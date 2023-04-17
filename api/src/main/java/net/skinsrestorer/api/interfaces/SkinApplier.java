@@ -20,6 +20,7 @@
 package net.skinsrestorer.api.interfaces;
 
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 
 public interface SkinApplier<P> {
@@ -37,10 +38,10 @@ public interface SkinApplier<P> {
      * This will not keep the skin on rejoin / applySkin(playerWrapper).
      *
      * @param player   Player to apply the skin to.
-     * @param skinName Skin to apply
+     * @param identifier SkinIdentifier to apply
      * @throws DataRequestException
      */
-    void applySkin(P player, String skinName) throws DataRequestException;
+    void applySkin(P player, SkinIdentifier identifier) throws DataRequestException;
 
     /**
      * Applies the skin In other words, sets the skin data, but no changes will

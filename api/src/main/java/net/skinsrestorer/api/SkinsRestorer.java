@@ -19,14 +19,15 @@
  */
 package net.skinsrestorer.api;
 
+import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.event.EventBus;
-import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.interfaces.MineSkinAPI;
-import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.CacheStorage;
+import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -37,6 +38,10 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings({"unused"})
 public interface SkinsRestorer {
     SkinStorage getSkinStorage();
+
+    PlayerStorage getPlayerStorage();
+
+    CacheStorage getCacheStorage();
 
     MojangAPI getMojangAPI();
 
@@ -85,9 +90,4 @@ public interface SkinsRestorer {
      * @return Decoded profile data as java object
      */
     MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property);
-
-    default void setSkin(String playerName, String skinName) throws DataRequestException {
-        getSkinStorage().setSkinNameOfPlayer(playerName, skinName);
-        getSkinStorage().fetchSkinData(skinName);
-    }
 }

@@ -19,38 +19,46 @@
  */
 package net.skinsrestorer.shared.storage.adapter;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
+import net.skinsrestorer.shared.storage.model.player.PlayerData;
+import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface StorageAdapter {
-    Optional<String> getStoredSkinNameOfPlayer(String playerName);
+    Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException;
 
-    void removeStoredSkinNameOfPlayer(String playerName);
+    void setPlayerData(UUID uuid, PlayerData data);
 
-    void setStoredSkinNameOfPlayer(String playerName, String skinName);
+    Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException;
 
-    Optional<StoredProperty> getStoredSkinData(String skinName) throws Exception;
+    void removePlayerSkinData(UUID uuid);
 
-    void removeStoredSkinData(String skinName);
+    void setPlayerSkinData(UUID uuid, PlayerSkinData skinData);
 
-    void setStoredSkinData(String skinName, StoredProperty storedProperty);
+    Optional<URLSkinData> getURLSkinData(String url) throws StorageException;
 
-    Map<String, String> getStoredSkins(int offset);
+    void removeURLSkinData(String url);
 
-    Optional<Long> getStoredTimestamp(String skinName);
+    void setURLSkinData(String url, URLSkinData skinData);
 
-    void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException;
+    Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException;
 
-    @RequiredArgsConstructor
-    @Getter
-    class StoredProperty {
-        private final String value;
-        private final String signature;
-        private final long timestamp;
-    }
+    void removeCustomSkinData(String skinName);
+
+    void setCustomSkinData(String skinName, CustomSkinData skinData);
+
+    Map<String, String> getStoredSkins(int offset); // TODO: Redesign this
+
+    void purgeStoredOldSkins(long targetPurgeTimestamp) throws StorageException; // TODO: Redesign this
+
+    Optional<MojangCacheData> getCachedUUID(String playerName) throws StorageException;
+
+    void setCachedUUID(String playerName, MojangCacheData mojangCacheData);
 
     class StorageException extends Exception {
         public StorageException(Throwable cause) {

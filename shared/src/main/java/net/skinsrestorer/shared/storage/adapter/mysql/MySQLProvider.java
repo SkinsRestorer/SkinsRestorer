@@ -19,91 +19,27 @@
  */
 package net.skinsrestorer.shared.storage.adapter.mysql;
 
-import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import org.intellij.lang.annotations.Language;
 import org.mariadb.jdbc.Configuration;
 import org.mariadb.jdbc.pool.Pool;
 import org.mariadb.jdbc.pool.Pools;
 
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MySQLProvider {
     private final SRLogger logger;
-    private final String host;
-    private final int port;
-    private final String database;
-    private final String username;
-    private final String password;
-    private final int maxPoolSize;
-    private final String options;
     private Pool pool;
 
-    public void createTable(SettingsManager settings) {
-        execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` ("
-                + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
-                + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
-                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-
-        execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ("
-                + "`Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
-                + "`Value` text COLLATE utf8_unicode_ci,"
-                + "`Signature` text COLLATE utf8_unicode_ci,"
-                + "`timestamp` text COLLATE utf8_unicode_ci,"
-                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-
-        if (!columnExists(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "timestamp")) {
-            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Nick") < 17) {
-            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Skin") < 19) {
-            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "Nick") < 19) {
-            execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
-        }
-    }
-
-    private boolean columnExists(String tableName, String columnName) {
-        try (Connection connection = pool.getPoolConnection().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
-            statement.setString(1, tableName);
-            statement.setString(2, columnName);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1) > 0;
-        } catch (SQLException e) {
-            logger.severe("Error checking if column exists", e);
-            return false;
-        }
-    }
-
-    private int columnVarCharLength(String tableName, String columnName) {
-        try (Connection connection = pool.getPoolConnection().getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
-            statement.setString(1, tableName);
-            statement.setString(2, columnName);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            logger.severe("Error checking if column exists", e);
-            return -1;
-        }
-    }
-
-    public void connectPool() throws SQLException {
+    public void connectPool(String host, int port, String database,
+                            String username, String password,
+                            int maxPoolSize, String options) throws SQLException {
         Configuration configuration = Configuration.parse("jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?permitMysqlScheme" +
                 "&maxPoolSize=" + maxPoolSize +

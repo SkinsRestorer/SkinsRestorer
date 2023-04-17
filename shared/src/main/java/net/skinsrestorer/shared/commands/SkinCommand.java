@@ -22,10 +22,13 @@ package net.skinsrestorer.shared.commands;
 import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.interfaces.MineSkinAPI;
 import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
@@ -35,7 +38,6 @@ import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.CooldownStorage;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -61,7 +63,8 @@ public final class SkinCommand {
     private final SRPlugin plugin;
     private final SettingsManager settings;
     private final CooldownStorage cooldownStorage;
-    private final SkinStorageImpl skinStorage;
+    private final SkinStorage skinStorage;
+    private final PlayerStorage playerStorage;
     private final SkinsRestorerLocale locale;
     private final SRLogger logger;
     private final SharedSkinApplier<Object> skinApplier;
@@ -99,7 +102,7 @@ public final class SkinCommand {
         String playerName = target.getName();
 
         // remove users defined skin from database
-        skinStorage.removeSkinNameOfPlayer(playerName);
+        playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
 
         try {
             Optional<SkinProperty> property = skinStorage.getDefaultSkinForPlayer(playerName);
@@ -137,7 +140,7 @@ public final class SkinCommand {
     @CommandConditions("cooldown")
     private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
         String playerName = target.getName();
-        Optional<String> skin = skinStorage.getSkinNameOfPlayer(playerName);
+        Optional<String> skin = playerStorage.getSkinForPlayer(target.getUniqueId());
 
         try {
             if (skin.isPresent()) {
@@ -219,22 +222,21 @@ public final class SkinCommand {
         commandManager.executeCommand(player, "skins");
     }
 
-    private boolean setSkin(SRCommandSender sender, SRPlayer player, String skinName, boolean saveSkin, SkinVariant skinVariant) {
-        if (isDisabledSkin(skinName) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
+    private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, boolean saveSkin, SkinVariant skinVariant) {
+        if (isDisabledSkin(skinInput) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
             sender.sendMessage(Message.ERROR_SKIN_DISABLED);
             return false;
         }
 
-        String playerName = player.getName();
-        String oldSkinName = saveSkin ? skinStorage.getSkinNameOfPlayer(playerName).orElse(playerName) : null;
-        if (C.validUrl(skinName)) {
+        Optional<SkinIdentifier> oldSkinId = saveSkin ? playerStorage.getSkinIdOfPlayer(target.getUniqueId()) : null;
+        if (C.validUrl(skinInput)) {
             if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
                     && !settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) { // Ignore /skin clear when defaultSkin = url
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
 
-            if (!allowedSkinUrl(skinName)) {
+            if (!allowedSkinUrl(skinInput)) {
                 sender.sendMessage(Message.ERROR_SKINURL_DISALLOWED);
                 return false;
             }
@@ -245,10 +247,10 @@ public final class SkinCommand {
                 if (skinUrlName.length() > 16) // max len of 16 char
                     skinUrlName = skinUrlName.substring(0, 16);
 
-                SkinProperty generatedSkin = mineSkinAPI.genSkin(skinName, skinVariant);
-                skinStorage.setSkinData(skinUrlName, generatedSkin, 0); // "generate" and save skin forever
+                SkinProperty generatedSkin = mineSkinAPI.genSkin(skinInput, skinVariant);
+                skinStorage.setCustomSkinData(skinUrlName, generatedSkin, 0); // "generate" and save skin forever
                 skinStorage.setSkinNameOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
-                skinApplier.applySkin(player.getAs(Object.class), generatedSkin);
+                skinApplier.applySkin(target.getAs(Object.class), generatedSkin);
 
                 sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
 
@@ -258,18 +260,18 @@ public final class SkinCommand {
             } catch (DataRequestException e) {
                 sender.sendMessage(getRootCause(e).getMessage());
             } catch (Exception e) {
-                logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinName), e);
+                logger.debug(SRLogLevel.SEVERE, String.format("Could not generate skin url: %s", skinInput), e);
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
             }
         } else {
             try {
                 if (saveSkin) {
-                    skinStorage.setSkinNameOfPlayer(playerName, skinName);
+                    skinStorage.setSkinNameOfPlayer(playerName, skinInput);
                 }
 
-                skinApplier.applySkin(player.getAs(Object.class), skinName);
+                skinApplier.applySkin(target.getAs(Object.class), skinInput);
 
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinName);
+                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinInput);
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
@@ -282,7 +284,7 @@ public final class SkinCommand {
         setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
 
         if (saveSkin) {
-            skinStorage.setSkinNameOfPlayer(playerName, oldSkinName);
+            playerStorage.setSkinIdOfPlayer(playerName, oldSkinId);
         }
         return false;
     }

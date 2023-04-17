@@ -25,9 +25,9 @@ import ch.jalu.injector.Injector;
 import lombok.Getter;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.SkinsRestorerProvider;
-import net.skinsrestorer.api.interfaces.MineSkinAPI;
+import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.shared.api.NameGetter;
+import net.skinsrestorer.shared.api.PlatformWrapper;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
 import net.skinsrestorer.shared.api.SharedSkinsRestorer;
 import net.skinsrestorer.shared.api.SkinApplierAccess;
@@ -243,22 +243,23 @@ public class SRPlugin {
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
         try {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
-                MySQLProvider mySQLProvider = new MySQLProvider(
-                        logger,
-                        settings.getProperty(DatabaseConfig.MYSQL_HOST),
+                MySQLProvider mySQLProvider = injector.getSingleton(MySQLProvider.class);
+
+                mySQLProvider.connectPool(settings.getProperty(DatabaseConfig.MYSQL_HOST),
                         settings.getProperty(DatabaseConfig.MYSQL_PORT),
                         settings.getProperty(DatabaseConfig.MYSQL_DATABASE),
                         settings.getProperty(DatabaseConfig.MYSQL_USERNAME),
                         settings.getProperty(DatabaseConfig.MYSQL_PASSWORD),
                         settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE),
-                        settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS)
-                );
-
-                mySQLProvider.connectPool();
-                mySQLProvider.createTable(settings);
+                        settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS));
 
                 logger.info("Connected to MySQL!");
-                skinStorage.setStorageAdapter(new MySQLAdapter(mySQLProvider, settings));
+
+                MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
+
+                adapter.createTable();
+
+                skinStorage.setStorageAdapter(adapter);
             } else {
                 skinStorage.setStorageAdapter(new FileAdapter(dataFolder, settings));
             }
@@ -308,8 +309,8 @@ public class SRPlugin {
         injector.register(SkinsRestorer.class, api);
     }
 
-    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, NameGetter<P> nameGetter) {
-        SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, nameGetter,
+    public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, PlatformWrapper<P> platformWrapper) {
+        SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
                 injector.getSingleton(SkinStorageImpl.class));
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
         injector.register(SkinApplier.class, sharedSkinApplier);

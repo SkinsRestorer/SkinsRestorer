@@ -19,10 +19,13 @@
  */
 package net.skinsrestorer.shared.connections.http;
 
+import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 
+import javax.inject.Inject;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -31,18 +34,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class HttpClient {
     private final SRLogger logger;
-    private final String url;
-    private final RequestBody requestBody;
-    private final HttpType accepts;
-    private final String userAgent;
-    private final HttpMethod method;
-    private final Map<String, String> headers;
-    private final int timeout;
+    private final SettingsManager settings;
 
-    public HttpResponse execute() throws IOException {
+    public HttpResponse execute(String url, RequestBody requestBody, HttpType accepts,
+                                String userAgent, HttpMethod method,
+                                Map<String, String> headers, int timeout) throws IOException {
+        if (settings.getProperty(AdvancedConfig.NO_CONNECTIONS)) {
+            throw new IOException("Connections are disabled.");
+        }
+
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(method.name());
         connection.setConnectTimeout(timeout);

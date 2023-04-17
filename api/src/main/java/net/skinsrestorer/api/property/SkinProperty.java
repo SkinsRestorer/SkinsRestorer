@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
  */
 @Data
 @RequiredArgsConstructor(staticName = "of")
-@SuppressWarnings("unused")
 public class SkinProperty {
     public static final String TEXTURES_NAME = "textures";
     @NonNull

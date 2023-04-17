@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 public class MineSkinTest {
     private static final String TEST_URL = "https://skinsrestorer.net/skinsrestorer-skin.png";
     @Mock
-    private SettingsManager settingsManager;
+    private SettingsManager settings;
     @Mock
     private SkinsRestorerLocale skinsRestorerLocale;
 
@@ -48,9 +48,9 @@ public class MineSkinTest {
     public void testServices(Injector injector) throws DataRequestException {
         injector.register(SkinsRestorerLocale.class, skinsRestorerLocale);
 
-        when(settingsManager.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
+        when(settings.getProperty(APIConfig.MINESKIN_API_KEY)).thenReturn("");
 
-        injector.register(SettingsManager.class, settingsManager);
+        injector.register(SettingsManager.class, settings);
 
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
         SkinProperty skinProperty = injector.getSingleton(MineSkinAPIImpl.class).genSkin(TEST_URL, null);

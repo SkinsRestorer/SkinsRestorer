@@ -19,6 +19,8 @@
  */
 package net.skinsrestorer.shared.api;
 
-public interface NameGetter<P> {
-    String getName(P player);
+import net.skinsrestorer.shared.subjects.SRPlayer;
+
+public interface PlatformWrapper<P> {
+    SRPlayer convert(P player);
 }

@@ -23,14 +23,19 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.interfaces.SkinStorage;
+import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
+import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
+import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.C;
@@ -38,11 +43,7 @@ import net.skinsrestorer.shared.utils.C;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
@@ -88,28 +89,6 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<SkinProperty> getSkinOfPlayer(String playerName) throws DataRequestException {
-        Optional<String> skinName = getSkinNameOfPlayer(playerName);
-
-        if (skinName.isPresent()) {
-            return fetchSkinData(skinName.get());
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<SkinProperty> getDefaultSkinForPlayer(String playerName) throws DataRequestException {
-        String defaultSkinName = getDefaultSkinNameForPlayer(playerName).orElse(playerName);
-
-        if (C.validUrl(defaultSkinName)) {
-            return Optional.of(mineSkinAPI.genSkin(defaultSkinName, null));
-        } else {
-            return fetchSkinData(defaultSkinName);
-        }
-    }
-
-    @Override
     public Optional<SkinProperty> fetchSkinData(String skinName) throws DataRequestException {
         Optional<SkinProperty> textures = getSkinData(skinName, true);
         if (textures.isPresent()) {
@@ -123,7 +102,7 @@ public class SkinStorageImpl implements SkinStorage {
             return Optional.empty();
         }
 
-        setSkinData(skinName, mojangTextures.get());
+        setCustomSkinData(skinName, mojangTextures.get());
 
         return mojangTextures;
     }
@@ -136,10 +115,10 @@ public class SkinStorageImpl implements SkinStorage {
      * @return Platform-specific property
      */
     private Optional<SkinProperty> updateSkin(String playerName, long timestamp) {
-        if (isExpired(timestamp)) {
+        if (isPlayerSkinExpired(timestamp)) {
             try {
                 return mojangAPI.getSkin(playerName).map(skinProperty -> {
-                    setSkinData(playerName, skinProperty);
+                    setCustomSkinData(playerName, skinProperty);
                     return skinProperty;
                 });
             } catch (DataRequestException e) {
@@ -151,30 +130,8 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public Optional<String> getSkinNameOfPlayer(String playerName) {
-        playerName = playerName.toLowerCase();
-
-        return storageAdapter.getStoredSkinNameOfPlayer(playerName).flatMap(skinName -> {
-            if (skinName.isEmpty()) {
-                return Optional.empty();
-            }
-
-            return Optional.of(skinName);
-        });
-    }
-
-    @Override
-    public void setSkinNameOfPlayer(String playerName, String skinName) {
-        playerName = playerName.toLowerCase();
-
-        storageAdapter.setStoredSkinNameOfPlayer(playerName, skinName);
-    }
-
-    @Override
-    public void removeSkinNameOfPlayer(String playerName) {
-        playerName = playerName.toLowerCase();
-
-        storageAdapter.removeStoredSkinNameOfPlayer(playerName);
+    public Optional<SkinProperty> fetchPlayerSkinData(UUID uuid) throws DataRequestException {
+        return Optional.empty();
     }
 
     // #getSkinData() also create while we have #getSkinForPlayer()
@@ -184,7 +141,7 @@ public class SkinStorageImpl implements SkinStorage {
 
         try {
             String finalSkinName = skinName;
-            return storageAdapter.getStoredSkinData(skinName).map(property -> {
+            return storageAdapter.getCustomSkinData(skinName).map(property -> {
                 SkinProperty skinProperty = SkinProperty.of(property.getValue(), property.getSignature());
                 if (updateOutdated) {
                     return updateSkin(finalSkinName, property.getTimestamp()).orElse(skinProperty);
@@ -199,6 +156,21 @@ public class SkinStorageImpl implements SkinStorage {
         }
     }
 
+    @Override
+    public void setPlayerSkinData(UUID uuid, SkinProperty textures, long timestamp) {
+        storageAdapter.setPlayerSkinData(uuid, PlayerSkinData.of(uuid, textures, timestamp));
+    }
+
+    @Override
+    public void setURLSkinData(String url, String mineSkinId, SkinProperty textures) {
+        storageAdapter.setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures));
+    }
+
+    @Override
+    public void setCustomSkinData(String skinName, SkinProperty textures) {
+        storageAdapter.setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
+    }
+
     /**
      * Removes skin data from database
      *
@@ -207,19 +179,7 @@ public class SkinStorageImpl implements SkinStorage {
     public void removeSkinData(String skinName) {
         skinName = skinName.toLowerCase();
 
-        storageAdapter.removeStoredSkinData(skinName);
-    }
-
-    @Override
-    public void setSkinData(String skinName, SkinProperty textures, long timestamp) {
-        skinName = skinName.toLowerCase();
-        String value = textures.getValue();
-        String signature = textures.getSignature();
-
-        if (value.isEmpty() || signature.isEmpty())
-            return;
-
-        storageAdapter.setStoredSkinData(skinName, new StorageAdapter.StoredProperty(value, signature, timestamp));
+        storageAdapter.removeCustomSkinData(skinName);
     }
 
     // TODO: CUSTOM_GUI
@@ -255,7 +215,7 @@ public class SkinStorageImpl implements SkinStorage {
                 Optional<SkinProperty> textures = mojangAPI.getProfileMojang(mojangUUID.get());
 
                 if (textures.isPresent()) {
-                    setSkinData(skinName, textures.get());
+                    setCustomSkinData(skinName, textures.get());
                     return true;
                 }
             }
@@ -266,70 +226,50 @@ public class SkinStorageImpl implements SkinStorage {
         return false;
     }
 
-    /**
-     * // TODO: Rewrite this comment
-     * Filters player name to exclude non [a-z_]
-     * Checks and process default skin.
-     * IF no default skin:
-     * 1: Return player if clear
-     * 2: Return skin if found
-     * Else: return player
-     *
-     * @param playerName Player name
-     * @return Custom skin or default skin or player name, right side indicates if it is a custom skin
-     */
-    public Optional<String> getDefaultSkinNameForPlayer(String playerName) {
-        // Trim player name
-        playerName = playerName.trim();
+    public Optional<SkinIdentifier> getSkinIdByString(String input) {
+        try {
+            if (C.validUrl(input)) {
+                return storageAdapter.getURLSkinData(input).map(data -> SkinIdentifier.of(input, SkinType.URL));
+            } else {
+                Optional<CustomSkinData> customSkinData = storageAdapter.getCustomSkinData(input);
 
-        if (settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
-            // don't return default skin name for premium players if enabled
-            if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
-                // check if player is premium
-                try {
-                    if (mojangAPI.getUUID(playerName).isPresent()) {
-                        // player is premium, return his skin name instead of default skin
-                        return Optional.empty();
-                    }
-                } catch (DataRequestException ignored) {
-                    // Player is not premium catching exception here to continue returning a default skin name
+                if (customSkinData.isPresent()) {
+                    return Optional.of(SkinIdentifier.of(input, SkinType.CUSTOM));
+                }
+
+                Optional<UUID> uuid = mojangAPI.getUUID(input);
+
+                if (!uuid.isPresent()) {
+                    return Optional.empty();
+                }
+
+                Optional<PlayerSkinData> playerSkinData = storageAdapter.getPlayerSkinData(uuid.get());
+
+                if (playerSkinData.isPresent()) {
+                    return Optional.of(SkinIdentifier.of(input, SkinType.PLAYER));
                 }
             }
-
-            // return default skin name if user has no custom skin set, or we want to clear to default
-            List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
-
-            // return player name if there are no default skins set
-            if (skins.isEmpty()) {
-                return Optional.empty();
-            }
-
-            // makes no sense to select a random skin if there is only one
-            if (skins.size() == 1) {
-                return Optional.of(skins.get(0));
-            }
-
-            return Optional.of(skins.get(ThreadLocalRandom.current().nextInt(skins.size())));
+        } catch (StorageAdapter.StorageException | DataRequestException e) {
+            e.printStackTrace();
         }
 
-        // empty if player has no custom skin, we'll return his name then
         return Optional.empty();
     }
 
     /**
-     * Checks if a skin is expired and should be re-fetched from mojang.
+     * Checks if a player skin is expired and should be re-fetched from mojang.
      *
-     * @param timestamp in milliseconds
+     * @param timestamp in seconds
      * @return true if skin is outdated
      */
-    private boolean isExpired(long timestamp) {
+    private boolean isPlayerSkinExpired(long timestamp) {
         // Do not update if timestamp is not 0 or update is disabled.
-        if (timestamp == 0 || settings.getProperty(StorageConfig.DISALLOW_AUTO_UPDATE_SKIN)) {
+        if (timestamp == -1 || settings.getProperty(StorageConfig.DISALLOW_AUTO_UPDATE_SKIN)) {
             return false;
         }
 
-        long now = System.currentTimeMillis();
-        long expiryDate = timestamp + TimeUnit.MINUTES.toMillis(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
+        long now = Instant.now().getEpochSecond();
+        long expiryDate = timestamp + TimeUnit.MINUTES.toSeconds(settings.getProperty(StorageConfig.SKIN_EXPIRES_AFTER));
 
         return expiryDate <= now;
     }

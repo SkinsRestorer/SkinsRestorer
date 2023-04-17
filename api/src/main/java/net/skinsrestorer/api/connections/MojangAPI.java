@@ -17,12 +17,13 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.interfaces;
+package net.skinsrestorer.api.connections;
 
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface MojangAPI {
     /**
@@ -38,7 +39,7 @@ public interface MojangAPI {
      */
     Optional<SkinProperty> getSkin(String playerName) throws DataRequestException;
 
-    Optional<String> getUUID(String playerName) throws DataRequestException;
+    Optional<UUID> getUUID(String playerName) throws DataRequestException;
 
     Optional<SkinProperty> getProfile(String uuid) throws DataRequestException;
 }

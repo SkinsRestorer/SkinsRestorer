@@ -23,13 +23,15 @@ import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinsRestorer;
+import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.event.EventBus;
-import net.skinsrestorer.api.interfaces.MineSkinAPI;
-import net.skinsrestorer.api.interfaces.MojangAPI;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.api.interfaces.SkinStorage;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.CacheStorage;
+import net.skinsrestorer.api.storage.PlayerStorage;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +43,10 @@ import java.util.Base64;
 public class SharedSkinsRestorer implements SkinsRestorer {
     @Getter
     private final SkinStorage skinStorage;
+    @Getter
+    private final PlayerStorage playerStorage;
+    @Getter
+    private final CacheStorage cacheStorage;
     @Getter
     private final MojangAPI mojangAPI;
     @Getter

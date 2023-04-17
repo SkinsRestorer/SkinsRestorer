@@ -49,21 +49,17 @@ public class UpdateCheckerGitHub {
     private final SRLogger logger;
     private final SRPlugin plugin;
     private final Injector injector;
+    private final HttpClient httpClient;
 
     public void checkForUpdate(UpdateCallback callback) {
-        HttpClient client = new HttpClient(
-                logger,
-                RELEASES_URL_LATEST,
-                null,
-                HttpClient.HttpType.JSON,
-                plugin.getUserAgent(),
-                HttpClient.HttpMethod.GET,
-                Collections.emptyMap(),
-                90_000
-        );
-
         try {
-            HttpResponse response = client.execute();
+            HttpResponse response = httpClient.execute(RELEASES_URL_LATEST,
+                    null,
+                    HttpClient.HttpType.JSON,
+                    plugin.getUserAgent(),
+                    HttpClient.HttpMethod.GET,
+                    Collections.emptyMap(),
+                    90_000);
             GitHubReleaseInfo releaseInfo = response.getBodyAs(GitHubReleaseInfo.class);
 
             Optional<GitHubAssetInfo> jarAsset = releaseInfo.getAssets().stream()
@@ -89,7 +85,11 @@ public class UpdateCheckerGitHub {
         printHeader(cause);
         logger.info("§b    Current version: §a" + plugin.getVersion());
         logger.info("§b    Commit: §a" + BuildData.COMMIT_SHORT);
-        logger.info("§a    This is the latest version!");
+        if (cause == UpdateCause.NO_NETWORK) {
+            logger.info("§c    No network connection available!");
+        } else {
+            logger.info("§a    This is the latest version!");
+        }
         printFooter();
     }
 

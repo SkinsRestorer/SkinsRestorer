@@ -74,6 +74,8 @@ public class ConfigMigratorService implements MigrationService {
         Property<String> oldMySQLPasswordProperty = newProperty("MySQL.Password", "password");
         migrated |= moveProperty(oldMySQLPasswordProperty, DatabaseConfig.MYSQL_PASSWORD, reader, configData);
 
+        Property<String> oldMySQLSkinTable = newProperty("MySQL.TablePrefix", "skinsrestorer_");
+
         return migrated;
     }
 
