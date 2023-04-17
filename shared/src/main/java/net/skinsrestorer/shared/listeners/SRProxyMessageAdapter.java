@@ -20,11 +20,11 @@
 package net.skinsrestorer.shared.listeners;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.listeners.event.SRProxyMessageEvent;
 import net.skinsrestorer.shared.plugin.SRProxyAdapter;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 
@@ -36,7 +36,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class SRProxyMessageAdapter {
-    private final SkinStorageImpl skinStorage;
+    private final SkinStorage skinStorage;
     private final SRProxyAdapter<?> plugin;
     private final CommandManager<SRCommandSender> commandManager;
     private final SRProxyPlugin proxyPlugin;

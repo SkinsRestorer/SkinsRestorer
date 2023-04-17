@@ -20,9 +20,9 @@
 package net.skinsrestorer.shared.commands;
 
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.plugin.SRProxyPlugin;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -37,7 +37,7 @@ import javax.inject.Inject;
 @CommandConditions({"cooldown", "allowed-server"})
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public final class ProxyGUICommand {
-    private final SkinStorageImpl skinStorage;
+    private final SkinStorage skinStorage;
     private final SRProxyPlugin proxyPlugin;
 
     @RootCommand

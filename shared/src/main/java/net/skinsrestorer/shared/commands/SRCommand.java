@@ -31,19 +31,19 @@ import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.CacheStorage;
+import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
-import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -66,9 +66,9 @@ import static net.skinsrestorer.shared.utils.SharedMethods.getRootCause;
 public final class SRCommand {
     private final SRPlugin plugin;
     private final SRPlatformAdapter<?> adapter;
-    private final MojangAPIImpl mojangAPI;
     private final ServiceCheckerService serviceCheckerService;
-    private final PlayerStorageImpl playerStorage;
+    private final PlayerStorage playerStorage;
+    private final CacheStorage cacheStorage;
     private final SkinStorage skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
@@ -151,18 +151,14 @@ public final class SRCommand {
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         switch (playerOrSkin) {
             case PLAYER:
-                try {
-                    Optional<UUID> targetId = mojangAPI.getUUID(target);
+                Optional<UUID> targetId = cacheStorage.getUUID(target);
 
-                    if (!targetId.isPresent()) {
-                        sender.sendMessage("§cPlayer §e" + target + " §cnot found."); // TODO: Message
-                        return;
-                    }
-
-                    playerStorage.removeSkinIdOfPlayer(targetId.get());
-                } catch (DataRequestException e) {
-                    e.printStackTrace();
+                if (!targetId.isPresent()) {
+                    sender.sendMessage("§cPlayer §e" + target + " §cnot found."); // TODO: Message
+                    return;
                 }
+
+                playerStorage.removeSkinIdOfPlayer(targetId.get());
                 break;
             case SKIN:
                 Optional<InputDataResult> optional = skinStorage.findSkinData(target);

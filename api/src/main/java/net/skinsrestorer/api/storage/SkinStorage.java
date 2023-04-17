@@ -24,6 +24,7 @@ import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,7 +48,7 @@ public interface SkinStorage {
     /**
      * Saves skin data to database
      *
-     * @param uuid    Player UUID
+     * @param uuid      Player UUID
      * @param textures  Property object
      * @param timestamp timestamp string in milliseconds
      */
@@ -56,17 +57,17 @@ public interface SkinStorage {
     /**
      * Saves skin data to database
      *
-     * @param url         URL to skin
-     * @param mineSkinId  MineSkin ID
-     * @param textures    Property object
+     * @param url        URL to skin
+     * @param mineSkinId MineSkin ID
+     * @param textures   Property object
      */
     void setURLSkinData(String url, String mineSkinId, SkinProperty textures);
 
     /**
      * Saves skin data to database
      *
-     * @param skinName  Skin name
-     * @param textures  Property object
+     * @param skinName Skin name
+     * @param textures Property object
      */
     void setCustomSkinData(String skinName, SkinProperty textures);
 
@@ -79,4 +80,6 @@ public interface SkinStorage {
     void removeSkinData(SkinIdentifier identifier);
 
     boolean purgeOldSkins(int days);
+
+    Map<String, String> getSkins(int skinNumber);
 }

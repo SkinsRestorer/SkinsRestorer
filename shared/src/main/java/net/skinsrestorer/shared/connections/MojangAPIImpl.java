@@ -54,6 +54,19 @@ public class MojangAPIImpl implements MojangAPI {
     private final SRPlugin plugin;
     private final HttpClient httpClient;
 
+    public static UUID convertToDashed(String noDashes) {
+        StringBuilder idBuff = new StringBuilder(noDashes);
+        idBuff.insert(20, '-');
+        idBuff.insert(16, '-');
+        idBuff.insert(12, '-');
+        idBuff.insert(8, '-');
+        return UUID.fromString(idBuff.toString());
+    }
+
+    public static String convertToNoDashes(UUID uuid) {
+        return uuid.toString().replace("-", "");
+    }
+
     @Override
     public Optional<SkinProperty> getSkin(String playerName) throws DataRequestException {
         if (!C.validMojangUsername(playerName)) {
@@ -272,18 +285,5 @@ public class MojangAPIImpl implements MojangAPI {
 
         private final String value;
         private final String signature;
-    }
-
-    public static UUID convertToDashed(String noDashes) {
-        StringBuilder idBuff = new StringBuilder(noDashes);
-        idBuff.insert(20, '-');
-        idBuff.insert(16, '-');
-        idBuff.insert(12, '-');
-        idBuff.insert(8, '-');
-        return UUID.fromString(idBuff.toString());
-    }
-
-    public static String convertToNoDashes(UUID uuid) {
-        return uuid.toString().replace("-", "");
     }
 }

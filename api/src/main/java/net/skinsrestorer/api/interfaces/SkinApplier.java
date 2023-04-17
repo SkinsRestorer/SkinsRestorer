@@ -37,7 +37,7 @@ public interface SkinApplier<P> {
      * Only Apply the skinName from the skin table/file.
      * This will not keep the skin on rejoin / applySkin(playerWrapper).
      *
-     * @param player   Player to apply the skin to.
+     * @param player     Player to apply the skin to.
      * @param identifier SkinIdentifier to apply
      * @throws DataRequestException
      */

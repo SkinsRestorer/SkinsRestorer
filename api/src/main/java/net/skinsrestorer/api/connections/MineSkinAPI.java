@@ -22,7 +22,6 @@ package net.skinsrestorer.api.connections;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.api.property.SkinProperty;
 import org.jetbrains.annotations.Nullable;
 
 public interface MineSkinAPI {

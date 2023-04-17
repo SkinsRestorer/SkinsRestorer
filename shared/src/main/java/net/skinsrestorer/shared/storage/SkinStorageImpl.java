@@ -27,6 +27,7 @@ import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SkinStorageImpl implements SkinStorage {
     private final SRLogger logger;
+    private final CacheStorage cacheStorage;
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
@@ -141,7 +143,7 @@ public class SkinStorageImpl implements SkinStorage {
                             InputDataResult.of(SkinIdentifier.of(data.getSkinName(), SkinType.CUSTOM), data.getProperty()));
                 }
 
-                Optional<UUID> uuid = mojangAPI.getUUID(input);
+                Optional<UUID> uuid = cacheStorage.getUUID(input);
 
                 if (!uuid.isPresent()) {
                     return Optional.empty();
@@ -154,7 +156,7 @@ public class SkinStorageImpl implements SkinStorage {
                             InputDataResult.of(SkinIdentifier.of(uuid.get().toString(), SkinType.PLAYER), data.getProperty()));
                 }
             }
-        } catch (StorageAdapter.StorageException | DataRequestException e) {
+        } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();
         }
 
@@ -176,7 +178,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             return Optional.of(InputDataResult.of(SkinIdentifier.of(input, SkinType.URL), response.getProperty()));
         } else {
-            Optional<UUID> uuid = mojangAPI.getUUID(input);
+            Optional<UUID> uuid = cacheStorage.getUUID(input);
 
             if (!uuid.isPresent()) {
                 return Optional.empty();
