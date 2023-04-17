@@ -53,15 +53,19 @@ public class CacheStorageImpl implements CacheStorage {
         try {
             Optional<MojangCacheData> stored = storageAdapter.getCachedUUID(playerName);
 
-            if (stored.isPresent() && !isExpiredUniqueId(stored.get().getTimestampSeconds())) {
-                return stored.map(MojangCacheData::getUniqueId);
+            if (stored.isPresent() && !isExpiredUniqueId(stored.get().getTimestamp())) {
+                if (stored.get().isPremium()) {
+                    return Optional.of(stored.get().getUniqueId());
+                } else {
+                    return Optional.empty();
+                }
             }
 
             try {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
-                uuid.ifPresent(value -> storageAdapter.setCachedUUID(playerName,
-                        MojangCacheData.of(value, playerName, Instant.now().getEpochSecond())));
+                storageAdapter.setCachedUUID(playerName,
+                        MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), playerName, Instant.now().getEpochSecond()));
 
                 return uuid;
             } catch (DataRequestException e) {

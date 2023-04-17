@@ -71,8 +71,7 @@ public class MojangAPIImpl implements MojangAPI {
         } catch (DataRequestException e) {
             Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
             if (uuidResult.isPresent()) {
-                return getProfileStartMojang(uuidResult.get()
-                        .toString().replace("-", "")); // Mojang API requires no dashes
+                return getProfileStartMojang(uuidResult.get()); // Mojang API requires no dashes
             }
 
             return Optional.empty();
@@ -155,15 +154,15 @@ public class MojangAPIImpl implements MojangAPI {
                 .map(MojangAPIImpl::convertToDashed);
     }
 
-    public Optional<SkinProperty> getProfile(String uuid) throws DataRequestException {
+    public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
-            return getDataAshcon(uuid).flatMap(this::getPropertyAshcon);
+            return getDataAshcon(uuid.toString().replace("-", "")).flatMap(this::getPropertyAshcon);
         } catch (DataRequestException e) {
             return getProfileStartMojang(uuid);
         }
     }
 
-    private Optional<SkinProperty> getProfileStartMojang(String uuid) throws DataRequestException {
+    private Optional<SkinProperty> getProfileStartMojang(UUID uuid) throws DataRequestException {
         try {
             return getProfileMojang(uuid);
         } catch (DataRequestException e) {
@@ -171,8 +170,8 @@ public class MojangAPIImpl implements MojangAPI {
         }
     }
 
-    public Optional<SkinProperty> getProfileMojang(String uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(PROFILE_MOJANG.replace("%uuid%", uuid), MetricsCounter.Service.MOJANG);
+    public Optional<SkinProperty> getProfileMojang(UUID uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(PROFILE_MOJANG.replace("%uuid%", convertToNoDashes(uuid)), MetricsCounter.Service.MOJANG);
         MojangProfileResponse response = httpResponse.getBodyAs(MojangProfileResponse.class);
         if (response.getProperties() == null) {
             return Optional.empty();
@@ -186,8 +185,8 @@ public class MojangAPIImpl implements MojangAPI {
         return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
     }
 
-    protected Optional<SkinProperty> getProfileMineTools(String uuid) throws DataRequestException {
-        HttpResponse httpResponse = readURL(PROFILE_MINETOOLS.replace("%uuid%", uuid), MetricsCounter.Service.MINE_TOOLS, 10_000);
+    protected Optional<SkinProperty> getProfileMineTools(UUID uuid) throws DataRequestException {
+        HttpResponse httpResponse = readURL(PROFILE_MINETOOLS.replace("%uuid%", convertToNoDashes(uuid)), MetricsCounter.Service.MINE_TOOLS, 10_000);
         MineToolsProfileResponse response = httpResponse.getBodyAs(MineToolsProfileResponse.class);
         if (response.getRaw() == null) {
             return Optional.empty();
@@ -282,4 +281,7 @@ public class MojangAPIImpl implements MojangAPI {
         return UUID.fromString(idBuff.toString());
     }
 
+    public static String convertToNoDashes(UUID uuid) {
+        return uuid.toString().replace("-", "");
+    }
 }

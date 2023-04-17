@@ -34,7 +34,7 @@ import java.util.UUID;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ServiceCheckerService {
     private static final String XKNAT_NAME = "xknat";
-    private static final String XKNAT_UUID = "7dcfc130344a47199fbe3176bc2075c6";
+    private static final UUID XKNAT_UUID = UUID.fromString("7dcfc130-344a-4719-9fbe-3176bc2075c6");
     private static final String MESSAGE_ERROR = "%s §c✘ Error getting %s";
     private static final String MESSAGE_ERROR_EXCEPTION = "%s §c✘ Error getting %s: %s";
     private static final String UUID_MESSAGE = "%s §a✔ xknat UUID: §b%s";
@@ -63,9 +63,9 @@ public class ServiceCheckerService {
 
         // ##### UUID requests #####
         try {
-            Optional<String> uuid = mojangAPI.getUUIDMojang(XKNAT_NAME);
+            Optional<UUID> uuid = mojangAPI.getUUIDMojang(XKNAT_NAME);
 
-            if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
+            if (uuid.isPresent()) {
                 response.addResult(String.format(UUID_MESSAGE, "Mojang", uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "Mojang", "UUID"));
@@ -74,9 +74,9 @@ public class ServiceCheckerService {
         }
 
         try {
-            Optional<String> uuid = mojangAPI.getUUIDMineTools(XKNAT_NAME);
+            Optional<UUID> uuid = mojangAPI.getUUIDMineTools(XKNAT_NAME);
 
-            if (uuid.isPresent() && !uuid.get().equalsIgnoreCase("null")) {
+            if (uuid.isPresent()) {
                 response.addResult(String.format(UUID_MESSAGE, "MineTools", uuid.get()));
                 response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "MineTools", "UUID"));
@@ -86,7 +86,7 @@ public class ServiceCheckerService {
 
         // ##### Profile requests #####
         try {
-            Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID);
+            Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID.toString());
             if (nameAshcon.isPresent()) {
                 Optional<SkinProperty> property = mojangAPI.getPropertyAshcon(nameAshcon.get());
                 if (property.isPresent()) {

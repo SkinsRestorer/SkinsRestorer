@@ -23,6 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -70,7 +71,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
     private final HttpClient httpClient;
 
     @Override
-    public SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException {
+    public MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException {
         url = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
         AtomicInteger failedAttempts = new AtomicInteger(0);
 
@@ -91,7 +92,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         throw new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED);
     }
 
-    public CompletableFuture<SkinProperty> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
+    public CompletableFuture<MineSkinResponse> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
         return CompletableFuture.supplyAsync(() -> {
             String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
 
@@ -102,8 +103,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 switch (response.getStatusCode()) {
                     case 200: {
                         MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
-                        return SkinProperty.of(urlResponse.getData().getTexture().getValue(),
-                                urlResponse.getData().getTexture().getSignature());
+                        return MineSkinResponse.of(SkinProperty.of(urlResponse.getData().getTexture().getValue(),
+                                urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr());
                     }
                     case 500:
                     case 400: {

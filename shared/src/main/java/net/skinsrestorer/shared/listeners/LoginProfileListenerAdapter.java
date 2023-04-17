@@ -60,7 +60,7 @@ public final class LoginProfileListenerAdapter<R> {
     }
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
-        Optional<SkinProperty> skinOfPlayer = playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName());
+        Optional<SkinProperty> skinOfPlayer = playerStorage.getSkinOfPlayer(event.getPlayerUniqueId());
 
         if (skinOfPlayer.isPresent()) {
             return skinOfPlayer;
@@ -72,6 +72,6 @@ public final class LoginProfileListenerAdapter<R> {
                 && !settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM))
             return Optional.empty();
 
-        return skinStorage.getDefaultSkinForPlayer(playerName);
+        return playerStorage.getDefaultSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName());
     }
 }

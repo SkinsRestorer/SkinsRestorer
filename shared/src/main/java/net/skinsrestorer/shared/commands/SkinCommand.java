@@ -23,10 +23,12 @@ import ch.jalu.configme.SettingsManager;
 import ch.jalu.configme.properties.Property;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.SharedSkinApplier;
@@ -44,6 +46,7 @@ import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.utils.C;
+import net.skinsrestorer.shared.utils.SRConstants;
 
 import javax.inject.Inject;
 import java.util.Optional;
@@ -105,8 +108,8 @@ public final class SkinCommand {
         playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
 
         try {
-            Optional<SkinProperty> property = skinStorage.getDefaultSkinForPlayer(playerName);
-            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SkinProperty.of("", "")));
+            Optional<SkinProperty> property = playerStorage.getDefaultSkinForPlayer(target.getUniqueId(), target.getName());
+            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
         } catch (DataRequestException e) {
             sender.sendMessage(getRootCause(e).getMessage());
         }
@@ -139,36 +142,34 @@ public final class SkinCommand {
     @Description(Message.HELP_SKIN_UPDATE_OTHER)
     @CommandConditions("cooldown")
     private void onSkinUpdateOther(SRCommandSender sender, SRPlayer target) {
-        String playerName = target.getName();
-        Optional<String> skin = playerStorage.getSkinForPlayer(target.getUniqueId());
+        Optional<SkinIdentifier> setSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
 
         try {
-            if (skin.isPresent()) {
-                // Filter skinUrl
-                if (skin.get().startsWith(" ")) {
-                    sender.sendMessage(Message.ERROR_UPDATING_URL);
-                    return;
+            if (setSkin.isPresent()) {
+                if (setSkin.get().getSkinType() == SkinType.PLAYER) {
+                    if (!skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isPresent()) {
+                        sender.sendMessage(Message.ERROR_UPDATING_SKIN);
+                        return;
+                    }
                 }
-
-                if (!skinStorage.updateSkinData(skin.get())) {
-                    sender.sendMessage(Message.ERROR_UPDATING_SKIN);
-                    return;
-                }
-            } else {
-                // get DefaultSkin
-                skin = skinStorage.getDefaultSkinNameForPlayer(playerName);
             }
-        } catch (DataRequestException e) {
-            sender.sendMessage(getRootCause(e).getMessage());
-            return;
-        }
 
-        if (setSkin(sender, target, skin.orElse(playerName), false, null)) {
+            Optional<SkinProperty> skin = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
+
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, null); // TODO: Figure this out
+
+            skinApplier.applySkin(target.getAs(Object.class), skin.orElse(SRConstants.EMPTY_SKIN));
+
             if (sender.getName().equals(target.getName())) {
                 sender.sendMessage(Message.SUCCESS_UPDATING_SKIN);
             } else {
-                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, playerName);
+                sender.sendMessage(Message.SUCCESS_UPDATING_SKIN_OTHER, target.getName());
             }
+
+            setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
+        } catch (DataRequestException e) {
+            sender.sendMessage(getRootCause(e).getMessage());
+            setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
         }
     }
 
@@ -197,7 +198,19 @@ public final class SkinCommand {
             return;
         }
 
-        if (setSkin(sender, target, skinName, true, skinVariant) && !playerEqual(sender, target)) {
+        if (isDisabledSkin(skinName) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
+            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
+            return;
+        }
+
+        if (!setSkin(sender, target, skinName, skinVariant)) {
+            setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+            return;
+        }
+
+        if (playerEqual(sender, target)) {
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, null); // TODO: Figure this out
+        } else {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
         }
     }
@@ -222,16 +235,10 @@ public final class SkinCommand {
         commandManager.executeCommand(player, "skins");
     }
 
-    private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, boolean saveSkin, SkinVariant skinVariant) {
-        if (isDisabledSkin(skinInput) && !sender.hasPermission(PermissionRegistry.BYPASS_DISABLED)) {
-            sender.sendMessage(Message.ERROR_SKIN_DISABLED);
-            return false;
-        }
-
-        Optional<SkinIdentifier> oldSkinId = saveSkin ? playerStorage.getSkinIdOfPlayer(target.getUniqueId()) : null;
+    private boolean setSkin(SRCommandSender sender, SRPlayer target, String skinInput, SkinVariant skinVariant) {
+        Optional<SkinIdentifier> oldSkinId = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
         if (C.validUrl(skinInput)) {
-            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL) // TODO: Maybe we should do this in the command itself?
-                    && !settings.getProperty(CommandConfig.FORCE_DEFAULT_PERMISSIONS)) { // Ignore /skin clear when defaultSkin = url
+            if (!sender.hasPermission(PermissionRegistry.SKIN_SET_URL)) { // TODO: Maybe we should do this in the command itself?
                 sender.sendMessage(Message.PLAYER_HAS_NO_PERMISSION_URL);
                 return false;
             }
@@ -243,16 +250,11 @@ public final class SkinCommand {
 
             try {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
-                String skinUrlName = " " + playerName; // so won't overwrite premium player names
-                if (skinUrlName.length() > 16) // max len of 16 char
-                    skinUrlName = skinUrlName.substring(0, 16);
 
-                SkinProperty generatedSkin = mineSkinAPI.genSkin(skinInput, skinVariant);
-                skinStorage.setCustomSkinData(skinUrlName, generatedSkin, 0); // "generate" and save skin forever
-                skinStorage.setSkinNameOfPlayer(playerName, skinUrlName); // set player to "whitespaced" name then reload skin
-                skinApplier.applySkin(target.getAs(Object.class), generatedSkin);
-
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, "skinUrl");
+                MineSkinResponse response = mineSkinAPI.genSkin(skinInput, skinVariant);
+                skinStorage.setURLSkinData(skinInput, response.getMineSkinId(), response.getProperty()); // "generate" and save skin forever
+                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), SkinIdentifier.of(skinInput, SkinType.URL)); // set player to "whitespaced" name then reload skin
+                skinApplier.applySkin(target.getAs(Object.class), response.getProperty());
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
@@ -265,13 +267,9 @@ public final class SkinCommand {
             }
         } else {
             try {
-                if (saveSkin) {
-                    skinStorage.setSkinNameOfPlayer(playerName, skinInput);
-                }
+                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), skinInput);
 
                 skinApplier.applySkin(target.getAs(Object.class), skinInput);
-
-                sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, skinInput);
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);
 
@@ -281,11 +279,8 @@ public final class SkinCommand {
             }
         }
 
-        setCoolDown(sender, CommandConfig.SKIN_ERROR_COOLDOWN);
+        playerStorage.setSkinIdOfPlayer(target.getUniqueId(), oldSkinId.orElse(null)); // TODO: Rethink this
 
-        if (saveSkin) {
-            playerStorage.setSkinIdOfPlayer(playerName, oldSkinId);
-        }
         return false;
     }
 

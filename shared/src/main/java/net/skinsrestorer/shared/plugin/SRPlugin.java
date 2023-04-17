@@ -39,13 +39,13 @@ import net.skinsrestorer.shared.commands.SkinCommand;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.config.*;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
 import net.skinsrestorer.shared.storage.CooldownStorage;
+import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
@@ -300,18 +300,14 @@ public class SRPlugin {
     }
 
     public void registerAPI() {
-        SkinsRestorer api = new SharedSkinsRestorer(injector.getSingleton(SkinStorageImpl.class),
-                injector.getSingleton(MojangAPIImpl.class),
-                injector.getSingleton(MineSkinAPIImpl.class),
-                injector.getSingleton(SharedSkinApplier.class),
-                injector.getSingleton(EventBusImpl.class));
+        SkinsRestorer api = injector.getSingleton(SharedSkinsRestorer.class);
         SkinsRestorerProvider.setApi(api);
         injector.register(SkinsRestorer.class, api);
     }
 
     public <P> void registerSkinApplier(SkinApplierAccess<P> skinApplier, Class<P> playerClass, PlatformWrapper<P> platformWrapper) {
         SharedSkinApplier<P> sharedSkinApplier = new SharedSkinApplier<>(playerClass, skinApplier, platformWrapper,
-                injector.getSingleton(SkinStorageImpl.class));
+                injector.getSingleton(PlayerStorageImpl.class), injector.getSingleton(SkinStorageImpl.class));
         injector.register(SharedSkinApplier.class, sharedSkinApplier);
         injector.register(SkinApplier.class, sharedSkinApplier);
     }

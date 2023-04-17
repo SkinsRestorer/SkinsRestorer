@@ -20,6 +20,7 @@
 package net.skinsrestorer.api.storage;
 
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 
@@ -37,19 +38,11 @@ public interface SkinStorage {
      * This method returns the skin data associated to the skin name.
      * If the skin name is not found, it will try to get the skin data from Mojang.
      *
-     * @param skinName Skin name to search for
+     * @param uuid Player UUID
      * @return The skin property containing the skin data
      * @throws DataRequestException If MojangAPI lookup errors (e.g. premium player not found)
      */
-    Optional<SkinProperty> fetchPlayerSkinData(UUID uuid) throws DataRequestException;
-
-    /**
-     * Returns property object containing skin data of the wanted skin
-     *
-     * @param skinName       Skin name
-     * @param updateOutdated Whether we update the skin if expired
-     */
-    Optional<SkinProperty> getSkinData(String skinName, boolean updateOutdated);
+    Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException;
 
     /**
      * Saves skin data to database
@@ -77,7 +70,9 @@ public interface SkinStorage {
      */
     void setCustomSkinData(String skinName, SkinProperty textures);
 
-    Optional<SkinIdentifier> getSkinIdByString(String input);
+    Optional<InputDataResult> findSkinData(String input);
 
-    Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier);
+    Optional<InputDataResult> findOrCreateSkinData(String input) throws DataRequestException;
+
+    Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier); // TODO: Remember is API
 }

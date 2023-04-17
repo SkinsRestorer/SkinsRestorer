@@ -23,13 +23,12 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
-import net.skinsrestorer.shared.connections.MojangAPIImpl;
-import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 
@@ -41,8 +40,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class PlayerStorageImpl implements PlayerStorage {
-    private final SRLogger logger;
-    private final MojangAPIImpl mojangAPI;
     private final SettingsManager settings;
     private final SkinStorage skinStorage;
     private final CacheStorageImpl cacheStorage;
@@ -113,16 +110,13 @@ public class PlayerStorageImpl implements PlayerStorage {
         return getDefaultSkinForPlayer(uuid, playerName);
     }
 
-    /**
-     * Gets the default skin for a player.
-     */
     @Override
-    public Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName) throws DataRequestException {
+    public Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName) {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
             return Optional.empty();
         }
 
-        // don't return default skin name for premium players if enabled
+        // Don't return default skin name for premium players if enabled
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
             // check if player is premium
             if (cacheStorage.getUUID(playerName).isPresent()) {
@@ -141,6 +135,6 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         String selectedSkin = skins.size() == 1 ? skins.get(0) : skins.get(ThreadLocalRandom.current().nextInt(skins.size()));
 
-        return skinStorage.getSkinIdByString(selectedSkin).flatMap(skinStorage::getSkinDataByIdentifier);
+        return skinStorage.findSkinData(selectedSkin).map(InputDataResult::getProperty);
     }
 }

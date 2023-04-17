@@ -52,7 +52,7 @@ public class SharedSkinApplier<P> implements SkinApplier<P> {
 
     @Override
     public void applySkin(P player, SkinIdentifier identifier) throws DataRequestException {
-        skinStorage.fetchPlayerSkinData(skinName).ifPresent(property -> applySkin(player, property));
+        skinStorage.getSkinDataByIdentifier(identifier).ifPresent(property -> applySkin(player, property));
     }
 
     @Override

@@ -24,12 +24,14 @@ import ch.jalu.injector.Injector;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.SkinsRestorer;
 import net.skinsrestorer.api.connections.MineSkinAPI;
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.interfaces.SkinApplier;
 import net.skinsrestorer.api.model.MojangProfileResponse;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
+import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.commands.library.CommandManager;
 import net.skinsrestorer.shared.commands.library.annotations.*;
@@ -42,7 +44,6 @@ import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.plugin.SRServerPlugin;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
-import net.skinsrestorer.shared.storage.SkinStorageImpl;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -68,7 +69,7 @@ public final class SRCommand {
     private final MojangAPIImpl mojangAPI;
     private final ServiceCheckerService serviceCheckerService;
     private final PlayerStorageImpl playerStorage;
-    private final SkinStorageImpl skinStorage;
+    private final SkinStorage skinStorage;
     private final SettingsManager settings;
     private final SRLogger logger;
     private final DumpService dumpService;
@@ -222,7 +223,8 @@ public final class SRCommand {
     private void onCreateCustom(SRCommandSender sender, String skinName, String skinUrl, SkinVariant skinVariant) {
         try {
             if (C.validUrl(skinUrl)) {
-                skinStorage.setCustomSkinData(skinName, mineSkinAPI.genSkin(skinUrl, skinVariant), 0); // "generate" and save skin
+                MineSkinResponse response = mineSkinAPI.genSkin(skinUrl, skinVariant);
+                skinStorage.setURLSkinData(skinName, response.getMineSkinId(), response.getProperty());
                 sender.sendMessage(Message.SUCCESS_ADMIN_CREATECUSTOM, skinName);
             } else {
                 sender.sendMessage(Message.ERROR_INVALID_URLSKIN);
@@ -237,23 +239,19 @@ public final class SRCommand {
     @Description(Message.HELP_SR_SET_SKIN_ALL)
     @CommandConditions("console-only")
     private void onSetSkinAll(SRCommandSender sender, String skinName, SkinVariant skinVariant) {
-        try {
-            Optional<SkinIdentifier> skinIdentifier = skinStorage.getSkinIdByString(skinName);
+        Optional<InputDataResult> optional = skinStorage.findSkinData(skinName);
 
-            if (!skinIdentifier.isPresent()) {
-                sender.sendMessage("§e[§2SkinsRestorer§e] §4no skin found....");
-                return;
-            }
-
-            for (SRPlayer player : adapter.getOnlinePlayers()) {
-                playerStorage.setSkinIdOfPlayer(player.getUniqueId(), skinIdentifier.get());
-                skinApplier.applySkin(player.getAs(Object.class), skinProps.get());
-            }
-
-            sender.sendMessage("§aSuccessfully set skin of all online players to " + appliedSkinName);
-        } catch (DataRequestException e) {
-            sender.sendMessage(getRootCause(e).getMessage());
+        if (!optional.isPresent()) {
+            sender.sendMessage("§e[§2SkinsRestorer§e] §4No skin found....");
+            return;
         }
+
+        for (SRPlayer player : adapter.getOnlinePlayers()) {
+            playerStorage.setSkinIdOfPlayer(player.getUniqueId(), optional.get().getIdentifier());
+            skinApplier.applySkin(player.getAs(Object.class), optional.get().getProperty());
+        }
+
+        sender.sendMessage("§aSuccessfully set skin of all online players to " + skinName);
     }
 
     @Subcommand("applyskinall")

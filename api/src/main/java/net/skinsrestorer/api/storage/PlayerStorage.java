@@ -1,3 +1,22 @@
+/*
+ * SkinsRestorer
+ *
+ * Copyright (C) 2022 SkinsRestorer
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ */
 package net.skinsrestorer.api.storage;
 
 import net.skinsrestorer.api.exception.DataRequestException;
@@ -44,9 +63,8 @@ public interface PlayerStorage {
      *
      * @param uuid Players UUID
      * @return The identifier of the default skin
-     * @throws DataRequestException If MojangAPI lookup errors (e.g. mojang offline)
      */
-    Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName) throws DataRequestException;
+    Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName);
 
     /**
      * This method seeks out the skin that would be set on join and returns

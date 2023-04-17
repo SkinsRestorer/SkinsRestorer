@@ -19,6 +19,7 @@
  */
 package net.skinsrestorer.api.connections;
 
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -34,5 +35,5 @@ public interface MineSkinAPI {
      * @return Custom skin property containing "value" and "signature"
      * @throws DataRequestException on error
      */
-    SkinProperty genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException;
+    MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException;
 }

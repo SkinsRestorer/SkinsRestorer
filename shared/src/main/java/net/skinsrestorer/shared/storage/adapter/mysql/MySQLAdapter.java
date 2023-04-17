@@ -45,34 +45,17 @@ public class MySQLAdapter implements StorageAdapter {
     private final SRLogger logger;
 
     public void createTable() {
-        /*
-        mysql.execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` ("
-                + "`Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL,"
-                + "`Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
-                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
+                + "`Nick` varchar(17) NOT NULL,"
+                + "`Skin` varchar(19) NOT NULL,"
+                + "PRIMARY KEY (`Nick`)) DEFAULT");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ("
-                + "`Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL,"
-                + "`Value` text COLLATE utf8_unicode_ci,"
-                + "`Signature` text COLLATE utf8_unicode_ci,"
-                + "`timestamp` text COLLATE utf8_unicode_ci,"
-                + "PRIMARY KEY (`Nick`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
-
-        if (!columnExists(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "timestamp")) {
-            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` ADD `timestamp` text COLLATE utf8_unicode_ci;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Nick") < 17) {
-            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Nick` varchar(17) COLLATE utf8_unicode_ci NOT NULL;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE), "Skin") < 19) {
-            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` MODIFY `Skin` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
-        }
-
-        if (columnVarCharLength(settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE), "Nick") < 19) {
-            mysql.execute("ALTER TABLE `" + settings.getProperty(DatabaseConfig.MYSQL_SKIN_TABLE) + "` MODIFY `Nick` varchar(19) COLLATE utf8_unicode_ci NOT NULL;");
-        }*/ // TODO
+                + "`Nick` varchar(19) NOT NULL,"
+                + "`Value` text,"
+                + "`Signature` text,"
+                + "`timestamp` text,"
+                + "PRIMARY KEY (`Nick`))");
     }
 
     private boolean columnExists(String tableName, String columnName) {
@@ -236,22 +219,22 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     private String resolveCustomSkinTable() {
-
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "custom_skins";
     }
 
     private String resolveURLSkinTable() {
-        return skinsFolder.resolve(hashSHA256(url) + ".urlskin");
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "url_skins";
     }
 
     private String resolvePlayerSkinTable() {
-        return skinsFolder.resolve(uuid + ".playerskin");
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "player_skins";
     }
 
     private String resolvePlayerTable() {
-        return settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE);
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "players";
     }
 
     private String resolveCacheTable() {
-        return cacheFolder.resolve(name + ".mojangcache");
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "cache";
     }
 }
