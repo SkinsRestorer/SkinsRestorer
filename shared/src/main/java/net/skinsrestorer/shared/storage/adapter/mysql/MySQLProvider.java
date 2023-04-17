@@ -24,7 +24,9 @@ import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.shared.config.DatabaseConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import org.intellij.lang.annotations.Language;
-import org.mariadb.jdbc.MariaDbPoolDataSource;
+import org.mariadb.jdbc.Configuration;
+import org.mariadb.jdbc.pool.Pool;
+import org.mariadb.jdbc.pool.Pools;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,7 +43,7 @@ public class MySQLProvider {
     private final String password;
     private final int maxPoolSize;
     private final String options;
-    private MariaDbPoolDataSource poolDataSource;
+    private Pool pool;
 
     public void createTable(SettingsManager settings) {
         execute("CREATE TABLE IF NOT EXISTS `" + settings.getProperty(DatabaseConfig.MYSQL_PLAYER_TABLE) + "` ("
@@ -74,7 +76,7 @@ public class MySQLProvider {
     }
 
     private boolean columnExists(String tableName, String columnName) {
-        try (Connection connection = poolDataSource.getConnection();
+        try (Connection connection = pool.getPoolConnection().getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
             statement.setString(1, tableName);
             statement.setString(2, columnName);
@@ -88,7 +90,7 @@ public class MySQLProvider {
     }
 
     private int columnVarCharLength(String tableName, String columnName) {
-        try (Connection connection = poolDataSource.getConnection();
+        try (Connection connection = pool.getPoolConnection().getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT CHARACTER_MAXIMUM_LENGTH FROM information_schema.COLUMNS WHERE TABLE_NAME = ? AND COLUMN_NAME = ?")) {
             statement.setString(1, tableName);
             statement.setString(2, columnName);
@@ -102,18 +104,16 @@ public class MySQLProvider {
     }
 
     public void connectPool() throws SQLException {
-        poolDataSource = new MariaDbPoolDataSource();
-        poolDataSource.setUser(username);
-        poolDataSource.setPassword(password);
-        poolDataSource.setUrl("jdbc:mysql://" + host + ":" + port + "/" + database +
+        Configuration configuration = Configuration.parse("jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?permitMysqlScheme" +
                 "&maxPoolSize=" + maxPoolSize +
-                "&" + options
-        );
+                "&" + options);
+
+        pool = Pools.retrievePool(configuration.clone(username, password));
     }
 
     public void execute(@Language("sql") final String query, final Object... vars) {
-        try (Connection connection = poolDataSource.getConnection()) {
+        try (Connection connection = pool.getPoolConnection().getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
@@ -129,7 +129,7 @@ public class MySQLProvider {
     }
 
     public ResultSet query(@Language("sql") final String query, final Object... vars) throws SQLException {
-        try (Connection connection = poolDataSource.getConnection()) {
+        try (Connection connection = pool.getPoolConnection().getConnection()) {
             try (PreparedStatement ps = connection.prepareStatement(query)) {
                 fillPreparedStatement(ps, vars);
 
