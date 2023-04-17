@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.storage.adapter.file;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
 import net.skinsrestorer.shared.config.GUIConfig;
+import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
@@ -34,6 +35,7 @@ import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
@@ -51,16 +53,22 @@ public class FileAdapter implements StorageAdapter {
     private final SettingsManager settings;
     private final Gson gson = new Gson();
 
-    public FileAdapter(Path dataFolder, SettingsManager settings) throws IOException {
-        skinsFolder = dataFolder.resolve("skins");
-        Files.createDirectories(skinsFolder);
+    @Inject
+    public FileAdapter(SRPlugin plugin, SettingsManager settings) {
+        try {
+            Path dataFolder = plugin.getDataFolder();
+            skinsFolder = dataFolder.resolve("skins");
+            Files.createDirectories(skinsFolder);
 
-        playersFolder = dataFolder.resolve("players");
-        Files.createDirectories(playersFolder);
+            playersFolder = dataFolder.resolve("players");
+            Files.createDirectories(playersFolder);
 
-        cacheFolder = dataFolder.resolve("cache");
-        Files.createDirectories(cacheFolder);
-        this.settings = settings;
+            cacheFolder = dataFolder.resolve("cache");
+            Files.createDirectories(cacheFolder);
+            this.settings = settings;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

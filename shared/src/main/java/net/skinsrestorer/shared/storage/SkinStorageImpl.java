@@ -21,7 +21,6 @@ package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.InputDataResult;
@@ -33,11 +32,11 @@ import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
-import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;
@@ -52,9 +51,7 @@ public class SkinStorageImpl implements SkinStorage {
     private final MojangAPIImpl mojangAPI;
     private final MineSkinAPIImpl mineSkinAPI;
     private final SettingsManager settings;
-    private final SkinsRestorerLocale locale;
-    @Setter
-    private StorageAdapter storageAdapter;
+    private final AtomicAdapter atomicAdapter;
 
     public void preloadDefaultSkins() {
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
@@ -87,7 +84,7 @@ public class SkinStorageImpl implements SkinStorage {
     @Override
     public Optional<SkinProperty> updatePlayerSkinData(UUID uuid) throws DataRequestException {
         try {
-            Optional<PlayerSkinData> optional = storageAdapter.getPlayerSkinData(uuid);
+            Optional<PlayerSkinData> optional = atomicAdapter.get().getPlayerSkinData(uuid);
 
             if (!optional.isPresent()) {
                 return Optional.empty();
@@ -111,33 +108,33 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public void setPlayerSkinData(UUID uuid, SkinProperty textures, long timestamp) {
-        storageAdapter.setPlayerSkinData(uuid, PlayerSkinData.of(uuid, textures, timestamp));
+        atomicAdapter.get().setPlayerSkinData(uuid, PlayerSkinData.of(uuid, textures, timestamp));
     }
 
     @Override
     public void setURLSkinData(String url, String mineSkinId, SkinProperty textures) {
-        storageAdapter.setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures));
+        atomicAdapter.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures));
     }
 
     @Override
     public void setCustomSkinData(String skinName, SkinProperty textures) {
-        storageAdapter.setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
+        atomicAdapter.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
 
     // TODO: CUSTOM_GUI
     // seems to be that crs order is ignored...
     public Map<String, String> getSkins(int offset) {
-        return storageAdapter.getStoredSkins(offset);
+        return atomicAdapter.get().getStoredSkins(offset);
     }
 
     public Optional<InputDataResult> findSkinData(String input) {
         try {
             if (C.validUrl(input)) {
-                return storageAdapter.getURLSkinData(input).map(data ->
+                return atomicAdapter.get().getURLSkinData(input).map(data ->
                         InputDataResult.of(SkinIdentifier.of(data.getUrl(), SkinType.URL), data.getProperty()));
             } else {
-                Optional<CustomSkinData> customSkinData = storageAdapter.getCustomSkinData(input);
+                Optional<CustomSkinData> customSkinData = atomicAdapter.get().getCustomSkinData(input);
 
                 if (customSkinData.isPresent()) {
                     return customSkinData.map(data ->
@@ -150,7 +147,7 @@ public class SkinStorageImpl implements SkinStorage {
                     return Optional.empty();
                 }
 
-                Optional<PlayerSkinData> playerSkinData = storageAdapter.getPlayerSkinData(uuid.get());
+                Optional<PlayerSkinData> playerSkinData = atomicAdapter.get().getPlayerSkinData(uuid.get());
 
                 if (playerSkinData.isPresent()) {
                     return playerSkinData.map(data ->
@@ -206,13 +203,13 @@ public class SkinStorageImpl implements SkinStorage {
     public void removeSkinData(SkinIdentifier identifier) {
         switch (identifier.getSkinType()) {
             case PLAYER:
-                storageAdapter.removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
+                atomicAdapter.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
                 break;
             case URL:
-                storageAdapter.removeURLSkinData(identifier.getIdentifier());
+                atomicAdapter.get().removeURLSkinData(identifier.getIdentifier());
                 break;
             case CUSTOM:
-                storageAdapter.removeCustomSkinData(identifier.getIdentifier());
+                atomicAdapter.get().removeCustomSkinData(identifier.getIdentifier());
                 break;
         }
     }
@@ -239,7 +236,7 @@ public class SkinStorageImpl implements SkinStorage {
         long targetPurgeTimestamp = Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli();
 
         try {
-            storageAdapter.purgeStoredOldSkins(targetPurgeTimestamp);
+            atomicAdapter.get().purgeStoredOldSkins(targetPurgeTimestamp);
             return true; // TODO: Do better than true/false return
         } catch (StorageAdapter.StorageException e) {
             e.printStackTrace();

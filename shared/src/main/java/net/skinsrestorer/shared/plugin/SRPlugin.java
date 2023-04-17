@@ -53,6 +53,7 @@ import net.skinsrestorer.shared.storage.CacheStorageImpl;
 import net.skinsrestorer.shared.storage.CooldownStorage;
 import net.skinsrestorer.shared.storage.PlayerStorageImpl;
 import net.skinsrestorer.shared.storage.SkinStorageImpl;
+import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.file.FileAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLAdapter;
 import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
@@ -265,18 +266,15 @@ public class SRPlugin {
 
                 adapter.createTable();
 
-                skinStorage.setStorageAdapter(adapter);
+                injector.getSingleton(AtomicAdapter.class).setAdapter(adapter);
             } else {
-                skinStorage.setStorageAdapter(new FileAdapter(dataFolder, settings));
+                injector.getSingleton(AtomicAdapter.class).setAdapter(injector.getSingleton(FileAdapter.class));
             }
 
             // Preload default skins
             adapter.runAsync(skinStorage::preloadDefaultSkins);
         } catch (SQLException e) {
             logger.severe("§cCan't connect to MySQL! Disabling SkinsRestorer.", e);
-            throw new InitializeException(e);
-        } catch (IOException e) {
-            logger.severe("§cCan't create data folders! Disabling SkinsRestorer.", e);
             throw new InitializeException(e);
         }
     }
@@ -298,9 +296,6 @@ public class SRPlugin {
 
     public void setOutdated() {
         outdated = true;
-    }
-
-    private void initMineSkinAPI() {
     }
 
     public void registerAPI() {

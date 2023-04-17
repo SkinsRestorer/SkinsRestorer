@@ -74,7 +74,6 @@ public interface PlayerStorage {
      *
      * @param uuid Players UUID
      * @return The skin identifier of the skin that would be set on join
-     * @throws DataRequestException If MojangAPI lookup errors (e.g. mojang offline)
      */
-    Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName) throws DataRequestException;
+    Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName);
 }

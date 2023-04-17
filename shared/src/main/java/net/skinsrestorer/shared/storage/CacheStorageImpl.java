@@ -21,12 +21,12 @@ package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.utils.C;
@@ -41,8 +41,7 @@ public class CacheStorageImpl implements CacheStorage {
     private final SRLogger logger;
     private final MojangAPIImpl mojangAPI;
     private final SettingsManager settings;
-    @Setter
-    private StorageAdapter storageAdapter;
+    private final AtomicAdapter atomicAdapter;
 
     @Override
     public Optional<UUID> getUUID(String playerName) {
@@ -51,7 +50,7 @@ public class CacheStorageImpl implements CacheStorage {
         }
 
         try {
-            Optional<MojangCacheData> stored = storageAdapter.getCachedUUID(playerName);
+            Optional<MojangCacheData> stored = atomicAdapter.get().getCachedUUID(playerName);
 
             if (stored.isPresent() && !isExpiredUniqueId(stored.get().getTimestamp())) {
                 if (stored.get().isPremium()) {
@@ -64,7 +63,7 @@ public class CacheStorageImpl implements CacheStorage {
             try {
                 Optional<UUID> uuid = mojangAPI.getUUID(playerName);
 
-                storageAdapter.setCachedUUID(playerName,
+                atomicAdapter.get().setCachedUUID(playerName,
                         MojangCacheData.of(uuid.isPresent(), uuid.orElse(null), Instant.now().getEpochSecond()));
 
                 return uuid;
