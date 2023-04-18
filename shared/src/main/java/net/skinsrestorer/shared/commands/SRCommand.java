@@ -151,14 +151,19 @@ public final class SRCommand {
     private void onDrop(SRCommandSender sender, PlayerOrSkin playerOrSkin, String target) {
         switch (playerOrSkin) {
             case PLAYER:
-                Optional<UUID> targetId = cacheStorage.getUUID(target);
+                try {
+                    Optional<UUID> targetId = cacheStorage.getUUID(target, false);
 
-                if (!targetId.isPresent()) {
-                    sender.sendMessage("§cPlayer §e" + target + " §cnot found."); // TODO: Message
+                    if (!targetId.isPresent()) {
+                        sender.sendMessage("§cPlayer §e" + target + " §cnot found."); // TODO: Message
+                        return;
+                    }
+
+                    playerStorage.removeSkinIdOfPlayer(targetId.get());
+                } catch (DataRequestException e) {
+                    sender.sendMessage("§cCould not reach mojang."); // TODO: Message
                     return;
                 }
-
-                playerStorage.removeSkinIdOfPlayer(targetId.get());
                 break;
             case SKIN:
                 Optional<InputDataResult> optional = skinStorage.findSkinData(target);

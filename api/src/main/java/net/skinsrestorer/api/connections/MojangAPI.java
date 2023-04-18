@@ -20,6 +20,7 @@
 package net.skinsrestorer.api.connections;
 
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
 
 import java.util.Optional;
@@ -31,13 +32,13 @@ public interface MojangAPI {
      * It may return a hardcoded skin value, for example for "Steve" or "Alex".
      * It does in theory a name to uuid to profile request.
      * But internally it is faster than calling {@link #getUUID(String)} and {@link #getProfile(UUID)} separately.
-     * That is because we use ashcon.app, and we can directly get the profile from the name.
+     * That is because we use ashcon.app, and we can directly get the profile and uuid from the name.
      *
      * @param playerName Premium player username
      * @return Skin or empty if the player is not premium
      * @throws DataRequestException If there was an error while getting the data
      */
-    Optional<SkinProperty> getSkin(String playerName) throws DataRequestException;
+    Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException;
 
     Optional<UUID> getUUID(String playerName) throws DataRequestException;
 

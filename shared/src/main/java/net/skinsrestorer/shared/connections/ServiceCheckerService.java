@@ -22,8 +22,8 @@ package net.skinsrestorer.shared.connections;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.connections.responses.AshconResponse;
 
 import javax.inject.Inject;
 import java.util.LinkedList;
@@ -46,16 +46,10 @@ public class ServiceCheckerService {
 
         // ##### Ashcon request #####
         try {
-            Optional<AshconResponse> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
+            Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
             if (uuidAshcon.isPresent()) {
-                Optional<UUID> uuid = mojangAPI.getUUIDAshcon(uuidAshcon.get());
-
-                if (uuid.isPresent()) {
-                    response.addResult(String.format(UUID_MESSAGE, "Ashcon", uuid.get()));
-                    response.incrementWorkingUUID();
-                } else {
-                    response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
-                }
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", uuidAshcon.get().getUniqueId()));
+                response.incrementWorkingProfile();
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
         } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()));
@@ -86,15 +80,10 @@ public class ServiceCheckerService {
 
         // ##### Profile requests #####
         try {
-            Optional<AshconResponse> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID.toString());
+            Optional<MojangSkinDataResult> nameAshcon = mojangAPI.getDataAshcon(XKNAT_UUID.toString());
             if (nameAshcon.isPresent()) {
-                Optional<SkinProperty> property = mojangAPI.getPropertyAshcon(nameAshcon.get());
-                if (property.isPresent()) {
-                    response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", property.get()));
-                    response.incrementWorkingProfile();
-                } else {
-                    response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
-                }
+                response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", nameAshcon.get().getSkinProperty()));
+                response.incrementWorkingProfile();
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "Profile"));
         } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "Profile", e.getMessage()));

@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.connections;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.shared.connections.http.HttpClient;
 import net.skinsrestorer.shared.connections.http.HttpResponse;
@@ -39,7 +40,9 @@ import net.skinsrestorer.shared.utils.MetricsCounter;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MojangAPIImpl implements MojangAPI {
@@ -68,27 +71,30 @@ public class MojangAPIImpl implements MojangAPI {
     }
 
     @Override
-    public Optional<SkinProperty> getSkin(String playerName) throws DataRequestException {
+    public Optional<MojangSkinDataResult> getSkin(String playerName) throws DataRequestException {
         if (!C.validMojangUsername(playerName)) {
             return Optional.empty();
         }
 
+        /* // TODO: Migrate this to custom skins
         String upperCaseName = playerName.trim().toUpperCase(Locale.ENGLISH);
         Optional<HardcodedSkins> hardCodedSkin = Arrays.stream(HardcodedSkins.values()).filter(t -> t.name().equals(upperCaseName)).findAny();
         if (hardCodedSkin.isPresent()) {
             return Optional.of(SkinProperty.of(hardCodedSkin.get().value, hardCodedSkin.get().signature));
         }
+         */
 
         try {
-            return getDataAshcon(playerName).flatMap(this::getPropertyAshcon);
+            return getDataAshcon(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
-            Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
-            if (uuidResult.isPresent()) {
-                return getProfileStartMojang(uuidResult.get()); // Mojang API requires no dashes
+            Optional<UUID> uuidResult = getUUIDStartMojang(playerName); // TODO: Maybe use cache for this?
+            if (!uuidResult.isPresent()) {
+                return Optional.empty();
             }
 
-            return Optional.empty();
+            return getProfileStartMojang(uuidResult.get()).flatMap(propertyResponse ->
+                    Optional.of(MojangSkinDataResult.of(uuidResult.get(), propertyResponse)));
         }
     }
 
@@ -104,7 +110,7 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         try {
-            return getDataAshcon(playerName).flatMap(this::getUUIDAshcon);
+            return getDataAshcon(playerName).map(MojangSkinDataResult::getUniqueId);
         } catch (DataRequestException e) {
             logger.debug(e);
             return getUUIDStartMojang(playerName);
@@ -120,7 +126,7 @@ public class MojangAPIImpl implements MojangAPI {
         }
     }
 
-    protected Optional<AshconResponse> getDataAshcon(String uuidOrName) throws DataRequestException {
+    protected Optional<MojangSkinDataResult> getDataAshcon(String uuidOrName) throws DataRequestException {
         HttpResponse httpResponse = readURL(ASHCON.replace("%uuidOrName%", uuidOrName), MetricsCounter.Service.ASHCON);
         AshconResponse response = httpResponse.getBodyAs(AshconResponse.class);
 
@@ -136,7 +142,27 @@ public class MojangAPIImpl implements MojangAPI {
             throw new DataRequestExceptionShared("Ashcon error code: " + response.getCode());
         }
 
-        return Optional.of(response);
+        if (response.getUuid() == null) {
+            return Optional.empty();
+        }
+
+        AshconResponse.Textures textures = response.getTextures();
+
+        if (textures == null) {
+            return Optional.empty();
+        }
+
+        AshconResponse.Textures.Raw rawTextures = textures.getRaw();
+        if (rawTextures == null) {
+            return Optional.empty();
+        }
+
+        if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(MojangSkinDataResult.of(UUID.fromString(response.getUuid()),
+                SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature())));
     }
 
     public Optional<UUID> getUUIDMojang(String playerName) throws DataRequestException {
@@ -169,7 +195,7 @@ public class MojangAPIImpl implements MojangAPI {
 
     public Optional<SkinProperty> getProfile(UUID uuid) throws DataRequestException {
         try {
-            return getDataAshcon(uuid.toString().replace("-", "")).flatMap(this::getPropertyAshcon);
+            return getDataAshcon(uuid.toString().replace("-", "")).map(MojangSkinDataResult::getSkinProperty);
         } catch (DataRequestException e) {
             logger.debug(e);
             return getProfileStartMojang(uuid);
@@ -218,32 +244,6 @@ public class MojangAPIImpl implements MojangAPI {
         }
 
         return Optional.of(SkinProperty.of(property.getValue(), property.getSignature()));
-    }
-
-    protected Optional<SkinProperty> getPropertyAshcon(AshconResponse response) {
-        AshconResponse.Textures textures = response.getTextures();
-        if (textures == null) {
-            return Optional.empty();
-        }
-
-        AshconResponse.Textures.Raw rawTextures = textures.getRaw();
-        if (rawTextures == null) {
-            return Optional.empty();
-        }
-
-        if (rawTextures.getValue().isEmpty() || rawTextures.getSignature().isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(SkinProperty.of(rawTextures.getValue(), rawTextures.getSignature()));
-    }
-
-    protected Optional<UUID> getUUIDAshcon(AshconResponse response) {
-        if (response.getUuid() == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(UUID.fromString(response.getUuid()));
     }
 
     private HttpResponse readURL(String url, MetricsCounter.Service service) throws DataRequestException {

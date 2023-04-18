@@ -21,12 +21,14 @@ package net.skinsrestorer.shared.storage;
 
 import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
@@ -42,6 +44,7 @@ public class PlayerStorageImpl implements PlayerStorage {
     private final SettingsManager settings;
     private final SkinStorage skinStorage;
     private final CacheStorageImpl cacheStorage;
+    private final SRLogger logger;
     private final AtomicAdapter atomicAdapter;
 
     @Override
@@ -116,10 +119,14 @@ public class PlayerStorageImpl implements PlayerStorage {
 
         // Don't return default skin name for premium players if enabled
         if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
-            // check if player is premium
-            if (cacheStorage.getUUID(playerName).isPresent()) {
-                // player is premium, return his skin name instead of default skin
-                return Optional.empty();
+            // Check if player is premium
+            try {
+                if (cacheStorage.getUUID(playerName, false).isPresent()) {
+                    // player is premium, return his skin name instead of default skin
+                    return Optional.empty();
+                }
+            } catch (DataRequestException e) {
+                logger.debug(e);
             }
         }
 

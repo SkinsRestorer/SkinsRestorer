@@ -19,15 +19,26 @@
  */
 package net.skinsrestorer.shared.storage.model.cache;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
 @Getter
-@RequiredArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MojangCacheData {
     private final boolean isPremium;
     private final UUID uniqueId; // Null if not premium
-    private final long timestamp; // TODO: Change to Instant/Seconds
+    private final long timestamp;
+
+    public static MojangCacheData of(boolean isPremium, UUID uniqueId, long timestamp) {
+        if (isPremium && uniqueId == null)
+            throw new IllegalArgumentException("uniqueId cannot be null if isPremium is true");
+
+        if (!isPremium && uniqueId != null)
+            throw new IllegalArgumentException("uniqueId must be null if isPremium is false");
+
+        return new MojangCacheData(isPremium, uniqueId, timestamp);
+    }
 }

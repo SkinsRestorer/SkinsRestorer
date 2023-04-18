@@ -19,16 +19,21 @@
  */
 package net.skinsrestorer.api.storage;
 
+import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
+
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CacheStorage {
+    Optional<MojangSkinDataResult> getSkin(String playerName, boolean allowExpired) throws DataRequestException;
+
     /**
      * Gets the uuid of a Mojang player from the cache.
      * If the uuid is not found locally, it will try to get the uuid from Mojang.
      *
      * @param playerName Player name to search for
-     * @return The uuid of the player or empty if not found
+     * @return The uuid of the player or empty if no such player exists
      */
-    Optional<UUID> getUUID(String playerName);
+    Optional<UUID> getUUID(String playerName, boolean allowExpired) throws DataRequestException;
 }

@@ -23,10 +23,7 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.InputDataResult;
-import net.skinsrestorer.api.property.SkinIdentifier;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.api.property.SkinType;
+import net.skinsrestorer.api.property.*;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
@@ -143,7 +140,7 @@ public class SkinStorageImpl implements SkinStorage {
                             InputDataResult.of(SkinIdentifier.of(data.getSkinName(), SkinType.CUSTOM), data.getProperty()));
                 }
 
-                Optional<UUID> uuid = cacheStorage.getUUID(input);
+                Optional<UUID> uuid = cacheStorage.getUUID(input, false);
 
                 if (!uuid.isPresent()) {
                     return Optional.empty();
@@ -156,7 +153,7 @@ public class SkinStorageImpl implements SkinStorage {
                             InputDataResult.of(SkinIdentifier.of(uuid.get().toString(), SkinType.PLAYER), data.getProperty()));
                 }
             }
-        } catch (StorageAdapter.StorageException e) {
+        } catch (StorageAdapter.StorageException | DataRequestException e) {
             e.printStackTrace();
         }
 
@@ -178,21 +175,15 @@ public class SkinStorageImpl implements SkinStorage {
 
             return Optional.of(InputDataResult.of(SkinIdentifier.of(input, SkinType.URL), response.getProperty()));
         } else {
-            Optional<UUID> uuid = cacheStorage.getUUID(input);
+            Optional<MojangSkinDataResult> data = cacheStorage.getSkin(input, false);
 
-            if (!uuid.isPresent()) {
+            if (!data.isPresent()) {
                 return Optional.empty();
             }
 
-            Optional<SkinProperty> skinProperty = mojangAPI.getProfile(uuid.get());
+            setPlayerSkinData(data.get().getUniqueId(), data.get().getSkinProperty(), Instant.now().getEpochSecond());
 
-            if (!skinProperty.isPresent()) {
-                return Optional.empty();
-            }
-
-            setPlayerSkinData(uuid.get(), skinProperty.get(), Instant.now().getEpochSecond());
-
-            return Optional.of(InputDataResult.of(SkinIdentifier.of(uuid.get().toString(), SkinType.PLAYER), skinProperty.get()));
+            return Optional.of(InputDataResult.of(SkinIdentifier.of(data.get().toString(), SkinType.PLAYER), data.get().getSkinProperty()));
         }
     }
 
