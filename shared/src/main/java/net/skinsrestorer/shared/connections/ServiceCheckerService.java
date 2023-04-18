@@ -49,7 +49,7 @@ public class ServiceCheckerService {
             Optional<MojangSkinDataResult> uuidAshcon = mojangAPI.getDataAshcon(XKNAT_NAME);
             if (uuidAshcon.isPresent()) {
                 response.addResult(String.format(PROFILE_MESSAGE, "Ashcon", uuidAshcon.get().getUniqueId()));
-                response.incrementWorkingProfile();
+                response.incrementWorkingUUID();
             } else response.addResult(String.format(MESSAGE_ERROR, "Ashcon", "UUID"));
         } catch (DataRequestException e) {
             response.addResult(String.format(MESSAGE_ERROR_EXCEPTION, "Ashcon", "UUID", e.getMessage()));
