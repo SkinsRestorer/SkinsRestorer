@@ -33,6 +33,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -54,8 +56,10 @@ public class MineSkinTest {
 
         injector.register(SettingsManager.class, settings);
 
+        String randomUrl = TEST_URL + "?" + UUID.randomUUID(); // Random URL to avoid caching
         MetricsCounter metricsCounter = injector.getSingleton(MetricsCounter.class);
-        MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class).genSkin(TEST_URL, null);
+        MineSkinResponse response = injector.getSingleton(MineSkinAPIImpl.class)
+                .genSkin(randomUrl, null);
 
         assertNotNull(response);
 

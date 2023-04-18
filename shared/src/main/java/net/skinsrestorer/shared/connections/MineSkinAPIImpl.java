@@ -34,7 +34,6 @@ import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorDela
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinErrorResponse;
 import net.skinsrestorer.shared.connections.responses.mineskin.MineSkinUrlResponse;
 import net.skinsrestorer.shared.exception.DataRequestExceptionShared;
-import net.skinsrestorer.shared.exception.TryAgainException;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.subjects.messages.Message;
@@ -72,16 +71,34 @@ public class MineSkinAPIImpl implements MineSkinAPI {
 
     @Override
     public MineSkinResponse genSkin(String url, @Nullable SkinVariant skinVariant) throws DataRequestException {
-        url = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
+        String resultUrl = url.startsWith(NAMEMC_SKIN_URL) ? NAMEMC_IMG_URL.replace("%s", url.substring(24)) : url; // Fix NameMC skins
         AtomicInteger failedAttempts = new AtomicInteger(0);
 
         do {
             try {
-                return genSkinFuture(url, skinVariant).join();
+                Optional<MineSkinResponse> optional = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return genSkinInternal(resultUrl, skinVariant);
+                    } catch (DataRequestException e) {
+                        throw new CompletionException(e);
+                    } catch (IOException e) {
+                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
+                        throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL));
+                    } catch (JsonSyntaxException e) {
+                        logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
+                        throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }, executorService).join();
+
+                if (optional.isPresent()) {
+                    return optional.get();
+                }
+
+                failedAttempts.incrementAndGet();
             } catch (CompletionException e) {
-                if (e.getCause() instanceof TryAgainException) {
-                    failedAttempts.incrementAndGet();
-                } else if (e.getCause() instanceof DataRequestException) {
+                if (e.getCause() instanceof DataRequestException) {
                     throw new DataRequestExceptionShared(e.getCause());
                 } else {
                     throw new DataRequestExceptionShared(e.getMessage());
@@ -92,98 +109,86 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         throw new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED);
     }
 
-    public CompletableFuture<MineSkinResponse> genSkinFuture(String url, @Nullable SkinVariant skinVariant) {
-        return CompletableFuture.supplyAsync(() -> {
-            String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
+    private Optional<MineSkinResponse> genSkinInternal(String url, @Nullable SkinVariant skinVariant) throws DataRequestException, IOException, InterruptedException {
+        String skinVariantString = skinVariant != null ? "&variant=" + skinVariant.name().toLowerCase(Locale.ENGLISH) : "";
 
-            try {
-                HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
-                logger.debug("MineSkinAPI: Response: " + response);
+        HttpResponse response = queryURL("url=" + URLEncoder.encode(url, "UTF-8") + skinVariantString);
+        logger.debug("MineSkinAPI: Response: " + response);
 
-                switch (response.getStatusCode()) {
-                    case 200: {
-                        MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
-                        return MineSkinResponse.of(SkinProperty.of(urlResponse.getData().getTexture().getValue(),
-                                urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr());
-                    }
-                    case 500:
-                    case 400: {
-                        MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
-                        String error = errorResponse.getErrorCode();
-                        logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Url: %s", error, url));
-                        switch (error) {
-                            case "failed_to_create_id":
-                            case "skin_change_failed":
-                                logger.debug("Trying again in 5 seconds...");
-                                TimeUnit.SECONDS.sleep(5);
-
-                                throw new TryAgainException(); // try again
-                            case "no_account_available":
-                                throw new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL);
-                            default:
-                                throw new DataRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
-                        }
-                    }
-                    case 403: {
-                        MineSkinErrorResponse apiErrorResponse = response.getBodyAs(MineSkinErrorResponse.class);
-                        String errorCode2 = apiErrorResponse.getErrorCode();
-                        String error2 = apiErrorResponse.getError();
-                        if (errorCode2.equals("invalid_api_key")) {
-                            logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error2);
-                            switch (error2) {
-                                case "Invalid API Key":
-                                    logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
-                                    break;
-                                case "Client not allowed":
-                                    logger.severe("This server ip is not on the apikey allowed IPs list!");
-                                    break;
-                                case "Origin not allowed":
-                                    logger.severe("This server Origin is not on the apikey allowed Origins list!");
-                                    break;
-                                case "Agent not allowed":
-                                    logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
-                                    break;
-                                default:
-                                    logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
-                                    break;
-                            }
-                            throw new DataRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
-                        }
-                    }
-                    case 429: {
-                        MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
-                        // If "Too many requests"
-                        if (errorDelayResponse.getDelay() != null) {
-                            TimeUnit.SECONDS.sleep(errorDelayResponse.getDelay());
-                        } else if (errorDelayResponse.getNextRequest() != null) {
-                            Instant nextRequestInstant = Instant.ofEpochSecond(errorDelayResponse.getNextRequest());
-                            int delay = (int) Duration.between(Instant.now(), nextRequestInstant).getSeconds();
-
-                            if (delay > 0) {
-                                TimeUnit.SECONDS.sleep(delay);
-                            }
-                        } else { // Should normally not happen
-                            TimeUnit.SECONDS.sleep(2);
-                        }
-
-                        throw new TryAgainException(); // try again after nextRequest
-                    }
-                }
-            } catch (DataRequestException | TryAgainException e) {
-                throw new CompletionException(e);
-            } catch (IOException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! IOException (connection/disk): (" + url + ") " + e.getLocalizedMessage());
-                throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL));
-            } catch (JsonSyntaxException e) {
-                logger.debug(SRLogLevel.WARNING, "[ERROR] MineSkin Failed! JsonSyntaxException (encoding): (" + url + ") " + e.getLocalizedMessage());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        switch (response.getStatusCode()) {
+            case 200: {
+                MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
+                return Optional.of(MineSkinResponse.of(SkinProperty.of(urlResponse.getData().getTexture().getValue(),
+                        urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr()));
             }
+            case 500:
+            case 400: {
+                MineSkinErrorResponse errorResponse = response.getBodyAs(MineSkinErrorResponse.class);
+                String error = errorResponse.getErrorCode();
+                logger.debug(String.format("[ERROR] MineSkin Failed! Reason: %s Url: %s", error, url));
+                switch (error) {
+                    case "failed_to_create_id":
+                    case "skin_change_failed":
+                        logger.debug("Trying again in 5 seconds...");
+                        TimeUnit.SECONDS.sleep(5);
 
-            // throw exception after all tries have failed
-            logger.debug("[ERROR] MineSkin Failed! Could not generate skin url: " + url);
-            throw new CompletionException(new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED));
-        }, executorService);
+                        return Optional.empty(); // try again
+                    case "no_account_available":
+                        throw new DataRequestExceptionShared(locale, Message.ERROR_MS_FULL);
+                    default:
+                        throw new DataRequestExceptionShared(locale, Message.ERROR_INVALID_URLSKIN);
+                }
+            }
+            case 403: {
+                MineSkinErrorResponse apiErrorResponse = response.getBodyAs(MineSkinErrorResponse.class);
+                String errorCode2 = apiErrorResponse.getErrorCode();
+                String error2 = apiErrorResponse.getError();
+                if (errorCode2.equals("invalid_api_key")) {
+                    logger.severe("[ERROR] MineSkin API key is not invalid! Reason: " + error2);
+                    switch (error2) {
+                        case "Invalid API Key":
+                            logger.severe("The API Key provided is not registered on MineSkin! Please empty \"api.mineSkinKey\" in plugins/SkinsRestorer/config.yml and run /sr reload");
+                            break;
+                        case "Client not allowed":
+                            logger.severe("This server ip is not on the apikey allowed IPs list!");
+                            break;
+                        case "Origin not allowed":
+                            logger.severe("This server Origin is not on the apikey allowed Origins list!");
+                            break;
+                        case "Agent not allowed":
+                            logger.severe("SkinsRestorer's agent \"SkinsRestorer/MineSkinAPI\" is not on the apikey allowed agents list!");
+                            break;
+                        default:
+                            logger.severe("Unknown error, please report this to SkinsRestorer's discord!");
+                            break;
+                    }
+                    throw new DataRequestExceptionShared("Invalid Mineskin API key!, nag the server owner about this!");
+                }
+
+                throw new DataRequestExceptionShared("Unknown MineSkin Error!");
+            }
+            case 429: {
+                MineSkinErrorDelayResponse errorDelayResponse = response.getBodyAs(MineSkinErrorDelayResponse.class);
+                // If "Too many requests"
+                if (errorDelayResponse.getDelay() != null) {
+                    TimeUnit.SECONDS.sleep(errorDelayResponse.getDelay());
+                } else if (errorDelayResponse.getNextRequest() != null) {
+                    Instant nextRequestInstant = Instant.ofEpochSecond(errorDelayResponse.getNextRequest());
+                    int delay = (int) Duration.between(Instant.now(), nextRequestInstant).getSeconds();
+
+                    if (delay > 0) {
+                        TimeUnit.SECONDS.sleep(delay);
+                    }
+                } else { // Should normally not happen
+                    TimeUnit.SECONDS.sleep(2);
+                }
+
+                return Optional.empty(); // try again after nextRequest
+            }
+            default:
+                logger.debug("[ERROR] MineSkin Failed! Unknown error: (" + url + ") " + response.getStatusCode());
+                throw new DataRequestExceptionShared(locale, Message.ERROR_MS_API_FAILED);
+        }
     }
 
     private HttpResponse queryURL(String query) throws IOException {

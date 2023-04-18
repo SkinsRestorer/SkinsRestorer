@@ -88,7 +88,7 @@ public class MojangAPIImpl implements MojangAPI {
             return getDataAshcon(playerName);
         } catch (DataRequestException e) {
             logger.debug(e);
-            Optional<UUID> uuidResult = getUUIDStartMojang(playerName); // TODO: Maybe use cache for this?
+            Optional<UUID> uuidResult = getUUIDStartMojang(playerName);
             if (!uuidResult.isPresent()) {
                 return Optional.empty();
             }
