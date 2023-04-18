@@ -23,6 +23,8 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @RequiredArgsConstructor(staticName = "of")
 public class SkinIdentifier {
@@ -30,4 +32,8 @@ public class SkinIdentifier {
     private final String identifier;
     @NonNull
     private final SkinType skinType;
+
+    public static SkinIdentifier ofPlayer(UUID uuid) {
+        return of(uuid.toString(), SkinType.PLAYER);
+    }
 }

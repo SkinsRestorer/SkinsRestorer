@@ -21,6 +21,7 @@ package net.skinsrestorer.api.connections.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 
 @Getter
@@ -28,4 +29,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 public class MineSkinResponse {
     private final SkinProperty property;
     private final String mineSkinId;
+    private final SkinVariant requestedVariant;
+    private final SkinVariant generatedVariant;
 }

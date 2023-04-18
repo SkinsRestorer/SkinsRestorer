@@ -40,7 +40,7 @@ public class PlayerSkinFile {
         PlayerSkinFile playerSkinFile = new PlayerSkinFile();
         playerSkinFile.uniqueId = playerSkinData.getUniqueId();
         playerSkinFile.value = playerSkinData.getProperty().getValue();
-        playerSkinFile.signature = playerSkinData.getProperty().getValue();
+        playerSkinFile.signature = playerSkinData.getProperty().getSignature();
         playerSkinFile.timestamp = playerSkinData.getTimestamp();
         playerSkinFile.dataVersion = CURRENT_DATA_VERSION;
         return playerSkinFile;

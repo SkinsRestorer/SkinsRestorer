@@ -31,19 +31,19 @@ public class MojangCacheFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private boolean isPremium;
     private UUID uniqueId;
-    private long timestampSeconds;
+    private long timestamp;
     private int dataVersion;
 
     public static MojangCacheFile fromMojangCacheData(MojangCacheData cacheData) {
         MojangCacheFile mojangCacheFile = new MojangCacheFile();
         mojangCacheFile.isPremium = cacheData.isPremium();
         mojangCacheFile.uniqueId = cacheData.getUniqueId();
-        mojangCacheFile.timestampSeconds = cacheData.getTimestamp();
+        mojangCacheFile.timestamp = cacheData.getTimestamp();
         mojangCacheFile.dataVersion = CURRENT_DATA_VERSION;
         return mojangCacheFile;
     }
 
     public MojangCacheData toCacheData() {
-        return MojangCacheData.of(isPremium, uniqueId, timestampSeconds);
+        return MojangCacheData.of(isPremium, uniqueId, timestamp);
     }
 }

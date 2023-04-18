@@ -119,7 +119,8 @@ public class MineSkinAPIImpl implements MineSkinAPI {
             case 200: {
                 MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
                 return Optional.of(MineSkinResponse.of(SkinProperty.of(urlResponse.getData().getTexture().getValue(),
-                        urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr()));
+                        urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr(),
+                        skinVariant, SkinVariant.valueOf(urlResponse.getVariant().toUpperCase(Locale.ENGLISH))));
             }
             case 500:
             case 400: {

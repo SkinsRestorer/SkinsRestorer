@@ -150,7 +150,7 @@ public class SkinStorageImpl implements SkinStorage {
 
                 if (playerSkinData.isPresent()) {
                     return playerSkinData.map(data ->
-                            InputDataResult.of(SkinIdentifier.of(uuid.get().toString(), SkinType.PLAYER), data.getProperty()));
+                            InputDataResult.of(SkinIdentifier.ofPlayer(uuid.get()), data.getProperty()));
                 }
             }
         } catch (StorageAdapter.StorageException | DataRequestException e) {
@@ -183,7 +183,7 @@ public class SkinStorageImpl implements SkinStorage {
 
             setPlayerSkinData(data.get().getUniqueId(), data.get().getSkinProperty(), Instant.now().getEpochSecond());
 
-            return Optional.of(InputDataResult.of(SkinIdentifier.of(data.get().toString(), SkinType.PLAYER), data.get().getSkinProperty()));
+            return Optional.of(InputDataResult.of(SkinIdentifier.ofPlayer(data.get().getUniqueId()), data.get().getSkinProperty()));
         }
     }
 
