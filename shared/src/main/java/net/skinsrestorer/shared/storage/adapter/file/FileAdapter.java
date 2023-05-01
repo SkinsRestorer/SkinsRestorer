@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage.adapter.file;
 
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.Gson;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.shared.config.GUIConfig;
 import net.skinsrestorer.shared.plugin.SRPlugin;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
@@ -28,11 +29,13 @@ import net.skinsrestorer.shared.storage.adapter.file.model.cache.MojangCacheFile
 import net.skinsrestorer.shared.storage.adapter.file.model.player.PlayerFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.skin.CustomSkinFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.skin.PlayerSkinFile;
+import net.skinsrestorer.shared.storage.adapter.file.model.skin.URLIndexFile;
 import net.skinsrestorer.shared.storage.adapter.file.model.skin.URLSkinFile;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
 import javax.inject.Inject;
@@ -168,8 +171,8 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
-        Path skinFile = resolveURLSkinFile(url);
+    public Optional<URLSkinData> getURLSkinData(String url, SkinVariant skinVariant) throws StorageException {
+        Path skinFile = resolveURLSkinFile(url, skinVariant);
 
         if (!Files.exists(skinFile)) {
             return Optional.empty();
@@ -187,8 +190,8 @@ public class FileAdapter implements StorageAdapter {
     }
 
     @Override
-    public void removeURLSkinData(String url) {
-        Path skinFile = resolveURLSkinFile(url);
+    public void removeURLSkinData(String url, SkinVariant skinVariant) {
+        Path skinFile = resolveURLSkinFile(url, skinVariant);
 
         try {
             Files.deleteIfExists(skinFile);
@@ -199,10 +202,53 @@ public class FileAdapter implements StorageAdapter {
 
     @Override
     public void setURLSkinData(String url, URLSkinData skinData) {
-        Path skinFile = resolveURLSkinFile(url);
+        Path skinFile = resolveURLSkinFile(url, skinData.getSkinVariant());
 
         try {
             URLSkinFile file = URLSkinFile.fromURLSkinData(skinData);
+
+            Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<URLIndexData> getURLSkinIndex(String url) throws StorageException {
+        Path skinFile = resolveURLSkinIndexFile(url);
+
+        if (!Files.exists(skinFile)) {
+            return Optional.empty();
+        }
+
+        try {
+            String json = new String(Files.readAllBytes(skinFile), StandardCharsets.UTF_8);
+
+            URLIndexFile file = gson.fromJson(json, URLIndexFile.class);
+
+            return Optional.of(file.toURLIndexData());
+        } catch (Exception e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeURLSkinIndex(String url) {
+        Path skinFile = resolveURLSkinIndexFile(url);
+
+        try {
+            Files.deleteIfExists(skinFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void setURLSkinIndex(String url, URLIndexData skinData) {
+        Path skinFile = resolveURLSkinIndexFile(url);
+
+        try {
+            URLIndexFile file = URLIndexFile.fromURLIndexData(skinData);
 
             Files.write(skinFile, gson.toJson(file).getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -381,8 +427,12 @@ public class FileAdapter implements StorageAdapter {
         return skinsFolder.resolve(hashSHA256(skinName) + ".customskin");
     }
 
-    private Path resolveURLSkinFile(String url) {
-        return skinsFolder.resolve(hashSHA256(url) + ".urlskin");
+    private Path resolveURLSkinFile(String url, SkinVariant skinVariant) {
+        return skinsFolder.resolve(hashSHA256(url) + "_" + skinVariant.name() + ".urlskin");
+    }
+
+    private Path resolveURLSkinIndexFile(String url) {
+        return skinsFolder.resolve(hashSHA256(url) + ".urlindex");
     }
 
     private Path resolvePlayerSkinFile(UUID uuid) {

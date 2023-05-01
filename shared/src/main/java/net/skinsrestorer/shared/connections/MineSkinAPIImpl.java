@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.connections;
 import ch.jalu.configme.SettingsManager;
 import com.google.gson.JsonSyntaxException;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.PropertyUtil;
 import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
@@ -101,7 +102,7 @@ public class MineSkinAPIImpl implements MineSkinAPI {
                 if (e.getCause() instanceof DataRequestException) {
                     throw new DataRequestExceptionShared(e.getCause());
                 } else {
-                    throw new DataRequestExceptionShared(e.getMessage());
+                    throw new DataRequestExceptionShared(e);
                 }
             }
         } while (failedAttempts.get() < 5);
@@ -118,9 +119,10 @@ public class MineSkinAPIImpl implements MineSkinAPI {
         switch (response.getStatusCode()) {
             case 200: {
                 MineSkinUrlResponse urlResponse = response.getBodyAs(MineSkinUrlResponse.class);
-                return Optional.of(MineSkinResponse.of(SkinProperty.of(urlResponse.getData().getTexture().getValue(),
-                        urlResponse.getData().getTexture().getSignature()), urlResponse.getIdStr(),
-                        skinVariant, SkinVariant.valueOf(urlResponse.getVariant().toUpperCase(Locale.ENGLISH))));
+                SkinProperty property = SkinProperty.of(urlResponse.getData().getTexture().getValue(),
+                        urlResponse.getData().getTexture().getSignature());
+                return Optional.of(MineSkinResponse.of(property, urlResponse.getIdStr(),
+                        skinVariant, PropertyUtil.getSkinVariant(property)));
             }
             case 500:
             case 400: {

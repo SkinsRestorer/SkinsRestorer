@@ -21,6 +21,7 @@ package net.skinsrestorer.shared.storage.model.skin;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinProperty;
 
 @Getter
@@ -29,4 +30,5 @@ public class URLSkinData {
     private final String url;
     private final String mineSkinId;
     private final SkinProperty property;
+    private final SkinVariant skinVariant;
 }

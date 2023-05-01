@@ -204,7 +204,7 @@ public final class SkinCommand {
         }
 
         if (playerEqual(sender, target)) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, null); // TODO: Figure this out
+            sender.sendMessage(Message.SUCCESS_SKIN_CHANGE, (Object) null); // TODO: Figure this out
         } else {
             sender.sendMessage(Message.SUCCESS_SKIN_CHANGE_OTHER, target.getName());
         }
@@ -247,8 +247,8 @@ public final class SkinCommand {
                 sender.sendMessage(Message.MS_UPDATING_SKIN);
 
                 MineSkinResponse response = mineSkinAPI.genSkin(skinInput, skinVariant);
-                skinStorage.setURLSkinData(skinInput, response.getMineSkinId(), response.getProperty()); // "generate" and save skin forever
-                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), SkinIdentifier.of(skinInput, SkinType.URL)); // set player to "whitespaced" name then reload skin
+                skinStorage.setURLSkinByResponse(skinInput, response); // "generate" and save skin forever
+                playerStorage.setSkinIdOfPlayer(target.getUniqueId(), SkinIdentifier.ofURL(skinInput, response.getGeneratedVariant()));
                 skinApplier.applySkin(target.getAs(Object.class), response.getProperty());
 
                 setCoolDown(sender, CommandConfig.SKIN_CHANGE_COOLDOWN);

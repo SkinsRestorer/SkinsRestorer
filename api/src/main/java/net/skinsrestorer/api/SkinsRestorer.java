@@ -23,12 +23,9 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.event.EventBus;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.api.model.MojangProfileResponse;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * API Example: <a href="https://github.com/SkinsRestorer/SkinsRestorerAPIExample">https://github.com/SkinsRestorer/SkinsRestorerAPIExample</a> <br>
@@ -50,44 +47,4 @@ public interface SkinsRestorer {
     <P> SkinApplier<P> getSkinApplier(Class<P> playerClass);
 
     EventBus getEventBus();
-
-    /**
-     * Returns a <a href="https://textures.minecraft.net/id">Texture Url</a> based on skin
-     * This is useful for skull plugins like Dynmap or DiscordSRV
-     * for example <a href="https://mc-heads.net/avatar/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f/100.png">https://mc-heads.net/avatar/%texture_id%/%size%.png</a>
-     *
-     * @param property Profile property
-     * @return full textures.minecraft.net url
-     */
-    default String getSkinTextureUrl(@NotNull SkinProperty property) {
-        return getSkinProfileData(property).getTextures().getSKIN().getUrl();
-    }
-
-    /**
-     * Only returns the id at the end of the url.
-     * Example:
-     * <a href="https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f">
-     * https://textures.minecraft.net/texture/cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
-     * </a>
-     * Would return: cb50beab76e56472637c304a54b330780e278decb017707bf7604e484e4d6c9f
-     *
-     * @param property Profile property
-     * @return textures.minecraft.net id
-     * @see #getSkinTextureUrl(SkinProperty)
-     */
-    default String getSkinTextureUrlStripped(@NotNull SkinProperty property) {
-        return getSkinProfileData(property).getTextures().getSKIN().getStrippedUrl();
-    }
-
-    /**
-     * Returns the decoded profile data from the profile property.
-     * This is useful for getting the skin data from the property and other information like cape.
-     * The user stored in this property may not be the same as the player who has the skin.
-     * APIs like MineSkin use multiple shared accounts to generate these properties.
-     * Or it could be the property of another player that the player set their skin to.
-     *
-     * @param property Profile property
-     * @return Decoded profile data as java object
-     */
-    MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property);
 }

@@ -19,21 +19,47 @@
  */
 package net.skinsrestorer.api.property;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 
 import java.util.UUID;
 
 @Data
-@RequiredArgsConstructor(staticName = "of")
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkinIdentifier {
     @NonNull
     private final String identifier;
+    /**
+     * Only used for {@link SkinType#URL}, otherwise null.
+     */
+    private final SkinVariant skinVariant;
     @NonNull
     private final SkinType skinType;
 
     public static SkinIdentifier ofPlayer(UUID uuid) {
-        return of(uuid.toString(), SkinType.PLAYER);
+        return new SkinIdentifier(uuid.toString(), null, SkinType.PLAYER);
+    }
+
+    public static SkinIdentifier ofURL(String url, SkinVariant skinVariant) {
+        return new SkinIdentifier(url, skinVariant, SkinType.URL);
+    }
+
+    public static SkinIdentifier ofCustom(String skinName) {
+        return new SkinIdentifier(skinName, null, SkinType.CUSTOM);
+    }
+
+    /**
+     * Not recommended to use, use the other methods instead.
+     * Only use is for storage.
+     * @param skinIdentifier The identifier can be a UUID, a URL or a custom name.
+     * @param skinVariant Only used for {@link SkinType#URL}, otherwise null.
+     * @param skinType The type of the skin.
+     * @return A new SkinIdentifier.
+     */
+    public static SkinIdentifier of(String skinIdentifier, SkinVariant skinVariant, SkinType skinType) {
+        return new SkinIdentifier(skinIdentifier, skinVariant, skinType);
     }
 }

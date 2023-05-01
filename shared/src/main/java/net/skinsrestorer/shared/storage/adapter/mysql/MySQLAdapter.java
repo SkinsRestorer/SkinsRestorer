@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.storage.adapter.mysql;
 import ch.jalu.configme.SettingsManager;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.property.SkinType;
@@ -32,6 +33,7 @@ import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
 import javax.inject.Inject;
@@ -58,6 +60,7 @@ public class MySQLAdapter implements StorageAdapter {
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolvePlayerTable() + "` ("
                 + "`uuid` varchar(36) NOT NULL,"
                 + "`skin_identifier` VARCHAR(2083),"
+                + "`skin_variant` VARCHAR(20),"
                 + "`skin_type` varchar(20),"
                 + "PRIMARY KEY (`uuid`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
@@ -73,6 +76,12 @@ public class MySQLAdapter implements StorageAdapter {
                 + "`mine_skin_id` varchar(36),"
                 + "`value` text NOT NULL,"
                 + "`signature` text NOT NULL,"
+                + "`skin_variant` VARCHAR(20),"
+                + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+        mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveURLSkinIndexTable() + "` ("
+                + "`url` varchar(2083) NOT NULL,"
+                + "`skin_variant` VARCHAR(20),"
                 + "PRIMARY KEY (`url`)) ENGINE=InnoDB DEFAULT CHARSET=utf8");
 
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCustomSkinTable() + "` ("
@@ -84,16 +93,18 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE UUID=?", uuid.toString())) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerTable() + " WHERE uuid=?", uuid.toString())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
 
             String skinIdentifier = crs.getString("skin_identifier");
             String skinType = crs.getString("skin_type");
+            String skinVariant = crs.getString("skin_variant");
 
             SkinIdentifier identifier = skinIdentifier != null && skinType != null ?
-                    SkinIdentifier.of(skinIdentifier, SkinType.valueOf(skinType)) : null;
+                    SkinIdentifier.of(skinIdentifier,
+                            skinVariant == null ? null : SkinVariant.valueOf(skinVariant), SkinType.valueOf(skinType)) : null;
 
             return Optional.of(PlayerData.of(uuid, identifier));
         } catch (SQLException e) {
@@ -105,17 +116,20 @@ public class MySQLAdapter implements StorageAdapter {
     public void setPlayerData(UUID uuid, PlayerData data) {
         String skinIdentifier = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getIdentifier() : null;
         String skinType = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getSkinType().name() : null;
-        mysql.execute("INSERT INTO " + resolvePlayerTable() + " (UUID, skin_identifier, skin_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?",
+        String skinVariant = data.getSkinIdentifier() != null ? data.getSkinIdentifier().getSkinVariant().name() : null;
+        mysql.execute("INSERT INTO " + resolvePlayerTable() + " (uuid, skin_identifier, skin_type, skin_variant) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE skin_identifier=?, skin_type=?, skin_variant=?",
                 uuid.toString(),
                 skinIdentifier,
                 skinType,
+                skinVariant,
                 skinIdentifier,
-                skinType);
+                skinType,
+                skinVariant);
     }
 
     @Override
     public Optional<PlayerSkinData> getPlayerSkinData(UUID uuid) throws StorageException {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerSkinTable() + " WHERE UUID=?", uuid.toString())) {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolvePlayerSkinTable() + " WHERE uuid=?", uuid.toString())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
@@ -132,12 +146,12 @@ public class MySQLAdapter implements StorageAdapter {
 
     @Override
     public void removePlayerSkinData(UUID uuid) {
-        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE UUID=?", uuid.toString());
+        mysql.execute("DELETE FROM " + resolvePlayerSkinTable() + " WHERE uuid=?", uuid.toString());
     }
 
     @Override
     public void setPlayerSkinData(UUID uuid, PlayerSkinData skinData) {
-        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (UUID, value, signature, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?, timestamp=?",
+        mysql.execute("INSERT INTO " + resolvePlayerSkinTable() + " (uuid, value, signature, timestamp) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE value=?, signature=?, timestamp=?",
                 uuid.toString(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature(),
@@ -148,8 +162,8 @@ public class MySQLAdapter implements StorageAdapter {
     }
 
     @Override
-    public Optional<URLSkinData> getURLSkinData(String url) throws StorageException {
-        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveURLSkinTable() + " WHERE url=?", url)) {
+    public Optional<URLSkinData> getURLSkinData(String url, SkinVariant skinVariant) throws StorageException {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveURLSkinTable() + " WHERE url=? AND skin_variant=?", url, skinVariant.name())) {
             if (!crs.next()) {
                 return Optional.empty();
             }
@@ -157,28 +171,59 @@ public class MySQLAdapter implements StorageAdapter {
             String mineSkinId = crs.getString("mine_skin_id");
             String value = crs.getString("value");
             String signature = crs.getString("signature");
+            SkinVariant variant = SkinVariant.valueOf(crs.getString("skin_variant"));
 
-            return Optional.of(URLSkinData.of(url, mineSkinId, SkinProperty.of(value, signature)));
+            return Optional.of(URLSkinData.of(url, mineSkinId, SkinProperty.of(value, signature), variant));
         } catch (SQLException e) {
             throw new StorageException(e);
         }
     }
 
     @Override
-    public void removeURLSkinData(String url) {
-        mysql.execute("DELETE FROM " + resolveURLSkinTable() + " WHERE url=?", url);
+    public void removeURLSkinData(String url, SkinVariant skinVariant) {
+        mysql.execute("DELETE FROM " + resolveURLSkinTable() + " WHERE url=? AND skin_variant=?", url, skinVariant.name());
     }
 
     @Override
     public void setURLSkinData(String url, URLSkinData skinData) {
-        mysql.execute("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?",
+        mysql.execute("INSERT INTO " + resolveURLSkinTable() + " (url, mine_skin_id, value, signature, skin_variant) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE mine_skin_id=?, value=?, signature=?, skin_variant=?",
                 url,
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),
                 skinData.getProperty().getSignature(),
+                skinData.getSkinVariant().name(),
                 skinData.getMineSkinId(),
                 skinData.getProperty().getValue(),
-                skinData.getProperty().getSignature());
+                skinData.getProperty().getSignature(),
+                skinData.getSkinVariant().name());
+    }
+
+    @Override
+    public Optional<URLIndexData> getURLSkinIndex(String url) throws StorageException {
+        try (ResultSet crs = mysql.query("SELECT * FROM " + resolveURLSkinIndexTable() + " WHERE url=?", url)) {
+            if (!crs.next()) {
+                return Optional.empty();
+            }
+
+            SkinVariant variant = SkinVariant.valueOf(crs.getString("skin_variant"));
+
+            return Optional.of(URLIndexData.of(url, variant));
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
+
+    @Override
+    public void removeURLSkinIndex(String url) {
+        mysql.execute("DELETE FROM " + resolveURLSkinIndexTable() + " WHERE url=?", url);
+    }
+
+    @Override
+    public void setURLSkinIndex(String url, URLIndexData skinData) {
+        mysql.execute("INSERT INTO " + resolveURLSkinIndexTable() + " (url, skin_variant) VALUES (?, ?) ON DUPLICATE KEY UPDATE skin_variant=?",
+                url,
+                skinData.getSkinVariant().name(),
+                skinData.getSkinVariant().name());
     }
 
     @Override
@@ -259,6 +304,10 @@ public class MySQLAdapter implements StorageAdapter {
 
     private String resolveURLSkinTable() {
         return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "url_skins";
+    }
+
+    private String resolveURLSkinIndexTable() {
+        return settings.getProperty(DatabaseConfig.MYSQL_TABLE_PREFIX) + "url_index";
     }
 
     private String resolvePlayerSkinTable() {

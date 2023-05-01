@@ -23,7 +23,11 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
-import net.skinsrestorer.api.property.*;
+import net.skinsrestorer.api.model.SkinVariant;
+import net.skinsrestorer.api.property.InputDataResult;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
+import net.skinsrestorer.api.property.SkinIdentifier;
+import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.StorageConfig;
@@ -34,6 +38,7 @@ import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 import net.skinsrestorer.shared.utils.C;
 
@@ -111,8 +116,13 @@ public class SkinStorageImpl implements SkinStorage {
     }
 
     @Override
-    public void setURLSkinData(String url, String mineSkinId, SkinProperty textures) {
-        atomicAdapter.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures));
+    public void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant) {
+        atomicAdapter.get().setURLSkinData(url, URLSkinData.of(url, mineSkinId, textures, skinVariant));
+    }
+
+    @Override
+    public void setURLSkinIndex(String url, SkinVariant skinVariant) {
+        atomicAdapter.get().setURLSkinIndex(url, URLIndexData.of(url, skinVariant));
     }
 
     @Override
@@ -120,9 +130,7 @@ public class SkinStorageImpl implements SkinStorage {
         atomicAdapter.get().setCustomSkinData(skinName, CustomSkinData.of(skinName, textures));
     }
 
-
     // TODO: CUSTOM_GUI
-    // seems to be that crs order is ignored...
     public Map<String, String> getSkins(int offset) {
         return atomicAdapter.get().getStoredSkins(offset);
     }
@@ -130,14 +138,21 @@ public class SkinStorageImpl implements SkinStorage {
     public Optional<InputDataResult> findSkinData(String input) {
         try {
             if (C.validUrl(input)) {
-                return atomicAdapter.get().getURLSkinData(input).map(data ->
-                        InputDataResult.of(SkinIdentifier.of(data.getUrl(), SkinType.URL), data.getProperty()));
+                Optional<URLIndexData> urlSkinIndex = atomicAdapter.get().getURLSkinIndex(input);
+
+                if (!urlSkinIndex.isPresent()) {
+                    return Optional.empty();
+                }
+
+                return atomicAdapter.get().getURLSkinData(input, urlSkinIndex.get().getSkinVariant()).map(data ->
+                        InputDataResult.of(SkinIdentifier.ofURL(data.getUrl(), urlSkinIndex.get().getSkinVariant()),
+                                data.getProperty()));
             } else {
                 Optional<CustomSkinData> customSkinData = atomicAdapter.get().getCustomSkinData(input);
 
                 if (customSkinData.isPresent()) {
                     return customSkinData.map(data ->
-                            InputDataResult.of(SkinIdentifier.of(data.getSkinName(), SkinType.CUSTOM), data.getProperty()));
+                            InputDataResult.of(SkinIdentifier.ofCustom(data.getSkinName()), data.getProperty()));
                 }
 
                 Optional<UUID> uuid = cacheStorage.getUUID(input, false);
@@ -171,9 +186,9 @@ public class SkinStorageImpl implements SkinStorage {
         if (C.validUrl(input)) {
             MineSkinResponse response = mineSkinAPI.genSkin(input, null);
 
-            setURLSkinData(input, response.getMineSkinId(), response.getProperty());
+            setURLSkinByResponse(input, response);
 
-            return Optional.of(InputDataResult.of(SkinIdentifier.of(input, SkinType.URL), response.getProperty()));
+            return Optional.of(InputDataResult.of(SkinIdentifier.ofURL(input, response.getGeneratedVariant()), response.getProperty()));
         } else {
             Optional<MojangSkinDataResult> data = cacheStorage.getSkin(input, false);
 
@@ -189,7 +204,25 @@ public class SkinStorageImpl implements SkinStorage {
 
     @Override
     public Optional<SkinProperty> getSkinDataByIdentifier(SkinIdentifier identifier) {
-        return Optional.empty();
+        try {
+            switch (identifier.getSkinType()) {
+                case PLAYER:
+                    return atomicAdapter.get().getPlayerSkinData(UUID.fromString(identifier.getIdentifier()))
+                            .map(PlayerSkinData::getProperty);
+                case URL:
+                    return atomicAdapter.get().getURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant())
+                            .map(URLSkinData::getProperty);
+                case CUSTOM:
+                    return atomicAdapter.get().getCustomSkinData(identifier.getIdentifier())
+                            .map(CustomSkinData::getProperty);
+                default:
+                    throw new IllegalStateException("Unexpected value: " + identifier.getSkinType());
+            }
+
+        } catch (StorageAdapter.StorageException e) {
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -199,7 +232,7 @@ public class SkinStorageImpl implements SkinStorage {
                 atomicAdapter.get().removePlayerSkinData(UUID.fromString(identifier.getIdentifier()));
                 break;
             case URL:
-                atomicAdapter.get().removeURLSkinData(identifier.getIdentifier());
+                atomicAdapter.get().removeURLSkinData(identifier.getIdentifier(), identifier.getSkinVariant());
                 break;
             case CUSTOM:
                 atomicAdapter.get().removeCustomSkinData(identifier.getIdentifier());

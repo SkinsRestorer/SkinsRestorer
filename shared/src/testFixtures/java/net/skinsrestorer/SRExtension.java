@@ -41,7 +41,7 @@ public class SRExtension implements BeforeAllCallback, ParameterResolver {
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         Injector injector = new InjectorBuilder().addDefaultHandlers("net.skinsrestorer").create();
 
-        injector.register(SRLogger.class, new SRLogger(new SRPlatformLogger() {
+        SRLogger logger = new SRLogger(new SRPlatformLogger() {
             @Override
             public void log(SRLogLevel level, String message) {
                 System.out.println(level + " " + message);
@@ -52,7 +52,9 @@ public class SRExtension implements BeforeAllCallback, ParameterResolver {
                 System.out.println(level + " " + message);
                 throwable.printStackTrace();
             }
-        }, false));
+        }, false);
+        logger.setDebug(true);
+        injector.register(SRLogger.class, logger);
 
         return injector;
     }

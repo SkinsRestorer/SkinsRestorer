@@ -22,6 +22,7 @@ package net.skinsrestorer.shared.storage.adapter.file.model.player;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinType;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
@@ -53,6 +54,7 @@ public class PlayerFile {
     @AllArgsConstructor(staticName = "of")
     public static class IdentifierFile {
         private String identifier;
+        private SkinVariant skinVariant;
         private SkinType type;
 
         public static IdentifierFile of(SkinIdentifier identifier) {
@@ -60,11 +62,11 @@ public class PlayerFile {
                 return null;
             }
 
-            return new IdentifierFile(identifier.getIdentifier(), identifier.getSkinType());
+            return new IdentifierFile(identifier.getIdentifier(), identifier.getSkinVariant(), identifier.getSkinType());
         }
 
         public SkinIdentifier toIdentifier() {
-            return SkinIdentifier.of(identifier, type);
+            return SkinIdentifier.of(identifier, skinVariant, type);
         }
     }
 }

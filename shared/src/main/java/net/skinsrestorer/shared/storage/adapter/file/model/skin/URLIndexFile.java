@@ -22,32 +22,25 @@ package net.skinsrestorer.shared.storage.adapter.file.model.skin;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.skinsrestorer.api.model.SkinVariant;
-import net.skinsrestorer.api.property.SkinProperty;
-import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 
 @Getter
 @NoArgsConstructor
-public class URLSkinFile {
+public class URLIndexFile {
     private static final int CURRENT_DATA_VERSION = 1;
     private String url;
-    private String mineSkinId;
-    private String value;
-    private String signature;
     private SkinVariant skinVariant;
     private int dataVersion;
 
-    public static URLSkinFile fromURLSkinData(URLSkinData urlSkinData) {
-        URLSkinFile urlSkinFile = new URLSkinFile();
-        urlSkinFile.url = urlSkinData.getUrl();
-        urlSkinFile.mineSkinId = urlSkinData.getMineSkinId();
-        urlSkinFile.value = urlSkinData.getProperty().getValue();
-        urlSkinFile.signature = urlSkinData.getProperty().getSignature();
-        urlSkinFile.skinVariant = urlSkinData.getSkinVariant();
+    public static URLIndexFile fromURLIndexData(URLIndexData urlIndexData) {
+        URLIndexFile urlSkinFile = new URLIndexFile();
+        urlSkinFile.url = urlIndexData.getUrl();
+        urlSkinFile.skinVariant = urlIndexData.getSkinVariant();
         urlSkinFile.dataVersion = CURRENT_DATA_VERSION;
         return urlSkinFile;
     }
 
-    public URLSkinData toURLSkinData() {
-        return URLSkinData.of(url, mineSkinId, SkinProperty.of(value, signature), skinVariant);
+    public URLIndexData toURLIndexData() {
+        return URLIndexData.of(url, skinVariant);
     }
 }

@@ -19,10 +19,12 @@
  */
 package net.skinsrestorer.shared.storage.adapter;
 
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.shared.storage.model.cache.MojangCacheData;
 import net.skinsrestorer.shared.storage.model.player.PlayerData;
 import net.skinsrestorer.shared.storage.model.skin.CustomSkinData;
 import net.skinsrestorer.shared.storage.model.skin.PlayerSkinData;
+import net.skinsrestorer.shared.storage.model.skin.URLIndexData;
 import net.skinsrestorer.shared.storage.model.skin.URLSkinData;
 
 import java.util.Map;
@@ -40,11 +42,17 @@ public interface StorageAdapter {
 
     void setPlayerSkinData(UUID uuid, PlayerSkinData skinData);
 
-    Optional<URLSkinData> getURLSkinData(String url) throws StorageException;
+    Optional<URLSkinData> getURLSkinData(String url, SkinVariant skinVariant) throws StorageException;
 
-    void removeURLSkinData(String url);
+    void removeURLSkinData(String url, SkinVariant skinVariant);
 
     void setURLSkinData(String url, URLSkinData skinData);
+
+    Optional<URLIndexData> getURLSkinIndex(String url) throws StorageException;
+
+    void removeURLSkinIndex(String url);
+
+    void setURLSkinIndex(String url, URLIndexData skinData);
 
     Optional<CustomSkinData> getCustomSkinData(String skinName) throws StorageException;
 

@@ -19,7 +19,9 @@
  */
 package net.skinsrestorer.api.storage;
 
+import net.skinsrestorer.api.connections.model.MineSkinResponse;
 import net.skinsrestorer.api.exception.DataRequestException;
+import net.skinsrestorer.api.model.SkinVariant;
 import net.skinsrestorer.api.property.InputDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
@@ -60,8 +62,25 @@ public interface SkinStorage {
      * @param url        URL to skin
      * @param mineSkinId MineSkin ID
      * @param textures   Property object
+     * @param skinVariant Skin variant
      */
-    void setURLSkinData(String url, String mineSkinId, SkinProperty textures);
+    void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant);
+
+    /**
+     * Saves skin data to database
+     *
+     * @param url        URL to skin
+     * @param skinVariant Skin variant
+     */
+    void setURLSkinIndex(String url, SkinVariant skinVariant);
+
+    default void setURLSkinByResponse(String url, MineSkinResponse response) {
+        if (response.getRequestedVariant() == null) {
+            setURLSkinIndex(url, response.getGeneratedVariant());
+        }
+
+        setURLSkinData(url, response.getMineSkinId(), response.getProperty(), response.getGeneratedVariant());
+    }
 
     /**
      * Saves skin data to database

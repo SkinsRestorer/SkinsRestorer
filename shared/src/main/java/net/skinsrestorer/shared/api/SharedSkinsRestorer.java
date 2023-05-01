@@ -27,17 +27,12 @@ import net.skinsrestorer.api.connections.MineSkinAPI;
 import net.skinsrestorer.api.connections.MojangAPI;
 import net.skinsrestorer.api.event.EventBus;
 import net.skinsrestorer.api.interfaces.SkinApplier;
-import net.skinsrestorer.api.model.MojangProfileResponse;
-import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.CacheStorage;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.api.event.EventBusImpl;
-import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class SharedSkinsRestorer implements SkinsRestorer {
@@ -68,12 +63,5 @@ public class SharedSkinsRestorer implements SkinsRestorer {
     @Override
     public EventBus getEventBus() {
         return eventBus;
-    }
-
-    @Override
-    public MojangProfileResponse getSkinProfileData(@NotNull SkinProperty property) {
-        String decodedString = new String(Base64.getDecoder().decode(property.getValue()), StandardCharsets.UTF_8);
-
-        return gson.fromJson(decodedString, MojangProfileResponse.class);
     }
 }

@@ -17,19 +17,18 @@
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  */
-package net.skinsrestorer.api.model;
+package net.skinsrestorer.shared.storage.model.skin;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import net.skinsrestorer.api.model.SkinVariant;
 
-import java.util.regex.Pattern;
-
-@Data
-public class MojangProfileTexture {
-    public static final Pattern URL_STRIP_PATTERN = Pattern.compile("^https?://textures\\.minecraft\\.net/texture/");
-    private String url;
-    private MojangProfileTextureMeta metadata;
-
-    public String getStrippedUrl() {
-        return URL_STRIP_PATTERN.matcher(url).replaceAll("");
-    }
+/**
+ * A URL can be generated both as SLIM and as CLASSIC, so we need to find the default determined by MineSkin.
+ */
+@Getter
+@RequiredArgsConstructor(staticName = "of")
+public class URLIndexData {
+    private final String url;
+    private final SkinVariant skinVariant;
 }
