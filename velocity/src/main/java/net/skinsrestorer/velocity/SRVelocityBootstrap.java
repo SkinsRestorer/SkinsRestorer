@@ -60,7 +60,8 @@ public class SRVelocityBootstrap {
                 injector -> new SRVelocityAdapter(injector, this, metricsFactory),
                 SharedUpdateCheckInit.class,
                 SRProxyPlugin.class,
-                container.getDescription().getVersion().orElse("Unknown"),
+                container.getDescription().getVersion()
+                        .orElseThrow(() -> new RuntimeException("Failed to get version from plugin container.")),
                 dataFolder,
                 Platform.VELOCITY,
                 SRVelocityInit.class

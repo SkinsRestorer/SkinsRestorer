@@ -36,7 +36,7 @@ public class ClassInfo {
 
     private ClassInfo() {
         spigot = isClassPresent("org.spigotmc.SpigotConfig");
-        paper = isClassPresent("com.destroystokyo.paper.PaperConfig");
+        paper = isClassPresent("com.destroystokyo.paper.PaperConfig", "io.papermc.paper.configuration.Configuration");
         craftBukkit = isClassPresent("org.bukkit.Bukkit");
         folia = isClassPresent("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
         spongeVanilla = isClassPresent("org.spongepowered.server.SpongeVanilla");

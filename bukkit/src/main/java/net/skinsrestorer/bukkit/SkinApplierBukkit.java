@@ -20,7 +20,6 @@
 package net.skinsrestorer.bukkit;
 
 import ch.jalu.configme.SettingsManager;
-import io.papermc.lib.PaperLib;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +40,7 @@ import net.skinsrestorer.shared.api.event.SkinApplyEventImpl;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogLevel;
 import net.skinsrestorer.shared.log.SRLogger;
+import net.skinsrestorer.shared.serverinfo.ClassInfo;
 import net.skinsrestorer.shared.serverinfo.SemanticVersion;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Server;
@@ -167,7 +167,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private void ejectPassengers(Player player) {
-        if (PaperLib.isSpigot() && SpigotUtil.hasPassengerMethods()) {
+        if (ClassInfo.get().isSpigot() && SpigotUtil.hasPassengerMethods()) {
             Entity vehicle = player.getVehicle();
 
             SpigotPassengerUtil.refreshPassengers(adapter.getPluginInstance(), player, vehicle, settings);
@@ -175,7 +175,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
     }
 
     private boolean isPaper() {
-        if (PaperLib.isPaper() && NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
+        if (ClassInfo.get().isPaper() && NMSVersion.SERVER_VERSION.isNewerThan(new SemanticVersion(1, 11, 2))) {
             if (hasPaperMethods()) {
                 return true;
             } else {

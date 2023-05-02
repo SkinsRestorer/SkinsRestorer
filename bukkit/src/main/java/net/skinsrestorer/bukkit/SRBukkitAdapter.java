@@ -20,7 +20,6 @@
 package net.skinsrestorer.bukkit;
 
 import ch.jalu.injector.Injector;
-import io.papermc.lib.PaperLib;
 import lombok.Getter;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.bukkit.command.SRBukkitCommand;
@@ -35,6 +34,7 @@ import net.skinsrestorer.shared.commands.library.SRRegisterPayload;
 import net.skinsrestorer.shared.gui.SharedGUI;
 import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.provider.ProviderSelector;
+import net.skinsrestorer.shared.serverinfo.ClassInfo;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.IOExceptionConsumer;
@@ -124,7 +124,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
 
     @Override
     public boolean determineProxy() {
-        if (PaperLib.isSpigot() && SpigotUtil.isRealSpigot(server)) {
+        if (ClassInfo.get().isSpigot() && SpigotUtil.isRealSpigot(server)) {
             if (SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord")) {
                 return true;
             }
@@ -139,7 +139,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
             }
         }
 
-        if (PaperLib.isPaper()) {
+        if (ClassInfo.get().isPaper()) {
             // Load paper velocity-support.enabled to allow velocity compatability.
             Path oldPaperFile = Paths.get("paper.yml");
             if (Files.exists(oldPaperFile)) {

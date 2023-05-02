@@ -302,7 +302,6 @@ public final class SkinCommand {
     private boolean allowedSkinUrl(String url) {
         if (!settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_ENABLED)) {
             return true;
-
         }
 
         for (String possiblyAllowedUrl : settings.getProperty(CommandConfig.RESTRICT_SKIN_URLS_LIST)) {
@@ -323,6 +322,7 @@ public final class SkinCommand {
                 return false;
             }
         }
+
         return true;
     }
 
