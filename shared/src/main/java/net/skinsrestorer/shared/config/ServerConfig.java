@@ -52,11 +52,12 @@ public class ServerConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("server",
+                "\n",
                 "\n##########",
                 "\n# Server #",
                 "\n##########",
                 "\n",
-                "If we break things, you can disable it here."
+                "Change server specific settings here."
         );
     }
 }

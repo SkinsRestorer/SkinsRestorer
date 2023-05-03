@@ -61,11 +61,12 @@ public class AdvancedConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("advanced",
+                "\n",
                 "\n###############",
                 "\n# Danger Zone #",
                 "\n###############",
                 "\n",
-                "ABSOLUTELY DO NOT CHANGE IF YOU DO NOT KNOW WHAT YOU DO"
+                "ABSOLUTELY DO NOT CHANGE SETTINGS HERE IF YOU DO NOT KNOW WHAT YOU DO!"
         );
     }
 }

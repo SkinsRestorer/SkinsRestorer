@@ -36,10 +36,18 @@ public class ProxyConfig implements SettingsHolder {
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_ALLOWLIST = newProperty("proxy.notAllowedCommandServers.allowList", false);
     @Comment("Block players from executing SkinsRestorer commands before having joined a server. (RECOMMENDED)")
     public static final Property<Boolean> NOT_ALLOWED_COMMAND_SERVERS_IF_NONE_BLOCK_COMMAND = newProperty("proxy.notAllowedCommandServers.ifNoServerBlockCommand", false);
-    public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.List", listOf("auth"));
+    public static final Property<List<String>> NOT_ALLOWED_COMMAND_SERVERS = newListProperty("proxy.notAllowedCommandServers.list", listOf("auth"));
 
     @Override
     public void registerComments(CommentsConfiguration conf) {
+        conf.setComment("proxy",
+                "\n",
+                "\n#########",
+                "\n# Proxy #",
+                "\n#########",
+                "\n",
+                "Change proxy specific settings here."
+        );
         conf.setComment("proxy.notAllowedCommandServers",
                 "Disable all SkinsRestorer commands on specific backend servers.",
                 "[!] This only works & is relevant if you're using proxies like bungee / waterfall"

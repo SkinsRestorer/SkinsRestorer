@@ -39,11 +39,16 @@ public class DatabaseConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("database",
-                "Settings for MySQL skin storage (recommended for big BungeeCord networks)",
-                "[!] IF YOU USE BUNGEE, DO NOT ENABLE MYSQL in the Spigot / backend config.yml [!]",
+                "\n",
+                "\n############",
+                "\n# Database #",
+                "\n############",
+                "\n",
+                "Settings for databases skin storage (recommended for large networks with a lot of skins)",
+                "[!] IF YOU USE A PROXY, DO NOT ENABLE MYSQL in the Spigot / Backend config.yml [!]",
                 "[!] Non-root users: MySQL 8's new default authentication is not supported, use mysql_native_password [!]",
                 "[!] Make sure you have the correct permissions set for your MySQL user. [!]",
-                "[!] Make sure to fill in MySQL.ConnectionOptions if you're using certificate / ssl authentication. [!]",
+                "[!] Make sure to fill in database.connectionOptions if you're using certificate / ssl authentication. [!]",
                 "[!] If you're not using ssl, change sslMode=trust to sslMode=disable [!]"
         );
     }

@@ -65,6 +65,7 @@ public class StorageConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("storage",
+                "\n",
                 "\n###########",
                 "\n# Storage #",
                 "\n###########",

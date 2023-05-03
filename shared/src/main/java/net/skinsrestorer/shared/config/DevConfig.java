@@ -33,6 +33,7 @@ public class DevConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("dev",
+                "\n",
                 "Updater Settings",
                 "<!! Warning !!>",
                 "Using outdated version void's support, compatibility & stability.",

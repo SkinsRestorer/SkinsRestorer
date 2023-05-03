@@ -61,6 +61,7 @@ public class MessageConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("messages",
+                "\n",
                 "\n##########",
                 "\n# Locale #",
                 "\n##########",

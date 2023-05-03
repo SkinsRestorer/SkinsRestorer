@@ -74,9 +74,10 @@ public class CommandConfig implements SettingsHolder {
     @Override
     public void registerComments(CommentsConfiguration conf) {
         conf.setComment("commands",
-                "\n###########",
+                "\n",
+                "\n############",
                 "\n# Commands #",
-                "\n###########",
+                "\n############",
                 "\n",
                 "Control behaviour of commands."
         );
