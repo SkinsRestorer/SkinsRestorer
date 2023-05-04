@@ -327,7 +327,7 @@ public class SRPlugin {
         }
     }
 
-    public void startup(SRPlatformInit platformInit) throws InitializeException {
+    public void startup(Class<? extends SRPlatformInit> initClass) throws InitializeException {
         SRServerPlugin serverPlugin = injector.getIfAvailable(SRServerPlugin.class);
         SRProxyPlugin proxyPlugin = injector.getIfAvailable(SRProxyPlugin.class);
 
@@ -359,6 +359,7 @@ public class SRPlugin {
         injector.register(SkinStorage.class, injector.getSingleton(SkinStorageImpl.class));
         injector.register(PlayerStorage.class, injector.getSingleton(PlayerStorageImpl.class));
 
+        SRPlatformInit platformInit = injector.newInstance(initClass);
         platformInit.initSkinApplier();
 
         platformInit.checkPluginSupport();

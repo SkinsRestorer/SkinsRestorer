@@ -70,6 +70,8 @@ public class SRBukkitInit implements SRServerPlatformInit {
     private final Injector injector;
     private final SRLogger logger;
     private final Server server;
+    private final WrapperBukkit wrapper;
+    private final SkinsRestorerLocale locale;
 
     @Override
     public void initSkinApplier() throws InitializeException {
@@ -90,7 +92,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
             throw e;
         }
 
-        plugin.registerSkinApplier(skinApplierBukkit, Player.class, injector.getSingleton(WrapperBukkit.class)::player);
+        plugin.registerSkinApplier(skinApplierBukkit, Player.class, wrapper::player);
 
         // Log information about the platform
         logger.info(ChatColor.GREEN + "Detected Minecraft " + ChatColor.YELLOW + BukkitReflection.SERVER_VERSION_STRING + ChatColor.GREEN + ", using " + ChatColor.YELLOW + skinApplierBukkit.getRefresh().getClass().getSimpleName() + ChatColor.GREEN + ".");
@@ -117,7 +119,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initPrePlatformInit() {
-        WrapperBukkit wrapperBukkit = injector.getSingleton(WrapperBukkit.class);
         server.getHelpMap().registerHelpTopicFactory(SRBukkitCommand.class, command -> {
             if (command instanceof SRBukkitCommand) {
                 SRBukkitCommand srbukkitCommand = (SRBukkitCommand) command;
@@ -155,7 +156,7 @@ public class SRBukkitInit implements SRServerPlatformInit {
                         sb.append(ChatColor.GOLD);
                         sb.append("Usage: ");
                         sb.append(ChatColor.WHITE);
-                        sb.append(srbukkitCommand.getExecutor().getHelpUsage(wrapperBukkit.commandSender(forWho)));
+                        sb.append(srbukkitCommand.getExecutor().getHelpUsage(wrapper.commandSender(forWho)));
 
                         String[] aliases = srbukkitCommand.getMeta().getAliases();
                         if (aliases.length > 0) {
@@ -222,8 +223,6 @@ public class SRBukkitInit implements SRServerPlatformInit {
 
     @Override
     public void initPermissions() {
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-
         for (PermissionRegistry permission : PermissionRegistry.values()) {
             String permissionString = permission.getPermission().getPermissionString();
             String description = locale.getMessage(locale.getDefaultForeign(), permission.getDescription());

@@ -53,11 +53,12 @@ public class SRSpongeInit implements SRServerPlatformInit {
     private final SRSpongeAdapter adapter;
     private final SRPlugin plugin;
     private final Game game;
+    private final WrapperSponge wrapper;
+    private final SkinsRestorerLocale locale;
 
     @Override
     public void initSkinApplier() {
-        SkinApplierSponge skinApplierSponge = injector.getSingleton(SkinApplierSponge.class);
-        plugin.registerSkinApplier(skinApplierSponge, ServerPlayer.class, injector.getSingleton(WrapperSponge.class)::player);
+        plugin.registerSkinApplier(injector.getSingleton(SkinApplierSponge.class), ServerPlayer.class, wrapper::player);
     }
 
     @Override
@@ -101,8 +102,6 @@ public class SRSpongeInit implements SRServerPlatformInit {
     }
 
     private PermissionDescription.Builder newDescriptionBuilder(Permission permission, Message description) {
-        SkinsRestorerLocale locale = injector.getSingleton(SkinsRestorerLocale.class);
-
         return game.server().serviceProvider().permissionService()
                 .newDescriptionBuilder(adapter.getPluginContainer())
                 .id(permission.getPermissionString())

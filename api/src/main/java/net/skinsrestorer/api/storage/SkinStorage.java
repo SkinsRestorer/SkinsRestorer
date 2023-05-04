@@ -59,9 +59,9 @@ public interface SkinStorage {
     /**
      * Saves skin data to database
      *
-     * @param url        URL to skin
-     * @param mineSkinId MineSkin ID
-     * @param textures   Property object
+     * @param url         URL to skin
+     * @param mineSkinId  MineSkin ID
+     * @param textures    Property object
      * @param skinVariant Skin variant
      */
     void setURLSkinData(String url, String mineSkinId, SkinProperty textures, SkinVariant skinVariant);
@@ -69,7 +69,7 @@ public interface SkinStorage {
     /**
      * Saves skin data to database
      *
-     * @param url        URL to skin
+     * @param url         URL to skin
      * @param skinVariant Skin variant
      */
     void setURLSkinIndex(String url, SkinVariant skinVariant);

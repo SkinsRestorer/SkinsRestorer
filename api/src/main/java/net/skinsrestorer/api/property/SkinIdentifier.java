@@ -54,9 +54,10 @@ public class SkinIdentifier {
     /**
      * Not recommended to use, use the other methods instead.
      * Only use is for storage.
+     *
      * @param skinIdentifier The identifier can be a UUID, a URL or a custom name.
-     * @param skinVariant Only used for {@link SkinType#URL}, otherwise null.
-     * @param skinType The type of the skin.
+     * @param skinVariant    Only used for {@link SkinType#URL}, otherwise null.
+     * @param skinType       The type of the skin.
      * @return A new SkinIdentifier.
      */
     public static SkinIdentifier of(String skinIdentifier, SkinVariant skinVariant, SkinType skinType) {
