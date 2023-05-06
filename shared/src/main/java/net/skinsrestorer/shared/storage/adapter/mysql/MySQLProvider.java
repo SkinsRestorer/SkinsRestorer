@@ -37,9 +37,9 @@ public class MySQLProvider {
     private final SRLogger logger;
     private Pool pool;
 
-    public void connectPool(String host, int port, String database,
-                            String username, String password,
-                            int maxPoolSize, String options) throws SQLException {
+    public void initPool(String host, int port, String database,
+                         String username, String password,
+                         int maxPoolSize, String options) throws SQLException {
         Configuration configuration = Configuration.parse("jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?permitMysqlScheme" +
                 "&maxPoolSize=" + maxPoolSize +

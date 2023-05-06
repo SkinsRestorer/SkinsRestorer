@@ -110,7 +110,7 @@ public class SRProxyPlugin {
 
     public void startupPlatform(SRProxyPlatformInit init) throws InitializeException {
         // Init storage
-        plugin.initStorage();
+        plugin.loadStorage();
 
         // Init API
         plugin.registerAPI();

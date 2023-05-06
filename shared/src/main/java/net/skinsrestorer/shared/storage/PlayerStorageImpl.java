@@ -23,10 +23,12 @@ import ch.jalu.configme.SettingsManager;
 import lombok.RequiredArgsConstructor;
 import net.skinsrestorer.api.exception.DataRequestException;
 import net.skinsrestorer.api.property.InputDataResult;
+import net.skinsrestorer.api.property.MojangSkinDataResult;
 import net.skinsrestorer.api.property.SkinIdentifier;
 import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
+import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
@@ -101,35 +103,41 @@ public class PlayerStorageImpl implements PlayerStorage {
     }
 
     @Override
-    public Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName) {
+    public Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException {
         Optional<SkinProperty> setSkin = getSkinOfPlayer(uuid);
 
         if (setSkin.isPresent()) {
             return setSkin;
         }
 
-        return getDefaultSkinForPlayer(uuid, playerName);
-    }
-
-    @Override
-    public Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName) {
-        if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED)) {
+        if (isOnlineMode && !settings.getProperty(LoginConfig.ALWAYS_APPLY_PREMIUM)) {
             return Optional.empty();
         }
 
-        // Don't return default skin name for premium players if enabled
-        if (!settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
-            // Check if player is premium
-            try {
-                if (cacheStorage.getUUID(playerName, false).isPresent()) {
-                    // player is premium, return his skin name instead of default skin
-                    return Optional.empty();
-                }
-            } catch (DataRequestException e) {
-                logger.debug(e);
-            }
+        boolean defaultSkinsEnabled = settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED);
+        if (defaultSkinsEnabled && settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
+            return getDefaultSkinForPlayer(playerName);
         }
 
+        Optional<SkinProperty> premiumSkin = getPremiumSkinForPlayer(playerName);
+
+        if (premiumSkin.isPresent()) {
+            return premiumSkin;
+        }
+
+        if (defaultSkinsEnabled) {
+            return getDefaultSkinForPlayer(playerName);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<SkinProperty> getPremiumSkinForPlayer(String playerName) throws DataRequestException {
+        return cacheStorage.getSkin(playerName, false).map(MojangSkinDataResult::getSkinProperty);
+    }
+
+    private Optional<SkinProperty> getDefaultSkinForPlayer(String playerName) {
         // return default skin name if user has no custom skin set, or we want to clear to default
         List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
 

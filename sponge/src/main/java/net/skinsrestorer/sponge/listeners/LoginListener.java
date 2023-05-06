@@ -49,7 +49,7 @@ public class LoginListener implements EventListener<ServerSideConnectionEvent.Au
     private SRLoginProfileEvent<Void> wrap(ServerSideConnectionEvent.Auth event) {
         return new SRLoginProfileEvent<Void>() {
             @Override
-            public boolean isOnline() {
+            public boolean hasOnlineProperties() {
                 return event.profile().properties().stream().anyMatch(p -> p.name().equals(SkinProperty.TEXTURES_NAME));
             }
 

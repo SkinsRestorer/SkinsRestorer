@@ -49,7 +49,8 @@ public class MySQLAdapter implements StorageAdapter {
     private final SettingsManager settings;
     private final SRLogger logger;
 
-    public void createTable() {
+    @Override
+    public void init() {
         mysql.execute("CREATE TABLE IF NOT EXISTS `" + resolveCacheTable() + "` ("
                 + "`name` varchar(16) NOT NULL,"
                 + "`is_premium` tinyint(1) NOT NULL,"

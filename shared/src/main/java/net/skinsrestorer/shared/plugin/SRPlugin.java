@@ -60,7 +60,6 @@ import net.skinsrestorer.shared.storage.adapter.mysql.MySQLProvider;
 import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.subjects.SRProxyPlayer;
-import net.skinsrestorer.shared.subjects.messages.LocaleManager;
 import net.skinsrestorer.shared.subjects.messages.Message;
 import net.skinsrestorer.shared.subjects.messages.MessageLoader;
 import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
@@ -238,13 +237,12 @@ public class SRPlugin {
     }
 
     public void loadLocales() throws IOException {
-        injector.register(LocaleManager.class, new LocaleManager<>());
         MessageLoader messageLoader = injector.getSingleton(MessageLoader.class);
         messageLoader.moveOldFiles();
         messageLoader.loadMessages();
     }
 
-    public void initStorage() throws InitializeException {
+    public void loadStorage() throws InitializeException {
         // Initialise SkinStorage
         SkinStorageImpl skinStorage = injector.getSingleton(SkinStorageImpl.class);
         SettingsManager settings = injector.getSingleton(SettingsManager.class);
@@ -252,7 +250,7 @@ public class SRPlugin {
             if (settings.getProperty(DatabaseConfig.MYSQL_ENABLED)) {
                 MySQLProvider mySQLProvider = injector.getSingleton(MySQLProvider.class);
 
-                mySQLProvider.connectPool(settings.getProperty(DatabaseConfig.MYSQL_HOST),
+                mySQLProvider.initPool(settings.getProperty(DatabaseConfig.MYSQL_HOST),
                         settings.getProperty(DatabaseConfig.MYSQL_PORT),
                         settings.getProperty(DatabaseConfig.MYSQL_DATABASE),
                         settings.getProperty(DatabaseConfig.MYSQL_USERNAME),
@@ -260,11 +258,11 @@ public class SRPlugin {
                         settings.getProperty(DatabaseConfig.MYSQL_MAX_POOL_SIZE),
                         settings.getProperty(DatabaseConfig.MYSQL_CONNECTION_OPTIONS));
 
-                logger.info("Connected to MySQL!");
-
                 MySQLAdapter adapter = injector.getSingleton(MySQLAdapter.class);
 
-                adapter.createTable();
+                adapter.init();
+
+                logger.info("Connected to MySQL!");
 
                 injector.getSingleton(AtomicAdapter.class).setAdapter(adapter);
             } else {

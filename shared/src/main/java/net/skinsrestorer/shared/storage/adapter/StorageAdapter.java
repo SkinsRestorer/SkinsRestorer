@@ -32,6 +32,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface StorageAdapter {
+    void init();
+
     Optional<PlayerData> getPlayerData(UUID uuid) throws StorageException;
 
     void setPlayerData(UUID uuid, PlayerData data);

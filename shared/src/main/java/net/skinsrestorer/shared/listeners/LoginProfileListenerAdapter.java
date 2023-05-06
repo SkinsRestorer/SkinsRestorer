@@ -26,7 +26,6 @@ import net.skinsrestorer.api.property.SkinProperty;
 import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.shared.config.AdvancedConfig;
 import net.skinsrestorer.shared.config.LoginConfig;
-import net.skinsrestorer.shared.config.StorageConfig;
 import net.skinsrestorer.shared.listeners.event.SRLoginProfileEvent;
 import net.skinsrestorer.shared.log.SRLogger;
 
@@ -40,6 +39,7 @@ public final class LoginProfileListenerAdapter<R> {
     private final SRLogger logger;
 
     public R handleLogin(SRLoginProfileEvent<R> event) {
+        logger.info("Handling login for " + event.getPlayerName() + " (" + event.getPlayerUniqueId() + ")");
         if (handleSync(event)) {
             return null;
         }
@@ -58,18 +58,6 @@ public final class LoginProfileListenerAdapter<R> {
     }
 
     private Optional<SkinProperty> handleAsync(SRLoginProfileEvent<R> event) throws DataRequestException {
-        Optional<SkinProperty> skinOfPlayer = playerStorage.getSkinOfPlayer(event.getPlayerUniqueId());
-
-        if (skinOfPlayer.isPresent()) {
-            return skinOfPlayer;
-        }
-
-        // Skip default skin if: no custom skin set, online mode, always apply not enabled and default skins for premium not enabled
-        if (event.isOnline()
-                && !settings.getProperty(LoginConfig.ALWAYS_APPLY_PREMIUM)
-                && !settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM))
-            return Optional.empty();
-
-        return playerStorage.getDefaultSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName());
+        return playerStorage.getSkinForPlayer(event.getPlayerUniqueId(), event.getPlayerName(), event.hasOnlineProperties());
     }
 }

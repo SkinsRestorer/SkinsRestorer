@@ -19,10 +19,13 @@
  */
 package net.skinsrestorer.shared.subjects.messages;
 
+import lombok.NoArgsConstructor;
 import net.skinsrestorer.shared.subjects.SRForeign;
 
+import javax.inject.Inject;
 import java.util.*;
 
+@NoArgsConstructor(onConstructor_ = @Inject)
 public class LocaleManager<S extends SRForeign> {
     private final Map<Message, Map<Locale, String>> messages = new EnumMap<>(Message.class);
     private final Locale defaultLocale = Locale.ENGLISH;

@@ -41,6 +41,7 @@ import net.skinsrestorer.shared.commands.library.annotations.*;
 import net.skinsrestorer.shared.config.DevConfig;
 import net.skinsrestorer.shared.connections.DumpService;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
+import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
@@ -95,6 +96,12 @@ public final class SRCommand {
         try {
             plugin.loadLocales();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            plugin.loadStorage();
+        } catch (InitializeException e) {
             e.printStackTrace();
         }
 

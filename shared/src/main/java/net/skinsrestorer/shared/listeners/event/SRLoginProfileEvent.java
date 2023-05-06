@@ -24,7 +24,7 @@ import net.skinsrestorer.api.property.SkinProperty;
 import java.util.UUID;
 
 public interface SRLoginProfileEvent<R> {
-    boolean isOnline();
+    boolean hasOnlineProperties();
 
     UUID getPlayerUniqueId();
 

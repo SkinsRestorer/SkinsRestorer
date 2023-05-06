@@ -44,7 +44,7 @@ public class GameProfileRequest {
     private SRLoginProfileEvent<EventTask> wrap(GameProfileRequestEvent event) {
         return new SRLoginProfileEvent<EventTask>() {
             @Override
-            public boolean isOnline() {
+            public boolean hasOnlineProperties() {
                 return event.isOnlineMode();
             }
 

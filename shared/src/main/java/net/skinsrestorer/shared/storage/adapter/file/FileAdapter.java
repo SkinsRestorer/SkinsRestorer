@@ -58,17 +58,20 @@ public class FileAdapter implements StorageAdapter {
 
     @Inject
     public FileAdapter(SRPlugin plugin, SettingsManager settings) {
+        Path dataFolder = plugin.getDataFolder();
+        skinsFolder = dataFolder.resolve("skins");
+        playersFolder = dataFolder.resolve("players");
+        cacheFolder = dataFolder.resolve("cache");
+        init();
+        this.settings = settings;
+    }
+
+    @Override
+    public void init() {
         try {
-            Path dataFolder = plugin.getDataFolder();
-            skinsFolder = dataFolder.resolve("skins");
             Files.createDirectories(skinsFolder);
-
-            playersFolder = dataFolder.resolve("players");
             Files.createDirectories(playersFolder);
-
-            cacheFolder = dataFolder.resolve("cache");
             Files.createDirectories(cacheFolder);
-            this.settings = settings;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

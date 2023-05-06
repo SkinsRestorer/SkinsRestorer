@@ -48,7 +48,7 @@ public class LoginListener implements Listener {
     private SRLoginProfileEvent<Void> wrap(LoginEvent event) {
         return new SRLoginProfileEvent<Void>() {
             @Override
-            public boolean isOnline() {
+            public boolean hasOnlineProperties() {
                 return event.getConnection().isOnlineMode();
             }
 

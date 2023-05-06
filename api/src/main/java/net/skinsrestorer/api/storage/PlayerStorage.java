@@ -56,15 +56,7 @@ public interface PlayerStorage {
      * @param uuid Players UUID
      * @return The skin identifier of the skin that would be set on join
      */
-    Optional<SkinProperty> getSkinOfPlayer(UUID uuid) throws DataRequestException;
-
-    /**
-     * Get the skin a player would get if there was no skin set for them.
-     *
-     * @param uuid Players UUID
-     * @return The identifier of the default skin
-     */
-    Optional<SkinProperty> getDefaultSkinForPlayer(UUID uuid, String playerName);
+    Optional<SkinProperty> getSkinOfPlayer(UUID uuid);
 
     /**
      * This method seeks out the skin that would be set on join and returns
@@ -73,7 +65,19 @@ public interface PlayerStorage {
      * It also executes a skin data update if the saved skin data expired.
      *
      * @param uuid Players UUID
+     * @param playerName Players name
+     * @param isOnlineMode Whether the player gets properties from the platform already
      * @return The skin identifier of the skin that would be set on join
      */
-    Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName);
+    Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName, boolean isOnlineMode) throws DataRequestException;
+
+    /**
+     * @see #getSkinForPlayer(UUID, String, boolean)
+     */
+    default Optional<SkinProperty> getSkinForPlayer(UUID uuid, String playerName) throws DataRequestException {
+        return getSkinForPlayer(uuid, playerName, false);
+    }
+
+    // TODO: JavaDoc
+    Optional<SkinProperty> getPremiumSkinForPlayer(String playerName) throws DataRequestException;
 }

@@ -112,13 +112,13 @@ public class SRServerPlugin {
 
         if (proxyMode) {
             if (Files.exists(plugin.getDataFolder().resolve("enableSkinStorageAPI.txt"))) {
-                plugin.initStorage();
+                plugin.loadStorage();
                 plugin.registerAPI();
             }
 
             init.initMessageChannel();
         } else {
-            plugin.initStorage();
+            plugin.loadStorage();
 
             // Init API
             plugin.registerAPI();

@@ -106,13 +106,18 @@ public final class SkinCommand {
         // Remove the targets defined skin from database
         playerStorage.removeSkinIdOfPlayer(target.getUniqueId());
 
-        Optional<SkinProperty> property = playerStorage.getDefaultSkinForPlayer(target.getUniqueId(), target.getName());
-        skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
+        try {
+            Optional<SkinProperty> property = playerStorage.getSkinForPlayer(target.getUniqueId(), target.getName());
+            skinApplier.applySkin(target.getAs(Object.class), property.orElse(SRConstants.EMPTY_SKIN));
 
-        if (sender.getName().equals(target.getName())) {
-            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
-        } else {
-            sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, target.getName());
+            if (sender.getName().equals(target.getName())) {
+                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR);
+            } else {
+                sender.sendMessage(Message.SUCCESS_SKIN_CLEAR_OTHER, target.getName());
+            }
+        } catch (DataRequestException e) {
+            e.printStackTrace();
+            sender.sendMessage(Message.ERROR_UPDATING_SKIN); // TODO: Better error message
         }
     }
 
@@ -140,12 +145,10 @@ public final class SkinCommand {
         Optional<SkinIdentifier> setSkin = playerStorage.getSkinIdOfPlayer(target.getUniqueId());
 
         try {
-            if (setSkin.isPresent()) {
-                if (setSkin.get().getSkinType() == SkinType.PLAYER) {
-                    if (!skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isPresent()) {
-                        sender.sendMessage(Message.ERROR_UPDATING_SKIN);
-                        return;
-                    }
+            if (setSkin.isPresent() && setSkin.get().getSkinType() == SkinType.PLAYER) {
+                if (!skinStorage.updatePlayerSkinData(UUID.fromString(setSkin.get().getIdentifier())).isPresent()) {
+                    sender.sendMessage(Message.ERROR_UPDATING_SKIN);
+                    return;
                 }
             }
 
