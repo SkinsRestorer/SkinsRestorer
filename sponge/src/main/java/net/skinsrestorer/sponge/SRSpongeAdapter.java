@@ -107,6 +107,12 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
     }
 
     @Override
+    public void runSyncToPlayer(SRPlayer player, Runnable runnable) {
+        // Sponge has no implementation of per-player scheduling
+        runSync(runnable);
+    }
+
+    @Override
     public boolean determineProxy() {
         PluginContainer sponge = game.pluginManager().plugin("sponge").orElseThrow(IllegalStateException::new);
 
@@ -130,7 +136,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
         InventoryMenu inventory = injector.getSingleton(SharedGUI.class)
                 .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
 
-        runSync(() -> inventory.open(player.getAs(ServerPlayer.class)));
+        runSyncToPlayer(player, () -> inventory.open(player.getAs(ServerPlayer.class)));
     }
 
     @Override
@@ -138,7 +144,7 @@ public class SRSpongeAdapter implements SRServerAdapter<PluginContainer> {
         InventoryMenu inventory = injector.getSingleton(SkinsGUI.class)
                 .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
 
-        runSync(() -> inventory.open(player.getAs(ServerPlayer.class)));
+        runSyncToPlayer(player, () -> inventory.open(player.getAs(ServerPlayer.class)));
     }
 
     @Override

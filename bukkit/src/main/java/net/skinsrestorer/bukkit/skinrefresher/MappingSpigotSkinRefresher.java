@@ -19,12 +19,12 @@
  */
 package net.skinsrestorer.bukkit.skinrefresher;
 
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.MappingManager;
 import net.skinsrestorer.bukkit.utils.NoMappingException;
 import net.skinsrestorer.mappings.shared.IMapping;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 
@@ -33,11 +33,11 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class MappingSpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerAdapter<?> adapter;
+    private final SRBukkitAdapter adapter;
     private final IMapping mapping;
     private boolean useViaBackwards = false;
 
-    public MappingSpigotSkinRefresher(SRServerAdapter<?> adapter, SRLogger logger, Server server) throws NoMappingException {
+    public MappingSpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger, Server server) throws NoMappingException {
         this.adapter = adapter;
         Optional<IMapping> mapping = MappingManager.getMapping(server);
         if (!mapping.isPresent()) {
@@ -46,14 +46,12 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
             this.mapping = mapping.get();
         }
 
-        adapter.runSync(() -> {
-            // Wait to run task in order for ViaVersion to determine server protocol
-            if (adapter.isPluginEnabled("ViaBackwards")
-                    && ViaWorkaround.isProtocolNewer()) {
-                useViaBackwards = true;
-                logger.debug("Activating ViaBackwards workaround.");
-            }
-        });
+        // Wait to run task in order for ViaVersion to determine server protocol
+        if (adapter.isPluginEnabled("ViaBackwards")
+                && ViaWorkaround.isProtocolNewer()) {
+            useViaBackwards = true;
+            logger.debug("Activating ViaBackwards workaround.");
+        }
 
         logger.debug("Using MappingSpigotSkinRefresher");
     }
@@ -71,7 +69,7 @@ public class MappingSpigotSkinRefresher implements Consumer<Player> {
         mapping.accept(player, viaFunction);
 
         if (player.isOp()) {
-            adapter.runSync(() -> {
+            adapter.runSyncToPlayer(player, () -> {
                 // Workaround..
                 player.setOp(false);
                 player.setOp(true);

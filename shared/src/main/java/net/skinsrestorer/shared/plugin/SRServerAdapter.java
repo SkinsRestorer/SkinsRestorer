@@ -29,6 +29,8 @@ import java.util.Optional;
 public interface SRServerAdapter<P> extends SRPlatformAdapter<P> {
     void runSync(Runnable runnable);
 
+    void runSyncToPlayer(SRPlayer player, Runnable runnable);
+
     boolean determineProxy();
 
     void openServerGUI(SRPlayer player, int page);

@@ -34,9 +34,13 @@ public class FoliaSchedulerProvider implements SchedulerProvider {
         server.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
     }
 
+    /**
+     * @deprecated Use {@link #runSyncToEntity(Server, Plugin, Entity, Runnable)} instead because folia doesn't support sync tasks.
+     */
     @Override
+    @Deprecated
     public void runSync(Server server, Plugin plugin, Runnable runnable) {
-        server.getAsyncScheduler().runNow(plugin, scheduledTask -> runnable.run());
+        runAsync(server, plugin, runnable);
     }
 
     @Override

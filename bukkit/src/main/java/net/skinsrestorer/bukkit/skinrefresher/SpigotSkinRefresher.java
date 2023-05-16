@@ -21,11 +21,11 @@ package net.skinsrestorer.bukkit.skinrefresher;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
+import net.skinsrestorer.bukkit.SRBukkitAdapter;
 import net.skinsrestorer.bukkit.utils.BukkitReflection;
 import net.skinsrestorer.mappings.shared.ViaPacketData;
 import net.skinsrestorer.shared.exception.InitializeException;
 import net.skinsrestorer.shared.log.SRLogger;
-import net.skinsrestorer.shared.plugin.SRServerAdapter;
 import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public final class SpigotSkinRefresher implements Consumer<Player> {
-    private final SRServerAdapter<?> adapter;
+    private final SRBukkitAdapter adapter;
     private final Class<?> playOutRespawn;
     private final Class<?> playOutPlayerInfo;
     private final Class<?> playOutPosition;
@@ -47,7 +47,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
     private Enum<?> addPlayerEnum;
     private boolean useViabackwards = false;
 
-    public SpigotSkinRefresher(SRServerAdapter<?> adapter, SRLogger logger) throws InitializeException {
+    public SpigotSkinRefresher(SRBukkitAdapter adapter, SRLogger logger) throws InitializeException {
         this.adapter = adapter;
 
         try {
@@ -252,7 +252,7 @@ public final class SpigotSkinRefresher implements Consumer<Player> {
             ReflectionUtil.invokeMethod(entityPlayer, "triggerHealthUpdate");
 
             if (player.isOp()) {
-                adapter.runSync(() -> {
+                adapter.runSyncToPlayer(player, () -> {
                     // Workaround..
                     player.setOp(false);
                     player.setOp(true);

@@ -123,6 +123,15 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
     }
 
     @Override
+    public void runSyncToPlayer(SRPlayer player, Runnable runnable) {
+        runSyncToPlayer(player.getAs(Player.class), runnable);
+    }
+
+    public void runSyncToPlayer(Player player, Runnable runnable) {
+        schedulerProvider.runSyncToEntity(server, pluginInstance, player, runnable);
+    }
+
+    @Override
     public boolean determineProxy() {
         if (ClassInfo.get().isSpigot() && SpigotUtil.isRealSpigot(server)) {
             if (SpigotUtil.getSpigotConfig(server).getBoolean("settings.bungeecord")) {
@@ -162,7 +171,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
         Inventory inventory = injector.getSingleton(SharedGUI.class)
                 .createGUI(injector.getSingleton(SkinsGUI.class), injector.getSingleton(SharedGUI.ServerGUIActions.class), player, page);
 
-        runSync(() -> player.getAs(Player.class).openInventory(inventory));
+        runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }
 
     @Override
@@ -170,7 +179,7 @@ public class SRBukkitAdapter implements SRServerAdapter<JavaPlugin> {
         Inventory inventory = injector.getSingleton(SkinsGUI.class)
                 .createGUI(injector.getSingleton(SharedGUI.ProxyGUIActions.class), player, page, skinList);
 
-        runSync(() -> player.getAs(Player.class).openInventory(inventory));
+        runSyncToPlayer(player, () -> player.getAs(Player.class).openInventory(inventory));
     }
 
     @Override

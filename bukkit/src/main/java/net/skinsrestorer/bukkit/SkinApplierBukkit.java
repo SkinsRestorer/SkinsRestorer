@@ -119,7 +119,7 @@ public class SkinApplierBukkit implements SkinApplierAccess<Player> {
             }
 
             // delay 1 server tick so we override online-mode
-            adapter.runSync(() -> {
+            adapter.runSyncToPlayer(player, () -> {
                 applyAdapter.applyProperty(player, applyEvent.getProperty());
 
                 adapter.runAsync(() -> updateSkin(player, applyEvent.getProperty()));
