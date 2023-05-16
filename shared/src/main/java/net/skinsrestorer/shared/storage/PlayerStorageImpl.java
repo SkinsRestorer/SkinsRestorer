@@ -30,6 +30,7 @@ import net.skinsrestorer.api.storage.PlayerStorage;
 import net.skinsrestorer.api.storage.SkinStorage;
 import net.skinsrestorer.shared.config.LoginConfig;
 import net.skinsrestorer.shared.config.StorageConfig;
+import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.storage.adapter.AtomicAdapter;
 import net.skinsrestorer.shared.storage.adapter.StorageAdapter;
@@ -110,13 +111,18 @@ public class PlayerStorageImpl implements PlayerStorage {
             return setSkin;
         }
 
+        if (FloodgateUtil.isFloodgateBedrockPlayer(uuid)) {
+            logger.debug("Player " + playerName + " is a Floodgate player, not searching for java skin.");
+            return Optional.empty();
+        }
+
         if (isOnlineMode && !settings.getProperty(LoginConfig.ALWAYS_APPLY_PREMIUM)) {
             return Optional.empty();
         }
 
         boolean defaultSkinsEnabled = settings.getProperty(StorageConfig.DEFAULT_SKINS_ENABLED);
         if (defaultSkinsEnabled && settings.getProperty(StorageConfig.DEFAULT_SKINS_PREMIUM)) {
-            return getDefaultSkinForPlayer(playerName);
+            return getDefaultSkin();
         }
 
         Optional<SkinProperty> premiumSkin = getPremiumSkinForPlayer(playerName);
@@ -126,7 +132,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         }
 
         if (defaultSkinsEnabled) {
-            return getDefaultSkinForPlayer(playerName);
+            return getDefaultSkin();
         }
 
         return Optional.empty();
@@ -137,7 +143,7 @@ public class PlayerStorageImpl implements PlayerStorage {
         return cacheStorage.getSkin(playerName, false).map(MojangSkinDataResult::getSkinProperty);
     }
 
-    private Optional<SkinProperty> getDefaultSkinForPlayer(String playerName) {
+    private Optional<SkinProperty> getDefaultSkin() {
         // return default skin name if user has no custom skin set, or we want to clear to default
         List<String> skins = settings.getProperty(StorageConfig.DEFAULT_SKINS);
 

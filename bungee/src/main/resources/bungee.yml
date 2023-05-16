@@ -2,3 +2,4 @@ name: SkinsRestorer
 main: net.skinsrestorer.bungee.SRBungeeBootstrap
 version: ${version}
 author: knat, AlexProgrammerDE, Th3Tr0LLeR, McLive, DoNotSpamPls
+softDepends: ["floodgate"]

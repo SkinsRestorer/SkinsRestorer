@@ -22,6 +22,7 @@ package net.skinsrestorer.velocity;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -37,7 +38,10 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(id = "skinsrestorer", name = "SkinsRestorer", version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL, authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"})
+@Plugin(id = "skinsrestorer", name = "SkinsRestorer",
+        version = BuildData.VERSION, description = BuildData.DESCRIPTION, url = BuildData.URL,
+        authors = {"knat", "AlexProgrammerDE", "Blackfire62", "McLive"},
+        dependencies = {@Dependency(id = "floodgate", optional = true)})
 public class SRVelocityBootstrap {
     @Inject
     private ProxyServer proxy;

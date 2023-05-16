@@ -63,6 +63,12 @@ dependencyResolutionManagement {
         maven("https://repo.clojars.org/") {
             name = "Clojars Repository"
         }
+        maven("https://repo.opencollab.dev/maven-snapshots/") {
+            name = "OpenCollab Snapshot Repository"
+        }
+        maven("https://repo.opencollab.dev/maven-releases/") {
+            name = "OpenCollab Release Repository"
+        }
         mavenCentral()
     }
 }

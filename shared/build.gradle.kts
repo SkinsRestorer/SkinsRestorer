@@ -14,6 +14,8 @@ dependencies {
 
     compileOnly("org.bstats:bstats-base:3.0.2")
 
+    compileOnly("org.geysermc.floodgate:api:2.2.2-SNAPSHOT")
+
     implementation("com.mojang:brigadier:1.1.8")
 
     testImplementation("org.bstats:bstats-base:3.0.2")

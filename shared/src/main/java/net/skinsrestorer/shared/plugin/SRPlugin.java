@@ -46,6 +46,7 @@ import net.skinsrestorer.shared.connections.MineSkinAPIImpl;
 import net.skinsrestorer.shared.connections.MojangAPIImpl;
 import net.skinsrestorer.shared.connections.ServiceCheckerService;
 import net.skinsrestorer.shared.exception.InitializeException;
+import net.skinsrestorer.shared.floodgate.FloodgateUtil;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.serverinfo.Platform;
 import net.skinsrestorer.shared.serverinfo.ServerInfo;
@@ -66,6 +67,7 @@ import net.skinsrestorer.shared.subjects.messages.SkinsRestorerLocale;
 import net.skinsrestorer.shared.subjects.permissions.PermissionRegistry;
 import net.skinsrestorer.shared.update.UpdateCheckInit;
 import net.skinsrestorer.shared.utils.MetricsCounter;
+import net.skinsrestorer.shared.utils.ReflectionUtil;
 import org.bstats.MetricsBase;
 import org.bstats.charts.SingleLineChart;
 
@@ -370,6 +372,10 @@ public class SRPlugin {
             proxyPlugin.startupPlatform((SRProxyPlatformInit) platformInit);
         } else {
             throw new IllegalStateException("No platform class available!");
+        }
+
+        if (ReflectionUtil.classExists("org.geysermc.floodgate.api.FloodgateApi")) {
+            FloodgateUtil.registerListener(injector);
         }
 
         initUpdateCheck(UpdateCheckInit.InitCause.STARTUP);
