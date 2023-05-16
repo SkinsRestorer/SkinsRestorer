@@ -10,9 +10,9 @@ pluginManagement {
     plugins {
         id("com.github.johnrengelman.shadow") version "8.1.1"
         id("org.cadixdev.licenser") version "0.6.1"
-        id("net.kyori.indra") version "3.0.1"
-        id("net.kyori.indra.git") version "3.0.1"
-        id("net.kyori.indra.publishing") version "3.0.1"
+        id("net.kyori.indra") version "3.1.1"
+        id("net.kyori.indra.git") version "3.1.1"
+        id("net.kyori.indra.publishing") version "3.1.1"
         id("net.kyori.blossom") version "1.3.1"
         id("io.github.patrick.remapper") version "1.4.0"
         id("com.diffplug.spotless") version "6.18.0"
@@ -22,7 +22,7 @@ pluginManagement {
 }
 
 plugins {
-    id("com.gradle.enterprise") version "3.13.1"
+    id("com.gradle.enterprise") version "3.13.2"
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
 }
 
