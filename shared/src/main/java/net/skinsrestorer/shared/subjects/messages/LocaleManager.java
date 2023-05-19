@@ -20,13 +20,12 @@
 package net.skinsrestorer.shared.subjects.messages;
 
 import lombok.NoArgsConstructor;
-import net.skinsrestorer.shared.subjects.SRForeign;
 
 import javax.inject.Inject;
 import java.util.*;
 
 @NoArgsConstructor(onConstructor_ = @Inject)
-public class LocaleManager<S extends SRForeign> {
+public class LocaleManager {
     private final Map<Message, Map<Locale, String>> messages = new EnumMap<>(Message.class);
     private final Locale defaultLocale = Locale.ENGLISH;
 
@@ -50,8 +49,7 @@ public class LocaleManager<S extends SRForeign> {
         }
     }
 
-    public String getMessage(S foreign, Message key) {
-        Locale locale = foreign.getLocale();
+    public String getMessage(Locale locale, Message key) {
         Map<Locale, String> localeMap = messages.get(key);
 
         // First try language_country, then language and finally default
