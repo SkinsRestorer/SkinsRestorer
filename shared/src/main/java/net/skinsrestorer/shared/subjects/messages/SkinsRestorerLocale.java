@@ -22,15 +22,18 @@ package net.skinsrestorer.shared.subjects.messages;
 import ch.jalu.configme.SettingsManager;
 import lombok.Getter;
 import net.skinsrestorer.shared.config.MessageConfig;
+import net.skinsrestorer.shared.subjects.SRCommandSender;
 import net.skinsrestorer.shared.subjects.SRForeign;
+import net.skinsrestorer.shared.subjects.SRPlayer;
 import net.skinsrestorer.shared.utils.C;
 
 import javax.inject.Inject;
 import java.text.MessageFormat;
+import java.util.Locale;
 
 public class SkinsRestorerLocale {
     @Inject
-    private LocaleManager<SRForeign> localeManager;
+    private LocaleManager localeManager;
     @Inject
     private SettingsManager settings;
     @Getter
@@ -38,7 +41,11 @@ public class SkinsRestorerLocale {
 
     public String getMessage(SRForeign foreign, Message key, Object... args) {
         SRForeign target = settings.getProperty(MessageConfig.PER_ISSUER_LOCALE) ? foreign : defaultForeign;
-        String message = localeManager.getMessage(target, key);
+
+        boolean isConsole = foreign instanceof SRCommandSender && !(foreign instanceof SRPlayer);
+        Locale locale = isConsole ? settings.getProperty(MessageConfig.CONSOLE_LOCALE) : target.getLocale();
+
+        String message = localeManager.getMessage(locale, key);
 
         if (message == null) {
             throw new IllegalStateException(String.format("Message %s not found", key.name()));

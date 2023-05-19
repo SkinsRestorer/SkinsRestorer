@@ -24,11 +24,6 @@ import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.configurationdata.CommentsConfiguration;
 import ch.jalu.configme.properties.Property;
 import ch.jalu.configme.properties.TypeBasedProperty;
-import ch.jalu.configme.properties.convertresult.ConvertErrorRecorder;
-import ch.jalu.configme.properties.types.PropertyType;
-import net.skinsrestorer.shared.utils.LocaleParser;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -37,19 +32,16 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
 public class MessageConfig implements SettingsHolder {
     @Comment({
             "A locale code for the locale you want to use by default for messages and commands.",
-            "Has to a string separated by an underscore."
+            "Has to be a string separated by an underscore."
     })
-    public static final Property<Locale> LOCALE = new TypeBasedProperty<>("messages.locale", Locale.ENGLISH, new PropertyType<Locale>() {
-        @Override
-        public @Nullable Locale convert(@Nullable Object object, @NotNull ConvertErrorRecorder errorRecorder) {
-            return LocaleParser.parseLocale(object == null ? null : object.toString()).orElse(null);
-        }
-
-        @Override
-        public @NotNull Object toExportValue(Locale value) {
-            return value.toString();
-        }
-    });
+    public static final Property<Locale> LOCALE = new TypeBasedProperty<>("messages.locale", Locale.ENGLISH, LocaleProperty.instance());
+    @Comment({
+            "A locale code for the messages and commands sent to the console.",
+            "This is useful if you want to use a different locale for the console than for players.",
+            "We recommend keeping this at the default value because we mostly only provide support in English.",
+            "Has to be a string separated by an underscore."
+    })
+    public static final Property<Locale> CONSOLE_LOCALE = new TypeBasedProperty<>("messages.consoleLocale", Locale.ENGLISH, LocaleProperty.instance());
     @Comment("Disable message prefix in SkinsRestorer messages.")
     public static final Property<Boolean> DISABLE_PREFIX = newProperty("messages.disablePrefix", false);
     @Comment({
