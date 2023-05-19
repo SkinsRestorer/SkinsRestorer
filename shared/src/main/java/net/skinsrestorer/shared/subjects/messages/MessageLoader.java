@@ -24,7 +24,6 @@ import net.skinsrestorer.builddata.BuildData;
 import net.skinsrestorer.shared.log.SRLogger;
 import net.skinsrestorer.shared.plugin.SRPlatformAdapter;
 import net.skinsrestorer.shared.plugin.SRPlugin;
-import net.skinsrestorer.shared.subjects.SRForeign;
 import net.skinsrestorer.shared.utils.LocaleParser;
 import net.skinsrestorer.shared.utils.TranslationReader;
 
@@ -40,7 +39,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor_ = @Inject)
 public class MessageLoader {
     private final SRPlugin plugin;
-    private final LocaleManager<SRForeign> manager;
+    private final LocaleManager manager;
     private final SRPlatformAdapter<?> adapter;
     private final SRLogger logger;
 
